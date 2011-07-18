@@ -1,6 +1,11 @@
 #summary List of sources of data
 #labels Data
 
+= Sample Datasets =
+  * [http://jdem846.wthr.us/sampledata/Sample_Data_Boston_MA.zip Boston, MA]
+  * [http://jdem846.wthr.us/sampledata/Sample_Data_San_Francisco.zip San Francisco, CA]
+  * [http://jdem846.wthr.us/sampledata/Sample_Data_Maui_1-3_Arc_Second.zip Maui, HI]
+
 = U.S. Geology Survey = 
   * [http://seamless.usgs.gov/ Seamless Data Warehouse]
     * *Data:* http://seamless.usgs.gov/website/seamless/viewer.htm
