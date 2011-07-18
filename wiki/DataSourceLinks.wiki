@@ -1,5 +1,5 @@
 #summary List of sources of data
-#labels Data
+#labels Data,Featured
 
 = Sample Datasets =
   * [http://jdem846.wthr.us/sampledata/Sample_Data_Boston_MA.zip Boston, MA]
