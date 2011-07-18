@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jdem846 spec-version="0.1" generated="Fri Jun 24 10:24:43 EDT 2011">
+	<feature-types>
+		<feature-type-definition name="USGS Shapefile Classes" id="usgs-class">
+			<default-stroke>basic-feature</default-stroke>
+			<type-groups>
+				<type-group name="Roads" id="roads" default-stroke="basic-road"/>
+				<type-group name="Railroads" id="rail" default-stroke="rail"/>
+				<type-group name="Miscellaneous Ground Transportation" id="misc-ground" default-stroke="basic-road"/>
+				<type-group name="Landmarks" id="landmarks"  default-stroke="basic-feature"/>
+				<type-group name="Physical Features" id="physical"  default-stroke="basic-feature"/>
+				<type-group name="Nonvisible Features" id="nonvisible"  default-stroke="nonvisible"/>
+				<type-group name="Hydrography" id="hydrography"  default-stroke="basic-water"/>
+				<type-group name="Not Yet Classified" id="not-classified"  default-stroke="basic-feature"/>
+			</type-groups>
+			
+			
+			<!-- Transportation -->
+			<type code="Local Road" group="roads" stroke="basic-road"></type>
+			<type code="Ramp" group="roads" stroke="ramp"></type>
+			<type code="Private Road" group="roads" stroke="basic-road"></type>
+			<type code="Secandary Road" group="roads" stroke="secondary-road"></type>
+			<type code="4WD Road" group="roads" stroke="dirt-road"></type>
+			<type code="Primary Road" group="roads" stroke="primary-road"></type>
+			<type code="Private Driveway" group="roads" stroke="basic-road"></type>
+			<type code="Service Road" group="roads" stroke="dirt-road"></type>
+			<type code="Parking Lot Road" group="roads" stroke="basic-road"></type>
+			<type code="Parkling Lot Road" group="roads" stroke="basic-road"></type>
+			<type code="Alley" group="roads" stroke="basic-road"></type>
+			<type code="Unknown" group="roads" stroke="basic-road"></type>
+			
+			
+			<!-- Hydrography -->
+			<type code="Ice Mass" group="hydrography" stroke="basic-ice"></type>
+			<type code="Inundation Area" group="hydrography" stroke="basic-water"></type>
+			<type code="Wash" group="hydrography" stroke="basic-water"></type>
+			<type code="SeaOcean" group="hydrography" stroke="basic-water"></type>
+			<type code="Foreshore" group="hydrography" stroke="basic-water"></type>
+			<type code="Bay or Estuary or Ocean" group="hydrography" stroke="basic-water">A body of salt water.</type>
+			<type code="Canal" group="hydrography" stroke="basic-water">An artificial open waterway constructed to transport water, to irrigate or drain land, to connect two or more bodies of water, or to serve as a waterway for water craft.</type>
+			<type code="CanalDitch" group="hydrography" stroke="basic-water"></type>
+			<type code="ArtificialPath" group="hydrography" stroke="basic-water">An artificial open waterway constructed to transport water, to irrigate or drain land, to connect two or more bodies of water, or to serve as a waterway for water craft.</type>
+			<type code="Connector" group="hydrography" stroke="basic-water">An artificial open waterway constructed to transport water, to irrigate or drain land, to connect two or more bodies of water, or to serve as a waterway for water craft.</type>
+			<type code="Glacier" group="hydrography" stroke="basic-water">A field of ice.</type>
+			<type code="Lake" group="hydrography" stroke="basic-water">A standing body of water with a predominately natural shoreline surrounded by land.</type>
+			<type code="LakePond" group="hydrography" stroke="basic-water"></type>
+			<type code="Lake Dry" group="hydrography" stroke="basic-water">An area that at one time contained a standing body of water.</type>
+			<type code="Lake Intermittent" group="hydrography" stroke="basic-water">A standing body of water that contains water for only part of the year.</type>
+			<type code="Null" group="hydrography" stroke="basic-water">Not a water feature.</type>
+			<type code="Reservoir" group="hydrography" stroke="basic-water">A constructed basin formed to contain water.</type>
+			<type code="Reservoir Intermittent" group="hydrography" stroke="basic-water">A constructed basin formed to contain water for only part of the year.</type>
+			<type code="Stream" group="hydrography" stroke="basic-water">A body of flowing water.</type>
+			<type code="StreamRiver" group="hydrography" stroke="basic-water"></type>
+			<type code="Swamp Or Marsh" group="hydrography" stroke="basic-water">A noncultivated, vegetated area that is inundated or saturated for a significant part of the year.</type>
+			<type code="SwampMarsh" group="hydrography" stroke="basic-water"></type>
+			<type code="Closure Line" group="hydrography" stroke="basic-water"></type>
+			<type code="Shoreline" group="hydrography" stroke="basic-water"></type>
+			<type code="Coastline" group="hydrography" stroke="basic-water"></type>
+			<type code="Pipeline" group="hydrography" stroke="basic-water"></type>
+			<type code="Underground Conduit" group="hydrography" stroke="basic-water"></type>
+			<type code="Dam" group="hydrography" stroke="basic-water"></type>
+			<type code="Left Bank" group="hydrography" stroke="basic-water"></type>
+			<type code="Right Bank" group="hydrography" stroke="basic-water"></type>
+			<type code="Estuary" group="hydrography" stroke="basic-water"></type>
+    
+    		<!-- Transportation: Rail -->
+    		<type code="Rail" group="rail" stroke="rail"></type>
+	
+    		<!-- Transportation: Aviation -->
+    		<type code="Runway" group="roads" stroke="basic-runway"></type>
+			
+		</feature-type-definition>
+		
+		
+		<feature-type-definition name="Census Feature Class Codes (CFCC)" id="cfcc_codes">
+			<type-groups>
+				<type-group name="Roads" id="roads" default-stroke="basic-road"/>
+				<type-group name="Railroads" id="rail" default-stroke="rail"/>
+				<type-group name="Miscellaneous Ground Transportation" id="misc-ground" default-stroke="basic-road"/>
+				<type-group name="Landmarks" id="landmarks"  default-stroke="basic-feature"/>
+				<type-group name="Physical Features" id="physical"  default-stroke="basic-feature"/>
+				<type-group name="Nonvisible Features" id="nonvisible"  default-stroke="nonvisible"/>
+				<type-group name="Hydrography" id="hydrography"  default-stroke="basic-water"/>
+				<type-group name="Not Yet Classified" id="not-classified"  default-stroke="basic-feature"/>
+			</type-groups>
+			
+			<type code="A10" group="roads">Road, major and minor categories unknown</type>
+			<type code="A11" group="roads" stroke="primary-road">Primary road with limited access or interstate highway, unseparated</type>
+			<type code="A12" group="roads" stroke="primary-road-in-tunnel">Primary road with limited access or interstate highway, unseparated, in tunnel</type>
+			<type code="A13" group="roads" stroke="primary-road">Primary road with limited access or interstate highway, unseparated, underpassing</type>
+			<type code="A14" group="roads" stroke="primary-road">Primary road with limited access or interstate highway, unseparated, with rail line in center</type>
+			<type code="A15" group="roads" stroke="primary-road">Primary road with limited access or interstate highway, separated</type>
+			<type code="A16" group="roads" stroke="primary-road-in-tunnel">Primary road with limited access or interstate highway, separated, in tunnel</type>
+			<type code="A17" group="roads" stroke="primary-road">Primary road with limited access or interstate highway, separated, underpassing</type>
+			<type code="A18" group="roads" stroke="primary-road">Primary road with limited access or interstate highway, separated, with rail line in center</type>
+			<type code="A19" group="roads" stroke="primary-road">Primary road with limited access or interstate highway, bridge</type>
+			<type code="A21" group="roads" stroke="primary-road">Primary road without limited access, U.S. and State highways, unseparated</type>
+			<type code="A22" group="roads" stroke="primary-road-in-tunnel">Primary road without limited access, U.S. and State highways, unseparated, in tunnel</type>
+			<type code="A23" group="roads" stroke="primary-road">Primary road without limited access, U.S. and State highways, unseparated, underpassing</type>
+			<type code="A24" group="roads" stroke="primary-road">Primary road without limited access, U.S. and State highways, unseparated, with rail line in center</type>
+			<type code="A25" group="roads" stroke="primary-road">Primary road without limited access, U.S. and State highways, separated</type>
+			<type code="A26" group="roads" stroke="primary-road-in-tunnel">Primary road without limited access, U.S. and State highways, separated, in tunnel</type>
+			<type code="A27" group="roads" stroke="primary-road">Primary road without limited access, U.S. and State highways, separated, underpassing</type>
+			<type code="A28" group="roads" stroke="primary-road">Primary road without limited access, U.S. and State highways, separated, with rail line in center</type>
+			<type code="A29" group="roads" stroke="primary-road">Primary road without limited access, US highways, bridge</type>
+			<type code="A31" group="roads" stroke="secondary-road">Secondary and connecting road, State and county highways, unseparated</type>
+			<type code="A32" group="roads" stroke="secondary-road-in-tunnel">Secondary and connecting road, State and county highways, unseparated, in tunnel</type>
+			<type code="A33" group="roads" stroke="secondary-road">Secondary and connecting road, State and county highways, unseparated, underpassing</type>
+			<type code="A34" group="roads" stroke="secondary-road">Secondary and connecting road, State and county highways, unseparated, with rail line in center</type>
+			<type code="A35" group="roads" stroke="secondary-road">Secondary and connecting road, State and county highways, separated</type>
+			<type code="A36" group="roads" stroke="secondary-road-in-tunnel">Secondary and connecting road, State and county highways, separated, in tunnel</type>
+			<type code="A37" group="roads" stroke="secondary-road">Secondary and connecting road, State and county highways, separated, underpassing</type>
+			<type code="A38" group="roads" stroke="secondary-road">Secondary and connecting road, State and county highway, separated, with rail line in center</type>
+			<type code="A39" group="roads" stroke="secondary-road">Secondary and connecting road, state and county highways, bridge</type>
+			<type code="A41" group="roads" stroke="basic-road">Local, neighborhood, and rural road, city street, unseparated</type>
+			<type code="A42" group="roads" stroke="basic-road-in-tunnel">Local, neighborhood, and rural road, city street, unseparated, in tunnel</type>
+			<type code="A43" group="roads" stroke="basic-road">Local, neighborhood, and rural road, city street, unseparated, underpassing</type>
+			<type code="A44" group="roads" stroke="basic-road">Local, neighborhood, and rural road, city street, unseparated, with rail line in center</type>
+			<type code="A45" group="roads" stroke="basic-road">Local, neighborhood, and rural road, city street, separated</type>
+			<type code="A46" group="roads" stroke="basic-road-in-tunnel">Local, neighborhood, and rural road, city street, separated, in tunnel</type>
+			<type code="A47" group="roads" stroke="basic-road">Local, neighborhood, and rural road, city street, separated, underpassing</type>
+			<type code="A48" group="roads" stroke="basic-road">Local, neighborhood, and rural road, city street, separated, with rail line in center</type>
+			<type code="A49" group="roads" stroke="basic-road">Local, neighborhood, and rural road, city street, bridge</type>
+			<type code="A50" group="roads" stroke="dirt-road">Vehicular trail, road passable only by four-wheel drive (4WD) vehicle, major category</type>
+			<type code="A51" group="roads" stroke="dirt-road">Vehicular trail, road passable only by 4WD vehicle, unseparated</type>
+			<type code="A52" group="roads" stroke="dirt-road">Vehicular trail, road passable only by 4WD vehicle, unseparated, in tunnel</type>
+			<type code="A53" group="roads" stroke="dirt-road">Vehicular trail, road passable only by 4WD vehicle, unseparated, underpassing</type>
+			<type code="A60" group="roads">Special road feature, major category used when the minor category could not be determined</type>
+			<type code="A61" group="roads">Cul-de-sac, the closed end of a road that forms a loop or turn around</type>
+			<type code="A62" group="roads">Traffic circle, the portion of a road or intersection of roads that form a roundabout</type>
+			<type code="A63" group="roads" stroke="ramp">Access ramp, the portion of a road that forms a cloverleaf or limited access interchange</type>
+			<type code="A64" group="roads" stroke="basic-road">Service drive, road that provides access to businesses, facilities, and rest areas along limited-access highway</type>
+			<type code="A65" group="roads">Ferry crossing, the representation of a route over water that connects roads on opposite shores</type>
+			<type code="A66" group="roads">Gated barrier to travel</type>
+			<type code="A67" group="roads">Tool booth barrier to travel</type>
+			<type code="A70" group="roads">Other thoroughfare, major category used when the minor category could not be determined</type>
+			<type code="A71" group="roads">Walkway, nearly level road for pedestrians, usually unnamed</type>
+			<type code="A72" group="roads">Stairway, stepped road for pedestrians, usually unnamed</type>
+			<type code="A73" group="roads">Alley, road for service vehicles, usually unnamed, located at the rear of buildings and property</type>
+			<type code="A74" group="roads">Driveway or service road, usually privately owned and unnamed, used as access to residences, etc., or as access to logging areas, etc.</type>
+			
+			<type code="B00" group="rail">Railroad, major and minor categories unknown</type>
+			<type code="B11" group="rail">Railroad main track, not in tunnel or underpassing</type>
+			<type code="B12" group="rail">Railroad main track, in tunnel</type>
+			<type code="B13" group="rail">Railroad main track, underpassing</type>
+			<type code="B21" group="rail">Railroad spur track, not in tunnel or underpassing</type>
+			<type code="B22" group="rail">Railroad spur track, in tunnel</type>
+			<type code="B23" group="rail">Railroad spur track, underpassing</type>
+			<type code="B31" group="rail">Railroad yard track, not in tunnel or underpassing</type>
+			<type code="B32" group="rail">Railroad yard track, in tunnel</type>
+			<type code="B33" group="rail">Railroad yard track, underpassing</type>
+			<type code="B40" group="rail">Railroad ferry crossing, route over water used by ships carrying train cars to connecting railroads on opposite shores, major category</type>
+			<type code="B50" group="rail">Other rail line; major category used alone when the minor category could not be determined</type>
+			<type code="B51" group="rail">Carline, a track for street cars, trolleys, and other mass transit rail systems</type>
+			<type code="B52" group="rail">Cog railroad, incline railway, or logging tram</type>
+					
+			<type code="C00" group="misc-ground">Miscellaneous ground transportation, not road or railroad; major and minor categories unknown</type>
+			<type code="C10" group="misc-ground">Pipeline, major category used alone</type>
+			<type code="C20" group="misc-ground">Power transmission line, major category used alone</type>
+			<type code="C30" group="misc-ground">Other ground transportation that is not a pipeline or a power transmission line, major category</type>
+			<type code="C31" group="misc-ground">Aerial tramway, monorail, or ski lift</type>			
+			
+			
+			<type code="D00" group="landmarks">Landmark, major and minor categories unknown</type>
+			<type code="D10" group="landmarks">Military installation or reservation; major category used alone</type>
+			<type code="D20" group="landmarks">Multihousehold or transient quarters; major category used alone when minor category not determined</type>
+			<type code="D21" group="landmarks">Apartment building or complex</type>
+			<type code="D22" group="landmarks">Rooming or boarding house</type>
+			<type code="D23" group="landmarks">Trailer court or mobile home park</type>
+			<type code="D24" group="landmarks">Marina</type>
+			<type code="D25" group="landmarks">Crew-of-vessel area</type>
+			<type code="D26" group="landmarks">Housing facility for workers</type>
+			<type code="D27" group="landmarks">Hotel, motel, resort, spa, hostel, YMCA, or YWCA</type>
+			<type code="D28" group="landmarks">Campground</type>
+			<type code="D29" group="landmarks">Shelter or mission</type>
+			<type code="D30" group="landmarks">Custodial facility; major category used alone when the minor category could not be determined</type>
+			<type code="D31" group="landmarks">Hospital</type>
+			<type code="D32" group="landmarks">Halfway house</type>
+			<type code="D33" group="landmarks">Nursing home, retirement home, or home for the aged</type>
+			<type code="D34" group="landmarks">County home or poor farm</type>
+			<type code="D35" group="landmarks">Orphanage</type>
+			<type code="D36" group="landmarks">Jail or detention center</type>
+			<type code="D37" group="landmarks">Federal penitentiary, State prison, or prison farm</type>
+			<type code="D40" group="landmarks">Educational or religious institution, major category</type>
+			<type code="D41" group="landmarks">Sorority or fraternity</type>
+			<type code="D42" group="landmarks">Convent or monastery</type>
+			<type code="D43" group="landmarks">Educational institution, including academy, school, college, and university</type>
+			<type code="D44" group="landmarks">Religious institution, including church, synagogue, seminary, temple, and mosque</type>
+			<type code="D50" group="landmarks">Transportation terminal; major category used alone when the minor category could not be determined</type>
+			<type code="D51" group="landmarks">Airport or airfield</type>
+			<type code="D52" group="landmarks">Train station</type>
+			<type code="D53" group="landmarks">Bus terminal</type>
+			<type code="D54" group="landmarks">Marine terminal</type>
+			<type code="D55" group="landmarks">Seaplane anchorage</type>
+			<type code="D57" group="landmarks">Airport Statistical Representation used as part of urban area delineation where major airports are contiguous with urban areas</type>
+			<type code="D60" group="landmarks">Employment center; major category used alone when the minor category could not be determined</type>
+			<type code="D61" group="landmarks">Shopping center or major retail center</type>
+			<type code="D62" group="landmarks">Industrial building or industrial park</type>
+			<type code="D63" group="landmarks">Office building or office park</type>
+			<type code="D64" group="landmarks">Amusement center</type>
+			<type code="D65" group="landmarks">Government center</type>
+			<type code="D66" group="landmarks">Other employment center</type>
+			<type code="D70" group="landmarks">Tower; major category used alone when minor category could not be determined</type>
+			<type code="D71" group="landmarks">Lookout tower</type>
+			<type code="D80" group="landmarks">Open space; major category used alone when the minor category could not be determined</type>
+			<type code="D81" group="landmarks">Golf course</type>
+			<type code="D82" group="landmarks">Cemetery</type>
+			<type code="D83" group="landmarks">National Park Service land</type>
+			<type code="D84" group="landmarks">National forest or other Federal land</type>
+			<type code="D85" group="landmarks">State or local park or forest</type>
+			<type code="D90" group="landmarks">Special purpose landmark; major category used alone when the minor category could not be determined</type>
+			<type code="D91" group="landmarks">Post office box ZIP Code(R)</type>
+			<type code="D92" group="landmarks">Urbanizacion, an identifiable community development in Puerto Rico</type>
+			
+			<type code="E00" group="physical">Physical feature, tangible but not transportation or hydrographic; major and minor categories unknown</type>
+			<type code="E10" group="physical">Fence line locating a visible and permanent fence between separately identified property</type>
+			<type code="E20" group="physical">Topographic feature; major category used when the minor category could not be determined</type>
+			<type code="E21" group="physical">Ridge line, the line of highest elevation of a linear mountain</type>
+			<type code="E22" group="physical">Mountain peak, the point of highest elevation of a mountain</type>
+			<type code="E23" group="physical">Island, identified by name</type>
+			<type code="E24" group="physical">Levee, an embankment, as of earth or concrete, used to prevent a river or other body of water from overflowing</type>
+			<type code="E25" group="physical">Marsh/Swamp</type>
+			
+			<type code="F00" group="nonvisible">Nonvisible boundary, major and minor categories unknown</type>
+			<type code="F10" group="nonvisible">Nonvisible jurisdictional boundary of a legal or administrative entity, major category</type>
+			<type code="F11" group="nonvisible">Offset boundary of a legal or administrative entity</type>
+			<type code="F12" group="nonvisible">Corridor boundary of a legal or administrative entity</type>
+			<type code="F13" group="nonvisible">Nonvisible superseded 2000 governmental unit boundary</type>
+			<type code="F14" group="nonvisible">Superseded 1990 legal boundary</type>
+			<type code="F15" group="nonvisible">Superseded 1990 legal boundary, corrected through post census process</type>
+			<type code="F16" group="nonvisible">Superseded legal boundary, current at the time of the 1997 Economic Census</type>
+			<type code="F17" group="nonvisible">Nonvisible State Legislative District boundary</type>
+			<type code="F18" group="nonvisible">Nonvisible Congressional District boundary</type>
+			<type code="F19" group="nonvisible">Nonvisible corrected 2000 governmental unit boundary</type>
+			<type code="F20" group="nonvisible">Nonvisible feature for data base topology; major category used when the minor category could not be determined</type>
+			<type code="F21" group="nonvisible">Automated feature extension to lengthen existing physical feature</type>
+			<type code="F22" group="nonvisible">Irregular feature extension, determined manually, to lengthen existing physical feature</type>
+			<type code="F23" group="nonvisible">Closure extension to complete data base topological closure between extremely close features</type>
+			<type code="F24" group="nonvisible">Nonvisible separation line used with offset and corridor boundaries</type>
+			<type code="F25" group="nonvisible">Nonvisible centerline of area enclosed by corridor boundary</type>
+			<type code="F30" group="nonvisible">Point-to-point line, follows a line of sight and should not cross any visible feature</type>
+			<type code="F40" group="nonvisible">Property line, nonvisible boundary of either public or private lands, e.g., a park boundary</type>
+			<type code="F50" group="nonvisible">ZIP Code(R) tabulation boundary, used in delineating ZIP Code(R) Tabulation Areas</type>
+			<type code="F70" group="nonvisible">Statistical boundary; major category used when the minor category could not be determined</type>
+			<type code="F71" group="nonvisible">1980 statistical boundary</type>
+			<type code="F72" group="nonvisible">1990 statistical boundary, used to hold collection and tabulation census block boundaries not represented by existing physical features</type>
+			<type code="F73" group="nonvisible">1990 statistical boundary and extent of land use, it is not classifiable as a physical feature</type>
+			<type code="F74" group="nonvisible">1990 statistical boundary, used to hold a tabulation census block boundary not represented by an existing physical feature</type>
+			<type code="F80" group="nonvisible">Nonvisible other tabulation boundary, major category used when the minor category could not be determined</type>
+			<type code="F81" group="nonvisible">School district tabulation boundary</type>
+			<type code="F82" group="nonvisible">Special census tabulation boundary</type>
+			<type code="F83" group="nonvisible">Census 2000 collection block boundary; used to hold Census collection block boundaries not represented by existing physical features</type>
+			<type code="F84" group="nonvisible">Census 2000 statistical area boundary; used to hold Census statistical area boundaries not represented by existing physical features</type>
+			<type code="F85" group="nonvisible">Census 2000 tabulation block boundary; used to hold Census tabulation block boundaries not represented by existing physical features</type>
+			<type code="F86" group="nonvisible">Internal U.S. Census Bureau use</type>
+			<type code="F87" group="nonvisible">Oregon urban growth area boundary</type>
+			<type code="F88" group="nonvisible">Current statistical area boundary</type>		
+			
+			
+			<type code="H00" group="hydrography">Water feature, classification unknown or not elsewhere classified</type>
+			<type code="H01" group="hydrography">Shoreline of perennial water feature</type>
+			<type code="H02" group="hydrography">Shoreline of intermittent water feature</type>
+			<type code="H10" group="hydrography">Stream boundary, major category</type>
+			<type code="H11" group="hydrography">Perennial stream or river</type>
+			<type code="H12" group="hydrography">Intermittent stream, river, or wash</type>
+			<type code="H13" group="hydrography">Braided stream or river</type>
+			<type code="H20" group="hydrography">Canal, ditch, or aqueduct, major category</type>
+			<type code="H21" group="hydrography">Perennial canal, ditch, or aqueduct</type>
+			<type code="H22" group="hydrography">Intermittent canal, ditch, or aqueduct</type>
+			<type code="H30" group="hydrography">Lake or pond; major category used when the minor category could not be determined</type>
+			<type code="H31" group="hydrography">Perennial lake or pond</type>
+			<type code="H32" group="hydrography">Intermittent lake or pond</type>
+			<type code="H40" group="hydrography">Reservoir; major category used when the minor category could not be determined</type>
+			<type code="H41" group="hydrography">Perennial reservoir</type>
+			<type code="H42" group="hydrography">Intermittent reservoir</type>
+			<type code="H50" group="hydrography">Bay, estuary, gulf, sound, sea, or ocean; major category used when the minor category could not be determined</type>
+			<type code="H51" group="hydrography">Bay, estuary, gulf, or sound</type>
+			<type code="H53" group="hydrography">Sea or ocean</type>
+			<type code="H60" group="hydrography">Gravel pit or quarry filled with water</type>
+			<type code="H70" group="hydrography">Nonvisible water area definition boundary; used to separate named water areas; major category</type>
+			<type code="H71" group="hydrography">USGS closure line, used as maritime shoreline</type>
+			<type code="H72" group="hydrography">Census water centerline, computed to use as median positional boundary</type>
+			<type code="H73" group="hydrography">Census water boundary, international in waterways or at 12-mile limit, used as area measurement line</type>
+			<type code="H74" group="hydrography">Census water boundary, separates inland from coastal or Great Lakes, used as area measurement line</type>
+			<type code="H75" group="hydrography">Census water boundary, separates coastal from territorial sea at 3-mile limit, used as area measurement line</type>
+			<type code="H76" group="hydrography">Artificial path through double line hydrography, from the U.S. Geological Survey feature in the National Hydrography Database (NHD)</type>
+			<type code="H77" group="hydrography">Artificial path through double line hydrography, from any source other than the U.S. Geological Survey, National Hydrography Database</type>
+			<type code="H80" group="hydrography">Special water feature, major category used when the minor category could not be determined</type>
+			<type code="H81" group="hydrography">Glacier</type>
+	
+	
+			<type code="X00" group="not-classified">Feature not yet classified</type>
+				
+		</feature-type-definition>
+		
+		<feature-type-definition name="Solid Color - Red" id="solid-color-red">
+			<default-stroke>solid-red</default-stroke>
+		</feature-type-definition>
+		
+		<feature-type-definition name="Solid Color - Green" id="solid-color-green">
+			<default-stroke>solid-green</default-stroke>
+		</feature-type-definition>	
+		
+		<feature-type-definition name="Solid Color - Blue" id="solid-color-blue">
+			<default-stroke>solid-blue</default-stroke>
+		</feature-type-definition>	
+	</feature-types>
+
+</jdem846>

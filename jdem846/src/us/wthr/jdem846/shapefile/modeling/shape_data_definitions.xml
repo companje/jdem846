@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jdem846 spec-version="0.1" generated="Fri Jun 24 10:24:43 EDT 2011">
+
+	<shape-types>
+	
+	
+		<shape-type name="CFCC Codes - Roads" id="cfcc-codes-roads">
+			<featureTypeColumn definition="cfcc_codes">CFCC_Code</featureTypeColumn>
+			<columns>
+				
+				<column name="Name">Full_Stree</column>
+				<column name="Zip Left">Zip_Left</column>
+				<column name="Zip Right">Zip_Right</column>
+				<column name="CFCC Code">CFCC_Code</column>
+				<column name="Source">Source_Ori</column>
+				<column name="Release">Source__1</column>
+				<column name="Interstate">Interstate</column>
+				<column name="US Route">US_Route</column>
+				<column name="State Route">State_Rout</column>
+				<column name="County Route">County_Rou</column>
+				<column name="Road Class">Road_Class</column>
+				<column name="Is One Way">IsOneWay</column>
+				<column name="One Way Direction">OneWay_Dir</column>
+				<column name="Low Address">Low_Addres</column>
+				<column name="High Address">High_Addre</column>
+				<column name="Low Address 1">Low_Add_1</column>
+				<column name="High Address 1">High_Ad_1</column>
+			</columns>
+		</shape-type>
+		
+		<shape-type name="USGS Hydrography" id="usgs-hydrography">
+			<featureTypeColumn definition="usgs-class">FTYPE</featureTypeColumn>
+			<columns>
+				<column name="Name">GNIS_Name</column>
+				<column name="Resolution">Resolution</column>
+				<column name="AreaSqKm">AreaSqKm</column>
+				<column name="Elevation">Elevation</column>
+			</columns>
+		</shape-type>
+		
+		<shape-type name="USGS Transportation - Rail" id="usgs-transportation-rail">
+			<featureTypeColumn definition="usgs-class">FCode</featureTypeColumn>
+			<columns>
+				<column name="Name">Name</column>
+				<column name="Rail Usage">Rail_Usage</column>
+				<column name="Rail Class">Rail_Class</column>
+				<column name="Owner">Owner</column>
+				<column name="Length (KM)">LengthKM</column>
+			</columns>
+		</shape-type>
+		
+		<shape-type name="USGS Transportation - Airport Runways" id="usgs-transportation-runways">
+			<featureTypeColumn definition="usgs-class">FCode</featureTypeColumn>
+			<columns>
+				<column name="Name">Name</column>				
+				<column name="Airport Code">FAA_Airpor</column>
+				<column name="Surface Material">Surface_Ma</column>
+				<column name="Runway Length">Runway_Len</column>
+				<column name="Runway Width">Runway_Wid</column>
+				<column name="Runway Sta?">Runway_Sta</column>
+			</columns>
+		</shape-type>
+		
+		<shape-type name="USGS Transportation - Roads" id="usgs-transportation-roads">
+			<featureTypeColumn definition="usgs-class">Road_Class</featureTypeColumn>
+			<columns>
+				<column name="Name">Full_Stree</column>
+				<column name="Zip Left">Zip_Left</column>
+				<column name="Zip Right">Zip_Right</column>
+				<column name="CFCC Code">CFCC_Code</column>
+				<column name="Source">Source_Ori</column>
+				<column name="Release">Source__1</column>
+				<column name="Interstate">Interstate</column>
+				<column name="US Route">US_Route</column>
+				<column name="State Route">State_Rout</column>
+				<column name="County Route">County_Rou</column>
+				<column name="Road Class">Road_Class</column>
+				<column name="Is One Way">IsOneWay</column>
+				<column name="One Way Direction">OneWay_Dir</column>
+				<column name="Low Address">Low_Addres</column>
+				<column name="High Address">High_Addre</column>
+				<column name="Low Address 1">Low_Add_1</column>
+				<column name="High Address 1">High_Ad_1</column>
+			</columns>
+		</shape-type>
+		
+		<shape-type name="Solid Color - Red" id="solid-color-red">
+			<featureTypeColumn definition="solid-color-red"></featureTypeColumn>
+		</shape-type>
+		
+		<shape-type name="Solid Color - Green" id="solid-color-green">
+			<featureTypeColumn definition="solid-color-green"></featureTypeColumn>
+		</shape-type>
+		
+		<shape-type name="Solid Color - Blue" id="solid-color-blue">
+			<featureTypeColumn definition="solid-color-blue"></featureTypeColumn>
+		</shape-type>
+		
+	</shape-types>
+
+</jdem846>

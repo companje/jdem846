@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jdem846 spec-version="0.1" generated="Fri Jun 24 10:24:43 EDT 2011">
+
+	<line-strokes>
+		<line-stroke name="nonvisible">
+			<stroke red="0" green="0" blue="0" alpha="0"/>
+		</line-stroke>
+	
+		<line-stroke name="basic-feature">
+			<stroke />
+		</line-stroke>
+		
+		<line-stroke name="basic-ice">
+			<stroke red="255" green="255" blue="255" alpha="100" />
+		</line-stroke>
+		
+		<line-stroke name="basic-water">
+			<stroke red="44" green="73" blue="128" alpha="255" />
+		</line-stroke>
+		
+		<line-stroke name="basic-road-in-tunnel">
+			<stroke red="235" green="235" blue="235" width="3.0" cap="CAP_BUTT" join="JOIN_BEVEL" miterLimit="1.0" dash="6.0,3.0" dashPhase="1.0"/>
+			<stroke red="107" green="107" blue="107" width="1.8" cap="CAP_BUTT" join="JOIN_BEVEL" miterLimit="1.0" dash="6.0,3.0" dashPhase="1.0"/>
+		</line-stroke>
+		
+		<line-stroke name="basic-road">
+			<stroke cap="CAP_BUTT" join="JOIN_BEVEL" red="235" green="235" blue="235" width="3.0"/>
+			<stroke cap="CAP_BUTT" join="JOIN_BEVEL" red="107" green="107" blue="107" width="1.8"/>
+		</line-stroke>
+		
+		<line-stroke name="water-crossing">
+			<stroke width="1.0" cap="CAP_BUTT" join="JOIN_BEVEL" miterLimit="1.0" dash="1.0,1.0" dashPhase="1.0" red="0" green="0" blue="0"/>			
+		</line-stroke>
+		
+		<line-stroke name="basic-highway">
+			<stroke red="235" green="235" blue="235" width="4.5"/>
+			<stroke red="107" green="107" blue="107" width="3.3"/>
+		</line-stroke>
+		
+		<line-stroke name="basic-highway-in-tunnel">
+			<stroke width="4.0" cap="CAP_BUTT" join="JOIN_BEVEL" miterLimit="1.0" dash="6.0,3.0" dashPhase="1.0" red="0" green="0" blue="0" />
+		</line-stroke>
+		
+		<line-stroke name="primary-road-in-tunnel">
+			<stroke red="235" green="235" blue="235" width="4.5"  cap="CAP_BUTT" join="JOIN_BEVEL" miterLimit="1.0" dash="6.0,3.0" dashPhase="1.0"/>
+			<stroke red="107" green="107" blue="107" width="3.3"  cap="CAP_BUTT" join="JOIN_BEVEL" miterLimit="1.0" dash="6.0,3.0" dashPhase="1.0"/>
+		</line-stroke>
+		
+		<line-stroke name="primary-road">
+			<stroke cap="CAP_BUTT" join="JOIN_BEVEL" red="235" green="235" blue="235" width="4.5"/>
+			<stroke cap="CAP_BUTT" join="JOIN_BEVEL" red="107" green="107" blue="107" width="3.3"/>
+		</line-stroke>
+
+		<line-stroke name="secondary-road-in-tunnel">
+			<stroke red="235" green="235" blue="235" width="3.9" cap="CAP_BUTT" join="JOIN_BEVEL" miterLimit="1.0" dash="6.0,3.0" dashPhase="1.0"/>
+			<stroke red="107" green="107" blue="107" width="2.7" cap="CAP_BUTT" join="JOIN_BEVEL" miterLimit="1.0" dash="6.0,3.0" dashPhase="1.0"/>
+		</line-stroke>
+		
+		<line-stroke name="secondary-road">
+			<stroke cap="CAP_BUTT" red="235" green="235" blue="235" width="3.9"/>
+			<stroke cap="CAP_BUTT" red="107" green="107" blue="107" width="2.7"/>
+		</line-stroke>
+		
+		<line-stroke name="dirt-road">
+			<stroke width="1.0" cap="CAP_SQUARE" join="JOIN_BEVEL" miterLimit="1.0" dash="6.0,3.0" dashPhase="1.0" red="107" green="107" blue="107"   />
+		</line-stroke>
+		
+		<line-stroke name="ramp">
+			<stroke red="107" green="107" blue="107" width="1.0"/>
+		</line-stroke>
+		
+		<line-stroke name="rail">
+			<stroke width="1.0" cap="CAP_BUTT" join="JOIN_BEVEL" miterLimit="1.0" dash="6.0,3.0" dashPhase="1.0" red="235" green="235" blue="235" />
+		</line-stroke>
+		
+		<line-stroke name="basic-runway">
+			<stroke red="235" green="235" blue="235" width="20.0"/>
+			<stroke red="107" green="107" blue="107" width="23.0"/>
+		</line-stroke>
+		
+		<line-stroke name="solid-red">
+			<stroke red="255" green="0" blue="0" alpha="255"/>
+		</line-stroke>
+		
+		<line-stroke name="solid-green">
+			<stroke red="0" green="255" blue="0" alpha="255"/>
+		</line-stroke>
+		
+		<line-stroke name="solid-blue">
+			<stroke red="0" green="0" blue="255" alpha="255"/>
+		</line-stroke>
+		
+	</line-strokes>
+</jdem846>
