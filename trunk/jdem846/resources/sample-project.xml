@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jdem846 spec-version="0.1" generated="Fri Jun 24 10:24:43 EDT 2011">
+  <project>
+    <options>
+      <engine>dem2d-gen</engine>
+      <width>2400</width>
+      <height>2400</height>
+      <background-color>Blue</background-color>
+      <hill-shading>true</hill-shading>
+      <hill-shading-type>1002</hill-shading-type>
+      <coloring-type>standard-coloring</coloring-type>
+      <tile-size>1500</tile-size>
+      <lighting-multiple>0.3</lighting-multiple>
+      <spot-exponent>4</spot-exponent>
+      <lighting-azimuth>320.0</lighting-azimuth>
+      <lighting-elevation>25.0</lighting-elevation>
+    </options>
+    <input-files>
+      <input>C:\srv\elevation\Pawtuckaway\74339812.flt</input>
+    </input-files>
+  </project>
+</jdem846>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jdem846 spec-version="0.1" generated="Fri Jun 24 10:24:43 EDT 2011">
+	<project>
+		<options>
+			<option key="us.wthr.jdem846.modelOptions.engine">dem2d-gen</option>
+			<option key="us.wthr.jdem846.modelOptions.width">3000</option>
+			<option key="us.wthr.jdem846.modelOptions.height">3000</option>
+			<option key="us.wthr.jdem846.modelOptions.hillShading">true</option>
+			<option key="us.wthr.jdem846.modelOptions.hillShadeType">1002</option>
+			<option key="us.wthr.jdem846.modelOptions.coloringType">standard-coloring</option>
+			<option key="us.wthr.jdem846.modelOptions.tileSize">1000</option>
+			<option key="us.wthr.jdem846.modelOptions.lightingMultiple">0.75</option>
+			<option key="us.wthr.jdem846.modelOptions.spotExponent">1</option>
+			<option key="us.wthr.jdem846.modelOptions.backgroundColor">Blue</option>
+			<option key="us.wthr.jdem846.modelOptions.lightingAzimuth">320</option>
+			<option key="us.wthr.jdem846.modelOptions.lightingElevation">25</option>
+			<option key="us.wthr.jdem846.modelOptions.writeTo"></option>
+			<option key="us.wthr.jdem846.modelOptions.gradientLevels"></option>
+    </options>
+    <input-files>
+      <input>C:\srv\elevation\Pawtuckaway\74339812.flt</input>
+    </input-files>
+  </project>
+</jdem846>
