@@ -1,0 +1,7 @@
+#summary List of sources of data
+#labels Data
+
+= U.S. Geology Survey = 
+  * [http://seamless.usgs.gov/ Seamless Data Warehouse]
+    * *Data:* http://seamless.usgs.gov/website/seamless/viewer.htm
+  * [http://viewer.nationalmap.gov/viewer/ The National Map]
