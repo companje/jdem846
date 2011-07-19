@@ -304,7 +304,7 @@ public class JdemFrame extends JFrame
 	public void openProject()
 	{
 		log.info("Displaying open project dialog");
-		JFileChooser chooser = new JFileChooser();
+		JFileChooser chooser = new BasicFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("JDEM Project", "xdem");
 		chooser.setFileFilter(filter);
 		chooser.setMultiSelectionEnabled(false);
