@@ -20,6 +20,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 
+/** Identifies a method to be run on a service class when it is being destroyed.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Destroy
 {

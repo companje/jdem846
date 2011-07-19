@@ -23,6 +23,11 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+/** Controller for loading image resources.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class ImageIcons
 {
 	

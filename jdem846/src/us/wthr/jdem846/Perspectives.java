@@ -16,6 +16,12 @@
 
 package us.wthr.jdem846;
 
+
+/** Utility class for common three-dimensional projections calculations.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class Perspectives 
 {
 	

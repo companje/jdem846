@@ -19,10 +19,35 @@ package us.wthr.jdem846.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/** Annotation for identifying model coloring classes.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DemColoring {
+	
+	/** Human-readable name for the class.
+	 * 
+	 * @return
+	 */
 	String name();
+	
+	/** Unique machine-readable name for the class.
+	 * 
+	 * @return
+	 */
 	String identifier();
+	
+	/** Controls whether the UI should display a gradient configuration widget.
+	 * 
+	 * @return
+	 */
 	boolean allowGradientConfig() default true;
+	
+	/** Specifies whether the class needs a minimum and maximum elevation determined from the data.
+	 * 
+	 * @return
+	 */
 	boolean needsMinMaxElevation() default true;
 }

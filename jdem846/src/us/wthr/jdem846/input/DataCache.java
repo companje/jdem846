@@ -16,6 +16,11 @@
 
 package us.wthr.jdem846.input;
 
+/** Specifies a class that is to be uses to load and cache binary data.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public interface DataCache 
 {
 	

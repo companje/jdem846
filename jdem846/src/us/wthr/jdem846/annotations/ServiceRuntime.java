@@ -19,7 +19,11 @@ package us.wthr.jdem846.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-
+/** Identifies a method on a service class that is to be called as the primary business logic of the service thread.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ServiceRuntime
 {

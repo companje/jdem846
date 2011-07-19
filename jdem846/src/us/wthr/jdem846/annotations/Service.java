@@ -19,10 +19,29 @@ package us.wthr.jdem846.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/** Identifies a service class.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Service
 {
+	/** A unique name for the service.
+	 * 
+	 * @return
+	 */
 	String name();
+	
+	/** Specifies whether the service thread should be configured as a deamon.
+	 * 
+	 * @return
+	 */
 	boolean deamon() default true;
+	
+	/** Specifies whether the service class is enable and should be activated during runtime.
+	 * 
+	 * @return
+	 */
 	boolean enabled() default true;
 }

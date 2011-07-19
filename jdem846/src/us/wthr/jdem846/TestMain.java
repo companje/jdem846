@@ -47,7 +47,12 @@ import us.wthr.jdem846.shapefile.ShapeFile;
 import us.wthr.jdem846.shapefile.ShapeIndexFile;
 import us.wthr.jdem846.shapefile.ShapeIndexRecord;
 
-
+/** Testing entry point.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
+@Deprecated
 public class TestMain 
 {
 	private static Log log = Logging.getLog(TestMain.class);

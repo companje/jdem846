@@ -19,6 +19,11 @@ package us.wthr.jdem846.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/** Identifies a registry class that will be initialized on application startup.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Registry
 {

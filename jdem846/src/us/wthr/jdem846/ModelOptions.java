@@ -18,6 +18,11 @@ package us.wthr.jdem846;
 
 import us.wthr.jdem846.project.ProjectModel;
 
+/** Options for model processing.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class ModelOptions
 {
 	public static final int SPOT_EXPONENT_MINIMUM = 1;
@@ -156,7 +161,10 @@ public class ModelOptions
 	}
 
 	
-	
+	/** Synchronizes values from this object to a ProjectModel object.
+	 * 
+	 * @param projectModel A ProjectModel to synchronize to
+	 */
 	public void syncToProjectModel(ProjectModel projectModel)
 	{
 		projectModel.setOption(OPTION_ENGINE, this.getEngine());
@@ -176,6 +184,10 @@ public class ModelOptions
 		projectModel.setOption(OPTION_SPOT_EXPONENT, this.getSpotExponent());
 	}
 	
+	/** Synchronizes values from a ProjectModel object to this object.
+	 * 
+	 * @param projectModel A ProjectModel to synchronize from.
+	 */
 	public void syncFromProjectModel(ProjectModel projectModel)
 	{
 		
@@ -391,7 +403,10 @@ public class ModelOptions
 		this.writeTo = writeTo;
 	}
 	
-	
+	/** Creates a value-by-value copy of this object.
+	 * 
+	 * @return A value-by-value copy of this object.
+	 */
 	public ModelOptions copy()
 	{
 		ModelOptions clone = new ModelOptions();

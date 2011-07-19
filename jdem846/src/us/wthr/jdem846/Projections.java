@@ -18,7 +18,7 @@ package us.wthr.jdem846;
 
 /** Projection and georeferencing constants. Based on values from GeoTIFF Rev. 0.2
  * 
- * @author oracle
+ * @author Kevin M. Gill
  *
  */
 public enum Projections 
