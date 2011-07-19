@@ -24,13 +24,20 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.ui.SplashScreen;
 
-
+/** Main application entry point. Parses command line options and kicks off service and registry kernels.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class JDemMain 
 {
 	
 	private static Log log = Logging.getLog(JDemMain.class);
 	
-
+	/** Scans command line options and places appropriate values into system properties map.
+	 * 
+	 * @param args Command line options array.
+	 */
 	public static void checkCommandLineOptions(String[] args)
 	{
 		for (String arg : args) {
@@ -54,6 +61,10 @@ public class JDemMain
 		}
 	}
 	
+	/** Application entry point.
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
 		checkCommandLineOptions(args);

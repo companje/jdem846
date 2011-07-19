@@ -18,6 +18,11 @@ package us.wthr.jdem846.input;
 
 import us.wthr.jdem846.ByteOrder;
 
+/** Defines a class that provides data header (metadata) information.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public interface DataSourceHeader 
 {
 	

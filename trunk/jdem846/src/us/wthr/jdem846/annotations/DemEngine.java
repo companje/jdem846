@@ -19,22 +19,90 @@ package us.wthr.jdem846.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/** Identifies model engine classes.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DemEngine {
+	
+	/** Human-readable name for the class.
+	 * 
+	 * @return
+	 */
 	String name();
+	
+	/** Unique, machine-readable identifier for the class.
+	 * 
+	 * @return
+	 */
 	String identifier();
 	
+	/** Specifies whether the engine is enabled and available for use on the UI.
+	 * 
+	 * @return
+	 */
 	boolean enabled() default true;
+	
+	/** Specifies whether the engine uses the width property from the model options.
+	 * 
+	 * @return
+	 */
 	boolean usesWidth() default true;
+	
+	/** Specifies whether the engine uses the height property from the model options.
+	 * 
+	 * @return
+	 */
 	boolean usesHeight() default true;
+	
+	/** Specifies whether the engine uses the background color property from the model options.
+	 * 
+	 * @return
+	 */
 	boolean usesBackgroundColor() default true;
+	
+	/** Specifies whether the engine uses the coloring engine property from the model options.
+	 * 
+	 * @return
+	 */
 	boolean usesColoring() default true;
+	
+	/** Specifies whether the engine uses the hill shading property from the model options.
+	 * 
+	 * @return
+	 */
 	boolean usesHillshading() default true;
+	
+	/** Specifies whether the engine uses the light multiple property from the model options.
+	 * 
+	 * @return
+	 */
 	boolean usesLightMultiple() default true;
+	
+	/** Specifies whether the engine uses the spot exponent property from the model options.
+	 * 
+	 * @return
+	 */
 	boolean usesSpotExponent() default true;
+	
+	/** Specifies whether the engine uses the tile size property from the model options.
+	 * 
+	 * @return
+	 */
 	boolean usesTileSize() default true;
+	
+	/** Specifies whether the engine uses the generates image property from the model options.
+	 * 
+	 * @return
+	 */
 	boolean generatesImage() default true;
 	
+	/** Specifies which output file type is required to be asked of the user before running. 
+	 * 
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	Class needsOutputFileOfType() default Object.class;
 }

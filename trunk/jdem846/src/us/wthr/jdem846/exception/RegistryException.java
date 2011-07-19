@@ -16,10 +16,17 @@
 
 package us.wthr.jdem846.exception;
 
+/** Thrown in the event of a error in a registry class or within the registry kernel.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 @SuppressWarnings("serial")
 public class RegistryException extends Exception
 {
-	
+	/** Fully qualified class name of the registry class causing the error.
+	 * 
+	 */
 	private String clazzName;
 	
 	public RegistryException(String clazzName, String message, Exception ex)
@@ -39,6 +46,10 @@ public class RegistryException extends Exception
 		this.clazzName = clazzName;
 	}
 	
+	/** Fully qualified class name of the registry class causing the error.
+	 * 
+	 * @return
+	 */
 	public String getClassName()
 	{
 		return clazzName;

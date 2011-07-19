@@ -18,6 +18,11 @@ package us.wthr.jdem846.util;
 
 import us.wthr.jdem846.ByteOrder;
 
+/** Provides a set of common byte-wise manipulation and datatype conversion operations.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class ByteConversions
 {
 	public static final ByteOrder DEFAULT_BYTE_ORDER = ByteOrder.LSBFIRST;
@@ -27,16 +32,36 @@ public class ByteConversions
 		
 	}
 	
+	/** Converts a 4 byte array to a float using the default byte order.
+	 * 
+	 * @param bytes A 4 byte array
+	 * @return
+	 */
 	public static float bytesToFloat(byte[] bytes)
 	{
 		return bytesToFloat(bytes,  DEFAULT_BYTE_ORDER);
 	}
 	
+	/** Converts a 4 byte array to a float using the specified byte order.
+	 * 
+	 * @param bytes A 4 byte array
+	 * @param byteOrder
+	 * @return
+	 */
 	public static float bytesToFloat(byte[] bytes, ByteOrder byteOrder)
 	{
 		return bytesToFloat(bytes[0], bytes[1], bytes[2], bytes[3], byteOrder);
 	}
 	
+	/** Converts 4 bytes to a float using the specified byte order.
+	 * 
+	 * @param b00
+	 * @param b01
+	 * @param b10
+	 * @param b11
+	 * @param byteOrder
+	 * @return
+	 */
 	public static float bytesToFloat(byte b00, byte b01, byte b10, byte b11, ByteOrder byteOrder)
 	{
 		int intBits = 0;
@@ -61,6 +86,11 @@ public class ByteConversions
 
 	}
 	
+	/** Translates the byte to a two-character hexidecimal string representation.
+	 * 
+	 * @param b00
+	 * @return
+	 */
 	public static String toHex(byte b00)
 	{
 		String s = Integer.toString(b00 & 0xFF, 16).toUpperCase();
@@ -69,11 +99,22 @@ public class ByteConversions
 		return s;
 	}
 	
+	/** Converts a float to a 4 byte array using the default byte order.
+	 * 
+	 * @param value
+	 * @return A 4 byte array
+	 */
 	public static byte[] floatToBytes(float value)
 	{
 		return floatToBytes(value, DEFAULT_BYTE_ORDER);
 	}
 	
+	/** Converts a float to a 4 byte array using the specified byte order.
+	 * 
+	 * @param value
+	 * @param byteOrder
+	 * @return A 4 byte array/
+	 */
 	public static byte[] floatToBytes(float value, ByteOrder byteOrder)
 	{
 		int bits = Float.floatToIntBits(value);
@@ -97,37 +138,45 @@ public class ByteConversions
 		return buffer;
 	}
 	
+	/** Converts a 4 byte array to an integer using the default byte order.
+	 * 
+	 * @param bytes A 4 byte array.
+	 * @return
+	 */
 	public static int bytesToInt(byte[] bytes)
 	{
 		return bytesToInt(bytes, ByteConversions.DEFAULT_BYTE_ORDER);
 	}
 	
+	/** Converts a 4 byte array to an integer using the specified byte order.
+	 * 
+	 * @param bytes A 4 byte array.
+	 * @param byteOrder
+	 * @return
+	 */
 	public static int bytesToInt(byte[] bytes, ByteOrder byteOrder)
 	{
-		/*
-		int intBits = 0;
-		if (byteOrder == ByteOrder.MSBFIRST) {
-			for(int i = 0; i < 4; i++){      
-				intBits <<= 8;  
-				intBits ^= (int)bytes[i] & 0xFF;      
-			}  
-		} else if (byteOrder == ByteOrder.LSBFIRST) {
-			for(int i = 3; i >= 0; i--){      
-				intBits <<= 8;  
-				intBits ^= (int)bytes[i] & 0xFF;      
-			}  
-		}
-		return intBits;
-		*/
-		
 		return bytesToInt(bytes[0], bytes[1], bytes[2], bytes[3], byteOrder);
 	}
 	
+	/** Converts 4 bytes to an integer using the default byte order.
+	 * 
+	 * @param b00
+	 * @param b01
+	 * @param b10
+	 * @param b11
+	 * @return
+	 */
 	public static int bytesToInt(byte b00, byte b01, byte b10, byte b11)
 	{
 		return bytesToInt(b00, b01, b10, b11, ByteConversions.DEFAULT_BYTE_ORDER);
 	}
 	
+	/** Translates a single byte (considered unsigned) into an integer.
+	 * 
+	 * @param b00
+	 * @return
+	 */
 	public static int byteToInt(byte b00)
 	{
 		int intBits = 0;
@@ -135,6 +184,15 @@ public class ByteConversions
 		return intBits;
 	}
 	
+	/** Converts the bytes to an integer using the specified byte order.
+	 * 
+	 * @param b00
+	 * @param b01
+	 * @param b10
+	 * @param b11
+	 * @param byteOrder
+	 * @return
+	 */
 	public static int bytesToInt(byte b00, byte b01, byte b10, byte b11, ByteOrder byteOrder)
 	{
 		int intBits = 0;
@@ -152,23 +210,43 @@ public class ByteConversions
 		return intBits;
 	}
 	
+	/** Converts an 8 byte array to a double using the default byte order.
+	 * 
+	 * @param bytes
+	 * @return
+	 */
 	public static double bytesToDouble(byte[] bytes)
 	{
 		return bytesToDouble(bytes, ByteConversions.DEFAULT_BYTE_ORDER);
 	}
 	
+	/** Converts an 8 byte array to a double using the specified byte order.
+	 * 
+	 * @param bytes
+	 * @param byteOrder
+	 * @return
+	 */
 	public static double bytesToDouble(byte[] bytes, ByteOrder byteOrder)
 	{
 		return Double.longBitsToDouble(bytesToLong(bytes, byteOrder));
 	}
 	
-	
+	/** Converts an 8 byte array to a long using the default byte order.
+	 * 
+	 * @param bytes
+	 * @return
+	 */
 	public static long bytesToLong(byte[] bytes)
 	{
 		return bytesToLong(bytes, ByteConversions.DEFAULT_BYTE_ORDER);
 	}
 	
-
+	/** Converts an 8 byte array to a long using the specified byte order.
+	 * 
+	 * @param bytes
+	 * @param byteOrder
+	 * @return
+	 */
 	public static long bytesToLong(byte[] bytes, ByteOrder byteOrder)
 	{
 		long longBits = 0;

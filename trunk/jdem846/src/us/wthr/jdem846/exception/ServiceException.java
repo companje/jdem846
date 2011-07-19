@@ -16,9 +16,18 @@
 
 package us.wthr.jdem846.exception;
 
+/** Thrown in the event of an error within a service class method or within the service kernel.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 @SuppressWarnings("serial")
 public class ServiceException extends Exception
 {
+	
+	/** Fully qualified class name of the service class causing the error.
+	 * 
+	 */
 	private String clazzName;
 	
 	public ServiceException(String clazzName, String message, Exception ex)
@@ -38,6 +47,10 @@ public class ServiceException extends Exception
 		this.clazzName = clazzName;
 	}
 	
+	/** Fully qualified class name of the service class causing the error.
+	 * 
+	 * @return
+	 */
 	public String getClassName()
 	{
 		return clazzName;

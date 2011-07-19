@@ -18,6 +18,11 @@ package us.wthr.jdem846.input;
 
 import us.wthr.jdem846.DemConstants;
 
+/** A class that provides the primitives for a specific raster format driver.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public abstract class DataSource 
 {
 	

@@ -20,6 +20,11 @@ import us.wthr.jdem846.exception.InvalidFileFormatException;
 import us.wthr.jdem846.input.edef.ElevationDatasetExchange;
 import us.wthr.jdem846.input.esri.GridAscii;
 
+/** Utility class for loading a datasource using known file extensions to determine type and correct driver.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class DataSourceFactory 
 {
 	

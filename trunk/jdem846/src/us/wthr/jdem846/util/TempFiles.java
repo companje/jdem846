@@ -23,6 +23,11 @@ import java.io.IOException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+/** Controller for managing the creation and cleanup of temporary files.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class TempFiles
 {
 	private static Log log = Logging.getLog(TempFiles.class);

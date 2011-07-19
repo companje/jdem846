@@ -22,6 +22,11 @@ import java.util.Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+/** Properties manager class.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 @SuppressWarnings("serial")
 public class JDem846Properties extends Properties
 {

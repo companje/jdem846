@@ -16,10 +16,17 @@
 
 package us.wthr.jdem846.exception;
 
+/** Thrown for file format exceptions.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 @SuppressWarnings("serial")
 public class InvalidFileFormatException extends Exception
 {
-	
+	/** Extension of the invalid file.
+	 * 
+	 */
 	private String extension;
 	
 	public InvalidFileFormatException(String extension)
@@ -27,6 +34,10 @@ public class InvalidFileFormatException extends Exception
 		this.extension = extension;
 	}
 	
+	/** Extension of the invalid file.
+	 * 
+	 * @return
+	 */
 	public String getExtension()
 	{
 		return extension;

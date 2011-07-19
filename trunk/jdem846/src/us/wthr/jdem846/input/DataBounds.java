@@ -18,6 +18,11 @@ package us.wthr.jdem846.input;
 
 import java.awt.Rectangle;
 
+/** Simple data boundaries container class.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class DataBounds
 {
 	private Rectangle rectangle;

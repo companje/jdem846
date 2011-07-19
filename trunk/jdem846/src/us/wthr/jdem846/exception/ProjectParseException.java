@@ -16,6 +16,11 @@
 
 package us.wthr.jdem846.exception;
 
+/** Thrown in the event of errors encountered in a project file.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 @SuppressWarnings("serial")
 public class ProjectParseException extends Exception
 {

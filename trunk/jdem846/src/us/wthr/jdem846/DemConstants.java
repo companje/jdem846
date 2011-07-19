@@ -16,6 +16,11 @@
 
 package us.wthr.jdem846;
 
+/** Collection of common constants.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class DemConstants {
 	
 	public static final String APPLICATION_SPEC_VERSION = "0.1";
