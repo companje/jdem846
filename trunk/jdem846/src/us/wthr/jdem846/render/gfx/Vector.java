@@ -89,6 +89,7 @@ public class Vector
 		return new Vector(color, x, y, z);
 	}
 	
+	
 	/**
 	 * 
 	 * See: http://en.wikipedia.org/wiki/3D_projection

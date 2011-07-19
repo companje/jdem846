@@ -138,8 +138,10 @@ public class Dem3dGenerator extends RenderEngine
 		int tileHeight = modelOptions.getTileSize();
 		
 		
-		Vector eye = new Vector(0, 0, 1000);
-		Vector near = new Vector(0, 0, 1000);
+		Vector eye = new Vector(0, 0, (int) dataPackage.getRows());
+		
+		Vector near = new Vector(0, 0, (int) Math.round((dataPackage.getRows()/2.0f)));
+		
 		double nearWidth = 50;
 		double nearHeight = 50;
 		double farDistance = 50;
@@ -161,7 +163,8 @@ public class Dem3dGenerator extends RenderEngine
 		
 		int trueEndZ = (int) Math.round(height / 2.0);
 		
-		Vector rotate = new Vector(40, 0, 0);
+		Vector rotateX = new Vector(30, 0, 0);
+		Vector rotateY = new Vector(0, 0, 0);
 		DemPoint point = new DemPoint();
 		
 		ModelColoring modelColoring = modelColoring = ColoringRegistry.getInstance(modelOptions.getColoringType()).getImpl();
@@ -253,7 +256,9 @@ public class Dem3dGenerator extends RenderEngine
 					Perspectives.calcNormal(pBL, pFL, pBR, normal);
 					square.setNormal(normal);
 					
-					square.rotate(rotate);
+					square.rotate(rotateY);
+					square.rotate(rotateX);
+					
 					square.projectTo(eye, near, nearWidth, nearHeight, farDistance);
 					square.prepareForRender(sunsource, 1.0);
 	
