@@ -44,6 +44,13 @@ public class ModelOptions
 	public static final String OPTION_SPOT_EXPONENT = "us.wthr.jdem846.modelOptions.spotExponent";
 	public static final String OPTION_ELEVATION_MULTIPLE = "us.wthr.jdem846.modelOptions.elevationMultiple";
 	
+	public static final String OPTION_PROJECTION_ROTATE_X = "us.wthr.jdem846.modelOptions.projection.rotateX";
+	public static final String OPTION_PROJECTION_ROTATE_Y = "us.wthr.jdem846.modelOptions.projection.rotateY";
+	public static final String OPTION_PROJECTION_ROTATE_Z = "us.wthr.jdem846.modelOptions.projection.rotateZ";
+	public static final String OPTION_PROJECTION_SHIFT_X = "us.wthr.jdem846.modelOptions.projection.shiftX";
+	public static final String OPTION_PROJECTION_SHIFT_Y = "us.wthr.jdem846.modelOptions.projection.shiftY";
+	public static final String OPTION_PROJECTION_SHIFT_Z = "us.wthr.jdem846.modelOptions.projection.shiftZ";
+	
 	
 	private String engine = "dem2d-gen";
 	private boolean hillShading = true;
@@ -68,6 +75,7 @@ public class ModelOptions
 	
 	private String gradientLevels = null;
 	
+	private Projection projection = new Projection();
 	private String writeTo = null;
 	
 	
@@ -158,6 +166,37 @@ public class ModelOptions
 			setSpotExponent(Integer.parseInt(property));
 		}
 		
+		property = properties.getProperty(OPTION_PROJECTION_ROTATE_X);
+		if (property != null) {
+			projection.setRotateX(Double.parseDouble(property));
+		}
+		
+		property = properties.getProperty(OPTION_PROJECTION_ROTATE_Y);
+		if (property != null) {
+			projection.setRotateY(Double.parseDouble(property));
+		}
+		
+		property = properties.getProperty(OPTION_PROJECTION_ROTATE_Z);
+		if (property != null) {
+			projection.setRotateZ(Double.parseDouble(property));
+		}
+		
+		
+		property = properties.getProperty(OPTION_PROJECTION_SHIFT_X);
+		if (property != null) {
+			projection.setShiftX(Double.parseDouble(property));
+		}
+		
+		property = properties.getProperty(OPTION_PROJECTION_SHIFT_Y);
+		if (property != null) {
+			projection.setShiftY(Double.parseDouble(property));
+		}
+		
+		property = properties.getProperty(OPTION_PROJECTION_SHIFT_Z);
+		if (property != null) {
+			projection.setShiftZ(Double.parseDouble(property));
+		}
+		
 	}
 
 	
@@ -182,6 +221,14 @@ public class ModelOptions
 		projectModel.setOption(OPTION_TILE_SIZE, this.getTileSize());
 		projectModel.setOption(OPTION_LIGHTING_MULTIPLE, this.getLightingMultiple());
 		projectModel.setOption(OPTION_SPOT_EXPONENT, this.getSpotExponent());
+		
+		projectModel.setOption(OPTION_PROJECTION_ROTATE_X, projection.getRotateX());
+		projectModel.setOption(OPTION_PROJECTION_ROTATE_Y, projection.getRotateY());
+		projectModel.setOption(OPTION_PROJECTION_ROTATE_Z, projection.getRotateZ());
+		
+		projectModel.setOption(OPTION_PROJECTION_SHIFT_X, projection.getShiftX());
+		projectModel.setOption(OPTION_PROJECTION_SHIFT_Y, projection.getShiftY());
+		projectModel.setOption(OPTION_PROJECTION_SHIFT_Z, projection.getShiftZ());
 	}
 	
 	/** Synchronizes values from a ProjectModel object to this object.
@@ -206,6 +253,16 @@ public class ModelOptions
 		this.setTileSize(projectModel.getIntegerOption(OPTION_TILE_SIZE));
 		this.setLightingMultiple(projectModel.getDoubleOption(OPTION_LIGHTING_MULTIPLE));
 		this.setSpotExponent(projectModel.getIntegerOption(OPTION_SPOT_EXPONENT));
+	
+		this.projection.setRotateX(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_X));
+		this.projection.setRotateY(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_Y));
+		this.projection.setRotateZ(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_Z));
+		
+		this.projection.setShiftX(projectModel.getDoubleOption(OPTION_PROJECTION_SHIFT_X));
+		this.projection.setShiftY(projectModel.getDoubleOption(OPTION_PROJECTION_SHIFT_Y));
+		this.projection.setShiftZ(projectModel.getDoubleOption(OPTION_PROJECTION_SHIFT_Z));
+		
+		
 	}
 	
 	
@@ -403,6 +460,20 @@ public class ModelOptions
 		this.writeTo = writeTo;
 	}
 	
+	
+	
+	public Projection getProjection()
+	{
+		return projection;
+	}
+
+
+	public void setProjection(Projection projection)
+	{
+		this.projection = projection;
+	}
+
+
 	/** Creates a value-by-value copy of this object.
 	 * 
 	 * @return A value-by-value copy of this object.
@@ -426,7 +497,9 @@ public class ModelOptions
 		clone.spotExponent = this.spotExponent;
 		clone.gradientLevels = this.gradientLevels;
 		clone.writeTo = this.writeTo;
-		
+		if (projection != null) {
+			clone.projection = this.projection.copy();
+		}
 		
 		return clone;
 	}

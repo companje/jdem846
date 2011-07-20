@@ -104,10 +104,10 @@ public class Square implements Renderable
 			vector.rotate(angle, axis);
 	}
 	
-	public void projectTo(Vector eye, Vector near, double nearWidth, double nearHeight, double farDistance)
+	public void projectTo(Vector eye, Vector near)//, double nearWidth, double nearHeight, double farDistance)
 	{
 		for (Vector vector : vectors) 
-			vector.projectTo(eye, near, nearWidth, nearHeight, farDistance);
+			vector.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
 	}
 	
 	public void setNormal(double[] normal)

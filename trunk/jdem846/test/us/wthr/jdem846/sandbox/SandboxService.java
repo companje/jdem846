@@ -536,7 +536,7 @@ public class SandboxService extends AbstractLockableService
 			ViewportBuffer buffer = new ViewportBuffer(getWidth(), getHeight());
 			
 			for (Renderable renderObject : rotated) {
-				renderObject.projectTo(eye, near, nearWidth, nearHeight, farDistance);
+				renderObject.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
 				renderObject.prepareForRender(sunsource, 1.0);
 				renderObject.render(buffer, getWidth(), getHeight());
 			}

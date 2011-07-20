@@ -100,15 +100,15 @@ public class Vector
 	 * @param farDistance
 	 * @return
 	 */
-	public void projectTo(Vector eye, Vector near, double nearWidth, double nearHeight, double farDistance)
+	public void projectTo(Vector eye, Vector near)
 	{
-		double thetaX = 0;
+		double thetaX = 0; // Orientation of the camera
 		double thetaY = 0;
 		double thetaZ = 0;
 		
-		Vector e = near;
-		Vector a = this;
-		Vector c = eye;
+		Vector e = near; // Viewer's position relative to the display surface
+		Vector a = this; // 3D position of points being projected
+		Vector c = eye;  // Camera position
 		
 		double sinTX = sin(thetaX);
 		double sinTY = sin(thetaY);

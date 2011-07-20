@@ -216,9 +216,9 @@ public class LightingPreviewPanel extends JPanel
 
 		Vector eye = new Vector(0, 0, 1000);
 		Vector near = new Vector(0, 0, 1000);
-		double nearWidth = 50;
-		double nearHeight = 50;
-		double farDistance = 50;
+		//double nearWidth = 50;
+		//double nearHeight = 50;
+		//double farDistance = 50;
 		double sunsource[] = {0.0, 0.0, 0.0};
 		
 		Vector sun = new Vector(0.0, 0.0, -1.0);
@@ -243,7 +243,7 @@ public class LightingPreviewPanel extends JPanel
 		
 		for (Renderable renderObject : rotated) {
 
-			renderObject.projectTo(eye, near, nearWidth, nearHeight, farDistance);
+			renderObject.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
 			renderObject.prepareForRender(sunsource, 2.0);
 			renderObject.render(buffer, size, size);
 		}
