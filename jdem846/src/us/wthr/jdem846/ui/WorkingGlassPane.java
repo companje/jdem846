@@ -69,6 +69,9 @@ public class WorkingGlassPane extends JPanel
 	
 	public void setVisible(boolean visible)
 	{
+		if (arcTimer == null)
+			return;
+		
 		try {
 			if (visible && !arcTimer.isRunning())
 				arcTimer.restart();
