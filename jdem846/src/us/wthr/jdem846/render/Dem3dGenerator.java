@@ -42,7 +42,7 @@ import us.wthr.jdem846.render.gfx.StaticPolygonList;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.gfx.ViewportBuffer;
 
-@DemEngine(name="DEM-3D Generator", identifier="dem3d-gen")
+@DemEngine(name="DEM-3D Generator", identifier="dem3d-gen", usesProjection=true)
 public class Dem3dGenerator extends RenderEngine
 {
 	private static Log log = Logging.getLog(Dem3dGenerator.class);
@@ -138,9 +138,12 @@ public class Dem3dGenerator extends RenderEngine
 		int tileHeight = modelOptions.getTileSize();
 		
 		
-		Vector eye = new Vector(0, 0, (int) dataPackage.getRows());
+		Vector eye = new Vector(0, 0, (int) dataPackage.getColumns());
+		Vector near = new Vector(0, 0, (int) Math.round((dataPackage.getColumns()/2.0f)));
+		double translateZ = -(dataPackage.getColumns() / 2.0f) / Math.tan(45.0 / 2.0);
 		
-		Vector near = new Vector(0, 0, (int) Math.round((dataPackage.getRows()/2.0f)));
+		Vector translate = new Vector(0, 0, 0);//translateZ);
+		log.info("Translate Z: " + translateZ);
 		
 		//double nearWidth = 50;
 		//double nearHeight = 50;
@@ -258,7 +261,7 @@ public class Dem3dGenerator extends RenderEngine
 					
 					square.rotate(rotateY);
 					square.rotate(rotateX);
-					
+					square.translate(translate);
 					square.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
 					square.prepareForRender(sunsource, 1.0);
 	

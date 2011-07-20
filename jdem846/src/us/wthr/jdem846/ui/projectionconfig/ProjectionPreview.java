@@ -88,6 +88,7 @@ public class ProjectionPreview extends JPanel
 		double hypotenuse = Math.sqrt(Math.pow(getWidth()/2, 2) + Math.pow(surface.getZ(), 2));
 		double viewAngle = 2 * Math.toDegrees(Math.atan((getWidth()/2) / surface.getZ()));
 		double translateZ = -(dimension.width / 2.0);
+		//translateZ = -78;
 		log.info("View Angle: " + viewAngle + ", Hypotenuse: " + hypotenuse + ", translateZ: " + translateZ);
 		
 		//double nearWidth = 50;

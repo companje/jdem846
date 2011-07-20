@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -41,17 +42,26 @@ public class ProjectionConfigPanel extends JPanel
 	private ProjectionPreview projectionPreview;
 	private JLabel jlblRotateAngles;
 	
+	private JSlider jsldRotateX;
+	private JSlider jsldRotateY;
+	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
 	int lastX = -1;
 	int lastY = -1;
 	
+	private boolean ignoreChanges = false;
+	
 	public ProjectionConfigPanel()
 	{
 		jlblRotateAngles = new JLabel("");
 		projectionPreview = new ProjectionPreview(new Dimension(250, 250));
-		setRotation(30, 0, 0);
 		
+		
+		jsldRotateX = new JSlider(0, 180, 30);
+		jsldRotateY = new JSlider(-180, 180, 0);
+		
+		jsldRotateX.setOrientation(JSlider.VERTICAL);
 		
 		MouseAdapter mouseAdapter = new MouseAdapter() {
 			public void mouseDragged(MouseEvent e)
@@ -70,9 +80,35 @@ public class ProjectionConfigPanel extends JPanel
 		this.addMouseListener(mouseAdapter);
 		this.addMouseMotionListener(mouseAdapter);
 		
+		ChangeListener changeListener = new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (ignoreChanges)
+					return;
+				
+				JSlider source = (JSlider)e.getSource();
+				syncPreviewToInputs();
+				if (!source.getValueIsAdjusting()) {
+					
+					fireChangeListeners();
+				}
+			}
+		};
+		jsldRotateX.addChangeListener(changeListener);
+		jsldRotateY.addChangeListener(changeListener);
+		
 		setLayout(new BorderLayout());
 		add(projectionPreview, BorderLayout.CENTER);
 		add(jlblRotateAngles, BorderLayout.SOUTH);
+		add(jsldRotateX, BorderLayout.EAST);
+		add(jsldRotateY, BorderLayout.NORTH);
+		
+		setRotation(0, 0, 0);
+	}
+	
+	
+	protected void syncPreviewToInputs()
+	{
+		setRotation(jsldRotateX.getValue(), jsldRotateY.getValue(), 0, false);
 	}
 	
 	protected void onMouseDragged(MouseEvent e)
@@ -98,10 +134,10 @@ public class ProjectionConfigPanel extends JPanel
 				rotateX = 180;
 			
 			rotateY += (deltaX * 2);
-			if (rotateY < 0)
-				rotateY = 359;
-			if (rotateY > 359)
-				rotateY = 0;
+			if (rotateY < -180)
+				rotateY = -180;
+			if (rotateY > 180)
+				rotateY = 180;
 			
 			this.setRotation(rotateX, rotateY, rotateZ);
 		}
@@ -120,6 +156,24 @@ public class ProjectionConfigPanel extends JPanel
 	
 	public void setRotation(double x, double y, double z)
 	{
+		setRotation(x, y, z, true);
+	}
+	
+	/**
+	 * Set protected as other components have no business calling this
+	 * with updateControls as false.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param updateControls
+	 */
+	protected void setRotation(double x, double y, double z, boolean updateControls)
+	{
+		if (updateControls) {
+			jsldRotateX.setValue((int)x);
+			jsldRotateY.setValue((int)y);
+		}
 		jlblRotateAngles.setText("Rotation X/Y: " + x + ", " + y);
 		projectionPreview.setRotateX(x);
 		projectionPreview.setRotateY(y);
