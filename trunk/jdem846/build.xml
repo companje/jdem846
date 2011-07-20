@@ -3,7 +3,7 @@
 	<property name="lib.dir" value="lib" />
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
-	<property name="dist.dir" value="dist" />
+	<property name="dist.dir" value="." />
 	
 	<property name="jar.file" value="${dist.dir}/jdem846.jar" />
 	
@@ -30,6 +30,8 @@
 		<include name="**/?*.jpeg" />
 		<include name="**/?*.jpg" />
 		<include name="**/?*.html" />
+		<include name="**/?*.gradient" />
+		<include name="**/?*.txt" />
 	</patternset>
 	
 	<patternset id="lib.resources">
@@ -48,7 +50,6 @@
 	
 	<target name="init" description="Initialize the build">
 		<mkdir dir="${build.dir}" />
-		<mkdir dir="${dist.dir}" />
 	</target>
 		
 	<target name="compile" depends="init" description="">
