@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -51,6 +52,7 @@ import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.ui.MonitoredSlider.MonitoredValueListener;
 import us.wthr.jdem846.ui.border.StandardTitledBorder;
+import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 
 @SuppressWarnings("serial")
 public class ModelOptionsPanel extends JPanel
@@ -72,6 +74,7 @@ public class ModelOptionsPanel extends JPanel
 	private ColoringListModel coloringModel;
 	private HillShadingOptionsListModel hillShadingModel;
 	
+	private ProjectionConfigPanel projectionConfigPanel;
 	private GradientConfigPanel gradientConfigPanel;
 	private LightPositionConfigPanel lightPositionConfigPanel;
 	
@@ -138,8 +141,10 @@ public class ModelOptionsPanel extends JPanel
 		});
 		
 		gradientConfigPanel = new GradientConfigPanel();
-		lightPositionConfigPanel = new LightPositionConfigPanel();
+		projectionConfigPanel = new ProjectionConfigPanel();
+		projectionConfigPanel.setBorder(new StandardTitledBorder("Projection"));
 		
+		lightPositionConfigPanel = new LightPositionConfigPanel();
 		lightPositionConfigPanel.setPreferredSize(new Dimension(200, 200));
 		lightPositionConfigPanel.setSize(new Dimension(200, 200));
 		
@@ -210,12 +215,16 @@ public class ModelOptionsPanel extends JPanel
 		jsldLightMultiple.addChangeListener(sliderChangeListener);
 		jsldElevationMultiple.addChangeListener(sliderChangeListener);
 		
-		gradientConfigPanel.addChangeListener(new ChangeListener() {
+		ChangeListener basicChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
 			{
 				fireOptionsChangedListeners();
 			}
-		});
+		};
+		
+		projectionConfigPanel.addChangeListener(basicChangeListener);
+		gradientConfigPanel.addChangeListener(basicChangeListener);
+		
 		this.addOptionsChangedListener(new OptionsChangedListener() {
 			public void onOptionsChanged(ModelOptions options)
 			{
@@ -260,9 +269,23 @@ public class ModelOptionsPanel extends JPanel
 		setLayout(boxLayout);
 		
 		add(controlGrid);
-		add(lightPositionConfigPanel);
 		
 		lightPositionConfigPanel.setMinimumSize(new Dimension(150, 150));
+		projectionConfigPanel.setMinimumSize(new Dimension(150, 150));
+		lightPositionConfigPanel.setPreferredSize(new Dimension(150, 150));
+		projectionConfigPanel.setPreferredSize(new Dimension(150, 150));
+		
+		JPanel lightAndProjectionPanel = new JPanel();
+		BoxLayout lightAndProjectionBoxLayout = new BoxLayout(lightAndProjectionPanel, BoxLayout.PAGE_AXIS);
+		lightAndProjectionPanel.setLayout(lightAndProjectionBoxLayout);
+		Box lightAndProjectionBox = Box.createVerticalBox();
+
+		lightAndProjectionBox.add(lightPositionConfigPanel);
+		lightAndProjectionBox.add(projectionConfigPanel);
+		lightAndProjectionPanel.add(lightAndProjectionBox);
+		add(lightAndProjectionPanel);
+		
+		
 		
 		add(gradientConfigPanel);
 
@@ -326,6 +349,10 @@ public class ModelOptionsPanel extends JPanel
 		//	spotExp = 1;
 		
 		modelOptions.setSpotExponent(jsldSpotExponent.getValue());
+		
+		modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
+		modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
+		modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
 	}
 	
 	

@@ -98,11 +98,11 @@ public class Triangle implements Renderable
 		p2.rotate(angle, axis);
 	}
 	
-	public void projectTo(Vector eye, Vector near, double nearWidth, double nearHeight, double farDistance)
+	public void projectTo(Vector eye, Vector near)//, double nearWidth, double nearHeight, double farDistance)
 	{
-		p0.projectTo(eye, near, nearWidth, nearHeight, farDistance);
-		p1.projectTo(eye, near, nearWidth, nearHeight, farDistance);
-		p2.projectTo(eye, near, nearWidth, nearHeight, farDistance);
+		p0.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
+		p1.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
+		p2.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
 		
 		//double[] copyNormal = (this.normalProvided) ? this.normal : null;
 		

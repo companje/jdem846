@@ -39,7 +39,7 @@ public interface Renderable
 	
 	public void translate(Vector trans);
 	
-	public void projectTo(Vector eye, Vector near, double nearWidth, double nearHeight, double farDistance);
+	public void projectTo(Vector eye, Vector near);//, double nearWidth, double nearHeight, double farDistance);
 	
 	public void setNormal(double[] normal);
 	public void prepareForRender(double[] lightSource, double specularExponent);

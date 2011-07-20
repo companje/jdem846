@@ -65,10 +65,10 @@ public class Line implements Renderable
 		p1.rotate(angle, axis);
 	}
 	
-	public void projectTo(Vector eye, Vector near, double nearWidth, double nearHeight, double farDistance)
+	public void projectTo(Vector eye, Vector near)//, double nearWidth, double nearHeight, double farDistance)
 	{
-		p0.projectTo(eye, near, nearWidth, nearHeight, farDistance);
-		p1.projectTo(eye, near, nearWidth, nearHeight, farDistance);
+		p0.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
+		p1.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
 		//return new Line(color, proj0, proj1);
 	}
 	

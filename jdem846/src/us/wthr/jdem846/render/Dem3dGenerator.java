@@ -142,9 +142,9 @@ public class Dem3dGenerator extends RenderEngine
 		
 		Vector near = new Vector(0, 0, (int) Math.round((dataPackage.getRows()/2.0f)));
 		
-		double nearWidth = 50;
-		double nearHeight = 50;
-		double farDistance = 50;
+		//double nearWidth = 50;
+		//double nearHeight = 50;
+		//double farDistance = 50;
 		double sunsource[] = {0.0, 0.0, 0.0};
 		
 		Vector sun = new Vector(0.0, 0.0, -1.0);
@@ -163,8 +163,8 @@ public class Dem3dGenerator extends RenderEngine
 		
 		int trueEndZ = (int) Math.round(height / 2.0);
 		
-		Vector rotateX = new Vector(30, 0, 0);
-		Vector rotateY = new Vector(0, 0, 0);
+		Vector rotateX = new Vector(modelOptions.getProjection().getRotateX(), 0, 0);
+		Vector rotateY = new Vector(0, modelOptions.getProjection().getRotateY(), 0);
 		DemPoint point = new DemPoint();
 		
 		ModelColoring modelColoring = modelColoring = ColoringRegistry.getInstance(modelOptions.getColoringType()).getImpl();
@@ -259,7 +259,7 @@ public class Dem3dGenerator extends RenderEngine
 					square.rotate(rotateY);
 					square.rotate(rotateX);
 					
-					square.projectTo(eye, near, nearWidth, nearHeight, farDistance);
+					square.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
 					square.prepareForRender(sunsource, 1.0);
 	
 					square.render(buffer, width, height);
