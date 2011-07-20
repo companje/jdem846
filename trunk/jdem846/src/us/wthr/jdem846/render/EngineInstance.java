@@ -38,6 +38,7 @@ public class EngineInstance {
 	private boolean usesLightMultiple;
 	private boolean usesSpotExponent;
 	private boolean usesTileSize;
+	private boolean usesProjection;
 	private boolean generatesImage;
 	
 	@SuppressWarnings("unchecked")
@@ -204,6 +205,20 @@ public class EngineInstance {
 	public void setUsesTileSize(boolean usesTileSize) 
 	{
 		this.usesTileSize = usesTileSize;
+	}
+
+
+	
+	
+	public boolean usesProjection()
+	{
+		return usesProjection;
+	}
+
+
+	public void setUsesProjection(boolean usesProjection)
+	{
+		this.usesProjection = usesProjection;
 	}
 
 

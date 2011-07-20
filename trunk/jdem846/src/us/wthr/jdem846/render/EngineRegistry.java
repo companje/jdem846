@@ -60,7 +60,7 @@ public class EngineRegistry  implements AppRegistry
 		engineInstance.setUsesTileSize(annotation.usesTileSize());
 		engineInstance.setGeneratesImage(annotation.generatesImage());
 		engineInstance.setNeedsOutputFileOfType(annotation.needsOutputFileOfType());
-		
+		engineInstance.setUsesProjection(annotation.usesProjection());
 		if (annotation.enabled()) {
 			EngineRegistry.engineMap.put(annotation.identifier(), engineInstance);
 			log.info("Adding render engine instance for " + clazzName + ": " + annotation.name());

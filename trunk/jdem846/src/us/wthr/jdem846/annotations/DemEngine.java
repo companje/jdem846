@@ -99,6 +99,13 @@ public @interface DemEngine {
 	 */
 	boolean generatesImage() default true;
 	
+	/** Specifies whether the engine uses three-dimensional projection and
+	 * requires the corresponding configuration control.
+	 * 
+	 * @return
+	 */
+	boolean usesProjection() default false;
+	
 	/** Specifies which output file type is required to be asked of the user before running. 
 	 * 
 	 * @return

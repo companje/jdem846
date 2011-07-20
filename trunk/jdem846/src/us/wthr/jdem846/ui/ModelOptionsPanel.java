@@ -322,6 +322,10 @@ public class ModelOptionsPanel extends JPanel
 		lightPositionConfigPanel.setSolarAzimuth(modelOptions.getLightingAzimuth());
 		lightPositionConfigPanel.setSolarElevation(modelOptions.getLightingElevation());
 
+		projectionConfigPanel.setRotation(modelOptions.getProjection().getRotateX(),
+								modelOptions.getProjection().getRotateY(),
+								modelOptions.getProjection().getRotateZ());
+		
 		onEngineSelectionChanged();
 		
 		ignoreValueChanges = false;
@@ -373,6 +377,7 @@ public class ModelOptionsPanel extends JPanel
 		gradientConfigPanel.setEnabled(engineInstance.usesColoring());
 		
 		gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());
+		projectionConfigPanel.setVisible(engineInstance.usesProjection());
 		
 		lightPositionConfigPanel.setEnabled(engineInstance.usesHillshading());
 		lightPositionConfigPanel.updatePreview(true);
