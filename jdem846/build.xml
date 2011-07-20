@@ -1,0 +1,86 @@
+<project name="jdem846" default="jar" basedir=".">
+	<property name="application" value="jdem846" />
+	<property name="lib.dir" value="lib" />
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="dist.dir" value="dist" />
+	
+	<property name="jar.file" value="${dist.dir}/jdem846.jar" />
+	
+	<property name="main.class" value="us.wthr.jdem846.JDemMain" />
+	
+	<property name="compiler.debug" value="on" />
+	<property name="compiler.generate.no.warnings" value="off" />
+	<property name="compiler.args" value="" />
+	<property name="compiler.max.memory" value="128m" />
+		
+	<fileset id="lib" dir="${lib.dir}">
+		<include name="*.jar" />
+	</fileset>
+	
+	<patternset id="ignored.files">
+		<exclude name="**/.svn/**" />
+	</patternset>
+	
+	<patternset id="compiler.resources">
+		<include name="**/?*.properties" />
+		<include name="**/?*.xml" />
+		<include name="**/?*.gif" />
+		<include name="**/?*.png" />
+		<include name="**/?*.jpeg" />
+		<include name="**/?*.jpg" />
+		<include name="**/?*.html" />
+	</patternset>
+	
+	<patternset id="lib.resources">
+		<include name="**/?*.jar" />
+	</patternset>
+	
+	<path id="build.sourcepath">
+			<dirset dir=".">
+				<include name="src" />
+			</dirset>
+	</path>
+	
+	<path id="build.classpath">
+		<fileset refid="lib" />
+	</path>
+	
+	<target name="init" description="Initialize the build">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+		
+	<target name="compile" depends="init" description="">
+		<javac destdir="${build.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+					<compilerarg line="${compiler.args}" />
+					<classpath refid="build.classpath" />
+					<src refid="build.sourcepath" />
+					<patternset refid="ignored.files" />
+		</javac>
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
+		</copy>
+		
+	</target>
+	
+	<target name="jar" depends="compile">
+		<jar destfile="${jar.file}" duplicate="add">
+			<zipfileset dir="${build.dir}" />
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}"/>
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+
+	
+</project>
