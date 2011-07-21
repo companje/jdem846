@@ -1,18 +1,15 @@
 <project name="jdem846" default="jar" basedir=".">
-	<property name="application" value="jdem846" />
+
+	<property file="build.properties" />
 	<property name="lib.dir" value="lib" />
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
-	<property name="dist.dir" value="." />
+	<property name="javadoc.dir" value="docs/api" />
+	<property name="dist.dir" value="dist" />
 	
-	<property name="jar.file" value="${dist.dir}/jdem846.jar" />
-	
-	<property name="main.class" value="us.wthr.jdem846.JDemMain" />
-	
-	<property name="compiler.debug" value="on" />
-	<property name="compiler.generate.no.warnings" value="off" />
-	<property name="compiler.args" value="" />
-	<property name="compiler.max.memory" value="128m" />
+	<property name="jar.file" value="${application.name}.jar" />
+	<property name="dist.file" value="${dist.dir}/${application.name}-${application.version}.zip" />
+
 		
 	<fileset id="lib" dir="${lib.dir}">
 		<include name="*.jar" />
@@ -50,6 +47,7 @@
 	
 	<target name="init" description="Initialize the build">
 		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
 	</target>
 		
 	<target name="compile" depends="init" description="">
@@ -80,8 +78,47 @@
 	<target name="clean">
 		<delete dir="${build.dir}" />
 		<delete dir="${dist.dir}" />
+		<delete dir="${javadoc.dir}" />
 	</target>
 
+	<target name="javadoc">
+		  <javadoc
+		           destdir="${javadoc.dir}"
+		  		   sourcepath="${src.dir}"
+		           author="true"
+		           version="true"
+		           use="true"
+		           windowtitle="jDem846 API">
 
+
+		    <doctitle><![CDATA[<h1>jDem846</h1>]]></doctitle>
+		    <bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
+		</javadoc>
+	</target>
 	
+	<target name="dist" depends="jar,javadoc">
+		<mkdir dir="${dist.dir}/stage/lib" />
+		<mkdir dir="${dist.dir}/stage/docs/api" />
+		<copy file="${jar.file}" todir="${dist.dir}/stage" />
+		<copy file="LICENSE" todir="${dist.dir}/stage" />
+		<copy file="NOTICE" todir="${dist.dir}/stage" />
+		<copy file="jdem.bat" todir="${dist.dir}/stage" />
+		<copy file="jdem.sh" todir="${dist.dir}/stage" />
+		<copy todir="${dist.dir}/stage/lib">
+			<fileset dir="${lib.dir}">
+				<patternset refid="lib.resources" />
+				<type type="file" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.dir}/stage/docs/api">
+			<fileset dir="${javadoc.dir}">
+			</fileset>
+		</copy>
+		
+		<zip destfile="${dist.file}" duplicate="add">
+			<zipfileset dir="${dist.dir}/stage" />
+		</zip>
+		
+		<delete dir="${dist.dir}/stage" />
+	</target>
 </project>
