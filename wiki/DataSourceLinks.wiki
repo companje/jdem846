@@ -5,6 +5,7 @@
   * [http://jdem846.wthr.us/sampledata/Sample_Data_Boston_MA.zip Boston, MA]
   * [http://jdem846.wthr.us/sampledata/Sample_Data_San_Francisco.zip San Francisco, CA]
   * [http://jdem846.wthr.us/sampledata/Sample_Data_Maui_1-3_Arc_Second.zip Maui, HI]
+  * [http://jdem846.wthr.us/sampledata/Sample_Data_Nashua_NH.zip Nashua, NH]
 
 = U.S. Geology Survey = 
   * [http://seamless.usgs.gov/ Seamless Data Warehouse]
