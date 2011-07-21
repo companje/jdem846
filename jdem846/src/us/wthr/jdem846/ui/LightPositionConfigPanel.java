@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -34,7 +35,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
 @SuppressWarnings("serial")
-public class LightPositionConfigPanel extends JPanel
+public class LightPositionConfigPanel extends TitledRoundedPanel
 {
 	private static Log log = Logging.getLog(LightPositionConfigPanel.class);
 	
@@ -48,8 +49,8 @@ public class LightPositionConfigPanel extends JPanel
 	
 	public LightPositionConfigPanel()
 	{
-		
-		this.setBorder(BorderFactory.createEtchedBorder());
+		super("Light Direction");
+		//this.setBorder(BorderFactory.createEtchedBorder());
 		
 		// Create components
 		jsldSolarAzimuth = new JSlider(0, 359);
@@ -111,9 +112,16 @@ public class LightPositionConfigPanel extends JPanel
 		constraints.weighty = 0.0;
 		constraints.anchor = GridBagConstraints.NORTH;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
-		constraints.gridwidth  = GridBagConstraints.REMAINDER;
+		constraints.gridwidth  = 5;//GridBagConstraints.REMAINDER;
 		gridbag.setConstraints(jsldSolarAzimuth, constraints);
 		add(jsldSolarAzimuth);
+		
+		JPanel spacer = new JPanel();
+		constraints.weightx = 0.0;
+		constraints.gridwidth  = GridBagConstraints.REMAINDER;
+		gridbag.setConstraints(spacer, constraints);
+		add(spacer);
+		
 		
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.anchor = GridBagConstraints.CENTER;

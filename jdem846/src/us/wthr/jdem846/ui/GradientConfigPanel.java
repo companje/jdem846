@@ -36,7 +36,7 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.ui.GradientLevelsControl.GradientChangedListener;
 
 @SuppressWarnings("serial")
-public class GradientConfigPanel extends JPanel
+public class GradientConfigPanel extends TitledRoundedPanel
 {
 	
 	private GradientSamplePanel samplePanel;
@@ -50,8 +50,10 @@ public class GradientConfigPanel extends JPanel
 	
 	public GradientConfigPanel()
 	{
+		super("Gradients");
+		
 		// Create components
-		this.setBorder(BorderFactory.createEtchedBorder());
+		//this.setBorder(BorderFactory.createEtchedBorder());
 		levelsControl = new GradientLevelsControl();
 		samplePanel = new GradientSamplePanel();
 		jbtnReset = new JButton("Reset");
