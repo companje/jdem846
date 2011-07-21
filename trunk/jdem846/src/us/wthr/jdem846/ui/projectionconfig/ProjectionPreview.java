@@ -1,9 +1,26 @@
+/*
+ * Copyright (C) 2011 Kevin M. Gill
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package us.wthr.jdem846.ui.projectionconfig;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +41,7 @@ public class ProjectionPreview extends JPanel
 	
 	private Dimension dimension;
 	
-	private Line[] lines = new Line[4];
+	private Line[] lines = new Line[7];
 	
 	private Color lineColor = Color.YELLOW;
 	private Color backgroundColor = Color.BLACK;
@@ -70,7 +87,15 @@ public class ProjectionPreview extends JPanel
 		lines[2] = new Line(color, backRight.copy(), frontRight.copy());
 		lines[3] = new Line(color, backLeft.copy(), backRight.copy());
 		
+
+		lines[4] = new Line(color, new Vector(0, 0, 0), 
+									new Vector(0, 0, halfZ));
 		
+		lines[5] = new Line(color, new Vector(0, 0, halfZ),
+									new Vector(-(halfX*.2), 0.0, halfZ*.8));
+		
+		lines[6] = new Line(color, new Vector(0, 0, halfZ),
+									new Vector((halfX*.2), 0.0, halfZ*.8));
 	}
 
 	@Override
@@ -81,6 +106,7 @@ public class ProjectionPreview extends JPanel
 		ViewportBuffer buffer = new ViewportBuffer(getWidth(), getHeight());
 		
 		Graphics2D g2d = (Graphics2D) g;
+		
 		
 		Vector eye = new Vector(0, 0, getWidth());
 		Vector surface = new Vector(0, 0, getWidth() / 2.0);

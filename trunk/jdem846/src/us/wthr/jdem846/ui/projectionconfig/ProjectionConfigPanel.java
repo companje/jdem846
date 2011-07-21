@@ -16,8 +16,9 @@
 
 package us.wthr.jdem846.ui.projectionconfig;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
@@ -29,13 +30,12 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.TitledRoundedPanel;
 
 @SuppressWarnings("serial")
-public class ProjectionConfigPanel extends JPanel
+public class ProjectionConfigPanel extends TitledRoundedPanel
 {
 	private static Log log = Logging.getLog(ProjectionConfigPanel.class);
 	
@@ -54,11 +54,12 @@ public class ProjectionConfigPanel extends JPanel
 	
 	public ProjectionConfigPanel()
 	{
+		super("Projection");
 		jlblRotateAngles = new JLabel("");
 		projectionPreview = new ProjectionPreview(new Dimension(250, 250));
 		
 		
-		jsldRotateX = new JSlider(0, 180, 30);
+		jsldRotateX = new JSlider(0, 90, 30);
 		jsldRotateY = new JSlider(-180, 180, 0);
 		
 		jsldRotateX.setOrientation(JSlider.VERTICAL);
@@ -96,11 +97,50 @@ public class ProjectionConfigPanel extends JPanel
 		jsldRotateX.addChangeListener(changeListener);
 		jsldRotateY.addChangeListener(changeListener);
 		
-		setLayout(new BorderLayout());
-		add(projectionPreview, BorderLayout.CENTER);
-		add(jlblRotateAngles, BorderLayout.SOUTH);
-		add(jsldRotateX, BorderLayout.EAST);
-		add(jsldRotateY, BorderLayout.NORTH);
+		//setLayout(new BorderLayout());
+		//add(projectionPreview, BorderLayout.CENTER);
+		//add(jlblRotateAngles, BorderLayout.SOUTH);
+		//add(jsldRotateX, BorderLayout.EAST);
+		//add(jsldRotateY, BorderLayout.NORTH);
+		
+		GridBagLayout gridbag = new GridBagLayout();
+		this.setLayout(gridbag);
+		GridBagConstraints constraints = new GridBagConstraints();
+		
+		constraints.weightx = 1.0;
+		constraints.weighty = 0.0;
+		constraints.anchor = GridBagConstraints.NORTH;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.gridwidth  = 5;
+		gridbag.setConstraints(jsldRotateY, constraints);
+		add(jsldRotateY);
+		
+		JPanel spacer = new JPanel();
+		constraints.weightx = 0.0;
+		constraints.gridwidth  = GridBagConstraints.REMAINDER;
+		gridbag.setConstraints(spacer, constraints);
+		add(spacer);
+		
+		
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.anchor = GridBagConstraints.CENTER;
+		constraints.weightx = 5.0;
+		constraints.weighty = 5.0;
+		constraints.gridwidth  = 5;
+		gridbag.setConstraints(projectionPreview, constraints);
+		add(projectionPreview);
+		
+		constraints.fill = GridBagConstraints.VERTICAL;
+		constraints.weightx = 0.0;
+		constraints.gridwidth  = GridBagConstraints.REMAINDER;
+		gridbag.setConstraints(jsldRotateX, constraints);
+		add(jsldRotateX);
+		
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.weightx = 5.0;
+		constraints.weighty = 0.0;
+		gridbag.setConstraints(jlblRotateAngles, constraints);
+		add(jlblRotateAngles);
 		
 		setRotation(0, 0, 0);
 	}
@@ -108,7 +148,7 @@ public class ProjectionConfigPanel extends JPanel
 	
 	protected void syncPreviewToInputs()
 	{
-		setRotation(jsldRotateX.getValue(), jsldRotateY.getValue(), 0, false);
+		setRotation(jsldRotateX.getValue(), -1*jsldRotateY.getValue(), 0, false);
 	}
 	
 	protected void onMouseDragged(MouseEvent e)
@@ -130,10 +170,10 @@ public class ProjectionConfigPanel extends JPanel
 			rotateX += (deltaY * 2);
 			if (rotateX < 0)
 				rotateX = 0;
-			if (rotateX > 180)
-				rotateX = 180;
+			if (rotateX > 90)
+				rotateX = 90;
 			
-			rotateY += (deltaX * 2);
+			rotateY -= (deltaX * 2);
 			if (rotateY < -180)
 				rotateY = -180;
 			if (rotateY > 180)

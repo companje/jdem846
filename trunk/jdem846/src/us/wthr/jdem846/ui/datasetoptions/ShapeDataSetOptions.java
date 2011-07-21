@@ -32,10 +32,11 @@ import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinition;
 import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinitionLoader;
 import us.wthr.jdem846.ui.JComboBoxModel;
+import us.wthr.jdem846.ui.TitledRoundedPanel;
 import us.wthr.jdem846.ui.border.StandardTitledBorder;
 
 @SuppressWarnings("serial")
-public class ShapeDataSetOptions extends JPanel
+public class ShapeDataSetOptions extends TitledRoundedPanel
 {
 	private static Log log = Logging.getLog(ShapeDataSetOptions.class);
 	
@@ -46,6 +47,8 @@ public class ShapeDataSetOptions extends JPanel
 	
 	public ShapeDataSetOptions(ShapeFileRequest shapeFileRequest)
 	{
+		super("Shape Options");
+		
 		this.shapeFileRequest = shapeFileRequest;
 		
 		// Create components
@@ -70,7 +73,7 @@ public class ShapeDataSetOptions extends JPanel
 		GridLayout gridLayout = new GridLayout(2, 2);
 		gridLayout.setVgap(2);
 		setLayout(gridLayout);
-		setBorder(new StandardTitledBorder("Shape Options"));
+		//setBorder(new StandardTitledBorder("Shape Options"));
 		
 		add(new JLabel("Shape Styles:"));
 		add(jcmbShapeStyles);

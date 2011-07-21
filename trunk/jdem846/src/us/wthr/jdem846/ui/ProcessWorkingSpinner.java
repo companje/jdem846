@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -44,6 +45,8 @@ public class ProcessWorkingSpinner extends JLabel
 	
 	private int currentRow = 0;
 	private int currentCol = 0;
+	
+	private Dimension dimension = new Dimension(24, 24);
 	
 	private Timer timer;
 	
@@ -137,8 +140,18 @@ public class ProcessWorkingSpinner extends JLabel
 		
 		
 		currentImage = rawImage.getSubimage(tileX, tileY, tileWidth, tileHeight);
+		Image scaled = currentImage.getScaledInstance(dimension.width, dimension.height, Image.SCALE_SMOOTH);
+		this.setIcon(new ImageIcon(scaled));
+	}
 
-		this.setIcon(new ImageIcon(currentImage));
+	public Dimension getDimension()
+	{
+		return dimension;
+	}
+
+	public void setDimension(Dimension dimension)
+	{
+		this.dimension = dimension;
 	}
 	
 	

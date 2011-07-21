@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -35,24 +36,30 @@ import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.ui.ModelingWorkerThread.ModelCompletionListener;
+import us.wthr.jdem846.ui.border.StandardBorder;
 
 @SuppressWarnings("serial")
-public class ModelPreviewPane extends JPanel
+public class ModelPreviewPane extends TitledRoundedPanel
 {
 	
 	private DataPackage dataPackage;
 	private ModelOptions modelOptions;
-	private DemCanvas canvas = null;
+	
 	
 	private int previewWidth = 250;
 	private int previewHeight = 100;
 	
-	private WorkingGlassPane glassPane;
+	//private WorkingGlassPane glassPane;
 	
 	private boolean needsUpdate = false;
+	private ImagePanel imagePanel;
 	
 	public ModelPreviewPane(DataPackage dataPackage, ModelOptions modelOptions)
 	{
+		super("Preview");
+		((StandardBorder) this.getBorder()).setPadding(1);
+		
+		imagePanel = new ImagePanel();
 		// Set properties
 		setDataPackage(dataPackage);
 		setModelOptions(modelOptions);
@@ -83,11 +90,15 @@ public class ModelPreviewPane extends JPanel
 			}
 		});
 		
+		
+		setLayout(new BorderLayout());
+		add(imagePanel, BorderLayout.CENTER);
 	}
 	
 	protected void setDefaultImage()
 	{
-		canvas = null;
+		imagePanel.setCanvas(null);
+		//canvas = null;
 	}
 	
 	
@@ -112,7 +123,8 @@ public class ModelPreviewPane extends JPanel
 				public void onTileCompleted(DemCanvas tileCanvas,
 						DemCanvas outputCanvas, double pctComplete)
 				{
-					canvas = outputCanvas;
+					imagePanel.setCanvas(outputCanvas);
+					//canvas = outputCanvas;
 					repaint();
 				}
 				
@@ -124,7 +136,8 @@ public class ModelPreviewPane extends JPanel
 			workerThread.addModelCompletionListener(new ModelCompletionListener() {
 				public void onModelComplete(DemCanvas completeCanvas)
 				{
-					canvas = completeCanvas;
+					imagePanel.setCanvas(completeCanvas);
+					//canvas = completeCanvas;
 					JdemFrame.getInstance().setGlassVisible(false);
 					repaint();
 				}
@@ -143,55 +156,6 @@ public class ModelPreviewPane extends JPanel
 		needsUpdate = false;
 	}
 	
-	@Override
-	public void paint(Graphics g)
-	{
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.setColor(Color.WHITE);
-		g2d.fillRect(0, 0, getWidth(), getHeight());
-		
-		if (canvas == null) {
-			super.paint(g2d);
-			return;
-		}
-		
-		double canvasWidth = canvas.getWidth();
-		double canvasHeight = canvas.getHeight();
-		
-		double panelWidth = getWidth();
-		double panelHeight = getHeight();
-		
-		double scaleWidth = 0;
-		double scaleHeight = 0;
-		
-		Image toPaint = null;
-		
-		double scale = Math.max(panelHeight/canvasHeight, panelWidth/canvasWidth);
-		scaleHeight = canvasHeight * scale;
-		scaleWidth = canvasWidth * scale;
-		
-		
-		if (scaleHeight > panelHeight) {
-			scale = panelHeight/scaleHeight;
-		    scaleHeight = scaleHeight * scale;
-			scaleWidth = scaleWidth * scale;
-		}
-		if (scaleWidth > panelWidth) {
-		    scale = panelWidth/scaleWidth;
-		    scaleHeight = scaleHeight * scale;
-			scaleWidth = scaleWidth * scale;
-		}
-		
-		int topLeftX = (int)Math.round((panelWidth / 2) - (scaleWidth / 2));
-		int topLeftY = (int)Math.round((panelHeight / 2) - (scaleHeight / 2));
-		
-		toPaint = canvas.getScaled((int)scaleWidth, (int)scaleHeight).getImage();
-		
-		g2d.drawImage(toPaint, topLeftX, topLeftY, (int)scaleWidth, (int)scaleHeight, this);
-
-		
-
-	}
 	
 	public DataPackage getDataPackage() 
 	{
@@ -242,4 +206,75 @@ public class ModelPreviewPane extends JPanel
 		return rec;
 	}
 	
+	
+	class ImagePanel extends JPanel
+	{
+		private DemCanvas canvas = null;
+		
+		public ImagePanel()
+		{
+			
+		}
+		
+		public void setCanvas(DemCanvas canvas)
+		{
+			this.canvas = canvas;
+		}
+		
+		public DemCanvas getCanvas()
+		{
+			return this.canvas;
+		}
+		
+
+		@Override
+		public void paint(Graphics g)
+		{
+			Graphics2D g2d = (Graphics2D) g;
+			g2d.setColor(Color.WHITE);
+			g2d.fillRect(0, 0, getWidth(), getHeight());
+			
+			if (canvas == null) {
+				super.paint(g2d);
+				return;
+			}
+			
+			double canvasWidth = canvas.getWidth();
+			double canvasHeight = canvas.getHeight();
+			
+			double panelWidth = getWidth();
+			double panelHeight = getHeight();
+			
+			double scaleWidth = 0;
+			double scaleHeight = 0;
+			
+			Image toPaint = null;
+			
+			double scale = Math.max(panelHeight/canvasHeight, panelWidth/canvasWidth);
+			scaleHeight = canvasHeight * scale;
+			scaleWidth = canvasWidth * scale;
+			
+			
+			if (scaleHeight > panelHeight) {
+				scale = panelHeight/scaleHeight;
+			    scaleHeight = scaleHeight * scale;
+				scaleWidth = scaleWidth * scale;
+			}
+			if (scaleWidth > panelWidth) {
+			    scale = panelWidth/scaleWidth;
+			    scaleHeight = scaleHeight * scale;
+				scaleWidth = scaleWidth * scale;
+			}
+			
+			int topLeftX = (int)Math.round((panelWidth / 2) - (scaleWidth / 2));
+			int topLeftY = (int)Math.round((panelHeight / 2) - (scaleHeight / 2));
+			
+			toPaint = canvas.getScaled((int)scaleWidth, (int)scaleHeight).getImage();
+			
+			g2d.drawImage(toPaint, topLeftX, topLeftY, (int)scaleWidth, (int)scaleHeight, this);
+
+			
+
+		}
+	}
 }

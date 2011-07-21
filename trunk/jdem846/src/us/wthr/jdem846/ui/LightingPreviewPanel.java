@@ -332,7 +332,7 @@ public class LightingPreviewPanel extends JPanel
 			double x = points[0];
 			double y = points[1];
 			
-			double xP = drawX + x + xMid;
+			double xP = x + xMid;
 			double yP = drawY + y;
 			
 			g2d.drawLine((int)xP, (int)yP, xMid, yMid);

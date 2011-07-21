@@ -86,14 +86,12 @@ public class ModelOptionsPanel extends JPanel
 	
 	public ModelOptionsPanel()
 	{
-		
-		JPanel controlGrid = new JPanel();
+		TitledRoundedPanel controlGrid = new TitledRoundedPanel("Model Options");
 		GridLayout gridLayout = new GridLayout(10, 2);
 		gridLayout.setVgap(2);
 		controlGrid.setLayout(gridLayout);
 		
-
-		controlGrid.setBorder(new StandardTitledBorder("Model Options"));
+		//controlGrid.setBorder(new StandardTitledBorder("Model Options"));
 		
 		// Create components
 		jtxtWidth = new JNumberTextField(false);
@@ -142,14 +140,14 @@ public class ModelOptionsPanel extends JPanel
 		
 		gradientConfigPanel = new GradientConfigPanel();
 		projectionConfigPanel = new ProjectionConfigPanel();
-		projectionConfigPanel.setBorder(new StandardTitledBorder("Projection"));
+		//projectionConfigPanel.setBorder(new StandardTitledBorder("Projection"));
 		
 		lightPositionConfigPanel = new LightPositionConfigPanel();
 		lightPositionConfigPanel.setPreferredSize(new Dimension(200, 200));
 		lightPositionConfigPanel.setSize(new Dimension(200, 200));
 		
-		lightPositionConfigPanel.setBorder(new StandardTitledBorder("Light Direction"));
-		gradientConfigPanel.setBorder(new StandardTitledBorder("Gradients"));
+		//lightPositionConfigPanel.setBorder(new StandardTitledBorder("Light Direction"));
+		//gradientConfigPanel.setBorder(new StandardTitledBorder("Gradients"));
 		// Set tool tips
 		jtxtWidth.setToolTipText("Output width");
 		jtxtHeight.setToolTipText("Output height");
