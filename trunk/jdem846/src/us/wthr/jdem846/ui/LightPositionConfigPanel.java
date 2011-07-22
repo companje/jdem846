@@ -31,6 +31,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -49,7 +50,7 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 	
 	public LightPositionConfigPanel()
 	{
-		super("Light Direction");
+		super(I18N.get("us.wthr.jdem846.ui.lightDirectionPanel.title"));
 		//this.setBorder(BorderFactory.createEtchedBorder());
 		
 		// Create components
@@ -63,8 +64,8 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 		previewPanel.setSize(new Dimension(200, 200));
 		
 		// Set tooltips
-		jsldSolarAzimuth.setToolTipText("Light source azimuth");
-		jsldSolarElevation.setToolTipText("Light source elevation");
+		jsldSolarAzimuth.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightDirectionPanel.solarAzimuthSlider.tooltip"));
+		jsldSolarElevation.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightDirectionPanel.solarElevationSlider.tooltip"));
 		
 		
 		// Set listeners

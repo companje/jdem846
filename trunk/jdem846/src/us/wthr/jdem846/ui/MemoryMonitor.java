@@ -31,6 +31,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
+import us.wthr.jdem846.i18n.I18N;
+
 /** A really quick and dirty memory monitor histogram
  * 
  * @author A345926
@@ -45,7 +47,7 @@ public class MemoryMonitor extends JLabel
 	
 	public MemoryMonitor(int pollDelay)
 	{
-		setToolTipText("Memory utilization; Click to force a garbage collection");
+		setToolTipText(I18N.get("us.wthr.jdem846.ui.memoryMonitor.tooltip"));
 		setText("                       ");
 		this.setOpaque(false);
 		this.setBorder(BorderFactory.createEtchedBorder());

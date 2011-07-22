@@ -43,6 +43,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.dbase.ClassLoadException;
 import us.wthr.jdem846.exception.ProjectParseException;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.ElevationDataLoaderInstance;
 import us.wthr.jdem846.logging.Log;
@@ -155,21 +156,21 @@ public class JdemFrame extends JFrame
 		menuBar = MainMenuBar.getInstance();
 
 		//menu = new JMenu("File");
-		ComponentMenu fileMenu = new ComponentMenu(this, "File", KeyEvent.VK_F);
+		ComponentMenu fileMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.menu.file"), KeyEvent.VK_F);
 		//menu.setMnemonic(KeyEvent.VK_F);
 		menuBar.add(fileMenu);
 		
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(
         //KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		
-		fileMenu.add(new MenuItem("New", "/us/wthr/jdem846/ui/icons/document-new.png", KeyEvent.VK_N, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.new"), "/us/wthr/jdem846/ui/icons/document-new.png", KeyEvent.VK_N, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				createNewProject(null);
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK)));
 		
-		fileMenu.add(new MenuItem("Open", "/us/wthr/jdem846/ui/icons/document-open.png", KeyEvent.VK_O, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.open"), "/us/wthr/jdem846/ui/icons/document-open.png", KeyEvent.VK_O, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				openProject();
@@ -178,7 +179,7 @@ public class JdemFrame extends JFrame
 		
 		fileMenu.addSeparator();
 		
-		fileMenu.add(new MenuItem("Save", "/us/wthr/jdem846/ui/icons/document-save.png", KeyEvent.VK_S, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.save"), "/us/wthr/jdem846/ui/icons/document-save.png", KeyEvent.VK_S, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				saveProject();
@@ -187,7 +188,7 @@ public class JdemFrame extends JFrame
 		
 		fileMenu.addSeparator();
 		
-		fileMenu.add(new MenuItem("Exit", "/us/wthr/jdem846/ui/icons/application-exit.png", KeyEvent.VK_X, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.exit"), "/us/wthr/jdem846/ui/icons/application-exit.png", KeyEvent.VK_X, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				exitApplication();
@@ -196,9 +197,9 @@ public class JdemFrame extends JFrame
 
 		
 		menuBar.add(Box.createHorizontalGlue());
-		ComponentMenu helpMenu = new ComponentMenu(this, "Help", KeyEvent.VK_H);
+		ComponentMenu helpMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.menu.help"), KeyEvent.VK_H);
 		menuBar.add(helpMenu);
-		helpMenu.add(new MenuItem("About jDem846...", "/us/wthr/jdem846/ui/icons/help-about.png", KeyEvent.VK_A, new ActionListener() {
+		helpMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.help.about"), "/us/wthr/jdem846/ui/icons/help-about.png", KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onAbout();
@@ -218,8 +219,8 @@ public class JdemFrame extends JFrame
 	public boolean exitApplication()
 	{
 		int response = JOptionPane.showConfirmDialog(this,
-				"Are you sure you'd like to exit?", 
-				"Exit?", 
+				I18N.get("us.wthr.jdem846.ui.jdemFrame.exitConfirm.message"), 
+				I18N.get("us.wthr.jdem846.ui.jdemFrame.exitConfirm.title"), 
 				JOptionPane.YES_NO_OPTION);
 		
 		// 0 = Yes
@@ -242,8 +243,8 @@ public class JdemFrame extends JFrame
 		Object tabObj = tabPane.getSelectedComponent();
 		if (tabObj == null || !(tabObj instanceof ProjectPane)) {
 			JOptionPane.showMessageDialog(getRootPane(),
-				    "Please select a project tab before saving",
-				    "Cannot Save",
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.invalidTab.message"),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.invalidTab.title"),
 				    JOptionPane.WARNING_MESSAGE);
 			return;
 		}
@@ -254,7 +255,7 @@ public class JdemFrame extends JFrame
 		
 		
 		JFileChooser chooser = new BasicFileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("JDEM Project", "xdem");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormatName"), "xdem");
 		chooser.setFileFilter(filter);
 		
 		if (projectModel.getLoadedFrom() != null) {
@@ -286,8 +287,8 @@ public class JdemFrame extends JFrame
 				//ex.printStackTrace();
 				log.warn("Error trying to write project to disk: " + ex.getMessage(), ex);
 				JOptionPane.showMessageDialog(getRootPane(),
-					    "Error occured trying to write project to disk",
-					    "Save Failed",
+					    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.message"),
+					    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.title"),
 					    JOptionPane.ERROR_MESSAGE);
 			}
 	    	
@@ -306,7 +307,7 @@ public class JdemFrame extends JFrame
 	{
 		log.info("Displaying open project dialog");
 		JFileChooser chooser = new BasicFileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("JDEM Project", "xdem");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormatName"), "xdem");
 		chooser.setFileFilter(filter);
 		chooser.setMultiSelectionEnabled(false);
 	    int returnVal = chooser.showOpenDialog(this);
@@ -333,7 +334,7 @@ public class JdemFrame extends JFrame
 				}
 			});
 			
-			String title = "DEM Project";
+			String title = I18N.get("us.wthr.jdem846.ui.defaultProjectTitle");
 			if (projectModel != null && projectModel.getLoadedFrom() != null) {
 				File f = new File(projectModel.getLoadedFrom());
 				title = f.getName();
@@ -345,22 +346,22 @@ public class JdemFrame extends JFrame
 		} catch (FileNotFoundException ex) {
 			log.warn("Project file not found: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(getRootPane(),
-				    "Cannot open project file: Not Found",
-				    "Open Failed",
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.fileNotFound.message"),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.fileNotFound.title"),
 				    JOptionPane.ERROR_MESSAGE);
 			
 		} catch (IOException ex) {
 			log.warn("IO error reading from disk: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(getRootPane(),
-				    "Cannot open project file: Failed to read file from disk",
-				    "Open Failed",
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.ioError.message"),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.ioError.title"),
 				    JOptionPane.ERROR_MESSAGE);
 
 		} catch (ProjectParseException ex) {
 			log.warn("Error parsing project: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(getRootPane(),
-				    "Cannot open project file: Format is invalid",
-				    "Open Failed",
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.parseError.message"),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.parseError.title"),
 				    JOptionPane.ERROR_MESSAGE);
 		}
 		
@@ -383,8 +384,8 @@ public class JdemFrame extends JFrame
 			log.error("Failed to load engine class '" + ex.getClassName() + "': " + ex.getMessage(), ex);
 			
 			JOptionPane.showMessageDialog(getRootPane(),
-				    "Error creating instance of model engine " + engineInstance.getName(),
-				    "Component Error",
+					I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelInstanceError.message") + " " + engineInstance.getName(),
+					I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelInstanceError.title"),
 				    JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -405,8 +406,8 @@ public class JdemFrame extends JFrame
 		    	modelOptions.setWriteTo(selectedFile.getAbsolutePath());
 		    } else {
 		    	JOptionPane.showMessageDialog(getRootPane(),
-					    "An output file needs to be selected before continuing.",
-					    "No File Selected",
+					    I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.fileNotSelected.message"),
+					    I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.fileNotSelected.title"),
 					    JOptionPane.ERROR_MESSAGE);
 		    	return;
 		    }

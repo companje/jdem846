@@ -26,6 +26,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.ui.datasetoptions.ElevationDataSetOptions;
@@ -44,7 +45,8 @@ public class DataSetOptionsPanel extends JPanel
 	public DataSetOptionsPanel()
 	{
 		// Create components
-		jbtnUpdatePreview = new JButton("Update Preview");
+		jbtnUpdatePreview = new JButton(I18N.get("us.wthr.jdem846.ui.datasetoptions.updatePreview.label"));
+		jbtnUpdatePreview.setToolTipText(I18N.get("us.wthr.jdem846.ui.datasetoptions.updatePreview.tooltip"));
 		
 		// Add listeners
 		jbtnUpdatePreview.addActionListener(new ActionListener() {

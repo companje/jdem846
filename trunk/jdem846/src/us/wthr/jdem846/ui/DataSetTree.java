@@ -42,6 +42,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.logging.Log;
@@ -121,8 +122,8 @@ public class DataSetTree extends JPanel
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		//tree.setRootVisible(false);
 		
-		elevationNode = new DatasetTreeNode(elevationCategoryIcon, "Elevation");
-		shapeNode = new DatasetTreeNode(shapesCategoryIcon, "Shapes");
+		elevationNode = new DatasetTreeNode(elevationCategoryIcon, I18N.get("us.wthr.jdem846.ui.dataSetTree.node.elevation"));
+		shapeNode = new DatasetTreeNode(shapesCategoryIcon, I18N.get("us.wthr.jdem846.ui.dataSetTree.node.shapes"));
 		
 		top.add(elevationNode);
 		top.add(shapeNode);

@@ -31,6 +31,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
 
+import us.wthr.jdem846.i18n.I18N;
+
 @SuppressWarnings("serial")
 public class OutputImageViewButtonBar extends JToolBar
 {
@@ -59,33 +61,33 @@ public class OutputImageViewButtonBar extends JToolBar
 	public OutputImageViewButtonBar()
 	{
 		// Create components
-		jbtnSave = new ToolbarButton("Save", "/us/wthr/jdem846/ui/icons/document-save.png", new ActionListener() {
+		jbtnSave = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.saveButton"), "/us/wthr/jdem846/ui/icons/document-save.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_SAVE);
 			}
 		});
-		jbtnZoomIn = new ToolbarButton("Zoom In", "/us/wthr/jdem846/ui/icons/zoom-in.png", new ActionListener() {
+		jbtnZoomIn = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomInButton"), "/us/wthr/jdem846/ui/icons/zoom-in.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_ZOOM_IN);
 			}
 		});
-		jbtnZoomOut = new ToolbarButton("Zoom Out", "/us/wthr/jdem846/ui/icons/zoom-out.png", new ActionListener() {
+		jbtnZoomOut = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomOutButton"), "/us/wthr/jdem846/ui/icons/zoom-out.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_ZOOM_OUT);
 			}
 		});
-		jbtnZoomActual = new ToolbarButton("Full Size", "/us/wthr/jdem846/ui/icons/zoom-original.png", new ActionListener() {
+		jbtnZoomActual = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomActualButton"), "/us/wthr/jdem846/ui/icons/zoom-original.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_ZOOM_ACTUAL);
 			}
 		});
-		jbtnZoomFit = new ToolbarButton("Best Fit", "/us/wthr/jdem846/ui/icons/zoom-fit-best.png", new ActionListener() {
+		jbtnZoomFit = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomFitButton"), "/us/wthr/jdem846/ui/icons/zoom-fit-best.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_ZOOM_FIT);
 			}
 		});
 		
-		jbtnStop = new ToolbarButton("Stop", "/us/wthr/jdem846/ui/icons/process-stop.png", new ActionListener() {
+		jbtnStop = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.stopButton"), "/us/wthr/jdem846/ui/icons/process-stop.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_STOP);
 			}
@@ -95,13 +97,13 @@ public class OutputImageViewButtonBar extends JToolBar
 		jcmbQuality = new JComboBox(qualityModel);
 		
 		// Set Tooltips
-		jbtnSave.setToolTipText("Save the image to disk");
-		jbtnZoomIn.setToolTipText("Enlarge the image");
-		jbtnZoomOut.setToolTipText("Shrink the image");
-		jbtnZoomActual.setToolTipText("Show image at full size");
-		jbtnZoomFit.setToolTipText("Fit the image to the window");
-		jcmbQuality.setToolTipText("Image scaling quality (slow/normal/fast)");
-		jbtnStop.setToolTipText("Stop the current render process");
+		jbtnSave.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.saveTooltip"));
+		jbtnZoomIn.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomInTooltip"));
+		jbtnZoomOut.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomOutTooltip"));
+		jbtnZoomActual.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomActualTooltip"));
+		jbtnZoomFit.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomFitTooltip"));
+		jcmbQuality.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.qualityTooltip"));
+		jbtnStop.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.stopTooltip"));
 		
 		// Add Listeners
 		jcmbQuality.addItemListener(new ItemListener() {
@@ -238,9 +240,9 @@ public class OutputImageViewButtonBar extends JToolBar
 		
 		public ImageQualityListModel()
 		{
-			addItem("High", Image.SCALE_SMOOTH);
-			addItem("Normal", Image.SCALE_DEFAULT);
-			addItem("Low", Image.SCALE_FAST);
+			addItem(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.quality.smooth"), Image.SCALE_SMOOTH);
+			addItem(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.quality.default"), Image.SCALE_DEFAULT);
+			addItem(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.quality.fast"), Image.SCALE_FAST);
 			this.setSelectedItemByValue(Image.SCALE_DEFAULT);
 		}
 	}
