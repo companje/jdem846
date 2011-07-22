@@ -19,6 +19,7 @@ package us.wthr.jdem846.ui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.ModelOptions;
@@ -65,6 +66,17 @@ public class DataGenerationViewPanel extends JPanel
 			public void onModelComplete(DemCanvas completedCanvas) {
 				statusBar.setProgressVisible(false);
 				setWorking(false);
+			}
+			public void onModelFailed(Exception ex)
+			{
+				statusBar.setProgressVisible(false);
+				setWorking(false);
+				
+				JOptionPane.showMessageDialog(getRootPane(),
+					    "Caught error when generating the model: " + ex.getMessage(),
+					    "Model Failed",
+					    JOptionPane.ERROR_MESSAGE);
+				
 			}
 		});
 		

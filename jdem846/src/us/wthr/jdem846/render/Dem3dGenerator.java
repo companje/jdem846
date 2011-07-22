@@ -32,6 +32,7 @@ import us.wthr.jdem846.color.ColorRegistry;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.dbase.ClassLoadException;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -62,68 +63,87 @@ public class Dem3dGenerator extends RenderEngine
 	}
 
 	@Override
-	public OutputProduct<DemCanvas> generate()
+	public OutputProduct<DemCanvas> generate() throws RenderEngineException
 	{
-		return generate(false);
+		try {
+			return generate(false);
+		} catch (OutOfMemoryError err) {
+			log.error("Out of memory error when generating model", err);
+			throw new RenderEngineException("Out of memory error when generating model", err);
+		} catch (Exception ex) {
+			log.error("Error occured generating model", ex);
+			throw new RenderEngineException("Error occured generating model", ex);
+		}
 	}
 	
 	@Override
-	public OutputProduct<DemCanvas> generate(boolean skipElevation)
+	public OutputProduct<DemCanvas> generate(boolean skipElevation) throws RenderEngineException
 	{
-		Color background = ColorRegistry.getInstance(modelOptions.getBackgroundColor()).getColor();
-		
-		double width = dataPackage.getColumns();
-		double height = dataPackage.getRows();
-		
-		BufferedImage image = new BufferedImage((int)dataPackage.getColumns(), (int) dataPackage.getRows(), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = (Graphics2D) image.getGraphics();
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		
-		
-		g2d.setColor(background);
-		g2d.fillRect(0, 0, (int)width, (int) height);
-		
-		int trueStartZ = (int) Math.round(-(height / 2.0));
-		int trueEndZ = (int) Math.round(height / 2.0);
-		
-		int tileSize = (int)Math.ceil(height);//modelOptions.getTileSize();
-		double numTiles = Math.ceil(((double)height / (double)tileSize));
-		log.info("Rendering " + numTiles + " tiles");
-		
-		double tileNum = 0;
-		
-		ViewportBuffer buffer = new ViewportBuffer((int)width, (int)height);
-
-		int[] tileYs = new int[(int)numTiles];
-		
-		for (int z = trueStartZ; z < trueEndZ; z+=tileSize) {
-			int endZ = z + tileSize;
-			if (endZ > trueEndZ)
-				endZ = trueEndZ;
-
-			tileNum++;
+		try {
+			Color background = ColorRegistry.getInstance(modelOptions.getBackgroundColor()).getColor();
 			
-			log.info("Rendering tile #" + (int)tileNum + " of " + (int)numTiles + " (" + z + " to " + endZ + ")");
+			double width = dataPackage.getColumns();
+			double height = dataPackage.getRows();
 			
-			renderTile(buffer, z, endZ);
+			BufferedImage image = new BufferedImage((int)dataPackage.getColumns(), (int) dataPackage.getRows(), BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2d = (Graphics2D) image.getGraphics();
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			
 			
+			
+			g2d.setColor(background);
+			g2d.fillRect(0, 0, (int)width, (int) height);
+			
+			int trueStartZ = (int) Math.round(-(height / 2.0));
+			int trueEndZ = (int) Math.round(height / 2.0);
+			
+			int tileSize = (int)Math.ceil(height);//modelOptions.getTileSize();
+			double numTiles = Math.ceil(((double)height / (double)tileSize));
+			log.info("Rendering " + numTiles + " tiles");
+			
+			double tileNum = 0;
+			
+			ViewportBuffer buffer = new ViewportBuffer((int)width, (int)height);
+	
+			int[] tileYs = new int[(int)numTiles];
+			
+			for (int z = trueStartZ; z < trueEndZ; z+=tileSize) {
+				int endZ = z + tileSize;
+				if (endZ > trueEndZ)
+					endZ = trueEndZ;
+	
+				tileNum++;
+				
+				log.info("Rendering tile #" + (int)tileNum + " of " + (int)numTiles + " (" + z + " to " + endZ + ")");
+				
+				renderTile(buffer, z, endZ);
+				
+				if (isCancelled()) {
+					log.warn("Render process cancelled, model not complete.");
+					break;
+				}
+			}
+			
+			log.info("Transferring pixel data to image");
+	
+			buffer.paint(image, 0);
+			buffer.dispose();
+	
+			
+			g2d.dispose();
+			
+			DemCanvas canvas = new DemCanvas(image);//background, modelOptions.getWidth(), modelOptions.getHeight());
+			return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
+		} catch (OutOfMemoryError err) {
+			log.error("Out of memory error when generating model", err);
+			throw new RenderEngineException("Out of memory error when generating model", err);
+		} catch (Exception ex) {
+			log.error("Error occured generating model", ex);
+			throw new RenderEngineException("Error occured generating model", ex);
 		}
-		
-		log.info("Transferring pixel data to image");
-
-		buffer.paint(image, 0);
-		buffer.dispose();
-
-		
-		g2d.dispose();
-		
-		DemCanvas canvas = new DemCanvas(image);//background, modelOptions.getWidth(), modelOptions.getHeight());
-		return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
 	}
 	
-	protected void renderTile(ViewportBuffer buffer, int startZ, int endZ)
+	protected void renderTile(ViewportBuffer buffer, int startZ, int endZ) throws RenderEngineException
 	{
 		//List<Renderable> polygons = new LinkedList<Renderable>();
 		
@@ -271,6 +291,11 @@ public class Dem3dGenerator extends RenderEngine
 					polyCount++;
 				}
 				
+				
+				if (isCancelled()) {
+					log.warn("Render process cancelled, model not complete.");
+					break;
+				}
 			}
 			
 			
@@ -285,6 +310,11 @@ public class Dem3dGenerator extends RenderEngine
 				progress = pctComplete;
 				//if (progress > 70)
 				//	break;
+			}
+			
+			if (isCancelled()) {
+				log.warn("Render process cancelled, model not complete.");
+				break;
 			}
 		}
 	}

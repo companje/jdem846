@@ -19,6 +19,7 @@ package us.wthr.jdem846.ui;
 import java.util.LinkedList;
 import java.util.List;
 
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -62,18 +63,39 @@ public class ModelingWorkerThread extends Thread
 			
 			dataPackage.calculateElevationMinMax(true);
 			
-
-			OutputProduct<DemCanvas> product = engine.generate(this.isPreviewModel());
+			try {
+				OutputProduct<DemCanvas> product = engine.generate(this.isPreviewModel());
+				
+				if (product != null)
+					fireModelCompletionListeners(product.getProduct());
+				else 
+					fireModelCompletionListeners(null);
+			} catch (RenderEngineException ex) {
+				fireModelFailedListeners(ex);
+			}
 			
-			if (product != null)
-				fireModelCompletionListeners(product.getProduct());
-			else 
-				fireModelCompletionListeners(null);
+			
 		//} else {
 		//	fireModelCompletionListeners(null);
 		//}
 		
 		
+	}
+	
+	public void cancel()
+	{
+		if (engine != null) {
+			engine.cancel();
+		}
+	}
+	
+	public boolean isCancelled()
+	{
+		if (engine != null) {
+			return engine.isCancelled();
+		} else {
+			return false;
+		}
 	}
 	
 	public void setPreviewModel(boolean previewModel)
@@ -114,9 +136,17 @@ public class ModelingWorkerThread extends Thread
 		}
 	}
 	
+	protected void fireModelFailedListeners(Exception ex) 
+	{
+		for (ModelCompletionListener listener : modelCompletionListeners) {
+			listener.onModelFailed(ex);
+		}
+	}
+	
 	public interface ModelCompletionListener
 	{
 		public void onModelComplete(DemCanvas canvas);
+		public void onModelFailed(Exception ex);
 	}
 	
 }

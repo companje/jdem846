@@ -23,9 +23,17 @@ import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+/** Provides a simple means of log formatting.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class SimpleEntryFormatter extends Formatter
 {
 
+	/** Provides simple formatting to the log record.
+	 * 
+	 */
 	@Override
 	public String format(LogRecord record)
 	{
@@ -36,11 +44,20 @@ public class SimpleEntryFormatter extends Formatter
 		String clazzName = record.getSourceClassName().substring(record.getSourceClassName().lastIndexOf(".")+1);
 		writer.printf("%s %8s %s %s\n", date, record.getLevel(), clazzName, record.getMessage());
 		
+		if (record.getThrown() != null) {
+			Throwable thrown = record.getThrown();
+			thrown.printStackTrace(writer);
+		}
+		
 		return sw.toString();
 	}
 
 	
-	
+	/**
+	 * 
+	 * @param millis
+	 * @return A standard formatted date string
+	 */
 	protected static String getFormattedDate(long millis)
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSS z");

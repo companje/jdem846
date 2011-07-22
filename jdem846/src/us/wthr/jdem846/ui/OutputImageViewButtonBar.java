@@ -40,12 +40,14 @@ public class OutputImageViewButtonBar extends JToolBar
 	public static final int BTN_ZOOM_ACTUAL = 3;
 	public static final int BTN_ZOOM_FIT = 4;
 	public static final int OPTION_QUALITY = 5;
+	public static final int BTN_STOP = 6;
 	
 	private ToolbarButton jbtnSave;
 	private ToolbarButton jbtnZoomIn;
 	private ToolbarButton jbtnZoomOut;
 	private ToolbarButton jbtnZoomActual;
 	private ToolbarButton jbtnZoomFit;
+	private ToolbarButton jbtnStop;
 	
 	private JComboBox jcmbQuality;
 	private ImageQualityListModel qualityModel;
@@ -82,6 +84,12 @@ public class OutputImageViewButtonBar extends JToolBar
 				fireButtonClickedListeners(BTN_ZOOM_FIT);
 			}
 		});
+		
+		jbtnStop = new ToolbarButton("Stop", "/us/wthr/jdem846/ui/icons/process-stop.png", new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fireButtonClickedListeners(BTN_STOP);
+			}
+		});
 
 		qualityModel = new ImageQualityListModel();
 		jcmbQuality = new JComboBox(qualityModel);
@@ -93,7 +101,7 @@ public class OutputImageViewButtonBar extends JToolBar
 		jbtnZoomActual.setToolTipText("Show image at full size");
 		jbtnZoomFit.setToolTipText("Fit the image to the window");
 		jcmbQuality.setToolTipText("Image scaling quality (slow/normal/fast)");
-		
+		jbtnStop.setToolTipText("Stop the current render process");
 		
 		// Add Listeners
 		jcmbQuality.addItemListener(new ItemListener() {
@@ -114,6 +122,8 @@ public class OutputImageViewButtonBar extends JToolBar
 		add(jbtnZoomOut);
 		add(jbtnZoomActual);
 		add(jbtnZoomFit);
+		addSeparator();
+		add(jbtnStop);
 		addSeparator();
 		add(new JLabel("Quality: "));
 		add(jcmbQuality);
@@ -141,6 +151,9 @@ public class OutputImageViewButtonBar extends JToolBar
 			break;
 		case OPTION_QUALITY:
 			jcmbQuality.setEnabled(enabled);
+			break;
+		case BTN_STOP:
+			jbtnStop.setEnabled(enabled);
 			break;
 		}
 	}
@@ -174,6 +187,9 @@ public class OutputImageViewButtonBar extends JToolBar
 			case BTN_ZOOM_FIT:
 				listener.onZoomFitClicked();
 				break;
+			case BTN_STOP:
+				listener.onStopClicked();
+				break;
 			}
 		}
 	}
@@ -185,6 +201,7 @@ public class OutputImageViewButtonBar extends JToolBar
 		public void onZoomOutClicked();
 		public void onZoomActualClicked();
 		public void onZoomFitClicked();
+		public void onStopClicked();
 	}
 	
 	
