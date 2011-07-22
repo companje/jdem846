@@ -18,6 +18,7 @@ package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -44,7 +45,7 @@ public class WorkingGlassPane extends JPanel
 	private String text;
 	private Font labelFont = new Font("SansSerif", Font.BOLD, 15);
 	//private JLabel jlblLabel;
-	private Rectangle limitSpace;
+	private Component shadeComponent;
 	
 	private int arcAngle = 0;
 	private Timer arcTimer;
@@ -99,19 +100,29 @@ public class WorkingGlassPane extends JPanel
 		return text;
 	}
 
-	public Rectangle getLimitSpace()
+	
+
+	public Component getShadeComponent()
 	{
-		return limitSpace;
+		return shadeComponent;
 	}
 
-	public void setLimitSpace(Rectangle limitSpace)
+	public void setShadeComponent(Component shadeComponent)
 	{
-		this.limitSpace = limitSpace;
+		this.shadeComponent = shadeComponent;
 	}
 
 	@Override
 	public void paint(Graphics g)
 	{
+		if (shadeComponent == null) {
+			shadeComponent = JdemFrame.getInstance();
+		}
+		
+		if (!shadeComponent.isVisible()) {
+			return;
+		}
+		
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
@@ -119,10 +130,16 @@ public class WorkingGlassPane extends JPanel
 		g2d.setColor(color);
 		
 		Point pt = this.getLocationOnScreen();
-		int x = (limitSpace != null) ? limitSpace.x - pt.x : 0;
-		int y = (limitSpace != null) ? limitSpace.y - pt.y : 0;
-		int width = (limitSpace != null) ? limitSpace.width : getWidth();
-		int height = (limitSpace != null) ? limitSpace.height : getHeight();
+		Point compPoint = shadeComponent.getLocationOnScreen();
+		int x = compPoint.x - pt.x;
+		int y = compPoint.y - pt.y;
+		int width = shadeComponent.getWidth();
+		int height = shadeComponent.getHeight();
+		
+		//int x = (limitSpace != null) ? limitSpace.x - pt.x : 0;
+		//int y = (limitSpace != null) ? limitSpace.y - pt.y : 0;
+		//int width = (limitSpace != null) ? limitSpace.width : getWidth();
+		//int height = (limitSpace != null) ? limitSpace.height : getHeight();
 		
 		g2d.fillRect(x, y, width, height);
 		

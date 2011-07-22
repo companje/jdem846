@@ -17,6 +17,7 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -438,15 +439,15 @@ public class JdemFrame extends JFrame
 	{
 		WorkingGlassPane glassPane = (WorkingGlassPane) this.getGlassPane();
 		glassPane.setVisible(visible);
-		glassPane.setLimitSpace(null);
+		glassPane.setShadeComponent(null);
 		glassPane.setText(text);
 	}
 	
-	public void setGlassVisible(String text, Rectangle limitSpace, boolean visible)
+	public void setGlassVisible(String text, Component component, boolean visible)
 	{
 		WorkingGlassPane glassPane = (WorkingGlassPane) this.getGlassPane();
 		glassPane.setVisible(visible);
-		glassPane.setLimitSpace(limitSpace);
+		glassPane.setShadeComponent(component);
 		glassPane.setText(text);
 	}
 	
