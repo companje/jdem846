@@ -42,18 +42,22 @@ public class I18N
 		Properties props = new Properties();
 		try {
 			String i18nPropertiesFile = uiProperties.getProperty("us.wthr.jdem846.ui.i18n");
-			log.info("Loading internationalization properties file: " + i18nPropertiesFile);
+			
 			props.load(I18N.class.getResourceAsStream(i18nPropertiesFile));
+			
+			for (Object key : props.keySet()) {
+				String sKey = (String) key;
+				String value = props.getProperty(sKey);
+				messages.put(sKey, value);
+			}
+			
+			log.info("Loaded internationalization properties file: " + i18nPropertiesFile);
 		} catch (Exception ex) {
 			log.error("Failed to load i18n properties", ex);
 		}
 		
 		
-		for (Object key : props.keySet()) {
-			String sKey = (String) key;
-			String value = props.getProperty(sKey);
-			messages.put(sKey, value);
-		}
+		
 		
 	}
 	

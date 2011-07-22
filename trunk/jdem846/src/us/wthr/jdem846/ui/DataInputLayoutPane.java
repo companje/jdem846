@@ -25,6 +25,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataBounds;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.ui.border.StandardBorder;
@@ -37,9 +38,8 @@ public class DataInputLayoutPane extends TitledRoundedPanel
 
 	public DataInputLayoutPane(DataPackage dataPackage, ModelOptions modelOptions)
 	{
-		super("Elevation Dataset Layout");
-		//((StandardBorder) this.getBorder()).setPadding(1);
-		
+		super(I18N.get("us.wthr.jdem846.ui.dataInputLayoutPane.title"));
+
 		graphicPanel = new LayoutGraphicPanel(dataPackage, modelOptions);
 
 		setLayout(new BorderLayout());

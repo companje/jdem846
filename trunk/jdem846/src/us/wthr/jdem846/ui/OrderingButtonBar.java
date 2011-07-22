@@ -23,6 +23,8 @@ import java.util.List;
 
 import javax.swing.JToolBar;
 
+import us.wthr.jdem846.i18n.I18N;
+
 @SuppressWarnings("serial")
 public class OrderingButtonBar extends JToolBar
 {
@@ -46,35 +48,35 @@ public class OrderingButtonBar extends JToolBar
 		this.setFloatable(false);
 		
 		// Create buttons
-		jbtnMoveTop = new ToolbarButton("Move to Top", "/us/wthr/jdem846/ui/icons/go-top.png", new ActionListener() {
+		jbtnMoveTop = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveTop.label"), "/us/wthr/jdem846/ui/icons/go-top.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_TOP);
 			}
 		});
 		
-		jbtnMoveUp = new ToolbarButton("Move Up", "/us/wthr/jdem846/ui/icons/go-up.png", new ActionListener() {
+		jbtnMoveUp = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveUp.label"), "/us/wthr/jdem846/ui/icons/go-up.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_UP);
 			}
 		});
 		
-		jbtnMoveDown = new ToolbarButton("Move Down", "/us/wthr/jdem846/ui/icons/go-down.png", new ActionListener() {
+		jbtnMoveDown = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveDown.label"), "/us/wthr/jdem846/ui/icons/go-down.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_DOWN);
 			}
 		});
 		
-		jbtnMoveBottom = new ToolbarButton("Move to Bottom", "/us/wthr/jdem846/ui/icons/go-bottom.png", new ActionListener() {
+		jbtnMoveBottom = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveBottom.label"), "/us/wthr/jdem846/ui/icons/go-bottom.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_BOTTOM);
 			}
 		});
 		
 		// Set button properties
-		jbtnMoveTop.setToolTipText("Move to top");
-		jbtnMoveUp.setToolTipText("Move up");
-		jbtnMoveDown.setToolTipText("Move down");
-		jbtnMoveBottom.setToolTipText("Move to bottom");
+		jbtnMoveTop.setToolTipText(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveTop.tooltip"));
+		jbtnMoveUp.setToolTipText(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveUp.tooltip"));
+		jbtnMoveDown.setToolTipText(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveDown.tooltip"));
+		jbtnMoveBottom.setToolTipText(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveBottom.tooltip"));
 		
 		jbtnMoveTop.setTextDisplayed(false);
 		jbtnMoveUp.setTextDisplayed(false);

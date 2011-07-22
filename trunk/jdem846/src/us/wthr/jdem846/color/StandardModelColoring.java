@@ -18,7 +18,7 @@ package us.wthr.jdem846.color;
 
 import us.wthr.jdem846.annotations.DemColoring;
 
-@DemColoring(name="Standard Model Coloring", identifier="standard-coloring",allowGradientConfig=false, needsMinMaxElevation=true)
+@DemColoring(name="us.wthr.jdem846.color.standardModelColoring.name", identifier="standard-coloring",allowGradientConfig=false, needsMinMaxElevation=true)
 public class StandardModelColoring implements ModelColoring
 {
 	

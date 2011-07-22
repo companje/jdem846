@@ -50,7 +50,7 @@ import us.wthr.jdem846.shapefile.ShapePath;
 import us.wthr.jdem846.shapefile.modeling.FeatureTypeStroke;
 import us.wthr.jdem846.shapefile.modeling.LineStroke;
 
-@DemEngine(name="DEM-2D Generator", identifier="dem2d-gen")
+@DemEngine(name="us.wthr.jdem846.render.demEngine2D.name", identifier="dem2d-gen")
 public class Dem2dGenerator extends RenderEngine
 {
 	private static Log log = Logging.getLog(Dem2dGenerator.class);

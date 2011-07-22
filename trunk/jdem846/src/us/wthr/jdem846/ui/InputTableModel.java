@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataSource;
 
 @SuppressWarnings("serial")
@@ -89,19 +90,19 @@ public class InputTableModel extends AbstractTableModel
 	{
 		switch(column) {
 		case 0:
-			return "No.";
+			return I18N.get("us.wthr.jdem846.ui.inputTableModel.column.number");
 		case 1:
-			return "File";
+			return I18N.get("us.wthr.jdem846.ui.inputTableModel.column.file");
 		case 2:
-			return "Rows";
+			return I18N.get("us.wthr.jdem846.ui.inputTableModel.column.rows");
 		case 3:
-			return "Columns";
+			return I18N.get("us.wthr.jdem846.ui.inputTableModel.column.columns");
 		case 4:
-			return "Latitude";
+			return I18N.get("us.wthr.jdem846.ui.inputTableModel.column.latitude");
 		case 5:
-			return "Longitude";
+			return I18N.get("us.wthr.jdem846.ui.inputTableModel.column.longitude");
 		case 6:
-			return "Size (KB)";
+			return I18N.get("us.wthr.jdem846.ui.inputTableModel.column.size");
 		default:
 			return "";
 		}

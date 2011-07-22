@@ -29,6 +29,7 @@ import java.util.Map;
 import us.wthr.jdem846.AppRegistry;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -58,6 +59,9 @@ public class ColorRegistry implements AppRegistry
 			log.info("Adding color: " + fromFile);
 			//System.out.println("Adding color: " + fromFile);
 			String name = parts[0];
+			
+			name = I18N.get(name, name);
+			
 			int red = Integer.parseInt(parts[1]);
 			int green = Integer.parseInt(parts[2]);
 			int blue = Integer.parseInt(parts[3]);

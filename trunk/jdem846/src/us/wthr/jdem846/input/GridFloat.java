@@ -23,7 +23,7 @@ import us.wthr.jdem846.annotations.ElevationDataLoader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
-@ElevationDataLoader(name="GridFloat", identifier="gridfloat", extension="flt")
+@ElevationDataLoader(name="us.wthr.jdem846.input.gridFloat.name", identifier="gridfloat", extension="flt")
 public class GridFloat extends DataSource
 {
 	private static Log log = Logging.getLog(GridFloat.class);

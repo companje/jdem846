@@ -23,7 +23,7 @@ import us.wthr.jdem846.annotations.ElevationDataLoader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
-@ElevationDataLoader(name="BIL 16INT", identifier="bil-16int", extension="bil")
+@ElevationDataLoader(name="us.wthr.jdem846.input.bilInt16.name", identifier="bil-16int", extension="bil")
 public class BilInt16 extends DataSource
 {
 	private static Log log = Logging.getLog(BilInt16.class);

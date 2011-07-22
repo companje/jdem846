@@ -34,6 +34,7 @@ import us.wthr.jdem846.annotations.DemColoring;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.dbase.ClassLoadException;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -58,7 +59,11 @@ public class ColoringRegistry implements AppRegistry
 			
 		DemColoring annotation = (DemColoring) clazz.getAnnotation(DemColoring.class);
 		
-		ColoringRegistry.instances.put(annotation.identifier(), new ColoringInstance(clazzName, annotation.name(), annotation.identifier(), annotation.allowGradientConfig(), annotation.needsMinMaxElevation()));
+		String name = annotation.name();
+		name = I18N.get(name, name);
+
+		
+		ColoringRegistry.instances.put(annotation.identifier(), new ColoringInstance(clazzName, name, annotation.identifier(), annotation.allowGradientConfig(), annotation.needsMinMaxElevation()));
 		//System.out.println("Adding coloring instance for " + clazzName + ": " + annotation.name());
 		
 		log.info("Adding coloring instance for " + clazzName + ": " + annotation.name());

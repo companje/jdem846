@@ -28,6 +28,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import us.wthr.jdem846.i18n.I18N;
+
 @SuppressWarnings("serial")
 public class ClosableTab extends JPanel
 {
@@ -59,7 +61,7 @@ public class ClosableTab extends JPanel
 		jbtnClose.setBorderPainted(false);
 		
 		// Set Tooltips
-		jbtnClose.setToolTipText("Close this tab");
+		jbtnClose.setToolTipText(I18N.get("us.wthr.jdem846.ui.closableTab.closeButton.tooltip"));
 		
 		// Add Listeners
 		jbtnClose.addActionListener(new ActionListener() {

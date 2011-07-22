@@ -17,8 +17,9 @@
 package us.wthr.jdem846.color;
 
 import us.wthr.jdem846.annotations.DemColoring;
+import us.wthr.jdem846.i18n.I18N;
 
-@DemColoring(name="Gray Tint", identifier="gray-tint", allowGradientConfig=false, needsMinMaxElevation=false)
+@DemColoring(name="us.wthr.jdem846.color.grayTint.name", identifier="gray-tint", allowGradientConfig=false, needsMinMaxElevation=false)
 public class GrayTint implements ModelColoring
 {
 	
