@@ -27,6 +27,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.ModelOptions;
@@ -137,9 +138,18 @@ public class ModelPreviewPane extends TitledRoundedPanel
 				public void onModelComplete(DemCanvas completeCanvas)
 				{
 					imagePanel.setCanvas(completeCanvas);
-					//canvas = completeCanvas;
 					JdemFrame.getInstance().setGlassVisible(false);
 					repaint();
+				}
+				public void onModelFailed(Exception ex)
+				{
+					imagePanel.setCanvas(null);
+					JdemFrame.getInstance().setGlassVisible(false);
+					
+					JOptionPane.showMessageDialog(getRootPane(),
+						    "Caught error when generating the model: " + ex.getMessage(),
+						    "Model Failed",
+						    JOptionPane.ERROR_MESSAGE);
 				}
 			});
 			workerThread.setPreviewModel(true);

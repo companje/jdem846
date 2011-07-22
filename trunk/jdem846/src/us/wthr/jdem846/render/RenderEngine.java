@@ -22,6 +22,7 @@ import java.util.List;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.ElevationDataLoaderInstance;
 import us.wthr.jdem846.input.ElevationDataLoaderRegistry;
@@ -37,6 +38,7 @@ public abstract class RenderEngine
 	
 	private List<TileCompletionListener> tileCompletionListeners = new LinkedList<TileCompletionListener>();
 	
+	private boolean cancel = false;
 	
 	public RenderEngine()
 	{
@@ -70,10 +72,10 @@ public abstract class RenderEngine
 	}
 
 	@SuppressWarnings("unchecked")
-	public abstract OutputProduct generate();
+	public abstract OutputProduct generate() throws RenderEngineException;
 	
 	@SuppressWarnings("unchecked")
-	public abstract OutputProduct generate(boolean previewModel);
+	public abstract OutputProduct generate(boolean previewModel) throws RenderEngineException;
 	
 	public abstract DataPackage getDataPackage();
 	public abstract void setDataPackage(DataPackage dataPackage);
@@ -123,6 +125,25 @@ public abstract class RenderEngine
 	public interface TileCompletionListener
 	{
 		public void onTileCompleted(DemCanvas tileCanvas, DemCanvas outputCanvas, double pctComplete);
+	}
+	
+	/** Requests that a rendering process is stopped.
+	 * 
+	 */
+	public void cancel()
+	{
+		this.cancel = true;
+	}
+	
+	/** Determines whether the rendering process has been requested to stop. This does not necessarily mean
+	 * that the process <i>has</i> stopped as engine implementations need not check this value that often or
+	 * at all.
+	 * 
+	 * @return Whether the rendering process has been requested to stop.
+	 */
+	public boolean isCancelled()
+	{
+		return cancel;
 	}
 	
 }

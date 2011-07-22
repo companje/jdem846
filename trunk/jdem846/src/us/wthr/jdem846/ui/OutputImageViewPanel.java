@@ -172,6 +172,9 @@ public class OutputImageViewPanel extends JdemPanel
 			public void onZoomOutClicked() {
 				onZoomOut();
 			}
+			public void onStopClicked() {
+				onStop();
+			}
 		});
 		buttonBar.addOptionChangeListener(new OptionChangeListener() {
 			public void onImageQualityChanged(int quality) {
@@ -207,11 +210,35 @@ public class OutputImageViewPanel extends JdemPanel
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, true);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, true);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, true);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, true);
 				setWorking(false);
 				statusBar.setProgressVisible(false);
 				spinner.stop();
 				detachModelListeners(true);
+				repaint();
+			}
+			public void onModelFailed(Exception ex)
+			{
+				canvas = null;
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_SAVE, false);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_IN, false);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
+				setWorking(false);
+				statusBar.setProgressVisible(false);
+				spinner.stop();
+				detachModelListeners(true);
+				
+				
+				JOptionPane.showMessageDialog(getRootPane(),
+					    "Caught error when generating the model: " + ex.getMessage(),
+					    "Model Failed",
+					    JOptionPane.ERROR_MESSAGE);
+				
 				repaint();
 			}
 		};
@@ -322,6 +349,12 @@ public class OutputImageViewPanel extends JdemPanel
 			}
 		});
 		saveThread.start();
+	}
+	
+	public void onStop()
+	{
+		log.info("Render process requested to stop");
+		worker.cancel();
 	}
 	
 	public void onZoomActual() 

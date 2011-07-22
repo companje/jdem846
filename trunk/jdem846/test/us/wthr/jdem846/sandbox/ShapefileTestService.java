@@ -161,7 +161,13 @@ public class ShapefileTestService extends AbstractLockableService
 		dataPackage.calculateElevationMinMax(true);
 		
 		log.info("Generating DEM2D image");
-		OutputProduct<DemCanvas> output = dem2d.generate();
+		OutputProduct<DemCanvas> output = null;
+		try {
+			output = dem2d.generate();
+		} catch (Exception ex) {
+			log.error("Failed to generate model: " + ex.getMessage(), ex);
+		}
+		
 		
 		DemCanvas canvas = output.getProduct();
 		canvas.save(saveToPath + "dem2d.png");

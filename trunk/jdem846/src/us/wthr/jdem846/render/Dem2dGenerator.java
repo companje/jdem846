@@ -34,6 +34,7 @@ import us.wthr.jdem846.color.ColorRegistry;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.dbase.ClassLoadException;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataBounds;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
@@ -69,21 +70,37 @@ public class Dem2dGenerator extends RenderEngine
 		this.modelOptions = modelOptions;
 	}
 	
-	public OutputProduct<DemCanvas> generate()
+	public OutputProduct<DemCanvas> generate() throws RenderEngineException
 	{
-		DemCanvas canvas = generate(modelOptions.getWidth(), modelOptions.getHeight(), modelOptions.getTileSize(), false);
-		applyShapefileLayers(canvas);
-		return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
+		try {
+			DemCanvas canvas = generate(modelOptions.getWidth(), modelOptions.getHeight(), modelOptions.getTileSize(), false);
+			applyShapefileLayers(canvas);
+			return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
+		} catch (OutOfMemoryError err) {
+			log.error("Out of memory error when generating model", err);
+			throw new RenderEngineException("Out of memory error when generating model", err);
+		} catch (Exception ex) {
+			log.error("Error occured generating model", ex);
+			throw new RenderEngineException("Error occured generating model", ex);
+		}
 	}
 	
-	public OutputProduct<DemCanvas> generate(boolean skipElevation)
+	public OutputProduct<DemCanvas> generate(boolean skipElevation) throws RenderEngineException
 	{
-		DemCanvas canvas = generate(modelOptions.getWidth(), modelOptions.getHeight(), modelOptions.getTileSize(), skipElevation);
-		applyShapefileLayers(canvas);
-		return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
+		try {
+			DemCanvas canvas = generate(modelOptions.getWidth(), modelOptions.getHeight(), modelOptions.getTileSize(), skipElevation);
+			applyShapefileLayers(canvas);
+			return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
+		} catch (OutOfMemoryError err) {
+			log.error("Out of memory error when generating model", err);
+			throw new RenderEngineException("Out of memory error when generating model", err);
+		} catch (Exception ex) {
+			log.error("Error occured generating model", ex);
+			throw new RenderEngineException("Error occured generating model", ex);
+		}
 	}
 	
-	public DemCanvas generate(int reqdWidth, int reqdHeight, int tileSize, boolean skipElevation)
+	public DemCanvas generate(int reqdWidth, int reqdHeight, int tileSize, boolean skipElevation) throws RenderEngineException
 	{
 		
 
@@ -173,8 +190,16 @@ public class Dem2dGenerator extends RenderEngine
 					}
 					tileCol++;	
 					
+					if (isCancelled()) {
+						log.warn("Render process cancelled, model not complete.");
+						break;
+					}
 				}
 				tileRow++;
+				if (isCancelled()) {
+					log.warn("Render process cancelled, model not complete.");
+					break;
+				}
 			}	
 		} else {
 			log.info("There was no elevation data to render");
@@ -194,12 +219,12 @@ public class Dem2dGenerator extends RenderEngine
 		return outputCanvas;
 	}
 	
-	public DemCanvas generate(int fromRow, int toRow, int fromColumn, int toColumn)
+	public DemCanvas generate(int fromRow, int toRow, int fromColumn, int toColumn) throws RenderEngineException
 	{
 		return generate(fromRow, toRow, fromColumn, toColumn, null);
 	}
 	
-	public DemCanvas generate(int fromRow, int toRow, int fromColumn, int toColumn, DemCanvas canvas)
+	public DemCanvas generate(int fromRow, int toRow, int fromColumn, int toColumn, DemCanvas canvas) throws RenderEngineException
 	{
 		
 		
@@ -345,6 +370,13 @@ public class Dem2dGenerator extends RenderEngine
 					}
 
 					canvas.setColor(imgCol, imgRow, color);
+					
+	
+				}
+				
+				if (isCancelled()) {
+					log.warn("Render process cancelled, model not complete.");
+					break;
 				}
 			}
 			
@@ -359,7 +391,10 @@ public class Dem2dGenerator extends RenderEngine
 				progress = pctComplete;
 			}
 			
-			
+			if (isCancelled()) {
+				log.warn("Render process cancelled, model not complete.");
+				break;
+			}
 		}
 		
 		
@@ -462,8 +497,13 @@ public class Dem2dGenerator extends RenderEngine
 		return color;
 	}
 	
-	public void applyShapefileLayers(DemCanvas canvas)
+	public void applyShapefileLayers(DemCanvas canvas) throws RenderEngineException
 	{
+		if (isCancelled()) {
+			log.warn("Render process cancelled, model not complete.");
+			return;
+		}
+		
 		int numLayers = dataPackage.getShapeFiles().size();
 		int layerNumber = 0;
 		
@@ -500,10 +540,17 @@ public class Dem2dGenerator extends RenderEngine
 				shapeBase.close();
 				fireTileCompletionListeners(canvas, canvas, ((double)layerNumber) / ((double)numLayers));
 				
+			} catch (OutOfMemoryError err) {
+				throw err;
 			} catch(Exception ex) {
-				ex.printStackTrace();
+				throw new RenderEngineException("Error occured rendering shape files", ex);
+				//ex.printStackTrace();
 			}
 			
+			if (isCancelled()) {
+				log.warn("Render process cancelled, model not complete.");
+				break;
+			}
 		}
 		
 		log.info("Completed shapefile rendering");
@@ -572,6 +619,10 @@ public class Dem2dGenerator extends RenderEngine
 
 				}					
 			}	
+			if (isCancelled()) {
+				log.warn("Render process cancelled, model not complete.");
+				break;
+			}
 		}
 
 	}
