@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+import us.wthr.jdem846.i18n.I18N;
+
 /** Provides a simple means of log formatting.
  * 
  * @author Kevin M. Gill
@@ -60,7 +62,7 @@ public class SimpleEntryFormatter extends Formatter
 	 */
 	protected static String getFormattedDate(long millis)
 	{
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSS z");
+		SimpleDateFormat sdf = new SimpleDateFormat(I18N.get("us.wthr.jdem846.log.dateFormat", "yyyy.MM.dd HH:mm:ss.SSS z"));
 		Date date = new Date(millis);
 		return sdf.format(date);
 	}

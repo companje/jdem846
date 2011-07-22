@@ -25,45 +25,9 @@ import java.util.Set;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
 
-/*
- * <jdem846>
-	<project>
-		<options>
-			<width>3000</width>
-			<height>3000</height>
-			<hill-shading>true</hill-shading>
-			<hill-shading-type>1002</hill-shading-type>
-			<coloring-type>1050</coloring-type>
-			<tile-size>1000</tile-size>
-			<lighting-multiple>0.5</lighting-multiple>
-		</options>
-		<input-files>
-			<input>C:/Documents and Settings/a345926/My Documents/testdata/ned_64087130.flt</input>
-		</input-files>
-	</project>
-</jdem846>
- */
-
 public class ProjectModel 
 {
-	
-	/*
-	private String engine;
-	private int width;
-	private int height;
-	private boolean hillShading;
-	private int hillShadingType;
-	private String coloringType;
-	private int tileSize;
-	private double lightingMultiple;
-	private int spotExponent;
-	
-	private String backgroundColor;
-	private String gradientLevels;
-	
-	private double lightingAzimuth;
-	private double lightingElevation;
-	*/
+
 	
 	private Map<String, String> optionsMap = new HashMap<String, String>();
 	private List<String> inputFiles = new LinkedList<String>();

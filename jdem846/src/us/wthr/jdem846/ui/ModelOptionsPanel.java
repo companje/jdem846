@@ -439,10 +439,10 @@ public class ModelOptionsPanel extends JPanel
 		
 		public HillShadingOptionsListModel()
 		{
-			addItem("Lighten", DemConstants.HILLSHADING_LIGHTEN);
-			addItem("Darken", DemConstants.HILLSHADING_DARKEN);
-			addItem("Combined", DemConstants.HILLSHADING_COMBINED);
-			addItem("None", DemConstants.HILLSHADING_NONE);
+			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillShadeOptions.lighten"), DemConstants.HILLSHADING_LIGHTEN);
+			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillShadeOptions.darken"), DemConstants.HILLSHADING_DARKEN);
+			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillShadeOptions.combined"), DemConstants.HILLSHADING_COMBINED);
+			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillShadeOptions.none"), DemConstants.HILLSHADING_NONE);
 		}
 	}
 	

@@ -18,7 +18,7 @@ package us.wthr.jdem846.color;
 
 import us.wthr.jdem846.annotations.DemColoring;
 
-@DemColoring(name="Green Tint", identifier="green-tint", allowGradientConfig=false, needsMinMaxElevation=false)
+@DemColoring(name="us.wthr.jdem846.color.greenTint.name", identifier="green-tint", allowGradientConfig=false, needsMinMaxElevation=false)
 public class GreenTint implements ModelColoring
 {
 

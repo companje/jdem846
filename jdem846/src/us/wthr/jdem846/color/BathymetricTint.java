@@ -18,7 +18,7 @@ package us.wthr.jdem846.color;
 
 import us.wthr.jdem846.annotations.DemColoring;
 
-@DemColoring(name="Bathymetric Tint", identifier="bathymetric-tint", needsMinMaxElevation=true)
+@DemColoring(name="us.wthr.jdem846.color.bathymetricTint.name", identifier="bathymetric-tint", needsMinMaxElevation=true)
 public class BathymetricTint extends GradientColoring
 {
 	

@@ -417,13 +417,13 @@ public class JdemFrame extends JFrame
 		
 		if (engine.generatesImage()) {
 			OutputImageViewPanel outputPanel = new OutputImageViewPanel(engine);
-			tabPane.addTab("Model", outputPanel, true);
+			tabPane.addTab(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelTabTitle"), outputPanel, true);
 			tabPane.setSelectedComponent(outputPanel);
 			outputPanel.startWorker();
 		} else {
 			
 			DataGenerationViewPanel outputPanel = new DataGenerationViewPanel(engine);
-			tabPane.addTab("Dataset", outputPanel, true);
+			tabPane.addTab(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.dataTabTitle"), outputPanel, true);
 			tabPane.setSelectedComponent(outputPanel);
 			outputPanel.startWorker();
 		}

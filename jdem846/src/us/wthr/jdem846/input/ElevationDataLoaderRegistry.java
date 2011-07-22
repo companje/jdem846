@@ -31,6 +31,7 @@ import us.wthr.jdem846.JDemMain;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -52,7 +53,10 @@ public class ElevationDataLoaderRegistry  implements AppRegistry
 		Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
 		ElevationDataLoader annotation = (ElevationDataLoader) clazz.getAnnotation(ElevationDataLoader.class);
 		
-		ElevationDataLoaderInstance instance = new ElevationDataLoaderInstance(clazzName, annotation.name(), annotation.identifier(), annotation.extension());
+		String name = annotation.name();
+		name = I18N.get(name, name);
+		
+		ElevationDataLoaderInstance instance = new ElevationDataLoaderInstance(clazzName, name, annotation.identifier(), annotation.extension());
 		instanceMap.put(annotation.identifier(), instance);
 	}
 	

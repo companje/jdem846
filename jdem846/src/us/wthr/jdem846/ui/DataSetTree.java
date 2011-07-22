@@ -57,7 +57,7 @@ public class DataSetTree extends JPanel
 	
 	private JTree tree;
 	private JScrollPane scrollPane;
-	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("Datasets");
+	private DefaultMutableTreeNode top = new DefaultMutableTreeNode(I18N.get("us.wthr.jdem846.ui.dataSetTree.node.datasets"));
 	private DefaultTreeModel treeModel;
 	
 	private DefaultMutableTreeNode elevationNode;

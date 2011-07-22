@@ -31,6 +31,7 @@ import us.wthr.jdem846.JDemMain;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -48,7 +49,10 @@ public class EngineRegistry  implements AppRegistry
 		Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
 		DemEngine annotation = (DemEngine) clazz.getAnnotation(DemEngine.class);
 
-		EngineInstance engineInstance = new EngineInstance(clazzName, annotation.name(), annotation.identifier());
+		String name = annotation.name();
+		name = I18N.get(name, name);
+		
+		EngineInstance engineInstance = new EngineInstance(clazzName, name, annotation.identifier());
 		engineInstance.setEnabled(annotation.enabled());
 		engineInstance.setUsesWidth(annotation.usesWidth());
 		engineInstance.setUsesHeight(annotation.usesHeight());

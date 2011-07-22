@@ -19,7 +19,7 @@ package us.wthr.jdem846.color;
 import us.wthr.jdem846.annotations.DemColoring;
 
 
-@DemColoring(name="Hypsometric Tint", identifier="hypsometric-tint", needsMinMaxElevation=true)
+@DemColoring(name="us.wthr.jdem846.color.hypsometricTint.name", identifier="hypsometric-tint", needsMinMaxElevation=true)
 public class HypsometricTint extends GradientColoring
 {
 

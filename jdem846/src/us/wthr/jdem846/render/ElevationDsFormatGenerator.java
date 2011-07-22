@@ -31,7 +31,7 @@ import us.wthr.jdem846.scaling.RasterScale;
 import us.wthr.jdem846.scaling.ResizeDimensions;
 
 
-@DemEngine(name="Elevation Dataset Generator", 
+@DemEngine(name="us.wthr.jdem846.render.elevationDsFormatGenerator.name", 
 			identifier="edef-gen", 
 			usesWidth=true,
 			usesHeight=true,

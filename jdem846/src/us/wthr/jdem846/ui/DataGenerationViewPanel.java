@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.RenderEngine;
@@ -73,8 +74,8 @@ public class DataGenerationViewPanel extends JPanel
 				setWorking(false);
 				
 				JOptionPane.showMessageDialog(getRootPane(),
-					    "Caught error when generating the model: " + ex.getMessage(),
-					    "Model Failed",
+					    I18N.get("us.wthr.jdem846.ui.dataGenerationViewPanel.modelFailed.message") + ": " + ex.getMessage(),
+					    I18N.get("us.wthr.jdem846.ui.dataGenerationViewPanel.modelFailed.title"),
 					    JOptionPane.ERROR_MESSAGE);
 				
 			}
@@ -125,7 +126,7 @@ public class DataGenerationViewPanel extends JPanel
 
 	protected void setWorking(boolean isWorking) 
 	{
-		statusBar.setStatus(((isWorking) ? "Working..." : "Done"));
+		statusBar.setStatus(((isWorking) ? I18N.get("us.wthr.jdem846.ui.working") : I18N.get("us.wthr.jdem846.ui.done")));
 		this.isWorking = isWorking;
 	}
 	

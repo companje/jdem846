@@ -25,7 +25,7 @@ import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
-@ElevationDataLoader(name="ESRI GridAscii", identifier="esri-gridascii", extension="asc")
+@ElevationDataLoader(name="us.wthr.jdem846.input.esri.gridAscii.name", identifier="esri-gridascii", extension="asc")
 public class GridAscii extends DataSource
 {
 	private static Log log = Logging.getLog(GridAscii.class);
