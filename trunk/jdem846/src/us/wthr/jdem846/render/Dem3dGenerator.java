@@ -107,7 +107,8 @@ public class Dem3dGenerator extends RenderEngine
 			log.info("Rendering tile #" + (int)tileNum + " of " + (int)numTiles + " (" + z + " to " + endZ + ")");
 			
 			renderTile(buffer, z, endZ);
-
+			
+			
 		}
 		
 		log.info("Transferring pixel data to image");
@@ -278,6 +279,7 @@ public class Dem3dGenerator extends RenderEngine
 				pctComplete = Math.floor(pctComplete * 100);
 				if (pctComplete > progress) {
 					log.info("Percent Complete: " + pctComplete + "%");
+					
 					//System.out.println("Percent Complete: " + (pctComplete) + "%");
 				}
 				progress = pctComplete;
