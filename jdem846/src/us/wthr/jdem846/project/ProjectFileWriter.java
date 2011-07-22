@@ -60,9 +60,11 @@ public class ProjectFileWriter
         for (String key : projectModel.getOptionKeys()) {
         	String value = projectModel.getOption(key);
         	if (value != null) {
-	        	Element element = options.addElement("option");
+        		
+        		Element element = options.addElement("option");
 	        	element.addAttribute("key", key);
-	        	element.addText(projectModel.getOption(key));
+        		element.addCDATA(value);
+
         	}
         }
         
