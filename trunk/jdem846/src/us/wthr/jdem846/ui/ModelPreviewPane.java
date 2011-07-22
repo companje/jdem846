@@ -109,7 +109,7 @@ public class ModelPreviewPane extends TitledRoundedPanel
 			return;
 		}
 
-		JdemFrame.getInstance().setGlassVisible("Working...", this.getWindowLocation(), true);
+		JdemFrame.getInstance().setGlassVisible("Working...", this, true);
 
 			float width = getWidth();
 			float height = getHeight();
