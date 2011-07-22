@@ -21,6 +21,8 @@ import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import us.wthr.jdem846.i18n.I18N;
+
 @SuppressWarnings("serial")
 public class DataOverviewPanel extends JPanel
 {
@@ -42,35 +44,35 @@ public class DataOverviewPanel extends JPanel
 		layout.setHgap(5);
 		setLayout(layout);
 		
-		JLabel label = new JLabel("Rows:");
+		JLabel label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.rows") + ":");
 		add(label);
 		add(jlblRows);
 		
-		label = new JLabel("North Latitude:");
+		label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.northLatitude") + ":");
 		add(label);
 		add(jlblMaxLatitude);
 		
-		label = new JLabel("East Longitude:");
+		label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.eastLongitude") + ":");
 		add(label);
 		add(jlblMaxLongitude);
 		
-		label = new JLabel("Columns:");
+		label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.columns") + ":");
 		add(label);
 		add(jlblColumns);
 		
-		label = new JLabel("South Latitude:");
+		label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.southLatitude") + ":");
 		add(label);
 		add(jlblMinLatitude);
 		
-		label = new JLabel("West Longitude:");
+		label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.westLongitude") + ":");
 		add(label);
 		add(jlblMinLongitude);
 		
-		//label = new JLabel("Max Elevation:");
+		//label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.maxElevation") + ":");
 		//add(label);
 		//add(jlblMaxElevation);
 		
-		//label = new JLabel("Minimum Elevation:");
+		//label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.minElevation") + ":");
 		//add(label);
 		//add(jlblMinElevation);
 		

@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.i18n.I18N;
 
 @SuppressWarnings("serial")
 public class TopButtonBar extends JToolBar
@@ -50,24 +51,24 @@ public class TopButtonBar extends JToolBar
 	{
 		// Create components
 		
-		jbtnNewProject = new ToolbarButton("New Project", "/us/wthr/jdem846/ui/icons/dim24x24/document-new.png", new ActionListener() {
+		jbtnNewProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"), "/us/wthr/jdem846/ui/icons/dim24x24/document-new.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_NEW_PROJECT);
 			}
 		});
 		
-		jbtnOpenProject = new ToolbarButton("Open Project", "/us/wthr/jdem846/ui/icons/dim24x24/document-open.png", new ActionListener() {
+		jbtnOpenProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectButton"), "/us/wthr/jdem846/ui/icons/dim24x24/document-open.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_OPEN_PROJECT);
 			}
 		});
 		
-		jbtnSaveProject = new ToolbarButton("Save Project", "/us/wthr/jdem846/ui/icons/dim24x24/document-save.png", new ActionListener() {
+		jbtnSaveProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectButton"), "/us/wthr/jdem846/ui/icons/dim24x24/document-save.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_SAVE_PROJECT);
 			}
 		});
-		jbtnExit = new ToolbarButton("Exit", "/us/wthr/jdem846/ui/icons/dim24x24/application-exit.png", new ActionListener() {
+		jbtnExit = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.exitButton"), "/us/wthr/jdem846/ui/icons/dim24x24/application-exit.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_EXIT);
 			}
@@ -80,10 +81,10 @@ public class TopButtonBar extends JToolBar
 			jbtnExit.setTextDisplayed(false);
 		}
 		
-		jbtnNewProject.setToolTipText("Create a blank (default) project");
-		jbtnOpenProject.setToolTipText("Open a previously saved project");
-		jbtnSaveProject.setToolTipText("Save the project to be opened later");
-		jbtnExit.setToolTipText("Exit the application");
+		jbtnNewProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectTooltip"));
+		jbtnOpenProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectTooltip"));
+		jbtnSaveProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectTooltip"));
+		jbtnExit.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.exitTooltip"));
 		
 		this.setMargin(new Insets(3, 3, 3, 3));
 		

@@ -20,6 +20,7 @@ package us.wthr.jdem846;
 
 import us.wthr.jdem846.ServiceKernel.ServiceThreadListener;
 import us.wthr.jdem846.exception.RegistryException;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.ui.SplashScreen;
@@ -81,12 +82,12 @@ public class JDemMain
 			splash.setCopyright(coreProperties.getProperty("us.wthr.jdem846.copyRight"));
 			splash.setVisible(true);
 			
-			SplashScreen.addIcon("/us/wthr/jdem846/ui/icons/dim48x48/applications-system.png", "System");
+			SplashScreen.addIcon("/us/wthr/jdem846/ui/icons/dim48x48/applications-system.png", I18N.get("us.wthr.jdem846.ui.system"));
 		}
 
 		
 		try {
-			SplashScreen.addIcon("/us/wthr/jdem846/ui/icons/dim48x48/applications-utilities.png", "Configuration");
+			SplashScreen.addIcon("/us/wthr/jdem846/ui/icons/dim48x48/applications-utilities.png", I18N.get("us.wthr.jdem846.ui.configuration"));
 			
 			RegistryKernel regKernel = new RegistryKernel();
 			regKernel.init();
@@ -96,7 +97,7 @@ public class JDemMain
 		
 		try {
 			
-			SplashScreen.addIcon("/us/wthr/jdem846/ui/icons/dim48x48/applications-internet.png", "Services");
+			SplashScreen.addIcon("/us/wthr/jdem846/ui/icons/dim48x48/applications-internet.png", I18N.get("us.wthr.jdem846.ui.service"));
 			
 			ServiceKernel serviceKernel = new ServiceKernel();
 			serviceKernel.addServiceThreadListener(new ServiceThreadListener() {

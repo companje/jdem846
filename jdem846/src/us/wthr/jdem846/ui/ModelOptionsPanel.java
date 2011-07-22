@@ -46,6 +46,7 @@ import us.wthr.jdem846.color.ColorInstance;
 import us.wthr.jdem846.color.ColorRegistry;
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.EngineInstance;
@@ -86,7 +87,7 @@ public class ModelOptionsPanel extends JPanel
 	
 	public ModelOptionsPanel()
 	{
-		TitledRoundedPanel controlGrid = new TitledRoundedPanel("Model Options");
+		TitledRoundedPanel controlGrid = new TitledRoundedPanel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.controlGrid.title"));
 		GridLayout gridLayout = new GridLayout(10, 2);
 		gridLayout.setVgap(2);
 		controlGrid.setLayout(gridLayout);
@@ -149,16 +150,17 @@ public class ModelOptionsPanel extends JPanel
 		//lightPositionConfigPanel.setBorder(new StandardTitledBorder("Light Direction"));
 		//gradientConfigPanel.setBorder(new StandardTitledBorder("Gradients"));
 		// Set tool tips
-		jtxtWidth.setToolTipText("Output width");
-		jtxtHeight.setToolTipText("Output height");
-		jcmbEngine.setToolTipText("Output data engine");
-		jcmbBackgroundColor.setToolTipText("Image background color");
-		jcmbColoring.setToolTipText("Elevation shaded relief method");
-		jcmbHillshading.setToolTipText("Hill shading method");
-		jtxtTileSize.setToolTipText("Width & height of data tiles used during processing");
-		jsldLightMultiple.setToolTipText("Hillshading intensity");
-		jsldSpotExponent.setToolTipText("Intensity distribution of the lighting");
-		jsldElevationMultiple.setToolTipText("Elevation exaggeration multiple");
+		
+		jtxtWidth.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.widthText.tooltip"));
+		jtxtHeight.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.heightText.tooltip"));
+		jcmbEngine.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.engineCombo.tooltip"));
+		jcmbBackgroundColor.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.tooltip"));
+		jcmbColoring.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.coloringCombo.tooltip"));
+		jcmbHillshading.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.tooltip"));
+		jtxtTileSize.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.tooltip"));
+		jsldLightMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.tooltip"));
+		jsldSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
+		jsldElevationMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.tooltip"));
 		
 		
 		
@@ -238,25 +240,25 @@ public class ModelOptionsPanel extends JPanel
 		});
 		
 		// Set Layout
-		controlGrid.add(new JLabel("Engine:"));
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.engineCombo.label") + ":"));
 		controlGrid.add(jcmbEngine);
-		controlGrid.add(new JLabel("Width:"));
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.widthText.label") + ":"));
 		controlGrid.add(jtxtWidth);
-		controlGrid.add(new JLabel("Height:"));
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.heightText.label") + ":"));
 		controlGrid.add(jtxtHeight);
-		controlGrid.add(new JLabel("Background Color:"));
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.label") + ":"));
 		controlGrid.add(jcmbBackgroundColor);
-		controlGrid.add(new JLabel("Coloring:"));
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.coloringCombo.label") + ":"));
 		controlGrid.add(jcmbColoring);
-		controlGrid.add(new JLabel("Hillshading:"));
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.label") + ":"));
 		controlGrid.add(jcmbHillshading);
-		controlGrid.add(new JLabel("Light Multiple:"));
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.label") + ":"));
 		controlGrid.add(jsldLightMultiple);
-		controlGrid.add(new JLabel("Spot Exponent:"));
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.label") + ":"));
 		controlGrid.add(jsldSpotExponent);
-		controlGrid.add(new JLabel("Tile Size:"));
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.label") + ":"));
 		controlGrid.add(jtxtTileSize);
-		controlGrid.add(new JLabel("Elevation Multiple:"));
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.label") + ":"));
 		controlGrid.add(jsldElevationMultiple);
 		
 		

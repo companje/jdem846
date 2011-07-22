@@ -30,6 +30,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.TitledRoundedPanel;
@@ -54,7 +55,7 @@ public class ProjectionConfigPanel extends TitledRoundedPanel
 	
 	public ProjectionConfigPanel()
 	{
-		super("Projection");
+		super(I18N.get("us.wthr.jdem846.ui.projectionConfigPanel.title"));
 		jlblRotateAngles = new JLabel("");
 		projectionPreview = new ProjectionPreview(new Dimension(250, 250));
 		
@@ -214,7 +215,7 @@ public class ProjectionConfigPanel extends TitledRoundedPanel
 			jsldRotateX.setValue((int)x);
 			jsldRotateY.setValue((int)y);
 		}
-		jlblRotateAngles.setText("Rotation X/Y: " + x + ", " + y);
+		jlblRotateAngles.setText(I18N.get("us.wthr.jdem846.ui.projectionConfigPanel.rotationXY") + ": " + x + ", " + y);
 		projectionPreview.setRotateX(x);
 		projectionPreview.setRotateY(y);
 		projectionPreview.setRotateZ(z);

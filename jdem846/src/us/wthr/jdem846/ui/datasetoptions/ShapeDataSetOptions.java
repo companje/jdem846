@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
@@ -47,7 +48,7 @@ public class ShapeDataSetOptions extends TitledRoundedPanel
 	
 	public ShapeDataSetOptions(ShapeFileRequest shapeFileRequest)
 	{
-		super("Shape Options");
+		super(I18N.get("us.wthr.jdem846.ui.datasetoptions.shapeOptions.title"));
 		
 		this.shapeFileRequest = shapeFileRequest;
 		
@@ -75,7 +76,7 @@ public class ShapeDataSetOptions extends TitledRoundedPanel
 		setLayout(gridLayout);
 		//setBorder(new StandardTitledBorder("Shape Options"));
 		
-		add(new JLabel("Shape Styles:"));
+		add(new JLabel(I18N.get("us.wthr.jdem846.ui.datasetoptions.shapeOptions.shapeStyles") + ":"));
 		add(jcmbShapeStyles);
 		
 		

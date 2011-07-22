@@ -28,13 +28,17 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 
 @SuppressWarnings("serial")
 public class VisualPreviewPanel extends JPanel
 {
-	protected final static String NAME_PREVIEW = "Preview";
-	protected final static String NAME_LAYOUT = "Data Layout";
+	//protected final static String NAME_PREVIEW = "Preview";
+	//protected final static String NAME_LAYOUT = "Data Layout";
+	
+	protected String NAME_PREVIEW;
+	protected String NAME_LAYOUT;
 	
 	private DataInputLayoutPane layoutPane;
 	private ModelPreviewPane previewPane;
@@ -50,8 +54,11 @@ public class VisualPreviewPanel extends JPanel
 		layoutPane = new DataInputLayoutPane(dataPackage, modelOptions);
 		previewPane = new ModelPreviewPane(dataPackage, modelOptions);
 		
-		jradLayout = new JRadioButton("Data Layout");
-		jradPreview = new JRadioButton("Preview");
+		NAME_PREVIEW = I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.preview.label");
+		NAME_LAYOUT = I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.layout.label");
+		
+		jradLayout = new JRadioButton(NAME_LAYOUT);
+		jradPreview = new JRadioButton(NAME_PREVIEW);
 		
 		ButtonGroup group = new ButtonGroup();
 		group.add(jradLayout);
@@ -62,8 +69,8 @@ public class VisualPreviewPanel extends JPanel
 		
 		
 		// Set Tooltips
-		jradLayout.setToolTipText("Display the relative layout of the data raster inputs");
-		jradPreview.setToolTipText("Display a limited preview of the model with the current options");
+		jradLayout.setToolTipText(I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.layout.tooltip"));
+		jradPreview.setToolTipText(I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.preview.tooltip"));
 		
 		// Set Layout
 		jpnlCards = new JPanel(new CardLayout());

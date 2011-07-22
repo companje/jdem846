@@ -26,6 +26,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
+import us.wthr.jdem846.i18n.I18N;
+
 @SuppressWarnings("serial")
 public class ProjectButtonBar extends JToolBar
 {
@@ -44,28 +46,28 @@ public class ProjectButtonBar extends JToolBar
 		// Create components
 		
 		
-		jbtnAdd = new ToolbarButton("Add", "/us/wthr/jdem846/ui/icons/list-add.png", new ActionListener() {
+		jbtnAdd = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.addButton"), "/us/wthr/jdem846/ui/icons/list-add.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_ADD);
 			}
 		});
 		
-		jbtnRemove = new ToolbarButton("Remove", "/us/wthr/jdem846/ui/icons/list-remove.png", new ActionListener() {
+		jbtnRemove = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.removeButton"), "/us/wthr/jdem846/ui/icons/list-remove.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_REMOVE);
 			}
 		});
 		
-		jbtnCreate = new ToolbarButton("Create", "/us/wthr/jdem846/ui/icons/stock_update-data.png", new ActionListener() {
+		jbtnCreate = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.createButton"), "/us/wthr/jdem846/ui/icons/stock_update-data.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_CREATE);
 			}
 		});
 
 		// Set tooltips
-		jbtnAdd.setToolTipText("Add a new data raster to the model");
-		jbtnRemove.setToolTipText("Remove the selected data raster from the model");
-		jbtnCreate.setToolTipText("Start the modeling process");
+		jbtnAdd.setToolTipText(I18N.get("us.wthr.jdem846.ui.projectButtonBar.addTooltip"));
+		jbtnRemove.setToolTipText(I18N.get("us.wthr.jdem846.ui.projectButtonBar.removeTooltip"));
+		jbtnCreate.setToolTipText(I18N.get("us.wthr.jdem846.ui.projectButtonBar.createTooltip"));
 		
 
 		this.setMargin(new Insets(3, 3, 3, 3));

@@ -33,6 +33,7 @@ import javax.swing.event.ChangeListener;
 
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.ui.GradientLevelsControl.GradientChangedListener;
 
 @SuppressWarnings("serial")
@@ -50,17 +51,17 @@ public class GradientConfigPanel extends TitledRoundedPanel
 	
 	public GradientConfigPanel()
 	{
-		super("Gradients");
+		super(I18N.get("us.wthr.jdem846.ui.gradientConfigPanel.title"));
 		
 		// Create components
 		//this.setBorder(BorderFactory.createEtchedBorder());
 		levelsControl = new GradientLevelsControl();
 		samplePanel = new GradientSamplePanel();
-		jbtnReset = new JButton("Reset");
+		jbtnReset = new JButton(I18N.get("us.wthr.jdem846.ui.gradientConfigPanel.resetButton.label"));
 		jbtnReset.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
 		
 		// Set tooltips
-		jbtnReset.setToolTipText("Reset levels back to their defaults");
+		jbtnReset.setToolTipText(I18N.get("us.wthr.jdem846.ui.gradientConfigPanel.resetButton.tooltip"));
 		
 		// Add listeners
 		levelsControl.addGradientChangedListener(new GradientChangedListener() {

@@ -34,6 +34,7 @@ import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -103,45 +104,50 @@ public class OutputImageViewPanel extends JdemPanel
 		// as it is drawn.
 		imageDisplay.setScalePercent(0.0);
 		
-		modelMenu = new ComponentMenu(this, "Model", KeyEvent.VK_M);
+		modelMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu"), KeyEvent.VK_M);
 		MainMenuBar.insertMenu(modelMenu);
 		
-		modelMenu.add(new MenuItem("Save Image", "/us/wthr/jdem846/ui/icons/document-save.png", KeyEvent.VK_A, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.save"), "/us/wthr/jdem846/ui/icons/document-save.png", KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onSave();
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.SHIFT_MASK | ActionEvent.CTRL_MASK)));
 
-		modelMenu.add(new MenuItem("Zoom In", "/us/wthr/jdem846/ui/icons/zoom-in.png", KeyEvent.VK_I, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomIn"), "/us/wthr/jdem846/ui/icons/zoom-in.png", KeyEvent.VK_I, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onZoomIn();
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.SHIFT_MASK | ActionEvent.CTRL_MASK)));
 		
-		modelMenu.add(new MenuItem("Zoom Out", "/us/wthr/jdem846/ui/icons/zoom-out.png", KeyEvent.VK_O, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomOut"), "/us/wthr/jdem846/ui/icons/zoom-out.png", KeyEvent.VK_O, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onZoomOut();
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.SHIFT_MASK | ActionEvent.CTRL_MASK)));
 		
-		modelMenu.add(new MenuItem("Zoom Fit", "/us/wthr/jdem846/ui/icons/zoom-fit-best.png", KeyEvent.VK_F, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomFit"), "/us/wthr/jdem846/ui/icons/zoom-fit-best.png", KeyEvent.VK_F, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onZoomFit();
 			}
 		}));
 		
-		modelMenu.add(new MenuItem("Zoom Actual", "/us/wthr/jdem846/ui/icons/zoom-original.png", KeyEvent.VK_A, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomActual"), "/us/wthr/jdem846/ui/icons/zoom-original.png", KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onZoomActual();
 			}
 		}));
 		
-		
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.stop"), "/us/wthr/jdem846/ui/icons/process-stop.png", KeyEvent.VK_S, new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				onStop();
+			}
+		}));
 		// Add listeners
 		
 		this.addComponentListener(new ComponentAdapter() {
@@ -235,8 +241,8 @@ public class OutputImageViewPanel extends JdemPanel
 				
 				
 				JOptionPane.showMessageDialog(getRootPane(),
-					    "Caught error when generating the model: " + ex.getMessage(),
-					    "Model Failed",
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.message") + ": " + ex.getMessage(),
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.title"),
 					    JOptionPane.ERROR_MESSAGE);
 				
 				repaint();
@@ -303,13 +309,13 @@ public class OutputImageViewPanel extends JdemPanel
 		log.info("Save");
 		
 		JFileChooser chooser = new BasicFileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG", "png");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.png"), "png");
 		chooser.setFileFilter(filter);
 		
-		filter = new FileNameExtensionFilter("JPEG", "jpg", "jpeg");
+		filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.jpeg"), "jpg", "jpeg");
 		chooser.setFileFilter(filter);
 		
-		filter = new FileNameExtensionFilter("Supported Types", "png", "jpg", "jpeg");
+		filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.supportedTypes"), "png", "jpg", "jpeg");
 		chooser.setFileFilter(filter);
 		
 		
@@ -336,15 +342,15 @@ public class OutputImageViewPanel extends JdemPanel
 			public void onSaveSuccessful()
 			{
 				JOptionPane.showMessageDialog(getRootPane(),
-					    "Image exported successfully",
-					    "Export Successful",
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveSuccess.message"),
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveSuccess.title"),
 					    JOptionPane.INFORMATION_MESSAGE);
 			}
 			public void onSaveFailed(Exception ex)
 			{
 				JOptionPane.showMessageDialog(getRootPane(),
-					    "Error exporting image: " + ex.getMessage(),
-					    "Export Error",
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveFailed.message") + ": " + ex.getMessage(),
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveFailed.title"),
 					    JOptionPane.ERROR_MESSAGE);
 			}
 		});
@@ -391,7 +397,7 @@ public class OutputImageViewPanel extends JdemPanel
 		double mouseLatitude = dataPackage.rowToLatitude(trueY);
 		double mouseLongitude = dataPackage.columnToLongitude(trueX);
 		
-		DecimalFormat formatter = new DecimalFormat("#.#####");
+		DecimalFormat formatter = new DecimalFormat(I18N.get("us.wthr.jdem846.ui.decimalFormat"));
 		String strMouseLatitude = formatter.format(mouseLatitude);
 		String strMouseLongitude = formatter.format(mouseLongitude);;
 		
@@ -399,7 +405,7 @@ public class OutputImageViewPanel extends JdemPanel
 		if (elevation == DemConstants.ELEV_NO_DATA || elevation == dataPackage.getNoData())
 			elevation = 0;
 		
-		statusBar.setStatus("X/Y: " + trueX + " / " + trueY + ", Latitude/Longitude: " + strMouseLatitude + " / " + strMouseLongitude + ", Elevation: " + elevation);
+		statusBar.setStatus("X/Y: " + trueX + " / " + trueY + ", " + I18N.get("us.wthr.jdem846.ui.latitude") + "/" + I18N.get("us.wthr.jdem846.ui.longitude") + ": " + strMouseLatitude + " / " + strMouseLongitude + ", " + I18N.get("us.wthr.jdem846.ui.elevation") + ": " + elevation);
 		
 		
 	}

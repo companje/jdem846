@@ -31,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
@@ -57,7 +58,7 @@ public class ModelPreviewPane extends TitledRoundedPanel
 	
 	public ModelPreviewPane(DataPackage dataPackage, ModelOptions modelOptions)
 	{
-		super("Preview");
+		super(I18N.get("us.wthr.jdem846.ui.modelPreviewPane.title"));
 		((StandardBorder) this.getBorder()).setPadding(1);
 		
 		imagePanel = new ImagePanel();
@@ -110,7 +111,7 @@ public class ModelPreviewPane extends TitledRoundedPanel
 			return;
 		}
 
-		JdemFrame.getInstance().setGlassVisible("Working...", this, true);
+		JdemFrame.getInstance().setGlassVisible(I18N.get("us.wthr.jdem846.ui.modelPreviewPane.working"), this, true);
 
 			float width = getWidth();
 			float height = getHeight();
@@ -147,8 +148,8 @@ public class ModelPreviewPane extends TitledRoundedPanel
 					JdemFrame.getInstance().setGlassVisible(false);
 					
 					JOptionPane.showMessageDialog(getRootPane(),
-						    "Caught error when generating the model: " + ex.getMessage(),
-						    "Model Failed",
+						    I18N.get("us.wthr.jdem846.ui.modelPreviewPane.modelFailed.message") + ": " + ex.getMessage(),
+						    I18N.get("us.wthr.jdem846.ui.modelPreviewPane.modelFailed.title"),
 						    JOptionPane.ERROR_MESSAGE);
 				}
 			});

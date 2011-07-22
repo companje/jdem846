@@ -34,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ImageIcons;
@@ -49,7 +50,7 @@ public class AboutDialog extends JDialog
 	{
 		super(owner);
 		this.setModal(true);
-		this.setTitle("About " + properties.getProperty("us.wthr.jdem846.applicationName"));
+		this.setTitle(I18N.get("us.wthr.jdem846.ui.about.about") + " " + properties.getProperty("us.wthr.jdem846.applicationName"));
 		
 		ImagePanel imagePanel = new ImagePanel();
 		
@@ -67,7 +68,7 @@ public class AboutDialog extends JDialog
 		infoPanel.add(jLabel);
 		infoPanel.add(Box.createRigidArea(new Dimension(0,5)));
 		
-		jLabel = new JLabel("Version: " + properties.getProperty("us.wthr.jdem846.version"));
+		jLabel = new JLabel(I18N.get("us.wthr.jdem846.ui.about.version") + ": " + properties.getProperty("us.wthr.jdem846.version"));
 		jLabel.setHorizontalAlignment(JLabel.CENTER);
 		jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		infoPanel.add(jLabel);
@@ -85,7 +86,7 @@ public class AboutDialog extends JDialog
 		infoPanel.add(jLabel);
 		infoPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		
-		JButton jbtnClose = new JButton("OK");
+		JButton jbtnClose = new JButton(I18N.get("us.wthr.jdem846.ui.ok"));
 		jbtnClose.setAlignmentX(Component.CENTER_ALIGNMENT);
 		jbtnClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)

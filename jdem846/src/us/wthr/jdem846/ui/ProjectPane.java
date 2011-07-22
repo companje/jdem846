@@ -45,6 +45,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.InvalidFileFormatException;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.input.DataSourceFactory;
@@ -152,17 +153,17 @@ public class ProjectPane extends JdemPanel
 		westPanel = new JPanel();
 		southPanel = new JPanel();
 		
-		projectMenu = new ComponentMenu(this, "Project", KeyEvent.VK_P);
+		projectMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.projectPane.menu.project"), KeyEvent.VK_P);
 		MainMenuBar.insertMenu(projectMenu);
 		
-		projectMenu.add(new MenuItem("Add", "/us/wthr/jdem846/ui/icons/list-add.png", KeyEvent.VK_A, new ActionListener() {
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.add"), "/us/wthr/jdem846/ui/icons/list-add.png", KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				openInputData();
 			}
 		}));
 		
-		projectMenu.add(new MenuItem("Remove", "/us/wthr/jdem846/ui/icons/list-remove.png", KeyEvent.VK_R, new ActionListener() {
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.remove"), "/us/wthr/jdem846/ui/icons/list-remove.png", KeyEvent.VK_R, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				int selectedType = datasetTree.getSelectedDatasetType();
@@ -171,7 +172,7 @@ public class ProjectPane extends JdemPanel
 			}
 		}));
 
-		projectMenu.add(new MenuItem("Create Model", "/us/wthr/jdem846/ui/icons/stock_update-data.png", KeyEvent.VK_C, new ActionListener() {
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.create"), "/us/wthr/jdem846/ui/icons/stock_update-data.png", KeyEvent.VK_C, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				fireCreateModelListeners();
@@ -327,9 +328,9 @@ public class ProjectPane extends JdemPanel
 		//layoutPane = new DataInputLayoutPane(dataPackage, modelOptions);
 		//previewPane = new ModelPreviewPane(dataPackage, modelOptions);
 		JTabbedPane centerPanel = new JTabbedPane();
-		centerPanel.add(modelOptionsPanel, "Options");
-		centerPanel.add(layoutPane, "Raster Layout");
-		centerPanel.add(previewPane, "Shape Preview");
+		centerPanel.add(modelOptionsPanel, I18N.get("us.wthr.jdem846.ui.projectPane.tab.options"));
+		centerPanel.add(layoutPane, I18N.get("us.wthr.jdem846.ui.projectPane.tab.layout"));
+		centerPanel.add(previewPane, I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"));
 		//centerPanel.add(previewPanel, "Layout Preview");
 		centerPanel.setTabPlacement(JTabbedPane.BOTTOM);
 		
@@ -444,13 +445,13 @@ public class ProjectPane extends JdemPanel
 				{
 					statusBar.setProgressVisible(true);
 			    	statusBar.setProgress(0);
-			    	statusBar.setStatus("Loading data...");
+			    	statusBar.setStatus(I18N.get("us.wthr.jdem846.ui.projectPane.status.loading"));
 				}
 				public void onComplete()
 				{
 					statusBar.setProgress(100);
 			    	onDataModelChanged();
-			    	statusBar.setStatus("Done.");
+			    	statusBar.setStatus(I18N.get("us.wthr.jdem846.ui.projectPane.status.done"));
 			    	statusBar.setProgressVisible(false);
 				}
 	    	});
@@ -475,8 +476,8 @@ public class ProjectPane extends JdemPanel
 		log.info("Removing elevation data #" + index);
 		if (index < 0) {
 			JOptionPane.showMessageDialog(getRootPane(),
-				    "Cannot remove: nothing selected.",
-				    "Cannot Remove",
+					I18N.get("us.wthr.jdem846.ui.projectPane.remove.nothingSelected.message"),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.remove.nothingSelected.title"),
 				    JOptionPane.WARNING_MESSAGE);
 			return;
 		}
@@ -490,8 +491,8 @@ public class ProjectPane extends JdemPanel
 		log.info("Removing shape data #" + index);
 		if (index < 0) {
 			JOptionPane.showMessageDialog(getRootPane(),
-				    "Cannot remove: nothing selected.",
-				    "Cannot Remove",
+					I18N.get("us.wthr.jdem846.ui.projectPane.remove.nothingSelected.message"),
+					I18N.get("us.wthr.jdem846.ui.projectPane.remove.nothingSelected.title"),
 				    JOptionPane.WARNING_MESSAGE);
 			return;
 		}
@@ -512,8 +513,8 @@ public class ProjectPane extends JdemPanel
 			ex.printStackTrace();
 			
 			JOptionPane.showMessageDialog(getRootPane(),
-				    "ShapeFile Load Failed: " + ex.getMessage(),
-				    "ShapeFile Load Failed",
+				    I18N.get("us.wthr.jdem846.ui.projectPane.add.shapefile.loadFailed.message") + ": " + ex.getMessage(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.add.shapefile.loadFailed.title"),
 				    JOptionPane.ERROR_MESSAGE);
 		}
 		
@@ -532,8 +533,8 @@ public class ProjectPane extends JdemPanel
 		} catch (InvalidFileFormatException ex) {
 			log.warn("Invalid file format: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(this.getRootPane(),
-				    "Invalid input file type: " + ex.getExtension(),
-				    "File Selection Error",
+				    I18N.get("us.wthr.jdem846.ui.projectPane.add.elevation.loadFailed.invalidFormat.message") + ": " + ex.getExtension(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.add.elevation.loadFailed.invalidFormat.title"),
 				    JOptionPane.ERROR_MESSAGE);
 			return;
 		}
