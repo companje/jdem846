@@ -19,6 +19,7 @@ package us.wthr.jdem846.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -81,7 +83,15 @@ public class JdemFrame extends JFrame
 		this.setLocationRelativeTo(null);
 		
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
+		
+		try {
+			Image icon = ImageIcons.loadImage("/us/wthr/jdem846/images/jdem846-icon.png");
+			this.setIconImage(icon);
+		} catch (IOException e) {
+			e.printStackTrace();
+			log.warn("Failed to load icon: " + e.getMessage(), e);
+		}
+		
 		// Create components
 		buildJMenuBar();
 		
