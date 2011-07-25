@@ -31,7 +31,7 @@ import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.ui.ModelingWorkerThread.ModelCompletionListener;
 
 @SuppressWarnings("serial")
-public class DataGenerationViewPanel extends JPanel
+public class DataGenerationViewPanel extends JdemPanel
 {
 	private DataPackage dataPackage;
 	private ModelOptions modelOptions;
@@ -128,6 +128,14 @@ public class DataGenerationViewPanel extends JPanel
 	{
 		statusBar.setStatus(((isWorking) ? I18N.get("us.wthr.jdem846.ui.working") : I18N.get("us.wthr.jdem846.ui.done")));
 		this.isWorking = isWorking;
+	}
+
+
+	@Override
+	public void cleanUp()
+	{
+		
+		
 	}
 	
 	

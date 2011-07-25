@@ -16,14 +16,47 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public abstract class JdemPanel extends JPanel
 {
+	private String title;
 	
+	public JdemPanel()
+	{
+		this.addComponentListener(new ComponentListener() {
+			public void componentHidden(ComponentEvent e) { }
+			public void componentMoved(ComponentEvent e) { }
+			public void componentResized(ComponentEvent e) { }
+			public void componentShown(ComponentEvent e)
+			{
+				JdemFrame.getInstance().setTitle(title);
+			}
+		});
+	}
+	
+	public JdemPanel(String title)
+	{
+		this();
+		this.title = title;
+		
+	}
 	
 	public abstract void cleanUp();
+
+	public String getTitle()
+	{
+		return title;
+	}
+
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
 	
 	
 }

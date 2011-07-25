@@ -78,7 +78,7 @@ public class JdemFrame extends JFrame
 		
 
 		// Set Properties
-		this.setTitle(properties.getProperty("us.wthr.jdem846.ui.windowTitle"));
+		this.setTitle(null);
 		this.setSize(properties.getIntProperty("us.wthr.jdem846.ui.windowWidth"), properties.getIntProperty("us.wthr.jdem846.ui.windowHeight"));
 		this.setLocationRelativeTo(null);
 		
@@ -311,6 +311,7 @@ public class JdemFrame extends JFrame
 	public void setComponentTabTitle(int index, String title)
 	{
 		tabPane.setTitleAt(index, title);
+		((JdemPanel)tabPane.getComponentAt(index)).setTitle(title);
 	}
 	
 	public void openProject()
@@ -352,6 +353,7 @@ public class JdemFrame extends JFrame
 			
 			tabPane.addTab(title, projectPane, true);
 			tabPane.setSelectedComponent(projectPane);
+			projectPane.setTitle(title);
 			
 		} catch (FileNotFoundException ex) {
 			log.warn("Project file not found: " + ex.getMessage(), ex);
@@ -377,6 +379,21 @@ public class JdemFrame extends JFrame
 		
 		
 		
+		
+	}
+	
+	@Override
+	public void setTitle(String title)
+	{
+		String appTitle = properties.getProperty("us.wthr.jdem846.ui.windowTitle");
+		String wndTitle = "";
+		
+		if (title != null)
+			wndTitle = title + " | " + appTitle;
+		else
+			wndTitle = appTitle;
+		
+		super.setTitle(wndTitle);
 		
 	}
 	
@@ -429,12 +446,14 @@ public class JdemFrame extends JFrame
 			OutputImageViewPanel outputPanel = new OutputImageViewPanel(engine);
 			tabPane.addTab(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelTabTitle"), outputPanel, true);
 			tabPane.setSelectedComponent(outputPanel);
+			outputPanel.setTitle(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelTabTitle"));
 			outputPanel.startWorker();
 		} else {
 			
 			DataGenerationViewPanel outputPanel = new DataGenerationViewPanel(engine);
 			tabPane.addTab(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.dataTabTitle"), outputPanel, true);
 			tabPane.setSelectedComponent(outputPanel);
+			outputPanel.setTitle(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelTabTitle"));
 			outputPanel.startWorker();
 		}
 
