@@ -1,0 +1,21 @@
+#summary Information for getting jDem846 running
+#labels Featured
+
+= Requirements = 
+  * Java runtime environment 5.0 or newer
+  * 500MB system memory (more depending on input data)
+
+= Running = 
+== Windows ==
+  * Use jdem.bat
+== Linux/Unix ==
+  * Use jdem.sh
+
+= Command-line Options = 
+|| -no-splash-screen   || Do not display splash screen on startup ||
+|| -show-splash-screen || Display splash screen on startup || 
+|| -debug              || Display log console ||
+|| -no-debug           || Do not display log console ||
+|| -show-toolbar-text  || Show text besides icons on the toolbar ||
+|| -no-toolbar-text    || Do not show text besides icons on the toolbar ||
+|| -language `<lang>`  || Use specified language (2 character ISO 639-1 code) ||
