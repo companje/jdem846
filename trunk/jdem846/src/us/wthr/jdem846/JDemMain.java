@@ -19,6 +19,7 @@ package us.wthr.jdem846;
 
 
 import us.wthr.jdem846.ServiceKernel.ServiceThreadListener;
+import us.wthr.jdem846.exception.ArgumentException;
 import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Logging;
@@ -39,9 +40,11 @@ public class JDemMain
 	 * 
 	 * @param args Command line options array.
 	 */
-	public static void checkCommandLineOptions(String[] args)
+	public static void checkCommandLineOptions(String[] args) throws ArgumentException
 	{
-		for (String arg : args) {
+		//for (String arg : args) {
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
 			
 			if (arg.equals("-no-splash-screen"))
 				System.setProperty("us.wthr.jdem846.ui.displaySplash", "false");
@@ -58,7 +61,11 @@ public class JDemMain
 			else if (arg.equals("-no-toolbar-text"))
 				System.setProperty("us.wthr.jdem846.ui.mainToolBar.displayText", "false");
 			
-			
+			else if (arg.equals("-language") && args.length >= i+2) {
+				System.setProperty("us.wthr.jdem846.ui.i18n.load", args[i+1]);
+			} else if (arg.equals("-language") && args.length < i+2) {
+				throw new ArgumentException("Missing parameter for '-language'");
+			}
 		}
 	}
 	
@@ -68,9 +75,25 @@ public class JDemMain
 	 */
 	public static void main(String[] args)
 	{
-		checkCommandLineOptions(args);
-
+		try {
+			checkCommandLineOptions(args);
+		} catch (ArgumentException ex) {
+			System.out.println("Invalid parameters: " + ex.getMessage());
+			return;
+		}
+		
 		log.info("Starting...");
+		
+		String loadLanguage = System.getProperty("us.wthr.jdem846.ui.i18n.load");
+		if (loadLanguage != null && loadLanguage.length() > 0) {
+			try {
+				I18N.loadLanguage(loadLanguage);
+			} catch (Exception ex) {
+				System.out.println("Language Error: Invalid language or failure to load language file");
+				ex.printStackTrace();
+				return;
+			}
+		}
 		
 		JDem846Properties uiProperties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
 		JDem846Properties coreProperties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);

@@ -37,26 +37,60 @@ public class I18N
 	
 	
 	static {
-		JDem846Properties uiProperties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+		try {
+			I18N.setDefaults();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void setDefaults() throws Exception
+	{
+		I18N.messages.clear();
 		
+		JDem846Properties uiProperties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+		String i18nDefaultLang = uiProperties.getProperty("us.wthr.jdem846.ui.i18n.default");
+		
+		try {
+			I18N.loadLanguage(i18nDefaultLang, false);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+	}
+	
+	public static void loadLanguage(String languageCode) throws Exception
+	{
+		I18N.loadLanguage(languageCode, true);
+	}
+	
+	public static void loadLanguage(String languageCode, boolean reset) throws Exception
+	{
+		if (reset)
+			I18N.setDefaults();
+		
+		String i18nPropertiesFile = "/us/wthr/jdem846/i18n/messages_" + languageCode + ".properties";
+		I18N.loadLanguageFile(i18nPropertiesFile);
+	}
+	
+	public static void loadLanguageFile(String i18nPropertiesFile) throws Exception
+	{
 		Properties props = new Properties();
 		try {
-			String i18nPropertiesFile = uiProperties.getProperty("us.wthr.jdem846.ui.i18n");
-			
+
 			props.load(I18N.class.getResourceAsStream(i18nPropertiesFile));
 			
 			for (Object key : props.keySet()) {
 				String sKey = (String) key;
 				String value = props.getProperty(sKey);
-				messages.put(sKey, value);
+				I18N.messages.put(sKey, value);
 			}
 			
 			log.info("Loaded internationalization properties file: " + i18nPropertiesFile);
 		} catch (Exception ex) {
 			log.error("Failed to load i18n properties", ex);
+			throw ex;
 		}
-		
-		
 		
 		
 	}
@@ -68,7 +102,7 @@ public class I18N
 	 */
 	public static String get(String key)
 	{
-		return get(key, null);
+		return I18N.get(key, null);
 	}
 	
 	/** Gets a string given the specified key, or returns the value of 'ifNull' if the key has not

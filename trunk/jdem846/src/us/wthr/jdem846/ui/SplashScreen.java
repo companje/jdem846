@@ -102,7 +102,7 @@ public class SplashScreen extends JWindow
 			g2d.drawString(copyright, 5, getHeight() - 5);
 		}
 		
-		int iconPaddingX = 30;
+		int iconPaddingX = 40;
 		int iconPaddingY = 10;
 		int iconX = iconPaddingX;
 		

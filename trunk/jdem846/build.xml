@@ -114,7 +114,7 @@
 			<fileset dir="${javadoc.dir}">
 			</fileset>
 		</copy>
-		
+		<copy file="${src.dir}/us/wthr/jdem846/images/jdem846-icon.png" todir="${dist.dir}/stage" />
 		<zip destfile="${dist.file}" duplicate="add">
 			<zipfileset dir="${dist.dir}/stage" />
 		</zip>
