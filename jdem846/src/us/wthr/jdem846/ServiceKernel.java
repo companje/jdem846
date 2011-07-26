@@ -93,7 +93,7 @@ public class ServiceKernel extends Thread
 			URL url = ClasspathUrlFinder.findClassBase(JDemMain.class);
 			AnnotationDB db = new AnnotationDB();
 			db.scanArchives(url);
-			db.crossReferenceImplementedInterfaces();
+			//db.crossReferenceImplementedInterfaces();
 			 	
 			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
 			Set<String> srvClasses = annotationIndex.get(Service.class.getName());

@@ -89,7 +89,7 @@ public class ColoringRegistry implements AppRegistry
 
 			AnnotationDB db = new AnnotationDB();
 			db.scanArchives(url);
-			db.crossReferenceImplementedInterfaces();
+			//db.crossReferenceImplementedInterfaces();
 					 	
 			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
 			Set<String> colorClasses = annotationIndex.get(DemColoring.class.getName());

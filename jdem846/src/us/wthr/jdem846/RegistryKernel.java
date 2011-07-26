@@ -54,7 +54,7 @@ public class RegistryKernel
 			URL url = ClasspathUrlFinder.findClassBase(JDemMain.class);
 			AnnotationDB db = new AnnotationDB();
 			db.scanArchives(url);
-			db.crossReferenceImplementedInterfaces();
+			//db.crossReferenceImplementedInterfaces();
 			 	
 			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
 			Set<String> regClasses = annotationIndex.get(Registry.class.getName());
