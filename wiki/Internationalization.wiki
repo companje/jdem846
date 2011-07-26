@@ -1,5 +1,5 @@
 #summary Description of internationalization within the user interface
-#labels Development,Internationalization
+#labels Phase-Implementation,Internationalization,Incomplete
 
 = Introduction =
 
