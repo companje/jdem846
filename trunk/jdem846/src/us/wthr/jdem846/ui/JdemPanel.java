@@ -28,6 +28,13 @@ public abstract class JdemPanel extends JPanel
 	
 	public JdemPanel()
 	{
+		this(null);
+	}
+	
+	public JdemPanel(String _title)
+	{
+		
+		this.title = _title;
 		this.addComponentListener(new ComponentListener() {
 			public void componentHidden(ComponentEvent e) { }
 			public void componentMoved(ComponentEvent e) { }
@@ -37,12 +44,6 @@ public abstract class JdemPanel extends JPanel
 				JdemFrame.getInstance().setTitle(title);
 			}
 		});
-	}
-	
-	public JdemPanel(String title)
-	{
-		this();
-		this.title = title;
 		
 	}
 	
