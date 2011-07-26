@@ -20,6 +20,8 @@ The following is a list of outstanding tasks for development and/or design. Thes
   * Persisted settings in user home
   * Improve layout and process flow
   * Additional image tweaking features for completed models
+    * Lighten/darken/contrast/etc...
+    * Add annotations
   * Latitude/longitude label for 3D projections on completed model panel
   * Improved thread-safety for Swing components
 
