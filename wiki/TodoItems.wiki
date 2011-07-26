@@ -19,6 +19,11 @@ The following is a list of outstanding tasks for development and/or design. Thes
   * Persisted settings in user home
   * Improve layout and process flow
   * Additional image tweaking features for completed models
+  * Latitude/longitude label for 3D projections on completed model panel
+
+= Image/Canvas = 
+  * Additional output formats
+    * GeoTIFF
 
 = Scaling / Resampling =
   * Reimplement data interpolation
