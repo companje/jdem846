@@ -13,6 +13,7 @@ The following is a list of outstanding tasks for development and/or design. Thes
   * Code documentation
   * Improved error handling
   * Add unit test cases
+  * Add Doxygen support?
 
 = User Interface =
   * Language selection control
@@ -31,6 +32,11 @@ The following is a list of outstanding tasks for development and/or design. Thes
 
 = Registry Model =
   * Strengthen model for stateful and transient instances  
+
+= DEM 2D = 
+  * Add elevation gradient level key to model
+  * Add north arrow to model
+  * Add customizable copyright label to model
 
 = DEM 3D = 
   * Replace polygon rendering with texture mapping from 2D image
