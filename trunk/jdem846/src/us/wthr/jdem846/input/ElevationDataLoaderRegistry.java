@@ -71,7 +71,7 @@ public class ElevationDataLoaderRegistry  implements AppRegistry
 			URL url = ClasspathUrlFinder.findClassBase(JDemMain.class);
 			AnnotationDB db = new AnnotationDB();
 			db.scanArchives(url);
-			db.crossReferenceImplementedInterfaces();
+			//db.crossReferenceImplementedInterfaces();
 			 	
 			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
 			Set<String> colorClasses = annotationIndex.get(ElevationDataLoader.class.getName());

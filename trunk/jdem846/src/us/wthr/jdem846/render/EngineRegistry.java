@@ -91,7 +91,7 @@ public class EngineRegistry  implements AppRegistry
 			URL url = ClasspathUrlFinder.findClassBase(JDemMain.class);
 			AnnotationDB db = new AnnotationDB();
 			db.scanArchives(url);
-			db.crossReferenceImplementedInterfaces();
+			//db.crossReferenceImplementedInterfaces();
 			 	
 			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
 			Set<String> engineClasses = annotationIndex.get(DemEngine.class.getName());
