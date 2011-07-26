@@ -1,7 +1,17 @@
 package us.wthr.jdem846.swtui;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolder2Listener;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -11,6 +21,7 @@ import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -24,9 +35,12 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.project.ProjectFileReader;
+import us.wthr.jdem846.project.ProjectModel;
 
 public class JDemShell
 {
@@ -49,7 +63,8 @@ public class JDemShell
 		
 		shell.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/images/jdem846-icon.png"));
 		
-		shell.setText(properties.getProperty("us.wthr.jdem846.ui.windowTitle"));
+		//shell.setText(properties.getProperty("us.wthr.jdem846.ui.windowTitle"));
+		setTitle(null);
 		shell.setSize(properties.getIntProperty("us.wthr.jdem846.ui.windowWidth"), properties.getIntProperty("us.wthr.jdem846.ui.windowHeight"));
 		
 		Menu menu = ShellMenu.createShellMenu(shell);
@@ -60,6 +75,23 @@ public class JDemShell
 		initMainToolbar(coolBar);
 		
 		tabFolder = new CTabFolder(shell, SWT.BORDER);
+		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		tabFolder.setSimple(false);
+		tabFolder.setUnselectedImageVisible(false);
+		tabFolder.setUnselectedCloseVisible(false);
+
+		tabFolder.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent arg0)
+			{
+				
+			}
+			public void widgetSelected(SelectionEvent arg0)
+			{
+				CTabItem tabItem = tabFolder.getSelection();
+				TabPanel panel = (TabPanel) tabItem.getControl();
+				setTitle(panel.getTitle());
+			}
+		});
 		
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
@@ -67,6 +99,11 @@ public class JDemShell
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
 		tabFolder.setLayoutData(gridData);
+		
+		
+		
+		
+		
 		
 		
 		//shell.pack();
@@ -143,26 +180,26 @@ public class JDemShell
 		
 		fileItem.setMenu (submenu);
 		
-		MenuItemFactory.createMenuItem(submenu, ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/document-new.png"), I18N.get("us.wthr.jdem846.ui.menu.file.new"), new Listener () {
+		MenuItemFactory.createMenuItem(submenu, ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/document-new.png"), I18N.get("us.wthr.jdem846.swtui.menu.file.new"), new Listener () {
 			public void handleEvent (Event e) {
 				onNew();
 			}
 		}, SWT.MOD1 + 'N');
 		
-		MenuItemFactory.createMenuItem(submenu, ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/document-open.png"), I18N.get("us.wthr.jdem846.ui.menu.file.open"), new Listener () {
+		MenuItemFactory.createMenuItem(submenu, ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/document-open.png"), I18N.get("us.wthr.jdem846.swtui.menu.file.open"), new Listener () {
 			public void handleEvent (Event e) {
 				onOpen();
 			}
 		}, SWT.MOD1 + 'O');
 		
-		MenuItemFactory.createMenuItem(submenu, ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/document-save.png"), I18N.get("us.wthr.jdem846.ui.menu.file.save"), new Listener () {
+		MenuItemFactory.createMenuItem(submenu, ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/document-save.png"), I18N.get("us.wthr.jdem846.swtui.menu.file.save"), new Listener () {
 			public void handleEvent (Event e) {
 				onSave();
 			}
 		}, SWT.MOD1 + 'S');
 		
 		
-		MenuItemFactory.createMenuItem(submenu, ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/application-exit.png"), I18N.get("us.wthr.jdem846.ui.menu.file.exit"), new Listener () {
+		MenuItemFactory.createMenuItem(submenu, ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/application-exit.png"), I18N.get("us.wthr.jdem846.swtui.menu.file.exit"), new Listener () {
 			public void handleEvent (Event e) {
 				onExitApplication();
 			}
@@ -172,11 +209,29 @@ public class JDemShell
 	protected void onNew()
 	{
 		log.info("On New Action");
+		createNewProject(null);
 	}
 	
 	protected void onOpen()
 	{
 		log.info("On Open Action");
+		
+		FileDialog dialog = new FileDialog (shell, SWT.OPEN | SWT.MULTI);
+		
+		String [] filterNames = new String [] {I18N.get("us.wthr.jdem846.ui.projectFormatName") + " (*.xdem)"};
+		String [] filterExtensions = new String [] {"*.xdem"};
+		
+		dialog.setFilterNames (filterNames);
+		dialog.setFilterExtensions (filterExtensions);
+		
+		dialog.open();
+		
+		String[] fileNames = dialog.getFileNames();
+		
+		for (String fileName : fileNames) {
+			createNewProject(dialog.getFilterPath() + "/" + fileName);
+		}
+		
 	}
 	
 	protected void onSave()
@@ -189,6 +244,48 @@ public class JDemShell
 		log.info("Exiting application UI");
 		shell.close();
 	}
+	
+	
+	
+	public void createNewProject(String filePath)
+	{
+		
+		try {
+			ProjectModel projectModel = null;
+			if (filePath != null) {
+				log.info("Opening file: " + filePath);
+				projectModel = ProjectFileReader.readProject(filePath);
+			}
+			
+			String title = I18N.get("us.wthr.jdem846.ui.defaultProjectTitle");
+			if (projectModel != null && projectModel.getLoadedFrom() != null) {
+				File f = new File(projectModel.getLoadedFrom());
+				title = f.getName();
+			}
+			
+			ProjectPanel panel = new ProjectPanel(tabFolder, projectModel);
+			panel.setTitle(title);
+			CTabItem tabItem = new CTabItem(tabFolder, SWT.CLOSE);
+			
+			
+			tabItem.setText(title);
+			tabItem.setControl(panel);
+			tabFolder.setSelection(tabFolder.getItemCount()-1);
+			setTitle(title);
+			
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} catch (ProjectParseException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	
+	
+	
+	
 	
 	public boolean isDisposed()
 	{
@@ -227,6 +324,18 @@ public class JDemShell
 	}
 	
 	
+	public void setTitle(String title)
+	{
+		String appTitle = properties.getProperty("us.wthr.jdem846.ui.windowTitle");
+		String wndTitle = "";
+		
+		if (title != null)
+			wndTitle = title + " | " + appTitle;
+		else
+			wndTitle = appTitle;
+		
+		shell.setText(wndTitle);
+	}
 	
 	public static Display getDisplayInstance()
 	{
