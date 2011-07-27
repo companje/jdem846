@@ -13,6 +13,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -25,6 +26,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -54,6 +56,7 @@ public class JDemShell
 	private static CoolBar coolBar;
 	private static CTabFolder tabFolder;
 	
+	private TabPanel selectedPanel = null;
 	
 	public JDemShell()
 	{
@@ -66,7 +69,15 @@ public class JDemShell
 		
 		//shell.setText(properties.getProperty("us.wthr.jdem846.ui.windowTitle"));
 		setTitle(null);
-		shell.setSize(properties.getIntProperty("us.wthr.jdem846.ui.windowWidth"), properties.getIntProperty("us.wthr.jdem846.ui.windowHeight"));
+		int shellWidth = properties.getIntProperty("us.wthr.jdem846.ui.windowWidth");
+		int shellHeight = properties.getIntProperty("us.wthr.jdem846.ui.windowHeight");
+		shell.setSize(shellWidth, shellHeight);
+		Monitor primary = display.getPrimaryMonitor ();
+		Rectangle bounds = primary.getBounds ();
+		Rectangle rect = shell.getBounds ();
+		int x = bounds.x + (bounds.width - rect.width) / 2;
+		int y = bounds.y + (bounds.height - rect.height) / 2;
+		shell.setLocation (x, y);
 		
 		menu = ShellMenu.createShellMenu(shell);
 		initMainMenu(menu);
@@ -85,20 +96,28 @@ public class JDemShell
 		tabFolder.setSimple(false);
 		tabFolder.setUnselectedImageVisible(false);
 		tabFolder.setUnselectedCloseVisible(false);
-
+		
+		tabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+			public void close(CTabFolderEvent arg0)
+			{
+				CTabItem tabItem = tabFolder.getSelection();
+				if (tabItem.getControl() instanceof TabPanel) {
+					TabPanel panel = (TabPanel) tabItem.getControl();
+					panel.onPanelClosed();
+				}
+				onTabSelectionChanged();
+			}
+		});
 		tabFolder.addSelectionListener(new SelectionListener() {
+		
 			public void widgetDefaultSelected(SelectionEvent event)
 			{
-				
+				log.info("widgetDefaultSelected()");
+				onTabSelectionChanged();
 			}
 			public void widgetSelected(SelectionEvent event)
 			{
-				CTabItem tabItem = tabFolder.getSelection();
-				TabPanel panel = (TabPanel) tabItem.getControl();
-				setTitle(panel.getTitle());
-				panel.onPanelVisible();
-				
-				
+				onTabSelectionChanged();
 				
 			}
 		});
@@ -124,6 +143,20 @@ public class JDemShell
 		//shell.pack();
 	}
 	
+	protected void onTabSelectionChanged()
+	{
+		CTabItem tabItem = tabFolder.getSelection();
+		TabPanel panel = (TabPanel) tabItem.getControl();
+		setTitle(panel.getTitle());
+		panel.onPanelVisible();
+		
+		// If selectedPanel is not null and it's not the same as the new one
+		if (selectedPanel != null && selectedPanel != panel) {
+			selectedPanel.onPanelHidden();
+		}
+		selectedPanel = panel;
+	}
+	
 	protected void initMainToolbar(CoolBar coolBar)
 	{
 		ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
@@ -132,7 +165,7 @@ public class JDemShell
 		ToolItem toolItem = null;
 		
 		toolItem = new ToolItem(toolBar, SWT.PUSH);
-		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/dim24x24/document-new.png"));
+		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/document-new.png"));
 		
 		if (properties.getBooleanProperty("us.wthr.jdem846.ui.mainToolBar.displayText"))
 			toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"));
@@ -145,7 +178,7 @@ public class JDemShell
 		});
 		
 		toolItem = new ToolItem(toolBar, SWT.PUSH);
-		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/dim24x24/document-open.png"));
+		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/document-open.png"));
 		if (properties.getBooleanProperty("us.wthr.jdem846.ui.mainToolBar.displayText"))
 			toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectButton"));
 		toolItem.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectTooltip"));
@@ -157,7 +190,7 @@ public class JDemShell
 		});
 		
 		toolItem = new ToolItem(toolBar, SWT.PUSH);
-		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/dim24x24/document-save.png"));
+		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/document-save.png"));
 		if (properties.getBooleanProperty("us.wthr.jdem846.ui.mainToolBar.displayText"))
 			toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectButton"));
 		toolItem.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectTooltip"));
@@ -169,7 +202,7 @@ public class JDemShell
 		});
 		
 		toolItem = new ToolItem(toolBar, SWT.PUSH);
-		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/dim24x24/application-exit.png"));
+		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/application-exit.png"));
 		if (properties.getBooleanProperty("us.wthr.jdem846.ui.mainToolBar.displayText"))
 			toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.exitButton"));
 		toolItem.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.exitTooltip"));
@@ -294,6 +327,7 @@ public class JDemShell
 			tabFolder.setSelection(tabFolder.getItemCount()-1);
 			setTitle(title);
 			
+			onTabSelectionChanged();
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
 		} catch (IOException ex) {
