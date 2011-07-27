@@ -50,6 +50,7 @@ public class JDemShell
 	private static Display display;
 	private static Shell shell;
 	
+	private static Menu menu;
 	private static CoolBar coolBar;
 	private static CTabFolder tabFolder;
 	
@@ -67,11 +68,16 @@ public class JDemShell
 		setTitle(null);
 		shell.setSize(properties.getIntProperty("us.wthr.jdem846.ui.windowWidth"), properties.getIntProperty("us.wthr.jdem846.ui.windowHeight"));
 		
-		Menu menu = ShellMenu.createShellMenu(shell);
+		menu = ShellMenu.createShellMenu(shell);
 		initMainMenu(menu);
 		shell.setMenuBar(menu);
 		
 		coolBar = new CoolBar(shell, SWT.NONE);
+		coolBar.addListener(SWT.Resize, new Listener() {
+	        public void handleEvent(Event event) {
+	            shell.layout();
+	        }
+	    });
 		initMainToolbar(coolBar);
 		
 		tabFolder = new CTabFolder(shell, SWT.BORDER);
@@ -81,19 +87,28 @@ public class JDemShell
 		tabFolder.setUnselectedCloseVisible(false);
 
 		tabFolder.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent arg0)
+			public void widgetDefaultSelected(SelectionEvent event)
 			{
 				
 			}
-			public void widgetSelected(SelectionEvent arg0)
+			public void widgetSelected(SelectionEvent event)
 			{
 				CTabItem tabItem = tabFolder.getSelection();
 				TabPanel panel = (TabPanel) tabItem.getControl();
 				setTitle(panel.getTitle());
+				panel.onPanelVisible();
+				
+				
+				
 			}
 		});
 		
 		GridData gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		coolBar.setLayoutData(gridData);
+		
+		gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.verticalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
@@ -113,11 +128,14 @@ public class JDemShell
 	{
 		ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
 		
+		
 		ToolItem toolItem = null;
 		
 		toolItem = new ToolItem(toolBar, SWT.PUSH);
 		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/dim24x24/document-new.png"));
-		toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"));
+		
+		if (properties.getBooleanProperty("us.wthr.jdem846.ui.mainToolBar.displayText"))
+			toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"));
 		toolItem.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectTooltip"));
 		toolItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event)
@@ -128,7 +146,8 @@ public class JDemShell
 		
 		toolItem = new ToolItem(toolBar, SWT.PUSH);
 		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/dim24x24/document-open.png"));
-		toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectButton"));
+		if (properties.getBooleanProperty("us.wthr.jdem846.ui.mainToolBar.displayText"))
+			toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectButton"));
 		toolItem.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectTooltip"));
 		toolItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event)
@@ -139,7 +158,8 @@ public class JDemShell
 		
 		toolItem = new ToolItem(toolBar, SWT.PUSH);
 		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/dim24x24/document-save.png"));
-		toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectButton"));
+		if (properties.getBooleanProperty("us.wthr.jdem846.ui.mainToolBar.displayText"))
+			toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectButton"));
 		toolItem.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectTooltip"));
 		toolItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event)
@@ -150,7 +170,8 @@ public class JDemShell
 		
 		toolItem = new ToolItem(toolBar, SWT.PUSH);
 		toolItem.setImage(ImageFactory.loadImageResource("/us/wthr/jdem846/ui/icons/dim24x24/application-exit.png"));
-		toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.exitButton"));
+		if (properties.getBooleanProperty("us.wthr.jdem846.ui.mainToolBar.displayText"))
+			toolItem.setText(I18N.get("us.wthr.jdem846.ui.topToolbar.exitButton"));
 		toolItem.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.exitTooltip"));
 		toolItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event)
@@ -345,6 +366,11 @@ public class JDemShell
 	public static Shell getShellInstance()
 	{
 		return shell;
+	}
+	
+	public static Menu getMenuInstance()
+	{
+		return menu;
 	}
 	
 	public static CoolBar getCoolBarInstance()
