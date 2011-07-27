@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -53,6 +54,7 @@ import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.ui.MonitoredSlider.MonitoredValueListener;
 import us.wthr.jdem846.ui.border.StandardTitledBorder;
+import us.wthr.jdem846.ui.panels.FlexGridPanel;
 import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 
 @SuppressWarnings("serial")
@@ -87,10 +89,15 @@ public class ModelOptionsPanel extends JPanel
 	
 	public ModelOptionsPanel()
 	{
-		TitledRoundedPanel controlGrid = new TitledRoundedPanel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.controlGrid.title"));
-		GridLayout gridLayout = new GridLayout(10, 2);
-		gridLayout.setVgap(2);
-		controlGrid.setLayout(gridLayout);
+		//TitledRoundedPanel controlGrid = new TitledRoundedPanel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.controlGrid.title"));
+		//GridLayout gridLayout = new GridLayout(10, 2);
+		//gridLayout.setVgap(2);
+		//controlGrid.setLayout(gridLayout);
+		TitledRoundedPanel optionsGrid = new TitledRoundedPanel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.controlGrid.title"));
+		
+		FlexGridPanel controlGrid = new FlexGridPanel(2);
+		optionsGrid.setLayout(new BorderLayout());
+		optionsGrid.add(controlGrid, BorderLayout.CENTER);
 		
 		//controlGrid.setBorder(new StandardTitledBorder("Model Options"));
 		
@@ -246,6 +253,8 @@ public class ModelOptionsPanel extends JPanel
 		controlGrid.add(jtxtWidth);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.heightText.label") + ":"));
 		controlGrid.add(jtxtHeight);
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.label") + ":"));
+		controlGrid.add(jtxtTileSize);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.label") + ":"));
 		controlGrid.add(jcmbBackgroundColor);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.coloringCombo.label") + ":"));
@@ -256,8 +265,7 @@ public class ModelOptionsPanel extends JPanel
 		controlGrid.add(jsldLightMultiple);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.label") + ":"));
 		controlGrid.add(jsldSpotExponent);
-		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.label") + ":"));
-		controlGrid.add(jtxtTileSize);
+		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.label") + ":"));
 		controlGrid.add(jsldElevationMultiple);
 		
@@ -268,7 +276,7 @@ public class ModelOptionsPanel extends JPanel
 		BoxLayout boxLayout = new BoxLayout(this, BoxLayout.X_AXIS);
 		setLayout(boxLayout);
 		
-		add(controlGrid);
+		add(optionsGrid);
 		
 		lightPositionConfigPanel.setMinimumSize(new Dimension(150, 150));
 		projectionConfigPanel.setMinimumSize(new Dimension(150, 150));

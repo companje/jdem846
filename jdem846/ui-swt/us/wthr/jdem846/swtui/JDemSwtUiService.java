@@ -28,7 +28,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-@Service(name="us.wthr.jdem846.swtui.jdemswtuiservice", enabled=true)
+@Service(name="us.wthr.jdem846.swtui.jdemswtuiservice", enabled=false)
 public class JDemSwtUiService extends AbstractLockableService
 {
 	private static Log log = Logging.getLog(JDemSwtUiService.class);

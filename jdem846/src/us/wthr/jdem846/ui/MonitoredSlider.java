@@ -54,7 +54,7 @@ public class MonitoredSlider extends JPanel
 			{
 				if (valueListener != null) {
 					String stringValue = valueListener.getValueString();
-					jlblValue.setText(stringValue);
+					jlblValue.setText("  " + stringValue);
 				} else {
 					jlblValue.setText("");
 				}
@@ -81,7 +81,7 @@ public class MonitoredSlider extends JPanel
 	{
 		jsldSlider.setValue(value);
 		if (valueListener != null)
-			jlblValue.setText(valueListener.getValueString());
+			jlblValue.setText("  " + valueListener.getValueString());
 		else
 			jlblValue.setText("");
 	}

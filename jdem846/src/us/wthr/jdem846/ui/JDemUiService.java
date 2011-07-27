@@ -32,7 +32,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
 
-@Service(name="us.wthr.jdem846.ui.jdemuiservice", enabled=false)
+@Service(name="us.wthr.jdem846.ui.jdemuiservice", enabled=true)
 public class JDemUiService extends AbstractLockableService
 {
 	
