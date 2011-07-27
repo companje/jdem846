@@ -32,7 +32,8 @@ public abstract class TabPanel extends Composite
 	
 	public abstract void onPanelVisible();
 	public abstract void onPanelHidden();
-
+	public abstract void onPanelClosed();
+	
 	public String getTitle()
 	{
 		return title;
