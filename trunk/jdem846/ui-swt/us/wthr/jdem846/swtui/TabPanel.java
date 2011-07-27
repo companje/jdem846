@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
-public class TabPanel extends Composite
+public abstract class TabPanel extends Composite
 {
 	private static Log log = Logging.getLog(TabPanel.class);
 	private String title;
@@ -29,6 +29,9 @@ public class TabPanel extends Composite
 		this.title = _title;
 
 	}
+	
+	public abstract void onPanelVisible();
+	public abstract void onPanelHidden();
 
 	public String getTitle()
 	{

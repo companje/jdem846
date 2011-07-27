@@ -8,12 +8,18 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
 public class MenuItemFactory
 {
 	private static Log log = Logging.getLog(MenuItemFactory.class);
+	private static JDem846Properties properties;
+	
+	static {
+		properties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+	}
 	
 	public static MenuItem createMenuItem(Menu submenu, String text, Listener selectionListener)
 	{
@@ -35,7 +41,10 @@ public class MenuItemFactory
 	public static MenuItem createMenuItem(Menu submenu, Image image, String text, Listener selectionListener, int accel)
 	{
 		MenuItem item = new MenuItem (submenu, SWT.PUSH);
+		
+
 		item.setText(text);
+
 		
 		if (image != null) {
 			item.setImage(image);
