@@ -36,6 +36,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.swtui.ValueMonitoredScale.MonitoredValueListener;
+import us.wthr.jdem846.swtui.config.LightPositionConfigPanel;
 
 public class ModelOptionsPanel extends Composite
 {
@@ -61,6 +62,8 @@ public class ModelOptionsPanel extends Composite
 	private ValueMonitoredScale spotExponentScale;
 	private ValueMonitoredScale elevationMultipleScale;
 	
+	private LightPositionConfigPanel lightPositionConfig;
+	
 	private boolean ignoreValueChanges = false;
 	
 	private List<Listener> changeListeners = new LinkedList<Listener>();
@@ -73,10 +76,10 @@ public class ModelOptionsPanel extends Composite
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.verticalAlignment = SWT.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
+		//gridData.grabExcessHorizontalSpace = true;
+		//gridData.grabExcessVerticalSpace = true;
 		
-		setLayout(new GridLayout(1, false));
+		setLayout(new GridLayout(2, false));
 		Composite optionsComposite = new Composite(this, SWT.NONE);
 		optionsComposite.setLayoutData(gridData);
 		optionsComposite.setLayout(new GridLayout(2, false));
@@ -236,6 +239,14 @@ public class ModelOptionsPanel extends Composite
 		
 		//pack();
 		
+		lightPositionConfig = new LightPositionConfigPanel(this);
+		
+		GridData lightPosGridData = new GridData();
+		lightPosGridData.horizontalAlignment = SWT.FILL;
+		lightPosGridData.verticalAlignment = SWT.FILL;
+		//lightPosGridData.grabExcessHorizontalSpace = true;
+		//lightPosGridData.grabExcessVerticalSpace = true;
+		lightPositionConfig.setLayoutData(lightPosGridData);
 		applyOptionsToUI();
 		
 	}
@@ -263,6 +274,11 @@ public class ModelOptionsPanel extends Composite
 		lightMultipleScale.setSelection((int)Math.round(modelOptions.getLightingMultiple() * 100));
 		spotExponentScale.setSelection(modelOptions.getSpotExponent());
 		elevationMultipleScale.setSelection((int)Math.round(modelOptions.getElevationMultiple()));
+		
+		lightPositionConfig.setSolarAzimuth(modelOptions.getLightingAzimuth());
+		lightPositionConfig.setSolarElevation(modelOptions.getLightingElevation());
+		
+		lightPositionConfig.updatePreview(false);
 		
 		ignoreValueChanges = false;
 	}
