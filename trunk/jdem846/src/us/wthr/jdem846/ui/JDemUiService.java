@@ -52,7 +52,7 @@ public class JDemUiService extends AbstractLockableService
 		//System.out.println("JDemUiService.initialize()");
 		log.info("JDemUIService.initialize()");
 		
-		JDem846Properties properties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+		JDem846Properties properties = JDem846Properties.getInstance();
 
 		try {
 			String swingLaf = properties.getProperty("us.wthr.jdem846.ui.swingLaf");

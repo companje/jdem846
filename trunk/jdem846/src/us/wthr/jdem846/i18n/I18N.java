@@ -48,8 +48,9 @@ public class I18N
 	{
 		I18N.messages.clear();
 		
-		JDem846Properties uiProperties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
-		String i18nDefaultLang = uiProperties.getProperty("us.wthr.jdem846.ui.i18n.default");
+		//JDem846Properties uiProperties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+		JDem846Properties properties = JDem846Properties.getInstance();
+		String i18nDefaultLang = properties.getProperty("us.wthr.jdem846.ui.i18n.default");
 		
 		try {
 			I18N.loadLanguage(i18nDefaultLang, false);

@@ -43,7 +43,7 @@ import us.wthr.jdem846.util.ImageIcons;
 public class AboutDialog extends JDialog
 {
 	private static Log log = Logging.getLog(AboutDialog.class);
-	private static JDem846Properties properties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
+	private static JDem846Properties properties = JDem846Properties.getInstance();
 	
 	
 	public AboutDialog(Frame owner)

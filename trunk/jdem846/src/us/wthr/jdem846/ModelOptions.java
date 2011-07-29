@@ -82,7 +82,9 @@ public class ModelOptions
 	
 	public ModelOptions()
 	{
-		JDem846Properties properties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
+		//JDem846Properties properties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
+		JDem846Properties properties = JDem846Properties.getInstance();
+		
 		String property = null;
 		
 		property = properties.getProperty(ModelOptions.OPTION_ENGINE);

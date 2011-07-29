@@ -65,7 +65,7 @@ import us.wthr.jdem846.util.TempFiles;
 public class JdemFrame extends JFrame
 {
 	private static Log log = Logging.getLog(JdemFrame.class);
-	private static JDem846Properties properties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+	private static JDem846Properties properties = JDem846Properties.getInstance();
 	
 	private TabPane tabPane;
 	private TopButtonBar topButtonBar;

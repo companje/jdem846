@@ -95,14 +95,15 @@ public class JDemMain
 			}
 		}
 		
-		JDem846Properties uiProperties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
-		JDem846Properties coreProperties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
+		JDem846Properties jdemProperties = JDem846Properties.getInstance();
+		//JDem846Properties uiProperties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+		//JDem846Properties coreProperties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
 		
 		SplashScreen splash = null;
 		
-		if (uiProperties.getBooleanProperty("us.wthr.jdem846.ui.displaySplash")) {
+		if (jdemProperties.getBooleanProperty("us.wthr.jdem846.ui.displaySplash")) {
 			splash = new SplashScreen();
-			splash.setCopyright(coreProperties.getProperty("us.wthr.jdem846.copyRight"));
+			splash.setCopyright(jdemProperties.getProperty("us.wthr.jdem846.copyRight"));
 			splash.setVisible(true);
 			
 			SplashScreen.addIcon("/us/wthr/jdem846/ui/icons/dim48x48/applications-system.png", I18N.get("us.wthr.jdem846.ui.system"));

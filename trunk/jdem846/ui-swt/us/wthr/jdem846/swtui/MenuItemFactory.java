@@ -18,7 +18,8 @@ public class MenuItemFactory
 	private static JDem846Properties properties;
 	
 	static {
-		properties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+		//properties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+		properties = JDem846Properties.getInstance();
 	}
 	
 	public static MenuItem createMenuItem(Menu submenu, String text, Listener selectionListener)
