@@ -31,12 +31,14 @@ import us.wthr.jdem846.logging.Logging;
 public class JDem846Properties extends Properties
 {
 	private static Log log = Logging.getLog(JDem846Properties.class);
+	private static JDem846Properties instance = null;
 	
-	public static final int CORE_PROPERTIES = 0;
-	public static final int UI_PROPERTIES = 1;
+	static {
+		JDem846Properties.instance = new JDem846Properties();
+	}
 	
-	public static final String CORE_PROPERTIES_PATH = "jdem846.properties";
-	public static final String UI_PROPERTIES_PATH = "jdem846-ui.properties";
+	
+	public static final String CORE_PROPERTIES_PATH = "/us/wthr/jdem846/jdem846.properties";
 	
 	private boolean loaded = false;
 	
@@ -45,19 +47,6 @@ public class JDem846Properties extends Properties
 		load(CORE_PROPERTIES_PATH);
 	}
 	
-	public JDem846Properties(int which)
-	{
-		switch(which) {
-		case UI_PROPERTIES:
-			load(UI_PROPERTIES_PATH);
-			break;
-		case CORE_PROPERTIES:
-		default:
-			load(CORE_PROPERTIES_PATH);
-			break;
-		}
-
-	}
 	
 	public JDem846Properties(String propertiesPath)
 	{
@@ -101,5 +90,10 @@ public class JDem846Properties extends Properties
 		for (Object key : System.getProperties().keySet()) {
 			this.setProperty((String)key, System.getProperty((String)key));
 		}
+	}
+	
+	public static JDem846Properties getInstance()
+	{
+		return JDem846Properties.instance;
 	}
 }

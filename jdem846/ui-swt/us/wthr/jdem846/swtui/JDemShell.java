@@ -47,7 +47,8 @@ import us.wthr.jdem846.project.ProjectModel;
 public class JDemShell
 {
 	private static Log log = Logging.getLog(JDemShell.class);
-	private static JDem846Properties properties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+	//private static JDem846Properties properties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+	private static JDem846Properties properties = JDem846Properties.getInstance();
 	
 	private static Display display;
 	private static Shell shell;

@@ -21,7 +21,8 @@ public class ToolItemFactory
 	private static JDem846Properties properties;
 	
 	static {
-		properties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+		//properties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+		properties = JDem846Properties.getInstance();
 	}
 
 	public static ToolItem createToolItem(ToolBar toolBar, String imageResourcePath, String text, String toolTipText, Listener selectionListener)

@@ -26,7 +26,8 @@ public class ModelOptionsTest extends TestCase
 	@Override
 	protected void setUp() throws Exception
 	{
-		properties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
+		//properties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
+		properties = JDem846Properties.getInstance();
 		super.setUp();
 	}
 	

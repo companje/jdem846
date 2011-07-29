@@ -32,7 +32,7 @@ import us.wthr.jdem846.i18n.I18N;
 @SuppressWarnings("serial")
 public class TopButtonBar extends JToolBar
 {
-	private static JDem846Properties properties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
+	private static JDem846Properties properties = JDem846Properties.getInstance();
 	
 	public static final int BTN_NEW_PROJECT = 0;
 	public static final int BTN_OPEN_PROJECT = 1;
