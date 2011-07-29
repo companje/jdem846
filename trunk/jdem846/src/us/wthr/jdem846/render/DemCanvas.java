@@ -106,6 +106,9 @@ public class DemCanvas implements ImageObserver
 	
 	public int getColor(int x, int y)
 	{
+		if (x < 0 || x >= image.getWidth() || y < 0 || y >= image.getHeight())
+			return 0;
+		
 		return image.getRGB(x, y);
 	}
 	
