@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary Screenshots and sample elevation models
 #labels Featured,Screenshots
 
 = Gallery =
