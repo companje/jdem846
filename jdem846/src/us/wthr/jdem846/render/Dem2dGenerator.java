@@ -253,8 +253,13 @@ public class Dem2dGenerator extends RenderEngine
 		Vector sun = new Vector(0.0, 0.0, -1.0);
 		//modelOptions.getLightingElevation()
 		//-modelOptions.getLightingAzimuth()
-		Vector rotate = new Vector(modelOptions.getLightingElevation(), 0, 0);
-		sun.rotate(rotate);
+		//Vector rotate = new Vector(modelOptions.getLightingElevation(), 0, 0);
+		double solarElevation = modelOptions.getLightingElevation();
+		double solarAzimuth = modelOptions.getLightingAzimuth();
+		sun.rotate(solarElevation, Vector.X_AXIS);
+		sun.rotate(-solarAzimuth, Vector.Y_AXIS);
+		
+		//sun.rotate(rotate);
 		//sun.rotate(180.0, Vector.Y_AXIS);
 		//sun.rotate(-45.0, Vector.X_AXIS);
 		sunsource[0] = sun.getX();
