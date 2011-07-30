@@ -31,13 +31,13 @@
 </tr>
 <tr>
 <td>
-<a href="http://jdem846.wthr.us/gallery/maui-hypso-1-3arc-second.png" >
-   <img src="http://jdem846.wthr.us/gallery/maui-hypso-1-3arc-second-350px.png" width="350"/>
+<a href="http://jdem846.wthr.us/gallery/screenshot-5.png" >
+   <img src="http://jdem846.wthr.us/gallery/screenshot-5-350px.png"/>
 </a>
 </td>
 <td>
-<a href="http://jdem846.wthr.us/gallery/maui-3d-preview.png" >
-   <img src="http://jdem846.wthr.us/gallery/maui-3d-preview-350px.png" width="350"/>
+<a href="http://jdem846.wthr.us/gallery/maui-hypso-1-3arc-second.png" >
+   <img src="http://jdem846.wthr.us/gallery/maui-hypso-1-3arc-second-350px.png" width="350"/>
 </a>
 </td>
 </tr>
@@ -46,6 +46,11 @@
 <td>
 <a href="http://jdem846.wthr.us/gallery/etopo1-bedrock.png" >
    <img src="http://jdem846.wthr.us/gallery/etopo1-bedrock-350px.png" width="350"/>
+</a>
+</td>
+<td>
+<a href="http://jdem846.wthr.us/gallery/maui-3d-preview.png" >
+   <img src="http://jdem846.wthr.us/gallery/maui-3d-preview-350px.png" width="350"/>
 </a>
 </td>
 </tr>
