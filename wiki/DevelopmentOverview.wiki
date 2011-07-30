@@ -3,12 +3,8 @@
 
 = Introduction =
 
-Add your content here.
+This is a learning project with an evolving design and isn't meant to be commercial-grade software. With that comes a "freedom to tinker" and try out new ideas and methods. That said, there are a few goals and guidelines to follow when developing the software...
 
 
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+= Memory =
+The datasets tend to be very large and produce huge images....
