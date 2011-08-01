@@ -21,13 +21,13 @@ import junit.framework.TestCase;
 public class ModelOptionsTest extends TestCase
 {
 	
-	private JDem846Properties properties;
+	//private JDem846Properties properties;
 	
 	@Override
 	protected void setUp() throws Exception
 	{
 		//properties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
-		properties = JDem846Properties.getInstance();
+		//properties = JDem846Properties.getInstance();
 		super.setUp();
 	}
 	
@@ -35,16 +35,16 @@ public class ModelOptionsTest extends TestCase
 	{
 		
 		ModelOptions modelOptions = new ModelOptions();
-		assert modelOptions.getEngine().equals(properties.getProperty("us.wthr.jdem846.modelOptions.engine"));
-		assert modelOptions.getColoringType().equals(properties.getProperty("us.wthr.jdem846.modelOptions.coloringType"));
-		assert modelOptions.getBackgroundColor().equals(properties.getProperty("us.wthr.jdem846.modelOptions.backgroundColor"));
-		assert modelOptions.isHillShading() == Boolean.parseBoolean(properties.getProperty("us.wthr.jdem846.modelOptions.hillShading"));
-		assert modelOptions.getWriteTo().equals(properties.getProperty("us.wthr.jdem846.modelOptions.writeTo"));
-		assert modelOptions.getWidth() == Integer.parseInt(properties.getProperty("us.wthr.jdem846.modelOptions.width"));
-		assert modelOptions.getHeight() == Integer.parseInt(properties.getProperty("us.wthr.jdem846.modelOptions.height"));
-		assert modelOptions.getHillShadeType() == Integer.parseInt(properties.getProperty("us.wthr.jdem846.modelOptions.hillShadeType"));
-		assert modelOptions.getTileSize() == Integer.parseInt(properties.getProperty("us.wthr.jdem846.modelOptions.tileSize"));
-		assert modelOptions.getLightingMultiple() == Double.parseDouble(properties.getProperty("us.wthr.jdem846.modelOptions.lightingMultiple"));
+		assert modelOptions.getEngine().equals(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.engine"));
+		assert modelOptions.getColoringType().equals(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.coloringType"));
+		assert modelOptions.getBackgroundColor().equals(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.backgroundColor"));
+		assert modelOptions.isHillShading() == Boolean.parseBoolean(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.hillShading"));
+		assert modelOptions.getWriteTo().equals(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.writeTo"));
+		assert modelOptions.getWidth() == Integer.parseInt(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.width"));
+		assert modelOptions.getHeight() == Integer.parseInt(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.height"));
+		assert modelOptions.getHillShadeType() == Integer.parseInt(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.hillShadeType"));
+		assert modelOptions.getTileSize() == Integer.parseInt(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.tileSize"));
+		assert modelOptions.getLightingMultiple() == Double.parseDouble(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.lightingMultiple"));
 		
 		/*
 		 * 

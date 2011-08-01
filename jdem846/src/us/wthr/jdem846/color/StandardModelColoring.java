@@ -16,14 +16,15 @@
 
 package us.wthr.jdem846.color;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.annotations.DemColoring;
 
 @DemColoring(name="us.wthr.jdem846.color.standardModelColoring.name", identifier="standard-coloring",allowGradientConfig=false, needsMinMaxElevation=true)
 public class StandardModelColoring implements ModelColoring
 {
 	
-	private GradientColoring hypsometric = new GradientColoring("hypsometric-global.gradient");
-	private GradientColoring bathymetric = new GradientColoring("bathymetric-2.gradient");
+	private GradientColoring hypsometric = new GradientColoring(JDem846Properties.getProperty("us.wthr.jdem846.color") + "/hypsometric-global.gradient");
+	private GradientColoring bathymetric = new GradientColoring(JDem846Properties.getProperty("us.wthr.jdem846.color") + "/bathymetric-2.gradient");
 	
 	
 	public StandardModelColoring()

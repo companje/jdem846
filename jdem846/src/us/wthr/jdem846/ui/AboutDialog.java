@@ -43,14 +43,12 @@ import us.wthr.jdem846.util.ImageIcons;
 public class AboutDialog extends JDialog
 {
 	private static Log log = Logging.getLog(AboutDialog.class);
-	private static JDem846Properties properties = JDem846Properties.getInstance();
-	
 	
 	public AboutDialog(Frame owner)
 	{
 		super(owner);
 		this.setModal(true);
-		this.setTitle(I18N.get("us.wthr.jdem846.ui.about.about") + " " + properties.getProperty("us.wthr.jdem846.applicationName"));
+		this.setTitle(I18N.get("us.wthr.jdem846.ui.about.about") + " " + JDem846Properties.getProperty("us.wthr.jdem846.applicationName"));
 		
 		ImagePanel imagePanel = new ImagePanel();
 		
@@ -62,25 +60,25 @@ public class AboutDialog extends JDialog
 		
 		JLabel jLabel = null;
 		
-		jLabel = new JLabel(properties.getProperty("us.wthr.jdem846.applicationName"));
+		jLabel = new JLabel(JDem846Properties.getProperty("us.wthr.jdem846.applicationName"));
 		jLabel.setHorizontalAlignment(JLabel.CENTER);
 		jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		infoPanel.add(jLabel);
 		infoPanel.add(Box.createRigidArea(new Dimension(0,5)));
 		
-		jLabel = new JLabel(I18N.get("us.wthr.jdem846.ui.about.version") + ": " + properties.getProperty("us.wthr.jdem846.version"));
+		jLabel = new JLabel(I18N.get("us.wthr.jdem846.ui.about.version") + ": " + JDem846Properties.getProperty("us.wthr.jdem846.version"));
 		jLabel.setHorizontalAlignment(JLabel.CENTER);
 		jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		infoPanel.add(jLabel);
 		infoPanel.add(Box.createRigidArea(new Dimension(0,5)));
 		
-		jLabel = new JLabel(properties.getProperty("us.wthr.jdem846.copyRight"));
+		jLabel = new JLabel(JDem846Properties.getProperty("us.wthr.jdem846.copyRight"));
 		jLabel.setHorizontalAlignment(JLabel.CENTER);
 		jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		infoPanel.add(jLabel);
 		infoPanel.add(Box.createRigidArea(new Dimension(0,5)));
 		
-		jLabel = new JLabel(properties.getProperty("us.wthr.jdem846.website"));
+		jLabel = new JLabel(JDem846Properties.getProperty("us.wthr.jdem846.website"));
 		jLabel.setHorizontalAlignment(JLabel.CENTER);
 		jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		infoPanel.add(jLabel);
@@ -120,7 +118,7 @@ public class AboutDialog extends JDialog
 		{
 			ImageIcon image = null;
 			try {
-				image = ImageIcons.loadImageIcon("/us/wthr/jdem846/images/jdem846-splash.png");
+				image = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.about"));
 			} catch (IOException ex) {
 				log.warn("Failed to load graphic for about dialog: " + ex.getMessage(), ex);
 			}

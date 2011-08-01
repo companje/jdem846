@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import us.wthr.jdem846.AppRegistry;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.i18n.I18N;
@@ -82,7 +83,7 @@ public class ColorRegistry implements AppRegistry
 		log.info("Static initialization of ColorRegistry");
 		
 		try {
-			InputStream in = ColorRegistry.class.getResourceAsStream("colors.txt");
+			InputStream in = ColorRegistry.class.getResourceAsStream(JDem846Properties.getProperty("us.wthr.jdem846.color") + "/colors.txt");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			String line = null;
 			while ((line = reader.readLine()) != null) {

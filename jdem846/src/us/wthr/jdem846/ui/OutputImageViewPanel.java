@@ -34,6 +34,7 @@ import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
@@ -107,42 +108,42 @@ public class OutputImageViewPanel extends JdemPanel
 		modelMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu"), KeyEvent.VK_M);
 		MainMenuBar.insertMenu(modelMenu);
 		
-		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.save"), "/us/wthr/jdem846/ui/icons/document-save.png", KeyEvent.VK_A, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.save"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-save.png", KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onSave();
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.SHIFT_MASK | ActionEvent.CTRL_MASK)));
 
-		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomIn"), "/us/wthr/jdem846/ui/icons/zoom-in.png", KeyEvent.VK_I, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomIn"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/zoom-in.png", KeyEvent.VK_I, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onZoomIn();
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.SHIFT_MASK | ActionEvent.CTRL_MASK)));
 		
-		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomOut"), "/us/wthr/jdem846/ui/icons/zoom-out.png", KeyEvent.VK_O, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomOut"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/zoom-out.png", KeyEvent.VK_O, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onZoomOut();
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.SHIFT_MASK | ActionEvent.CTRL_MASK)));
 		
-		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomFit"), "/us/wthr/jdem846/ui/icons/zoom-fit-best.png", KeyEvent.VK_F, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomFit"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/zoom-fit-best.png", KeyEvent.VK_F, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onZoomFit();
 			}
 		}));
 		
-		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomActual"), "/us/wthr/jdem846/ui/icons/zoom-original.png", KeyEvent.VK_A, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.zoomActual"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/zoom-original.png", KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onZoomActual();
 			}
 		}));
 		
-		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.stop"), "/us/wthr/jdem846/ui/icons/process-stop.png", KeyEvent.VK_S, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.stop"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/process-stop.png", KeyEvent.VK_S, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onStop();

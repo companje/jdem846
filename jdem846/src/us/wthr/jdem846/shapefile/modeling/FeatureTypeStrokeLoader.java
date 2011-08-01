@@ -31,6 +31,7 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -38,7 +39,7 @@ public class FeatureTypeStrokeLoader
 {
 	private static Log log = Logging.getLog(FeatureTypeStrokeLoader.class);
 	
-	private static String DEFAULT_XML_FILE = "/us/wthr/jdem846/shapefile/modeling/line-strokes.xml";
+	private static String DEFAULT_XML_FILE = JDem846Properties.getProperty("us.wthr.jdem846.shapefile") + "/line-strokes.xml";
 	
 	private List<FeatureTypeStroke> featureTypeStrokes;
 	

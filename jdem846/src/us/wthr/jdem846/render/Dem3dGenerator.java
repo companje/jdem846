@@ -18,9 +18,11 @@ package us.wthr.jdem846.render;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,22 +47,19 @@ import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.gfx.ViewportBuffer;
 
 @DemEngine(name="us.wthr.jdem846.render.demEngine3D.name", identifier="dem3d-gen", usesProjection=true, enabled=true)
-public class Dem3dGenerator extends RenderEngine
+public class Dem3dGenerator extends BasicRenderEngine
 {
 	private static Log log = Logging.getLog(Dem3dGenerator.class);
 	
-	private DataPackage dataPackage;
-	private ModelOptions modelOptions;
-	
+
 	public Dem3dGenerator()
 	{
-		
+		super();
 	}
 	
 	public Dem3dGenerator(DataPackage dataPackage, ModelOptions modelOptions)
 	{
-		this.dataPackage = dataPackage;
-		this.modelOptions = modelOptions;
+		super(dataPackage, modelOptions);
 	}
 
 	@Override
@@ -113,13 +112,14 @@ public class Dem3dGenerator extends RenderEngine
 		Graphics2D g2d = (Graphics2D) image.getGraphics();
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		g2d.setColor(Color.BLACK);
+		g2d.setColor(getDefinedColor(modelOptions.getBackgroundColor()));
 		g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 		//DemCanvas canvas3d = new DemCanvas(dataPaka)
 		
+		//int[] xPoints = new int[4];
+		//int[] yPoints = new int[4];
+		Path2D.Double path = new Path2D.Double();
 		
-		
-		g2d.setColor(Color.YELLOW);
 		for (int row = 0; row < dataPackage.getRows(); row++) {
 			for (int column = 0; column < dataPackage.getColumns(); column++) {
 				getPoint(row, column, 1, point);
@@ -186,7 +186,8 @@ public class Dem3dGenerator extends RenderEngine
 					vectorFrontLeft[1] -= startZ;
 					vectorFrontRight[1] -= startZ;
 					
-					Path2D.Double path = new Path2D.Double();
+
+					path.reset();
 					path.moveTo(vectorBackLeft[0], vectorBackLeft[1]);
 					path.lineTo(vectorFrontLeft[0], vectorFrontLeft[1]);
 					path.lineTo(vectorFrontRight[0], vectorFrontRight[1]);
@@ -195,6 +196,7 @@ public class Dem3dGenerator extends RenderEngine
 					
 					int color = canvas2d.getColor(column, row);
 					g2d.setColor(new Color(color));
+					//g2d.fillPolygon(xPoints, yPoints, 4);
 					
 					g2d.fill(path);
 					
@@ -206,23 +208,114 @@ public class Dem3dGenerator extends RenderEngine
 		}
 		
 		DemCanvas canvas3d = new DemCanvas(image);
+		canvas3d = autoCrop(canvas3d);
 		return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas3d);
+	}
+	
+	public DemCanvas autoCrop(DemCanvas original)
+	{
+		
+		int top = -1;
+		int left = -1;
+		int bottom = original.getHeight();
+		int right = original.getWidth();
+		
+		int bgRGB = getDefinedColor(modelOptions.getBackgroundColor()).getRGB();
+		
+		for (int y = 0; y < original.getHeight(); y++) {
+			for (int x = 0; x < original.getWidth(); x++) {
+				int imageColor = original.getColor(x, y);
+				if (imageColor != bgRGB) {
+					top = y;
+					break;
+				}
+			}
+			
+			if (top >= 0)
+				break;
+		}
+		
+		for (int y = original.getHeight() - 1; y >= 0; y--) {
+			for (int x = 0; x < original.getWidth(); x++) {
+				int imageColor = original.getColor(x, y);
+				if (imageColor != bgRGB) {
+					bottom = y;
+					break;
+				}
+			}
+			
+			if (bottom < original.getHeight())
+				break;
+		}
+		
+		for (int x = 0; x < original.getWidth(); x++) {
+			for (int y = 0; y < original.getHeight(); y++) {
+				int imageColor = original.getColor(x, y);
+				if (imageColor != bgRGB) {
+					left = x;
+					break;
+				}
+			}
+			if (left >= 0)
+				break;
+		}
+		
+		for (int x = original.getWidth() - 1; x >= 0 ; x--) {
+			for (int y = 0; y < original.getHeight(); y++) {
+				int imageColor = original.getColor(x, y);
+				if (imageColor != bgRGB) {
+					right = x;
+					break;
+				}
+			}
+			if (right < original.getWidth())
+				break;
+		}
+		
+		int cropHeight = bottom - top;
+		int cropWidth = right - left;
+		BufferedImage cropped = new BufferedImage(cropWidth, cropHeight, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = (Graphics2D) cropped.getGraphics();
+		
+
+		g2d.drawImage(original.getImage(),
+                0,
+                0,
+                cropWidth,
+                cropHeight,
+                left,
+                top,
+                right,
+                bottom,
+                new ImageObserver() {
+					public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+						return true;
+					}
+		});
+		
+		
+		g2d.dispose();
+		
+		
+		log.info("Auto Crop Top Y: " + top + ", buttom Y: " + bottom);
+		
+		return new DemCanvas(cropped);
 	}
 	
 	
 	public void projectTo(double[] vector, double[] eye, double[] near) //Vector eye, Vector near)
 	{
-		double thetaX = 0; // Orientation of the camera
-		double thetaY = 0;
-		double thetaZ = 0;
+		//double thetaX = 0; // Orientation of the camera
+		//double thetaY = 0;
+		//double thetaZ = 0;
 		
-		double[] a = vector;
-		double[] e = near;
-		double[] c = eye;
-		//Vector e = near; // Viewer's position relative to the display surface
-		//Vector a = this; // 3D position of points being projected
-		//Vector c = eye;  // Camera position
+		double[] a = vector;   // 3D position of points being projected
+		double[] e = near;     // Viewer's position relative to the display surface
+		double[] c = eye;      // Camera position
 		
+		
+		
+		/*
 		double sinTX = sin(thetaX);
 		double sinTY = sin(thetaY);
 		double sinTZ = sin(thetaZ);
@@ -231,25 +324,16 @@ public class Dem3dGenerator extends RenderEngine
 		double cosTY = cos(thetaY);
 		double cosTZ = cos(thetaZ);
 		
-		/*
-		double dX = cosTY * (sinTZ * (a.y - c.y) + cosTZ * (a.x - c.x)) - sinTY * (a.z - c.z);
-		double dY = sinTX * (cosTY * (a.z - c.z) + sinTY * (sinTZ * (a.y - c.y) + cosTZ * (a.x - c.x))) + cosTX * (cosTZ * (a.y - c.y) - sinTZ * (a.x - c.x));
-		double dZ = cosTX * (cosTY * (a.z - c.z) + sinTY * (sinTZ * (a.y - c.y) + cosTZ * (a.x - c.x))) - sinTX * (cosTZ * (a.y - c.y) - sinTZ * (a.x - c.x));
-		*/
 		double dX = cosTY * (sinTZ * (a[1] - c[1]) + cosTZ * (a[0] - c[0])) - sinTY * (a[2] - c[2]);
 		double dY = sinTX * (cosTY * (a[2] - c[2]) + sinTY * (sinTZ * (a[1] - c[1]) + cosTZ * (a[0] - c[0]))) + cosTX * (cosTZ * (a[1] - c[1]) - sinTZ * (a[0] - c[0]));
 		double dZ = cosTX * (cosTY * (a[2] - c[2]) + sinTY * (sinTZ * (a[1] - c[1]) + cosTZ * (a[0] - c[0]))) - sinTX * (cosTZ * (a[1] - c[1]) - sinTZ * (a[0] - c[0]));
-		
-		/*
-		double bX = (dX - e.x) * (e.z / dZ);
-		double bY = (dY - e.y) * (e.z / dZ);
 		*/
-		double bX = (dX - e[0]) * (e[2] / dZ);
-		double bY = (dY - e[1]) * (e[2] / dZ);
-		double bZ = a[2];
 		
-		vector[0] = bX;
-		vector[1] = bY;
+		vector[0] = ((a[0] - c[0]) - e[0]) * (e[2] / (a[2] - c[2]));
+		vector[1] = ((a[1] - c[1]) - e[1]) * (e[2] / (a[2] - c[2]));
+		
+		//vector[0] = bX;
+		///vector[1] = bY;
 	}
 	
 	/*
@@ -498,109 +582,8 @@ public class Dem3dGenerator extends RenderEngine
 	*/
 	
 	
-	public DataPackage getDataPackage()
-	{
-		return dataPackage;
-	}
-
-	public void setDataPackage(DataPackage dataPackage)
-	{
-		this.dataPackage = dataPackage;
-	}
-
-	public ModelOptions getModelOptions()
-	{
-		return modelOptions;
-	}
-
-	public void setModelOptions(ModelOptions modelOptions)
-	{
-		this.modelOptions = modelOptions;
-	}
 
 
-	private void getPoint(int row, int column, DemPoint point)
-	{
-		getPoint(row, column, 1, point);
-	}
-	
-	private void getPoint(int row, int column, int gridSize, DemPoint point)
-	{
-		//DemPoint point = new DemPoint();
-
-
-		if (dataPackage == null) {
-			point.setCondition(DemConstants.STAT_NO_DATA_PACKAGE);
-			return;
-			//return point;
-		}
-
-		float elevMax = dataPackage.getMaxElevation();
-		float elevMin = dataPackage.getMinElevation();
-		float nodata = dataPackage.getNoData();
-
-		float elevation = dataPackage.getElevation(row, column);
-
-
-		if (elevation == DemConstants.ELEV_NO_DATA) {
-			point.setCondition(DemConstants.STAT_INVALID_ELEVATION);
-			return;
-			//return point;
-		}
-		
-		point.setBackLeftElevation(elevation);
-
-
-		elevation = dataPackage.getElevation(row, column + gridSize);
-		if (elevation >= elevMin && elevation <= elevMax && elevation != DemConstants.ELEV_NO_DATA && elevation != nodata) {
-			point.setBackRightElevation(elevation);
-		} else {
-			point.setBackRightElevation(point.getBackLeftElevation());
-		}
-
-		elevation = dataPackage.getElevation(row + gridSize, column);
-		if (elevation >= elevMin && elevation <= elevMax && elevation != DemConstants.ELEV_NO_DATA && elevation != nodata) {
-			point.setFrontLeftElevation(elevation);
-		} else {
-			point.setFrontLeftElevation(point.getBackLeftElevation());
-		}
-
-		//this->data_package->get(row + 1, column + 1, &elevation);
-		elevation = dataPackage.getElevation(row + gridSize, column + gridSize);
-		if (elevation >= elevMin && elevation <= elevMax && elevation != DemConstants.ELEV_NO_DATA && elevation != nodata) {
-			point.setFrontRightElevation(elevation);
-		} else {
-			point.setFrontRightElevation(point.getBackLeftElevation());
-		}
-		
-		
-		if (point.getBackLeftElevation() == 0 
-			&& point.getBackRightElevation() == 0 
-			&& point.getFrontLeftElevation() == 0 
-			&& point.getFrontRightElevation() == 0) {
-			point.setCondition(DemConstants.STAT_FLAT_SEA_LEVEL);
-			return;
-			//return point;
-		}
-		
-
-		elevation = (point.getBackLeftElevation() + point.getBackRightElevation() + point.getFrontLeftElevation() + point.getFrontRightElevation()) / 4.0f;
-		point.setMiddleElevation(elevation);
-		
-		point.setCondition(DemConstants.STAT_SUCCESSFUL);
-		//return point;
-		return;
-	}
-	
-	protected static double cos(double d)
-	{
-		return Math.cos(Math.toRadians(d));
-	}
-	
-	protected static double sin(double d)
-	{
-		return Math.sin(Math.toRadians(d));
-	}
 	
 	
 	

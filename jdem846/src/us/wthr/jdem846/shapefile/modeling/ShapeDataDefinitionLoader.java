@@ -31,6 +31,7 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -39,7 +40,7 @@ public class ShapeDataDefinitionLoader
 {
 	private static Log log = Logging.getLog(ShapeDataDefinitionLoader.class);
 	
-	private static String DEFAULT_XML_FILE = "/us/wthr/jdem846/shapefile/modeling/shape_data_definitions.xml";
+	private static String DEFAULT_XML_FILE = JDem846Properties.getProperty("us.wthr.jdem846.shapefile") + "/shape_data_definitions.xml";
 	
 	private List<ShapeDataDefinition> shapeDataDefinitions;
 	

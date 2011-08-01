@@ -56,15 +56,23 @@ public class ModelingWorkerThread extends Thread
 		
 		//if (dataPackage.getDataSourceCount() > 0) {
 			
-
+			long start = 0;
+			long elapsed = 0;
+			
 			for (TileCompletionListener listener : tileCompletionListeners) {
 				engine.addTileCompletionListener(listener);
 			}
 			
+			start = System.currentTimeMillis();
 			dataPackage.calculateElevationMinMax(true);
+			elapsed = (System.currentTimeMillis() - start) / 1000;
+			log.info("Completed elevation min/max task in " + elapsed + " seconds");
 			
 			try {
+				start = System.currentTimeMillis();
 				OutputProduct<DemCanvas> product = engine.generate(this.isPreviewModel());
+				elapsed = (System.currentTimeMillis() - start) / 1000;
+				log.info("Completed render task in " + elapsed + " seconds");
 				
 				if (product != null)
 					fireModelCompletionListeners(product.getProduct());

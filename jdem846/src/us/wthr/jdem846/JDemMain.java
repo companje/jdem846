@@ -95,23 +95,23 @@ public class JDemMain
 			}
 		}
 		
-		JDem846Properties jdemProperties = JDem846Properties.getInstance();
+		//JDem846Properties jdemProperties = JDem846Properties.getInstance();
 		//JDem846Properties uiProperties = new JDem846Properties(JDem846Properties.UI_PROPERTIES);
 		//JDem846Properties coreProperties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
 		
 		SplashScreen splash = null;
 		
-		if (jdemProperties.getBooleanProperty("us.wthr.jdem846.ui.displaySplash")) {
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.displaySplash")) {
 			splash = new SplashScreen();
-			splash.setCopyright(jdemProperties.getProperty("us.wthr.jdem846.copyRight"));
+			splash.setCopyright(JDem846Properties.getProperty("us.wthr.jdem846.copyRight"));
 			splash.setVisible(true);
 			
-			SplashScreen.addIcon("/us/wthr/jdem846/ui/icons/dim48x48/applications-system.png", I18N.get("us.wthr.jdem846.ui.system"));
+			SplashScreen.addIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.48x48") + "/applications-system.png", I18N.get("us.wthr.jdem846.ui.system"));
 		}
 
 		
 		try {
-			SplashScreen.addIcon("/us/wthr/jdem846/ui/icons/dim48x48/applications-utilities.png", I18N.get("us.wthr.jdem846.ui.configuration"));
+			SplashScreen.addIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.48x48") + "/applications-utilities.png", I18N.get("us.wthr.jdem846.ui.configuration"));
 			
 			RegistryKernel regKernel = new RegistryKernel();
 			regKernel.init();
@@ -121,7 +121,7 @@ public class JDemMain
 		
 		try {
 			
-			SplashScreen.addIcon("/us/wthr/jdem846/ui/icons/dim48x48/applications-internet.png", I18N.get("us.wthr.jdem846.ui.service"));
+			SplashScreen.addIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.48x48") + "/applications-internet.png", I18N.get("us.wthr.jdem846.ui.service"));
 			
 			ServiceKernel serviceKernel = new ServiceKernel();
 			serviceKernel.addServiceThreadListener(new ServiceThreadListener() {
