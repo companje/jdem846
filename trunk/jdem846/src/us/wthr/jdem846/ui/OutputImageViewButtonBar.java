@@ -31,6 +31,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 
 @SuppressWarnings("serial")
@@ -61,33 +62,33 @@ public class OutputImageViewButtonBar extends JToolBar
 	public OutputImageViewButtonBar()
 	{
 		// Create components
-		jbtnSave = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.saveButton"), "/us/wthr/jdem846/ui/icons/document-save.png", new ActionListener() {
+		jbtnSave = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.saveButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-save.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_SAVE);
 			}
 		});
-		jbtnZoomIn = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomInButton"), "/us/wthr/jdem846/ui/icons/zoom-in.png", new ActionListener() {
+		jbtnZoomIn = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomInButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/zoom-in.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_ZOOM_IN);
 			}
 		});
-		jbtnZoomOut = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomOutButton"), "/us/wthr/jdem846/ui/icons/zoom-out.png", new ActionListener() {
+		jbtnZoomOut = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomOutButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/zoom-out.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_ZOOM_OUT);
 			}
 		});
-		jbtnZoomActual = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomActualButton"), "/us/wthr/jdem846/ui/icons/zoom-original.png", new ActionListener() {
+		jbtnZoomActual = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomActualButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/zoom-original.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_ZOOM_ACTUAL);
 			}
 		});
-		jbtnZoomFit = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomFitButton"), "/us/wthr/jdem846/ui/icons/zoom-fit-best.png", new ActionListener() {
+		jbtnZoomFit = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomFitButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/zoom-fit-best.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_ZOOM_FIT);
 			}
 		});
 		
-		jbtnStop = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.stopButton"), "/us/wthr/jdem846/ui/icons/process-stop.png", new ActionListener() {
+		jbtnStop = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.stopButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/process-stop.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_STOP);
 			}

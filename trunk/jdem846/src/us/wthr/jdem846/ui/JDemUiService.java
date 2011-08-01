@@ -52,10 +52,8 @@ public class JDemUiService extends AbstractLockableService
 		//System.out.println("JDemUiService.initialize()");
 		log.info("JDemUIService.initialize()");
 		
-		JDem846Properties properties = JDem846Properties.getInstance();
-
 		try {
-			String swingLaf = properties.getProperty("us.wthr.jdem846.ui.swingLaf");
+			String swingLaf = JDem846Properties.getProperty("us.wthr.jdem846.ui.swingLaf");
 			if (swingLaf != null && !swingLaf.equalsIgnoreCase("default")) {
 			    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 			        if (swingLaf.equalsIgnoreCase(info.getName())) {

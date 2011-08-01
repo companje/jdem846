@@ -37,6 +37,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -67,7 +68,7 @@ public class LogViewer extends JdemPanel
 		jscrollPane = new JScrollPane(jtxtLog);
 		
 		jbar = new JToolBar();
-		jbtnClear = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.logViewerPanel.clearButton.label"), "/us/wthr/jdem846/ui/icons/edit-clear.png", new ActionListener() {
+		jbtnClear = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.logViewerPanel.clearButton.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/edit-clear.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				clear();
 			}
@@ -77,7 +78,7 @@ public class LogViewer extends JdemPanel
 		logMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.logViewerPanel.menu"), KeyEvent.VK_L);
 		MainMenuBar.insertMenu(logMenu);
 		
-		logMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.logViewerPanel.menu.clear"), "/us/wthr/jdem846/ui/icons/edit-clear.png", KeyEvent.VK_C, new ActionListener() {
+		logMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.logViewerPanel.menu.clear"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/edit-clear.png", KeyEvent.VK_C, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				clear();

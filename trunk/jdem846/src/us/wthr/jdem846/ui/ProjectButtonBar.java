@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 
 @SuppressWarnings("serial")
@@ -46,19 +47,19 @@ public class ProjectButtonBar extends JToolBar
 		// Create components
 		
 		
-		jbtnAdd = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.addButton"), "/us/wthr/jdem846/ui/icons/list-add.png", new ActionListener() {
+		jbtnAdd = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.addButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/list-add.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_ADD);
 			}
 		});
 		
-		jbtnRemove = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.removeButton"), "/us/wthr/jdem846/ui/icons/list-remove.png", new ActionListener() {
+		jbtnRemove = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.removeButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/list-remove.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_REMOVE);
 			}
 		});
 		
-		jbtnCreate = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.createButton"), "/us/wthr/jdem846/ui/icons/stock_update-data.png", new ActionListener() {
+		jbtnCreate = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.createButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/stock_update-data.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_CREATE);
 			}

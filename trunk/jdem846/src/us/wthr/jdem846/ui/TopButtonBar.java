@@ -32,8 +32,7 @@ import us.wthr.jdem846.i18n.I18N;
 @SuppressWarnings("serial")
 public class TopButtonBar extends JToolBar
 {
-	private static JDem846Properties properties = JDem846Properties.getInstance();
-	
+
 	public static final int BTN_NEW_PROJECT = 0;
 	public static final int BTN_OPEN_PROJECT = 1;
 	public static final int BTN_SAVE_PROJECT = 2;
@@ -51,30 +50,30 @@ public class TopButtonBar extends JToolBar
 	{
 		// Create components
 		
-		jbtnNewProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"), "/us/wthr/jdem846/ui/icons/dim24x24/document-new.png", new ActionListener() {
+		jbtnNewProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.24x24") + "/document-new.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_NEW_PROJECT);
 			}
 		});
 		
-		jbtnOpenProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectButton"), "/us/wthr/jdem846/ui/icons/dim24x24/document-open.png", new ActionListener() {
+		jbtnOpenProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.24x24") + "/document-open.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_OPEN_PROJECT);
 			}
 		});
 		
-		jbtnSaveProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectButton"), "/us/wthr/jdem846/ui/icons/dim24x24/document-save.png", new ActionListener() {
+		jbtnSaveProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.24x24") + "/document-save.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_SAVE_PROJECT);
 			}
 		});
-		jbtnExit = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.exitButton"), "/us/wthr/jdem846/ui/icons/dim24x24/application-exit.png", new ActionListener() {
+		jbtnExit = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.exitButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.24x24") + "/application-exit.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_EXIT);
 			}
 		});
 		
-		if (properties.getBooleanProperty("us.wthr.jdem846.ui.mainToolBar.displayText") == false) {
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.mainToolBar.displayText") == false) {
 			jbtnNewProject.setTextDisplayed(false);
 			jbtnOpenProject.setTextDisplayed(false);
 			jbtnSaveProject.setTextDisplayed(false);

@@ -42,6 +42,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.DataSource;
@@ -81,12 +82,12 @@ public class DataSetTree extends JPanel
 		
 		// Load icons
     	try {
-    		polygonIcon = ImageIcons.loadImageIcon("/us/wthr/jdem846/ui/icons/node-icon-shape-polygon.png");
-    		elevationIcon = ImageIcons.loadImageIcon("/us/wthr/jdem846/ui/icons/node-icon-elevation.png");
-    		polylineIcon = ImageIcons.loadImageIcon("/us/wthr/jdem846/ui/icons/node-icon-shape-line.png");
+    		polygonIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-shape-polygon.png");
+    		elevationIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-elevation.png");
+    		polylineIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-shape-line.png");
     	
-    		elevationCategoryIcon = ImageIcons.loadImageIcon("/us/wthr/jdem846/ui/icons/node-icon-category-elevation.png");
-    		shapesCategoryIcon = ImageIcons.loadImageIcon("/us/wthr/jdem846/ui/icons/node-icon-category-shapes.png");
+    		elevationCategoryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-category-elevation.png");
+    		shapesCategoryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-category-shapes.png");
     	
     	} catch (IOException ex) {
 			ex.printStackTrace();

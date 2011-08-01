@@ -28,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 
 @SuppressWarnings("serial")
@@ -53,7 +54,7 @@ public class ClosableTab extends JPanel
 		jlblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 		
 		jbtnClose = new JButton();
-		jbtnClose.setIcon(new ImageIcon(getClass().getResource("icons/window-close.png")));
+		jbtnClose.setIcon(new ImageIcon(getClass().getResource(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/window-close.png")));
 		jbtnClose.setOpaque(false);
 		jbtnClose.setContentAreaFilled(false);
 		jbtnClose.setFocusable(false);

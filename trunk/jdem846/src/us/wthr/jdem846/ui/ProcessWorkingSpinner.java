@@ -27,12 +27,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
+import us.wthr.jdem846.JDem846Properties;
+
 @SuppressWarnings("serial")
 public class ProcessWorkingSpinner extends JLabel
 {
 	private static int rows = 4;
 	private static int columns = 8;
-	private static String imagePath = "icons/process-working.png";
+	private static String imagePath = JDem846Properties.getProperty("us.wthr.jdem846.processWorking");
 	
 	private BufferedImage rawImage;
 	private BufferedImage currentImage;

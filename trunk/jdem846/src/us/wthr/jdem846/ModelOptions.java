@@ -83,57 +83,57 @@ public class ModelOptions
 	public ModelOptions()
 	{
 		//JDem846Properties properties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
-		JDem846Properties properties = JDem846Properties.getInstance();
+		///JDem846Properties properties = JDem846Properties.getInstance();
 		
 		String property = null;
 		
-		property = properties.getProperty(ModelOptions.OPTION_ENGINE);
+		property = JDem846Properties.getProperty(ModelOptions.OPTION_ENGINE);
 		if (property != null) {
 			setEngine(property);
 		}
 		
-		property = properties.getProperty(OPTION_GRADIENT_LEVELS);
+		property = JDem846Properties.getProperty(OPTION_GRADIENT_LEVELS);
 		if (property != null) {
 			setGradientLevels(property);
 		}
 		
-		property = properties.getProperty(OPTION_WRITE_TO);
+		property = JDem846Properties.getProperty(OPTION_WRITE_TO);
 		if (property != null) {
 			setWriteTo(property);
 		}
 		
-		property = properties.getProperty(OPTION_WIDTH);
+		property = JDem846Properties.getProperty(OPTION_WIDTH);
 		if (property != null) {
 			setWidth(Integer.parseInt(property));
 		}
 		
 		
-		property = properties.getProperty(OPTION_HEIGHT);
+		property = JDem846Properties.getProperty(OPTION_HEIGHT);
 		if (property != null) {
 			setHeight(Integer.parseInt(property));
 		}
 		
-		property = properties.getProperty(OPTION_ELEVATION_MULTIPLE);
+		property = JDem846Properties.getProperty(OPTION_ELEVATION_MULTIPLE);
 		if (property != null) {
 			setElevationMultiple(Double.parseDouble(property));
 		}
 		
-		property = properties.getProperty(OPTION_BACKGROUND_COLOR);
+		property = JDem846Properties.getProperty(OPTION_BACKGROUND_COLOR);
 		if (property != null) {
 			setBackgroundColor(property);
 		}
 		
-		property = properties.getProperty(OPTION_HILLSHADING);
+		property = JDem846Properties.getProperty(OPTION_HILLSHADING);
 		if (property != null) {
 			setHillShading(Boolean.parseBoolean(property));
 		}
 		
-		property = properties.getProperty(OPTION_HILLSHADE_TYPE);
+		property = JDem846Properties.getProperty(OPTION_HILLSHADE_TYPE);
 		if (property != null) {
 			setHillShadeType(Integer.parseInt(property));
 		}
 		
-		property = properties.getProperty(OPTION_COLORING_TYPE);
+		property = JDem846Properties.getProperty(OPTION_COLORING_TYPE);
 		if (property != null) {
 			setColoringType(property);
 		}
@@ -142,59 +142,59 @@ public class ModelOptions
 		
 		
 		
-		property = properties.getProperty(OPTION_LIGHTING_AZIMUTH);
+		property = JDem846Properties.getProperty(OPTION_LIGHTING_AZIMUTH);
 		if (property != null) {
 			setLightingAzimuth(Double.parseDouble(property));
 		}
 		
-		property = properties.getProperty(OPTION_LIGHTING_ELEVATION);
+		property = JDem846Properties.getProperty(OPTION_LIGHTING_ELEVATION);
 		if (property != null) {
 			setLightingElevation(Double.parseDouble(property));
 		}
 		
 		
-		property = properties.getProperty(OPTION_TILE_SIZE);
+		property = JDem846Properties.getProperty(OPTION_TILE_SIZE);
 		if (property != null) {
 			setTileSize(Integer.parseInt(property));
 		}
 		
-		property = properties.getProperty(OPTION_LIGHTING_MULTIPLE);
+		property = JDem846Properties.getProperty(OPTION_LIGHTING_MULTIPLE);
 		if (property != null) {
 			setLightingMultiple(Double.parseDouble(property));
 		}
 		
-		property = properties.getProperty(OPTION_SPOT_EXPONENT);
+		property = JDem846Properties.getProperty(OPTION_SPOT_EXPONENT);
 		if (property != null) {
 			setSpotExponent(Integer.parseInt(property));
 		}
 		
-		property = properties.getProperty(OPTION_PROJECTION_ROTATE_X);
+		property = JDem846Properties.getProperty(OPTION_PROJECTION_ROTATE_X);
 		if (property != null) {
 			projection.setRotateX(Double.parseDouble(property));
 		}
 		
-		property = properties.getProperty(OPTION_PROJECTION_ROTATE_Y);
+		property = JDem846Properties.getProperty(OPTION_PROJECTION_ROTATE_Y);
 		if (property != null) {
 			projection.setRotateY(Double.parseDouble(property));
 		}
 		
-		property = properties.getProperty(OPTION_PROJECTION_ROTATE_Z);
+		property = JDem846Properties.getProperty(OPTION_PROJECTION_ROTATE_Z);
 		if (property != null) {
 			projection.setRotateZ(Double.parseDouble(property));
 		}
 		
 		
-		property = properties.getProperty(OPTION_PROJECTION_SHIFT_X);
+		property = JDem846Properties.getProperty(OPTION_PROJECTION_SHIFT_X);
 		if (property != null) {
 			projection.setShiftX(Double.parseDouble(property));
 		}
 		
-		property = properties.getProperty(OPTION_PROJECTION_SHIFT_Y);
+		property = JDem846Properties.getProperty(OPTION_PROJECTION_SHIFT_Y);
 		if (property != null) {
 			projection.setShiftY(Double.parseDouble(property));
 		}
 		
-		property = properties.getProperty(OPTION_PROJECTION_SHIFT_Z);
+		property = JDem846Properties.getProperty(OPTION_PROJECTION_SHIFT_Z);
 		if (property != null) {
 			projection.setShiftZ(Double.parseDouble(property));
 		}

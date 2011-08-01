@@ -29,6 +29,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JWindow;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ImageIcons;
@@ -50,7 +51,7 @@ public class SplashScreen extends JWindow
 		
 		
 		try {
-			splashImage = ImageIcons.loadImage("/us/wthr/jdem846/images/jdem846-splash.png");
+			splashImage = ImageIcons.loadImage(JDem846Properties.getProperty("us.wthr.jdem846.splash"));
 		} catch (Exception ex) {
 			log.error("Error loading splash screen image: " + ex.getMessage(), ex);
 		}

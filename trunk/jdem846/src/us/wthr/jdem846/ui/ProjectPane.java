@@ -43,6 +43,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.InvalidFileFormatException;
 import us.wthr.jdem846.i18n.I18N;
@@ -156,14 +157,14 @@ public class ProjectPane extends JdemPanel
 		projectMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.projectPane.menu.project"), KeyEvent.VK_P);
 		MainMenuBar.insertMenu(projectMenu);
 		
-		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.add"), "/us/wthr/jdem846/ui/icons/list-add.png", KeyEvent.VK_A, new ActionListener() {
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.add"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/list-add.png", KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				openInputData();
 			}
 		}));
 		
-		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.remove"), "/us/wthr/jdem846/ui/icons/list-remove.png", KeyEvent.VK_R, new ActionListener() {
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.remove"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/list-remove.png", KeyEvent.VK_R, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				int selectedType = datasetTree.getSelectedDatasetType();
@@ -172,7 +173,7 @@ public class ProjectPane extends JdemPanel
 			}
 		}));
 
-		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.create"), "/us/wthr/jdem846/ui/icons/stock_update-data.png", KeyEvent.VK_C, new ActionListener() {
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.create"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/stock_update-data.png", KeyEvent.VK_C, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				fireCreateModelListeners();

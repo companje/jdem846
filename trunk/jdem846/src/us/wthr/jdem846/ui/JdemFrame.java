@@ -65,8 +65,7 @@ import us.wthr.jdem846.util.TempFiles;
 public class JdemFrame extends JFrame
 {
 	private static Log log = Logging.getLog(JdemFrame.class);
-	private static JDem846Properties properties = JDem846Properties.getInstance();
-	
+
 	private TabPane tabPane;
 	private TopButtonBar topButtonBar;
 	private MainMenuBar menuBar;
@@ -79,13 +78,13 @@ public class JdemFrame extends JFrame
 
 		// Set Properties
 		this.setTitle(null);
-		this.setSize(properties.getIntProperty("us.wthr.jdem846.ui.windowWidth"), properties.getIntProperty("us.wthr.jdem846.ui.windowHeight"));
+		this.setSize(JDem846Properties.getIntProperty("us.wthr.jdem846.ui.windowWidth"), JDem846Properties.getIntProperty("us.wthr.jdem846.ui.windowHeight"));
 		this.setLocationRelativeTo(null);
 		
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
 		try {
-			Image icon = ImageIcons.loadImage("/us/wthr/jdem846/images/jdem846-icon.png");
+			Image icon = ImageIcons.loadImage(JDem846Properties.getProperty("us.wthr.jdem846.icon"));
 			this.setIconImage(icon);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -147,7 +146,7 @@ public class JdemFrame extends JFrame
 		this.add(topButtonBar, BorderLayout.NORTH);
 		this.add(tabPane, BorderLayout.CENTER);
 
-		if (properties.getBooleanProperty("us.wthr.jdem846.ui.displayLogViewPanel")) {
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.displayLogViewPanel")) {
 			log.info("Log viewer panel is enabled");
 			LogViewer logViewer = new LogViewer();
 			logViewer.setPreferredSize(new Dimension(1000, 150));
@@ -173,14 +172,14 @@ public class JdemFrame extends JFrame
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(
         //KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		
-		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.new"), "/us/wthr/jdem846/ui/icons/document-new.png", KeyEvent.VK_N, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.new"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-new.png", KeyEvent.VK_N, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				createNewProject(null);
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK)));
 		
-		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.open"), "/us/wthr/jdem846/ui/icons/document-open.png", KeyEvent.VK_O, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.open"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-open.png", KeyEvent.VK_O, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				openProject();
@@ -189,7 +188,7 @@ public class JdemFrame extends JFrame
 		
 		fileMenu.addSeparator();
 		
-		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.save"), "/us/wthr/jdem846/ui/icons/document-save.png", KeyEvent.VK_S, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.save"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-save.png", KeyEvent.VK_S, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				saveProject();
@@ -198,7 +197,7 @@ public class JdemFrame extends JFrame
 		
 		fileMenu.addSeparator();
 		
-		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.exit"), "/us/wthr/jdem846/ui/icons/application-exit.png", KeyEvent.VK_X, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.exit"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/application-exit.png", KeyEvent.VK_X, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				exitApplication();
@@ -209,7 +208,7 @@ public class JdemFrame extends JFrame
 		menuBar.add(Box.createHorizontalGlue());
 		ComponentMenu helpMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.menu.help"), KeyEvent.VK_H);
 		menuBar.add(helpMenu);
-		helpMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.help.about"), "/us/wthr/jdem846/ui/icons/help-about.png", KeyEvent.VK_A, new ActionListener() {
+		helpMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.help.about"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/help-about.png", KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onAbout();
@@ -385,7 +384,7 @@ public class JdemFrame extends JFrame
 	@Override
 	public void setTitle(String title)
 	{
-		String appTitle = properties.getProperty("us.wthr.jdem846.ui.windowTitle");
+		String appTitle = JDem846Properties.getProperty("us.wthr.jdem846.ui.windowTitle");
 		String wndTitle = "";
 		
 		if (title != null)

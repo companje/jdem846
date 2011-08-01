@@ -28,50 +28,48 @@ import us.wthr.jdem846.logging.Logging;
  *
  */
 @SuppressWarnings("serial")
-public class JDem846Properties extends Properties
+public class JDem846Properties 
 {
+
 	private static Log log = Logging.getLog(JDem846Properties.class);
-	private static JDem846Properties instance = null;
+	
+	private static boolean loaded = false;
+	private static Properties properties = null;
 	
 	static {
-		JDem846Properties.instance = new JDem846Properties();
+		load("/jdem846.properties");
 	}
 	
 	
-	public static final String CORE_PROPERTIES_PATH = "/us/wthr/jdem846/jdem846.properties";
 	
-	private boolean loaded = false;
 	
-	public JDem846Properties()
+
+	
+	public static String getProperty(String name)
 	{
-		load(CORE_PROPERTIES_PATH);
+		return properties.getProperty(name);
 	}
 	
-	
-	public JDem846Properties(String propertiesPath)
-	{
-		load(propertiesPath);
-	}
-	
-	public double getDoubleProperty(String name)
+	public static double getDoubleProperty(String name)
 	{
 		return Double.parseDouble(getProperty(name));
 	}
 	
-	public int getIntProperty(String name)
+	public static int getIntProperty(String name)
 	{
 		return Integer.parseInt(getProperty(name));
 	}
 	
-	public boolean getBooleanProperty(String name)
+	public static boolean getBooleanProperty(String name)
 	{
 		return Boolean.parseBoolean(getProperty(name));
 	}
 	
-	protected void load(String path)
+	protected static void load(String path)
 	{
 		try {
-			load(getClass().getResourceAsStream(path));
+			properties = new Properties();
+			properties.load(JDem846Properties.class.getResourceAsStream(path));
 			loaded = true;
 		} catch (IOException e) {
 			log.error("IO error loading properties file from '" + path + "': " + e.getMessage(), e);
@@ -80,20 +78,17 @@ public class JDem846Properties extends Properties
 		overrideWithSystemProperties();
 	}
 	
-	public boolean isLoaded()
+	public static boolean isLoaded()
 	{
 		return loaded;
 	}
 	
-	protected void overrideWithSystemProperties()
+	protected static void overrideWithSystemProperties()
 	{
 		for (Object key : System.getProperties().keySet()) {
-			this.setProperty((String)key, System.getProperty((String)key));
+			properties.setProperty((String)key, System.getProperty((String)key));
 		}
 	}
 	
-	public static JDem846Properties getInstance()
-	{
-		return JDem846Properties.instance;
-	}
+	
 }

@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.swing.JToolBar;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 
 @SuppressWarnings("serial")
@@ -48,25 +49,25 @@ public class OrderingButtonBar extends JToolBar
 		this.setFloatable(false);
 		
 		// Create buttons
-		jbtnMoveTop = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveTop.label"), "/us/wthr/jdem846/ui/icons/go-top.png", new ActionListener() {
+		jbtnMoveTop = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveTop.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/go-top.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_TOP);
 			}
 		});
 		
-		jbtnMoveUp = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveUp.label"), "/us/wthr/jdem846/ui/icons/go-up.png", new ActionListener() {
+		jbtnMoveUp = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveUp.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/go-up.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_UP);
 			}
 		});
 		
-		jbtnMoveDown = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveDown.label"), "/us/wthr/jdem846/ui/icons/go-down.png", new ActionListener() {
+		jbtnMoveDown = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveDown.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/go-down.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_DOWN);
 			}
 		});
 		
-		jbtnMoveBottom = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveBottom.label"), "/us/wthr/jdem846/ui/icons/go-bottom.png", new ActionListener() {
+		jbtnMoveBottom = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveBottom.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/go-bottom.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_BOTTOM);
 			}
