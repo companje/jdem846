@@ -50,7 +50,9 @@ import us.wthr.jdem846.render.gfx.ViewportBuffer;
 public class Dem3dGenerator extends BasicRenderEngine
 {
 	private static Log log = Logging.getLog(Dem3dGenerator.class);
-	
+	private static final int COUNTERCLOCKWISE = -1;
+	private static final int UNDEFINED = 0;
+	private static final int CLOCKWISE = 1;
 
 	public Dem3dGenerator()
 	{
@@ -116,9 +118,9 @@ public class Dem3dGenerator extends BasicRenderEngine
 		g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 		//DemCanvas canvas3d = new DemCanvas(dataPaka)
 		
-		//int[] xPoints = new int[4];
-		//int[] yPoints = new int[4];
-		Path2D.Double path = new Path2D.Double();
+		int[] xPoints = new int[4];
+		int[] yPoints = new int[4];
+		//Path2D.Double path = new Path2D.Double();
 		
 		for (int row = 0; row < dataPackage.getRows(); row++) {
 			for (int column = 0; column < dataPackage.getColumns(); column++) {
@@ -176,6 +178,11 @@ public class Dem3dGenerator extends BasicRenderEngine
 					projectTo(vectorFrontLeft, eyeVector, nearVector);
 					projectTo(vectorFrontRight, eyeVector, nearVector);
 					
+					
+					//if (CLOCKWISE == pointOrder(vectorBackLeft, vectorFrontLeft, vectorFrontRight, vectorBackRight)) {
+					//	continue;
+					//}
+					
 					vectorBackLeft[0] -= startX;
 					vectorBackRight[0] -= startX;
 					vectorFrontLeft[0] -= startX;
@@ -186,19 +193,42 @@ public class Dem3dGenerator extends BasicRenderEngine
 					vectorFrontLeft[1] -= startZ;
 					vectorFrontRight[1] -= startZ;
 					
-
+					xPoints[0] = (int) Math.floor(vectorBackLeft[0]);
+					xPoints[1] = (int) Math.floor(vectorFrontLeft[0]);
+					xPoints[2] = (int) Math.ceil(vectorFrontRight[0]);
+					xPoints[3] = (int) Math.ceil(vectorBackRight[0]);
+					
+					yPoints[0] = (int) Math.floor(vectorBackLeft[1]);
+					yPoints[1] = (int) Math.ceil(vectorFrontLeft[1]);
+					yPoints[2] = (int) Math.ceil(vectorFrontRight[1]);
+					yPoints[3] = (int) Math.floor(vectorBackRight[1]);
+					
+					
+					if (xPoints[0] >= xPoints[3])
+						xPoints[3] += 1;
+					if (xPoints[1] >= xPoints[2])
+						xPoints[2] += 1;
+					
+					if (yPoints[0] >= yPoints[1])
+						yPoints[1] += 1;
+					if (yPoints[3] >= yPoints[2])
+						yPoints[2] += 1;
+					
+					
+					/*
 					path.reset();
 					path.moveTo(vectorBackLeft[0], vectorBackLeft[1]);
 					path.lineTo(vectorFrontLeft[0], vectorFrontLeft[1]);
 					path.lineTo(vectorFrontRight[0], vectorFrontRight[1]);
 					path.lineTo(vectorBackRight[0], vectorBackRight[1]);
 					path.closePath();
+					*/
 					
-					int color = canvas2d.getColor(column, row);
-					g2d.setColor(new Color(color));
-					//g2d.fillPolygon(xPoints, yPoints, 4);
+					//g2d.setColor(Color.YELLOW);
+					g2d.setColor(new Color(canvas2d.getColor(column, row)));
+					g2d.fillPolygon(xPoints, yPoints, 4);
 					
-					g2d.fill(path);
+					//g2d.fill(path);
 					
 					
 				}
@@ -302,6 +332,32 @@ public class Dem3dGenerator extends BasicRenderEngine
 		return new DemCanvas(cropped);
 	}
 	
+	public int pointOrder(double[] ... vectors)
+	{
+		int i,j,k;
+		int count = 0;
+		int n = vectors.length;
+		double z;
+
+		for (i=0;i<n;i++) {
+
+			
+			j = (i + 1) % n;
+			k = (i + 2) % n;
+			z  = (vectors[j][0] - vectors[i][0]) * (vectors[k][1] - vectors[j][1]);
+			z -= (vectors[j][1] - vectors[i][1]) * (vectors[k][0] - vectors[j][0]);
+			if (z < 0)
+				count--;
+			else if (z > 0)
+				count++;
+		}
+		if (count > 0)
+			return(COUNTERCLOCKWISE);
+		else if (count < 0)
+			return(CLOCKWISE);
+		else
+			return(UNDEFINED);
+	}
 	
 	public void projectTo(double[] vector, double[] eye, double[] near) //Vector eye, Vector near)
 	{
@@ -335,251 +391,6 @@ public class Dem3dGenerator extends BasicRenderEngine
 		//vector[0] = bX;
 		///vector[1] = bY;
 	}
-	
-	/*
-	@Override
-	public OutputProduct<DemCanvas> generate(boolean skipElevation) throws RenderEngineException
-	{
-		try {
-			Color background = ColorRegistry.getInstance(modelOptions.getBackgroundColor()).getColor();
-			
-			double width = dataPackage.getColumns();
-			double height = dataPackage.getRows();
-			
-			BufferedImage image = new BufferedImage((int)dataPackage.getColumns(), (int) dataPackage.getRows(), BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g2d = (Graphics2D) image.getGraphics();
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			
-			
-			
-			g2d.setColor(background);
-			g2d.fillRect(0, 0, (int)width, (int) height);
-			
-			int trueStartZ = (int) Math.round(-(height / 2.0));
-			int trueEndZ = (int) Math.round(height / 2.0);
-			
-			int tileSize = (int)Math.ceil(height);//modelOptions.getTileSize();
-			double numTiles = Math.ceil(((double)height / (double)tileSize));
-			log.info("Rendering " + numTiles + " tiles");
-			
-			double tileNum = 0;
-			
-			ViewportBuffer buffer = new ViewportBuffer((int)width, (int)height);
-	
-			int[] tileYs = new int[(int)numTiles];
-			
-			for (int z = trueStartZ; z < trueEndZ; z+=tileSize) {
-				int endZ = z + tileSize;
-				if (endZ > trueEndZ)
-					endZ = trueEndZ;
-	
-				tileNum++;
-				
-				log.info("Rendering tile #" + (int)tileNum + " of " + (int)numTiles + " (" + z + " to " + endZ + ")");
-				
-				renderTile(buffer, z, endZ);
-				
-				if (isCancelled()) {
-					log.warn("Render process cancelled, model not complete.");
-					break;
-				}
-			}
-			
-			log.info("Transferring pixel data to image");
-	
-			buffer.paint(image, 0);
-			buffer.dispose();
-	
-			
-			g2d.dispose();
-			
-			DemCanvas canvas = new DemCanvas(image);//background, modelOptions.getWidth(), modelOptions.getHeight());
-			return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
-		} catch (OutOfMemoryError err) {
-			log.error("Out of memory error when generating model", err);
-			throw new RenderEngineException("Out of memory error when generating model", err);
-		} catch (Exception ex) {
-			log.error("Error occured generating model", ex);
-			throw new RenderEngineException("Error occured generating model", ex);
-		}
-	}
-	
-	protected void renderTile(ViewportBuffer buffer, int startZ, int endZ) throws RenderEngineException
-	{
-		//List<Renderable> polygons = new LinkedList<Renderable>();
-		
-		Color lineColor = Color.BLACK;
-		
-		double elevationMax = dataPackage.getMaxElevation();
-		double elevationMin = dataPackage.getMinElevation();
-		double elevationDelta = elevationMax - elevationMin;
-		double resolution = dataPackage.getAverageResolution();
-		
-		int width = (int) dataPackage.getColumns();
-		int height = (int) dataPackage.getRows();
-		int tileHeight = modelOptions.getTileSize();
-		
-		
-		Vector eye = new Vector(0, 0, (int) dataPackage.getColumns());
-		Vector near = new Vector(0, 0, (int) Math.round((dataPackage.getColumns()/2.0f)));
-		double translateZ = -(dataPackage.getColumns() / 2.0f) / Math.tan(45.0 / 2.0);
-		
-		Vector translate = new Vector(0, 0, 0);//translateZ);
-		log.info("Translate Z: " + translateZ);
-		
-		//double nearWidth = 50;
-		//double nearHeight = 50;
-		//double farDistance = 50;
-		double sunsource[] = {0.0, 0.0, 0.0};
-		
-		Vector sun = new Vector(0.0, 0.0, -1.0);
-		double solarElevation = modelOptions.getLightingElevation();
-		double solarAzimuth = modelOptions.getLightingAzimuth();
-
-		sun.rotate(solarElevation, Vector.X_AXIS);
-		sun.rotate(-solarAzimuth, Vector.Y_AXIS);
-		
-		sunsource[0] = sun.getX();
-		sunsource[1] = sun.getY();
-		sunsource[2] = sun.getZ();
-		
-		double startX = -(width / 2.0);
-		double endX = (width / 2.0);
-		
-		int trueEndZ = (int) Math.round(height / 2.0);
-		
-		Vector rotateX = new Vector(modelOptions.getProjection().getRotateX(), 0, 0);
-		Vector rotateY = new Vector(0, modelOptions.getProjection().getRotateY(), 0);
-		DemPoint point = new DemPoint();
-		
-		ModelColoring modelColoring = modelColoring = ColoringRegistry.getInstance(modelOptions.getColoringType()).getImpl();
-
-		double elevationMultiple = modelOptions.getElevationMultiple();
-		
-		int gridSize = 1;
-		int polyCount = 0;
-		
-		int[] cBL = {0, 0, 0};
-		int[] cBR = {0, 0, 0};
-		int[] cFL = {0, 0, 0};
-		int[] cFR = {0, 0, 0};
-		int[] cSq = {0, 0, 0};
-		
-		Vector vBL = new Vector(cBL, 0, 0, 0);
-		Vector vBR = new Vector(cBR, 0, 0, 0);
-		Vector vFL = new Vector(cFL, 0, 0, 0);
-		Vector vFR = new Vector(cFR, 0, 0, 0);
-		Square square = new Square(cSq, vBL, vFL, vFR, vBR);
-		
-		int[] clrBL = {0, 0, 0, 255};
-		int[] clrBR = {0, 0, 0, 255};
-		int[] clrFL = {0, 0, 0, 255};
-		int[] clrFR = {0, 0, 0, 255};
-		
-		double[] normal = {0.0, 0.0, 0.0};
-		
-		double[] pBL = {0, 0, 0};
-		double[] pBR = {0, 0, 0};
-		double[] pFL = {0, 0, 0};
-		double[] pFR = {0, 0, 0};
-		
-		double progress = 0;
-		
-		for (double z = startZ; z < endZ; z+=gridSize) {
-			double tileZ = z;
-			int row = (int) (trueEndZ + z);
-			
-			for (double x = startX; x < endX; x+=gridSize) {
-				int column = (int) (endX - x);
-
-				getPoint(row, column, gridSize, point);
-	
-				if (point.getCondition() == DemConstants.STAT_SUCCESSFUL) {
-					double yBL = (point.getBackLeftElevation() - elevationMax) / resolution;
-					double yBR = (point.getBackRightElevation() - elevationMax) / resolution;
-					double yFL = (point.getFrontLeftElevation() - elevationMax) / resolution;
-					double yFR = (point.getFrontRightElevation() - elevationMax) / resolution;
-	
-					
-					yBL = yBL + Math.abs(elevationMin);
-					yBR = yBR + Math.abs(elevationMin);
-					yFL = yFL + Math.abs(elevationMin);
-					yFR = yFR + Math.abs(elevationMin);
-	
-					modelColoring.getGradientColor(point.getBackLeftElevation(), (float)elevationMin, (float)elevationMax, clrBL);
-					modelColoring.getGradientColor(point.getBackRightElevation(), (float)elevationMin, (float)elevationMax, clrBR);
-					modelColoring.getGradientColor(point.getFrontLeftElevation(), (float)elevationMin, (float)elevationMax, clrFL);
-					modelColoring.getGradientColor(point.getFrontRightElevation(), (float)elevationMin, (float)elevationMax, clrFR);
-					
-					
-					square.getVector(0).setColor(clrBL[0], clrBL[1], clrBL[2]);
-					square.getVector(0).setX(x);
-					square.getVector(0).setY(yBL * elevationMultiple);
-					square.getVector(0).setZ(tileZ);
-					
-					square.getVector(1).setColor(clrFL[0], clrFL[1], clrFL[2]);
-					square.getVector(1).setX(x);
-					square.getVector(1).setY(yFL * elevationMultiple);
-					square.getVector(1).setZ(tileZ+gridSize);
-					
-					square.getVector(2).setColor(clrFR[0], clrFR[1], clrFR[2]);
-					square.getVector(2).setX(x+gridSize);
-					square.getVector(2).setY(yFR * elevationMultiple);
-					square.getVector(2).setZ(tileZ+gridSize);
-					
-					square.getVector(3).setColor(clrBR[0], clrBR[1], clrBR[2]);
-					square.getVector(3).setX(x+gridSize);
-					square.getVector(3).setY(yBR * elevationMultiple);
-					square.getVector(3).setZ(tileZ);
-	
-					
-					pBL[0] = x;				pBL[1] = yBL; 	pBL[2] = z;
-					pBR[0] = x+gridSize; 	pBR[1] = yBR; 	pBR[2] = z;
-					pFL[0] = x; 			pFL[1] = yFL; 	pFL[2] = z+gridSize;
-					pFR[0] = x+gridSize; 	pFR[1] = yFR; 	pFR[2] = z+gridSize;
-	
-					Perspectives.calcNormal(pBL, pFL, pBR, normal);
-					square.setNormal(normal);
-					
-					square.rotate(rotateY);
-					square.rotate(rotateX);
-					square.translate(translate);
-					square.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
-					square.prepareForRender(sunsource, 1.0);
-	
-					square.render(buffer, width, height);
-	
-					polyCount++;
-				}
-				
-				
-				if (isCancelled()) {
-					log.warn("Render process cancelled, model not complete.");
-					break;
-				}
-			}
-			
-			
-			if (z % 100 == 0) {
-				double pctComplete = ((double)z - startZ) / ((double)(endZ - startZ));
-				pctComplete = Math.floor(pctComplete * 100);
-				if (pctComplete > progress) {
-					log.info("Percent Complete: " + pctComplete + "%");
-					
-					//System.out.println("Percent Complete: " + (pctComplete) + "%");
-				}
-				progress = pctComplete;
-				//if (progress > 70)
-				//	break;
-			}
-			
-			if (isCancelled()) {
-				log.warn("Render process cancelled, model not complete.");
-				break;
-			}
-		}
-	}
-	*/
 	
 	
 
