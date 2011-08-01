@@ -98,60 +98,26 @@ public class Dem2dGenerator extends BasicRenderEngine
 	
 	public DemCanvas generate(int reqdWidth, int reqdHeight, int tileSize, boolean skipElevation) throws RenderEngineException
 	{
-		
-
-		int dataRows = (int) this.dataPackage.getRows();
-		int dataCols = (int) this.dataPackage.getColumns();
-
-		if (tileSize > dataRows && dataRows > dataCols)
-			tileSize = dataRows;
-		
-		if (tileSize > dataCols && dataCols > dataRows)
-			tileSize = dataCols;
-
-	
-		float sizeRatio = 1.0f;
-		int outputWidth = reqdWidth;
-		int outputHeight = reqdHeight;
-
-		if (dataRows > dataCols) {
-			sizeRatio = (float)dataCols / (float)dataRows;
-			outputWidth = Math.round(((float) outputHeight) * sizeRatio);
-		} else if (dataCols > dataRows) {
-			sizeRatio = (float)dataRows / (float)dataCols;
-			outputHeight = Math.round(((float)outputWidth) * sizeRatio);
-		}
-		
-		log.info("Output width/height: " + outputWidth + "/" + outputHeight);
-		
-		float xdimRatio = (float)outputWidth / (float)dataCols;
-		float xDim = dataPackage.getAvgXDim() / xdimRatio;
-		dataPackage.setAvgXDim(xDim);
-
-		float ydimRatio = (float)outputHeight / (float)dataRows;
-		float yDim = dataPackage.getAvgYDim() / ydimRatio;
-		dataPackage.setAvgYDim(yDim);
-		log.info("X/Y Dimension (cellsize): " + xDim + "/" + yDim);
+		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(dataPackage, modelOptions);
+		dataPackage.setAvgXDim(modelDimensions.getxDim());
+		dataPackage.setAvgYDim(modelDimensions.getyDim());
 		
 		
 		Color background = getDefinedColor(modelOptions.getBackgroundColor());
 
-		DemCanvas tileCanvas = new DemCanvas(background, (int)tileSize, (int)tileSize);
-		DemCanvas outputCanvas = new DemCanvas(background, (int)outputWidth, (int)outputHeight);
+		DemCanvas tileCanvas = new DemCanvas(background, (int)modelDimensions.getTileSize(), (int)modelDimensions.getTileSize());
+		DemCanvas outputCanvas = new DemCanvas(background, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
 		
-		float numTilesHoriz = ((float)dataCols) / ((float)tileSize);
-		float numTilesVert = ((float)dataRows) / ((float)tileSize);
 		
-		long tileOutputWidth = Math.round(((float)outputWidth) / numTilesHoriz);
-		long tileOutputHeight = Math.round(((float)outputHeight) / numTilesVert);
-
+		
 		int tileRow = 0;
 		int tileCol = 0;
 		int tileNum = 0;
-		
-		int numTiles = (int) (Math.ceil(((double)dataRows / (double)tileSize)) * Math.ceil(((double)dataCols / (double)tileSize)));
-		
-		log.info("Processing " + numTiles + " tiles");
+		int dataRows = modelDimensions.getDataRows();
+		int dataCols = modelDimensions.getDataColumns();
+		tileSize = modelDimensions.getTileSize();
+	
+		log.info("Processing " + modelDimensions.getTileCount() + " tiles");
 		
 		if ((!skipElevation) && dataPackage.getDataSources().size() > 0) {
 			for (int fromRow = 0; fromRow <= dataRows; fromRow+=tileSize) {
@@ -172,8 +138,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 						
 						generate(fromRow, toRow, fromCol, toCol, tileCanvas);
 						
-						DemCanvas scaled = tileCanvas.getScaled((int)tileOutputWidth, (int) tileOutputHeight);
-						outputCanvas.overlay(scaled.getImage(), (int)Math.floor(tileCol * tileOutputWidth), (int)Math.floor(tileRow * tileOutputHeight), scaled.getWidth(), scaled.getHeight());
+						DemCanvas scaled = tileCanvas.getScaled((int)modelDimensions.getTileOutputWidth(), (int) modelDimensions.getTileOutputHeight());
+						outputCanvas.overlay(scaled.getImage(), (int)Math.floor(tileCol * modelDimensions.getTileOutputWidth()), (int)Math.floor(tileRow * modelDimensions.getTileOutputHeight()), scaled.getWidth(), scaled.getHeight());
 						
 		
 						
@@ -182,7 +148,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 						
 						tileNum++;
 						
-						fireTileCompletionListeners(tileCanvas, outputCanvas, ((double)tileNum) / ((double)numTiles));
+						fireTileCompletionListeners(tileCanvas, outputCanvas, ((double)tileNum) / ((double)modelDimensions.getTileCount()));
 					}
 					tileCol++;	
 					
