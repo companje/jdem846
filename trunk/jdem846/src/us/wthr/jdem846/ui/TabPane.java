@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JTabbedPane;
 
+import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -33,7 +34,7 @@ import us.wthr.jdem846.logging.Logging;
  *
  */
 @SuppressWarnings("serial")
-public class TabPane extends JTabbedPane
+public class TabPane extends JTabbedPane implements Disposable
 {
 	private static Log log = Logging.getLog(TabPane.class);
 	
@@ -42,6 +43,7 @@ public class TabPane extends JTabbedPane
 
 	}
 	
+	@Override
 	public void addTab(String title, Component component)
 	{
 		addTab(title, component, false);
@@ -54,19 +56,12 @@ public class TabPane extends JTabbedPane
 
 		tab.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				Component comp = (Component) e.getSource();
 				int index = indexOfTabComponent(comp);
-				if (index >= 0) {
-					
-					Component tabComponent = getComponentAt(index);
-					if (tabComponent instanceof JdemPanel) {
-						JdemPanel panel = (JdemPanel) tabComponent;
-						panel.cleanUp();
-					}
-					removeTabAt(index);
-				} else {
-					log.warn("Invalid tab pane index: " + index);
-				}
+				removeTabAt(index);
+				
+				
 			}
 		});
 		
@@ -75,11 +70,60 @@ public class TabPane extends JTabbedPane
 	}
 	
 	
+	
+	
+	@Override
+	public void removeTabAt(int index)
+	{
+		if (index >= 0) {
+			Component tabComponent = getComponentAt(index);
+			
+			log.info("Closing tab of type " + tabComponent.getClass().getCanonicalName());
+			
+			if (tabComponent instanceof Disposable) {
+				Disposable disposable = (Disposable) tabComponent;
+				try {
+					disposable.dispose();
+				} catch (ComponentException e1) {
+					log.warn("Failed to dispose Tab pane: " + e1.getMessage(), e1);
+					e1.printStackTrace();
+				}
+			}
+		}
+		super.removeTabAt(index);
+	}
+
 	@Override
 	public void setTitleAt(int index, String title)
 	{
 		ClosableTab tab = (ClosableTab) this.getTabComponentAt(index);
 		tab.setTitle(title);
+	}
+
+	@Override
+	public void dispose() throws ComponentException
+	{
+		log.info("TabPane.dispose()");
+		
+		while(this.getTabCount() > 0) {
+			removeTabAt(0);
+		}
+		
+		
+		/*
+		Component components[] = getComponents();
+		for (Component component : components) {
+			if (component instanceof Disposable) {
+				Disposable disposableComponent = (Disposable) component;
+				try {
+					disposableComponent.dispose();
+				} catch (ComponentException ex) {
+					log.warn("Failed to dispose of component", ex);
+					ex.printStackTrace();
+				}
+			}
+		}
+		*/
 	}
 	
 

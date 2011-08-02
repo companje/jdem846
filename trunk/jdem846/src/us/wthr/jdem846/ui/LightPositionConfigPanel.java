@@ -31,6 +31,8 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import us.wthr.jdem846.exception.ComponentException;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -210,4 +212,13 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 			listener.stateChanged(event);
 		}
 	}
+
+	public void dispose() throws ComponentException
+	{
+		
+		log.info("Light Position Dispose");
+		super.dispose();
+		//previewPanel.dispose();
+	}
+
 }

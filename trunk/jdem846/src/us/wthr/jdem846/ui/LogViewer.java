@@ -152,11 +152,5 @@ public class LogViewer extends JdemPanel
 		jscrollPane.getVerticalScrollBar().setValue(jscrollPane.getVerticalScrollBar().getMaximum());
 	}
 	
-	
-	@Override
-	public void cleanUp()
-	{
-		log.info("cleanUp()");
-	}
 
 }

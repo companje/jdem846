@@ -16,6 +16,8 @@
 
 package us.wthr.jdem846.input;
 
+import us.wthr.jdem846.exception.DataSourceException;
+
 public class PackagedReader 
 {
 	private float rows;
@@ -47,7 +49,7 @@ public class PackagedReader
 	
 	private DataSource dataSource;
 	
-	
+	private boolean isDisposed = false;
 	
 	public PackagedReader(DataSource dataSource)
 	{
@@ -362,6 +364,18 @@ public class PackagedReader
 		
 		
 		return copy;
+	}
+	
+	public void dispose() throws DataSourceException
+	{
+		if (isDisposed) {
+			throw new DataSourceException("Object already disposed of");
+		}
+		
+		dataSource.dispose();
+		dataSource = null;
+		
+		isDisposed = true;
 	}
 	
 }

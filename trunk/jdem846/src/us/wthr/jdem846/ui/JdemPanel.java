@@ -21,8 +21,10 @@ import java.awt.event.ComponentListener;
 
 import javax.swing.JPanel;
 
+import us.wthr.jdem846.exception.ComponentException;
+
 @SuppressWarnings("serial")
-public abstract class JdemPanel extends JPanel
+public abstract class JdemPanel extends BasePanel
 {
 	private String title;
 	
@@ -47,7 +49,13 @@ public abstract class JdemPanel extends JPanel
 		
 	}
 	
-	public abstract void cleanUp();
+	
+	public void dispose() throws ComponentException
+	{
+
+		super.dispose();
+	}
+	
 
 	public String getTitle()
 	{

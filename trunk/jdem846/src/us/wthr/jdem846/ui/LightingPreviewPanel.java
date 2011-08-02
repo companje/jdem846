@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -38,6 +39,8 @@ import javax.swing.event.ChangeListener;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
+import us.wthr.jdem846.exception.ComponentException;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
@@ -54,7 +57,7 @@ import us.wthr.jdem846.render.gfx.ViewportBuffer;
 import us.wthr.jdem846.util.TempFiles;
 
 @SuppressWarnings("serial")
-public class LightingPreviewPanel extends JPanel
+public class LightingPreviewPanel extends BasePanel
 {
 	
 	private static Log log = Logging.getLog(LightingPreviewPanel.class);
@@ -73,6 +76,8 @@ public class LightingPreviewPanel extends JPanel
 	private DataPackage dataPackage;
 	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
+	
+	private boolean isDisposed = false;
 	
 	public LightingPreviewPanel()
 	{
@@ -101,6 +106,7 @@ public class LightingPreviewPanel extends JPanel
 		this.addMouseMotionListener(mouseAdapter);
 		
 		
+		
 		modelOptions = new ModelOptions();
 		modelOptions.setColoringType(JDem846Properties.getProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewColoring"));
 		
@@ -125,7 +131,6 @@ public class LightingPreviewPanel extends JPanel
 			dataPackage.addDataSource(previewData);
 			dataPackage.prepare();
 			dataPackage.calculateElevationMinMax(true);
-			
 		} catch (Exception e1) {
 			
 			e1.printStackTrace();
@@ -413,5 +418,29 @@ public class LightingPreviewPanel extends JPanel
 	protected double sin(double d)
 	{
 		return Math.sin(Math.toRadians(d));
+	}
+
+
+	@Override
+	public void dispose() throws ComponentException
+	{
+		if (isDisposed) {
+			throw new ComponentException("Object already disposed of");
+		}
+		
+		log.info("Disposing of Lighting Preview Pane");
+		
+		try {
+			dataPackage.dispose();
+		} catch (DataSourceException e) {
+			e.printStackTrace();
+			throw new ComponentException("Data source already disposed of", e);
+			
+		}
+		dataPackage = null;
+		
+		isDisposed = true;
+		
+		super.dispose();
 	}
 }

@@ -16,6 +16,8 @@
 
 package us.wthr.jdem846.input;
 
+import us.wthr.jdem846.exception.DataSourceException;
+
 /** Specifies a class that is to be uses to load and cache binary data.
  * 
  * @author Kevin M. Gill
@@ -29,4 +31,5 @@ public interface DataCache
 	public void unload();
 	public boolean isLoaded();
 	public void setLoaded(boolean isLoaded);
+	public void dispose() throws DataSourceException;
 }

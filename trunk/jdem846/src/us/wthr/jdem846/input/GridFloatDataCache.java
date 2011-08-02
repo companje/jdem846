@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import us.wthr.jdem846.ByteOrder;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ByteConversions;
@@ -39,6 +40,8 @@ public class GridFloatDataCache implements DataCache
 	private RandomAccessFile inputData;
 	private byte buffer[];
 
+	private boolean isDisposed = false;
+	
 	public GridFloatDataCache(File input, int size, ByteOrder byteOrder)
 	{
 		this.input = input;
@@ -46,6 +49,20 @@ public class GridFloatDataCache implements DataCache
 		this.byteOrder = byteOrder;
 		this.buffer = new byte[size];
 		this.inputData = null;
+	}
+	
+	public void dispose() throws DataSourceException
+	{
+		if (isDisposed) {
+			throw new DataSourceException("Object already disposed of");
+		}
+		
+		if (inputData != null) {
+			unload();
+			buffer = null;
+		}
+		
+		isDisposed = true;
 	}
 	
 	public float get(int position)

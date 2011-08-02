@@ -17,6 +17,7 @@
 package us.wthr.jdem846.input;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.exception.DataSourceException;
 
 /** A class that provides the primitives for a specific raster format driver.
  * 
@@ -118,4 +119,5 @@ public abstract class DataSource
 	public abstract float getResolution();
 
 	public abstract DataSource copy();
+	public abstract void dispose() throws DataSourceException;
 }

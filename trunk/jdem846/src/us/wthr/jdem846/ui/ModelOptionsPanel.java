@@ -47,6 +47,7 @@ import us.wthr.jdem846.color.ColorInstance;
 import us.wthr.jdem846.color.ColorRegistry;
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
+import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -58,7 +59,7 @@ import us.wthr.jdem846.ui.panels.FlexGridPanel;
 import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 
 @SuppressWarnings("serial")
-public class ModelOptionsPanel extends JPanel
+public class ModelOptionsPanel extends BasePanel
 {
 	private static Log log = Logging.getLog(ModelOptionsPanel.class);
 	
@@ -283,11 +284,11 @@ public class ModelOptionsPanel extends JPanel
 		lightPositionConfigPanel.setPreferredSize(new Dimension(150, 150));
 		projectionConfigPanel.setPreferredSize(new Dimension(150, 150));
 		
-		JPanel lightAndProjectionPanel = new JPanel();
+		BasePanel lightAndProjectionPanel = new BasePanel();
 		BoxLayout lightAndProjectionBoxLayout = new BoxLayout(lightAndProjectionPanel, BoxLayout.PAGE_AXIS);
 		lightAndProjectionPanel.setLayout(lightAndProjectionBoxLayout);
-		Box lightAndProjectionBox = Box.createVerticalBox();
-
+		//Box lightAndProjectionBox = Box.createVerticalBox();
+		DisposableBox lightAndProjectionBox = new DisposableBox(BoxLayout.Y_AXIS);
 		lightAndProjectionBox.add(lightPositionConfigPanel);
 		lightAndProjectionBox.add(projectionConfigPanel);
 		lightAndProjectionPanel.add(lightAndProjectionBox);
@@ -301,6 +302,13 @@ public class ModelOptionsPanel extends JPanel
 		// Set initial values
 		resetDefaultOptions();
 		onEngineSelectionChanged();
+	}
+	
+	@Override
+	public void dispose() throws ComponentException
+	{
+		log.info("Disposing of Model Options Panel");
+		super.dispose();
 	}
 	
 	public void resetDefaultOptions()
