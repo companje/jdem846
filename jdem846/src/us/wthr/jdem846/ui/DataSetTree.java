@@ -63,15 +63,18 @@ public class DataSetTree extends JPanel
 	
 	private DefaultMutableTreeNode elevationNode;
 	private DefaultMutableTreeNode shapeNode;
+	private DefaultMutableTreeNode imageryNode;
 	
 	private DataPackage dataPackage;
 	
 	private Icon polygonIcon;
 	private Icon elevationIcon;
 	private Icon polylineIcon;
+	private Icon orthoImageryIcon;
 	
 	private Icon shapesCategoryIcon;
 	private Icon elevationCategoryIcon;
+	private Icon imageryCategoryIcon;
 	
 	private List<DatasetSelectionListener> datasetSelectionListeners = new LinkedList<DatasetSelectionListener>();
 	
@@ -85,10 +88,11 @@ public class DataSetTree extends JPanel
     		polygonIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-shape-polygon.png");
     		elevationIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-elevation.png");
     		polylineIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-shape-line.png");
-    	
+    		orthoImageryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-orthoimagery.png");
+    		
     		elevationCategoryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-category-elevation.png");
     		shapesCategoryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-category-shapes.png");
-    	
+    		imageryCategoryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-category-imagery.png");
     	} catch (IOException ex) {
 			ex.printStackTrace();
 			log.warn("Failed to load image icon for tree node: " + ex.getMessage(), ex);
@@ -125,9 +129,11 @@ public class DataSetTree extends JPanel
 		
 		elevationNode = new DatasetTreeNode(elevationCategoryIcon, I18N.get("us.wthr.jdem846.ui.dataSetTree.node.elevation"));
 		shapeNode = new DatasetTreeNode(shapesCategoryIcon, I18N.get("us.wthr.jdem846.ui.dataSetTree.node.shapes"));
+		imageryNode =  new DatasetTreeNode(imageryCategoryIcon, I18N.get("us.wthr.jdem846.ui.dataSetTree.node.imagery"));
 		
 		top.add(elevationNode);
 		top.add(shapeNode);
+		top.add(imageryNode);
 		
 		// Add Listeners
 
@@ -177,6 +183,7 @@ public class DataSetTree extends JPanel
 		
 		elevationNode.removeAllChildren();
 		shapeNode.removeAllChildren();
+		imageryNode.removeAllChildren();
 		
 		if (dataPackage.getDataSources().size() > 0) {
 			top.add(elevationNode);
@@ -211,6 +218,9 @@ public class DataSetTree extends JPanel
 			
 			shapeNode.add(new DatasetTreeNode(icon, shapeFileRequest, i));
 		}
+		
+		// TODO: Add imagery files
+		
 		
 		treeModel.reload();
 		
@@ -260,7 +270,9 @@ public class DataSetTree extends JPanel
 		public static final int TYPE_ELEVATION = DataSetTypes.ELEVATION;
 		public static final int TYPE_SHAPES_POLYGON = DataSetTypes.SHAPE_POLYGON;
 		public static final int TYPE_SHAPES_POLYLINE = DataSetTypes.SHAPE_POLYLINE;
+		public static final int TYPE_IMAGERY = DataSetTypes.IMAGERY;
 		public static final int TYPE_CATEGORY = DataSetTypes.UNSUPPORTED;
+		
 		
 		private int type = -1;
 		private int index = -1;
@@ -291,6 +303,9 @@ public class DataSetTree extends JPanel
 			this.icon = icon;
 			this.type = shapeFileRequest.getDatasetType();
 		}
+		
+		// TODO: Add imagery constructor
+		
 		
 		public int getIndex()
 		{

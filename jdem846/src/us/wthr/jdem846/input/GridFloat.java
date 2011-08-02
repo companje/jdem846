@@ -22,6 +22,7 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.util.ResourceLoader;
 
 @ElevationDataLoader(name="us.wthr.jdem846.input.gridFloat.name", identifier="gridfloat", extension="flt")
 public class GridFloat extends DataSource
@@ -53,6 +54,9 @@ public class GridFloat extends DataSource
 		cache = new GridFloatDataCache(dataFile, (this.bits * header.getColumns())*2, header.getByteOrder());
 		this.calculateDistances();
 	}
+
+	
+	
 
 	
 	public void loadRow(int row)

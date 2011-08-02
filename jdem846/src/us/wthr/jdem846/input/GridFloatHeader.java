@@ -21,10 +21,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 
 import us.wthr.jdem846.ByteOrder;
+import us.wthr.jdem846.exception.ResourceLoaderException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.util.ResourceLoader;
 
 public class GridFloatHeader implements DataSourceHeader 
 {
@@ -45,9 +48,9 @@ public class GridFloatHeader implements DataSourceHeader
 	}
 
 
-	private void init(String file_path)
+	private void init(String filePath)
 	{
-		File headerFile = new File(file_path);
+		File headerFile = new File(filePath);
 		
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(headerFile));

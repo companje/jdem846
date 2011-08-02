@@ -59,7 +59,7 @@ public class GridAsciiDataCache implements DataCache
 		
 		try {
 			//cacheFile = File.createTempFile("jdem.gridascii.cache.", ".tmp", new File(System.getProperty("java.io.tmpdir")));
-			cacheFile = TempFiles.getTemporaryFile("gridascii.cache");
+			cacheFile = TempFiles.getTemporaryFile("gridascii.cache", ".tmp");
 			createBinaryCacheFile(cacheFile);
 		} catch (Exception ex) {
 			log.error("Failed to create GridAscii binary cache file: " + ex.getMessage(), ex);
