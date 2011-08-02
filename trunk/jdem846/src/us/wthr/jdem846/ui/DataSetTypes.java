@@ -22,4 +22,5 @@ public class DataSetTypes
 	public static final int ELEVATION = 0;
 	public static final int SHAPE_POLYGON = 1;
 	public static final int SHAPE_POLYLINE = 2;
+	public static final int IMAGERY = 3;
 }

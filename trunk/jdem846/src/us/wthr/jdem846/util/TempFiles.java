@@ -17,8 +17,12 @@
 package us.wthr.jdem846.util;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+
+import org.omg.CORBA_2_3.portable.OutputStream;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -32,10 +36,37 @@ public class TempFiles
 {
 	private static Log log = Logging.getLog(TempFiles.class);
 	
-	public static File getTemporaryFile(String subPrefix) throws IOException
+	public static File getTemporaryFile(String prefix) throws IOException
 	{
-		File temp = File.createTempFile("jdem." + subPrefix + ".", ".tmp", new File(System.getProperty("java.io.tmpdir")));
+		return getTemporaryFile(prefix, ".tmp");
+	}
+	
+	public static File getTemporaryFile(String prefix, String suffix) throws IOException
+	{
+		File temp = File.createTempFile("jdem." + prefix + ".", suffix, new File(System.getProperty("java.io.tmpdir")));
 		return temp;
+	}
+	
+	
+	
+	public static File getTemporaryFile(String prefix, String suffix, String copyFrom) throws Exception
+	{
+		File tempFile = getTemporaryFile(prefix, suffix);
+		
+		InputStream in = ResourceLoader.getResourceAsStream(copyFrom);
+		FileOutputStream out = new FileOutputStream(tempFile);
+		
+		byte[] buffer = new byte[1024];
+		int len = 0;
+		
+		while((len = in.read(buffer)) > 0) {
+			out.write(buffer, 0, len);
+		}
+
+		in.close();
+		out.close();
+		
+		return tempFile;
 	}
 	
 	public static void cleanUpTemporaryFiles()

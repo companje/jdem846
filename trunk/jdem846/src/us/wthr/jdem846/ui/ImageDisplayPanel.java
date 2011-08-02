@@ -62,7 +62,14 @@ public class ImageDisplayPanel extends JPanel
 		
 		// Create components
 		displayLabel = new JLabel();
+		displayLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		displayLabel.setAlignmentY(JLabel.CENTER_ALIGNMENT);
+		displayLabel.setHorizontalAlignment(JLabel.CENTER);
+		displayLabel.setVerticalAlignment(JLabel.CENTER);
 		scrollPane = new JScrollPane(displayLabel);
+		
+		setAlignmentX(CENTER_ALIGNMENT);
+		setAlignmentY(CENTER_ALIGNMENT);
 		
 		// Add listeners
 		displayLabel.addMouseMotionListener(new MouseMotionListener() {
@@ -140,6 +147,10 @@ public class ImageDisplayPanel extends JPanel
 		trueImage = image;
 		imageTrueWidth = image.getWidth(this);
 		imageTrueHeight = image.getHeight(this);
+		
+		scalePercent = this.getZoomToFitScalePercentage();
+		if (scalePercent > 1.0)
+			scalePercent = 1.0;
 	}
 	
 	protected void onMouseWheelMoved(int units, int amount, int type, int x, int y)
@@ -199,29 +210,34 @@ public class ImageDisplayPanel extends JPanel
 	{
 		if (trueImage != null) {
 		
-			if (scalePercent > 1.0)
-				scalePercent = 1.0;
 			
 			// Not perfect
 			Dimension viewSize = scrollPane.getViewport().getExtentSize();
 
-			double minimumScalePercent = this.getZoomToFitScalePercentage();
-
-			if (scalePercent < minimumScalePercent)
-				scalePercent = minimumScalePercent;
+			//double minimumScalePercent = this.getZoomToFitScalePercentage();
 			
+			//if (scalePercent < minimumScalePercent)
+			//scalePercent = minimumScalePercent;
+			
+			//if (scalePercent > 1.0)
+			//	scalePercent = 1.0;
+			if (scalePercent <= 0)
+				scalePercent = 0.01;
 			
 			int scaleToWidth = (int) Math.floor((double)imageTrueWidth * (double) scalePercent);
 			int scaleToHeight = (int) Math.floor((double)imageTrueHeight * (double) scalePercent);
+			
+			// Kinda silly to zoom out this far, but whatever...
+			if (scaleToWidth == 0)
+				scaleToWidth = 1;
+			if (scaleToHeight == 0)
+				scaleToHeight = 1;
 			
 			Image scaled = trueImage.getScaledInstance(scaleToWidth, scaleToHeight, scaleQuality);
 			
 			displayLabel.setIcon(new ImageIcon(scaled));
 			displayLabel.setSize(scaleToWidth, scaleToHeight);
-			displayLabel.setAlignmentX(CENTER_ALIGNMENT);
-			displayLabel.setAlignmentY(CENTER_ALIGNMENT);
-			displayLabel.setHorizontalAlignment(JLabel.CENTER);
-			displayLabel.setVerticalAlignment(JLabel.CENTER);
+			
 			super.paint(g);
 		} else {
 			g.setColor(Color.black);
@@ -266,10 +282,10 @@ public class ImageDisplayPanel extends JPanel
 	public void zoom(double units)
 	{
 		scalePercent += ((units / 100.0) * -1);
-		if (scalePercent > 1.0)
-			scalePercent = 1.0;
-		if (scalePercent < 0)
-			scalePercent = 0;
+		//if (scalePercent > 1.0)
+		//	scalePercent = 1.0;
+		//if (scalePercent < 0)
+		//	scalePercent = 0;
 		
 		repaint();
 	}

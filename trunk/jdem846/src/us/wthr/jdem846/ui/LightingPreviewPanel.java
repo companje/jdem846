@@ -26,6 +26,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,13 +35,23 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
+import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.input.DataPackage;
+import us.wthr.jdem846.input.GridFloat;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.render.Dem2dGenerator;
+import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.gfx.Renderable;
 import us.wthr.jdem846.render.gfx.Square;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.gfx.ViewportBuffer;
+import us.wthr.jdem846.util.TempFiles;
 
 @SuppressWarnings("serial")
 public class LightingPreviewPanel extends JPanel
@@ -49,11 +60,17 @@ public class LightingPreviewPanel extends JPanel
 	private static Log log = Logging.getLog(LightingPreviewPanel.class);
 	
 	private BufferedImage prerendered = null;
-	private List<Renderable> renderObjects = new LinkedList<Renderable>();
+	//private List<Renderable> renderObjects = new LinkedList<Renderable>();
 	private Color background = Color.BLACK;
 	
 	private double solarAzimuth = 183.0;
 	private double solarElevation = 71.0;
+	
+	private double renderedAzimuth = -1;
+	private double renderedElevation = -1;
+	
+	private ModelOptions modelOptions;
+	private DataPackage dataPackage;
 	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
@@ -63,27 +80,63 @@ public class LightingPreviewPanel extends JPanel
 		MouseAdapter mouseAdapter = new MouseAdapter() {
 			public void mouseDragged(MouseEvent e)
 			{
-				onMouseDragged(e);
+				onMouseLocation(e.getX(), e.getY(), false);
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e)
 			{
+				onMouseLocation(e.getX(), e.getY(), true);
 				fireChangeListeners();
 			}
+
+			@Override
+			public void mouseClicked(MouseEvent e)
+			{
+				onMouseLocation(e.getX(), e.getY(), true);
+			}
+			
 		};
 		this.addMouseListener(mouseAdapter);
 		this.addMouseMotionListener(mouseAdapter);
 		
+		
+		modelOptions = new ModelOptions();
+		modelOptions.setColoringType(JDem846Properties.getProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewColoring"));
+		
+		try {
+			File tmpGridFloatData = TempFiles.getTemporaryFile("lghtprv", ".flt", "jar://" + JDem846Properties.getProperty("us.wthr.jdem846.previewData") + "/raster-data.flt");
+			
+			File tmpTempGridFloatHeader = TempFiles.getTemporaryFile("lghtprv", ".hdr", "jar://" + JDem846Properties.getProperty("us.wthr.jdem846.previewData") + "/raster-data.hdr");
+			
+			String tmpHdrPath = tmpGridFloatData.getAbsolutePath();
+			tmpHdrPath = tmpHdrPath.replaceAll("\\.flt", ".hdr");
+			log.info("New Header Path: " + tmpHdrPath);
+			File tmpGridFloatHeader = new File(tmpHdrPath);
+			
+			tmpTempGridFloatHeader.renameTo(tmpGridFloatHeader);
+			
+			GridFloat previewData = new GridFloat(tmpGridFloatData.getAbsolutePath());
+		
+			modelOptions.setWidth(previewData.getHeader().getColumns());
+			modelOptions.setHeight(previewData.getHeader().getRows());
+			
+			dataPackage = new DataPackage();
+			dataPackage.addDataSource(previewData);
+			dataPackage.prepare();
+			dataPackage.calculateElevationMinMax(true);
+			
+		} catch (Exception e1) {
+			
+			e1.printStackTrace();
+		}
+
+		
 	}
 	
-	protected void onMouseDragged(MouseEvent e)
+	
+	protected void onMouseLocation(int x, int y, boolean updatePreview)
 	{
-		
-		
-		int x = e.getX();
-		int y = e.getY();
-		
 		int size = (getWidth() < getHeight()) ? getWidth() : getHeight();
 		
 		int xMid = (int)Math.round(((double)getWidth()/2.0));
@@ -114,154 +167,41 @@ public class LightingPreviewPanel extends JPanel
 		
 		this.setSolarAzimuth(angle);
 		this.setSolarElevation(newElev);
-		update(true);
 		
+		update(updatePreview);
 	}
 	
-	
 
-	protected void getPoints3D(double theta, double phi, double radius, double[] points)
+	public void update(boolean rerenderPreview)
 	{
-		double _y = sqrt(pow(radius, 2) - pow(radius * cos(phi), 2));
-		double r0 = sqrt(pow(radius, 2) - pow(_y, 2));
 
-		double _b = r0 * cos(theta );
-        double _z = sqrt(pow(r0, 2) - pow(_b, 2));
-        double _x = sqrt(pow(r0, 2) - pow(_z, 2));
-        if (theta <= 90.0) {
-                _z *= -1.0;
-        } else if (theta  <= 180.0) {
-                _x *= -1.0;
-                _z *= -1.0;
-        } else if (theta  <= 270.0) {
-                _x *= -1.0;
-        }
+		if (rerenderPreview && (renderedAzimuth != solarAzimuth || renderedElevation != solarElevation)) {
+			
+			//JdemFrame.getInstance().setGlassVisible(I18N.get("us.wthr.jdem846.ui.modelPreviewPane.working"), this, true);
 
-        if (phi >= 0) { 
-                _y = abs(_y);
-        } else {
-                _y = abs(_y) * -1;
-        }
-
-
-        points[0] = _x;
-        points[1] = _y;
-        points[2] = _z;
-	}
-
-	public void update(boolean recreatePolygons)
-	{
-		//List<Renderable> polygons = new LinkedList<Renderable>();
-		if (recreatePolygons) {
-			renderObjects.clear();
-			createPolygons(renderObjects);
+			
+			try {
+				log.info("Updating lighting preview model image");
+				Dem2dGenerator dem2d = new Dem2dGenerator(dataPackage, modelOptions);
+				OutputProduct<DemCanvas> product = dem2d.generate();
+				
+				prerendered = (BufferedImage) product.getProduct().getImage();
+				
+			} catch (RenderEngineException e) {
+				log.warn("Failed to render preview image: " + e.getMessage(), e);
+				e.printStackTrace();
+			} finally {
+				//JdemFrame.getInstance().setGlassVisible(false);
+				
+				renderedAzimuth = solarAzimuth;
+				renderedElevation = solarElevation;
+			}
 		}
 		
-		preRender(renderObjects);
 		repaint();
 	}
 	
-	protected void createPolygons(List<Renderable> polygons)
-	{
-		int size = (getWidth() < getHeight()) ? getWidth() : getHeight();
-		polygons.clear();
-		
-		double strips = 100.0;
-		double slices = 100.0;
-		
-		double strip_step = 90.0 / strips;
-		double slice_step = 360.0 / slices;
-		double radius = ((double)size / 2.0) - 4;
 
-		double p_tl[] = {0, 0, 0};
-		double p_tr[] = {0, 0, 0};
-		double p_bl[] = {0, 0, 0};
-		double p_br[] = {0, 0, 0};
-		
-		//Color ballColor = Color.LIGHT_GRAY;
-		int[] ballColor = {Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue()};
-
-		for (double phi = -90; phi <= 90 - strip_step; phi +=strip_step) {
-           for (double theta = 180; theta <= 360 + slice_step; theta+=slice_step) {
-            //for (double theta = 0; theta <= 360 + slice_step; theta+=slice_step) {
-            	
-            	getPoints3D(theta, phi, radius, p_tl);
-                getPoints3D(theta + slice_step, phi, radius, p_tr);
-                getPoints3D(theta, phi + strip_step, radius, p_bl);
-                getPoints3D(theta + slice_step, phi + strip_step, radius, p_br);
-            	
-                double[] normal = {0.0, 0.0, 0.0};
-                
-                Perspectives.calcNormal(p_tr, p_br, p_bl, normal);
-
-                Square square = new Square(ballColor, new Vector(p_tr),
-						new Vector(p_br),
-						new Vector(p_bl),
-						new Vector(p_tl));
-                square.setNormal(normal);
-                polygons.add(square);
-                
-            }
-		}
-		
-	}
-	
-	protected void preRender(List<Renderable> rotated)
-	{
-		
-		
-		int size = (getWidth() < getHeight()) ? getWidth() : getHeight();
-
-		BufferedImage canvas = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-
-		Vector eye = new Vector(0, 0, 1000);
-		Vector near = new Vector(0, 0, 1000);
-		//double nearWidth = 50;
-		//double nearHeight = 50;
-		//double farDistance = 50;
-		double sunsource[] = {0.0, 0.0, 0.0};
-		
-		Vector sun = new Vector(0.0, 0.0, -1.0);
-		Vector rotation = new Vector((solarElevation+90.0), 0.0, solarAzimuth);
-		sun.rotate(rotation);
-		//sun.rotate(-solarAzimuth, Vector.Z_AXIS);
-		//sun.rotate(-solarElevation, Vector.X_AXIS);
-		sunsource[0] = sun.getX();
-		sunsource[1] = sun.getY();
-		sunsource[2] = sun.getZ();
-		
-		
-		Graphics2D g2d = (Graphics2D) canvas.getGraphics();
-
-		g2d.setColor(background);
-		g2d.fillRect(0, 0, getWidth(), getHeight());
-		
-		
-		
-		
-		ViewportBuffer buffer = new ViewportBuffer(size, size);
-		
-		for (Renderable renderObject : rotated) {
-
-			renderObject.projectTo(eye, near);//, nearWidth, nearHeight, farDistance);
-			renderObject.prepareForRender(sunsource, 2.0);
-			renderObject.render(buffer, size, size);
-		}
-		
-		BufferedImage image = buffer.paint(null, 0);
-		g2d.drawImage(image, 0, 0, size, size, this);
-		
-		buffer.dispose();
-		
-		//buffer.paint(g2d);
-		//g2d.dispose();
-		
-		//synchronized (prerendered) {
-			prerendered = canvas;
-		//}
-		
-	}
-	
 	
 	public void setEnabled(boolean enabled)
 	{
@@ -310,8 +250,10 @@ public class LightingPreviewPanel extends JPanel
 			int drawX = (int) (((double)getWidth() / 2.0) - (size / 2.0));
 			int drawY = (int) (((double)getHeight() / 2.0) - (size / 2.0));
 			
-			g2d.drawImage(prerendered, drawX, drawY, size, size, this);
-			
+			//g2d.drawImage(prerendered, drawX, drawY, size, size, this);
+			if (prerendered != null) {
+				g2d.drawImage(prerendered, drawX, drawY, size, size, this);
+			}
 			
 			
 			int xMid = (int)Math.round(((double)getWidth()/2.0));
@@ -396,6 +338,7 @@ public class LightingPreviewPanel extends JPanel
 	public void setSolarAzimuth(double solarAzimuth)
 	{
 		this.solarAzimuth = solarAzimuth;
+		modelOptions.setLightingAzimuth(solarAzimuth);
 	}
 
 
@@ -408,6 +351,7 @@ public class LightingPreviewPanel extends JPanel
 	public void setSolarElevation(double solarElevation)
 	{
 		this.solarElevation = solarElevation;
+		modelOptions.setLightingElevation(solarElevation);
 	}
 
 	

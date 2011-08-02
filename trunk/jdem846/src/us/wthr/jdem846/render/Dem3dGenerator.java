@@ -23,8 +23,11 @@ import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
@@ -86,6 +89,19 @@ public class Dem3dGenerator extends BasicRenderEngine
 		OutputProduct<DemCanvas> product2d = dem2d.generate(skipElevation);
 		DemCanvas canvas2d = product2d.getProduct();
 		
+		/*
+		// Testing an orthoimage overlay...
+		DemCanvas canvas2d = null;
+		try {
+			File input = new File("C:/srv/elevation/Pawtuckaway II//13353220-scaled.jpg");
+			BufferedImage testImage = ImageIO.read(input);
+			canvas2d = new DemCanvas(testImage);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			throw new RenderEngineException("Failed to load orthoimage", ex);
+		}
+		*/
+		
 		DemPoint point = new DemPoint();
 		
 		double[] vectorFrontLeft = new double[3];
@@ -130,20 +146,12 @@ public class Dem3dGenerator extends BasicRenderEngine
 					double x = (dataPackage.getColumns() - column) + startX;
 					double z = row + startZ;
 					
-					//log.info("x/z: " + x + "/" + z);
-					
+
 					double yBL = ((point.getBackLeftElevation() * elevationMultiple - elevationMax) / resolution) + Math.abs(elevationMin);
 					double yBR = ((point.getBackRightElevation() * elevationMultiple - elevationMax) / resolution) + Math.abs(elevationMin);
 					double yFL = ((point.getFrontLeftElevation() * elevationMultiple - elevationMax) / resolution) + Math.abs(elevationMin);
 					double yFR = ((point.getFrontRightElevation() * elevationMultiple - elevationMax) / resolution) + Math.abs(elevationMin);
-	
-					/*
-					yBL = yBL + Math.abs(elevationMin);
-					yBR = yBR + Math.abs(elevationMin);
-					yFL = yFL + Math.abs(elevationMin);
-					yFR = yFR + Math.abs(elevationMin);
-					*/
-					
+
 					vectorBackLeft[0] = x;
 					vectorBackLeft[1] = yBL;
 					vectorBackLeft[2] = z;
@@ -193,6 +201,11 @@ public class Dem3dGenerator extends BasicRenderEngine
 					vectorFrontLeft[1] -= startZ;
 					vectorFrontRight[1] -= startZ;
 					
+					
+					
+					g2d.setColor(new Color(canvas2d.getColor(column, row)));
+					
+					
 					xPoints[0] = (int) Math.floor(vectorBackLeft[0]);
 					xPoints[1] = (int) Math.floor(vectorFrontLeft[0]);
 					xPoints[2] = (int) Math.ceil(vectorFrontRight[0]);
@@ -214,6 +227,8 @@ public class Dem3dGenerator extends BasicRenderEngine
 					if (yPoints[3] >= yPoints[2])
 						yPoints[2] += 1;
 					
+					g2d.fillPolygon(xPoints, yPoints, 4);
+					
 					
 					/*
 					path.reset();
@@ -222,13 +237,13 @@ public class Dem3dGenerator extends BasicRenderEngine
 					path.lineTo(vectorFrontRight[0], vectorFrontRight[1]);
 					path.lineTo(vectorBackRight[0], vectorBackRight[1]);
 					path.closePath();
+					g2d.fill(path);
 					*/
 					
-					//g2d.setColor(Color.YELLOW);
-					g2d.setColor(new Color(canvas2d.getColor(column, row)));
-					g2d.fillPolygon(xPoints, yPoints, 4);
 					
-					//g2d.fill(path);
+					
+					
+					
 					
 					
 				}
