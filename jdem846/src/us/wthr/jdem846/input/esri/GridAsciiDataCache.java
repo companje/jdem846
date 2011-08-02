@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import us.wthr.jdem846.ByteOrder;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.input.DataCache;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -45,6 +46,7 @@ public class GridAsciiDataCache implements DataCache
 	private File input;
 	private RandomAccessFile inputData;
 	private byte buffer[];
+	private boolean isDisposed = false;
 	
 	File cacheFile = null;
 	
@@ -57,6 +59,7 @@ public class GridAsciiDataCache implements DataCache
 		
 		this.inputData = null;
 		
+		
 		try {
 			//cacheFile = File.createTempFile("jdem.gridascii.cache.", ".tmp", new File(System.getProperty("java.io.tmpdir")));
 			cacheFile = TempFiles.getTemporaryFile("gridascii.cache", ".tmp");
@@ -67,6 +70,20 @@ public class GridAsciiDataCache implements DataCache
 		}
 	}
 
+	public void dispose() throws DataSourceException
+	{
+		if (isDisposed) {
+			throw new DataSourceException("Object already disposed of");
+		}
+		
+		if (inputData != null) {
+			unload();
+			buffer = null;
+		}
+		
+		isDisposed = true;
+	}
+	
 	@Override
 	public float get(int position)
 	{

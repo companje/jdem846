@@ -17,6 +17,7 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -45,6 +46,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.exception.ComponentException;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.InvalidFileFormatException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
@@ -81,13 +84,13 @@ public class ProjectPane extends JdemPanel
 	private StatusBar statusBar;
 	private DataSetTree datasetTree;
 	
-	private JPanel westPanel;
-	private JPanel southPanel;
+	private BasePanel westPanel;
+	private BasePanel southPanel;
 	
 	private DataPackage dataPackage;
 	private ModelOptions modelOptions;
 
-	private JSplitPane splitPane;
+	private DisposableSplitPane splitPane;
 	private String projectLoadedFrom = null;
 	
 	private List<CreateModelListener> createModelListeners = new LinkedList<CreateModelListener>();
@@ -151,8 +154,8 @@ public class ProjectPane extends JdemPanel
 		layoutPane = new DataInputLayoutPane(dataPackage, modelOptions);
 		previewPane = new ModelPreviewPane(dataPackage, modelOptions);
 		
-		westPanel = new JPanel();
-		southPanel = new JPanel();
+		westPanel = new BasePanel();
+		southPanel = new BasePanel();
 		
 		projectMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.projectPane.menu.project"), KeyEvent.VK_P);
 		MainMenuBar.insertMenu(projectMenu);
@@ -328,12 +331,12 @@ public class ProjectPane extends JdemPanel
 		
 		//layoutPane = new DataInputLayoutPane(dataPackage, modelOptions);
 		//previewPane = new ModelPreviewPane(dataPackage, modelOptions);
-		JTabbedPane centerPanel = new JTabbedPane();
-		centerPanel.add(modelOptionsPanel, I18N.get("us.wthr.jdem846.ui.projectPane.tab.options"));
-		centerPanel.add(layoutPane, I18N.get("us.wthr.jdem846.ui.projectPane.tab.layout"));
-		centerPanel.add(previewPane, I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"));
+		TabPane centerPanel = new TabPane();
+		centerPanel.addTab(I18N.get("us.wthr.jdem846.ui.projectPane.tab.options"), modelOptionsPanel);
+		centerPanel.addTab(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layout"), layoutPane);
+		centerPanel.addTab(I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"), previewPane);
 		//centerPanel.add(previewPanel, "Layout Preview");
-		centerPanel.setTabPlacement(JTabbedPane.BOTTOM);
+		centerPanel.setTabPlacement(TabPane.BOTTOM);
 		
 		//addInputData("C:/Documents and Settings/a345926/My Documents/testdata/ned_64087130.flt");
 		
@@ -352,7 +355,7 @@ public class ProjectPane extends JdemPanel
         box.add(datasetOptionsPanel);
         westPanel.add(box, BorderLayout.PAGE_END);
 		
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, westPanel, centerPanel);
+		splitPane = new DisposableSplitPane(DisposableSplitPane.HORIZONTAL_SPLIT, westPanel, centerPanel);
 		splitPane.setDividerLocation(280);
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setAlignmentY(TOP_ALIGNMENT);
@@ -369,11 +372,21 @@ public class ProjectPane extends JdemPanel
 		
 	}
 	
-	public void cleanUp()
+	public void dispose() throws ComponentException
 	{
 		log.info("Closing project pane.");
 		
 		MainMenuBar.removeMenu(projectMenu);
+		
+		try {
+			dataPackage.dispose();
+		} catch (DataSourceException ex) {
+			log.error("Failed to dispose of data package: " + ex.getMessage(), ex);
+			ex.printStackTrace();
+		}
+		
+		super.dispose();
+		
 
 	}
 	

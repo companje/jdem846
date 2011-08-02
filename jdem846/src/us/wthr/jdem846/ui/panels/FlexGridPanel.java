@@ -6,9 +6,16 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
 
+import us.wthr.jdem846.exception.ComponentException;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.BasePanel;
+
 @SuppressWarnings("serial")
-public class FlexGridPanel extends JPanel
+public class FlexGridPanel extends BasePanel
 {
+	private static Log log = Logging.getLog(FlexGridPanel.class);
+	
 	private int columns = 1;
 	private int addColumn = 0;
 	private GridBagLayout gridbag;
@@ -20,6 +27,12 @@ public class FlexGridPanel extends JPanel
 		gridbag = new GridBagLayout();
 		this.setLayout(gridbag);
 		
+	}
+	
+	@Override
+	public void dispose() throws ComponentException
+	{
+		super.dispose();
 	}
 	
 	@Override

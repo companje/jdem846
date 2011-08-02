@@ -43,7 +43,7 @@ public class TempFiles
 	
 	public static File getTemporaryFile(String prefix, String suffix) throws IOException
 	{
-		File temp = File.createTempFile("jdem." + prefix + ".", suffix, new File(System.getProperty("java.io.tmpdir")));
+		File temp = File.createTempFile("jdem." + InstanceIdentifier.getInstanceId() + "." + prefix + ".", suffix, new File(System.getProperty("java.io.tmpdir")));
 		return temp;
 	}
 	
@@ -77,7 +77,7 @@ public class TempFiles
 		File files[] = tempRoot.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name)
 			{
-				return name.startsWith("jdem.");
+				return name.startsWith("jdem." + InstanceIdentifier.getInstanceId() + ".");
 			}
 		});
 		

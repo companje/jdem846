@@ -29,11 +29,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 
 @SuppressWarnings("serial")
-public class ClosableTab extends JPanel
+public class ClosableTab extends BasePanel
 {
+	private static Log log = Logging.getLog(ClosableTab.class);
+	
 	private JLabel jlblTitle;
 	private JButton jbtnClose;
 	private boolean closable;
@@ -85,6 +90,13 @@ public class ClosableTab extends JPanel
 		
 	}
 
+	@Override
+	public void dispose() throws ComponentException
+	{
+		log.info("ClosableTab.dispose()");
+		super.dispose();
+	}
+	
 	/** Replaces the event source component with this tab and fires
 	 * the action listeners.
 	 * 

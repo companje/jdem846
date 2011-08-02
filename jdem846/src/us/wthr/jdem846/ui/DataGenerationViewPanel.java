@@ -131,12 +131,6 @@ public class DataGenerationViewPanel extends JdemPanel
 	}
 
 
-	@Override
-	public void cleanUp()
-	{
-		
-		
-	}
 	
 	
 }

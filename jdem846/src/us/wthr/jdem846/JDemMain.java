@@ -18,6 +18,9 @@ package us.wthr.jdem846;
 
 
 
+import java.util.Random;
+import java.util.UUID;
+
 import us.wthr.jdem846.ServiceKernel.ServiceThreadListener;
 import us.wthr.jdem846.exception.ArgumentException;
 import us.wthr.jdem846.exception.RegistryException;
@@ -25,6 +28,7 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.ui.SplashScreen;
+import us.wthr.jdem846.util.InstanceIdentifier;
 
 /** Main application entry point. Parses command line options and kicks off service and registry kernels.
  * 
@@ -81,6 +85,11 @@ public class JDemMain
 			System.out.println("Invalid parameters: " + ex.getMessage());
 			return;
 		}
+		
+		
+		String instanceId = InstanceIdentifier.getInstanceId();
+		log.info("Instance ID: " + instanceId);
+		
 		
 		log.info("Starting...");
 		

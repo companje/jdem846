@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.shapefile;
 
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
@@ -29,6 +30,8 @@ public class ShapeFileRequest
 	private String shapeDataDefinitionId;
 	private int shapeType;
 	private int datasetType;
+	
+	private boolean isDisposed = false;
 	
 	protected ShapeFileRequest()
 	{
@@ -125,5 +128,14 @@ public class ShapeFileRequest
 		shapeFileRequest.datasetType = this.datasetType;
 		
 		return shapeFileRequest;
+	}
+	
+	public void dispose() throws DataSourceException
+	{
+		if (isDisposed) {
+			throw new DataSourceException("Object already disposed of");
+		}
+		
+		isDisposed = true;
 	}
 }

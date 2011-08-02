@@ -23,7 +23,7 @@ import javax.swing.JPanel;
 import us.wthr.jdem846.ui.border.StandardTitledBorder;
 
 @SuppressWarnings("serial")
-public class TitledRoundedPanel extends JPanel
+public class TitledRoundedPanel extends BasePanel
 {
 	
 	public TitledRoundedPanel(String title)

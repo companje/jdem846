@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import us.wthr.jdem846.ByteOrder;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -37,6 +38,7 @@ public class BilInt16DataCache implements DataCache
 	private File input;
 	private RandomAccessFile inputData;
 	private byte buffer[];
+	private boolean isDisposed = false;
 	
 	public BilInt16DataCache(File input, int size, ByteOrder byteOrder, int skipBytes)
 	{
@@ -47,6 +49,20 @@ public class BilInt16DataCache implements DataCache
 		this.buffer = new byte[size];
 		
 		this.inputData = null;
+	}
+	
+	public void dispose() throws DataSourceException
+	{
+		if (isDisposed) {
+			throw new DataSourceException("Object already disposed of");
+		}
+		
+		if (inputData != null) {
+			unload();
+			buffer = null;
+		}
+		
+		isDisposed = true;
 	}
 	
 	public float get(int position)

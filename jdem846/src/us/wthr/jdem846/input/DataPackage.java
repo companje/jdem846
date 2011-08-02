@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.Box;
@@ -63,6 +64,8 @@ public class DataPackage
 	
 	private PackagedReader[] packagedReaderArray;
 	private String prepareFilePath;
+	
+	private boolean isDisposed = false;
 	
 	public DataPackage()
 	{
@@ -638,5 +641,26 @@ public class DataPackage
 		return clone;
 	}
 	
-	
+	public void dispose() throws DataSourceException
+	{
+		if (isDisposed) {
+			throw new DataSourceException("Object already disposed of");
+		}
+		
+		for (PackagedReader reader : packagedReaderArray) {
+			reader.dispose();
+		}
+		
+		dataSources.clear();
+		packagedReaderArray = null;
+		dataBounds.clear();
+		
+		for (ShapeFileRequest shapeFileRequest : shapeFiles) {
+			shapeFileRequest.dispose();
+		}
+		shapeFiles.clear();
+		
+
+		isDisposed = true;
+	}
 }

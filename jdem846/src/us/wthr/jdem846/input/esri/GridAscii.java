@@ -20,6 +20,7 @@ import java.io.File;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.input.BilInt16;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.logging.Log;
@@ -45,6 +46,8 @@ public class GridAscii extends DataSource
     private int cachedRow = -1;
     private GridAsciiDataCache cache;
     
+    private boolean isDisposed = false;
+    
     public GridAscii(String filePath)
     {
     	this.filePath = filePath;
@@ -56,6 +59,19 @@ public class GridAscii extends DataSource
 		this.calculateDistances();
     }
 
+    
+	public void dispose() throws DataSourceException
+	{
+		if (isDisposed) {
+			throw new DataSourceException("Object already disposed of");
+		}
+		
+		cache.dispose();
+		cache = null;
+		
+		isDisposed = true;
+	}
+    
 	private float __get(int row, int col)
 	{
 		if (col < 0 || col > header.getColumns() || row < 0 || row > header.getRows())

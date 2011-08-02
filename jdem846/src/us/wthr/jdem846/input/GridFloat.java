@@ -20,6 +20,7 @@ import java.io.File;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ResourceLoader;
@@ -44,6 +45,8 @@ public class GridFloat extends DataSource
     int cachedRow = -1;
     GridFloatDataCache cache = null;
 	
+    private boolean isDisposed = false;
+    
 	public GridFloat(String filePath)
 	{
 		this.filePath = filePath;
@@ -56,7 +59,17 @@ public class GridFloat extends DataSource
 	}
 
 	
-	
+	public void dispose() throws DataSourceException
+	{
+		if (isDisposed) {
+			throw new DataSourceException("Object already disposed of");
+		}
+		
+		cache.dispose();
+		cache = null;
+		
+		isDisposed = true;
+	}
 
 	
 	public void loadRow(int row)
