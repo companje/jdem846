@@ -30,6 +30,7 @@ import us.wthr.jdem846.ui.Disposable;
 public class BoxContainer extends Box implements Disposable
 {
 	private static Log log = Logging.getLog(BoxContainer.class);
+	private boolean disposed = false;
 	
 	public BoxContainer(int axis)
 	{
@@ -40,17 +41,12 @@ public class BoxContainer extends Box implements Disposable
 	@Override
 	public void dispose() throws ComponentException
 	{
-		Component components[] = getComponents();
-		for (Component component : components) {
-			if (component instanceof Disposable) {
-				Disposable disposableComponent = (Disposable) component;
-				try {
-					disposableComponent.dispose();
-				} catch (ComponentException ex) {
-					log.warn("Failed to dispose of component", ex);
-					ex.printStackTrace();
-				}
-			}
-		}
+		
+		disposed = true;
+	}
+	
+	public boolean isDisposed()
+	{
+		return disposed;
 	}
 }

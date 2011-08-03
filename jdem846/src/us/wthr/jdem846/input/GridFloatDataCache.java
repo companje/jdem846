@@ -57,6 +57,8 @@ public class GridFloatDataCache implements DataCache
 			throw new DataSourceException("Object already disposed of");
 		}
 		
+		log.info("Disposing of GridFloat cache and file pointer");
+		
 		if (inputData != null) {
 			unload();
 			buffer = null;

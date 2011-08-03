@@ -31,7 +31,7 @@ import us.wthr.jdem846.ui.Disposable;
 public class Panel extends JPanel implements Disposable
 {
 	private static Log log = Logging.getLog(Panel.class);
-	
+	private boolean disposed = false;
 	
 	
 	public Panel()
@@ -69,19 +69,16 @@ public class Panel extends JPanel implements Disposable
 	@Override
 	public void dispose() throws ComponentException
 	{
-		
-		Component components[] = getComponents();
-		for (Component component : components) {
-			if (component instanceof Disposable) {
-				Disposable disposableComponent = (Disposable) component;
-				try {
-					disposableComponent.dispose();
-				} catch (ComponentException ex) {
-					log.warn("Failed to dispose of component", ex);
-					ex.printStackTrace();
-				}
-			}
+		if (disposed) {
+			log.warn("Container already disposed of!");
+			throw new ComponentException("Container already disposed of");
 		}
 		
+		disposed = true;
+	}
+	
+	public boolean isDisposed()
+	{
+		return disposed;
 	}
 }
