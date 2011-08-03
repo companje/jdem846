@@ -32,8 +32,10 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinition;
 import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinitionLoader;
-import us.wthr.jdem846.ui.JComboBoxModel;
 import us.wthr.jdem846.ui.TitledRoundedPanel;
+import us.wthr.jdem846.ui.base.ComboBox;
+import us.wthr.jdem846.ui.base.JComboBoxModel;
+import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.border.StandardTitledBorder;
 
 @SuppressWarnings("serial")
@@ -43,7 +45,7 @@ public class ShapeDataSetOptions extends TitledRoundedPanel
 	
 	private ShapeFileRequest shapeFileRequest;
 	
-	private JComboBox jcmbShapeStyles;
+	private ComboBox jcmbShapeStyles;
 	private ShapeStylesListModel shapeStylesModel;
 	
 	public ShapeDataSetOptions(ShapeFileRequest shapeFileRequest)
@@ -54,7 +56,7 @@ public class ShapeDataSetOptions extends TitledRoundedPanel
 		
 		// Create components
 		shapeStylesModel = new ShapeStylesListModel();
-		jcmbShapeStyles = new JComboBox(shapeStylesModel);
+		jcmbShapeStyles = new ComboBox(shapeStylesModel);
 		
 
 		// Set initial values.
@@ -76,7 +78,7 @@ public class ShapeDataSetOptions extends TitledRoundedPanel
 		setLayout(gridLayout);
 		//setBorder(new StandardTitledBorder("Shape Options"));
 		
-		add(new JLabel(I18N.get("us.wthr.jdem846.ui.datasetoptions.shapeOptions.shapeStyles") + ":"));
+		add(new Label(I18N.get("us.wthr.jdem846.ui.datasetoptions.shapeOptions.shapeStyles") + ":"));
 		add(jcmbShapeStyles);
 		
 		

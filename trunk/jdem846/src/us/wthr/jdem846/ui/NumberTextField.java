@@ -21,13 +21,15 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JTextField;
 
+import us.wthr.jdem846.ui.base.TextField;
+
 @SuppressWarnings("serial")
-public class JNumberTextField extends JTextField
+public class NumberTextField extends TextField
 {
 	private boolean decimal = false;
 	
 	
-	public JNumberTextField(boolean decimal)
+	public NumberTextField(boolean decimal)
 	{
 		this.decimal = decimal;
 		this.addKeyListener(new KeyListener() {

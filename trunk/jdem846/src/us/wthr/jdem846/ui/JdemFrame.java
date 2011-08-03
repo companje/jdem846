@@ -58,11 +58,16 @@ import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.render.RenderEngine;
 import us.wthr.jdem846.ui.ProjectPane.CreateModelListener;
 import us.wthr.jdem846.ui.TopButtonBar.ButtonClickedListener;
+import us.wthr.jdem846.ui.base.FileChooser;
+import us.wthr.jdem846.ui.base.Frame;
+import us.wthr.jdem846.ui.base.Menu;
+import us.wthr.jdem846.ui.base.MenuItem;
+import us.wthr.jdem846.ui.base.TabPane;
 import us.wthr.jdem846.util.ImageIcons;
 import us.wthr.jdem846.util.TempFiles;
 
 @SuppressWarnings("serial")
-public class JdemFrame extends JFrame
+public class JdemFrame extends Frame
 {
 	private static Log log = Logging.getLog(JdemFrame.class);
 
@@ -159,8 +164,8 @@ public class JdemFrame extends JFrame
 	
 	protected void buildJMenuBar()
 	{
-		JMenu menu;
-		JMenuItem menuItem;
+		Menu menu;
+		MenuItem menuItem;
 		
 		menuBar = MainMenuBar.getInstance();
 
@@ -239,7 +244,7 @@ public class JdemFrame extends JFrame
 			
 			log.info("Shutting down application");
 			
-			this.dispose();
+			close();
 			
 			return true;
 		} else {
@@ -263,7 +268,7 @@ public class JdemFrame extends JFrame
 		
 		
 		
-		JFileChooser chooser = new BasicFileChooser();
+		FileChooser chooser = new FileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormatName"), "xdem");
 		chooser.setFileFilter(filter);
 		
@@ -316,7 +321,7 @@ public class JdemFrame extends JFrame
 	public void openProject()
 	{
 		log.info("Displaying open project dialog");
-		JFileChooser chooser = new BasicFileChooser();
+		FileChooser chooser = new FileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormatName"), "xdem");
 		chooser.setFileFilter(filter);
 		chooser.setMultiSelectionEnabled(false);

@@ -19,8 +19,10 @@ package us.wthr.jdem846.ui;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
+import us.wthr.jdem846.ui.base.MenuBar;
+
 @SuppressWarnings("serial")
-public class MainMenuBar extends JMenuBar
+public class MainMenuBar extends MenuBar
 {
 	
 	private static MainMenuBar instance = null;

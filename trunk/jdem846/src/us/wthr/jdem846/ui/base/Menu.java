@@ -14,45 +14,42 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.ui;
+package us.wthr.jdem846.ui.base;
 
-import java.awt.Component;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-
+import javax.swing.Action;
 import javax.swing.JMenu;
 
-import us.wthr.jdem846.ui.base.Menu;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 
 @SuppressWarnings("serial")
-public class ComponentMenu extends Menu
+public class Menu extends JMenu
 {
-	
-	public ComponentMenu(Component owner, String text, int mnemonic)
+	private static Log log = Logging.getLog(Menu.class);
+
+	public Menu()
 	{
-		super(text);
-		this.setMnemonic(mnemonic);
-		owner.addComponentListener(new ComponentAdapter() {
-			public void componentHidden(ComponentEvent e)
-			{
-				onOwnerHidden();
-			}
-			public void componentShown(ComponentEvent e)
-			{
-				onOwnerShown();
-			}
-		});
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Menu(Action a)
+	{
+		super(a);
+		// TODO Auto-generated constructor stub
+	}
+
+	public Menu(String s, boolean b)
+	{
+		super(s, b);
+		// TODO Auto-generated constructor stub
+	}
+
+	public Menu(String s)
+	{
+		super(s);
+		// TODO Auto-generated constructor stub
 	}
 	
-	
-	protected void onOwnerShown()
-	{
-		setVisible(true);
-	}
-	
-	protected void onOwnerHidden()
-	{
-		setVisible(false);
-	}
 	
 }

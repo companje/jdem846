@@ -28,9 +28,10 @@ import javax.swing.JToolBar;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
-public class ProjectButtonBar extends JToolBar
+public class ProjectButtonBar extends ToolBar
 {
 	public static final int BTN_ADD = 0;
 	public static final int BTN_REMOVE = 1;

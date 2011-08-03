@@ -9,10 +9,10 @@ import javax.swing.JPanel;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.ui.BasePanel;
+import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
-public class FlexGridPanel extends BasePanel
+public class FlexGridPanel extends Panel
 {
 	private static Log log = Logging.getLog(FlexGridPanel.class);
 	

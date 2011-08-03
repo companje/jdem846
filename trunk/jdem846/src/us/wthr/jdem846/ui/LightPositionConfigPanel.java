@@ -36,14 +36,15 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.base.Slider;
 
 @SuppressWarnings("serial")
 public class LightPositionConfigPanel extends TitledRoundedPanel
 {
 	private static Log log = Logging.getLog(LightPositionConfigPanel.class);
 	
-	private JSlider jsldSolarAzimuth;
-	private JSlider jsldSolarElevation;
+	private Slider sldSolarAzimuth;
+	private Slider sldSolarElevation;
 	private LightingPreviewPanel previewPanel;
 	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
@@ -56,18 +57,18 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 		//this.setBorder(BorderFactory.createEtchedBorder());
 		
 		// Create components
-		jsldSolarAzimuth = new JSlider(0, 359);
-		jsldSolarElevation = new JSlider(0, 90);
+		sldSolarAzimuth = new Slider(0, 359);
+		sldSolarElevation = new Slider(0, 90);
 		
 		
-		jsldSolarElevation.setOrientation(JSlider.VERTICAL);
+		sldSolarElevation.setOrientation(JSlider.VERTICAL);
 		previewPanel = new LightingPreviewPanel();
 		previewPanel.setPreferredSize(new Dimension(200, 200));
 		previewPanel.setSize(new Dimension(200, 200));
 		
 		// Set tooltips
-		jsldSolarAzimuth.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightDirectionPanel.solarAzimuthSlider.tooltip"));
-		jsldSolarElevation.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightDirectionPanel.solarElevationSlider.tooltip"));
+		sldSolarAzimuth.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightDirectionPanel.solarAzimuthSlider.tooltip"));
+		sldSolarElevation.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightDirectionPanel.solarElevationSlider.tooltip"));
 		
 		
 		// Set listeners
@@ -83,8 +84,8 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 				}
 			}
 		};
-		jsldSolarAzimuth.addChangeListener(changeListener);
-		jsldSolarElevation.addChangeListener(changeListener);
+		sldSolarAzimuth.addChangeListener(changeListener);
+		sldSolarElevation.addChangeListener(changeListener);
 		
 		previewPanel.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e)
@@ -96,8 +97,8 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 			public void stateChanged(ChangeEvent e)
 			{
 				ignoreChanges = true;
-				jsldSolarAzimuth.setValue((int)Math.round(previewPanel.getSolarAzimuth()));
-				jsldSolarElevation.setValue((int)Math.round(previewPanel.getSolarElevation()));
+				sldSolarAzimuth.setValue((int)Math.round(previewPanel.getSolarAzimuth()));
+				sldSolarElevation.setValue((int)Math.round(previewPanel.getSolarElevation()));
 				ignoreChanges = false;
 				
 				fireChangeListeners();
@@ -116,8 +117,8 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 		constraints.anchor = GridBagConstraints.NORTH;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.gridwidth  = 5;//GridBagConstraints.REMAINDER;
-		gridbag.setConstraints(jsldSolarAzimuth, constraints);
-		add(jsldSolarAzimuth);
+		gridbag.setConstraints(sldSolarAzimuth, constraints);
+		add(sldSolarAzimuth);
 		
 		JPanel spacer = new JPanel();
 		constraints.weightx = 0.0;
@@ -137,8 +138,8 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 		constraints.fill = GridBagConstraints.VERTICAL;
 		constraints.weightx = 0.0;
 		constraints.gridwidth  = 1;
-		gridbag.setConstraints(jsldSolarElevation, constraints);
-		add(jsldSolarElevation);
+		gridbag.setConstraints(sldSolarElevation, constraints);
+		add(sldSolarElevation);
 		
 		
 		// Defaults
@@ -152,8 +153,8 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 	{
 		super.setEnabled(enabled);
 		previewPanel.setEnabled(enabled);
-		jsldSolarAzimuth.setEnabled(enabled);
-		jsldSolarElevation.setEnabled(enabled);
+		sldSolarAzimuth.setEnabled(enabled);
+		sldSolarElevation.setEnabled(enabled);
 	}
 	
 	public void updatePreview(boolean recreatePolygons)
@@ -171,26 +172,26 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 	
 	public void setSolarAzimuth(double solarAzimuth)
 	{
-		jsldSolarAzimuth.setValue((int)Math.round(solarAzimuth));
+		sldSolarAzimuth.setValue((int)Math.round(solarAzimuth));
 		previewPanel.setSolarAzimuth(solarAzimuth);
 	}
 	
 	
 	public double getSolarAzimuth()
 	{
-		return jsldSolarAzimuth.getValue();
+		return sldSolarAzimuth.getValue();
 	}
 	
 	public void setSolarElevation(double solarElevation)
 	{
-		jsldSolarElevation.setValue((int)Math.round(solarElevation));
+		sldSolarElevation.setValue((int)Math.round(solarElevation));
 		previewPanel.setSolarElevation(solarElevation);
 	}
 	
 	
 	public double getSolarElevation()
 	{
-		return jsldSolarElevation.getValue();
+		return sldSolarElevation.getValue();
 	}
 	
 	public void addChangeListener(ChangeListener listener)

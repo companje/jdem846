@@ -54,22 +54,26 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.ui.MonitoredSlider.MonitoredValueListener;
+import us.wthr.jdem846.ui.base.BoxContainer;
+import us.wthr.jdem846.ui.base.ComboBox;
+import us.wthr.jdem846.ui.base.JComboBoxModel;
+import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.border.StandardTitledBorder;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
 import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 
 @SuppressWarnings("serial")
-public class ModelOptionsPanel extends BasePanel
+public class ModelOptionsPanel extends Panel
 {
 	private static Log log = Logging.getLog(ModelOptionsPanel.class);
 	
-	private JNumberTextField jtxtWidth;
-	private JNumberTextField jtxtHeight;
-	private JNumberTextField jtxtTileSize;
-	private JComboBox jcmbEngine;
-	private JComboBox jcmbBackgroundColor;
-	private JComboBox jcmbColoring;
-	private JComboBox jcmbHillshading;
+	private NumberTextField txtWidth;
+	private NumberTextField txtHeight;
+	private NumberTextField txtTileSize;
+	private ComboBox cmbEngine;
+	private ComboBox cmbBackgroundColor;
+	private ComboBox cmbColoring;
+	private ComboBox cmbHillshading;
 	private MonitoredSlider jsldLightMultiple;
 	private MonitoredSlider jsldSpotExponent;
 	private MonitoredSlider jsldElevationMultiple;
@@ -103,21 +107,21 @@ public class ModelOptionsPanel extends BasePanel
 		//controlGrid.setBorder(new StandardTitledBorder("Model Options"));
 		
 		// Create components
-		jtxtWidth = new JNumberTextField(false);
-		jtxtHeight = new JNumberTextField(false);
-		jtxtTileSize = new JNumberTextField(false);
+		txtWidth = new NumberTextField(false);
+		txtHeight = new NumberTextField(false);
+		txtTileSize = new NumberTextField(false);
 		
 		engineModel = new EngineListModel();
-		jcmbEngine = new JComboBox(engineModel);
+		cmbEngine = new ComboBox(engineModel);
 		
 		backgroundModel = new BackgroundColorOptionsListModel();
-		jcmbBackgroundColor = new JComboBox(backgroundModel);
+		cmbBackgroundColor = new ComboBox(backgroundModel);
 		
 		coloringModel = new ColoringListModel();
-		jcmbColoring = new JComboBox(coloringModel);
+		cmbColoring = new ComboBox(coloringModel);
 		
 		hillShadingModel = new HillShadingOptionsListModel();
-		jcmbHillshading = new JComboBox(hillShadingModel);
+		cmbHillshading = new ComboBox(hillShadingModel);
 
 		jsldLightMultiple = new MonitoredSlider(0, 100, 50, new MonitoredValueListener() {
 			NumberFormat format = NumberFormat.getInstance();
@@ -159,13 +163,13 @@ public class ModelOptionsPanel extends BasePanel
 		//gradientConfigPanel.setBorder(new StandardTitledBorder("Gradients"));
 		// Set tool tips
 		
-		jtxtWidth.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.widthText.tooltip"));
-		jtxtHeight.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.heightText.tooltip"));
-		jcmbEngine.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.engineCombo.tooltip"));
-		jcmbBackgroundColor.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.tooltip"));
-		jcmbColoring.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.coloringCombo.tooltip"));
-		jcmbHillshading.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.tooltip"));
-		jtxtTileSize.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.tooltip"));
+		txtWidth.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.widthText.tooltip"));
+		txtHeight.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.heightText.tooltip"));
+		cmbEngine.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.engineCombo.tooltip"));
+		cmbBackgroundColor.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.tooltip"));
+		cmbColoring.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.coloringCombo.tooltip"));
+		cmbHillshading.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.tooltip"));
+		txtTileSize.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.tooltip"));
 		jsldLightMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.tooltip"));
 		jsldSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
 		jsldElevationMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.tooltip"));
@@ -186,13 +190,13 @@ public class ModelOptionsPanel extends BasePanel
 			}
 		};
 		
-		jtxtWidth.addActionListener(textFieldActionListener);
-		jtxtHeight.addActionListener(textFieldActionListener);
-		jtxtTileSize.addActionListener(textFieldActionListener);
+		txtWidth.addActionListener(textFieldActionListener);
+		txtHeight.addActionListener(textFieldActionListener);
+		txtTileSize.addActionListener(textFieldActionListener);
 		
-		jtxtWidth.addFocusListener(focusListener);
-		jtxtHeight.addFocusListener(focusListener);
-		jtxtTileSize.addFocusListener(focusListener);
+		txtWidth.addFocusListener(focusListener);
+		txtHeight.addFocusListener(focusListener);
+		txtTileSize.addFocusListener(focusListener);
 		
 		ItemListener comboBoxItemListener = new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -201,10 +205,10 @@ public class ModelOptionsPanel extends BasePanel
 			}
 		};
 		
-		jcmbEngine.addItemListener(comboBoxItemListener);
-		jcmbBackgroundColor.addItemListener(comboBoxItemListener);
-		jcmbColoring.addItemListener(comboBoxItemListener);
-		jcmbHillshading.addItemListener(comboBoxItemListener);
+		cmbEngine.addItemListener(comboBoxItemListener);
+		cmbBackgroundColor.addItemListener(comboBoxItemListener);
+		cmbColoring.addItemListener(comboBoxItemListener);
+		cmbHillshading.addItemListener(comboBoxItemListener);
 		
 		ChangeListener sliderChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -249,19 +253,19 @@ public class ModelOptionsPanel extends BasePanel
 		
 		// Set Layout
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.engineCombo.label") + ":"));
-		controlGrid.add(jcmbEngine);
+		controlGrid.add(cmbEngine);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.widthText.label") + ":"));
-		controlGrid.add(jtxtWidth);
+		controlGrid.add(txtWidth);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.heightText.label") + ":"));
-		controlGrid.add(jtxtHeight);
+		controlGrid.add(txtHeight);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.label") + ":"));
-		controlGrid.add(jtxtTileSize);
+		controlGrid.add(txtTileSize);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.label") + ":"));
-		controlGrid.add(jcmbBackgroundColor);
+		controlGrid.add(cmbBackgroundColor);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.coloringCombo.label") + ":"));
-		controlGrid.add(jcmbColoring);
+		controlGrid.add(cmbColoring);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.label") + ":"));
-		controlGrid.add(jcmbHillshading);
+		controlGrid.add(cmbHillshading);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.label") + ":"));
 		controlGrid.add(jsldLightMultiple);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.label") + ":"));
@@ -284,11 +288,11 @@ public class ModelOptionsPanel extends BasePanel
 		lightPositionConfigPanel.setPreferredSize(new Dimension(150, 150));
 		projectionConfigPanel.setPreferredSize(new Dimension(150, 150));
 		
-		BasePanel lightAndProjectionPanel = new BasePanel();
+		Panel lightAndProjectionPanel = new Panel();
 		BoxLayout lightAndProjectionBoxLayout = new BoxLayout(lightAndProjectionPanel, BoxLayout.PAGE_AXIS);
 		lightAndProjectionPanel.setLayout(lightAndProjectionBoxLayout);
 		//Box lightAndProjectionBox = Box.createVerticalBox();
-		DisposableBox lightAndProjectionBox = new DisposableBox(BoxLayout.Y_AXIS);
+		BoxContainer lightAndProjectionBox = new BoxContainer(BoxLayout.Y_AXIS);
 		lightAndProjectionBox.add(lightPositionConfigPanel);
 		lightAndProjectionBox.add(projectionConfigPanel);
 		lightAndProjectionPanel.add(lightAndProjectionBox);
@@ -321,13 +325,13 @@ public class ModelOptionsPanel extends BasePanel
 		ignoreValueChanges = true;
 		
 		engineModel.setSelectedItemByValue(modelOptions.getEngine());
-		jtxtWidth.setText(""+modelOptions.getWidth());
-		jtxtHeight.setText(""+modelOptions.getHeight());
+		txtWidth.setText(""+modelOptions.getWidth());
+		txtHeight.setText(""+modelOptions.getHeight());
 		backgroundModel.setSelectedItemByValue(modelOptions.getBackgroundColor());
 		coloringModel.setSelectedItemByValue(modelOptions.getColoringType());
 		hillShadingModel.setSelectedItemByValue(modelOptions.getHillShadeType());
 		
-		jtxtTileSize.setText(""+modelOptions.getTileSize());
+		txtTileSize.setText(""+modelOptions.getTileSize());
 		jsldLightMultiple.setValue((int)Math.round(modelOptions.getLightingMultiple() * 100));
 		jsldSpotExponent.setValue(modelOptions.getSpotExponent());
 
@@ -350,15 +354,15 @@ public class ModelOptionsPanel extends BasePanel
 	protected void applyOptionsToModel()
 	{
 		modelOptions.setEngine(engineModel.getSelectedItemValue());
-		modelOptions.setWidth(jtxtWidth.getInteger());
-		modelOptions.setHeight(jtxtHeight.getInteger());
+		modelOptions.setWidth(txtWidth.getInteger());
+		modelOptions.setHeight(txtHeight.getInteger());
 		
 		modelOptions.setBackgroundColor(backgroundModel.getSelectedItemValue());
 		modelOptions.setColoringType(coloringModel.getSelectedItemValue());
 		modelOptions.setHillShadeType(hillShadingModel.getSelectedItemValue());
 		modelOptions.setLightingMultiple((double)jsldLightMultiple.getValue() / 100.0);
 		modelOptions.setElevationMultiple((double)jsldElevationMultiple.getValue());
-		modelOptions.setTileSize(jtxtTileSize.getInteger());
+		modelOptions.setTileSize(txtTileSize.getInteger());
 		modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
 		
 		modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
@@ -382,14 +386,14 @@ public class ModelOptionsPanel extends BasePanel
 		EngineInstance engineInstance = EngineRegistry.getInstance(engineSelection);
 		ColoringInstance coloringInstance = ColoringRegistry.getInstance(this.coloringModel.getSelectedItemValue());
 		
-		jtxtWidth.setEnabled(engineInstance.usesWidth());
-		jtxtHeight.setEnabled(engineInstance.usesHeight());
-		jcmbBackgroundColor.setEnabled(engineInstance.usesBackgroundColor());
-		jcmbColoring.setEnabled(engineInstance.usesColoring());
-		jcmbHillshading.setEnabled(engineInstance.usesHillshading());
+		txtWidth.setEnabled(engineInstance.usesWidth());
+		txtHeight.setEnabled(engineInstance.usesHeight());
+		cmbBackgroundColor.setEnabled(engineInstance.usesBackgroundColor());
+		cmbColoring.setEnabled(engineInstance.usesColoring());
+		cmbHillshading.setEnabled(engineInstance.usesHillshading());
 		jsldLightMultiple.setEnabled(engineInstance.usesLightMultiple());
 		jsldSpotExponent.setEnabled(engineInstance.usesSpotExponent());
-		jtxtTileSize.setEnabled(engineInstance.usesTileSize());
+		txtTileSize.setEnabled(engineInstance.usesTileSize());
 		gradientConfigPanel.setEnabled(engineInstance.usesColoring());
 		
 		gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());

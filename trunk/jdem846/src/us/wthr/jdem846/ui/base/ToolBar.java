@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.ui.datasetoptions;
+package us.wthr.jdem846.ui.base;
 
-import javax.swing.JPanel;
+import javax.swing.JToolBar;
 
-import us.wthr.jdem846.input.DataSource;
-import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 
 @SuppressWarnings("serial")
-public class ElevationDataSetOptions extends Panel
+public class ToolBar extends JToolBar
 {
+	private static Log log = Logging.getLog(ToolBar.class);
 	
-	private DataSource dataSource;
-	
-	public ElevationDataSetOptions(DataSource dataSource)
-	{
-		this.dataSource = dataSource;
-	}
 	
 }

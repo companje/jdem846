@@ -22,9 +22,10 @@ import java.awt.event.ComponentListener;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.exception.ComponentException;
+import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
-public abstract class JdemPanel extends BasePanel
+public abstract class JdemPanel extends Panel
 {
 	private String title;
 	

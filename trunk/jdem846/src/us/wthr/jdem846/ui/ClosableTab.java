@@ -33,14 +33,17 @@ import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.base.Button;
+import us.wthr.jdem846.ui.base.Label;
+import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
-public class ClosableTab extends BasePanel
+public class ClosableTab extends Panel
 {
 	private static Log log = Logging.getLog(ClosableTab.class);
 	
-	private JLabel jlblTitle;
-	private JButton jbtnClose;
+	private Label lblTitle;
+	private Button btnClose;
 	private boolean closable;
 	
 	private List<ActionListener> actionListeners = new LinkedList<ActionListener>();
@@ -54,23 +57,23 @@ public class ClosableTab extends BasePanel
 		this.setOpaque(false);
 
 		// Create components
-		jlblTitle = new JLabel(title);
-		jlblTitle.setOpaque(false);
-		jlblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+		lblTitle = new Label(title);
+		lblTitle.setOpaque(false);
+		lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 		
-		jbtnClose = new JButton();
-		jbtnClose.setIcon(new ImageIcon(getClass().getResource(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/window-close.png")));
-		jbtnClose.setOpaque(false);
-		jbtnClose.setContentAreaFilled(false);
-		jbtnClose.setFocusable(false);
-		jbtnClose.setBorder(BorderFactory.createEtchedBorder());
-		jbtnClose.setBorderPainted(false);
+		btnClose = new Button();
+		btnClose.setIcon(new ImageIcon(getClass().getResource(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/window-close.png")));
+		btnClose.setOpaque(false);
+		btnClose.setContentAreaFilled(false);
+		btnClose.setFocusable(false);
+		btnClose.setBorder(BorderFactory.createEtchedBorder());
+		btnClose.setBorderPainted(false);
 		
 		// Set Tooltips
-		jbtnClose.setToolTipText(I18N.get("us.wthr.jdem846.ui.closableTab.closeButton.tooltip"));
+		btnClose.setToolTipText(I18N.get("us.wthr.jdem846.ui.closableTab.closeButton.tooltip"));
 		
 		// Add Listeners
-		jbtnClose.addActionListener(new ActionListener() {
+		btnClose.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -83,9 +86,9 @@ public class ClosableTab extends BasePanel
 		
 		
 		// Set Layout
-		add(jlblTitle);
+		add(lblTitle);
 		if (closable)
-			add(jbtnClose);
+			add(btnClose);
 		
 		
 	}
@@ -137,6 +140,6 @@ public class ClosableTab extends BasePanel
 	
 	public void setTitle(String title)
 	{
-		jlblTitle.setText(title);
+		lblTitle.setText(title);
 	}
 }

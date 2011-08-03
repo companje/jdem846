@@ -38,9 +38,10 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.GradientColorStop;
 import us.wthr.jdem846.color.GradientLoader;
 import us.wthr.jdem846.color.ModelColoring;
+import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
-public class GradientLevelsControl extends JPanel
+public class GradientLevelsControl extends Panel
 {
 	
 	private String gradientIdentifier = null;

@@ -22,8 +22,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import us.wthr.jdem846.ui.base.Frame;
+import us.wthr.jdem846.ui.base.Label;
+
 @SuppressWarnings("serial")
-public class SimpleImageViewer extends JFrame
+public class SimpleImageViewer extends Frame
 {
 	
 	
@@ -36,7 +39,7 @@ public class SimpleImageViewer extends JFrame
 		
 		ImageIcon imageIcon = new ImageIcon(image);
 		
-		JLabel imageLabel = new JLabel();
+		Label imageLabel = new Label();
 		imageLabel.setIcon(imageIcon);
 		this.add(imageLabel);
 		

@@ -36,9 +36,10 @@ import javax.swing.Timer;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
-public class WorkingGlassPane extends JPanel
+public class WorkingGlassPane extends Panel
 {
 	private static Log log = Logging.getLog(WorkingGlassPane.class);
 

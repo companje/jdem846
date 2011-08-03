@@ -23,9 +23,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 import us.wthr.jdem846.input.DataSource;
+import us.wthr.jdem846.ui.base.Table;
 
 @SuppressWarnings("serial")
-public class InputGridList extends JTable {
+public class InputGridList extends Table {
 
 	private InputTableModel tableModel;
 	private DefaultListSelectionModel selectionModel;

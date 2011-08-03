@@ -54,10 +54,11 @@ import us.wthr.jdem846.render.gfx.Renderable;
 import us.wthr.jdem846.render.gfx.Square;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.gfx.ViewportBuffer;
+import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.util.TempFiles;
 
 @SuppressWarnings("serial")
-public class LightingPreviewPanel extends BasePanel
+public class LightingPreviewPanel extends Panel
 {
 	
 	private static Log log = Logging.getLog(LightingPreviewPanel.class);

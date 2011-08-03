@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.ui;
+package us.wthr.jdem846.ui.base;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -25,12 +25,14 @@ import javax.swing.JTabbedPane;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.ClosableTab;
+import us.wthr.jdem846.ui.Disposable;
 
 
 /** Implements a tabbed pane with the first tab being the project form and cannot be closed. The
  * other tabs are output images within a OutputImageViewer component panel.
  * 
- * @author Gill Family
+ * @author Kevin M. Gill
  *
  */
 @SuppressWarnings("serial")

@@ -37,10 +37,14 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.base.Button;
+import us.wthr.jdem846.ui.base.Dialog;
+import us.wthr.jdem846.ui.base.Label;
+import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.util.ImageIcons;
 
 @SuppressWarnings("serial")
-public class AboutDialog extends JDialog
+public class AboutDialog extends Dialog
 {
 	private static Log log = Logging.getLog(AboutDialog.class);
 	
@@ -53,46 +57,46 @@ public class AboutDialog extends JDialog
 		ImagePanel imagePanel = new ImagePanel();
 		
 		
-		JPanel infoPanel = new JPanel();
+		Panel infoPanel = new Panel();
 		infoPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		BoxLayout infoPanelLayout = new BoxLayout(infoPanel, BoxLayout.PAGE_AXIS);
 		infoPanel.setLayout(infoPanelLayout);
 		
-		JLabel jLabel = null;
+		Label label = null;
 		
-		jLabel = new JLabel(JDem846Properties.getProperty("us.wthr.jdem846.applicationName"));
-		jLabel.setHorizontalAlignment(JLabel.CENTER);
-		jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		infoPanel.add(jLabel);
+		label = new Label(JDem846Properties.getProperty("us.wthr.jdem846.applicationName"));
+		label.setHorizontalAlignment(JLabel.CENTER);
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		infoPanel.add(label);
 		infoPanel.add(Box.createRigidArea(new Dimension(0,5)));
 		
-		jLabel = new JLabel(I18N.get("us.wthr.jdem846.ui.about.version") + ": " + JDem846Properties.getProperty("us.wthr.jdem846.version"));
-		jLabel.setHorizontalAlignment(JLabel.CENTER);
-		jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		infoPanel.add(jLabel);
+		label = new Label(I18N.get("us.wthr.jdem846.ui.about.version") + ": " + JDem846Properties.getProperty("us.wthr.jdem846.version"));
+		label.setHorizontalAlignment(JLabel.CENTER);
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		infoPanel.add(label);
 		infoPanel.add(Box.createRigidArea(new Dimension(0,5)));
 		
-		jLabel = new JLabel(JDem846Properties.getProperty("us.wthr.jdem846.copyRight"));
-		jLabel.setHorizontalAlignment(JLabel.CENTER);
-		jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		infoPanel.add(jLabel);
+		label = new Label(JDem846Properties.getProperty("us.wthr.jdem846.copyRight"));
+		label.setHorizontalAlignment(JLabel.CENTER);
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		infoPanel.add(label);
 		infoPanel.add(Box.createRigidArea(new Dimension(0,5)));
 		
-		jLabel = new JLabel(JDem846Properties.getProperty("us.wthr.jdem846.website"));
-		jLabel.setHorizontalAlignment(JLabel.CENTER);
-		jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		infoPanel.add(jLabel);
+		label = new Label(JDem846Properties.getProperty("us.wthr.jdem846.website"));
+		label.setHorizontalAlignment(JLabel.CENTER);
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		infoPanel.add(label);
 		infoPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		
-		JButton jbtnClose = new JButton(I18N.get("us.wthr.jdem846.ui.ok"));
-		jbtnClose.setAlignmentX(Component.CENTER_ALIGNMENT);
-		jbtnClose.addActionListener(new ActionListener() {
+		Button btnClose = new Button(I18N.get("us.wthr.jdem846.ui.ok"));
+		btnClose.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				dispose();
 			}
 		});
-		infoPanel.add(jbtnClose);
+		infoPanel.add(btnClose);
 		
 		
 		BorderLayout layout = new BorderLayout();

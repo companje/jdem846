@@ -32,10 +32,11 @@ import javax.swing.JWindow;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.base.Window;
 import us.wthr.jdem846.util.ImageIcons;
 
 @SuppressWarnings("serial")
-public class SplashScreen extends JWindow
+public class SplashScreen extends Window
 {
 	private static Log log = Logging.getLog(SplashScreen.class);
 	

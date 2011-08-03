@@ -24,9 +24,10 @@ import javax.swing.JPanel;
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
+import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
-public class GradientSamplePanel extends JPanel
+public class GradientSamplePanel extends Panel
 {
 	
 	private String gradientIdentifier = null;

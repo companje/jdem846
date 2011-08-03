@@ -34,6 +34,8 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.TitledRoundedPanel;
+import us.wthr.jdem846.ui.base.Label;
+import us.wthr.jdem846.ui.base.Slider;
 
 @SuppressWarnings("serial")
 public class ProjectionConfigPanel extends TitledRoundedPanel
@@ -41,10 +43,10 @@ public class ProjectionConfigPanel extends TitledRoundedPanel
 	private static Log log = Logging.getLog(ProjectionConfigPanel.class);
 	
 	private ProjectionPreview projectionPreview;
-	private JLabel jlblRotateAngles;
+	private Label jlblRotateAngles;
 	
-	private JSlider jsldRotateX;
-	private JSlider jsldRotateY;
+	private Slider jsldRotateX;
+	private Slider jsldRotateY;
 	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
@@ -56,12 +58,12 @@ public class ProjectionConfigPanel extends TitledRoundedPanel
 	public ProjectionConfigPanel()
 	{
 		super(I18N.get("us.wthr.jdem846.ui.projectionConfigPanel.title"));
-		jlblRotateAngles = new JLabel("");
+		jlblRotateAngles = new Label("");
 		projectionPreview = new ProjectionPreview(new Dimension(250, 250));
 		
 		
-		jsldRotateX = new JSlider(0, 90, 30);
-		jsldRotateY = new JSlider(-180, 180, 0);
+		jsldRotateX = new Slider(0, 90, 30);
+		jsldRotateY = new Slider(-180, 180, 0);
 		
 		jsldRotateX.setOrientation(JSlider.VERTICAL);
 		

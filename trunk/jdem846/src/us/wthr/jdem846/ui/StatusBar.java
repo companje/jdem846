@@ -27,12 +27,16 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.BevelBorder;
 
+import us.wthr.jdem846.ui.base.Label;
+import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.ProgressBar;
+
 @SuppressWarnings("serial")
-public class StatusBar extends JPanel
+public class StatusBar extends Panel
 {
 	
-	private JLabel jlblStatus;
-	private JProgressBar jprgProgress;
+	private Label lblStatus;
+	private ProgressBar prgProgress;
 	
 	
 	public StatusBar()
@@ -41,46 +45,46 @@ public class StatusBar extends JPanel
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
 		// Create components
-		jlblStatus = new JLabel(" ");
-		jprgProgress = new JProgressBar(0, 100);
+		lblStatus = new Label(" ");
+		prgProgress = new ProgressBar(0, 100);
 
-		jlblStatus.setFont(new Font("Courier New", Font.PLAIN, 11));
+		lblStatus.setFont(new Font("Courier New", Font.PLAIN, 11));
 
 		
 		// Set Layout
 		BoxLayout layout = new BoxLayout(this, BoxLayout.X_AXIS);
 		setLayout(layout);
 		
-	    add(jlblStatus);
+	    add(lblStatus);
 	    add( Box.createHorizontalGlue() );
-		add(jprgProgress);
+		add(prgProgress);
 		
 
 	}
 	
 	public void setStatus(String status)
 	{
-		jlblStatus.setText(status);
+		lblStatus.setText(status);
 	}
 	
 	public void clear()
 	{
-		jlblStatus.setText(" ");
+		lblStatus.setText(" ");
 	}
 	
 	public void setProgressVisible(boolean visible)
 	{
-		jprgProgress.setVisible(visible);
+		prgProgress.setVisible(visible);
 	}
 	
 	public void setProgress(int progress)
 	{
-		jprgProgress.setValue(progress);
+		prgProgress.setValue(progress);
 	}
 	
 	public int getProgress()
 	{
-		return jprgProgress.getValue();
+		return prgProgress.getValue();
 	}
 	
 	

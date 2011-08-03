@@ -65,6 +65,12 @@ import us.wthr.jdem846.ui.ModelOptionsPanel.OptionsChangedListener;
 import us.wthr.jdem846.ui.MonitoredThread.ProgressListener;
 import us.wthr.jdem846.ui.OrderingButtonBar.OrderingButtonClickedListener;
 import us.wthr.jdem846.ui.ProjectButtonBar.ButtonClickedListener;
+import us.wthr.jdem846.ui.base.FileChooser;
+import us.wthr.jdem846.ui.base.Menu;
+import us.wthr.jdem846.ui.base.MenuItem;
+import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.SplitPane;
+import us.wthr.jdem846.ui.base.TabPane;
 
 @SuppressWarnings("serial")
 public class ProjectPane extends JdemPanel
@@ -84,18 +90,18 @@ public class ProjectPane extends JdemPanel
 	private StatusBar statusBar;
 	private DataSetTree datasetTree;
 	
-	private BasePanel westPanel;
-	private BasePanel southPanel;
+	private Panel westPanel;
+	private Panel southPanel;
 	
 	private DataPackage dataPackage;
 	private ModelOptions modelOptions;
 
-	private DisposableSplitPane splitPane;
+	private SplitPane splitPane;
 	private String projectLoadedFrom = null;
 	
 	private List<CreateModelListener> createModelListeners = new LinkedList<CreateModelListener>();
 	
-	private JMenu projectMenu;
+	private Menu projectMenu;
 	
 	public ProjectPane(ProjectModel projectModel)
 	{
@@ -154,8 +160,8 @@ public class ProjectPane extends JdemPanel
 		layoutPane = new DataInputLayoutPane(dataPackage, modelOptions);
 		previewPane = new ModelPreviewPane(dataPackage, modelOptions);
 		
-		westPanel = new BasePanel();
-		southPanel = new BasePanel();
+		westPanel = new Panel();
+		southPanel = new Panel();
 		
 		projectMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.projectPane.menu.project"), KeyEvent.VK_P);
 		MainMenuBar.insertMenu(projectMenu);
@@ -355,7 +361,7 @@ public class ProjectPane extends JdemPanel
         box.add(datasetOptionsPanel);
         westPanel.add(box, BorderLayout.PAGE_END);
 		
-		splitPane = new DisposableSplitPane(DisposableSplitPane.HORIZONTAL_SPLIT, westPanel, centerPanel);
+		splitPane = new SplitPane(SplitPane.HORIZONTAL_SPLIT, westPanel, centerPanel);
 		splitPane.setDividerLocation(280);
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setAlignmentY(TOP_ALIGNMENT);
@@ -413,7 +419,7 @@ public class ProjectPane extends JdemPanel
 	
 	protected void openInputData()
 	{
-		final JFileChooser chooser = new BasicFileChooser();
+		final FileChooser chooser = new FileChooser();
 		FileFilter acceptAll = chooser.getAcceptAllFileFilter();
 		for (ElevationDataLoaderInstance instance : ElevationDataLoaderRegistry.getInstances()) {
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(instance.getName(), instance.getExtension());

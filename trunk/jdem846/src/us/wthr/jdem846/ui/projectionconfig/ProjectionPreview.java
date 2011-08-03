@@ -33,9 +33,10 @@ import us.wthr.jdem846.render.gfx.Line;
 import us.wthr.jdem846.render.gfx.Renderable;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.gfx.ViewportBuffer;
+import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
-public class ProjectionPreview extends JPanel
+public class ProjectionPreview extends Panel
 {
 	private static Log log = Logging.getLog(ProjectionPreview.class);
 	

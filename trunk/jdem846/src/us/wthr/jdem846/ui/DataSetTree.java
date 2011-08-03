@@ -49,15 +49,18 @@ import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.ScrollPane;
+import us.wthr.jdem846.ui.base.Tree;
 import us.wthr.jdem846.util.ImageIcons;
 
 @SuppressWarnings("serial")
-public class DataSetTree extends JPanel
+public class DataSetTree extends Panel
 {
 	private static Log log = Logging.getLog(DataSetTree.class);
 	
-	private JTree tree;
-	private JScrollPane scrollPane;
+	private Tree tree;
+	private ScrollPane scrollPane;
 	private DefaultMutableTreeNode top = new DefaultMutableTreeNode(I18N.get("us.wthr.jdem846.ui.dataSetTree.node.datasets"));
 	private DefaultTreeModel treeModel;
 	
@@ -121,8 +124,8 @@ public class DataSetTree extends JPanel
 			}
     	});
     	
-		tree = new JTree(treeModel);
-		scrollPane = new JScrollPane(tree);
+		tree = new Tree(treeModel);
+		scrollPane = new ScrollPane(tree);
 		tree.setCellRenderer(new DatasetTreeCellRenderer());
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		//tree.setRootVisible(false);
