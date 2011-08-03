@@ -20,14 +20,17 @@ import java.awt.Component;
 
 import javax.swing.JScrollPane;
 
+import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.Disposable;
 
 @SuppressWarnings("serial")
-public class ScrollPane extends JScrollPane
+public class ScrollPane extends JScrollPane implements Disposable
 {
 	private static Log log = Logging.getLog(ScrollPane.class);
-
+	private boolean disposed = false;
+	
 	public ScrollPane()
 	{
 		super();
@@ -52,5 +55,16 @@ public class ScrollPane extends JScrollPane
 		// TODO Auto-generated constructor stub
 	}
 	
+	@Override
+	public void dispose() throws ComponentException
+	{
+		
+		
+		disposed = true;
+	}
 	
+	public boolean isDisposed()
+	{
+		return disposed;
+	}
 }

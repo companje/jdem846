@@ -40,6 +40,8 @@ public class TabPane extends JTabbedPane implements Disposable
 {
 	private static Log log = Logging.getLog(TabPane.class);
 	
+	private boolean disposed = false;
+	
 	public TabPane()
 	{
 
@@ -81,15 +83,11 @@ public class TabPane extends JTabbedPane implements Disposable
 			Component tabComponent = getComponentAt(index);
 			
 			log.info("Closing tab of type " + tabComponent.getClass().getCanonicalName());
-			
-			if (tabComponent instanceof Disposable) {
-				Disposable disposable = (Disposable) tabComponent;
-				try {
-					disposable.dispose();
-				} catch (ComponentException e1) {
-					log.warn("Failed to dispose Tab pane: " + e1.getMessage(), e1);
-					e1.printStackTrace();
-				}
+			try {
+				Frame.dispose(tabComponent);
+			} catch (ComponentException ex) {
+				log.error("Failed to dispose of component: " + ex.getMessage(), ex);
+				ex.printStackTrace();
 			}
 		}
 		super.removeTabAt(index);
@@ -106,28 +104,15 @@ public class TabPane extends JTabbedPane implements Disposable
 	public void dispose() throws ComponentException
 	{
 		log.info("TabPane.dispose()");
-		
-		while(this.getTabCount() > 0) {
-			removeTabAt(0);
-		}
-		
-		
-		/*
-		Component components[] = getComponents();
-		for (Component component : components) {
-			if (component instanceof Disposable) {
-				Disposable disposableComponent = (Disposable) component;
-				try {
-					disposableComponent.dispose();
-				} catch (ComponentException ex) {
-					log.warn("Failed to dispose of component", ex);
-					ex.printStackTrace();
-				}
-			}
-		}
-		*/
+
+		disposed = true;
 	}
 	
+	
+	public boolean isDisposed()
+	{
+		return disposed;
+	}
 
 	
 	

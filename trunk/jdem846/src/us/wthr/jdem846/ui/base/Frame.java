@@ -17,6 +17,7 @@
 package us.wthr.jdem846.ui.base;
 
 import java.awt.Component;
+import java.awt.Container;
 
 import javax.swing.JFrame;
 
@@ -43,21 +44,28 @@ public class Frame extends JFrame
 	}
 	
 	
-	public void disposeComponents() throws ComponentException
+	public static void dispose(Component component) throws ComponentException
 	{
-		
-		Component components[] = getComponents();
-		for (Component component : components) {
-			if (component instanceof Disposable) {
-				Disposable disposableComponent = (Disposable) component;
-				try {
-					disposableComponent.dispose();
-				} catch (ComponentException ex) {
-					log.warn("Failed to dispose of component", ex);
-					ex.printStackTrace();
-				}
+		if (component instanceof Container)  {
+			Container container = (Container) component;
+			for (Component child : container.getComponents()) {
+				Frame.dispose(child);
 			}
 		}
 		
+		if (component instanceof Disposable) {
+			Disposable disposableComponent = (Disposable) component;
+			disposableComponent.dispose();
+		}
+		
+		
+		
+		
+	}
+	
+	public void disposeComponents() throws ComponentException
+	{
+		log.info("Frame dispose initiated");
+		Frame.dispose(this);
 	}
 }
