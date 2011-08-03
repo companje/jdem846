@@ -14,45 +14,38 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.ui;
+package us.wthr.jdem846.ui.base;
 
-public class JComboBoxItem<E>
+import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
+
+import javax.swing.JWindow;
+
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
+
+@SuppressWarnings("serial")
+public class Window extends JWindow
 {
-	
-	private String label;
-	private E value;
-	
-	public JComboBoxItem(String label, E value)
+	private static Log log = Logging.getLog(Window.class);
+
+	public Window()
 	{
-		this.label = label;
-		this.value = value;
-	}
-	
-	public String toString()
-	{
-		return label;
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	public String getLabel() 
+	public Window(Frame owner)
 	{
-		return label;
+		super(owner);
+		// TODO Auto-generated constructor stub
 	}
 
-	public void setLabel(String label)
+	public Window(GraphicsConfiguration gc)
 	{
-		this.label = label;
+		super(gc);
+		// TODO Auto-generated constructor stub
 	}
-
-	public E getValue()
-	{
-		return value;
-	}
-
-	public void setValue(E value) 
-	{
-		this.value = value;
-	}
-	
 	
 	
 }

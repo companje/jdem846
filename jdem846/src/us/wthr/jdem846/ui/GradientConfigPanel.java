@@ -35,6 +35,7 @@ import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.ui.GradientLevelsControl.GradientChangedListener;
+import us.wthr.jdem846.ui.base.Button;
 
 @SuppressWarnings("serial")
 public class GradientConfigPanel extends TitledRoundedPanel
@@ -42,7 +43,7 @@ public class GradientConfigPanel extends TitledRoundedPanel
 	
 	private GradientSamplePanel samplePanel;
 	private GradientLevelsControl levelsControl;
-	private JButton jbtnReset;
+	private Button btnReset;
 	
 	private String gradientIdentifier = null;
 	private ColoringInstance coloringInstance = null;
@@ -57,11 +58,11 @@ public class GradientConfigPanel extends TitledRoundedPanel
 		//this.setBorder(BorderFactory.createEtchedBorder());
 		levelsControl = new GradientLevelsControl();
 		samplePanel = new GradientSamplePanel();
-		jbtnReset = new JButton(I18N.get("us.wthr.jdem846.ui.gradientConfigPanel.resetButton.label"));
-		jbtnReset.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
+		btnReset = new Button(I18N.get("us.wthr.jdem846.ui.gradientConfigPanel.resetButton.label"));
+		btnReset.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
 		
 		// Set tooltips
-		jbtnReset.setToolTipText(I18N.get("us.wthr.jdem846.ui.gradientConfigPanel.resetButton.tooltip"));
+		btnReset.setToolTipText(I18N.get("us.wthr.jdem846.ui.gradientConfigPanel.resetButton.tooltip"));
 		
 		// Add listeners
 		levelsControl.addGradientChangedListener(new GradientChangedListener() {
@@ -78,7 +79,7 @@ public class GradientConfigPanel extends TitledRoundedPanel
 			}
 		});
 		
-		jbtnReset.addActionListener(new ActionListener() {
+		btnReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0)
 			{
 				onReset();
@@ -107,8 +108,8 @@ public class GradientConfigPanel extends TitledRoundedPanel
 		constraints.weighty = .1;
 		constraints.anchor = GridBagConstraints.SOUTH;
 		constraints.fill = GridBagConstraints.NONE;
-		gridbag.setConstraints(jbtnReset, constraints);
-		add(jbtnReset);
+		gridbag.setConstraints(btnReset, constraints);
+		add(btnReset);
 		
 		
 	}
@@ -126,7 +127,7 @@ public class GradientConfigPanel extends TitledRoundedPanel
 	public void setEnabled(boolean enabled)
 	{
 		super.setEnabled(enabled);
-		jbtnReset.setEnabled(enabled);
+		btnReset.setEnabled(enabled);
 		levelsControl.setEnabled(enabled);
 	}
 	

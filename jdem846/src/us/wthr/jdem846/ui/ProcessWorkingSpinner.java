@@ -28,9 +28,10 @@ import javax.swing.JLabel;
 import javax.swing.Timer;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ui.base.Label;
 
 @SuppressWarnings("serial")
-public class ProcessWorkingSpinner extends JLabel
+public class ProcessWorkingSpinner extends Label
 {
 	private static int rows = 4;
 	private static int columns = 8;

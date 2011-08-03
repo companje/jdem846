@@ -25,9 +25,10 @@ import javax.swing.JToolBar;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
-public class OrderingButtonBar extends JToolBar
+public class OrderingButtonBar extends ToolBar
 {
 	public static final int BTN_MOVE_TOP = 0;
 	public static final int BTN_MOVE_UP = 1;

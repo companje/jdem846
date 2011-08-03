@@ -33,9 +33,12 @@ import javax.swing.JToolBar;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.ui.base.ComboBox;
+import us.wthr.jdem846.ui.base.JComboBoxModel;
+import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
-public class OutputImageViewButtonBar extends JToolBar
+public class OutputImageViewButtonBar extends ToolBar
 {
 	public static final int BTN_SAVE = 0;
 	public static final int BTN_ZOOM_IN = 1;
@@ -52,7 +55,7 @@ public class OutputImageViewButtonBar extends JToolBar
 	private ToolbarButton jbtnZoomFit;
 	private ToolbarButton jbtnStop;
 	
-	private JComboBox jcmbQuality;
+	private ComboBox cmbQuality;
 	private ImageQualityListModel qualityModel;
 	
 
@@ -95,7 +98,7 @@ public class OutputImageViewButtonBar extends JToolBar
 		});
 
 		qualityModel = new ImageQualityListModel();
-		jcmbQuality = new JComboBox(qualityModel);
+		cmbQuality = new ComboBox(qualityModel);
 		
 		// Set Tooltips
 		jbtnSave.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.saveTooltip"));
@@ -103,11 +106,11 @@ public class OutputImageViewButtonBar extends JToolBar
 		jbtnZoomOut.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomOutTooltip"));
 		jbtnZoomActual.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomActualTooltip"));
 		jbtnZoomFit.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomFitTooltip"));
-		jcmbQuality.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.qualityTooltip"));
+		cmbQuality.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.qualityTooltip"));
 		jbtnStop.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.stopTooltip"));
 		
 		// Add Listeners
-		jcmbQuality.addItemListener(new ItemListener() {
+		cmbQuality.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					fireOptionChangeListeners(OPTION_QUALITY);
@@ -129,7 +132,7 @@ public class OutputImageViewButtonBar extends JToolBar
 		add(jbtnStop);
 		addSeparator();
 		add(new JLabel("Quality: "));
-		add(jcmbQuality);
+		add(cmbQuality);
 		
 	}
 	
@@ -153,7 +156,7 @@ public class OutputImageViewButtonBar extends JToolBar
 			jbtnZoomFit.setEnabled(enabled);
 			break;
 		case OPTION_QUALITY:
-			jcmbQuality.setEnabled(enabled);
+			cmbQuality.setEnabled(enabled);
 			break;
 		case BTN_STOP:
 			jbtnStop.setEnabled(enabled);

@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.Timer;
 
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.ui.base.Label;
 
 /** A really quick and dirty memory monitor histogram
  * 
@@ -39,7 +40,7 @@ import us.wthr.jdem846.i18n.I18N;
  *
  */
 @SuppressWarnings("serial")
-public class MemoryMonitor extends JLabel
+public class MemoryMonitor extends Label
 {
 	private LinkedList<MemorySnapshot> usageList = new LinkedList<MemorySnapshot>();
 	private MemoryMXBean memoryBean;

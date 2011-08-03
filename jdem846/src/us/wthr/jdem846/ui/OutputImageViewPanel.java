@@ -47,6 +47,9 @@ import us.wthr.jdem846.ui.ImageDisplayPanel.MousePositionListener;
 import us.wthr.jdem846.ui.ModelingWorkerThread.ModelCompletionListener;
 import us.wthr.jdem846.ui.OutputImageViewButtonBar.ButtonClickedListener;
 import us.wthr.jdem846.ui.OutputImageViewButtonBar.OptionChangeListener;
+import us.wthr.jdem846.ui.base.FileChooser;
+import us.wthr.jdem846.ui.base.Menu;
+import us.wthr.jdem846.ui.base.MenuItem;
 
 @SuppressWarnings("serial")
 public class OutputImageViewPanel extends JdemPanel
@@ -70,7 +73,7 @@ public class OutputImageViewPanel extends JdemPanel
 	private ModelCompletionListener modelCompletionListener = null;
 	private TileCompletionListener tileCompletionListener = null;
 	
-	private JMenu modelMenu;
+	private Menu modelMenu;
 	
 	public OutputImageViewPanel(RenderEngine engine)
 	{
@@ -309,7 +312,7 @@ public class OutputImageViewPanel extends JdemPanel
 	{
 		log.info("Save");
 		
-		JFileChooser chooser = new BasicFileChooser();
+		FileChooser chooser = new FileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.png"), "png");
 		chooser.setFileFilter(filter);
 		

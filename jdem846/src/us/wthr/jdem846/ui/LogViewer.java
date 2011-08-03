@@ -41,6 +41,10 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.base.MenuItem;
+import us.wthr.jdem846.ui.base.ScrollPane;
+import us.wthr.jdem846.ui.base.TextArea;
+import us.wthr.jdem846.ui.base.ToolBar;
 
 /** A really simple log listing panel
  * 
@@ -53,27 +57,27 @@ public class LogViewer extends JdemPanel
 	
 	private static Log log = Logging.getLog(LogViewer.class);
 	
-	private JScrollPane jscrollPane;
-	private JTextArea jtxtLog;
-	private JToolBar jbar;
-	private ToolbarButton jbtnClear;
+	private ScrollPane scrollPane;
+	private TextArea txtLog;
+	private ToolBar toolBar;
+	private ToolbarButton btnClear;
 	
 	private JMenu logMenu;
 	
 	public LogViewer()
 	{
 		// Create Components
-		jtxtLog = new JTextArea();
-		jtxtLog.setEditable(false);
-		jscrollPane = new JScrollPane(jtxtLog);
+		txtLog = new TextArea();
+		txtLog.setEditable(false);
+		scrollPane = new ScrollPane(txtLog);
 		
-		jbar = new JToolBar();
-		jbtnClear = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.logViewerPanel.clearButton.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/edit-clear.png", new ActionListener() {
+		toolBar = new ToolBar();
+		btnClear = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.logViewerPanel.clearButton.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/edit-clear.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				clear();
 			}
 		});
-		jbtnClear.setToolTipText(I18N.get("us.wthr.jdem846.ui.logViewerPanel.clearButton.tooltip"));
+		btnClear.setToolTipText(I18N.get("us.wthr.jdem846.ui.logViewerPanel.clearButton.tooltip"));
 		
 		logMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.logViewerPanel.menu"), KeyEvent.VK_L);
 		MainMenuBar.insertMenu(logMenu);
@@ -86,7 +90,7 @@ public class LogViewer extends JdemPanel
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK | ActionEvent.CTRL_MASK)));
 		
 		
-		jtxtLog.addCaretListener(new CaretListener() {
+		txtLog.addCaretListener(new CaretListener() {
 			public void caretUpdate(CaretEvent e)
 			{
 				scrollToBotton();
@@ -117,10 +121,10 @@ public class LogViewer extends JdemPanel
 		
 		
 		// Set Layout
-		jbar.add(jbtnClear);
+		toolBar.add(btnClear);
 		setLayout(new BorderLayout());
-		add(jbar, BorderLayout.NORTH);
-		add(jscrollPane, BorderLayout.CENTER);
+		add(toolBar, BorderLayout.NORTH);
+		add(scrollPane, BorderLayout.CENTER);
 		
 		/*
 		Timer timer = new Timer(200, new ActionListener() {
@@ -137,19 +141,19 @@ public class LogViewer extends JdemPanel
 	
 	protected void clear()
 	{
-		jtxtLog.setText("");
+		txtLog.setText("");
 	}
 	
 	protected void append(String record)
 	{
-		jtxtLog.setText(jtxtLog.getText() + record);
-		jtxtLog.setCaretPosition(jtxtLog.getText().length());
+		txtLog.setText(txtLog.getText() + record);
+		txtLog.setCaretPosition(txtLog.getText().length());
 	}
 	
 	
 	protected void scrollToBotton()
 	{
-		jscrollPane.getVerticalScrollBar().setValue(jscrollPane.getVerticalScrollBar().getMaximum());
+		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 	}
 	
 

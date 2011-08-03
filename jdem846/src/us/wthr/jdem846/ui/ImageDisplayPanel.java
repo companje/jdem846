@@ -34,13 +34,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import us.wthr.jdem846.ui.base.Label;
+import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.ScrollPane;
+
 @SuppressWarnings("serial")
-public class ImageDisplayPanel extends JPanel
+public class ImageDisplayPanel extends Panel
 {
 	
 	
-	private JLabel displayLabel;
-	private JScrollPane scrollPane;
+	private Label displayLabel;
+	private ScrollPane scrollPane;
 	
 	private Image trueImage;
 	private int imageTrueWidth = -1;
@@ -61,12 +65,12 @@ public class ImageDisplayPanel extends JPanel
 		setLayout(new BorderLayout());
 		
 		// Create components
-		displayLabel = new JLabel();
+		displayLabel = new Label();
 		displayLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		displayLabel.setAlignmentY(JLabel.CENTER_ALIGNMENT);
 		displayLabel.setHorizontalAlignment(JLabel.CENTER);
 		displayLabel.setVerticalAlignment(JLabel.CENTER);
-		scrollPane = new JScrollPane(displayLabel);
+		scrollPane = new ScrollPane(displayLabel);
 		
 		setAlignmentX(CENTER_ALIGNMENT);
 		setAlignmentY(CENTER_ALIGNMENT);

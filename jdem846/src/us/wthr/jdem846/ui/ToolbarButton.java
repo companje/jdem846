@@ -26,10 +26,11 @@ import javax.swing.JButton;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.util.ImageIcons;
 
 @SuppressWarnings("serial")
-public class ToolbarButton extends JButton
+public class ToolbarButton extends Button
 {
 	private static Log log = Logging.getLog(ToolbarButton.class);
 	

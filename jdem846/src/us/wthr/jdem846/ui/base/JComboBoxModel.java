@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.ui;
+package us.wthr.jdem846.ui.base;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,11 +22,12 @@ import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;
 
+
 public class JComboBoxModel<E> implements ComboBoxModel
 {
 	
-	private List<JComboBoxItem<E>> itemList = new LinkedList<JComboBoxItem<E>>();
-	private JComboBoxItem<E> selectedItem = null;
+	private List<ComboBoxItem<E>> itemList = new LinkedList<ComboBoxItem<E>>();
+	private ComboBoxItem<E> selectedItem = null;
 	private List<ListDataListener> listDataListeners = new LinkedList<ListDataListener>();
 	
 	public JComboBoxModel()
@@ -34,14 +35,14 @@ public class JComboBoxModel<E> implements ComboBoxModel
 		
 	}
 	
-	public void addItem(JComboBoxItem<E> item)
+	public void addItem(ComboBoxItem<E> item)
 	{
 		itemList.add(item);
 	}
 	
 	public void addItem(String label, E value)
 	{
-		itemList.add(new JComboBoxItem<E>(label, value));
+		itemList.add(new ComboBoxItem<E>(label, value));
 	}
 	
 	
@@ -55,12 +56,12 @@ public class JComboBoxModel<E> implements ComboBoxModel
 	@Override
 	public void setSelectedItem(Object anItem) 
 	{
-		selectedItem = (JComboBoxItem<E>) anItem;
+		selectedItem = (ComboBoxItem<E>) anItem;
 	}
 
 	public void setSelectedItemByValue(E value)
 	{
-		for (JComboBoxItem<E> item : itemList) {
+		for (ComboBoxItem<E> item : itemList) {
 			if (item.getValue().equals(value)) {
 				setSelectedItem(item);
 				break;

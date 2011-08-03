@@ -28,12 +28,16 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import us.wthr.jdem846.ui.base.Label;
+import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.Slider;
+
 @SuppressWarnings("serial")
-public class MonitoredSlider extends JPanel
+public class MonitoredSlider extends Panel
 {
 	
-	private JLabel jlblValue;
-	private JSlider jsldSlider;
+	private Label lblValue;
+	private Slider sldSlider;
 	private MonitoredValueListener valueListener;
 	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
@@ -43,23 +47,23 @@ public class MonitoredSlider extends JPanel
 		this.valueListener = listener;
 		
 		// Create components
-		jlblValue = new JLabel("");
-		jsldSlider = new JSlider(min, max, value);
+		lblValue = new Label("");
+		sldSlider = new Slider(min, max, value);
 		
-		jlblValue.setPreferredSize(new Dimension(40, 10));
+		lblValue.setPreferredSize(new Dimension(40, 10));
 		
 		// Add listeners
-		jsldSlider.addChangeListener(new ChangeListener() {
+		sldSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
 			{
 				if (valueListener != null) {
 					String stringValue = valueListener.getValueString();
-					jlblValue.setText("  " + stringValue);
+					lblValue.setText("  " + stringValue);
 				} else {
-					jlblValue.setText("");
+					lblValue.setText("");
 				}
 				
-				if (!jsldSlider.getValueIsAdjusting()) {
+				if (!sldSlider.getValueIsAdjusting()) {
 					fireChangeListeners(e);
 				}
 				
@@ -71,35 +75,35 @@ public class MonitoredSlider extends JPanel
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		Box box = Box.createHorizontalBox();
-		box.add(jsldSlider);
-		box.add(jlblValue);
+		box.add(sldSlider);
+		box.add(lblValue);
 		this.add(box);
 
 	}
 	
 	public void setValue(int value)
 	{
-		jsldSlider.setValue(value);
+		sldSlider.setValue(value);
 		if (valueListener != null)
-			jlblValue.setText("  " + valueListener.getValueString());
+			lblValue.setText("  " + valueListener.getValueString());
 		else
-			jlblValue.setText("");
+			lblValue.setText("");
 	}
 	
 	public int getValue()
 	{
-		return jsldSlider.getValue();
+		return sldSlider.getValue();
 	}
 	
 	public void setSnapToTicks(boolean snap)
 	{
-		jsldSlider.setSnapToTicks(snap);
+		sldSlider.setSnapToTicks(snap);
 		
 	}
 	
 	public boolean getSnapToTicks()
 	{
-		return jsldSlider.getSnapToTicks();
+		return sldSlider.getSnapToTicks();
 	}
 	
 	public MonitoredValueListener getValueListener()

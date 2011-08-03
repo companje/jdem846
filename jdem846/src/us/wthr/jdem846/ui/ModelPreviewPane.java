@@ -38,6 +38,7 @@ import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.ui.ModelingWorkerThread.ModelCompletionListener;
+import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.border.StandardBorder;
 
 @SuppressWarnings("serial")
@@ -218,7 +219,7 @@ public class ModelPreviewPane extends TitledRoundedPanel
 	}
 	
 	
-	class ImagePanel extends JPanel
+	class ImagePanel extends Panel
 	{
 		private DemCanvas canvas = null;
 		

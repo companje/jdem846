@@ -22,20 +22,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.ui.base.Label;
+import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
-public class DataOverviewPanel extends JPanel
+public class DataOverviewPanel extends Panel
 {
 	
-	private JLabel jlblRows = new JLabel("");
-	private JLabel jlblColumns = new JLabel("");
-	private JLabel jlblMaxLatitude = new JLabel("");
-	private JLabel jlblMinLatitude = new JLabel("");
-	private JLabel jlblMaxLongitude = new JLabel("");
-	private JLabel jlblMinLongitude = new JLabel("");
+	private Label lblRows = new Label("");
+	private Label lblColumns = new Label("");
+	private Label lblMaxLatitude = new Label("");
+	private Label lblMinLatitude = new Label("");
+	private Label lblMaxLongitude = new Label("");
+	private Label lblMinLongitude = new Label("");
 	
-	private JLabel jlblMaxElevation = new JLabel("");
-	private JLabel jlblMinElevation = new JLabel("");
+	private Label lblMaxElevation = new Label("");
+	private Label lblMinElevation = new Label("");
 	
 	public DataOverviewPanel()
 	{
@@ -44,29 +46,29 @@ public class DataOverviewPanel extends JPanel
 		layout.setHgap(5);
 		setLayout(layout);
 		
-		JLabel label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.rows") + ":");
+		Label label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.rows") + ":");
 		add(label);
-		add(jlblRows);
+		add(lblRows);
 		
-		label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.northLatitude") + ":");
+		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.northLatitude") + ":");
 		add(label);
-		add(jlblMaxLatitude);
+		add(lblMaxLatitude);
 		
-		label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.eastLongitude") + ":");
+		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.eastLongitude") + ":");
 		add(label);
-		add(jlblMaxLongitude);
+		add(lblMaxLongitude);
 		
-		label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.columns") + ":");
+		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.columns") + ":");
 		add(label);
-		add(jlblColumns);
+		add(lblColumns);
 		
-		label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.southLatitude") + ":");
+		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.southLatitude") + ":");
 		add(label);
-		add(jlblMinLatitude);
+		add(lblMinLatitude);
 		
-		label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.westLongitude") + ":");
+		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.westLongitude") + ":");
 		add(label);
-		add(jlblMinLongitude);
+		add(lblMinLongitude);
 		
 		//label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.maxElevation") + ":");
 		//add(label);
@@ -81,54 +83,54 @@ public class DataOverviewPanel extends JPanel
 	
 	public void setValuesVisible(boolean visible)
 	{
-		jlblRows.setVisible(visible);
-		jlblColumns.setVisible(visible);
-		jlblMaxLatitude.setVisible(visible);
-		jlblMinLatitude.setVisible(visible);
-		jlblMaxLongitude.setVisible(visible);
-		jlblMinLongitude.setVisible(visible);
-		jlblMaxElevation.setVisible(visible);
-		jlblMinElevation.setVisible(visible);
+		lblRows.setVisible(visible);
+		lblColumns.setVisible(visible);
+		lblMaxLatitude.setVisible(visible);
+		lblMinLatitude.setVisible(visible);
+		lblMaxLongitude.setVisible(visible);
+		lblMinLongitude.setVisible(visible);
+		lblMaxElevation.setVisible(visible);
+		lblMinElevation.setVisible(visible);
 	}
 	
 	public void setRows(int rows)
 	{
-		jlblRows.setText(""+rows);
+		lblRows.setText(""+rows);
 	}
 	
 	public void setColumns(int columns)
 	{
-		jlblColumns.setText(""+columns);
+		lblColumns.setText(""+columns);
 	}
 	
 	public void setMaxLatitude(float maxLatitude)
 	{
-		jlblMaxLatitude.setText(""+maxLatitude);
+		lblMaxLatitude.setText(""+maxLatitude);
 	}
 	
 	public void setMinLatitude(float minLatitude)
 	{
-		jlblMinLatitude.setText(""+minLatitude);
+		lblMinLatitude.setText(""+minLatitude);
 	}
 	
 	public void setMaxLongitude(float maxLongitude)
 	{
-		jlblMaxLongitude.setText(""+maxLongitude);
+		lblMaxLongitude.setText(""+maxLongitude);
 	}
 	
 	public void setMinLongitude(float minLongitude)
 	{
-		jlblMinLongitude.setText(""+minLongitude);
+		lblMinLongitude.setText(""+minLongitude);
 	}
 	
 	public void setMaxElevation(float maxElevation)
 	{
-		jlblMaxElevation.setText(""+maxElevation);
+		lblMaxElevation.setText(""+maxElevation);
 	}
 	
 	public void setMinElevation(float minElevation)
 	{
-		jlblMinElevation.setText(""+minElevation);
+		lblMinElevation.setText(""+minElevation);
 	}
 	
 	

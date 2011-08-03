@@ -14,22 +14,45 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.ui.datasetoptions;
+package us.wthr.jdem846.ui.base;
 
-import javax.swing.JPanel;
-
-import us.wthr.jdem846.input.DataSource;
-import us.wthr.jdem846.ui.base.Panel;
-
-@SuppressWarnings("serial")
-public class ElevationDataSetOptions extends Panel
+public class ComboBoxItem<E>
 {
 	
-	private DataSource dataSource;
+	private String label;
+	private E value;
 	
-	public ElevationDataSetOptions(DataSource dataSource)
+	public ComboBoxItem(String label, E value)
 	{
-		this.dataSource = dataSource;
+		this.label = label;
+		this.value = value;
 	}
+	
+	public String toString()
+	{
+		return label;
+	}
+
+	public String getLabel() 
+	{
+		return label;
+	}
+
+	public void setLabel(String label)
+	{
+		this.label = label;
+	}
+
+	public E getValue()
+	{
+		return value;
+	}
+
+	public void setValue(E value) 
+	{
+		this.value = value;
+	}
+	
+	
 	
 }

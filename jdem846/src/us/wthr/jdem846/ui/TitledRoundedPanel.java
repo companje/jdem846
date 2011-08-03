@@ -20,10 +20,11 @@ import java.awt.Insets;
 
 import javax.swing.JPanel;
 
+import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.border.StandardTitledBorder;
 
 @SuppressWarnings("serial")
-public class TitledRoundedPanel extends BasePanel
+public class TitledRoundedPanel extends Panel
 {
 	
 	public TitledRoundedPanel(String title)

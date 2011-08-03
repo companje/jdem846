@@ -28,9 +28,10 @@ import javax.swing.JToolBar;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
-public class TopButtonBar extends JToolBar
+public class TopButtonBar extends ToolBar
 {
 
 	public static final int BTN_NEW_PROJECT = 0;

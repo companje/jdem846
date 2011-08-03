@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.ui.datasetoptions;
+package us.wthr.jdem846.ui.base;
 
-import javax.swing.JPanel;
+import javax.swing.JMenuBar;
 
-import us.wthr.jdem846.input.DataSource;
-import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 
 @SuppressWarnings("serial")
-public class ElevationDataSetOptions extends Panel
+public class MenuBar extends JMenuBar
 {
-	
-	private DataSource dataSource;
-	
-	public ElevationDataSetOptions(DataSource dataSource)
+	private static Log log = Logging.getLog(MenuBar.class);
+
+	public MenuBar()
 	{
-		this.dataSource = dataSource;
+		super();
+		// TODO Auto-generated constructor stub
 	}
+	
 	
 }

@@ -29,15 +29,17 @@ import javax.swing.JPanel;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.ui.base.Button;
+import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.datasetoptions.ElevationDataSetOptions;
 import us.wthr.jdem846.ui.datasetoptions.ShapeDataSetOptions;
 
 @SuppressWarnings("serial")
-public class DataSetOptionsPanel extends JPanel
+public class DataSetOptionsPanel extends Panel
 {
 	private DataSource dataSource;
 	private ShapeFileRequest shapeFileRequest;
-	private JButton jbtnUpdatePreview;
+	private Button btnUpdatePreview;
 	private Component currentConfigPanel = null;
 	
 	private List<ActionListener> updateListeners = new LinkedList<ActionListener>();
@@ -45,11 +47,11 @@ public class DataSetOptionsPanel extends JPanel
 	public DataSetOptionsPanel()
 	{
 		// Create components
-		jbtnUpdatePreview = new JButton(I18N.get("us.wthr.jdem846.ui.datasetoptions.updatePreview.label"));
-		jbtnUpdatePreview.setToolTipText(I18N.get("us.wthr.jdem846.ui.datasetoptions.updatePreview.tooltip"));
+		btnUpdatePreview = new Button(I18N.get("us.wthr.jdem846.ui.datasetoptions.updatePreview.label"));
+		btnUpdatePreview.setToolTipText(I18N.get("us.wthr.jdem846.ui.datasetoptions.updatePreview.tooltip"));
 		
 		// Add listeners
-		jbtnUpdatePreview.addActionListener(new ActionListener() {
+		btnUpdatePreview.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				fireActionListeners();
@@ -58,7 +60,7 @@ public class DataSetOptionsPanel extends JPanel
 		
 		// Set layout
 		this.setLayout(new BorderLayout());
-		this.add(jbtnUpdatePreview, BorderLayout.SOUTH);
+		this.add(btnUpdatePreview, BorderLayout.SOUTH);
 		
 		// Set default state
 		clear();
@@ -73,7 +75,7 @@ public class DataSetOptionsPanel extends JPanel
 			this.remove(currentConfigPanel);
 			currentConfigPanel = null;
 		}
-		jbtnUpdatePreview.setVisible(false);
+		btnUpdatePreview.setVisible(false);
 	}
 	
 	public void setElevationDataSet(DataSource dataSource)
@@ -84,7 +86,7 @@ public class DataSetOptionsPanel extends JPanel
 		}
 		currentConfigPanel = panel;
 		this.add(panel, BorderLayout.CENTER);
-		jbtnUpdatePreview.setVisible(true);
+		btnUpdatePreview.setVisible(true);
 	}
 	
 	public void setShapeDataSet(ShapeFileRequest shapeFileRequest)
@@ -95,7 +97,7 @@ public class DataSetOptionsPanel extends JPanel
 		}
 		currentConfigPanel = panel;
 		this.add(panel, BorderLayout.CENTER);
-		jbtnUpdatePreview.setVisible(true);
+		btnUpdatePreview.setVisible(true);
 	}
 	
 	

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.ui;
+package us.wthr.jdem846.ui.base;
 
 import java.awt.Component;
 import java.io.File;
@@ -22,7 +22,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 
 @SuppressWarnings("serial")
-public class BasicFileChooser extends JFileChooser
+public class FileChooser extends JFileChooser
 {
 	private static String lastPath;
 	
@@ -30,11 +30,11 @@ public class BasicFileChooser extends JFileChooser
 		lastPath = System.getProperty("user.home");
 	}
 	
-	public BasicFileChooser()
+	public FileChooser()
 	{
 		super();
 		
-		String path = BasicFileChooser.getLastPath();
+		String path = FileChooser.getLastPath();
 		if (path != null) {
 			this.setCurrentDirectory(new File(path));
 		}
@@ -45,7 +45,7 @@ public class BasicFileChooser extends JFileChooser
 	{
 		int result = super.showOpenDialog(parent);
 		if(result == JFileChooser.APPROVE_OPTION) {
-			BasicFileChooser.setLastPath(this.getSelectedFile().getParentFile().getAbsolutePath());
+			FileChooser.setLastPath(this.getSelectedFile().getParentFile().getAbsolutePath());
 		}
 		return result;
 	}
@@ -55,18 +55,18 @@ public class BasicFileChooser extends JFileChooser
 	{
 		int result = super.showSaveDialog(parent);
 		if(result == JFileChooser.APPROVE_OPTION) {
-			BasicFileChooser.setLastPath(this.getSelectedFile().getParentFile().getAbsolutePath());
+			FileChooser.setLastPath(this.getSelectedFile().getParentFile().getAbsolutePath());
 		}
 		return result;
 	}
 	
 	public static void setLastPath(String lastPath)
 	{
-		BasicFileChooser.lastPath = lastPath;
+		FileChooser.lastPath = lastPath;
 	}
 	
 	public static String getLastPath()
 	{
-		return BasicFileChooser.lastPath;
+		return FileChooser.lastPath;
 	}
 }

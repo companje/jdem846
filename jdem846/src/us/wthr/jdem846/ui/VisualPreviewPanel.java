@@ -30,9 +30,11 @@ import javax.swing.JRadioButton;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
+import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.RadioButton;
 
 @SuppressWarnings("serial")
-public class VisualPreviewPanel extends JPanel
+public class VisualPreviewPanel extends Panel
 {
 	//protected final static String NAME_PREVIEW = "Preview";
 	//protected final static String NAME_LAYOUT = "Data Layout";
@@ -43,10 +45,10 @@ public class VisualPreviewPanel extends JPanel
 	private DataInputLayoutPane layoutPane;
 	private ModelPreviewPane previewPane;
 	
-	private JRadioButton jradLayout;
-	private JRadioButton jradPreview;
+	private RadioButton radLayout;
+	private RadioButton radPreview;
 	
-	private JPanel jpnlCards;
+	private Panel pnlCards;
 	
 	public VisualPreviewPanel(DataPackage dataPackage, ModelOptions modelOptions)
 	{
@@ -57,28 +59,28 @@ public class VisualPreviewPanel extends JPanel
 		NAME_PREVIEW = I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.preview.label");
 		NAME_LAYOUT = I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.layout.label");
 		
-		jradLayout = new JRadioButton(NAME_LAYOUT);
-		jradPreview = new JRadioButton(NAME_PREVIEW);
+		radLayout = new RadioButton(NAME_LAYOUT);
+		radPreview = new RadioButton(NAME_PREVIEW);
 		
 		ButtonGroup group = new ButtonGroup();
-		group.add(jradLayout);
-		group.add(jradPreview);
+		group.add(radLayout);
+		group.add(radPreview);
 		
-		jradLayout.setSelected(true);
+		radLayout.setSelected(true);
 		setBorder(BorderFactory.createEtchedBorder());
 		
 		
 		// Set Tooltips
-		jradLayout.setToolTipText(I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.layout.tooltip"));
-		jradPreview.setToolTipText(I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.preview.tooltip"));
+		radLayout.setToolTipText(I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.layout.tooltip"));
+		radPreview.setToolTipText(I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.preview.tooltip"));
 		
 		// Set Layout
-		jpnlCards = new JPanel(new CardLayout());
-		jpnlCards.add(previewPane, NAME_PREVIEW);
-		jpnlCards.add(layoutPane, NAME_LAYOUT);
+		pnlCards = new Panel(new CardLayout());
+		pnlCards.add(previewPane, NAME_PREVIEW);
+		pnlCards.add(layoutPane, NAME_LAYOUT);
 		
-		CardLayout cardLayout = (CardLayout)(jpnlCards.getLayout());
-		cardLayout.show(jpnlCards, NAME_LAYOUT);
+		CardLayout cardLayout = (CardLayout)(pnlCards.getLayout());
+		cardLayout.show(pnlCards, NAME_LAYOUT);
 		
 	
 		GridBagLayout gridbag = new GridBagLayout();
@@ -89,39 +91,39 @@ public class VisualPreviewPanel extends JPanel
 		constraints.weighty = 2.0;
 		constraints.gridwidth  = GridBagConstraints.REMAINDER;
 		constraints.fill = GridBagConstraints.BOTH;
-		gridbag.setConstraints(jpnlCards, constraints);
-		add(jpnlCards);
+		gridbag.setConstraints(pnlCards, constraints);
+		add(pnlCards);
 		
 		constraints.weightx = 1.0;
 		constraints.weighty = 0.0;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.gridwidth  = 1;
-		gridbag.setConstraints(jradLayout, constraints);
-		add(jradLayout);
+		gridbag.setConstraints(radLayout, constraints);
+		add(radLayout);
 		
-		gridbag.setConstraints(jradPreview, constraints);
-		add(jradPreview);
+		gridbag.setConstraints(radPreview, constraints);
+		add(radPreview);
 		
 		
 		// Set Listeners
 
 		ItemListener itemListener = new ItemListener() {
 			public void itemStateChanged(ItemEvent event) {
-				CardLayout cardLayout = (CardLayout)(jpnlCards.getLayout());
+				CardLayout cardLayout = (CardLayout)(pnlCards.getLayout());
 				if (event.getStateChange() == ItemEvent.SELECTED) {
-					if (jradLayout.isSelected()) {
-						cardLayout.show(jpnlCards, NAME_LAYOUT);
-					} else if (jradPreview.isSelected()) {
-						cardLayout.show(jpnlCards, NAME_PREVIEW);
+					if (radLayout.isSelected()) {
+						cardLayout.show(pnlCards, NAME_LAYOUT);
+					} else if (radPreview.isSelected()) {
+						cardLayout.show(pnlCards, NAME_PREVIEW);
 					}
 				}
 			}
 		};
 		
-		jradLayout.addItemListener(itemListener);
-		jradPreview.addItemListener(itemListener);
+		radLayout.addItemListener(itemListener);
+		radPreview.addItemListener(itemListener);
 		
-		jradPreview.setEnabled(true);
+		radPreview.setEnabled(true);
 	}
 	
 	
