@@ -117,16 +117,16 @@ public class Dem2dGenerator extends BasicRenderEngine
 		int dataCols = modelDimensions.getDataColumns();
 		tileSize = modelDimensions.getTileSize();
 	
-		log.info("Processing " + modelDimensions.getTileCount() + " tiles");
+		log.info("Processing " + modelDimensions.getTileCount() + " tiles of size: " + tileSize);
 		
 		if ((!skipElevation) && dataPackage.getDataSources().size() > 0) {
-			for (int fromRow = 0; fromRow <= dataRows; fromRow+=tileSize) {
+			for (int fromRow = 0; fromRow < dataRows; fromRow+=tileSize) {
 				int toRow = fromRow + tileSize - 1;
 				if (toRow > dataRows)
 					toRow = dataRows;
 			
 				tileCol = 0;
-				for (int fromCol = 0; fromCol <= dataCols; fromCol+=tileSize) {
+				for (int fromCol = 0; fromCol < dataCols; fromCol+=tileSize) {
 					int toCol = fromCol + tileSize - 1;
 					if (toCol > dataCols)
 						toCol = dataCols;
@@ -265,6 +265,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 
 		
 		//System.out.println("Percent Complete: 0%");
+		
+		log.info("Row from/to: " + fromRow + "/" + toRow + ", Column from/to: " + fromColumn + "/" + toColumn);
 		log.info("Percent Complete: 0%");
 		for (int row = fromRow; row <= toRow; row++) {
 			imgRow++;

@@ -213,6 +213,7 @@ public class OutputImageViewPanel extends JdemPanel
 			public void onModelComplete(DemCanvas completedCanvas) {
 				if (completedCanvas != null) {
 					imageDisplay.setImage(completedCanvas.getImage());
+					//imageDisplay.zoomFit();
 				}
 				canvas = completedCanvas;
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_SAVE, true);
@@ -258,7 +259,7 @@ public class OutputImageViewPanel extends JdemPanel
 			public void onTileCompleted(DemCanvas tileCanvas, DemCanvas outputCanvas, double pctComplete) {
 				statusBar.setProgress((int)(pctComplete * 100));
 				imageDisplay.setImage(outputCanvas.getImage());
-				imageDisplay.zoomFit();
+				//imageDisplay.zoomFit();
 				canvas = outputCanvas;
 				repaint();
 			}

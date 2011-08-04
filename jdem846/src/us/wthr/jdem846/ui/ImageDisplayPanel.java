@@ -21,6 +21,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -58,6 +61,7 @@ public class ImageDisplayPanel extends Panel
 	
 	private List<MousePositionListener> mousePositionListeners = new LinkedList<MousePositionListener>();
 	
+	private boolean isBestFit = false;
 	
 	public ImageDisplayPanel()
 	{
@@ -76,6 +80,13 @@ public class ImageDisplayPanel extends Panel
 		setAlignmentY(CENTER_ALIGNMENT);
 		
 		// Add listeners
+		this.addComponentListener(new ComponentAdapter() {
+			public void componentResized(ComponentEvent e) {
+				if (isBestFit) {
+					zoomFit();
+				}
+			}
+		});
 		displayLabel.addMouseMotionListener(new MouseMotionListener() {
 			public void mouseDragged(MouseEvent e) {
 				onMouseDragged(e.getX(), e.getY());
@@ -151,10 +162,10 @@ public class ImageDisplayPanel extends Panel
 		trueImage = image;
 		imageTrueWidth = image.getWidth(this);
 		imageTrueHeight = image.getHeight(this);
-		
-		scalePercent = this.getZoomToFitScalePercentage();
-		if (scalePercent > 1.0)
-			scalePercent = 1.0;
+		zoomFit();
+		//scalePercent = this.getZoomToFitScalePercentage();
+		//if (scalePercent > 1.0)
+		//	scalePercent = 1.0;
 	}
 	
 	protected void onMouseWheelMoved(int units, int amount, int type, int x, int y)
@@ -290,7 +301,7 @@ public class ImageDisplayPanel extends Panel
 		//	scalePercent = 1.0;
 		//if (scalePercent < 0)
 		//	scalePercent = 0;
-		
+		isBestFit = false;
 		repaint();
 	}
 	
@@ -306,14 +317,20 @@ public class ImageDisplayPanel extends Panel
 	
 	public void zoomFit()
 	{
-		zoom(100);
+		scalePercent = this.getZoomToFitScalePercentage();
+		if (scalePercent > 1.0)
+			scalePercent = 1.0;
+		isBestFit = true;
+		repaint();
+		//zoom(100);
 		//scalePercent = getZoomToFitScalePercentage();
 		//repaint();
 	}
 	
 	public void zoomActual()
 	{
-		zoom(-100);
+		scalePercent = 1.0;
+		//zoom(-100);
 	}
 	
 	public void addMousePositionListener(MousePositionListener listener)

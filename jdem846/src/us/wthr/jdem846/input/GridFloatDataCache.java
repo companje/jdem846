@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import us.wthr.jdem846.ByteOrder;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -40,6 +41,9 @@ public class GridFloatDataCache implements DataCache
 	private RandomAccessFile inputData;
 	private byte buffer[];
 
+	private boolean isFullyCached = false;
+	private int cacheOffset = 0;
+	
 	private boolean isDisposed = false;
 	
 	public GridFloatDataCache(File input, int size, ByteOrder byteOrder)
@@ -47,9 +51,19 @@ public class GridFloatDataCache implements DataCache
 		this.input = input;
 		this.size = size;
 		this.byteOrder = byteOrder;
-		this.buffer = new byte[size];
+		
 		this.inputData = null;
+		
+		int cacheFullIfUnder = JDem846Properties.getIntProperty("us.wthr.jdem846.input.gridFloat.cacheFullyUnderBytes");
+		if (input.length() < cacheFullIfUnder) {
+			log.info("Data length of " + input.length() + " does not exceed limit of " + cacheFullIfUnder + ", loading entire dataset into memory");
+			isFullyCached = true;
+			load(0);
+		}
 	}
+	
+	
+
 	
 	public void dispose() throws DataSourceException
 	{
@@ -69,7 +83,7 @@ public class GridFloatDataCache implements DataCache
 	
 	public float get(int position)
 	{
-		int offset = (position * 4);
+		int offset = cacheOffset + (position * 4);
 		return ByteConversions.bytesToFloat(buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3], byteOrder);
 	}
 	
@@ -81,10 +95,19 @@ public class GridFloatDataCache implements DataCache
 			} catch (FileNotFoundException ex) {
 				log.error("File Not Found error opening GridFloat file for reading: " + ex.getMessage(), ex);
 			}
+			
+			if (isFullyCached) {
+				cacheOffset = (int) start;
+				start = 0;
+			}
+			
+		} else if (inputData != null && isFullyCached) {
+			cacheOffset = (int) start;
+			return;
 		}
 		
 		if (buffer == null) {
-			buffer = new byte[size];
+			buffer = new byte[(isFullyCached) ? (int)input.length() : size];
 		}
 		
 
