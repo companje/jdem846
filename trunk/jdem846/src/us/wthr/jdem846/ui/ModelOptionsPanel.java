@@ -398,9 +398,14 @@ public class ModelOptionsPanel extends Panel
 		
 		gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());
 		projectionConfigPanel.setVisible(engineInstance.usesProjection());
+		lightPositionConfigPanel.setVisible(engineInstance.usesLightDirection());
 		
-		lightPositionConfigPanel.setEnabled(engineInstance.usesHillshading());
-		lightPositionConfigPanel.updatePreview(true);
+		if (engineInstance.usesLightDirection()) {
+			lightPositionConfigPanel.updatePreview(true);
+		}	
+		
+		jsldLightMultiple.setEnabled(engineInstance.usesLightMultiple());
+		jsldElevationMultiple.setEnabled(engineInstance.usesElevationMultiple());
 	}
 	
 	

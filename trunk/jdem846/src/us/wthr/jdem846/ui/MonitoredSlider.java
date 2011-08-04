@@ -81,6 +81,14 @@ public class MonitoredSlider extends Panel
 
 	}
 	
+	@Override
+	public void setEnabled(boolean enabled)
+	{
+		super.setEnabled(enabled);
+		sldSlider.setEnabled(enabled);
+		lblValue.setEnabled(enabled);
+	}
+	
 	public void setValue(int value)
 	{
 		sldSlider.setValue(value);
