@@ -40,6 +40,8 @@ import us.wthr.jdem846.scaling.ResizeDimensions;
 			usesHillshading=false,
 			usesLightMultiple=false,
 			usesSpotExponent=false,
+			usesElevationMultiple=false,
+			usesLightDirection=false,
 			generatesImage=false,
 			enabled=true,
 			needsOutputFileOfType=ElevationDatasetExchange.class)

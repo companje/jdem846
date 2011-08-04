@@ -38,6 +38,8 @@ public class EngineInstance {
 	private boolean usesLightMultiple;
 	private boolean usesSpotExponent;
 	private boolean usesTileSize;
+	private boolean usesElevationMultiple;
+	private boolean usesLightDirection;
 	private boolean usesProjection;
 	private boolean generatesImage;
 	
@@ -172,6 +174,18 @@ public class EngineInstance {
 
 	
 	
+	public boolean usesLightDirection()
+	{
+		return usesLightDirection;
+	}
+
+
+	public void setUsesLightDirection(boolean usesLightDirection)
+	{
+		this.usesLightDirection = usesLightDirection;
+	}
+
+
 	public boolean usesSpotExponent()
 	{
 		return usesSpotExponent;
@@ -210,6 +224,18 @@ public class EngineInstance {
 
 	
 	
+	public boolean usesElevationMultiple()
+	{
+		return usesElevationMultiple;
+	}
+
+
+	public void setUsesElevationMultiple(boolean usesElevationMultiple)
+	{
+		this.usesElevationMultiple = usesElevationMultiple;
+	}
+
+
 	public boolean usesProjection()
 	{
 		return usesProjection;

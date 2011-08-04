@@ -93,6 +93,18 @@ public @interface DemEngine {
 	 */
 	boolean usesTileSize() default true;
 	
+	/** Specifies whether the engine uses the elevation multiple property from the model options.
+	 * 
+	 * @return
+	 */
+	boolean usesElevationMultiple() default true;
+	
+	/** Specifies whether the engine uses the lighting direction (azimuth/elevation) property
+	 * from the model options.
+	 * @return
+	 */
+	boolean usesLightDirection() default true;
+	
 	/** Specifies whether the engine uses the generates image property from the model options.
 	 * 
 	 * @return
