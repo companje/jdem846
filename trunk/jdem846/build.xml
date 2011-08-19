@@ -3,6 +3,8 @@
 	<property file="build.properties" />
 	<property name="lib.dir" value="lib" />
 	<property name="src.dir" value="src" />
+	<property name="resources.dir" value="src-resources"/>
+	
 	<property name="build.dir" value="build" />
 	<property name="javadoc.dir" value="docs/api" />
 	<property name="dist.dir" value="dist" />
@@ -29,6 +31,8 @@
 		<include name="**/?*.html" />
 		<include name="**/?*.gradient" />
 		<include name="**/?*.txt" />
+		<include name="**/?*.flt" />
+		<include name="**/?*.hdr" />
 	</patternset>
 	
 	<patternset id="lib.resources">
@@ -63,7 +67,12 @@
 				<type type="file" />
 			</fileset>
 		</copy>
-		
+		<copy todir="${build.dir}">
+			<fileset dir="${resources.dir}">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
+		</copy>
 	</target>
 	
 	<target name="jar" depends="compile">
@@ -114,7 +123,7 @@
 			<fileset dir="${javadoc.dir}">
 			</fileset>
 		</copy>
-		<copy file="${src.dir}/us/wthr/jdem846/images/jdem846-icon.png" todir="${dist.dir}/stage" />
+		<copy file="${resources.dir}/jdem846-icon.png" todir="${dist.dir}/stage" />
 		<zip destfile="${dist.file}" duplicate="add">
 			<zipfileset dir="${dist.dir}/stage" />
 		</zip>
