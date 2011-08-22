@@ -136,12 +136,16 @@ public class Dem2dGenerator extends BasicRenderEngine
 						
 						tileCanvas.reset();
 						
+						log.info("Rendering tile...");
 						generate(fromRow, toRow, fromCol, toCol, tileCanvas);
 						
+						log.info("Rescaling tile...");
 						DemCanvas scaled = tileCanvas.getScaled((int)modelDimensions.getTileOutputWidth(), (int) modelDimensions.getTileOutputHeight());
+						
+						log.info("Overlaying tile to output canvas...");
 						outputCanvas.overlay(scaled.getImage(), (int)Math.floor(tileCol * modelDimensions.getTileOutputWidth()), (int)Math.floor(tileRow * modelDimensions.getTileOutputHeight()), scaled.getWidth(), scaled.getHeight());
 						
-		
+						log.info("Completed tile.");
 						
 						//tileCanvas.save("output-" + tileRow + "-" + tileCol + ".png");
 						//scaled.save("scaled-" + tileRow + "-" + tileCol + ".png");
@@ -278,15 +282,17 @@ public class Dem2dGenerator extends BasicRenderEngine
 				getPoint(row, column, point);
 				
 				if (point.getCondition() == DemConstants.STAT_SUCCESSFUL) {
+					/*
 					point.setBackLeftElevation(point.getBackLeftElevation() * elevationMultiple);
 					point.setBackRightElevation(point.getBackRightElevation() * elevationMultiple);
 					point.setFrontLeftElevation(point.getFrontLeftElevation() * elevationMultiple);
 					point.setFrontRightElevation(point.getFrontRightElevation() * elevationMultiple);
-
-					backLeftPoints[1] = point.getBackLeftElevation();
-					backRightPoints[1] = point.getBackRightElevation();
-					frontLeftPoints[1] = point.getFrontLeftElevation();
-					frontRightPoints[1] = point.getFrontRightElevation();
+					*/
+					
+					backLeftPoints[1] = point.getBackLeftElevation() * elevationMultiple;
+					backRightPoints[1] = point.getBackRightElevation() * elevationMultiple;
+					frontLeftPoints[1] = point.getFrontLeftElevation() * elevationMultiple;
+					frontRightPoints[1] = point.getFrontRightElevation() * elevationMultiple;
 					
 					Perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
 					
@@ -294,7 +300,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 					//dot = (dot + 1.0f) / 2.0f;
 
 					// Back Left Color
-					modelColoring.getGradientColor(point.getBackLeftElevation(), (float)elevationMin, (float)elevationMax, reliefColor);
+					modelColoring.getGradientColor((float)backLeftPoints[1], (float)elevationMin, (float)elevationMax, reliefColor);
 					//color = modelColoring.getGradientColor(point.getBackLeftElevation(), (float)elevationMin, (float)elevationMax);
 					
 					////color.darkenColor((1.0 - dot));

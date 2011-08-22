@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import us.wthr.jdem846.ByteOrder;
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.input.DataCache;
@@ -88,7 +89,11 @@ public class GridFloatDataCache implements DataCache
 	public float get(int position)
 	{
 		int offset = cacheOffset + (position * 4);
-		return ByteConversions.bytesToFloat(buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3], byteOrder);
+		try {
+			return ByteConversions.bytesToFloat(buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3], byteOrder);
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			return DemConstants.ELEV_NO_DATA;
+		}
 	}
 	
 	public void load(long start)

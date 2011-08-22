@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -29,6 +30,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,6 +42,7 @@ import javax.swing.JScrollPane;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
+import us.wthr.jdem846.util.ImageUtilities;
 
 @SuppressWarnings("serial")
 public class ImageDisplayPanel extends Panel
@@ -248,7 +251,11 @@ public class ImageDisplayPanel extends Panel
 			if (scaleToHeight == 0)
 				scaleToHeight = 1;
 			
-			Image scaled = trueImage.getScaledInstance(scaleToWidth, scaleToHeight, scaleQuality);
+			//Image scaled = trueImage.getScaledInstance(scaleToWidth, scaleToHeight, scaleQuality);
+			
+			Object hint = (scaleQuality == Image.SCALE_FAST) ? RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR : RenderingHints.VALUE_INTERPOLATION_BILINEAR;
+			boolean higherQuality = (scaleQuality == Image.SCALE_SMOOTH);
+			BufferedImage scaled = ImageUtilities.getScaledInstance((BufferedImage)trueImage, scaleToWidth, scaleToHeight, hint, higherQuality);
 			
 			displayLabel.setIcon(new ImageIcon(scaled));
 			displayLabel.setSize(scaleToWidth, scaleToHeight);
