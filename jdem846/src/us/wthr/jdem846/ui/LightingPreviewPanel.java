@@ -44,7 +44,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
-import us.wthr.jdem846.input.GridFloat;
+import us.wthr.jdem846.input.gridfloat.GridFloat;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.Dem2dGenerator;
