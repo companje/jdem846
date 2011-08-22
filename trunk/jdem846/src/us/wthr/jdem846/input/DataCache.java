@@ -26,6 +26,11 @@ import us.wthr.jdem846.exception.DataSourceException;
 public interface DataCache 
 {
 	
+	/** Gets the length of the data file in bytes.
+	 * 
+	 * @return The length of the data file in bytes.
+	 */
+	public long getDataLength();
 	public float get(int position);
 	public void load(long start);
 	public void unload();

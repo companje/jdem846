@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.input;
+package us.wthr.jdem846.input.bil;
 
 import java.io.BufferedReader;
 import java.io.File;

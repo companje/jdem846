@@ -50,6 +50,11 @@ public class ElevationDatasetExchangeDataCache implements DataCache
 		this.inputData = null;
 	}
 
+	public long getDataLength()
+	{
+		return input.length() - ElevationDatasetExchangeHeader.BYTE_SIZE;
+	}
+	
 	public void dispose() throws DataSourceException
 	{
 		if (isDisposed) {

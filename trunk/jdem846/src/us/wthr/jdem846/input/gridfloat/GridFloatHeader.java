@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.input;
+package us.wthr.jdem846.input.gridfloat;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,6 +25,7 @@ import java.io.Reader;
 
 import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.exception.ResourceLoaderException;
+import us.wthr.jdem846.input.DataSourceHeader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ResourceLoader;
