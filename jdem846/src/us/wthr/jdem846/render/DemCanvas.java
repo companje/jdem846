@@ -16,10 +16,13 @@
 
 package us.wthr.jdem846.render;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
@@ -30,6 +33,7 @@ import javax.imageio.ImageIO;
 import us.wthr.jdem846.color.DemColor;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.util.ImageUtilities;
 
 public class DemCanvas implements ImageObserver
 {
@@ -114,10 +118,18 @@ public class DemCanvas implements ImageObserver
 	
 	public DemCanvas getScaled(int width, int height)
 	{
-		Image scaled = getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
+		boolean higherQuality = (width < this.width || height < this.height);
+		
+		BufferedImage scaled = ImageUtilities.getScaledInstance((BufferedImage)getImage(),
+                width,
+                height,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR,
+                higherQuality);
 		DemCanvas newCanvas = new DemCanvas(scaled);
 		return newCanvas;
 	}
+	
+
 	
 	
 	public void overlay(DemCanvas other, int x, int y, int width, int height)
