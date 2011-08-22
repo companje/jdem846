@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.input;
+package us.wthr.jdem846.input.bil;
 
 import java.io.File;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.input.DataSource;
+import us.wthr.jdem846.input.DataSourceHeader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -96,6 +98,11 @@ public class BilInt16 extends DataSource
     	
     	
     }
+    
+    public long getDataLength()
+	{
+		return cache.getDataLength();
+	}
     
 	public void dispose() throws DataSourceException
 	{

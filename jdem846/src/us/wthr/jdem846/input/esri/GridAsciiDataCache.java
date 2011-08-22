@@ -70,6 +70,11 @@ public class GridAsciiDataCache implements DataCache
 		}
 	}
 
+	public long getDataLength()
+	{
+		return input.length();
+	}
+	
 	public void dispose() throws DataSourceException
 	{
 		if (isDisposed) {

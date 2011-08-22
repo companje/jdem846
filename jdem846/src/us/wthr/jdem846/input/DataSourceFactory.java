@@ -17,8 +17,10 @@
 package us.wthr.jdem846.input;
 
 import us.wthr.jdem846.exception.InvalidFileFormatException;
+import us.wthr.jdem846.input.bil.BilInt16;
 import us.wthr.jdem846.input.edef.ElevationDatasetExchange;
 import us.wthr.jdem846.input.esri.GridAscii;
+import us.wthr.jdem846.input.gridfloat.GridFloat;
 
 /** Utility class for loading a datasource using known file extensions to determine type and correct driver.
  * 

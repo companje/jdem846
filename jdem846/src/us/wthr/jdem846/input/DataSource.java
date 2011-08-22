@@ -93,6 +93,12 @@ public abstract class DataSource
 		setMinElevation(min);
 	}
 	
+	/** Gets the length of the data file in bytes.
+	 * 
+	 * @return The length of the data file in bytes.
+	 */
+	public abstract long getDataLength();
+	
 	public abstract void loadRow(int row);
 	public abstract void initDataCache();
 	public abstract void unloadDataCache();

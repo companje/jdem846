@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.input;
+package us.wthr.jdem846.input.gridfloat;
 
 
 import java.io.File;
@@ -25,6 +25,7 @@ import java.io.RandomAccessFile;
 import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.input.DataCache;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ByteConversions;
@@ -63,7 +64,10 @@ public class GridFloatDataCache implements DataCache
 	}
 	
 	
-
+	public long getDataLength()
+	{
+		return input.length();
+	}
 	
 	public void dispose() throws DataSourceException
 	{
