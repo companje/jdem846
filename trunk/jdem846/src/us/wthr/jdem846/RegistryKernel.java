@@ -51,9 +51,13 @@ public class RegistryKernel
 	{
 		
 		try {
-			URL url = ClasspathUrlFinder.findClassBase(JDemMain.class);
+
 			AnnotationDB db = new AnnotationDB();
-			db.scanArchives(url);
+			URL[] urls = ClasspathUrlFinder.findClassPaths();
+			for (URL url : urls) {
+				log.info("Scanning Classpath URL: " + url);
+				db.scanArchives(url);
+			}
 			//db.crossReferenceImplementedInterfaces();
 			 	
 			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
@@ -94,7 +98,7 @@ public class RegistryKernel
 				log.info("Initializing " + clazzName + "." + method.getName());
 				//System.out.println("RegistryKernel: Initializing " + clazzName + "." + method.getName());
 				try {
-					method.invoke(JDemMain.class);
+					method.invoke(JDem846Properties.class);
 					initMethodInvoked = true;
 				} catch (Exception ex) {
 					//ex.printStackTrace();

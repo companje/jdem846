@@ -2,14 +2,27 @@
 
 	<property file="build.properties" />
 	<property name="lib.dir" value="lib" />
-	<property name="src.dir" value="src" />
-	<property name="resources.dir" value="src-resources"/>
-	
 	<property name="build.dir" value="build" />
-	<property name="javadoc.dir" value="docs/api" />
-	<property name="dist.dir" value="dist" />
+	<property name="docs.dir" value="build" />
+	<property name="javadoc.dir" value="${docs.dir}/api" />
+	<property name="stage.dir" value="${build.dir}/stage" />
+	<property name="dist.dir" value="${build.dir}/dist" />
 	
-	<property name="jar.file" value="${application.name}.jar" />
+	<property name="core.src.dir" value="src" />
+	<property name="core.build.dir" value="${build.dir}/core" />
+	<property name="core.jar.file" value="${stage.dir}/jdem846-core.jar" />
+	<property name="core.javadoc.dir" value="${javadoc.dir}/core" />
+	
+	<property name="ui.src.dir" value="src-ui" />
+	<property name="ui.build.dir" value="${build.dir}/ui" />
+	<property name="ui.jar.file" value="${stage.dir}/jdem846-ui.jar" />
+	<property name="ui.javadoc.dir" value="${javadoc.dir}/ui" />
+	
+	<property name="resources.src.dir" value="src-resources"/>
+	<property name="resources.build.dir" value="${build.dir}/resources" />
+	<property name="resources.jar.file" value="${stage.dir}/jdem846-resources.jar" />
+	
+	<property name="dist.stage.dir" value="${stage.dir}/stage" />
 	<property name="dist.file" value="${dist.dir}/${application.name}-${application.version}.zip" />
 
 		
@@ -39,95 +52,186 @@
 		<include name="**/?*.jar" />
 	</patternset>
 	
-	<path id="build.sourcepath">
-			<dirset dir=".">
-				<include name="src" />
-			</dirset>
+	<path id="core.build.sourcepath">
+		<dirset dir=".">
+			<include name="${core.src.dir}" />
+		</dirset>
 	</path>
 	
-	<path id="build.classpath">
+	<path id="ui.build.sourcepath">
+		<dirset dir=".">
+			<include name="${ui.src.dir}" />
+		</dirset>
+	</path>
+	
+	<path id="core.build.classpath">
 		<fileset refid="lib" />
+	</path>
+	
+	<path id="ui.build.classpath">
+		<fileset refid="lib" />
+		<dirset dir=".">
+			<include name="${core.build.dir}" />
+		</dirset>
 	</path>
 	
 	<target name="init" description="Initialize the build">
 		<mkdir dir="${build.dir}" />
+		<mkdir dir="${stage.dir}" />
 		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${core.build.dir}" />
+		<mkdir dir="${ui.build.dir}" />
+		<mkdir dir="${resources.build.dir}" />
 	</target>
-		
-	<target name="compile" depends="init" description="">
-		<javac destdir="${build.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
-					<compilerarg line="${compiler.args}" />
-					<classpath refid="build.classpath" />
-					<src refid="build.sourcepath" />
-					<patternset refid="ignored.files" />
+	
+	<target name="core.compile" depends="init" description="">
+		<javac destdir="${core.build.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" includeantruntime="false" fork="true">
+			<compilerarg line="${compiler.args}" />
+			<classpath refid="core.build.classpath" />
+			<src refid="core.build.sourcepath" />
+			<patternset refid="ignored.files" />
 		</javac>
-		<copy todir="${build.dir}">
-			<fileset dir="${src.dir}">
-				<patternset refid="compiler.resources" />
-				<type type="file" />
-			</fileset>
-		</copy>
-		<copy todir="${build.dir}">
-			<fileset dir="${resources.dir}">
+		<copy todir="${core.build.dir}">
+			<fileset dir="${core.src.dir}">
 				<patternset refid="compiler.resources" />
 				<type type="file" />
 			</fileset>
 		</copy>
 	</target>
 	
-	<target name="jar" depends="compile">
-		<jar destfile="${jar.file}" duplicate="add">
-			<zipfileset dir="${build.dir}" />
+	<target name="ui.compile" depends="init,core.compile" description="">
+		<javac destdir="${ui.build.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" includeantruntime="false" fork="true">
+			<compilerarg line="${compiler.args}" />
+			<classpath refid="ui.build.classpath" />
+			<src refid="ui.build.sourcepath" />
+			<patternset refid="ignored.files" />
+		</javac>
+		<copy todir="${ui.build.dir}">
+			<fileset dir="${ui.src.dir}">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="resources.compile" depends="init,core.compile" description="">
+		<copy todir="${resources.build.dir}">
+			<fileset dir="${resources.src.dir}">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="compile" depends="init,core.compile,ui.compile,resources.compile" description="">
+
+	</target>
+	
+	<target name="core.jar" depends="compile">
+		<jar destfile="${core.jar.file}" duplicate="add">
+			<zipfileset dir="${core.build.dir}" />
+		</jar>
+	</target>
+	
+	
+	<target name="ui.jar" depends="compile">
+		<jar destfile="${ui.jar.file}" duplicate="add">
+			<zipfileset dir="${ui.build.dir}" />
 			<manifest>
-				<attribute name="Main-Class" value="${main.class}"/>
+				<attribute name="Main-Class" value="${ui.main.class}"/>
 			</manifest>
 		</jar>
 	</target>
 	
+	<target name="resources.jar" depends="compile">
+		<jar destfile="${resources.jar.file}" duplicate="add">
+			<zipfileset dir="${resources.build.dir}" />
+		</jar>
+	</target>
+	
+	<target name="jar" depends="compile,core.jar,ui.jar,resources.jar">
+		
+	</target>
+	
 	<target name="clean">
 		<delete dir="${build.dir}" />
-		<delete dir="${dist.dir}" />
 		<delete dir="${javadoc.dir}" />
 	</target>
 
-	<target name="javadoc">
-		  <javadoc
-		           destdir="${javadoc.dir}"
-		  		   sourcepath="${src.dir}"
-		           author="true"
-		           version="true"
-		           use="true"
-		           windowtitle="jDem846 API">
+	<target name="core.javadoc">
+		<javadoc
+			destdir="${core.javadoc.dir}"
+			sourcepath="${core.src.dir}"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="jDem846 API">
 
 
-		    <doctitle><![CDATA[<h1>jDem846</h1>]]></doctitle>
+			<doctitle><![CDATA[<h1>jDem846</h1>]]></doctitle>
 		    <bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
 		</javadoc>
 	</target>
 	
-	<target name="dist" depends="jar,javadoc">
-		<mkdir dir="${dist.dir}/stage/lib" />
-		<mkdir dir="${dist.dir}/stage/docs/api" />
-		<copy file="${jar.file}" todir="${dist.dir}/stage" />
-		<copy file="LICENSE" todir="${dist.dir}/stage" />
-		<copy file="NOTICE" todir="${dist.dir}/stage" />
-		<copy file="jdem.bat" todir="${dist.dir}/stage" />
-		<copy file="jdem.sh" todir="${dist.dir}/stage" />
-		<copy todir="${dist.dir}/stage/lib">
+	<target name="ui.javadoc">
+		<javadoc
+			destdir="${ui.javadoc.dir}"
+			sourcepath="${ui.src.dir}"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="jDem846 UI API">
+
+
+			<doctitle><![CDATA[<h1>jDem846 UI</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
+		</javadoc>
+	</target>
+	
+	
+	<target name="javadoc" depends="compile,core.javadoc,ui.javadoc">
+				
+	</target>
+	
+	<target name="dist-init" depends="">
+		<mkdir dir="${dist.stage.dir}/lib" />
+		<mkdir dir="${dist.stage.dir}/docs/api/core" />
+		<mkdir dir="${dist.stage.dir}/docs/api/ui" />
+	</target>
+		
+	<target name="dist" depends="jar,javadoc,dist-init">
+		
+		
+		
+		<copy file="${ui.jar.file}" todir="${dist.stage.dir}/lib" />
+		<copy file="${core.jar.file}" todir="${dist.stage.dir}/lib" />
+		<copy file="${resources.jar.file}" todir="${dist.stage.dir}/lib" />
+		
+		<copy file="LICENSE" todir="${dist.stage.dir}" />
+		<copy file="NOTICE" todir="${dist.stage.dir}" />
+		<copy file="jdem.bat" todir="${dist.stage.dir}" />
+		<copy file="jdem.sh" todir="${dist.stage.dir}" />
+		
+		<copy todir="${dist.stage.dir}/lib">
 			<fileset dir="${lib.dir}">
 				<patternset refid="lib.resources" />
 				<type type="file" />
 			</fileset>
 		</copy>
-		<copy todir="${dist.dir}/stage/docs/api">
-			<fileset dir="${javadoc.dir}">
-			</fileset>
+		
+		<copy todir="${dist.stage.dir}/docs/api/core">
+			<fileset dir="${core.javadoc.dir}" />
 		</copy>
-		<copy file="${resources.dir}/jdem846-icon.png" todir="${dist.dir}/stage" />
+		<copy todir="${dist.stage.dir}/docs/api/ui">
+			<fileset dir="${ui.javadoc.dir}" />
+		</copy>
+		
+		<copy file="${resources.src.dir}/jdem846-icon.png" todir="${dist.stage.dir}" />
+		
 		<zip destfile="${dist.file}" duplicate="add">
-			<zipfileset dir="${dist.dir}/stage" />
+			<zipfileset dir="${dist.stage.dir}" />
 		</zip>
 		
-		<delete dir="${dist.dir}/stage" />
+		<delete dir="${dist.stage.dir}" />
 	</target>
 </project>

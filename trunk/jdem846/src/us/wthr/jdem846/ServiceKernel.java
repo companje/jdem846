@@ -82,19 +82,20 @@ public class ServiceKernel extends Thread
 	
 	public void initializeServices() throws ServiceException
 	{
-		//System.out.println("Initializing Services...");
+		
 		log.info("Initializing Services...");
 		
 		try {
 			
 			serviceThreadGroup = new ThreadGroup("JDEM Service Thread Group");
-			//serviceThreadGroup.setDaemon(true);
-
-			URL url = ClasspathUrlFinder.findClassBase(JDemMain.class);
+			
 			AnnotationDB db = new AnnotationDB();
-			db.scanArchives(url);
-			//db.crossReferenceImplementedInterfaces();
-			 	
+			URL[] urls = ClasspathUrlFinder.findClassPaths();
+			for (URL url : urls) {
+				log.info("Scanning Classpath URL: " + url);
+				db.scanArchives(url);
+			}
+
 			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
 			Set<String> srvClasses = annotationIndex.get(Service.class.getName());
 			
@@ -112,7 +113,8 @@ public class ServiceKernel extends Thread
 		
 		
 	}
-
+	
+	
 	
 	public void invokeOnShutdowns() throws ServiceException
 	{

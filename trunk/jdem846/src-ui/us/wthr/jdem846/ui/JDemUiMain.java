@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846;
+package us.wthr.jdem846.ui;
 
 
 
 import java.util.Random;
 import java.util.UUID;
 
+import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.RegistryKernel;
+import us.wthr.jdem846.ServiceKernel;
 import us.wthr.jdem846.ServiceKernel.ServiceThreadListener;
 import us.wthr.jdem846.exception.ArgumentException;
 import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.logging.Log;
-import us.wthr.jdem846.ui.SplashScreen;
 import us.wthr.jdem846.util.InstanceIdentifier;
 
 /** Main application entry point. Parses command line options and kicks off service and registry kernels.
@@ -35,10 +37,10 @@ import us.wthr.jdem846.util.InstanceIdentifier;
  * @author Kevin M. Gill
  *
  */
-public class JDemMain 
+public class JDemUiMain 
 {
 	
-	private static Log log = Logging.getLog(JDemMain.class);
+	private static Log log = Logging.getLog(JDemUiMain.class);
 	
 	/** Scans command line options and places appropriate values into system properties map.
 	 * 

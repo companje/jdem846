@@ -42,6 +42,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;

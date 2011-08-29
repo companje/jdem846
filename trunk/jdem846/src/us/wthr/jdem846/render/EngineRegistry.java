@@ -27,7 +27,7 @@ import org.scannotation.AnnotationDB;
 import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.AppRegistry;
-import us.wthr.jdem846.JDemMain;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
@@ -91,11 +91,14 @@ public class EngineRegistry  implements AppRegistry
 		log.info("Static initialization of EngineRegistry");
 		
 		try {
-			URL url = ClasspathUrlFinder.findClassBase(JDemMain.class);
 			AnnotationDB db = new AnnotationDB();
-			db.scanArchives(url);
-			//db.crossReferenceImplementedInterfaces();
-			 	
+			URL[] urls = ClasspathUrlFinder.findClassPaths();
+			
+			for (URL url : urls) {
+				log.info("Scanning Classpath URL: " + url);
+				db.scanArchives(url);
+			}
+
 			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
 			Set<String> engineClasses = annotationIndex.get(DemEngine.class.getName());
 			
