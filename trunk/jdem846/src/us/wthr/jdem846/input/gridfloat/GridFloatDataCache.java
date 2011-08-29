@@ -89,11 +89,13 @@ public class GridFloatDataCache implements DataCache
 	public float get(int position)
 	{
 		int offset = cacheOffset + (position * 4);
-		try {
-			return ByteConversions.bytesToFloat(buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3], byteOrder);
-		} catch (ArrayIndexOutOfBoundsException ex) {
+		if (offset < 0 || offset+3 >= buffer.length)
 			return DemConstants.ELEV_NO_DATA;
-		}
+		//try {
+			return ByteConversions.bytesToFloat(buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3], byteOrder);
+		//} catch (ArrayIndexOutOfBoundsException ex) {
+		//	return DemConstants.ELEV_NO_DATA;
+		//}
 	}
 	
 	public void load(long start)

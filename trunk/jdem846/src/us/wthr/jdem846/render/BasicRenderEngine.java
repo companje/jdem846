@@ -17,6 +17,7 @@ public abstract class BasicRenderEngine extends RenderEngine
 	protected DataPackage dataPackage;
 	protected ModelOptions modelOptions;
 	
+	
 	public BasicRenderEngine()
 	{
 		
@@ -47,40 +48,35 @@ public abstract class BasicRenderEngine extends RenderEngine
 			//return point;
 		}
 
-		float elevMax = dataPackage.getMaxElevation();
-		float elevMin = dataPackage.getMinElevation();
-		float nodata = dataPackage.getNoData();
+		float elevationMax = dataPackage.getMaxElevation();
+		float elevationMin = dataPackage.getMinElevation();
 
-		float elevation = dataPackage.getElevation(row, column);
+		float elevation_bl = dataPackage.getElevation(row, column);
+		float elevation_br = dataPackage.getElevation(row, column + gridSize);
+		float elevation_fl = dataPackage.getElevation(row + gridSize, column);
+		float elevation_fr = dataPackage.getElevation(row + gridSize, column + gridSize);
 
-
-		if (elevation == DemConstants.ELEV_NO_DATA) {
+		if (elevation_bl == DemConstants.ELEV_NO_DATA) {
 			point.setCondition(DemConstants.STAT_INVALID_ELEVATION);
 			return;
-			//return point;
 		}
 		
-		point.setBackLeftElevation(elevation);
+		point.setBackLeftElevation(elevation_bl);
 
-
-		elevation = dataPackage.getElevation(row, column + gridSize);
-		if (elevation >= elevMin && elevation <= elevMax && elevation != DemConstants.ELEV_NO_DATA && elevation != nodata) {
-			point.setBackRightElevation(elevation);
+		if (elevation_br >= elevationMin && elevation_br <= elevationMax && elevation_br != DemConstants.ELEV_NO_DATA) {
+			point.setBackRightElevation(elevation_br);
 		} else {
 			point.setBackRightElevation(point.getBackLeftElevation());
 		}
 
-		elevation = dataPackage.getElevation(row + gridSize, column);
-		if (elevation >= elevMin && elevation <= elevMax && elevation != DemConstants.ELEV_NO_DATA && elevation != nodata) {
-			point.setFrontLeftElevation(elevation);
+		if (elevation_fl >= elevationMin && elevation_fl <= elevationMax && elevation_fl != DemConstants.ELEV_NO_DATA) {
+			point.setFrontLeftElevation(elevation_fl);
 		} else {
 			point.setFrontLeftElevation(point.getBackLeftElevation());
 		}
 
-		//this->data_package->get(row + 1, column + 1, &elevation);
-		elevation = dataPackage.getElevation(row + gridSize, column + gridSize);
-		if (elevation >= elevMin && elevation <= elevMax && elevation != DemConstants.ELEV_NO_DATA && elevation != nodata) {
-			point.setFrontRightElevation(elevation);
+		if (elevation_fr >= elevationMin && elevation_fr <= elevationMax && elevation_fr != DemConstants.ELEV_NO_DATA) {
+			point.setFrontRightElevation(elevation_fr);
 		} else {
 			point.setFrontRightElevation(point.getBackLeftElevation());
 		}
@@ -92,15 +88,13 @@ public abstract class BasicRenderEngine extends RenderEngine
 			&& point.getFrontRightElevation() == 0) {
 			point.setCondition(DemConstants.STAT_FLAT_SEA_LEVEL);
 			return;
-			//return point;
 		}
 		
 
-		elevation = (point.getBackLeftElevation() + point.getBackRightElevation() + point.getFrontLeftElevation() + point.getFrontRightElevation()) / 4.0f;
-		point.setMiddleElevation(elevation);
+		point.setMiddleElevation((point.getBackLeftElevation() + point.getBackRightElevation() + point.getFrontLeftElevation() + point.getFrontRightElevation()) / 4.0f);
 		
 		point.setCondition(DemConstants.STAT_SUCCESSFUL);
-		//return point;
+		
 		return;
 	}
 	

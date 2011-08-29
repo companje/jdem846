@@ -24,7 +24,8 @@ public class GradientColoring implements ModelColoring
 	private static DemColor defaultColor = new DemColor(0, 0, 0, 0xFF);
 	private GradientLoader gradient;
 	private String configFile = null;
-	
+	private GradientColorStop[] colorStops = null;
+	                                       
 	public GradientColoring(String configFile)
 	{
 		this.configFile = configFile;
@@ -39,6 +40,8 @@ public class GradientColoring implements ModelColoring
 		
 		URL url = this.getClass().getResource(configFile);
 		gradient = new GradientLoader(url);
+		colorStops = new GradientColorStop[gradient.getColorStops().size()];
+		gradient.getColorStops().toArray(colorStops);
 	}
 	
 	@Override
@@ -60,7 +63,7 @@ public class GradientColoring implements ModelColoring
 		GradientColorStop lower = null;
 		GradientColorStop upper = null;
 		
-		for (GradientColorStop stop : gradient.getColorStops()) {
+		for (GradientColorStop stop : colorStops) {
 			if (stop.getPosition() <= ratio) {
 				lower = stop;
 			}
