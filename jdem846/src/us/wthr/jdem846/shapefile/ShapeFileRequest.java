@@ -16,11 +16,11 @@
 
 package us.wthr.jdem846.shapefile;
 
+import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
-import us.wthr.jdem846.ui.DataSetTypes;
 
 public class ShapeFileRequest
 {

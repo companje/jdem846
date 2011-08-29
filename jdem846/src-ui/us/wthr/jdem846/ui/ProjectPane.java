@@ -44,6 +44,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.ComponentException;

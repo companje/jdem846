@@ -29,7 +29,7 @@ import org.scannotation.AnnotationDB;
 import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.AppRegistry;
-import us.wthr.jdem846.JDemMain;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.annotations.DemColoring;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
@@ -84,11 +84,16 @@ public class ColoringRegistry implements AppRegistry
 		
 		try {
 
-			URL url = ClasspathUrlFinder.findClassBase(JDemMain.class);
-			log.info("Checking " + url + " for components");
+			//URL url = ClasspathUrlFinder.findClassBase(JDem846Properties.class);
+			//log.info("Checking " + url + " for components");
 
 			AnnotationDB db = new AnnotationDB();
-			db.scanArchives(url);
+			
+			URL[] urls = ClasspathUrlFinder.findClassPaths();
+			for (URL url : urls) {
+				log.info("Scanning Classpath URL: " + url);
+				db.scanArchives(url);
+			}
 			//db.crossReferenceImplementedInterfaces();
 					 	
 			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();

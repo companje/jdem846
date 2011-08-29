@@ -27,7 +27,7 @@ import org.scannotation.AnnotationDB;
 import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.AppRegistry;
-import us.wthr.jdem846.JDemMain;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
@@ -68,9 +68,14 @@ public class ElevationDataLoaderRegistry  implements AppRegistry
 		log.info("Static initialization of ElevationDataLoaderRegistry");
 		
 		try {
-			URL url = ClasspathUrlFinder.findClassBase(JDemMain.class);
+			//URL url = ClasspathUrlFinder.findClassBase(JDem846Properties.class);
 			AnnotationDB db = new AnnotationDB();
-			db.scanArchives(url);
+			
+			URL[] urls = ClasspathUrlFinder.findClassPaths();
+			for (URL url : urls) {	
+				log.info("Scanning Classpath URL: " + url);
+				db.scanArchives(url);
+			}
 			//db.crossReferenceImplementedInterfaces();
 			 	
 			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();

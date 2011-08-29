@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.ui;
+package us.wthr.jdem846;
 
 public class DataSetTypes
 {
