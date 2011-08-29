@@ -99,22 +99,22 @@ public class GridFloat extends DataSource
 	private float __get(int row, int col)
 	{
 		
-		if (col < 0 || col > header.getColumns() || row < 0 || row > header.getRows())
-			return DemConstants.ELEV_NO_DATA;
+		//if (col < 0 || col > header.getColumns() || row < 0 || row > header.getRows())
+		//	return DemConstants.ELEV_NO_DATA;
 		
 		if ((row != cachedRow && row != cachedRow+1) || cachedRow == -1 ) {
 			this.loadRow(row);
 		}
 		
-		if (row != cachedRow) {
-			col = header.getColumns() + col;
-		}
+		//if (row != cachedRow) {
+		//	col = header.getColumns() + col;
+		//}
 	
-		float elevation = cache.get(col);
-		if (elevation == Float.NaN || elevation == -Float.NaN) 
-			elevation = DemConstants.ELEV_NO_DATA;
+		return cache.get(((row != cachedRow) ? header.getColumns() + col : col));
+		//if (elevation == Float.NaN || elevation == -Float.NaN) 
+		//	elevation = DemConstants.ELEV_NO_DATA;
 		
-		return elevation;
+		//return elevation;
 		
 	}
 
