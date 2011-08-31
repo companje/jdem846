@@ -39,15 +39,21 @@ import us.wthr.jdem846.logging.Logging;
 public class ServiceKernel extends Thread
 {
 	private static Log log = Logging.getLog(ServiceKernel.class);
+	private static ServiceKernel instance;
 	
 	private Map<String, ServiceThread> services = new HashMap<String, ServiceThread>();
 	private List<ServiceThreadListener> serviceThreadListeners = new LinkedList<ServiceThreadListener>();
 	
 	private ThreadGroup serviceThreadGroup;
 	
+	private boolean shutdownInitiated = false;
+	
 	public ServiceKernel()
 	{
 		setName("us.wthr.jdem846.ServiceKernel");
+		if (instance == null) {
+			instance = this;
+		}
 	}
 	
 	
@@ -65,10 +71,12 @@ public class ServiceKernel extends Thread
 		
 		log.warn("Leaving ServiceKernel Thread");
 		
-		try {
-			invokeOnShutdowns();
-		} catch (ServiceException e) {
-			log.error("Exception during service OnShutdown: " + e.getMessage(), e);
+		if (shutdownInitiated == false) {
+			try {
+				invokeOnShutdowns();
+			} catch (ServiceException e) {
+				log.error("Exception during service OnShutdown: " + e.getMessage(), e);
+			}
 		}
 		
 		try {
@@ -78,6 +86,23 @@ public class ServiceKernel extends Thread
 		}
 		
 		fireServiceThreadListeners();
+	}
+	
+	public static void initiateApplicationShutdown()
+	{
+		log.info("Initiating application shutdown");
+		
+		if (ServiceKernel.instance == null) {
+			log.warn("ServiceKernel instance is null. Cannot initiate shutdown");
+			return;
+		}
+		
+		try {
+			ServiceKernel.instance.invokeOnShutdowns();
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void initializeServices() throws ServiceException
@@ -119,6 +144,8 @@ public class ServiceKernel extends Thread
 	public void invokeOnShutdowns() throws ServiceException
 	{
 		log.info("Invoking OnShutdown on services...");
+		
+		shutdownInitiated = true;
 		
 		for (String name : services.keySet()) {
 			

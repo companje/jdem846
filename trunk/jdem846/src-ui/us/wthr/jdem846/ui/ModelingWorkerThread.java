@@ -28,6 +28,7 @@ import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.RenderEngine;
 
+@Deprecated
 public class ModelingWorkerThread extends Thread
 {
 	private static Log log = Logging.getLog(ModelingWorkerThread.class);

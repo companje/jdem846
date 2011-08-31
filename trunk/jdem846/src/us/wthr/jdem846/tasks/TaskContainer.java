@@ -37,6 +37,12 @@ public class TaskContainer
 		this.task = task;
 	}
 	
+	public TaskContainer(RunnableTask task, TaskStatusListener listener)
+	{
+		this.task = task;
+		this.addTaskStatusListener(listener);
+	}
+	
 	public RunnableTask getRunnableTask()
 	{
 		return task;
@@ -52,8 +58,13 @@ public class TaskContainer
 		
 		try {
 			
+			this.setRunning(true);
+			
 			task.run();
 			
+			
+			this.setRunning(false);
+			this.setCompleted(true);
 			
 			if (isCancelled()) {
 				fireTaskCancelledListeners();
@@ -62,13 +73,22 @@ public class TaskContainer
 			}
 			
 		} catch (Exception ex) {
-			log.info("Failure in task #" + task.getId(), ex);
+			log.info("Failure in task #" + task.getIdentifier(), ex);
 			fireTaskFailedListeners(ex);
 		}
 		
 		
 	}
 	
+	public void cancel()
+	{
+		this.setCancelled(true);
+		// TODO: Do more than this. We need to actually tell the task to stop doing whatever it's doing.
+		
+		task.cancel();
+		
+		
+	}
 	
 	protected void setRunning(boolean running)
 	{
@@ -133,7 +153,9 @@ public class TaskContainer
 	
 	public void addTaskStatusListener(TaskStatusListener listener)
 	{
-		taskStatusListeners.add(listener);
+		if (listener != null) {
+			taskStatusListeners.add(listener);
+		}
 	}
 	
 	public boolean removeTaskStatusListener(TaskStatusListener listener)

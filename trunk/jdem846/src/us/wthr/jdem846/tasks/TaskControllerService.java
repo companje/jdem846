@@ -16,12 +16,15 @@
 
 package us.wthr.jdem846.tasks;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import us.wthr.jdem846.AbstractLockableService;
 import us.wthr.jdem846.annotations.Destroy;
 import us.wthr.jdem846.annotations.Initialize;
+import us.wthr.jdem846.annotations.OnShutdown;
 import us.wthr.jdem846.annotations.Service;
 import us.wthr.jdem846.annotations.ServiceRuntime;
 import us.wthr.jdem846.logging.Log;
@@ -29,6 +32,9 @@ import us.wthr.jdem846.logging.Logging;
 
 /** Service for managing the execution of synchronous and asynchronous tasks. Synchronous tasks are executed
  * in order, one after another. Asynchronous tasks are delegated to threads and executed concurrently.
+ * 
+ * Note: While some tasks may be synchronous, this is in relation to the task service thread. These
+ * tasks are executed asynchronously relative to the thread supplying the task.
  * 
  * @author Kevin M. Gill
  */
@@ -38,36 +44,18 @@ public class TaskControllerService extends AbstractLockableService
 	private static Log log = Logging.getLog(TaskControllerService.class);
 	
 	private static TaskControllerService instance = null;
+
+	private TaskGroup defaultTaskGroup;
+	private Map<String, TaskGroup> taskGroups = new HashMap<String, TaskGroup>();
 	
-	private TaskContainer activeSynchronousTask = null;
-	private TaskStatusListener activeSynchronousTaskListener = null;
-	
-	private List<TaskContainer> tasks = new LinkedList<TaskContainer>();
+	private List<TaskControllerListener> taskControllerListeners = new LinkedList<TaskControllerListener>();
 	
 	/** Constructor.
 	 * 
 	 */
 	public TaskControllerService()
 	{
-		activeSynchronousTaskListener = new TaskStatusListener() {
-			public void taskCancelled(RunnableTask task)
-			{
-				
-			}
-			public void taskCompleted(RunnableTask task)
-			{
-				
-			}
-			public void taskFailed(RunnableTask task, Throwable thrown)
-			{
-				
-			}
-			public void taskStarting(RunnableTask task)
-			{
-				
-			}
-		};
-		
+
 		
 		
 	}
@@ -88,20 +76,55 @@ public class TaskControllerService extends AbstractLockableService
 	{
 		log.info("Entering task controller service runtime routine");
 		
-		/*
-		while(true) {
+		defaultTaskGroup = new TaskGroup("DefaultTaskGroup");
+		defaultTaskGroup.setPersistentThread(true);
+		defaultTaskGroup.setDaemon(true);
+		defaultTaskGroup.start();
+		
+		while (this.isLocked()) {
 			
-			log.info("Task controller service PING! -- Is Daemon: " + Thread.currentThread().isDaemon());
+			cleanUpInactiveTaskGroups();
+			
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(250);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		*/
 		
 		log.info("Leaving task controller service runtime routine");
+	}
+	
+	
+	public void cleanUpInactiveTaskGroups()
+	{
+		List<TaskGroup> groups = getTaskGroups();
+		for (TaskGroup group : groups) {
+			if (!group.isAlive()) {
+				log.info("Cleaning up inactive task group '" + group.getIdentifier() + "'");
+				
+				taskGroups.remove(group.getIdentifier().getId());
+			}
+		}
+		
+	}
+	
+	@OnShutdown
+	public void onShutdown()
+	{
+		log.info("Task controller service on shutdown");
+		//defaultTaskGroup.setPersistentThread(false);
+		//defaultTaskGroup.cancelRemainingTasks();
+		
+		
+		List<TaskGroup> taskGroups = getTaskGroups();
+		for (TaskGroup taskGroup : taskGroups) {
+			taskGroup.setPersistentThread(false);
+			taskGroup.cancelRemainingTasks();
+		}
+		
+		this.setLocked(false);
+		
 	}
 	
 	@Destroy
@@ -111,13 +134,7 @@ public class TaskControllerService extends AbstractLockableService
 		TaskControllerService.instance = null;
 	}
 	
-	/** Starts the next pending synchronous task.
-	 * 
-	 */
-	protected void fireNextSynchronousTask()
-	{
-		
-	}
+
 	
 	/** Adds a task to the end of the run queue.
 	 * 
@@ -126,7 +143,30 @@ public class TaskControllerService extends AbstractLockableService
 	 */
 	public static void addTask(RunnableTask task, TaskStatusListener listener)
 	{
-		
+		TaskControllerService.instance.defaultTaskGroup.addTask(task, listener);
+	}
+	
+	/** Adds a task group to the task controller and starts it's execution thread.
+	 * 
+	 * @param taskGroup
+	 */
+	public static void addTaskGroup(TaskGroup taskGroup) 
+	{
+		TaskControllerService.addTaskGroup(taskGroup, true);
+	}
+	
+	/** Adds a task group to the task controller and starts it's execution thread if 'start' is true.
+	 * 
+	 * @param taskGroup A new task group
+	 * @param start Will start the task group thread if true.
+	 */
+	public static void addTaskGroup(TaskGroup taskGroup, boolean start) 
+	{
+		TaskControllerService.instance.taskGroups.put(taskGroup.getIdentifier().getId(), taskGroup);
+		if (start) {
+			taskGroup.start();
+		}
+		TaskControllerService.instance.fireTaskGroupAddedListeners(taskGroup);
 	}
 	
 	/** Adds a task listener to the container holding the task.
@@ -134,9 +174,15 @@ public class TaskControllerService extends AbstractLockableService
 	 * @param task
 	 * @param listener
 	 */
-	public static void addTaskStatusListener(RunnableTask task, TaskStatusListener listener)
+	public static boolean addTaskStatusListener(RunnableTask task, TaskStatusListener listener)
 	{
-		
+		TaskGroup group = TaskControllerService.getTaskGroupContainingTask(task);
+		if (group != null) {
+			group.addTaskStatusListener(task, listener);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/** Removes a task listener from the container holding the task.
@@ -144,69 +190,117 @@ public class TaskControllerService extends AbstractLockableService
 	 * @param task
 	 * @param listener
 	 */
-	public static void removeTaskStatusListener(RunnableTask task, TaskStatusListener listener)
+	public static boolean removeTaskStatusListener(RunnableTask task, TaskStatusListener listener)
 	{
+		TaskGroup group = TaskControllerService.getTaskGroupContainingTask(task);
+		if (group != null) {
+			return group.removeTaskStatusListener(task, listener);
+		} else {
+			return false;
+		}
+	}
+	
+	/** Retrieves a list of all active task groups.
+	 * 
+	 * @return
+	 */
+	public static List<TaskGroup> getTaskGroups()
+	{
+		List<TaskGroup> groupList = new LinkedList<TaskGroup>();
+		groupList.add(TaskControllerService.instance.defaultTaskGroup);
 		
+		synchronized (TaskControllerService.instance.taskGroups) {
+			for (String key : TaskControllerService.instance.taskGroups.keySet()) {
+				groupList.add(TaskControllerService.instance.taskGroups.get(key));
+			}
+		}
+		
+		return groupList;
 	}
 	
-	/** Retrieves the currently active synchronous task.
-	 * 
-	 * @return The currently active synchronous task, or null if no task is currently running.
-	 */
-	public static RunnableTask getActiveSynchronousTask()
-	{
-		return null;
-	}
-	
-	/** Retrieves the currently active synchronous and asynchronous tasks.
-	 * 
-	 * @return The currently active synchronous and asynchronous tasks. List will be empty if no tasks
-	 * are currently running.
-	 */
-	public static List<RunnableTask> getActiveTasks()
-	{
-		return null;
-	}
-	
-	/** Retrieves a list of pending (not yet executed) tasks.
-	 * 
-	 * @return
-	 */
-	public static List<RunnableTask> getPendingTasks()
-	{
-		return null;
-	}
-	
-	/** Retrieves a list of all pending and active synchronous and asynchronous tasks.
-	 * 
-	 * @return
-	 */
-	public static List<RunnableTask> getTasks()
-	{
-		return null;
-	}
 	
 	/** Requests the specified task be canceled mid-execution. It is up to the task whether it will/can 
 	 * stop.
 	 * @param task
 	 */
-	public void cancelTask(RunnableTask task)
+	public static boolean cancelTask(RunnableTask task)
 	{
-		
+		TaskGroup group = TaskControllerService.getTaskGroupContainingTask(task);
+		if (group != null) {
+			boolean result = group.cancelTask(task);
+			if (result) {
+				TaskControllerService.instance.fireTaskCancelledListeners(task);
+			}
+			return result;
+		} else {
+			return false;
+		}
 	}
 	
-	/** Retrieves the task container holding the specified task.
+	/** Retrieves the task group containing the specified task. 
 	 * 
 	 * @param task
-	 * @return The task container or null if not found.
+	 * @return The task group containing the specified task, or null if none is found.
 	 */
-	protected TaskContainer getTaskContainer(RunnableTask task)
+	public static TaskGroup getTaskGroupContainingTask(RunnableTask task)
 	{
-		for (TaskContainer taskContainer : tasks) {
-			if (taskContainer.getRunnableTask() == task) { // Pointer address comparison
-				return taskContainer;
-			}
+		List<TaskGroup> groups = TaskControllerService.getTaskGroups();
+		
+		for (TaskGroup group : groups) {
+			if (group.containsTask(task))
+				return group;
 		}
+		
 		return null;
 	}
+	
+	
+	public static TaskGroup getTaskGroup(String identifier)
+	{
+		return TaskControllerService.instance.taskGroups.get(identifier);
+	}
+	
+	
+	/*
+	 * public void taskAdded(RunnableTask task);
+	public void taskGroupAdded(TaskGroup taskGroup);
+	public void taskCancelled(RunnableTask task);
+	 */
+	
+	protected void fireTaskAddedListeners(RunnableTask task)
+	{
+		for (TaskControllerListener listener : taskControllerListeners) {
+			listener.taskAdded(task);
+		}
+	}
+	
+	protected void fireTaskGroupAddedListeners(TaskGroup taskGroup)
+	{
+		for (TaskControllerListener listener : taskControllerListeners) {
+			listener.taskGroupAdded(taskGroup);
+		}
+	}
+	
+	protected void fireTaskCancelledListeners(RunnableTask task)
+	{
+		for (TaskControllerListener listener : taskControllerListeners) {
+			listener.taskCancelled(task);
+		}
+	}
+	
+	public static void addDefaultTaskGroupListener(TaskGroupListener listener)
+	{
+		TaskControllerService.instance.defaultTaskGroup.addTaskGroupListener(listener);
+	}
+	
+	public static void addTaskControllerListener(TaskControllerListener listener)
+	{
+		TaskControllerService.instance.taskControllerListeners.add(listener);
+	}
+	
+	public static boolean removeTaskControllerListener(TaskControllerListener listener)
+	{
+		return TaskControllerService.instance.taskControllerListeners.remove(listener);
+	}
+	
 }
