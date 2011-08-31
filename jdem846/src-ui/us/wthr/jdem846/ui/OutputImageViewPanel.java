@@ -35,13 +35,18 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.RenderEngine;
+import us.wthr.jdem846.tasks.RunnableTask;
+import us.wthr.jdem846.tasks.TaskControllerService;
+import us.wthr.jdem846.tasks.TaskStatusListener;
 import us.wthr.jdem846.ui.FileSaveThread.SaveCompletedListener;
 import us.wthr.jdem846.ui.ImageDisplayPanel.MousePositionListener;
 import us.wthr.jdem846.ui.ModelingWorkerThread.ModelCompletionListener;
@@ -68,14 +73,17 @@ public class OutputImageViewPanel extends JdemPanel
 	//private RenderEngine engine;
 	
 	private boolean isWorking = false;
-	private ModelingWorkerThread worker;
 	
-	private ModelCompletionListener modelCompletionListener = null;
+	private RunnableTask renderTask;
+	private TaskStatusListener taskStatusListener;
+	//private ModelingWorkerThread worker;
+	
+	//private ModelCompletionListener modelCompletionListener = null;
 	private TileCompletionListener tileCompletionListener = null;
 	
 	private Menu modelMenu;
 	
-	public OutputImageViewPanel(RenderEngine engine)
+	public OutputImageViewPanel(final RenderEngine engine)
 	{
 		// Set Properties
 		//this.canvas = canvas;
@@ -207,15 +215,69 @@ public class OutputImageViewPanel extends JdemPanel
 		this.add(statusBar, BorderLayout.SOUTH);
 		
 		// Set up worker thread
-		worker = new ModelingWorkerThread(engine);
 		
-		modelCompletionListener = new ModelCompletionListener() {
-			public void onModelComplete(DemCanvas completedCanvas) {
-				if (completedCanvas != null) {
-					imageDisplay.setImage(completedCanvas.getImage());
-					//imageDisplay.zoomFit();
+		tileCompletionListener = new TileCompletionListener() {
+			public void onTileCompleted(DemCanvas tileCanvas, DemCanvas outputCanvas, double pctComplete) {
+				statusBar.setProgress((int)(pctComplete * 100));
+				imageDisplay.setImage(outputCanvas.getImage());
+				//imageDisplay.zoomFit();
+				canvas = outputCanvas;
+				repaint();
+			}
+		};
+		engine.addTileCompletionListener(tileCompletionListener);
+		
+		
+		renderTask = new RunnableTask("Model Render Task") {
+			
+			public void run() throws RenderEngineException
+			{
+				log.info("Model rendering task starting");
+				this.setStoppable(true);
+				
+				long start = 0;
+				long elapsed = 0;
+				
+				start = System.currentTimeMillis();
+				dataPackage.calculateElevationMinMax(true);
+				elapsed = (System.currentTimeMillis() - start) / 1000;
+				log.info("Completed elevation min/max task in " + elapsed + " seconds");
+				
+
+				start = System.currentTimeMillis();
+				OutputProduct<DemCanvas> product = engine.generate(false);
+				elapsed = (System.currentTimeMillis() - start) / 1000;
+				DemCanvas demCanvas = product.getProduct();
+				synchronized(imageDisplay) {
+					imageDisplay.setImage(demCanvas.getImage());
 				}
-				canvas = completedCanvas;
+				synchronized(canvas) {
+					canvas = demCanvas;
+				}
+				log.info("Completed render task in " + elapsed + " seconds");
+
+			}
+			
+			@Override
+			public void cancel()
+			{
+				engine.cancel();
+			}
+			
+		};
+		
+		taskStatusListener = new TaskStatusListener() {
+			public void taskCancelled(RunnableTask task)
+			{
+				if (canvas != null) {
+					taskCompleted(task);
+				} else {
+					onNonSuccessfulCompletion(task, null);
+				}
+				
+			}
+			public void taskCompleted(RunnableTask task)
+			{
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_SAVE, true);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_IN, true);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, true);
@@ -229,7 +291,12 @@ public class OutputImageViewPanel extends JdemPanel
 				detachModelListeners(true);
 				repaint();
 			}
-			public void onModelFailed(Exception ex)
+			public void taskFailed(RunnableTask task, Throwable thrown)
+			{
+				onNonSuccessfulCompletion(task, thrown);
+			}
+			
+			protected void onNonSuccessfulCompletion(RunnableTask task, Throwable thrown) 
 			{
 				canvas = null;
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_SAVE, false);
@@ -244,27 +311,22 @@ public class OutputImageViewPanel extends JdemPanel
 				spinner.stop();
 				detachModelListeners(true);
 				
-				
-				JOptionPane.showMessageDialog(getRootPane(),
-					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.message") + ": " + ex.getMessage(),
-					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.title"),
-					    JOptionPane.ERROR_MESSAGE);
-				
+				if (thrown != null) {
+					JOptionPane.showMessageDialog(getRootPane(),
+						    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.message") + ": " + thrown.getMessage(),
+						    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.title"),
+						    JOptionPane.ERROR_MESSAGE);
+				}
 				repaint();
 			}
-		};
-		worker.addModelCompletionListener(modelCompletionListener);
-		
-		tileCompletionListener = new TileCompletionListener() {
-			public void onTileCompleted(DemCanvas tileCanvas, DemCanvas outputCanvas, double pctComplete) {
-				statusBar.setProgress((int)(pctComplete * 100));
-				imageDisplay.setImage(outputCanvas.getImage());
-				//imageDisplay.zoomFit();
-				canvas = outputCanvas;
-				repaint();
+			
+			public void taskStarting(RunnableTask task)
+			{
+				
 			}
 		};
-		worker.addTileCompletionListener(tileCompletionListener);
+			
+
 	}
 	
 	
@@ -288,25 +350,31 @@ public class OutputImageViewPanel extends JdemPanel
 			timer.setRepeats(false);
 			timer.start();
 		} else {
-			if (modelCompletionListener != null) {
-				worker.removeModelCompletionListener(modelCompletionListener);
-				modelCompletionListener = null;
-			}
+			//if (modelCompletionListener != null) {
+				//worker.removeModelCompletionListener(modelCompletionListener);
+			//	modelCompletionListener = null;
+			//}
 			
-			if (tileCompletionListener != null) {
-				worker.removeTileCompletionListener(tileCompletionListener);
-				tileCompletionListener = null;
-			}
+			//if (tileCompletionListener != null) {
+				//worker.removeTileCompletionListener(tileCompletionListener);
+			//	tileCompletionListener = null;
+			//}
 		}
 	}
 	
 	public void startWorker()
 	{
-		if (worker != null) {
+		if (!this.isWorking) {
+			TaskControllerService.addTask(renderTask, taskStatusListener);
 			setWorking(true);
 			spinner.start();
-			worker.start();
 		}
+		
+		//if (worker != null) {
+		//	setWorking(true);
+		//	spinner.start();
+		//	worker.start();
+		//}
 	}
 	
 	public void onSave()
@@ -365,7 +433,7 @@ public class OutputImageViewPanel extends JdemPanel
 	public void onStop()
 	{
 		log.info("Render process requested to stop");
-		worker.cancel();
+		TaskControllerService.cancelTask(renderTask);
 	}
 	
 	public void onZoomActual() 

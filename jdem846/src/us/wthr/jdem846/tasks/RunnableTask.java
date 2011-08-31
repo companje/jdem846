@@ -16,29 +16,55 @@
 
 package us.wthr.jdem846.tasks;
 
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
+
 public abstract class RunnableTask
 {
+	private static Log log = Logging.getLog(RunnableTask.class);
+	
 	private boolean async = false;
 	private boolean stoppable = false;
-	private int id = -1;
+	private TaskIdentifier identifier = TaskIdentifier.generate();
+	private String name;
+	
 	
 	public RunnableTask()
 	{
+		this(null);
+	}
+	
+	public RunnableTask(String name)
+	{
+		if (name == null) {
+			this.name = identifier.getId();
+		} else {
+			this.name = name;
+		}
+	}
+
+	public abstract void run() throws Exception;
+	
+	public void cancel()
+	{
 		
 	}
-
-	public abstract void run();
 	
 	
 	
-	public int getId()
+	public String getName()
 	{
-		return id;
+		return name;
 	}
 
-	public void setId(int id)
+	protected void setName(String name)
 	{
-		this.id = id;
+		this.name = name;
+	}
+
+	public TaskIdentifier getIdentifier()
+	{
+		return identifier;
 	}
 
 	public boolean isAsync()

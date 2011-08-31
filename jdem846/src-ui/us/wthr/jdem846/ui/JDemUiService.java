@@ -24,6 +24,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import us.wthr.jdem846.AbstractLockableService;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ServiceKernel;
 import us.wthr.jdem846.annotations.Destroy;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Service;
@@ -112,6 +113,9 @@ public class JDemUiService extends AbstractLockableService
 		}
 		
 		log.info("Window was closed & lock released.");
+		
+		ServiceKernel.initiateApplicationShutdown();
+		
 		//System.out.println("Window was closed & lock released.");
 	}
 	
