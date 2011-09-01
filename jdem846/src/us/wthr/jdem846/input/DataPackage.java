@@ -357,6 +357,22 @@ public class DataPackage
 		return false;
 	}
 	
+	public SubsetDataPackage getDataSubset(DataBounds bounds)
+	{
+		List<PackagedReader> packageReaderSubset = new LinkedList<PackagedReader>();
+		
+		for (PackagedReader packagedReader : this.packagedReaderArray) {
+			DataBounds packageBounds = new DataBounds((int)this.longitudeToColumn(packagedReader.getLongitude()), (int) this.latitudeToRow(packagedReader.getLatitude()), (int) packagedReader.getColumns(), (int) packagedReader.getRows());
+			if (packageBounds.overlaps(bounds)) {
+				packageReaderSubset.add(packagedReader);
+			}
+		}
+		
+		SubsetDataPackage subset = new SubsetDataPackage(this.rows, this.columns);
+		subset.setPackagedReaders(packageReaderSubset);
+		return subset;
+	}
+	
 	public float getAvgXDim()
 	{
 		return avgXDim;

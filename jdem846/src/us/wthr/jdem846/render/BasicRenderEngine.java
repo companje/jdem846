@@ -6,7 +6,9 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColorRegistry;
+import us.wthr.jdem846.input.DataBounds;
 import us.wthr.jdem846.input.DataPackage;
+import us.wthr.jdem846.input.SubsetDataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -15,6 +17,7 @@ public abstract class BasicRenderEngine extends RenderEngine
 	private static Log log = Logging.getLog(Dem3dGenerator.class);
 	
 	protected DataPackage dataPackage;
+	protected SubsetDataPackage dataSubset;
 	protected ModelOptions modelOptions;
 	
 	
@@ -30,8 +33,22 @@ public abstract class BasicRenderEngine extends RenderEngine
 	}
 
 	
-	
+	protected void loadDataSubset(int fromCol, int fromRow, int width, int height)
+	{
+		DataBounds tileBounds = new DataBounds(fromCol, fromRow, width, height);
+		dataSubset = dataPackage.getDataSubset(tileBounds);
+	}
 
+	protected float getElevation(int row, int col)
+	{
+		if (dataSubset != null) {
+			return dataSubset.getElevation(row, col);
+		} else {
+			return dataPackage.getElevation(row, col);
+		}
+	}
+	
+	
 	protected void getPoint(int row, int column, DemPoint point)
 	{
 		getPoint(row, column, 1, point);
@@ -51,10 +68,10 @@ public abstract class BasicRenderEngine extends RenderEngine
 		float elevationMax = dataPackage.getMaxElevation();
 		float elevationMin = dataPackage.getMinElevation();
 
-		float elevation_bl = dataPackage.getElevation(row, column);
-		float elevation_br = dataPackage.getElevation(row, column + gridSize);
-		float elevation_fl = dataPackage.getElevation(row + gridSize, column);
-		float elevation_fr = dataPackage.getElevation(row + gridSize, column + gridSize);
+		float elevation_bl = getElevation(row, column);
+		float elevation_br = getElevation(row, column + gridSize);
+		float elevation_fl = getElevation(row + gridSize, column);
+		float elevation_fr = getElevation(row + gridSize, column + gridSize);
 
 		if (elevation_bl == DemConstants.ELEV_NO_DATA) {
 			point.setCondition(DemConstants.STAT_INVALID_ELEVATION);
