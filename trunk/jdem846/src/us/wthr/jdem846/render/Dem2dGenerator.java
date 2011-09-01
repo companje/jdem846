@@ -37,6 +37,7 @@ import us.wthr.jdem846.dbase.ClassLoadException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataBounds;
 import us.wthr.jdem846.input.DataPackage;
+import us.wthr.jdem846.input.SubsetDataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.gfx.Vector;
@@ -131,9 +132,13 @@ public class Dem2dGenerator extends BasicRenderEngine
 					if (toCol > dataCols)
 						toCol = dataCols;
 					
-					DataBounds tileBounds = new DataBounds((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
-					if (dataPackage.dataOverlaps(tileBounds)) {
-						
+					//DataBounds tileBounds = new DataBounds((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
+					//if (dataPackage.dataOverlaps(tileBounds)) {
+					//SubsetDataPackage dataSubset = dataPackage.getDataSubset(tileBounds);
+					
+					loadDataSubset((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
+					
+					if (dataSubset != null && dataSubset.containsData()) {
 						tileCanvas.reset();
 						
 						log.info("Rendering tile...");
