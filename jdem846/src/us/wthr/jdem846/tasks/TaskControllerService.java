@@ -164,6 +164,7 @@ public class TaskControllerService extends AbstractLockableService
 	{
 		TaskControllerService.instance.taskGroups.put(taskGroup.getIdentifier().getId(), taskGroup);
 		if (start) {
+			//taskGroup.setPriority(Thread.MAX_PRIORITY);
 			taskGroup.start();
 		}
 		TaskControllerService.instance.fireTaskGroupAddedListeners(taskGroup);

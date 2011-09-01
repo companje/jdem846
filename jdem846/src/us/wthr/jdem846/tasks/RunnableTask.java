@@ -19,6 +19,15 @@ package us.wthr.jdem846.tasks;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+/** A RunnableTask extending class contains logic which is to be executed within a TaskGroup by the 
+ * task controller service.
+ * 
+ * @author Kevin M. Gill
+ * 
+ * @see TaskGroup
+ * @see TaskStatusListener
+ * @see TaskControllerService
+ */
 public abstract class RunnableTask
 {
 	private static Log log = Logging.getLog(RunnableTask.class);
@@ -47,7 +56,7 @@ public abstract class RunnableTask
 	
 	public void cancel()
 	{
-		
+		log.info("Default cancel signal caught within Runnable Task");
 	}
 	
 	
