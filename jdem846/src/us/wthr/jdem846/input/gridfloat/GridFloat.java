@@ -85,6 +85,15 @@ public class GridFloat extends DataSource
 		cache.load(seekTo);
 	}
 
+	public boolean setDataPrecached(boolean precached)
+	{
+		if (cache != null) {
+			return cache.setDataPrecached(precached);
+		} else {
+			return false;
+		}
+	}
+	
 	public void initDataCache()
 	{
 		loadRow(this.cachedRow);

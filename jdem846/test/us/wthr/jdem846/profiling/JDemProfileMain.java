@@ -2,6 +2,8 @@ package us.wthr.jdem846.profiling;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelOptions;
@@ -28,6 +30,7 @@ public class JDemProfileMain
 			RegistryKernel regKernel = new RegistryKernel();
 			regKernel.init();
 			
+			/*
 			File tmpGridFloatData = TempFiles.getTemporaryFile("lghtprv", ".flt", "jar://" + JDem846Properties.getProperty("us.wthr.jdem846.previewData") + "/raster-data.flt");
 			
 			File tmpTempGridFloatHeader = TempFiles.getTemporaryFile("lghtprv", ".hdr", "jar://" + JDem846Properties.getProperty("us.wthr.jdem846.previewData") + "/raster-data.hdr");
@@ -40,16 +43,44 @@ public class JDemProfileMain
 			tmpTempGridFloatHeader.renameTo(tmpGridFloatHeader);
 			
 			GridFloat previewData = new GridFloat(tmpGridFloatData.getAbsolutePath());
+			*/
+			
+			List<String> inputDataList = new LinkedList<String>();
+			inputDataList.add("C:/srv/elevation/Maui//15749574.flt");
+			inputDataList.add("C:/srv/elevation/Maui//58273983.flt");
+			
+			
+			
+			boolean fullPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.precacheStrategy").equalsIgnoreCase("full");
+			if (fullPrecaching) {
+				log.info("Data Precaching Strategy Set to FULL");
+			}
+			
 			ModelOptions modelOptions = new ModelOptions();
 
 			DataPackage dataPackage = new DataPackage();
-			dataPackage.addDataSource(previewData);
+			
+			
+			for (String inputDataPath : inputDataList) {
+				GridFloat previewData = new GridFloat(inputDataPath);
+				
+				if (fullPrecaching) {
+					previewData.setDataPrecached(true);
+				}
+				
+				dataPackage.addDataSource(previewData);
+			}
+			
 			dataPackage.prepare();
 			dataPackage.calculateElevationMinMax(true);
 			
 			Dem2dGenerator dem2d = new Dem2dGenerator(dataPackage, modelOptions);
 			
+			long start = System.currentTimeMillis();
 			OutputProduct<DemCanvas> product = generate(dem2d);
+			long complete = System.currentTimeMillis();
+			
+			log.info("Completed rendering in " + ((complete - start) / 1000) + " second(s)");
 			
 			BufferedImage prerendered = (BufferedImage) product.getProduct().getImage();
 			

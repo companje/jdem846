@@ -114,7 +114,10 @@ public class PackagedReader
 	}
 
 	
-	
+	public boolean setDataPrecached(boolean precached)
+	{
+		return dataSource.setDataPrecached(precached);
+	}
 	
 	public float getRows() 
 	{

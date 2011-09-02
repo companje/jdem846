@@ -99,6 +99,11 @@ public abstract class DataSource
 	 */
 	public abstract long getDataLength();
 	
+	public boolean setDataPrecached(boolean precached)
+	{
+		return false;
+	}
+	
 	public abstract void loadRow(int row);
 	public abstract void initDataCache();
 	public abstract void unloadDataCache();

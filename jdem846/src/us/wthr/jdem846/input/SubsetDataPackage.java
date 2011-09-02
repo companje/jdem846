@@ -63,4 +63,19 @@ public class SubsetDataPackage
 		return DemConstants.ELEV_NO_DATA;
 		
 	}
+	
+	
+	public void precacheData()
+	{
+		for (int i = 0; i < packagedReaderArray.length; i++) {
+			packagedReaderArray[i].setDataPrecached(true);
+		}
+	}
+	
+	public void unloadData()
+	{
+		for (int i = 0; i < packagedReaderArray.length; i++) {
+			packagedReaderArray[i].setDataPrecached(false);
+		}
+	}
 }
