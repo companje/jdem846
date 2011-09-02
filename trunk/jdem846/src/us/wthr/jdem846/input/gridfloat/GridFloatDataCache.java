@@ -56,13 +56,35 @@ public class GridFloatDataCache implements DataCache
 		
 		this.inputData = null;
 		
+		/*
 		int cacheFullIfUnder = JDem846Properties.getIntProperty("us.wthr.jdem846.input.gridFloat.cacheFullyUnderBytes");
 		if (input.length() < cacheFullIfUnder) {
 			log.info("Data length of " + input.length() + " does not exceed limit of " + cacheFullIfUnder + ", loading entire dataset into memory");
 			isFullyCached = true;
 			load(0);
 		}
+		*/
 	}
+	
+	public boolean setDataPrecached(boolean precached)
+	{
+		int cacheFullIfUnder = JDem846Properties.getIntProperty("us.wthr.jdem846.input.gridFloat.cacheFullyUnderBytes");
+		
+		if (precached && input.length() < cacheFullIfUnder) {
+			log.info("Data length of " + input.length() + " does not exceed limit of " + cacheFullIfUnder + ", loading entire dataset into memory");
+			isFullyCached = true;
+			load(0);
+			return true;
+		} else {
+			//log.info("Data length of " + input.length() + " exceeds limit of " + cacheFullIfUnder);
+			isFullyCached = false;
+			unload();
+			return false;
+		}
+	}
+	
+
+	
 	
 	
 	public long getDataLength()

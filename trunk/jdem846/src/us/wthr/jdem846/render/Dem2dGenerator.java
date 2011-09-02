@@ -26,6 +26,7 @@ import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.annotations.DemEngine;
@@ -120,6 +121,11 @@ public class Dem2dGenerator extends BasicRenderEngine
 	
 		log.info("Processing " + modelDimensions.getTileCount() + " tiles of size: " + tileSize);
 		
+		boolean tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.precacheStrategy").equalsIgnoreCase("tiled");
+		if (tiledPrecaching) {
+			log.info("Data Precaching Strategy Set to TILED");
+		}
+		
 		if ((!skipElevation) && dataPackage.getDataSources().size() > 0) {
 			for (int fromRow = 0; fromRow < dataRows; fromRow+=tileSize) {
 				int toRow = fromRow + tileSize - 1;
@@ -139,6 +145,11 @@ public class Dem2dGenerator extends BasicRenderEngine
 					loadDataSubset((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
 					
 					if (dataSubset != null && dataSubset.containsData()) {
+						
+						if (tiledPrecaching) {
+							dataSubset.precacheData();
+						}
+						
 						tileCanvas.reset();
 						
 						log.info("Rendering tile...");
@@ -151,6 +162,10 @@ public class Dem2dGenerator extends BasicRenderEngine
 						outputCanvas.overlay(scaled.getImage(), (int)Math.floor(tileCol * modelDimensions.getTileOutputWidth()), (int)Math.floor(tileRow * modelDimensions.getTileOutputHeight()), scaled.getWidth(), scaled.getHeight());
 						
 						log.info("Completed tile.");
+						
+						if (tiledPrecaching) {
+							dataSubset.unloadData();
+						}
 						
 						//tileCanvas.save("output-" + tileRow + "-" + tileCol + ".png");
 						//scaled.save("scaled-" + tileRow + "-" + tileCol + ".png");

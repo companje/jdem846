@@ -123,6 +123,9 @@ public class LightingPreviewPanel extends Panel
 			tmpTempGridFloatHeader.renameTo(tmpGridFloatHeader);
 			
 			GridFloat previewData = new GridFloat(tmpGridFloatData.getAbsolutePath());
+			if (!previewData.setDataPrecached(true)) {
+				log.warn("Lighting preview data cannot be precached. Performance will be affected.");
+			}
 			
 			modelOptions.setBackgroundColor(I18N.get("us.wthr.jdem846.color.transparent"));
 			modelOptions.setWidth(previewData.getHeader().getColumns());
