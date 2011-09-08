@@ -23,6 +23,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -130,19 +131,22 @@ public class Dem3dGenerator extends BasicRenderEngine
 		Graphics2D g2d = (Graphics2D) image.getGraphics();
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		g2d.setColor(getDefinedColor(modelOptions.getBackgroundColor()));
+		Color backgroundColor = getDefinedColor(modelOptions.getBackgroundColor());
+		
+		g2d.setColor(new Color(0, 0, 0, 0));//getDefinedColor(modelOptions.getBackgroundColor()));
 		g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 		//DemCanvas canvas3d = new DemCanvas(dataPaka)
 		
-		int[] xPoints = new int[4];
-		int[] yPoints = new int[4];
-		//Path2D.Double path = new Path2D.Double();
+		//int[] xPoints = new int[4];
+		//int[] yPoints = new int[4];
+		Path2D.Double path = new Path2D.Double();
 		
-		for (int row = 0; row < dataPackage.getRows(); row++) {
-			for (int column = 0; column < dataPackage.getColumns(); column++) {
+		log.info("Projecting image onto 3D model");
+		for (int row = 0; row < dataPackage.getRows() - 1; row++) {
+			for (int column = 0; column < dataPackage.getColumns() - 1; column++) {
 				getPoint(row, column, 1, point);
 				
-				if (point.getCondition() == DemConstants.STAT_SUCCESSFUL) {
+				//if (point.getCondition() == DemConstants.STAT_SUCCESSFUL) {
 					double x = (dataPackage.getColumns() - column) + startX;
 					double z = row + startZ;
 					
@@ -205,7 +209,7 @@ public class Dem3dGenerator extends BasicRenderEngine
 					
 					g2d.setColor(new Color(canvas2d.getColor(column, row)));
 					
-					
+					/*
 					xPoints[0] = (int) Math.floor(vectorBackLeft[0]);
 					xPoints[1] = (int) Math.floor(vectorFrontLeft[0]);
 					xPoints[2] = (int) Math.ceil(vectorFrontRight[0]);
@@ -226,11 +230,12 @@ public class Dem3dGenerator extends BasicRenderEngine
 						yPoints[1] += 1;
 					if (yPoints[3] >= yPoints[2])
 						yPoints[2] += 1;
+					*/
 					
-					g2d.fillPolygon(xPoints, yPoints, 4);
+					//g2d.fillPolygon(xPoints, yPoints, 4);
 					
 					
-					/*
+					
 					path.reset();
 					path.moveTo(vectorBackLeft[0], vectorBackLeft[1]);
 					path.lineTo(vectorFrontLeft[0], vectorFrontLeft[1]);
@@ -238,7 +243,6 @@ public class Dem3dGenerator extends BasicRenderEngine
 					path.lineTo(vectorBackRight[0], vectorBackRight[1]);
 					path.closePath();
 					g2d.fill(path);
-					*/
 					
 					
 					
@@ -246,14 +250,64 @@ public class Dem3dGenerator extends BasicRenderEngine
 					
 					
 					
-				}
+					
+				//}
 				
+				if (isCancelled()) {
+					log.warn("Render process cancelled, model not complete.");
+					break;
+				}
+			}
+			
+			if (isCancelled()) {
+				log.warn("Render process cancelled, model not complete.");
+				break;
 			}
 			//log.info("Rendered row #" + row);
 		}
 		
+
+		if (!isCancelled()) {
+			log.info("Finalizing image");
+			
+			WritableRaster raster = image.getRaster();
+			int[] rasterPixel = new int[4];
+			
+			for (int row = 0; row < raster.getHeight(); row++) {
+				for (int column = 0; column < raster.getWidth(); column++) {
+					raster.getPixel(column, row, rasterPixel);
+					
+					if (rasterPixel[0] == 0 && rasterPixel[1] == 0 && rasterPixel[2] == 0 && rasterPixel[3] == 0) {
+						// Apply background color
+						
+						rasterPixel[0] = backgroundColor.getRed();
+						rasterPixel[1] = backgroundColor.getGreen();
+						rasterPixel[2] = backgroundColor.getBlue();
+						rasterPixel[3] = backgroundColor.getAlpha();
+						
+						raster.setPixel(column, row, rasterPixel);
+					} else {
+						// Remove alpha channel
+						
+						rasterPixel[3] = 255;
+						raster.setPixel(column, row, rasterPixel);
+					}
+				}
+				
+			}
+		}
+		
+		
+		
+		
+		
 		DemCanvas canvas3d = new DemCanvas(image);
-		canvas3d = autoCrop(canvas3d);
+		
+		if (!isCancelled()) {
+			log.info("Cropping image");
+			canvas3d = autoCrop(canvas3d);
+		}
+
 		return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas3d);
 	}
 	
@@ -406,6 +460,8 @@ public class Dem3dGenerator extends BasicRenderEngine
 		//vector[0] = bX;
 		///vector[1] = bY;
 	}
+
+
 	
 	
 

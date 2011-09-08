@@ -251,9 +251,11 @@ public class OutputImageViewPanel extends JdemPanel
 				synchronized(imageDisplay) {
 					imageDisplay.setImage(demCanvas.getImage());
 				}
-				synchronized(canvas) {
-					canvas = demCanvas;
-				}
+				//if (demCanvas != null) {
+				//	synchronized(canvas) {
+						canvas = demCanvas;
+				//	}
+				//}
 				log.info("Completed render task in " + elapsed + " seconds");
 
 			}

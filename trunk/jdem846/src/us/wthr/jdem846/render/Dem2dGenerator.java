@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -51,6 +52,7 @@ import us.wthr.jdem846.shapefile.ShapeLayer;
 import us.wthr.jdem846.shapefile.ShapePath;
 import us.wthr.jdem846.shapefile.modeling.FeatureTypeStroke;
 import us.wthr.jdem846.shapefile.modeling.LineStroke;
+import us.wthr.jdem846.util.ImageIcons;
 
 @DemEngine(name="us.wthr.jdem846.render.demEngine2D.name", identifier="dem2d-gen")
 public class Dem2dGenerator extends BasicRenderEngine
@@ -110,7 +112,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		DemCanvas tileCanvas = new DemCanvas(background, (int)modelDimensions.getTileSize(), (int)modelDimensions.getTileSize());
 		DemCanvas outputCanvas = new DemCanvas(background, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
 		
-		
+		//applyTiledBackground(outputCanvas, "/background-tiles/water_3.png");
 		
 		int tileRow = 0;
 		int tileCol = 0;
@@ -398,7 +400,39 @@ public class Dem2dGenerator extends BasicRenderEngine
 		return canvas;
 	}
 	
-
+	public void applyTiledBackground(DemCanvas canvas, String path) throws RenderEngineException
+	{
+		try {
+			Image tiledImage = ImageIcons.loadImage(path);
+			applyTiledBackground(canvas, tiledImage);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			throw new RenderEngineException("Failed to load tiled image @ " + path, ex);
+		}
+	}
+	
+	public void applyTiledBackground(DemCanvas canvas, Image tiledImage) throws RenderEngineException
+	{
+		log.info("Applying tile background image");
+		
+		int tileWidth = tiledImage.getWidth(this);
+		int tileHeight = tiledImage.getHeight(this);
+		
+		Image demImage = canvas.getImage();
+		Graphics2D g2d = (Graphics2D) demImage.getGraphics();
+		
+		int demWidth = demImage.getWidth(this);
+		int demHeight = demImage.getHeight(this);
+		
+		for (int x = 0; x < demWidth; x += tileWidth) {
+			for (int y = 0; y < demHeight; y += tileHeight) {
+				g2d.drawImage(tiledImage, x, y, this);
+			}
+		}
+		
+		g2d.dispose();
+		
+	}
 
 	
 	public void applyShapefileLayers(DemCanvas canvas) throws RenderEngineException

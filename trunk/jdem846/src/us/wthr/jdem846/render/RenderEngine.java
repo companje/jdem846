@@ -16,6 +16,8 @@
 
 package us.wthr.jdem846.render;
 
+import java.awt.Image;
+import java.awt.image.ImageObserver;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,7 +31,7 @@ import us.wthr.jdem846.input.ElevationDataLoaderRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
-public abstract class RenderEngine 
+public abstract class RenderEngine  implements ImageObserver
 {
 	private static Log log = Logging.getLog(RenderEngine.class);
 	
@@ -146,4 +148,11 @@ public abstract class RenderEngine
 		return cancel;
 	}
 	
+	
+	@Override
+	public boolean imageUpdate(Image img, int infoflags, int x, int y,
+			int width, int height) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }
