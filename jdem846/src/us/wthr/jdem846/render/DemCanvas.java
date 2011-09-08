@@ -25,6 +25,7 @@ import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 
@@ -53,7 +54,7 @@ public class DemCanvas implements ImageObserver
 		this.height = height;
 		this.background = background;
 		
-		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		graphics = (Graphics2D) image.createGraphics();
 		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		graphics.setColor(background);
@@ -66,7 +67,7 @@ public class DemCanvas implements ImageObserver
 		height = rawImage.getHeight(this);
 
 
-		image = new BufferedImage(rawImage.getWidth(this), rawImage.getHeight(this), BufferedImage.TYPE_INT_RGB);
+		image = new BufferedImage(rawImage.getWidth(this), rawImage.getHeight(this), BufferedImage.TYPE_INT_ARGB);
 		graphics = (Graphics2D) image.createGraphics();
 		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		overlay(rawImage, 0, 0);
@@ -90,15 +91,17 @@ public class DemCanvas implements ImageObserver
 	
 	public void setColor(int x, int y, int r, int g, int b)
 	{
-		int rgb = (0x0 << 24) |
+		int rgb = (0xFF << 24) |
 			((r & 0xff) << 16) |
 			((g & 0xff) << 8) |
 			(b & 0xff);
+		
 		//int abgr = (0xFF << 24) |
 		//((b & 0xFF) << 16) |
 		//((g & 0xFF) << 8) |
 		//(r & 0xFF);
 		try {
+			//WritableRaster raster = image.getRaster();
 			image.setRGB(x, y, rgb);
 		} catch (Exception ex) {
 			log.error("Failed to set color to x/y coordinate: " + x + "/" + y + ": " + ex.getMessage(), ex);
@@ -166,8 +169,16 @@ public class DemCanvas implements ImageObserver
 	
 	public void reset()
 	{
-		graphics.setColor(background);
-		graphics.fillRect(0, 0, getWidth(), getHeight());
+		WritableRaster raster = image.getRaster();
+		int[] rasterPixel = {0, 0, 0, 0};
+		for (int x = 0; x < getWidth(); x++) {
+			for (int y = 0; y < getHeight(); y++) {
+				raster.setPixel(x, y, rasterPixel);
+			}
+		}
+		
+		//graphics.setColor(background);
+		//graphics.fillRect(0, 0, getWidth(), getHeight());
 	}
 	
 	@Override

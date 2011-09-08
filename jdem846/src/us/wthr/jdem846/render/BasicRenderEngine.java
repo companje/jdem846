@@ -1,6 +1,7 @@
 package us.wthr.jdem846.render;
 
 import java.awt.Color;
+import java.awt.image.ImageObserver;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;

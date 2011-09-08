@@ -82,8 +82,8 @@ public class TopButtonBar extends ToolBar
 		}
 		
 		jbtnNewProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectTooltip"));
-		jbtnOpenProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectTooltip"));
-		jbtnSaveProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectTooltip"));
+		jbtnOpenProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectTooltip"));
+		jbtnSaveProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectTooltip"));
 		jbtnExit.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.exitTooltip"));
 		
 		this.setMargin(new Insets(3, 3, 3, 3));
