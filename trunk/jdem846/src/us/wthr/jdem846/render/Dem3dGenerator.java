@@ -205,7 +205,11 @@ public class Dem3dGenerator extends BasicRenderEngine
 					vectorFrontLeft[1] -= startZ;
 					vectorFrontRight[1] -= startZ;
 					
+					//pointOrder(double[] ... vectors)
 					
+					if (!isFacingCamera(vectorBackLeft, vectorFrontLeft, vectorFrontRight, vectorBackRight)) {
+						continue;
+					}
 					
 					g2d.setColor(new Color(canvas2d.getColor(column, row)));
 					
@@ -399,6 +403,16 @@ public class Dem3dGenerator extends BasicRenderEngine
 		log.info("Auto Crop Top Y: " + top + ", buttom Y: " + bottom);
 		
 		return new DemCanvas(cropped);
+	}
+	
+	public boolean isFacingCamera(double[] bl, double[] fl, double[] fr, double[] br)
+	{
+		
+		if (bl[1] >= fl[1] || br[1] >= fr[1]) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	public int pointOrder(double[] ... vectors)
