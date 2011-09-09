@@ -112,7 +112,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		DemCanvas tileCanvas = new DemCanvas(background, (int)modelDimensions.getTileSize(), (int)modelDimensions.getTileSize());
 		DemCanvas outputCanvas = new DemCanvas(background, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
 		
-		//applyTiledBackground(outputCanvas, "/background-tiles/water_3.png");
+		applyTiledBackground(outputCanvas, "/background-tiles/water_3.png");
 		
 		int tileRow = 0;
 		int tileCol = 0;
