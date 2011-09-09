@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.render;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -129,7 +130,14 @@ public class Dem3dGenerator extends BasicRenderEngine
 		
 		BufferedImage image = new BufferedImage((int)dataPackage.getColumns(), (int) dataPackage.getRows(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = (Graphics2D) image.getGraphics();
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		//g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		//g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		//g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP));
+		//BufferedImage lineBuffer = new BufferedImage((int)dataPackage.getColumns(), (int) dataPackage.getRows(), BufferedImage.TYPE_INT_ARGB);
+		//Graphics2D g2dLineBuffer = (Graphics2D) image.getGraphics();
+		//g2dLineBuffer.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		
 		Color backgroundColor = getDefinedColor(modelOptions.getBackgroundColor());
 		
@@ -137,12 +145,15 @@ public class Dem3dGenerator extends BasicRenderEngine
 		g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 		//DemCanvas canvas3d = new DemCanvas(dataPaka)
 		
-		//int[] xPoints = new int[4];
-		//int[] yPoints = new int[4];
+		int[] xPoints = new int[4];
+		int[] yPoints = new int[4];
 		Path2D.Double path = new Path2D.Double();
 		
 		log.info("Projecting image onto 3D model");
 		for (int row = 0; row < dataPackage.getRows() - 1; row++) {
+	//	for (int row = (int)dataPackage.getRows() - 2; row >= 0; row--) {
+			//resetImage(lineBuffer);
+			
 			for (int column = 0; column < dataPackage.getColumns() - 1; column++) {
 				getPoint(row, column, 1, point);
 				
@@ -207,13 +218,13 @@ public class Dem3dGenerator extends BasicRenderEngine
 					
 					//pointOrder(double[] ... vectors)
 					
-					if (!isFacingCamera(vectorBackLeft, vectorFrontLeft, vectorFrontRight, vectorBackRight)) {
-						continue;
-					}
+					//if (!isFacingCamera(vectorBackLeft, vectorFrontLeft, vectorFrontRight, vectorBackRight)) {
+					//	continue;
+					//}
 					
 					g2d.setColor(new Color(canvas2d.getColor(column, row)));
 					
-					/*
+					
 					xPoints[0] = (int) Math.floor(vectorBackLeft[0]);
 					xPoints[1] = (int) Math.floor(vectorFrontLeft[0]);
 					xPoints[2] = (int) Math.ceil(vectorFrontRight[0]);
@@ -234,24 +245,34 @@ public class Dem3dGenerator extends BasicRenderEngine
 						yPoints[1] += 1;
 					if (yPoints[3] >= yPoints[2])
 						yPoints[2] += 1;
-					*/
+					
 					
 					//g2d.fillPolygon(xPoints, yPoints, 4);
 					
+					/*
 					
+					*/
 					
 					path.reset();
+					/*
 					path.moveTo(vectorBackLeft[0], vectorBackLeft[1]);
 					path.lineTo(vectorFrontLeft[0], vectorFrontLeft[1]);
 					path.lineTo(vectorFrontRight[0], vectorFrontRight[1]);
 					path.lineTo(vectorBackRight[0], vectorBackRight[1]);
+					*/
+					
+					path.moveTo(xPoints[0], yPoints[0]);
+					path.lineTo(xPoints[1], yPoints[1]);
+					path.lineTo(xPoints[2], yPoints[2]);
+					path.lineTo(xPoints[3], yPoints[3]);
+					
 					path.closePath();
 					g2d.fill(path);
 					
 					
+					//removeAlphaChannel(lineBuffer);
 					
-					
-					
+					//g2d.drawImage(lineBuffer, 0, 0, this);
 					
 					
 					
@@ -272,8 +293,11 @@ public class Dem3dGenerator extends BasicRenderEngine
 		
 
 		if (!isCancelled()) {
-			log.info("Finalizing image");
 			
+			log.info("Removing alpha channel");
+			removeAlphaChannel(image);
+			
+			log.info("Finalizing image");
 			WritableRaster raster = image.getRaster();
 			int[] rasterPixel = new int[4];
 			
@@ -290,12 +314,7 @@ public class Dem3dGenerator extends BasicRenderEngine
 						rasterPixel[3] = backgroundColor.getAlpha();
 						
 						raster.setPixel(column, row, rasterPixel);
-					} else {
-						// Remove alpha channel
-						
-						rasterPixel[3] = 255;
-						raster.setPixel(column, row, rasterPixel);
-					}
+					} 
 				}
 				
 			}
@@ -314,6 +333,39 @@ public class Dem3dGenerator extends BasicRenderEngine
 
 		return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas3d);
 	}
+	
+	public void resetImage(BufferedImage image)
+	{
+		WritableRaster raster = image.getRaster();
+		int[] rasterPixel = {0, 0, 0, 0};
+		
+		for (int row = 0; row < raster.getHeight(); row++) {
+			for (int column = 0; column < raster.getWidth(); column++) {
+				raster.setPixel(column, row, rasterPixel);
+			}
+		}
+	}
+	
+	public void removeAlphaChannel(BufferedImage image)
+	{
+		WritableRaster raster = image.getRaster();
+		int[] rasterPixel = new int[4];
+		
+		for (int row = 0; row < raster.getHeight(); row++) {
+			for (int column = 0; column < raster.getWidth(); column++) {
+				raster.getPixel(column, row, rasterPixel);
+				
+				if (!(rasterPixel[0] == 0 && rasterPixel[1] == 0 && rasterPixel[2] == 0 && rasterPixel[3] == 0)) {
+					// Remove alpha channel
+					
+					rasterPixel[3] = 255;
+					raster.setPixel(column, row, rasterPixel);
+				}
+			}
+			
+		}
+	}
+	
 	
 	public DemCanvas autoCrop(DemCanvas original)
 	{
