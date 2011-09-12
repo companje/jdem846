@@ -51,6 +51,8 @@ public class ModelOptions
 	public static final String OPTION_PROJECTION_SHIFT_Y = "us.wthr.jdem846.modelOptions.projection.shiftY";
 	public static final String OPTION_PROJECTION_SHIFT_Z = "us.wthr.jdem846.modelOptions.projection.shiftZ";
 	
+	public static final String OPTION_PRECACHE_STRATEGY = "us.wthr.jdem846.modelOptions.precacheStrategy";
+	public static final String OPTION_ANTIALIASED = "us.wthr.jdem846.modelOptions.antialiased";
 	
 	private String engine = "dem2d-gen";
 	private boolean hillShading = true;
@@ -78,7 +80,8 @@ public class ModelOptions
 	private Projection projection = new Projection();
 	private String writeTo = null;
 	
-	
+	private String precacheStrategy;
+	private boolean antialiased;
 	
 	public ModelOptions()
 	{
@@ -168,6 +171,18 @@ public class ModelOptions
 			setSpotExponent(Integer.parseInt(property));
 		}
 		
+		property = JDem846Properties.getProperty(OPTION_PRECACHE_STRATEGY);
+		if (property != null) {
+			setPrecacheStrategy(property);
+		}
+
+		property = JDem846Properties.getProperty(OPTION_ANTIALIASED);
+		if (property != null) {
+			setAntialiased(Boolean.parseBoolean(property));
+		}
+		
+		
+		
 		property = JDem846Properties.getProperty(OPTION_PROJECTION_ROTATE_X);
 		if (property != null) {
 			projection.setRotateX(Double.parseDouble(property));
@@ -199,6 +214,9 @@ public class ModelOptions
 			projection.setShiftZ(Double.parseDouble(property));
 		}
 		
+		
+		
+		
 	}
 
 	
@@ -223,6 +241,9 @@ public class ModelOptions
 		projectModel.setOption(OPTION_TILE_SIZE, this.getTileSize());
 		projectModel.setOption(OPTION_LIGHTING_MULTIPLE, this.getLightingMultiple());
 		projectModel.setOption(OPTION_SPOT_EXPONENT, this.getSpotExponent());
+		
+		projectModel.setOption(OPTION_PRECACHE_STRATEGY, this.getPrecacheStrategy());
+		projectModel.setOption(OPTION_ANTIALIASED, this.isAntialiased());
 		
 		projectModel.setOption(OPTION_PROJECTION_ROTATE_X, projection.getRotateX());
 		projectModel.setOption(OPTION_PROJECTION_ROTATE_Y, projection.getRotateY());
@@ -255,7 +276,9 @@ public class ModelOptions
 		this.setTileSize(projectModel.getIntegerOption(OPTION_TILE_SIZE));
 		this.setLightingMultiple(projectModel.getDoubleOption(OPTION_LIGHTING_MULTIPLE));
 		this.setSpotExponent(projectModel.getIntegerOption(OPTION_SPOT_EXPONENT));
-	
+		this.setPrecacheStrategy(projectModel.getOption(OPTION_PRECACHE_STRATEGY));
+		this.setAntialiased(projectModel.getBooleanOption(OPTION_ANTIALIASED));
+		
 		this.projection.setRotateX(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_X));
 		this.projection.setRotateY(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_Y));
 		this.projection.setRotateZ(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_Z));
@@ -450,6 +473,28 @@ public class ModelOptions
 	}
 
 
+	public String getPrecacheStrategy() 
+	{
+		return precacheStrategy;
+	}
+
+
+	public void setPrecacheStrategy(String precacheStrategy) 
+	{
+		this.precacheStrategy = precacheStrategy;
+	}
+
+
+	public boolean isAntialiased() 
+	{
+		return antialiased;
+	}
+
+
+	public void setAntialiased(boolean antialiased) 
+	{
+		this.antialiased = antialiased;
+	}
 
 
 	public String getWriteTo()
@@ -498,6 +543,9 @@ public class ModelOptions
 		clone.lightingElevation = this.lightingElevation;
 		clone.spotExponent = this.spotExponent;
 		clone.gradientLevels = this.gradientLevels;
+		clone.antialiased = this.antialiased;
+		clone.precacheStrategy = this.precacheStrategy.toString();
+		
 		clone.writeTo = this.writeTo;
 		if (projection != null) {
 			clone.projection = this.projection.copy();

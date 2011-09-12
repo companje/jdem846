@@ -34,12 +34,15 @@ import javax.swing.event.ChangeListener;
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.GradientLevelsControl.GradientChangedListener;
 import us.wthr.jdem846.ui.base.Button;
 
 @SuppressWarnings("serial")
 public class GradientConfigPanel extends TitledRoundedPanel
 {
+	private static Log log = Logging.getLog(GradientConfigPanel.class);
 	
 	private GradientSamplePanel samplePanel;
 	private GradientLevelsControl levelsControl;
@@ -117,7 +120,11 @@ public class GradientConfigPanel extends TitledRoundedPanel
 	protected void onReset()
 	{
 		if (coloringInstance != null) {
-			coloringInstance.getImpl().reset();
+			try {
+				coloringInstance.getImpl().reset();
+			} catch (Exception ex) {
+				log.warn("Failed to reset coloring instance: " + ex.getMessage(), ex);
+			}
 			repaint();
 			fireChangeListeners(null);
 		}

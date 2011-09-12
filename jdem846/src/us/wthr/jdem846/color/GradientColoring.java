@@ -16,17 +16,26 @@
 
 package us.wthr.jdem846.color;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
+
+import us.wthr.jdem846.exception.GradientLoadException;
 
 public class GradientColoring implements ModelColoring
 {
-	
+
+	private String name;
+	private String identifier;
+	private boolean needsMinMaxElevation;
+	private String units;
+
 	private static DemColor defaultColor = new DemColor(0, 0, 0, 0xFF);
 	private GradientLoader gradient;
 	private String configFile = null;
 	private GradientColorStop[] colorStops = null;
 	                                       
-	public GradientColoring(String configFile)
+	public GradientColoring(String configFile) throws GradientLoadException
 	{
 		this.configFile = configFile;
 		reset();
@@ -34,12 +43,20 @@ public class GradientColoring implements ModelColoring
 	
 
 	@Override
-	public void reset()
+	public void reset() throws GradientLoadException
 	{
-		//gradient = new GradientLoader("hypsometric.gradient");
+		//URL url = this.getClass().getResource(configFile);
+		try {
+			gradient = GradientLoader.loadGradient(new File(configFile));
+		} catch (Exception ex) {
+			throw new GradientLoadException(configFile, "Invalid gradient file location: " + ex.getMessage(), ex);
+		}
+		this.name = gradient.getName();
+		this.identifier = gradient.getIdentifier();
+		this.needsMinMaxElevation = gradient.needsMinMaxElevation();
+		this.units = gradient.getUnits();
 		
-		URL url = this.getClass().getResource(configFile);
-		gradient = new GradientLoader(url);
+		
 		colorStops = new GradientColorStop[gradient.getColorStops().size()];
 		gradient.getColorStops().toArray(colorStops);
 	}
@@ -50,6 +67,32 @@ public class GradientColoring implements ModelColoring
 		return gradient;
 	}
 	
+	
+	
+	public String getName()
+	{
+		return name;
+	}
+
+
+	public String getIdentifier()
+	{
+		return identifier;
+	}
+
+
+	public boolean needsMinMaxElevation()
+	{
+		return needsMinMaxElevation;
+	}
+
+
+	public String getUnits()
+	{
+		return units;
+	}
+
+
 	@Override
 	public void getColor(double ratio, int[] color) 
 	{

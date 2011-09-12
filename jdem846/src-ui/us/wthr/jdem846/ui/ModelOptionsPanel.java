@@ -82,6 +82,13 @@ public class ModelOptionsPanel extends Panel
 	private ColoringListModel coloringModel;
 	private HillShadingOptionsListModel hillShadingModel;
 	
+	private ComboBox cmbAntialiasing;
+	private AntialiasingOptionsListModel antialiasingModel;
+	
+	private ComboBox cmbPrecacheStrategy;
+	private PrecacheStrategyOptionsListModel precacheStrategyModel;
+	
+	
 	private ProjectionConfigPanel projectionConfigPanel;
 	private GradientConfigPanel gradientConfigPanel;
 	private LightPositionConfigPanel lightPositionConfigPanel;
@@ -123,6 +130,14 @@ public class ModelOptionsPanel extends Panel
 		hillShadingModel = new HillShadingOptionsListModel();
 		cmbHillshading = new ComboBox(hillShadingModel);
 
+		antialiasingModel = new AntialiasingOptionsListModel();
+		cmbAntialiasing = new ComboBox(antialiasingModel);
+
+		precacheStrategyModel = new PrecacheStrategyOptionsListModel();
+		cmbPrecacheStrategy = new ComboBox(precacheStrategyModel);
+
+		
+		
 		jsldLightMultiple = new MonitoredSlider(0, 100, 50, new MonitoredValueListener() {
 			NumberFormat format = NumberFormat.getInstance();
 			public String getValueString()
@@ -173,6 +188,8 @@ public class ModelOptionsPanel extends Panel
 		jsldLightMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.tooltip"));
 		jsldSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
 		jsldElevationMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.tooltip"));
+		cmbAntialiasing.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.antialiasingCombo.tooltip"));
+		cmbPrecacheStrategy.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.tooltip"));
 		
 		
 		
@@ -266,6 +283,13 @@ public class ModelOptionsPanel extends Panel
 		controlGrid.add(cmbColoring);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.label") + ":"));
 		controlGrid.add(cmbHillshading);
+		
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.antialiasingCombo.label") + ":"));
+		controlGrid.add(cmbAntialiasing);
+		
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.label") + ":"));
+		controlGrid.add(cmbPrecacheStrategy);
+		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.label") + ":"));
 		controlGrid.add(jsldLightMultiple);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.label") + ":"));
@@ -331,6 +355,9 @@ public class ModelOptionsPanel extends Panel
 		coloringModel.setSelectedItemByValue(modelOptions.getColoringType());
 		hillShadingModel.setSelectedItemByValue(modelOptions.getHillShadeType());
 		
+		antialiasingModel.setSelectedItemByValue(modelOptions.isAntialiased());
+		precacheStrategyModel.setSelectedItemByValue(modelOptions.getPrecacheStrategy());
+		
 		txtTileSize.setText(""+modelOptions.getTileSize());
 		jsldLightMultiple.setValue((int)Math.round(modelOptions.getLightingMultiple() * 100));
 		jsldSpotExponent.setValue(modelOptions.getSpotExponent());
@@ -365,6 +392,12 @@ public class ModelOptionsPanel extends Panel
 		modelOptions.setTileSize(txtTileSize.getInteger());
 		modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
 		
+		modelOptions.setAntialiased(antialiasingModel.getSelectedItemValue());
+		modelOptions.setPrecacheStrategy(precacheStrategyModel.getSelectedItemValue());
+		
+		
+		
+		
 		modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
 		modelOptions.setLightingElevation(lightPositionConfigPanel.getSolarElevation());
 		
@@ -373,6 +406,8 @@ public class ModelOptionsPanel extends Panel
 		//	spotExp = 1;
 		
 		modelOptions.setSpotExponent(jsldSpotExponent.getValue());
+		
+		
 		
 		modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
 		modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
@@ -391,6 +426,8 @@ public class ModelOptionsPanel extends Panel
 		cmbBackgroundColor.setEnabled(engineInstance.usesBackgroundColor());
 		cmbColoring.setEnabled(engineInstance.usesColoring());
 		cmbHillshading.setEnabled(engineInstance.usesHillshading());
+		cmbAntialiasing.setEnabled(engineInstance.usesAntialiasing());
+		cmbPrecacheStrategy.setEnabled(engineInstance.usesPrecacheStrategy());
 		jsldLightMultiple.setEnabled(engineInstance.usesLightMultiple());
 		jsldSpotExponent.setEnabled(engineInstance.usesSpotExponent());
 		txtTileSize.setEnabled(engineInstance.usesTileSize());
@@ -470,6 +507,30 @@ public class ModelOptionsPanel extends Panel
 			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillShadeOptions.none"), DemConstants.HILLSHADING_NONE);
 		}
 	}
+	
+	class AntialiasingOptionsListModel extends JComboBoxModel<Boolean>
+	{
+		
+		public AntialiasingOptionsListModel()
+		{
+			addItem(I18N.get("us.wthr.jdem846.ui.yes"), true);
+			addItem(I18N.get("us.wthr.jdem846.ui.no"), false);
+		}
+		
+	}
+	
+	class PrecacheStrategyOptionsListModel extends JComboBoxModel<String>
+	{
+		
+		public PrecacheStrategyOptionsListModel()
+		{
+			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyOptions.tiled"), DemConstants.PRECACHE_STRATEGY_TILED);
+			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyOptions.default"), DemConstants.PRECACHE_STRATEGY_DEFAULT);
+			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyOptions.full"), DemConstants.PRECACHE_STRATEGY_FULL);
+			
+		}
+		
+	}	
 	
 	
 	

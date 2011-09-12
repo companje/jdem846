@@ -38,11 +38,15 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.GradientColorStop;
 import us.wthr.jdem846.color.GradientLoader;
 import us.wthr.jdem846.color.ModelColoring;
+import us.wthr.jdem846.exception.GradientLoadException;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
 public class GradientLevelsControl extends Panel
 {
+	private static Log log = Logging.getLog(GradientLevelsControl.class);
 	
 	private String gradientIdentifier = null;
 	private ColoringInstance coloringInstance = null;
@@ -298,7 +302,12 @@ public class GradientLevelsControl extends Panel
 		if (gradient == null) 
 			return;
 		
-		gradient.load(configString);
+	
+		try {
+			gradient.loadJSON(configString);
+		} catch (GradientLoadException ex) {
+			log.warn("Failed to load gradient config string: " + ex.getMessage(), ex);
+		}
 	}
 	
 	public String getConfigString()

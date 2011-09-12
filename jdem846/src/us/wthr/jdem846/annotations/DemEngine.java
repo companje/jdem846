@@ -118,6 +118,18 @@ public @interface DemEngine {
 	 */
 	boolean usesProjection() default false;
 	
+	/** Specifies whether the engine supports using antialiasing as part of it's rendering process.
+	 * 
+	 * @return
+	 */
+	boolean usesAntialiasing() default true;
+	
+	/** Specifies whether the engine supports using data precache strategies as part of it's rendering process.
+	 * 
+	 * @return
+	 */
+	boolean usesPrecacheStrategy() default true;
+	
 	/** Specifies which output file type is required to be asked of the user before running. 
 	 * 
 	 * @return

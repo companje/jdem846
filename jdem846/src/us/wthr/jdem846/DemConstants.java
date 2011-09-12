@@ -73,5 +73,7 @@ public class DemConstants {
 	public static final int PIXELTYPE_SIGNED_INT      = 3000;
 	public static final int PIXELTYPE_UNSIGNED_INT    = 3001;
 	
-	
+	public static final String PRECACHE_STRATEGY_DEFAULT = "default";
+	public static final String PRECACHE_STRATEGY_TILED = "tiled";
+	public static final String PRECACHE_STRATEGY_FULL = "full";
 }

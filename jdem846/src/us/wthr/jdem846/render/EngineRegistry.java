@@ -67,6 +67,8 @@ public class EngineRegistry  implements AppRegistry
 		engineInstance.setUsesProjection(annotation.usesProjection());
 		engineInstance.setUsesElevationMultiple(annotation.usesElevationMultiple());
 		engineInstance.setUsesLightDirection(annotation.usesLightDirection());
+		engineInstance.setUsesAntialiasing(annotation.usesAntialiasing());
+		engineInstance.setUsesPrecacheStrategy(annotation.usesPrecacheStrategy());
 		
 		if (annotation.enabled()) {
 			EngineRegistry.engineMap.put(annotation.identifier(), engineInstance);

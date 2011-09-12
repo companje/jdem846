@@ -112,7 +112,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		DemCanvas tileCanvas = new DemCanvas(background, (int)modelDimensions.getTileSize(), (int)modelDimensions.getTileSize());
 		DemCanvas outputCanvas = new DemCanvas(background, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
 		
-		applyTiledBackground(outputCanvas, "/background-tiles/water_3.png");
+		//applyTiledBackground(outputCanvas, "/background-tiles/water_3.png");
 		
 		int tileRow = 0;
 		int tileCol = 0;
@@ -123,7 +123,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 	
 		log.info("Processing " + modelDimensions.getTileCount() + " tiles of size: " + tileSize);
 		
-		boolean tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.precacheStrategy").equalsIgnoreCase("tiled");
+
+		boolean tiledPrecaching = modelOptions.getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		if (tiledPrecaching) {
 			log.info("Data Precaching Strategy Set to TILED");
 		}

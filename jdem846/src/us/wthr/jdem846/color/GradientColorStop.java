@@ -18,9 +18,32 @@ package us.wthr.jdem846.color;
 
 public class GradientColorStop 
 {
-	private float position;
+	private double position;
 	private DemColor color;
 	
+	public GradientColorStop(double position, double red, double green, double blue, double alpha)
+	{
+		if (red > 1.0) {
+    		red = red / 255;
+    	}
+    	
+    	if (green > 1.0) {
+    		green = green / 255;
+    	}
+    	
+    	if (blue > 1.0) {
+    		blue = blue / 255;
+    	}
+    	
+    	if (alpha > 1.0) {
+    		alpha = alpha / 255;
+    	}
+    	
+    	this.position = position;
+    	color = new DemColor(red, green, blue, alpha);
+	}
+	
+	/*
 	//1.000000, 1.000000, 1.000000, 1.000000
 	public GradientColorStop(String source_line)
 	{
@@ -48,6 +71,8 @@ public class GradientColorStop
 		position = _pos;
 		color = new DemColor(_red, _green, _blue, _alpha);
 	}
+	*/
+	
 	
 	public String toString()
 	{
@@ -59,12 +84,12 @@ public class GradientColorStop
 		return s;
 	}
 	
-	public void setPosition(float position)
+	public void setPosition(double position)
 	{
 		this.position = position;
 	}
 	
-	public float getPosition()
+	public double getPosition()
 	{
 		return position;
 	}

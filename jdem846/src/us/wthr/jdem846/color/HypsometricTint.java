@@ -18,14 +18,15 @@ package us.wthr.jdem846.color;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.annotations.DemColoring;
+import us.wthr.jdem846.exception.GradientLoadException;
 
 
-@DemColoring(name="us.wthr.jdem846.color.hypsometricTint.name", identifier="hypsometric-tint", needsMinMaxElevation=true)
+//@DemColoring(name="us.wthr.jdem846.color.hypsometricTint.name", identifier="hypsometric-tint", needsMinMaxElevation=true)
 public class HypsometricTint extends GradientColoring
 {
 
 	
-	public HypsometricTint()
+	public HypsometricTint() throws GradientLoadException
 	{
 		super(JDem846Properties.getProperty("us.wthr.jdem846.color") + "/hypsometric.gradient");
 	}

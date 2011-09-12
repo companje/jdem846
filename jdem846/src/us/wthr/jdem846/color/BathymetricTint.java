@@ -18,13 +18,14 @@ package us.wthr.jdem846.color;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.annotations.DemColoring;
+import us.wthr.jdem846.exception.GradientLoadException;
 
-@DemColoring(name="us.wthr.jdem846.color.bathymetricTint.name", identifier="bathymetric-tint", needsMinMaxElevation=true)
+//@DemColoring(name="us.wthr.jdem846.color.bathymetricTint.name", identifier="bathymetric-tint", needsMinMaxElevation=true)
 public class BathymetricTint extends GradientColoring
 {
 	
 	
-	public BathymetricTint()
+	public BathymetricTint() throws GradientLoadException
 	{
 		super(JDem846Properties.getProperty("us.wthr.jdem846.color") + "/bathymetric-2.gradient");
 	}

@@ -35,6 +35,11 @@ public class RegistryException extends Exception
 		this.clazzName = clazzName;
 	}
 	
+	public RegistryException(String message)
+	{
+		super(message);
+	}
+	
 	public RegistryException(String message, Exception ex)
 	{
 		super(message, ex);
