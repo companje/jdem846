@@ -18,6 +18,8 @@ package us.wthr.jdem846.color;
 
 
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -34,6 +36,8 @@ import us.wthr.jdem846.annotations.DemColoring;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.dbase.ClassLoadException;
+import us.wthr.jdem846.exception.GradientLoadException;
+import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -70,17 +74,93 @@ public class ColoringRegistry implements AppRegistry
 		
 	}
 	
+	protected static void addColoringInstance(File gradientFile) throws RegistryException
+	{
+		if (!gradientFile.exists()) {
+			throw new RegistryException(gradientFile.getAbsolutePath(), "Gradient file not found");
+		}
+		
+		if (!gradientFile.canRead()) {
+			throw new RegistryException(gradientFile.getAbsolutePath(), "Gradient file is unreadable");
+		}
+		
+		GradientColoring coloring = null;
+		
+		try {
+			coloring = new GradientColoring(gradientFile.getAbsolutePath());
+		} catch (GradientLoadException ex) {
+			throw new RegistryException(gradientFile.getAbsolutePath(), "Error when loading gradient file: " + ex.getMessage(), ex);
+		}
+		
+		try {
+			ColoringRegistry.instances.put(coloring.getIdentifier(), new ColoringInstance(coloring));
+		} catch (Exception ex) {
+			throw new RegistryException(gradientFile.getAbsolutePath(), "Error creating coloring instance: " + ex.getMessage(), ex);
+		}
+	}
+	
 	protected ColoringRegistry()
 	{
 		
 	}
 	
+	
 	@Initialize
 	public static void init()
 	{
+		try {
+			initByAnnotations();
+		} catch (Exception ex) {
+			log.warn("Error loading coloring drivers by annotations: " + ex.getMessage(), ex);
+		}
+		
+		try {
+			initByGradientFileSearch();
+		} catch (Exception ex) {
+			log.warn("Error loading coloring drivers by gradient file search: " + ex.getMessage(), ex);
+		}
+		
+	}
+	
+	public static void initByGradientFileSearch() throws RegistryException
+	{
+
+		log.info("Static initialization of ColoringRegistry by gradient file search");
+		String rootPath = JDem846Properties.getProperty("us.wthr.jdem846.gradients");
+		
+
+		File rootPathFile = new File(ColoringRegistry.class.getResource(rootPath).getPath());
+		log.info("Searching " + rootPathFile.getAbsolutePath() + " for gradient files");
+		
+		if (!rootPathFile.exists()) {
+			throw new RegistryException("Search path not found: " + rootPath);
+		}
+		
+		File[] gradientFiles = rootPathFile.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name)
+			{
+				if (name == null)
+					return false;
+				
+				if (name.toLowerCase().endsWith(".json")) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+		
+		for (File gradientFile : gradientFiles) {
+			addColoringInstance(gradientFile);
+		}
+		
+	}
+	
+	public static void initByAnnotations() throws RegistryException
+	{
 		//System.out.println("Static initialization of ColoringRegistry");
 		
-		log.info("Static initialization of ColoringRegistry");
+		log.info("Static initialization of ColoringRegistry by annotations");
 		
 		try {
 
@@ -106,9 +186,13 @@ public class ColoringRegistry implements AppRegistry
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			throw new RegistryException("Error loading coloring class: " + ex.getMessage(), ex);
 		}
 	}
+	
+	//
+	
+	
 	
 	public static ColoringInstance getInstance(String identifier)
 	{

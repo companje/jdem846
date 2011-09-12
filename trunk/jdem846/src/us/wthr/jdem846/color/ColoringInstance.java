@@ -29,7 +29,19 @@ public class ColoringInstance
 	private String identifier;
 	private boolean requiresMinMaxElevation;
 	private boolean allowGradientConfig;
+	
 	private ModelColoring coloringImpl = null;
+	
+	public ColoringInstance(GradientColoring gradientColoring) throws Exception
+	{
+		coloringImpl = gradientColoring;
+		this.clazzName = GradientColoring.class.getCanonicalName();
+		this.name = gradientColoring.getName();
+		this.identifier = gradientColoring.getIdentifier();
+		this.requiresMinMaxElevation = gradientColoring.needsMinMaxElevation();
+		allowGradientConfig = true;
+	}
+			
 	
 	public ColoringInstance(String clazzName, String name, String identifier, boolean allowGradientConfig, boolean requiresMinMaxElevation) throws ClassLoadException
 	{

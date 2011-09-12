@@ -17,14 +17,28 @@
 package us.wthr.jdem846.color;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.io.InputStream;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
+
+import org.apache.commons.io.IOUtils;
+
+import us.wthr.jdem846.exception.GradientLoadException;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -34,58 +48,130 @@ public class GradientLoader
 	
 	private List<GradientColorStop> colorStops = new LinkedList<GradientColorStop>();
 	
-	public GradientLoader(String configString)
+	private String name;
+	private String identifier;
+	private boolean needsMinMaxElevation;
+	private String units;
+	
+	protected GradientLoader(String configString) throws GradientLoadException
 	{
-		load(configString);
+		loadJSON(configString);
 	}
 	
-	public GradientLoader(URL url)
+	protected GradientLoader(File gradientFile) throws GradientLoadException
 	{
-		load(url);
-	}
-	
-	public GradientLoader()
-	{
-		load(this.getClass().getResource("hypsometric.gradient"));
+		load(gradientFile);
 	}
 	
 	
-	public void load(URL url)
+	public static GradientLoader loadGradient(String jsonTxt) throws GradientLoadException
+	{
+		return new GradientLoader(jsonTxt);
+	}
+	
+	public static GradientLoader loadGradient(File gradientFile) throws GradientLoadException
+	{
+		return new GradientLoader(gradientFile);
+	}
+	
+	public static GradientLoader loadDefaultGradient() throws GradientLoadException
 	{
 		try {
-			StringBuilder configString = new StringBuilder();
-			
-			BufferedInputStream bis = new BufferedInputStream(url.openStream());
-			byte[] buffer = new byte[128];
-			int len = 0;
-			
-			while ((len = bis.read(buffer)) > 0) {
-				String data = new String(buffer, 0, len);
-				configString.append(data);
-			}
-			
-			load(configString.toString());
-
-		} catch (FileNotFoundException ex) {
-			log.error("File Not Found error opening gradient file for reading: " + ex.getMessage(), ex);
-		} catch (IOException ex) {
-			log.error("IO error reading from gradient file: " + ex.getMessage(), ex);
+			File rootPathFile = new File(ColoringRegistry.class.getResource("/color/gradient/hypsometric.json").getPath());
+			GradientLoader gradient = new GradientLoader(rootPathFile);
+			return gradient;
+		} catch (Exception ex) {
+			throw new GradientLoadException("Failed to load default gradient: " + ex.getMessage(), ex);
 		}
 	}
 	
-	public void load(String configString)
+	public void load(File gradientFile) throws GradientLoadException
 	{
-		clear();
-		if (configString == null)
-			return;
+		log.info("Loading gradient from " + gradientFile.getAbsolutePath());
+
+		InputStream is = null;
+		String jsonTxt = null;
 		
-		String[] lines = configString.split("\n");
-		for (String line : lines) {
-			colorStops.add(new GradientColorStop(line));
+		if (gradientFile.exists()) {
+			try {
+				is = new BufferedInputStream(new FileInputStream(gradientFile));
+			} catch (FileNotFoundException ex) {
+				throw new GradientLoadException(gradientFile.getAbsolutePath(), "Failed to open gradient file @ '" + gradientFile.getAbsolutePath() + "': " + ex.getMessage(), ex);
+			}
 		}
 		
+		
+		try {
+			jsonTxt = IOUtils.toString( is );
+		} catch (Exception ex) {
+			throw new GradientLoadException(gradientFile.getAbsolutePath(), "Failed to read gradient file @ '" + gradientFile.getAbsolutePath() + "': " + ex.getMessage(), ex);
+		}
+		
+		
+		loadJSON(jsonTxt);
+
 	}
 	
+	public void loadJSON(String jsonTxt) throws GradientLoadException
+	{
+		JSONObject json = null;
+		
+		try {
+			json = (JSONObject) JSONSerializer.toJSON( jsonTxt );   
+		} catch (JSONException ex) {
+			log.warn("JSON parse error on: \n" + jsonTxt);
+			throw new GradientLoadException("Error parsing JSON text: " + ex.getMessage(), ex);
+		}
+        
+        name = json.getString("name");
+        if (name == null) {
+        	throw new GradientLoadException("Name cannot be null");
+        }
+        name = I18N.get(name, name);
+        
+        
+        identifier = json.getString("identifier");
+        if (identifier == null) {
+        	throw new GradientLoadException("Identifier cannot be null");
+        }
+        
+        if (!json.has("needsMinMaxElevation")) {
+        	throw new GradientLoadException("needsMinMaxElevation cannot be null");
+        }
+        needsMinMaxElevation = json.getBoolean("needsMinMaxElevation");
+        
+        units = json.getString("units");
+        if (units == null) {
+        	throw new GradientLoadException("Units cannot be null");
+        }
+        
+        JSONArray gradient = json.getJSONArray("gradient");
+        
+        for (int i = 0; i < gradient.size(); i++) {
+        	JSONObject gradientStop = gradient.getJSONObject(i);
+        	double stop = gradientStop.getDouble("stop");
+        	if (stop > 1.0 || stop < 0.0) {
+        		throw new GradientLoadException("Invalid color stop: " + stop);
+        	}
+        	
+        	double red = gradientStop.getDouble("red");
+        	double green = gradientStop.getDouble("green");
+        	double blue = gradientStop.getDouble("blue");
+        	
+        	double alpha = 1.0;
+        	if (gradientStop.has("alpha")) {
+        		alpha = gradientStop.getDouble("alpha");
+        	}
+        	
+        	
+        	GradientColorStop colorStop = new GradientColorStop(stop, red, green, blue, alpha);
+        	colorStops.add(colorStop);
+        	
+        }
+        
+        
+	}
+
 	public void clear()
 	{
 		colorStops.clear();
@@ -96,6 +182,28 @@ public class GradientLoader
 		return colorStops;
 	}
 	
+	
+	
+	public String getName()
+	{
+		return name;
+	}
+
+	public String getIdentifier()
+	{
+		return identifier;
+	}
+
+	public boolean needsMinMaxElevation()
+	{
+		return needsMinMaxElevation;
+	}
+
+	public String getUnits()
+	{
+		return units;
+	}
+
 	/*
 	 * 0.000000, 0.000000, 0.388235, 0.274510
 0.179381, 0.145098, 0.513725, 0.207843
@@ -108,6 +216,8 @@ public class GradientLoader
 	 */
 	public String getConfigString()
 	{
+		return null;
+		/*
 		StringWriter configStringWriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(configStringWriter);
 		
@@ -120,6 +230,6 @@ public class GradientLoader
 			
 		}
 		return configStringWriter.toString();
-
+		*/
 	}
 }

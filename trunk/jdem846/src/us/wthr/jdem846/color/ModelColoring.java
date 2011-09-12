@@ -18,7 +18,7 @@ package us.wthr.jdem846.color;
 
 public interface ModelColoring 
 {
-	public void reset();
+	public void reset() throws Exception;
 	public GradientLoader getGradientLoader();
 	public void getColor(double ratio, int[] color);
 	public void getGradientColor(float elevation, float min_elevation, float max_elevation, int[] color);

@@ -1,0 +1,50 @@
+{
+	name : 'us.wthr.jdem846.color.hypsometricTintNatural.name',
+	identifier : 'hypsometric-tint-natural',
+	needsMinMaxElevation : true,
+	units : 'percent',
+	gradient : [
+		{   
+			stop : 0.000000,
+			red : 187,
+			green : 170,
+			blue : 102
+		},
+		{   
+			stop : 0.077519,
+			red : 153,
+			green : 102,
+			blue : 51
+		},
+		{   
+			stop : 0.143411,
+			red : 89,
+			green : 120,
+			blue : 52
+		},
+		{   
+			stop : 0.317829,
+			red : 102,
+			green : 102,
+			blue : 51
+		},
+		{   
+			stop : 0.686046,
+			red : 68,
+			green : 68,
+			blue : 51
+		},
+		{   
+			stop : 1.000000,
+			red : 0.764706,
+			green : 0.764706,
+			blue : 0.764706
+		}
+	]
+}
+
+
+
+
+
+

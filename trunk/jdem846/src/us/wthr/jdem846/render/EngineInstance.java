@@ -42,6 +42,8 @@ public class EngineInstance {
 	private boolean usesLightDirection;
 	private boolean usesProjection;
 	private boolean generatesImage;
+	private boolean usesAntialiasing;
+	private boolean usesPrecacheStrategy;
 	
 	@SuppressWarnings("unchecked")
 	private Class needsOutputFileOfType;
@@ -245,6 +247,32 @@ public class EngineInstance {
 	public void setUsesProjection(boolean usesProjection)
 	{
 		this.usesProjection = usesProjection;
+	}
+
+	
+	
+
+	public boolean usesAntialiasing()
+	{
+		return usesAntialiasing;
+	}
+
+
+	public void setUsesAntialiasing(boolean usesAntialiasing)
+	{
+		this.usesAntialiasing = usesAntialiasing;
+	}
+
+
+	public boolean usesPrecacheStrategy()
+	{
+		return usesPrecacheStrategy;
+	}
+
+
+	public void setUsesPrecacheStrategy(boolean usesPrecacheStrategy)
+	{
+		this.usesPrecacheStrategy = usesPrecacheStrategy;
 	}
 
 

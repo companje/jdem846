@@ -42,6 +42,8 @@ import us.wthr.jdem846.scaling.ResizeDimensions;
 			usesSpotExponent=false,
 			usesElevationMultiple=false,
 			usesLightDirection=false,
+			usesAntialiasing=false,
+			usesPrecacheStrategy=true,
 			generatesImage=false,
 			enabled=true,
 			needsOutputFileOfType=ElevationDatasetExchange.class)
