@@ -105,13 +105,20 @@ public class GradientLevelsControl extends Panel
 		if (!this.isEnabled())
 			return;
 		
+		if (coloringInstance == null) {
+			return;
+		}
+		
+		ModelColoring coloring = coloringInstance.getImpl();
+		double min = coloring.getMinimumSupported();
+		double max = coloring.getMaximumSupported();
+		double range = Math.abs(min) + Math.abs(max);
+		
 		if (selectedPolyStop != null) {
-			//System.out.println("Dragging....");
+			double height = this.getHeight();
+			double mouseY = event.getY();
 			
-			float height = this.getHeight();
-			float mouseY = event.getY();
-			
-			float newStop = 1.0f - (mouseY / height);
+			double newStop = min + ((1.0f - (mouseY / height)) * range);
 			selectedPolyStop.getColorStop().setPosition(newStop);
 			updatePolyList();
 			repaint();
@@ -214,8 +221,13 @@ public class GradientLevelsControl extends Panel
 			return;
 		}
 		
+		double min = coloring.getMinimumSupported();
+		double max = coloring.getMaximumSupported();
+		double range = Math.abs(min) + Math.abs(max);
+		
 		for (GradientColorStop stop : gradient.getColorStops()) {
-			int levelY = (int) Math.round((1.0 - stop.getPosition()) * (float) height);
+			int levelY = (int) Math.round((1.0 - (stop.getPosition() - min) / range) * ((double) height));
+			
 			if (levelY >= height)
 				levelY = height - 1;
 			

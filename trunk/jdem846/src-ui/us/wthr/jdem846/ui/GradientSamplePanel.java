@@ -24,11 +24,14 @@ import javax.swing.JPanel;
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
 public class GradientSamplePanel extends Panel
 {
+	private static Log log = Logging.getLog(GradientSamplePanel.class);
 	
 	private String gradientIdentifier = null;
 	private ColoringInstance coloringInstance = null;
@@ -54,9 +57,18 @@ public class GradientSamplePanel extends Panel
 		
 		int[] rgba = new int[4];
 		
+		float min = (float) coloring.getMinimumSupported();
+		float max = (float) coloring.getMaximumSupported();
+		float range = Math.abs(min) + Math.abs(max);
+		
 		for (int y = 0; y < height; y++) {
-			double ratio = 1.0 - ((double)y / height);
-			coloring.getColor(ratio, rgba);
+			float ratio = 1.0f - ((float)y / height);
+			float value = min + (ratio * range);
+			
+			//log.info("Value: " + value + ", " + min + "/" + max + "/" + range);
+			//double value = min + ((double)y / height);
+			
+			coloring.getGradientColor(value, min, max, rgba);
 			
 			Color color = new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
 			g.setColor(color);

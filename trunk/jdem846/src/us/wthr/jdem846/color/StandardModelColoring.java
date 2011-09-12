@@ -52,7 +52,13 @@ public class StandardModelColoring implements ModelColoring
 
 	
 	@Override
-	public void getColor(double ratio, int[] color)
+	public void getColorByMeters(double ratio, int[] color) 
+	{
+		
+	}
+	
+	@Override
+	public void getColorByPercent(double ratio, int[] color) 
 	{
 		getColor(hypsometric, ratio, color);
 	}
@@ -81,7 +87,7 @@ public class StandardModelColoring implements ModelColoring
 			
 			ratio = (elevation - effMin) / (effMax - effMin);
 			
-			bathymetric.getColor(ratio, color);
+			bathymetric.getColorByPercent(ratio, color);
 			//getColor(bathymetric, ratio, color);
 		} else {
 			effMax = max_elevation;
@@ -93,14 +99,22 @@ public class StandardModelColoring implements ModelColoring
 			
 			ratio = (elevation - effMin) / (effMax - effMin);
 			
-			hypsometric.getColor(ratio, color);
+			hypsometric.getColorByPercent(ratio, color);
 			//getColor(bathymetric, ratio, color);
 		}
 		
 		
 	}
 	
+	public double getMinimumSupported()
+	{
+		return 0;
+	}
 	
+	public double getMaximumSupported()
+	{
+		return 1.0;
+	}
 	
 	
 }

@@ -44,7 +44,13 @@ public class GrayTint implements ModelColoring
 	}
 	
 	@Override
-	public void getColor(double ratio, int[] color) 
+	public void getColorByMeters(double ratio, int[] color) 
+	{
+		
+	}
+	
+	@Override
+	public void getColorByPercent(double ratio, int[] color) 
 	{
 		defaultColor.toList(color);
 		//return defaultColor.getCopy();
@@ -58,6 +64,14 @@ public class GrayTint implements ModelColoring
 		//return defaultColor.getCopy();
 	}
 	
+	public double getMinimumSupported()
+	{
+		return 0;
+	}
 	
+	public double getMaximumSupported()
+	{
+		return 1.0;
+	}
 	
 }

@@ -21,14 +21,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import us.wthr.jdem846.exception.GradientLoadException;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 
 public class GradientColoring implements ModelColoring
 {
-
+	private static Log log = Logging.getLog(GradientColoring.class);
+	
+	
+	private static final int UNITS_PERCENT = 0;
+	private static final int UNITS_METERS = 10;
+	
 	private String name;
 	private String identifier;
 	private boolean needsMinMaxElevation;
-	private String units;
+	private int units;
 
 	private static DemColor defaultColor = new DemColor(0, 0, 0, 0xFF);
 	private GradientLoader gradient;
@@ -54,8 +61,13 @@ public class GradientColoring implements ModelColoring
 		this.name = gradient.getName();
 		this.identifier = gradient.getIdentifier();
 		this.needsMinMaxElevation = gradient.needsMinMaxElevation();
-		this.units = gradient.getUnits();
-		
+		if (gradient.getUnits().equalsIgnoreCase("percent")) {
+			this.units = UNITS_PERCENT;
+		} else if (gradient.getUnits().equalsIgnoreCase("meters")) {
+			this.units = UNITS_METERS;
+		} else {
+			throw new GradientLoadException(configFile, "Unsupported unit of measurement: " + gradient.getUnits());
+		}
 		
 		colorStops = new GradientColorStop[gradient.getColorStops().size()];
 		gradient.getColorStops().toArray(colorStops);
@@ -89,12 +101,57 @@ public class GradientColoring implements ModelColoring
 
 	public String getUnits()
 	{
-		return units;
+		return gradient.getUnits();
 	}
 
 
 	@Override
-	public void getColor(double ratio, int[] color) 
+	public void getColorByMeters(double meters, int[] color) 
+	{
+		GradientColorStop lower = null;
+		GradientColorStop upper = null;
+		
+		for (GradientColorStop stop : colorStops) {
+			if (stop.getPosition() <= meters) {
+				lower = stop;
+			}
+			if (stop.getPosition() >= meters) {
+				upper = stop;
+				break;
+			}
+		}
+		
+		if (upper == null)
+			upper = lower;
+		
+		if (lower == null)
+			lower = upper;
+		
+		if (upper == null && lower == null) {
+			defaultColor.toList(color);
+			return;
+			//return defaultColor.getCopy();
+		}
+		
+		
+		double color_ratio = (meters - lower.getPosition()) / (upper.getPosition() - lower.getPosition());
+		if (Double.isNaN(color_ratio))
+			color_ratio = 1.0;
+
+		double red = (lower.getColor().getRed() * (1.0 - color_ratio)) + (upper.getColor().getRed() * color_ratio);
+		double green = (lower.getColor().getGreen() * (1.0 - color_ratio)) + (upper.getColor().getGreen() * color_ratio);
+		double blue = (lower.getColor().getBlue() * (1.0 - color_ratio)) + (upper.getColor().getBlue() * color_ratio);
+
+		color[0] = (int)Math.round((red * 0xFF));
+		color[1] = (int)Math.round((green * 0xFF));
+		color[2] = (int)Math.round((blue * 0xFF));
+		color[3] = 0xFF;
+		
+		
+	}
+	
+	@Override
+	public void getColorByPercent(double ratio, int[] color) 
 	{
 		
 		if (ratio < 0 || ratio > 1) {
@@ -151,14 +208,42 @@ public class GradientColoring implements ModelColoring
 	@Override
 	public void getGradientColor(float elevation, float minElevation, float maxElevation, int[] color) 
 	{
-		double ratio = (elevation - minElevation) / (maxElevation - minElevation);
+		if (units == UNITS_PERCENT) {
+			double ratio = (elevation - minElevation) / (maxElevation - minElevation);
+			
+			if (ratio <= 0)
+				ratio = .001;
+			
+			getColorByPercent(ratio, color);
+		} else if (units == UNITS_METERS) {
+			getColorByMeters(elevation, color);
+		}
 		
-		if (ratio <= 0)
-			ratio = .001;
 		
-		getColor(ratio, color);
 		//return getColor(ratio);
 	}
 	
+	
+	public double getMinimumSupported()
+	{
+		if (units == UNITS_PERCENT) {
+			return 0.0;
+		} else if (units == UNITS_METERS) {
+			return colorStops[0].getPosition();
+		} else {
+			return 0.0;
+		}
+	}
+	
+	public double getMaximumSupported()
+	{
+		if (units == UNITS_PERCENT) {
+			return 1.0;
+		} else if (units == UNITS_METERS) {
+			return colorStops[colorStops.length - 1].getPosition();
+		} else {
+			return 0;
+		}
+	}
 	
 }

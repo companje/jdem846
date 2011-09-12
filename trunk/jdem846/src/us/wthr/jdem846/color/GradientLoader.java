@@ -150,7 +150,7 @@ public class GradientLoader
         for (int i = 0; i < gradient.size(); i++) {
         	JSONObject gradientStop = gradient.getJSONObject(i);
         	double stop = gradientStop.getDouble("stop");
-        	if (stop > 1.0 || stop < 0.0) {
+        	if (units.equalsIgnoreCase("percent") && (stop > 1.0 || stop < 0.0)) {
         		throw new GradientLoadException("Invalid color stop: " + stop);
         	}
         	
