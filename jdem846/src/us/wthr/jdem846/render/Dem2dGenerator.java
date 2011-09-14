@@ -125,7 +125,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		log.info("Processing " + modelDimensions.getTileCount() + " tiles of size: " + tileSize);
 		
 
-		boolean tiledPrecaching = modelOptions.getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
+		boolean tiledPrecaching =true;// modelOptions.getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		if (tiledPrecaching) {
 			log.info("Data Precaching Strategy Set to TILED");
 		}

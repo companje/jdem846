@@ -150,9 +150,14 @@ public class GridFloatDataCache extends DataCache
 			for (int i = 0; i < totalReadLength; i+=2048) {
 				inputData.read(buffer_2048);
 				
-				for (int j = 0; j < length; j++) {
-					int p = j * 4;	// The position within the buffer that the float sits
-
+				//for (int j = 0; j < length; j++) {
+					//int p = j * 4;	// The position within the buffer that the float sits
+					//if (p+3<2048)
+				//for (int p = i; p < i+2040; p+=4) {
+				for (int p = 0; p < 2048; p+=4) {
+					int j = ((i / 4) + (p / 4)) ;
+					if (j >= valueBuffer.length)
+						break;
 					valueBuffer[j] =  ByteConversions.bytesToFloat(buffer_2048[p], buffer_2048[p+1], buffer_2048[p+2], buffer_2048[p+3], byteOrder);
 				}
 				
