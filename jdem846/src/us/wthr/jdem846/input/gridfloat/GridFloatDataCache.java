@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 
 import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.DemConstants;
@@ -31,9 +32,10 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ByteConversions;
 
-public class GridFloatDataCache implements DataCache
+public class GridFloatDataCache extends DataCache
 {
 	private static Log log = Logging.getLog(GridFloatDataCache.class);
+	private static byte[] buffer_2048 = new byte[2048];
 	
 	private boolean isLoaded = false;
 	private int size = 0;
@@ -118,6 +120,47 @@ public class GridFloatDataCache implements DataCache
 		//} catch (ArrayIndexOutOfBoundsException ex) {
 		//	return DemConstants.ELEV_NO_DATA;
 		//}
+	}
+	
+	@Override
+	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	{
+		if (inputData == null) {
+			try {
+				inputData = new RandomAccessFile(input, "r");
+			} catch (FileNotFoundException ex) {
+				throw new DataSourceException("File Not Found error opening GridFloat file for reading: " + ex.getMessage(), ex);
+			}
+		}
+		
+		Arrays.fill(buffer_2048, (byte)0x0);
+		
+
+		int seekStart = start * (Float.SIZE / 8);
+		try {
+			inputData.seek(seekStart);
+		} catch (IOException ex) {
+			throw new DataSourceException("IO error seeking within GridFloat data file: " + ex.getMessage(), ex);
+		}
+		
+		
+		
+		int totalReadLength = length * (Float.SIZE / 8);
+		try {
+			for (int i = 0; i < totalReadLength; i+=2048) {
+				inputData.read(buffer_2048);
+				
+				for (int j = 0; j < length; j++) {
+					int p = j * 4;	// The position within the buffer that the float sits
+
+					valueBuffer[j] =  ByteConversions.bytesToFloat(buffer_2048[p], buffer_2048[p+1], buffer_2048[p+2], buffer_2048[p+3], byteOrder);
+				}
+				
+			}
+			
+		} catch (IOException ex) {
+			throw new DataSourceException("IO error reading from GridFloat data file: " + ex.getMessage(), ex);
+		}
 	}
 	
 	public void load(long start)

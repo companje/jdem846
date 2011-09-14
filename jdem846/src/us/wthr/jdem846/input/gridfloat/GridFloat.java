@@ -77,6 +77,11 @@ public class GridFloat extends DataSource
 		isDisposed = true;
 	}
 
+	@Override
+	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	{
+		cache.load(valueBuffer, start, length);
+	}
 	
 	public void loadRow(int row)
 	{

@@ -368,7 +368,9 @@ public class DataPackage
 			}
 		}
 		
-		SubsetDataPackage subset = new SubsetDataPackage(this.rows, this.columns);
+		
+		BufferedSubsetDataPackage subset = new BufferedSubsetDataPackage(bounds.getTopY(), bounds.getLeftX(), (int)Math.round(this.rows), (int)Math.round(this.columns), bounds.getWidth(), bounds.getHeight());
+		//SubsetDataPackage subset = new SubsetDataPackage((int)Math.round(this.rows), (int)Math.round(this.columns));
 		subset.setPackagedReaders(packageReaderSubset);
 		return subset;
 	}
