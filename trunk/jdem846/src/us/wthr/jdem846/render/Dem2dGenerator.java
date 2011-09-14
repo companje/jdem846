@@ -36,6 +36,7 @@ import us.wthr.jdem846.color.ColorRegistry;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.dbase.ClassLoadException;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataBounds;
 import us.wthr.jdem846.input.DataPackage;
@@ -150,7 +151,11 @@ public class Dem2dGenerator extends BasicRenderEngine
 					if (dataSubset != null && dataSubset.containsData()) {
 						
 						if (tiledPrecaching) {
-							dataSubset.precacheData();
+							try {
+								dataSubset.precacheData();
+							} catch (DataSourceException ex) {
+								throw new RenderEngineException("Error with source data: " + ex.getMessage(), ex);
+							}
 						}
 						
 						tileCanvas.reset();
@@ -167,7 +172,11 @@ public class Dem2dGenerator extends BasicRenderEngine
 						log.info("Completed tile.");
 						
 						if (tiledPrecaching) {
-							dataSubset.unloadData();
+							try {
+								dataSubset.unloadData();
+							} catch (DataSourceException ex) {
+								throw new RenderEngineException("Error with source data: " + ex.getMessage(), ex);
+							}
 						}
 						
 						//tileCanvas.save("output-" + tileRow + "-" + tileCol + ".png");
@@ -218,9 +227,11 @@ public class Dem2dGenerator extends BasicRenderEngine
 		
 		
 		int numRows = (toRow - fromRow) + 1;
-		//int numCols = (toColumn - fromColumn) + 1;
+		int numCols = (toColumn - fromColumn) + 1;
 		
-		
+		//log.info("Prebuffering tile raster");
+		//float[][] buffer = new float[numRows][numCols];
+		//dataSubset.fillBuffer(buffer, fromRow, fromColumn, numRows, numCols);
 		
 		
 		double elevationMax = dataPackage.getMaxElevation();

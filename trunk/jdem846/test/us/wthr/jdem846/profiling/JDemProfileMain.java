@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.RegistryKernel;
@@ -48,7 +49,7 @@ public class JDemProfileMain
 			List<String> inputDataList = new LinkedList<String>();
 			inputDataList.add("C:/srv/elevation/Maui//15749574.flt");
 			inputDataList.add("C:/srv/elevation/Maui//58273983.flt");
-			
+			//inputDataList.add("C:/srv/elevation/Shapefiles/Nashua NH 1-3 Arc Second//77591663.flt");
 			
 			
 			boolean fullPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.precacheStrategy").equalsIgnoreCase("full");
@@ -57,16 +58,19 @@ public class JDemProfileMain
 			}
 			
 			ModelOptions modelOptions = new ModelOptions();
-
+			
+			//modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
+			modelOptions.setTileSize(100);
+			
 			DataPackage dataPackage = new DataPackage();
 			
 			
 			for (String inputDataPath : inputDataList) {
 				GridFloat previewData = new GridFloat(inputDataPath);
 				
-				if (fullPrecaching) {
-					previewData.setDataPrecached(true);
-				}
+				////if (fullPrecaching) {
+				//	previewData.setDataPrecached(true);
+				//}
 				
 				dataPackage.addDataSource(previewData);
 			}
@@ -82,7 +86,9 @@ public class JDemProfileMain
 			
 			log.info("Completed rendering in " + ((complete - start) / 1000) + " second(s)");
 			
-			BufferedImage prerendered = (BufferedImage) product.getProduct().getImage();
+			//BufferedImage prerendered = (BufferedImage) product.getProduct().getImage();
+			
+			product.getProduct().save("C:\\srv\\testing.png");
 			
 			TempFiles.cleanUpTemporaryFiles();
 		} catch (Exception e1) {

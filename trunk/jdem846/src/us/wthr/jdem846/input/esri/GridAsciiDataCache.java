@@ -33,7 +33,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ByteConversions;
 import us.wthr.jdem846.util.TempFiles;
 
-public class GridAsciiDataCache implements DataCache
+public class GridAsciiDataCache extends DataCache
 {
 	private static Log log = Logging.getLog(GridAsciiDataCache.class);
 	

@@ -23,18 +23,23 @@ import us.wthr.jdem846.exception.DataSourceException;
  * @author Kevin M. Gill
  *
  */
-public interface DataCache 
+public abstract class DataCache 
 {
 	
 	/** Gets the length of the data file in bytes.
 	 * 
 	 * @return The length of the data file in bytes.
 	 */
-	public long getDataLength();
-	public float get(int position);
-	public void load(long start);
-	public void unload();
-	public boolean isLoaded();
-	public void setLoaded(boolean isLoaded);
-	public void dispose() throws DataSourceException;
+	public abstract long getDataLength();
+	public abstract float get(int position);
+	public abstract void load(long start);
+	public abstract void unload();
+	public abstract boolean isLoaded();
+	public abstract void setLoaded(boolean isLoaded);
+	public abstract void dispose() throws DataSourceException;
+	
+	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	{
+		throw new DataSourceException("Not implemented");
+	}
 }

@@ -104,6 +104,11 @@ public abstract class DataSource
 		return false;
 	}
 	
+	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	{
+		throw new DataSourceException("Not implemented");
+	}
+	
 	public abstract void loadRow(int row);
 	public abstract void initDataCache();
 	public abstract void unloadDataCache();
