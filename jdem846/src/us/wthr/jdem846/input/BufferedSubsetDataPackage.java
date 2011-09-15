@@ -69,6 +69,7 @@ public class BufferedSubsetDataPackage extends SubsetDataPackage
 		int halfColumns = (int) Math.round((double)totalColumns / 2.0);
 		int halfRows = (int) Math.round((double)totalRows / 2.0);
 		
+		
 		float[] floatBuffer = new float[columns];
 		for (int row = 0; row < rows; row++) {
 			Arrays.fill(buffer[row], DemConstants.ELEV_NO_DATA);
@@ -83,64 +84,42 @@ public class BufferedSubsetDataPackage extends SubsetDataPackage
 				
 				
 				if (pack != null) {
-					
-					
+					float noData = pack.getDataSource().getHeader().getNoData();
 					int start = column + ((topRow + row) * (int)pack.getColumns());
-					//int start = leftColumn + ((topRow + row) * totalColumns);
-					
+
 					pack.getDataSource().load(floatBuffer, start, columns);
 					
-					//for (int c = columnsRead; c < columns; c++) {
-					//for (int c = column - leftColumn; c < columns; c++) {
-					
 					lastColumn = columnsRead;
-					int testCol = ((column + columns) - halfColumns);
-					if (pack.getColumnEnd() < testCol) {
-						
-						columnsRead += ((leftColumn + columns) - pack.getColumnEnd() - columnsRead + halfColumns);
+					int dataEndColumn = pack.getColumnEnd() + halfColumns;
+					if (dataEndColumn < leftColumn + columns) {
+						columnsRead += (dataEndColumn - leftColumn);
 					} else {
 						columnsRead += columns;
 					}
 					
-					for (int c = lastColumn; c < columns; c++) {
-						buffer[row][c] = floatBuffer[c];
-					}
-					
-					
-					
-					//columnsRead += (pack.getColumns() < 100);
-				} else {
-					
-					//for (int c = 0; c < columns; c++) {
-					//if (column < columns)
-					//	buffer[row][column] = DemConstants.ELEV_NO_DATA;
-					columnsRead += 1;
-					//}
-				}
-				
-			}
-			/*
-			int start = leftColumn + ((topRow + row) * totalColumns);
-			Arrays.fill(floatBuffer, 0x0);
-			
-			
-			// Not gonna work
-			packagedReaderArray[0].getDataSource().load(floatBuffer, start, columns);
 
-			for (int column = 0; column < columns; column++) {
-				buffer[row][column] = floatBuffer[column];
+					
+					for (int c = lastColumn; c < lastColumn + columnsRead && c < columns; c++) {
+						if (lastColumn > 0) {
+							int v = 0;
+						}
+						if (floatBuffer[c] != noData) {
+							if (columnsRead > columns) {
+								buffer[row][c] = floatBuffer[c - (columnsRead - columns)];
+							} else {
+								buffer[row][c] = floatBuffer[c];
+							}
+						} else {
+							buffer[row][c] = DemConstants.ELEV_NO_DATA;
+						}
+					}
+
+				} else {
+					columnsRead += 1;
+				}
 			}
-			*/
+
 		}
-		/*
-		for (int row = 0; row < rows; row++) {
-			for (int column = 0; column < columns; column++) {
-				float elevation = super.getElevation(row+topRow, column+leftColumn);
-				buffer[row][column] = elevation;
-				
-			}
-		}
-		*/
 	}
 	
 }
