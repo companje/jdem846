@@ -35,7 +35,9 @@ import us.wthr.jdem846.util.ByteConversions;
 public class GridFloatDataCache extends DataCache
 {
 	private static Log log = Logging.getLog(GridFloatDataCache.class);
-	private static byte[] buffer_2048 = new byte[2048];
+	
+	private static int LOAD_BUFFER_SIZE = 2048;
+	private static byte[] load_buffer = new byte[GridFloatDataCache.LOAD_BUFFER_SIZE];
 	
 	private boolean isLoaded = false;
 	private int size = 0;
@@ -133,7 +135,7 @@ public class GridFloatDataCache extends DataCache
 			}
 		}
 		
-		Arrays.fill(buffer_2048, (byte)0x0);
+		Arrays.fill(load_buffer, (byte)0x0);
 		
 
 		int seekStart = start * (Float.SIZE / 8);
@@ -147,18 +149,18 @@ public class GridFloatDataCache extends DataCache
 		
 		int totalReadLength = length * (Float.SIZE / 8);
 		try {
-			for (int i = 0; i < totalReadLength; i+=2048) {
-				inputData.read(buffer_2048);
+			for (int i = 0; i < totalReadLength; i+=GridFloatDataCache.LOAD_BUFFER_SIZE) {
+				inputData.read(load_buffer);
 				
 				//for (int j = 0; j < length; j++) {
 					//int p = j * 4;	// The position within the buffer that the float sits
 					//if (p+3<2048)
 				//for (int p = i; p < i+2040; p+=4) {
-				for (int p = 0; p < 2048; p+=4) {
+				for (int p = 0; p < GridFloatDataCache.LOAD_BUFFER_SIZE; p+=4) {
 					int j = ((i / 4) + (p / 4)) ;
 					if (j >= valueBuffer.length)
 						break;
-					valueBuffer[j] =  ByteConversions.bytesToFloat(buffer_2048[p], buffer_2048[p+1], buffer_2048[p+2], buffer_2048[p+3], byteOrder);
+					valueBuffer[j] =  ByteConversions.bytesToFloat(load_buffer[p], load_buffer[p+1], load_buffer[p+2], load_buffer[p+3], byteOrder);
 				}
 				
 			}

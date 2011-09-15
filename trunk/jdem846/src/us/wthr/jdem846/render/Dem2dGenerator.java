@@ -113,7 +113,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		DemCanvas tileCanvas = new DemCanvas(background, (int)modelDimensions.getTileSize(), (int)modelDimensions.getTileSize());
 		DemCanvas outputCanvas = new DemCanvas(background, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
 		
-		//applyTiledBackground(outputCanvas, "/background-tiles/water_3.png");
+		applyTiledBackground(outputCanvas, "/background-tiles/water_3.png");
 		
 		int tileRow = 0;
 		int tileCol = 0;
@@ -125,7 +125,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		log.info("Processing " + modelDimensions.getTileCount() + " tiles of size: " + tileSize);
 		
 
-		boolean tiledPrecaching =true;// modelOptions.getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
+		boolean tiledPrecaching = modelOptions.getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		if (tiledPrecaching) {
 			log.info("Data Precaching Strategy Set to TILED");
 		}
@@ -145,7 +145,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 					//DataBounds tileBounds = new DataBounds((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
 					//if (dataPackage.dataOverlaps(tileBounds)) {
 					//SubsetDataPackage dataSubset = dataPackage.getDataSubset(tileBounds);
-					
+
 					loadDataSubset((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
 					
 					if (dataSubset != null && dataSubset.containsData()) {
@@ -160,16 +160,16 @@ public class Dem2dGenerator extends BasicRenderEngine
 						
 						tileCanvas.reset();
 						
-						log.info("Rendering tile...");
+						//log.info("Rendering tile...");
 						generate(fromRow, toRow, fromCol, toCol, tileCanvas);
 						
-						log.info("Rescaling tile...");
+						//log.info("Rescaling tile...");
 						DemCanvas scaled = tileCanvas.getScaled((int)modelDimensions.getTileOutputWidth(), (int) modelDimensions.getTileOutputHeight());
 						
-						log.info("Overlaying tile to output canvas...");
+						//log.info("Overlaying tile to output canvas...");
 						outputCanvas.overlay(scaled.getImage(), (int)Math.floor(tileCol * modelDimensions.getTileOutputWidth()), (int)Math.floor(tileRow * modelDimensions.getTileOutputHeight()), scaled.getWidth(), scaled.getHeight());
 						
-						log.info("Completed tile.");
+						//log.info("Completed tile.");
 						
 						if (tiledPrecaching) {
 							try {
