@@ -115,10 +115,13 @@ public class JDemProfileMain
 				testList.add(new TileSizeTest(tileSize, defaulted, tiled));
 			}
 			
-			
+			StringBuffer out = new StringBuffer();
+			out.append("\n");
 			for (TileSizeTest tileSizeTest : testList) {
-				log.info("" + tileSizeTest.tileSize + "	" + tileSizeTest.defaulted + "	" + tileSizeTest.tiled);
+				String outLine = "" + tileSizeTest.tileSize + "	" + tileSizeTest.defaulted + "	" + tileSizeTest.tiled + "\n";
+				out.append(outLine);
 			}
+			log.info("Results: " + out.toString());
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
