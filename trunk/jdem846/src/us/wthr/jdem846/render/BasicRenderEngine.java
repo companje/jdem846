@@ -66,13 +66,13 @@ public abstract class BasicRenderEngine extends RenderEngine
 			//return point;
 		}
 
-		float elevationMax = dataPackage.getMaxElevation();
-		float elevationMin = dataPackage.getMinElevation();
+		//float elevationMax = dataPackage.getMaxElevation();
+		//float elevationMin = dataPackage.getMinElevation();
 
 		float elevation_bl = getElevation(row, column);
 		float elevation_br = getElevation(row, column + gridSize);
 		float elevation_fl = getElevation(row + gridSize, column);
-		float elevation_fr = getElevation(row + gridSize, column + gridSize);
+		//float elevation_fr = getElevation(row + gridSize, column + gridSize);
 
 		if (elevation_bl == DemConstants.ELEV_NO_DATA) {
 			point.setCondition(DemConstants.STAT_INVALID_ELEVATION);
@@ -81,29 +81,28 @@ public abstract class BasicRenderEngine extends RenderEngine
 		
 		point.setBackLeftElevation(elevation_bl);
 
-		if (elevation_br >= elevationMin && elevation_br <= elevationMax && elevation_br != DemConstants.ELEV_NO_DATA) {
+		if (elevation_br != DemConstants.ELEV_NO_DATA) {
 			point.setBackRightElevation(elevation_br);
 		} else {
 			point.setBackRightElevation(point.getBackLeftElevation());
 		}
 
-		if (elevation_fl >= elevationMin && elevation_fl <= elevationMax && elevation_fl != DemConstants.ELEV_NO_DATA) {
+		if (elevation_fl != DemConstants.ELEV_NO_DATA) {
 			point.setFrontLeftElevation(elevation_fl);
 		} else {
 			point.setFrontLeftElevation(point.getBackLeftElevation());
 		}
 
-		if (elevation_fr >= elevationMin && elevation_fr <= elevationMax && elevation_fr != DemConstants.ELEV_NO_DATA) {
-			point.setFrontRightElevation(elevation_fr);
-		} else {
-			point.setFrontRightElevation(point.getBackLeftElevation());
-		}
+	//	if (elevation_fr != DemConstants.ELEV_NO_DATA) {
+		//	point.setFrontRightElevation(elevation_fr);
+		//} else {
+		//	point.setFrontRightElevation(point.getBackLeftElevation());
+	//	}
 		
 		
 		if (point.getBackLeftElevation() == 0 
 			&& point.getBackRightElevation() == 0 
-			&& point.getFrontLeftElevation() == 0 
-			&& point.getFrontRightElevation() == 0) {
+			&& point.getFrontLeftElevation() == 0) {
 			point.setCondition(DemConstants.STAT_FLAT_SEA_LEVEL);
 			return;
 		}

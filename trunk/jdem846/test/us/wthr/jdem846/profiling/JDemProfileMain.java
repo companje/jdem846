@@ -84,57 +84,79 @@ public class JDemProfileMain
 		}
 		*/
 		
-		
-		
-		int minTileSize = 100;
-		int maxTileSize = 1600;
-		int tileSizeInterval = 100;
-		int tileSizeRepetitions = 5;
-		
-		int tile = 0;
-		
-		List<TileSizeTest> testList = new LinkedList<TileSizeTest>();
-		
 		try {
 			RegistryKernel regKernel = new RegistryKernel();
 			regKernel.init();
-			
-			for (int tileSize = minTileSize; tileSize <= maxTileSize; tileSize+=tileSizeInterval) {
-				double defaulted = 0;
-				double tiled = 0;
-				
-				for (int repetition = 0; repetition < tileSizeRepetitions; repetition++) {
-					defaulted += doTest(DemConstants.PRECACHE_STRATEGY_DEFAULT, tileSize);
-					tiled += doTest(DemConstants.PRECACHE_STRATEGY_TILED, tileSize);
-					
-				}
-				
-				defaulted = defaulted / tileSizeRepetitions;
-				tiled = tiled / tileSizeRepetitions;
-				
-				testList.add(new TileSizeTest(tileSize, defaulted, tiled));
-			}
-			
-			StringBuffer out = new StringBuffer();
-			out.append("\n");
-			for (TileSizeTest tileSizeTest : testList) {
-				String outLine = "" + tileSizeTest.tileSize + "	" + tileSizeTest.defaulted + "	" + tileSizeTest.tiled + "\n";
-				out.append(outLine);
-			}
-			log.info("Results: " + out.toString());
-			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			log.error("Failed to initialize registry configuration: " + ex.getMessage(), ex);
+			return;
 		}
-	}
-	
-	
-	protected static double doTest(String precacheStrategy, int tileSize) throws Exception
-	{
+		
+		
 		List<String> inputDataList = new LinkedList<String>();
 		//inputDataList.add("C:/srv/elevation/Maui//15749574.flt");
 		//inputDataList.add("C:/srv/elevation/Maui//58273983.flt");
 		inputDataList.add("C:/srv/elevation/Shapefiles/Nashua NH 1-3 Arc Second//77591663.flt");
+		
+		boolean doingTesting = true;
+		
+		if (!doingTesting) {
+			try {
+				doTest(inputDataList, DemConstants.PRECACHE_STRATEGY_TILED, 100, "C:/srv/testing.png");
+			} catch (Exception ex) {
+				log.error("Fail!", ex);
+			}
+		} else {
+			
+			int minTileSize = 100;
+			int maxTileSize = 1600;
+			int tileSizeInterval = 100;
+			int tileSizeRepetitions = 1;
+			
+			int tile = 0;
+			
+			List<TileSizeTest> testList = new LinkedList<TileSizeTest>();
+			
+			try {
+				
+				
+				for (int tileSize = minTileSize; tileSize <= maxTileSize; tileSize+=tileSizeInterval) {
+					double defaulted = 0;
+					double tiled = 0;
+					
+					for (int repetition = 0; repetition < tileSizeRepetitions; repetition++) {
+						defaulted += doTest(inputDataList, DemConstants.PRECACHE_STRATEGY_DEFAULT, tileSize, null);
+						tiled += doTest(inputDataList, DemConstants.PRECACHE_STRATEGY_TILED, tileSize, null);
+						
+					}
+					
+					defaulted = defaulted / tileSizeRepetitions;
+					tiled = tiled / tileSizeRepetitions;
+					
+					testList.add(new TileSizeTest(tileSize, defaulted, tiled));
+				}
+				
+				StringBuffer out = new StringBuffer();
+				out.append("\n");
+				for (TileSizeTest tileSizeTest : testList) {
+					String outLine = "" + tileSizeTest.tileSize + "	" + tileSizeTest.defaulted + "	" + tileSizeTest.tiled + "\n";
+					out.append(outLine);
+				}
+				log.info("Results: " + out.toString());
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+	
+	
+	protected static double doTest(List<String> inputDataList, String precacheStrategy, int tileSize, String saveTo) throws Exception
+	{
+		//List<String> inputDataList = new LinkedList<String>();
+		//inputDataList.add("C:/srv/elevation/Maui//15749574.flt");
+		//inputDataList.add("C:/srv/elevation/Maui//58273983.flt");
+		//inputDataList.add("C:/srv/elevation/Shapefiles/Nashua NH 1-3 Arc Second//77591663.flt");
 		
 		
 		boolean fullPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.precacheStrategy").equalsIgnoreCase("full");
@@ -168,6 +190,11 @@ public class JDemProfileMain
 		
 		double elapsed = (((double)complete - (double)start) / 1000.0);
 		log.info("Completed rendering in " + (((double)complete - (double)start) / 1000.0) + " second(s)");
+		
+		if (saveTo != null) {
+			product.getProduct().save(saveTo);
+		}
+		
 		return elapsed;
 	}
 	

@@ -113,7 +113,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		DemCanvas tileCanvas = new DemCanvas(background, (int)modelDimensions.getTileSize(), (int)modelDimensions.getTileSize());
 		DemCanvas outputCanvas = new DemCanvas(background, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
 		
-		applyTiledBackground(outputCanvas, "/background-tiles/water_3.png");
+		//applyTiledBackground(outputCanvas, "/background-tiles/water_3.png");
 		
 		int tileRow = 0;
 		int tileCol = 0;
@@ -227,7 +227,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		
 		
 		int numRows = (toRow - fromRow) + 1;
-		int numCols = (toColumn - fromColumn) + 1;
+		//int numCols = (toColumn - fromColumn) + 1;
 		
 		//log.info("Prebuffering tile raster");
 		//float[][] buffer = new float[numRows][numCols];
@@ -326,7 +326,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 					backLeftPoints[1] = point.getBackLeftElevation() * elevationMultiple;
 					backRightPoints[1] = point.getBackRightElevation() * elevationMultiple;
 					frontLeftPoints[1] = point.getFrontLeftElevation() * elevationMultiple;
-					frontRightPoints[1] = point.getFrontRightElevation() * elevationMultiple;
+					//frontRightPoints[1] = point.getFrontRightElevation() * elevationMultiple;
 					
 					Perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
 					
