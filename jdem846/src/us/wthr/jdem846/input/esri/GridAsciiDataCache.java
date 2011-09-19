@@ -24,10 +24,12 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 
 import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.input.DataCache;
+import us.wthr.jdem846.input.gridfloat.GridFloatDataCache;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ByteConversions;
@@ -36,6 +38,9 @@ import us.wthr.jdem846.util.TempFiles;
 public class GridAsciiDataCache extends DataCache
 {
 	private static Log log = Logging.getLog(GridAsciiDataCache.class);
+	
+	private static int LOAD_BUFFER_SIZE = 2048;
+	private static byte[] load_buffer = new byte[GridAsciiDataCache.LOAD_BUFFER_SIZE];
 	
 	private boolean isLoaded = false;
 	
@@ -89,6 +94,57 @@ public class GridAsciiDataCache extends DataCache
 	{
 		int offset = (position * 4);
 		return ByteConversions.bytesToFloat(buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3], byteOrder);
+	}
+	
+
+	@Override
+	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	{
+		if (cacheFile == null) {
+			createBinaryCacheFile();
+		}
+		
+		if (inputData == null) {
+			try {
+				inputData = new RandomAccessFile(input, "r");
+			} catch (FileNotFoundException ex) {
+				throw new DataSourceException("File Not Found error opening GridFloat file for reading: " + ex.getMessage(), ex);
+			}
+		}
+		
+		Arrays.fill(load_buffer, (byte)0x0);
+		
+
+		int seekStart = start * (Float.SIZE / 8);
+		try {
+			inputData.seek(seekStart);
+		} catch (IOException ex) {
+			throw new DataSourceException("IO error seeking within GridFloat data file: " + ex.getMessage(), ex);
+		}
+		
+		
+		
+		int totalReadLength = length * (Float.SIZE / 8);
+		try {
+			for (int i = 0; i < totalReadLength; i+=GridAsciiDataCache.LOAD_BUFFER_SIZE) {
+				inputData.read(load_buffer);
+				
+				//for (int j = 0; j < length; j++) {
+					//int p = j * 4;	// The position within the buffer that the float sits
+					//if (p+3<2048)
+				//for (int p = i; p < i+2040; p+=4) {
+				for (int p = 0; p < GridAsciiDataCache.LOAD_BUFFER_SIZE; p+=4) {
+					int j = ((i / 4) + (p / 4)) ;
+					if (j >= valueBuffer.length)
+						break;
+					valueBuffer[j] =  ByteConversions.bytesToFloat(load_buffer[p], load_buffer[p+1], load_buffer[p+2], load_buffer[p+3], byteOrder);
+				}
+				
+			}
+			
+		} catch (IOException ex) {
+			throw new DataSourceException("IO error reading from GridFloat data file: " + ex.getMessage(), ex);
+		}
 	}
 
 	@Override

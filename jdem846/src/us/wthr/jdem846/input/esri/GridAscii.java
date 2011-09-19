@@ -124,6 +124,12 @@ public class GridAscii extends DataSource
 	{
 		loadRow(this.cachedRow);
 	}
+	
+	@Override
+	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	{
+		cache.load(valueBuffer, start, length);
+	}
 
 	@Override
 	public void loadRow(int row) throws DataSourceException
