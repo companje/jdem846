@@ -313,7 +313,11 @@ public class Dem2dGenerator extends BasicRenderEngine
 			for (int column = fromColumn; column <= toColumn; column++)  {
 				imgCol++;
 
-				getPoint(row, column, point);
+				try {
+					getPoint(row, column, point);
+				} catch (DataSourceException ex) {
+					throw new RenderEngineException("Error loading elevation data: " + ex.getMessage(), ex);
+				}
 				
 				if (point.getCondition() == DemConstants.STAT_SUCCESSFUL) {
 					/*

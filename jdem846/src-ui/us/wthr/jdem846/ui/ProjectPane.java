@@ -591,7 +591,11 @@ public class ProjectPane extends JdemPanel
 		*/
 		
 		dataPackage.prepare();
-		dataPackage.calculateElevationMinMax(false);
+		try {
+			dataPackage.calculateElevationMinMax(false);
+		} catch (DataSourceException ex) {
+			log.warn("Failed to calculate elevation min/max: " + ex.getMessage(), ex);
+		}
 		layoutPane.update();
 		previewPane.update();
 		//previewPanel.update();

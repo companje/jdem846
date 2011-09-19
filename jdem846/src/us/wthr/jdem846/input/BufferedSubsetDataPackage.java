@@ -46,7 +46,7 @@ public class BufferedSubsetDataPackage extends SubsetDataPackage
 	}
 	
 	@Override
-	public float getElevation(int row, int col)
+	public float getElevation(int row, int col) throws DataSourceException
 	{
 		if (buffer != null) {
 			int bufferRow = row - topRow;

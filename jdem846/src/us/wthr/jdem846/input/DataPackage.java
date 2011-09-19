@@ -119,7 +119,7 @@ public class DataPackage
 		this.averageResolution = 0;
 	}
 	
-	public void calculateElevationMinMax(boolean full)
+	public void calculateElevationMinMax(boolean full) throws DataSourceException
 	{
 		log.info("Calculating elevation minimums & Maximums");
 		
@@ -300,7 +300,7 @@ public class DataPackage
 		}
 	}
 	
-	public float getElevation(int row, int col)
+	public float getElevation(int row, int col) throws DataSourceException
 	{
 		int testCol = (col - halfColumns);
 		int testRow = (row - halfRows);

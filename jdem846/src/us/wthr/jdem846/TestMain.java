@@ -28,7 +28,9 @@ import us.wthr.jdem846.dbase.DBaseFieldDescriptor;
 import us.wthr.jdem846.dbase.DBaseFile;
 import us.wthr.jdem846.dbase.DBaseLastUpdate;
 import us.wthr.jdem846.dbase.DBaseRecord;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.InvalidFileFormatException;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.input.DataSourceFactory;
@@ -111,7 +113,7 @@ public class TestMain
 			writer.flush();
 			writer.close();
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -152,7 +154,7 @@ public class TestMain
 			writer.close();
 			
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -206,13 +208,23 @@ public class TestMain
 		engine.setModelOptions(modelOptions);
 		
 		start = System.currentTimeMillis();
-		dataPackage.calculateElevationMinMax(true);
+		try {
+			dataPackage.calculateElevationMinMax(true);
+		} catch (DataSourceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		end = System.currentTimeMillis();
 		System.out.println("Completed elevation min/max in " + (end - start) + " milliseconds");
 		
 	
 		start = System.currentTimeMillis();
-		engine.generate();
+		try {
+			engine.generate();
+		} catch (RenderEngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		end = System.currentTimeMillis();
 		System.out.println("Completed Generate in " + (end - start) + " milliseconds");
 		

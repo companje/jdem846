@@ -58,17 +58,12 @@ public class GridAsciiDataCache extends DataCache
 		this.buffer = new byte[size];
 		
 		this.inputData = null;
+		this.cacheFile = null;
 		
 		
-		try {
-			//cacheFile = File.createTempFile("jdem.gridascii.cache.", ".tmp", new File(System.getProperty("java.io.tmpdir")));
-			cacheFile = TempFiles.getTemporaryFile("gridascii.cache", ".tmp");
-			createBinaryCacheFile(cacheFile);
-		} catch (Exception ex) {
-			log.error("Failed to create GridAscii binary cache file: " + ex.getMessage(), ex);
-			//ex.printStackTrace();
-		}
 	}
+	
+	
 
 	public long getDataLength()
 	{
@@ -90,15 +85,19 @@ public class GridAsciiDataCache extends DataCache
 	}
 	
 	@Override
-	public float get(int position)
+	public float get(int position) throws DataSourceException
 	{
 		int offset = (position * 4);
 		return ByteConversions.bytesToFloat(buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3], byteOrder);
 	}
 
 	@Override
-	public void load(long start)
+	public void load(long start) throws DataSourceException
 	{
+		if (cacheFile == null) {
+			createBinaryCacheFile();
+		}
+		
 		if (inputData == null) {
 			try {
 				inputData = new RandomAccessFile(cacheFile, "r");
@@ -127,7 +126,23 @@ public class GridAsciiDataCache extends DataCache
 		
 	}
 
-	public void createBinaryCacheFile(File cacheFile) throws IOException
+	
+	
+	public void createBinaryCacheFile() throws DataSourceException
+	{
+		if (cacheFile != null) {
+			throw new DataSourceException("Binary cache file already exists!");
+		}
+		try {
+			cacheFile = TempFiles.getTemporaryFile("gridascii.cache", ".tmp");
+			loadBinaryCacheFile(cacheFile);
+		} catch (Exception ex) {
+			throw new DataSourceException("Failed to create GridAscii binary cache file: " + ex.getMessage(), ex);
+		}
+		
+	}
+	
+	protected void loadBinaryCacheFile(File cachefile) throws IOException
 	{
 		log.info("Writing GridAscii cache to " + cacheFile.getAbsolutePath());
 
@@ -164,6 +179,7 @@ public class GridAsciiDataCache extends DataCache
 		}
 		this.inputData = null;
 		this.isLoaded = false;
+		this.cacheFile = null;
 	}
 	
 	public boolean isLoaded() 

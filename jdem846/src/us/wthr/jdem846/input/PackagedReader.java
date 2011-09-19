@@ -108,7 +108,7 @@ public class PackagedReader
 		
 	}
 	
-	public float getElevation(int row, int column)
+	public float getElevation(int row, int column) throws DataSourceException
 	{
 		return dataSource.getElevation(row - rowStart, column - columnStart);
 	}

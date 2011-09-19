@@ -64,7 +64,7 @@ public class SubsetDataPackage
 		return null;
 	}
 	
-	public float getElevation(int row, int col)
+	public float getElevation(int row, int col) throws DataSourceException
 	{
 		PackagedReader pack = getByRowAndColumn(row, col);
 		if (pack != null) {
