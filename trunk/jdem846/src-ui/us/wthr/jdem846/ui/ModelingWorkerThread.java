@@ -65,7 +65,14 @@ public class ModelingWorkerThread extends Thread
 			}
 			
 			start = System.currentTimeMillis();
-			dataPackage.calculateElevationMinMax(true);
+			
+			try {
+				dataPackage.calculateElevationMinMax(true);
+			} catch (Exception ex) {
+				fireModelFailedListeners(ex);
+				return;
+			}
+			
 			elapsed = (System.currentTimeMillis() - start) / 1000;
 			log.info("Completed elevation min/max task in " + elapsed + " seconds");
 			

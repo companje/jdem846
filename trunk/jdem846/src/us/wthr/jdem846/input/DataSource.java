@@ -59,7 +59,7 @@ public abstract class DataSource
 	}
 	
 	
-	public void calculateElevationMinMax()
+	public void calculateElevationMinMax() throws DataSourceException
 	{
 		setMaxElevation(-50000);
 		setMinElevation(50000);
@@ -109,12 +109,12 @@ public abstract class DataSource
 		throw new DataSourceException("Not implemented");
 	}
 	
-	public abstract void loadRow(int row);
-	public abstract void initDataCache();
-	public abstract void unloadDataCache();
+	public abstract void loadRow(int row) throws DataSourceException;
+	public abstract void initDataCache() throws DataSourceException;
+	public abstract void unloadDataCache() throws DataSourceException;
 	
-	public abstract float getElevation(int column);
-	public abstract float getElevation(int row, int column);
+	public abstract float getElevation(int column)  throws DataSourceException;
+	public abstract float getElevation(int row, int column)  throws DataSourceException;
 	
 	public abstract String getFilePath();
 	public abstract DataSourceHeader getHeader();

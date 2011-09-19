@@ -35,6 +35,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
@@ -239,7 +240,11 @@ public class OutputImageViewPanel extends JdemPanel
 				long elapsed = 0;
 				
 				start = System.currentTimeMillis();
-				dataPackage.calculateElevationMinMax(true);
+				try {
+					dataPackage.calculateElevationMinMax(true);
+				} catch (Exception ex) {
+					throw new RenderEngineException("Error calculating elevation min/max: " + ex.getMessage(), ex);
+				}
 				elapsed = (System.currentTimeMillis() - start) / 1000;
 				log.info("Completed elevation min/max task in " + elapsed + " seconds");
 				
@@ -476,7 +481,12 @@ public class OutputImageViewPanel extends JdemPanel
 		String strMouseLatitude = formatter.format(mouseLatitude);
 		String strMouseLongitude = formatter.format(mouseLongitude);;
 		
-		float elevation = dataPackage.getElevation(trueY, trueX);
+		float elevation = 0;
+		try {
+			elevation = dataPackage.getElevation(trueY, trueX);
+		} catch (DataSourceException ex) {
+			log.warn("Failed to retrieve elevation data: " + ex.getMessage(), ex);
+		}
 		if (elevation == DemConstants.ELEV_NO_DATA || elevation == dataPackage.getNoData())
 			elevation = 0;
 		

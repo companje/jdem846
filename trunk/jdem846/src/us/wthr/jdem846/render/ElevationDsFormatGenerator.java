@@ -19,6 +19,8 @@ package us.wthr.jdem846.render;
 import java.awt.Rectangle;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.DemEngine;
+import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataBounds;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.edef.ElevationDatasetExchange;
@@ -71,13 +73,13 @@ public class ElevationDsFormatGenerator extends RenderEngine
 	
 	
 	@SuppressWarnings("unchecked")
-	public OutputProduct generate()
+	public OutputProduct generate() throws RenderEngineException
 	{
 		return generate(false);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public OutputProduct generate(boolean skipElevation)
+	public OutputProduct generate(boolean skipElevation) throws RenderEngineException
 	{
 		String writeTo = modelOptions.getWriteTo();
 		if (writeTo == null) {
@@ -164,7 +166,7 @@ public class ElevationDsFormatGenerator extends RenderEngine
 		
 	}
 	
-	public FloatRaster generate(int fromRow, int toRow, int fromColumn, int toColumn, FloatRaster raster)
+	public FloatRaster generate(int fromRow, int toRow, int fromColumn, int toColumn, FloatRaster raster) throws RenderEngineException
 	{
 		
 		int numRows = (toRow - fromRow) + 1;
@@ -178,18 +180,23 @@ public class ElevationDsFormatGenerator extends RenderEngine
 		
 		float elevation = 0;
 		
-		for (int row = fromRow; row <= toRow; row++) {
-			dataRow++;
-			dataCol = -1;
-			
-			for (int column = fromColumn; column <= toColumn; column++)  {
-				dataCol++;
+		try {
+			for (int row = fromRow; row <= toRow; row++) {
+				dataRow++;
+				dataCol = -1;
 				
-				elevation = dataPackage.getElevation(row, column);
-				raster.set(dataCol, dataRow, elevation);
-
+				for (int column = fromColumn; column <= toColumn; column++)  {
+					dataCol++;
+					
+					
+					elevation = dataPackage.getElevation(row, column);
+					raster.set(dataCol, dataRow, elevation);
+	
+				}
+				
 			}
-			
+		} catch (DataSourceException ex) {
+			throw new RenderEngineException("Failed to read source data: " + ex.getMessage(), ex);
 		}
 
 		return raster;

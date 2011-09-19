@@ -31,8 +31,8 @@ public abstract class DataCache
 	 * @return The length of the data file in bytes.
 	 */
 	public abstract long getDataLength();
-	public abstract float get(int position);
-	public abstract void load(long start);
+	public abstract float get(int position) throws DataSourceException;
+	public abstract void load(long start) throws DataSourceException;
 	public abstract void unload();
 	public abstract boolean isLoaded();
 	public abstract void setLoaded(boolean isLoaded);

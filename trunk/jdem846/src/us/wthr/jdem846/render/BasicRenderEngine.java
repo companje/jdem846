@@ -7,6 +7,7 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColorRegistry;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.input.DataBounds;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.SubsetDataPackage;
@@ -40,7 +41,7 @@ public abstract class BasicRenderEngine extends RenderEngine
 		dataSubset = dataPackage.getDataSubset(tileBounds);
 	}
 
-	protected float getElevation(int row, int col)
+	protected float getElevation(int row, int col) throws DataSourceException
 	{
 		if (dataSubset != null) {
 			return dataSubset.getElevation(row, col);
@@ -50,12 +51,12 @@ public abstract class BasicRenderEngine extends RenderEngine
 	}
 	
 	
-	protected void getPoint(int row, int column, DemPoint point)
+	protected void getPoint(int row, int column, DemPoint point) throws DataSourceException
 	{
 		getPoint(row, column, 1, point);
 	}
 	
-	protected void getPoint(int row, int column, int gridSize, DemPoint point)
+	protected void getPoint(int row, int column, int gridSize, DemPoint point) throws DataSourceException
 	{
 		//DemPoint point = new DemPoint();
 

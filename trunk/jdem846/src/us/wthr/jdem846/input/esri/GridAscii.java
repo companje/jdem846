@@ -76,7 +76,7 @@ public class GridAscii extends DataSource
 		isDisposed = true;
 	}
     
-	private float __get(int row, int col)
+	private float __get(int row, int col)  throws DataSourceException
 	{
 		if (col < 0 || col > header.getColumns() || row < 0 || row > header.getRows())
 			return DemConstants.ELEV_NO_DATA;
@@ -98,7 +98,7 @@ public class GridAscii extends DataSource
 	}
 	
 	
-	public float getElevation(int col)
+	public float getElevation(int col) throws DataSourceException
 	{
 		if (col >= header.getColumns())
 			return DemConstants.ELEV_NO_DATA;
@@ -106,7 +106,7 @@ public class GridAscii extends DataSource
 		return this.getElevation(cachedRow, col);
 	}
 
-	public float getElevation(int row, int column)
+	public float getElevation(int row, int column) throws DataSourceException
 	{
 		if (column >= header.getColumns() || row > header.getRows())
 			return DemConstants.ELEV_NO_DATA;
@@ -120,13 +120,13 @@ public class GridAscii extends DataSource
     
 
 	@Override
-	public void initDataCache()
+	public void initDataCache() throws DataSourceException
 	{
 		loadRow(this.cachedRow);
 	}
 
 	@Override
-	public void loadRow(int row)
+	public void loadRow(int row) throws DataSourceException
 	{
 		this.cachedRow = row;
 		long seekTo = row * (header.getColumns() * 4);

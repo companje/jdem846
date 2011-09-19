@@ -40,6 +40,7 @@ import us.wthr.jdem846.color.ColorRegistry;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.dbase.ClassLoadException;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
@@ -161,7 +162,11 @@ public class Dem3dGenerator extends BasicRenderEngine
 			//resetImage(lineBuffer);
 			
 			for (int column = 0; column < dataPackage.getColumns() - 1; column++) {
-				getPoint(row, column, 1, point);
+				try {
+					getPoint(row, column, 1, point);
+				} catch (DataSourceException ex) {
+					throw new RenderEngineException("Error loading elevation data: " + ex.getMessage(), ex);
+				}
 				
 				//if (point.getCondition() == DemConstants.STAT_SUCCESSFUL) {
 					double x = (dataPackage.getColumns() - column) + startX;
@@ -435,6 +440,11 @@ public class Dem3dGenerator extends BasicRenderEngine
 		
 		int cropHeight = bottom - top;
 		int cropWidth = right - left;
+		
+		// One dimension would be too small (0). Return the original let the user crop manually.
+		if (cropHeight == 0 || cropWidth == 0) {
+			return original;
+		}
 		BufferedImage cropped = new BufferedImage(cropWidth, cropHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = (Graphics2D) cropped.getGraphics();
 		

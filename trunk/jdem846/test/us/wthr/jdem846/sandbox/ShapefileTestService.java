@@ -37,6 +37,7 @@ import us.wthr.jdem846.annotations.Destroy;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Service;
 import us.wthr.jdem846.annotations.ServiceRuntime;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.InvalidFileFormatException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.DataSource;
@@ -158,7 +159,12 @@ public class ShapefileTestService extends AbstractLockableService
 		Dem2dGenerator dem2d = new Dem2dGenerator(dataPackage, modelOptions);
 		
 		log.info("Calculating elevation min/max");
-		dataPackage.calculateElevationMinMax(true);
+		try {
+			dataPackage.calculateElevationMinMax(true);
+		} catch (DataSourceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		log.info("Generating DEM2D image");
 		OutputProduct<DemCanvas> output = null;

@@ -106,7 +106,7 @@ public class ElevationDatasetExchange extends DataSource
 	}
 	
 	@Override
-	public void calculateElevationMinMax()
+	public void calculateElevationMinMax() throws DataSourceException
 	{
 		if (minElevation > maxElevation)
 			super.calculateElevationMinMax();
