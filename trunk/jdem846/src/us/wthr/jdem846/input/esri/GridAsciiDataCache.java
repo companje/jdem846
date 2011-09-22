@@ -115,7 +115,7 @@ public class GridAsciiDataCache extends DataCache
 		Arrays.fill(load_buffer, (byte)0x0);
 		
 
-		int seekStart = start * (Float.SIZE / 8);
+		long seekStart = (long)start * (long)  (Float.SIZE / 8);
 		try {
 			inputData.seek(seekStart);
 		} catch (IOException ex) {
