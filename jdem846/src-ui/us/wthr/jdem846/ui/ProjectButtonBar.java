@@ -36,12 +36,14 @@ public class ProjectButtonBar extends ToolBar
 	public static final int BTN_ADD = 0;
 	public static final int BTN_REMOVE = 1;
 	public static final int BTN_CREATE = 2;
+	public static final int BTN_EXPORT = 3;
 	
 	private List<ButtonClickedListener> buttonClickedListeners = new LinkedList<ButtonClickedListener>();
 	
 	private ToolbarButton jbtnAdd;
 	private ToolbarButton jbtnRemove;
 	private ToolbarButton jbtnCreate;
+	private ToolbarButton jbtnExport;
 	
 	public ProjectButtonBar()
 	{
@@ -65,18 +67,26 @@ public class ProjectButtonBar extends ToolBar
 				fireButtonClickedListeners(BTN_CREATE);
 			}
 		});
-
+		
+		jbtnExport = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.exportButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/data_export.png", new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fireButtonClickedListeners(BTN_EXPORT);
+			}
+		});
+		
 		// Set tooltips
 		jbtnAdd.setToolTipText(I18N.get("us.wthr.jdem846.ui.projectButtonBar.addTooltip"));
 		jbtnRemove.setToolTipText(I18N.get("us.wthr.jdem846.ui.projectButtonBar.removeTooltip"));
 		jbtnCreate.setToolTipText(I18N.get("us.wthr.jdem846.ui.projectButtonBar.createTooltip"));
-		
+		jbtnExport.setToolTipText(I18N.get("us.wthr.jdem846.ui.projectButtonBar.exportTooltip"));
 
 		this.setMargin(new Insets(3, 3, 3, 3));
 		
 		// Create layout
 		add(jbtnAdd);
 		add(jbtnRemove);
+		addSeparator();
+		add(jbtnExport);
 		addSeparator();
 		add(jbtnCreate);
 	}
@@ -93,6 +103,8 @@ public class ProjectButtonBar extends ToolBar
 		case BTN_CREATE:
 			jbtnCreate.setEnabled(enabled);
 			break;
+		case BTN_EXPORT:
+			jbtnExport.setEnabled(enabled);
 		}
 	}
 	
@@ -115,6 +127,9 @@ public class ProjectButtonBar extends ToolBar
 			case BTN_CREATE:
 				listener.onCreateClicked();
 				break;
+			case BTN_EXPORT:
+				listener.onExportClicked();
+				break;
 			}
 		}
 	}
@@ -124,6 +139,7 @@ public class ProjectButtonBar extends ToolBar
 		public void onAddClicked();
 		public void onRemoveClicked();
 		public void onCreateClicked();
+		public void onExportClicked();
 	}
 	
 }

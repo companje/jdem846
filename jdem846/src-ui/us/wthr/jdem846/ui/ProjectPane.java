@@ -189,7 +189,13 @@ public class ProjectPane extends JdemPanel
 				fireCreateModelListeners();
 			}
 		}));
-
+		
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.export"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/data_export.png", KeyEvent.VK_E, new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				onExportData();
+			}
+		}));
 		
 	
 		// Set component properties
@@ -208,6 +214,9 @@ public class ProjectPane extends JdemPanel
 				int selectedType = datasetTree.getSelectedDatasetType();
 				int selectedIndex = datasetTree.getSelectedDatasetIndex();
 				removeInputData(selectedType, selectedIndex);
+			}
+			public void onExportClicked() {
+				onExportData();
 			}
 		});
 		
@@ -378,6 +387,17 @@ public class ProjectPane extends JdemPanel
 		
 		
 	}
+	
+	public void onExportData()
+	{
+		log.warn("Export not yet implemented");
+		
+		JOptionPane.showMessageDialog(getRootPane(),
+				I18N.get("us.wthr.jdem846.ui.notYetImplemented.message"),
+			    I18N.get("us.wthr.jdem846.ui.notYetImplemented.title"),
+			    JOptionPane.INFORMATION_MESSAGE);
+	}
+	
 	
 	public void dispose() throws ComponentException
 	{
