@@ -53,8 +53,12 @@ public class ElevationDataLoaderRegistry  implements AppRegistry
 		Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
 		ElevationDataLoader annotation = (ElevationDataLoader) clazz.getAnnotation(ElevationDataLoader.class);
 		
+		if (!annotation.enabled())
+			return;
+		
 		String name = annotation.name();
 		name = I18N.get(name, name);
+		
 		
 		ElevationDataLoaderInstance instance = new ElevationDataLoaderInstance(clazzName, name, annotation.identifier(), annotation.extension());
 		instanceMap.put(annotation.identifier(), instance);

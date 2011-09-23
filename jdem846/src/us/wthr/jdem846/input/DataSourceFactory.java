@@ -21,6 +21,7 @@ import us.wthr.jdem846.input.bil.BilInt16;
 import us.wthr.jdem846.input.edef.ElevationDatasetExchange;
 import us.wthr.jdem846.input.esri.GridAscii;
 import us.wthr.jdem846.input.gridfloat.GridFloat;
+import us.wthr.jdem846.input.netcdf.NetCdf;
 
 /** Utility class for loading a datasource using known file extensions to determine type and correct driver.
  * 
@@ -52,6 +53,8 @@ public class DataSourceFactory
 			dataSource = new ElevationDatasetExchange(filePath);
 		} else if (extension.equalsIgnoreCase("asc")) {
 			dataSource = new GridAscii(filePath);
+		} else if (extension.equalsIgnoreCase("nc")) {
+			dataSource = new NetCdf(filePath);
 		} else {
 			throw new InvalidFileFormatException(extension);
 		}
