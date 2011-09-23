@@ -55,7 +55,9 @@ import us.wthr.jdem846.shapefile.modeling.FeatureTypeStroke;
 import us.wthr.jdem846.shapefile.modeling.LineStroke;
 import us.wthr.jdem846.util.ImageIcons;
 
-@DemEngine(name="us.wthr.jdem846.render.demEngine2D.name", identifier="dem2d-gen")
+@DemEngine(name="us.wthr.jdem846.render.demEngine2D.name", 
+	identifier="dem2d-gen",
+	usesElevationMultiple=false)
 public class Dem2dGenerator extends BasicRenderEngine
 {
 	private static Log log = Logging.getLog(Dem2dGenerator.class);
@@ -368,6 +370,13 @@ public class Dem2dGenerator extends BasicRenderEngine
 							break;
 						
 						case DemConstants.HILLSHADING_COMBINED:
+							
+							if (dot > 0) {
+								dot *= modelOptions.getRelativeLightIntensity();
+							} else if (dot < 0) {
+								dot *= modelOptions.getRelativeDarkIntensity();
+							}
+							
 							ColorAdjustments.adjustBrightness(hillshadeColor, dot);
 							break;
 						}

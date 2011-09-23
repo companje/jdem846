@@ -81,6 +81,10 @@ public @interface DemEngine {
 	 */
 	boolean usesLightMultiple() default true;
 	
+	boolean usesRelativeLightMultiple() default true;
+	
+	boolean usesRelativeDarkMultiple() default true;
+	
 	/** Specifies whether the engine uses the spot exponent property from the model options.
 	 * 
 	 * @return
