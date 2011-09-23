@@ -32,4 +32,6 @@ public @interface ElevationDataLoader
 	String identifier();
 	String extension();
 	
+	boolean enabled() default true;
+	
 }
