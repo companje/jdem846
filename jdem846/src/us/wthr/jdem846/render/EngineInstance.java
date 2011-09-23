@@ -44,6 +44,8 @@ public class EngineInstance {
 	private boolean generatesImage;
 	private boolean usesAntialiasing;
 	private boolean usesPrecacheStrategy;
+	private boolean usesRelativeLightMultiple;
+	private boolean usesRelativeDarkMultiple;
 	
 	@SuppressWarnings("unchecked")
 	private Class needsOutputFileOfType;
@@ -209,6 +211,29 @@ public class EngineInstance {
 	public void setUsesLightMultiple(boolean usesLightMultiple)
 	{
 		this.usesLightMultiple = usesLightMultiple;
+	}
+
+	public boolean usesRelativeLightMultiple()
+	{
+		return usesRelativeLightMultiple;
+	}
+
+
+	public void setUsesRelativeLightMultiple(boolean usesRelativeLightMultiple)
+	{
+		this.usesRelativeLightMultiple = usesRelativeLightMultiple;
+	}
+
+
+	public boolean usesRelativeDarkMultiple()
+	{
+		return usesRelativeDarkMultiple;
+	}
+
+
+	public void setUsesRelativeDarkMultiple(boolean usesRelativeDarkMultiple)
+	{
+		this.usesRelativeDarkMultiple = usesRelativeDarkMultiple;
 	}
 
 

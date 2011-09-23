@@ -44,6 +44,9 @@ public class ModelOptions
 	public static final String OPTION_SPOT_EXPONENT = "us.wthr.jdem846.modelOptions.spotExponent";
 	public static final String OPTION_ELEVATION_MULTIPLE = "us.wthr.jdem846.modelOptions.elevationMultiple";
 	
+	public static final String OPTION_RELATIVE_LIGHT_INTENSITY = "us.wthr.jdem846.modelOptions.relativeLightIntensity";
+	public static final String OPTION_RELATIVE_DARK_INTENSITY = "us.wthr.jdem846.modelOptions.relativeDarkIntensity";
+	
 	public static final String OPTION_PROJECTION_ROTATE_X = "us.wthr.jdem846.modelOptions.projection.rotateX";
 	public static final String OPTION_PROJECTION_ROTATE_Y = "us.wthr.jdem846.modelOptions.projection.rotateY";
 	public static final String OPTION_PROJECTION_ROTATE_Z = "us.wthr.jdem846.modelOptions.projection.rotateZ";
@@ -70,6 +73,9 @@ public class ModelOptions
 	private double lightingAzimuth = 135;
 	private double lightingElevation = 45;
 	
+	private double relativeLightIntensity = 1.0;
+	private double relativeDarkIntensity = 1.0;
+	
 	/** Sets the spot exponent for the intensity distribution of the lighting. 
 	 * Should be a value between 0.4 and 10.0 (default: 1.0)
 	 */
@@ -80,6 +86,7 @@ public class ModelOptions
 	private Projection projection = new Projection();
 	private String writeTo = null;
 	
+
 	private String precacheStrategy;
 	private boolean antialiased;
 	
@@ -166,6 +173,16 @@ public class ModelOptions
 			setLightingMultiple(Double.parseDouble(property));
 		}
 		
+		property = JDem846Properties.getProperty(OPTION_RELATIVE_LIGHT_INTENSITY);
+		if (property != null) {
+			setRelativeLightIntensity(Double.parseDouble(property));
+		}
+		
+		property = JDem846Properties.getProperty(OPTION_RELATIVE_DARK_INTENSITY);
+		if (property != null) {
+			setRelativeDarkIntensity(Double.parseDouble(property));
+		}
+		
 		property = JDem846Properties.getProperty(OPTION_SPOT_EXPONENT);
 		if (property != null) {
 			setSpotExponent(Integer.parseInt(property));
@@ -241,6 +258,8 @@ public class ModelOptions
 		projectModel.setOption(OPTION_TILE_SIZE, this.getTileSize());
 		projectModel.setOption(OPTION_LIGHTING_MULTIPLE, this.getLightingMultiple());
 		projectModel.setOption(OPTION_SPOT_EXPONENT, this.getSpotExponent());
+		projectModel.setOption(OPTION_RELATIVE_LIGHT_INTENSITY, this.getRelativeLightIntensity());
+		projectModel.setOption(OPTION_RELATIVE_DARK_INTENSITY, this.getRelativeDarkIntensity());
 		
 		projectModel.setOption(OPTION_PRECACHE_STRATEGY, this.getPrecacheStrategy());
 		projectModel.setOption(OPTION_ANTIALIASED, this.isAntialiased());
@@ -279,6 +298,9 @@ public class ModelOptions
 		this.setPrecacheStrategy(projectModel.getOption(OPTION_PRECACHE_STRATEGY));
 		this.setAntialiased(projectModel.getBooleanOption(OPTION_ANTIALIASED));
 		
+		this.setRelativeLightIntensity(projectModel.getDoubleOption(OPTION_RELATIVE_LIGHT_INTENSITY));
+		this.setRelativeDarkIntensity(projectModel.getDoubleOption(OPTION_RELATIVE_DARK_INTENSITY));
+		
 		this.projection.setRotateX(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_X));
 		this.projection.setRotateY(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_Y));
 		this.projection.setRotateZ(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_Z));
@@ -313,7 +335,30 @@ public class ModelOptions
 		this.lightingMultiple = lightingMultiple;
 	}
 
-	
+
+	public double getRelativeLightIntensity()
+	{
+		return relativeLightIntensity;
+	}
+
+
+	public void setRelativeLightIntensity(double relativeLightIntensity)
+	{
+		this.relativeLightIntensity = relativeLightIntensity;
+	}
+
+
+	public double getRelativeDarkIntensity()
+	{
+		return relativeDarkIntensity;
+	}
+
+
+	public void setRelativeDarkIntensity(double relativeDarkIntensity)
+	{
+		this.relativeDarkIntensity = relativeDarkIntensity;
+	}
+
 	
 	
 	public int getSpotExponent()
@@ -545,6 +590,9 @@ public class ModelOptions
 		clone.gradientLevels = this.gradientLevels;
 		clone.antialiased = this.antialiased;
 		clone.precacheStrategy = this.precacheStrategy.toString();
+		
+		clone.relativeLightIntensity = this.relativeLightIntensity;
+		clone.relativeDarkIntensity = this.relativeDarkIntensity;
 		
 		clone.writeTo = this.writeTo;
 		if (projection != null) {

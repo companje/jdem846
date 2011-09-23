@@ -60,6 +60,8 @@ public class EngineRegistry  implements AppRegistry
 		engineInstance.setUsesColoring(annotation.usesColoring());
 		engineInstance.setUsesHillshading(annotation.usesHillshading());
 		engineInstance.setUsesLightMultiple(annotation.usesLightMultiple());
+		engineInstance.setUsesRelativeLightMultiple(annotation.usesRelativeLightMultiple());
+		engineInstance.setUsesRelativeDarkMultiple(annotation.usesRelativeDarkMultiple());
 		engineInstance.setUsesSpotExponent(annotation.usesSpotExponent());
 		engineInstance.setUsesTileSize(annotation.usesTileSize());
 		engineInstance.setGeneratesImage(annotation.generatesImage());

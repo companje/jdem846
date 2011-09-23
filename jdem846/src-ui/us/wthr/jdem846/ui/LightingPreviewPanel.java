@@ -130,6 +130,8 @@ public class LightingPreviewPanel extends Panel
 			modelOptions.setBackgroundColor(I18N.get("us.wthr.jdem846.color.transparent"));
 			modelOptions.setWidth(previewData.getHeader().getColumns());
 			modelOptions.setHeight(previewData.getHeader().getRows());
+			modelOptions.setRelativeLightIntensity(1.0);
+			modelOptions.setRelativeDarkIntensity(1.0);
 			
 			dataPackage = new DataPackage();
 			dataPackage.addDataSource(previewData);

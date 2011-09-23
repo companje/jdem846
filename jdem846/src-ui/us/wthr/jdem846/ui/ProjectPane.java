@@ -392,10 +392,16 @@ public class ProjectPane extends JdemPanel
 	{
 		log.warn("Export not yet implemented");
 		
+		DataExportDialog export = new DataExportDialog(this.dataPackage);
+		export.setModal(true);
+		export.setVisible(true);
+		
+		/*
 		JOptionPane.showMessageDialog(getRootPane(),
 				I18N.get("us.wthr.jdem846.ui.notYetImplemented.message"),
 			    I18N.get("us.wthr.jdem846.ui.notYetImplemented.title"),
 			    JOptionPane.INFORMATION_MESSAGE);
+		*/
 	}
 	
 	

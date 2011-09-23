@@ -77,6 +77,9 @@ public class ModelOptionsPanel extends Panel
 	private MonitoredSlider jsldLightMultiple;
 	private MonitoredSlider jsldSpotExponent;
 	private MonitoredSlider jsldElevationMultiple;
+	private MonitoredSlider jsldRelativeLightIntensity;
+	private MonitoredSlider jsldRelativeDarkIntensity;
+	
 	private EngineListModel engineModel;
 	private BackgroundColorOptionsListModel backgroundModel;
 	private ColoringListModel coloringModel;
@@ -166,6 +169,22 @@ public class ModelOptionsPanel extends Panel
 			}
 		});
 		
+		jsldRelativeLightIntensity =  new MonitoredSlider(0, 100, 0, new MonitoredValueListener() {
+			NumberFormat format = NumberFormat.getIntegerInstance();
+			public String getValueString()
+			{
+				return format.format(jsldRelativeLightIntensity.getValue());
+			}
+		});
+		
+		jsldRelativeDarkIntensity =  new MonitoredSlider(0, 100, 0, new MonitoredValueListener() {
+			NumberFormat format = NumberFormat.getIntegerInstance();
+			public String getValueString()
+			{
+				return format.format(jsldRelativeDarkIntensity.getValue());
+			}
+		});
+		
 		gradientConfigPanel = new GradientConfigPanel();
 		projectionConfigPanel = new ProjectionConfigPanel();
 		//projectionConfigPanel.setBorder(new StandardTitledBorder("Projection"));
@@ -188,6 +207,8 @@ public class ModelOptionsPanel extends Panel
 		jsldLightMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.tooltip"));
 		jsldSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
 		jsldElevationMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.tooltip"));
+		jsldRelativeLightIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeLightIntensity.tooltip"));
+		jsldRelativeDarkIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeDarkIntensity.tooltip"));
 		cmbAntialiasing.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.antialiasingCombo.tooltip"));
 		cmbPrecacheStrategy.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.tooltip"));
 		
@@ -243,6 +264,8 @@ public class ModelOptionsPanel extends Panel
 		jsldSpotExponent.addChangeListener(sliderChangeListener);
 		jsldLightMultiple.addChangeListener(sliderChangeListener);
 		jsldElevationMultiple.addChangeListener(sliderChangeListener);
+		jsldRelativeLightIntensity.addChangeListener(sliderChangeListener);
+		jsldRelativeDarkIntensity.addChangeListener(sliderChangeListener);
 		
 		ChangeListener basicChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
@@ -292,6 +315,13 @@ public class ModelOptionsPanel extends Panel
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.label") + ":"));
 		controlGrid.add(jsldLightMultiple);
+		
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeLightIntensity.label") + ":"));
+		controlGrid.add(jsldRelativeLightIntensity);
+		
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeDarkIntensity.label") + ":"));
+		controlGrid.add(jsldRelativeDarkIntensity);
+		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.label") + ":"));
 		controlGrid.add(jsldSpotExponent);
 		
@@ -361,7 +391,10 @@ public class ModelOptionsPanel extends Panel
 		txtTileSize.setText(""+modelOptions.getTileSize());
 		jsldLightMultiple.setValue((int)Math.round(modelOptions.getLightingMultiple() * 100));
 		jsldSpotExponent.setValue(modelOptions.getSpotExponent());
-
+		
+		jsldRelativeLightIntensity.setValue((int)Math.round(modelOptions.getRelativeLightIntensity() * 100));
+		jsldRelativeDarkIntensity.setValue((int)Math.round(modelOptions.getRelativeDarkIntensity() * 100));
+		
 		jsldElevationMultiple.setValue((int)Math.round(modelOptions.getElevationMultiple()));
 		
 		gradientConfigPanel.setGradientIdentifier(modelOptions.getColoringType());
@@ -389,6 +422,10 @@ public class ModelOptionsPanel extends Panel
 		modelOptions.setHillShadeType(hillShadingModel.getSelectedItemValue());
 		modelOptions.setLightingMultiple((double)jsldLightMultiple.getValue() / 100.0);
 		modelOptions.setElevationMultiple((double)jsldElevationMultiple.getValue());
+		
+		modelOptions.setRelativeLightIntensity((double)jsldRelativeLightIntensity.getValue() / 100.0);
+		modelOptions.setRelativeDarkIntensity((double)jsldRelativeDarkIntensity.getValue() / 100.0);
+		
 		modelOptions.setTileSize(txtTileSize.getInteger());
 		modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
 		
@@ -432,6 +469,9 @@ public class ModelOptionsPanel extends Panel
 		jsldSpotExponent.setEnabled(engineInstance.usesSpotExponent());
 		txtTileSize.setEnabled(engineInstance.usesTileSize());
 		gradientConfigPanel.setEnabled(engineInstance.usesColoring());
+		
+		jsldRelativeLightIntensity.setEnabled(engineInstance.usesRelativeLightMultiple());
+		jsldRelativeDarkIntensity.setEnabled(engineInstance.usesRelativeDarkMultiple());
 		
 		gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());
 		projectionConfigPanel.setVisible(engineInstance.usesProjection());
