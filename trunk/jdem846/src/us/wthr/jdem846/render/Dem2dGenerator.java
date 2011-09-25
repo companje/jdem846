@@ -388,7 +388,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 					} else {
 						color[0] = reliefColor[0];
 						color[1] = reliefColor[1];
-						color[1] = reliefColor[1];
+						color[2] = reliefColor[2];
 					}
 
 					canvas.setColor(imgCol, imgRow, color);
