@@ -86,7 +86,7 @@ public class GridFloat extends DataSource
 	public void loadRow(int row)
 	{
 		this.cachedRow = row;
-		long seekTo = row * (header.getColumns() * 4);
+		long seekTo = (long) row * (long)(header.getColumns() * 4l);
 		cache.load(seekTo);
 	}
 
