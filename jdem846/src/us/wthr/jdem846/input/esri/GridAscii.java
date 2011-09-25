@@ -135,7 +135,7 @@ public class GridAscii extends DataSource
 	public void loadRow(int row) throws DataSourceException
 	{
 		this.cachedRow = row;
-		long seekTo = row * (header.getColumns() * 4);
+		long seekTo = (long) row * (long)(header.getColumns() * 4l);
 		cache.load(seekTo);
 	}
 
