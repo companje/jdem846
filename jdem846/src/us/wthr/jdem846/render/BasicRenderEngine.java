@@ -33,9 +33,22 @@ public abstract class BasicRenderEngine extends RenderEngine
 		this.dataPackage = dataPackage;
 		this.modelOptions = modelOptions;
 	}
-
 	
-	protected void loadDataSubset(int fromCol, int fromRow, int width, int height)
+	public void precacheData() throws DataSourceException
+	{
+		if (dataSubset != null) {
+			dataSubset.precacheData();
+		}
+	}
+	
+	public void unloadData() throws DataSourceException
+	{
+		if (dataSubset != null) {
+			dataSubset.unloadData();
+		}
+	}
+	
+	public void loadDataSubset(int fromCol, int fromRow, int width, int height)
 	{
 		DataBounds tileBounds = new DataBounds(fromCol, fromRow, width, height);
 		dataSubset = dataPackage.getDataSubset(tileBounds);
