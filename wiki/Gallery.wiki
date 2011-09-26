@@ -4,6 +4,10 @@
 = Gallery =
 <g:plusone size="medium"></g:plusone>
 
+<b><em>
+<a href="http://www.flickr.com/photos/kevinmgill/sets/72157627638273316/">See More Examples @ Flickr</a>
+</em></b>
+
 <table style="margin-left:auto;margin-right:auto;">
 <tr>
 <td>
@@ -51,6 +55,13 @@
 <td>
 <a href="http://jdem846.wthr.us/gallery/maui-3d-preview.png" >
    <img src="http://jdem846.wthr.us/gallery/maui-3d-preview-350px.png" width="350"/>
+</a>
+</td>
+</tr>
+<tr>
+<td colspan="2" align="center">
+<a href="http://jdem846.wthr.us/gallery/google-earth-kml-preview.png" >
+   <img src="http://jdem846.wthr.us/gallery/google-earth-kml-preview-450px.png" width="450"/> 
 </a>
 </td>
 </tr>
