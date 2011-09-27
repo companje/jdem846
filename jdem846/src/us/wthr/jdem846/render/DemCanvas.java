@@ -191,9 +191,15 @@ public class DemCanvas implements ImageObserver
 	
 	public void save(String saveTo)
 	{
+		String format = null;
+		if (saveTo.toLowerCase().endsWith(".png"))
+			format = "png";
+		else if (saveTo.toLowerCase().endsWith(".jpeg") || saveTo.toLowerCase().endsWith(".jpg"))
+			format = "jpg";
+		
 		File writeFile = new File(saveTo);
 		try {
-			ImageIO.write((BufferedImage)getImage(), "png", writeFile);
+			ImageIO.write((BufferedImage)getImage(), format, writeFile);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
