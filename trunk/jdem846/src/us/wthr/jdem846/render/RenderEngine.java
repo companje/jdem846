@@ -38,7 +38,7 @@ public abstract class RenderEngine  implements ImageObserver
 	private DemEngine annotation = null;
 	private String needsOutputFileOfTypeIdentifier = null;
 	
-	private List<TileCompletionListener> tileCompletionListeners = new LinkedList<TileCompletionListener>();
+	protected List<TileCompletionListener> tileCompletionListeners = new LinkedList<TileCompletionListener>();
 	
 	private boolean cancel = false;
 	

@@ -16,17 +16,40 @@
 
 package us.wthr.jdem846.kml;
 
-public class Placemark extends KmlElement
+public class NetworkLink extends KmlElement
 {
-	
 	private String name;
-	private Geometry geometry;
+	private Region region;
+	private Link link;
 	
+	public NetworkLink()
+	{
+		
+	}
 	
-	public Placemark(String name, Geometry geometry)
+	public NetworkLink(String href)
+	{
+		link = new Link(href);
+	}
+	
+	public NetworkLink(String name, String href)
 	{
 		setName(name);
-		setGeometry(geometry);
+		link = new Link(href);
+	}
+
+	public void setHref(String href)
+	{
+		link = new Link(href);
+	}
+	
+	public String getHref()
+	{
+		if (link != null) {
+			return link.getHref();
+		} else {
+			return null;
+		}
 	}
 	
 	public String getName()
@@ -38,34 +61,47 @@ public class Placemark extends KmlElement
 	{
 		this.name = name;
 	}
-
-	public Geometry getGeometry()
+	
+	public Region getRegion()
 	{
-		return geometry;
+		return region;
 	}
 
-	public void setGeometry(Geometry geometry)
+	public void setRegion(Region region)
 	{
-		this.geometry = geometry;
+		this.region = region;
 	}
-
+	
+	public void setLink(Link link)
+	{
+		this.link = link;
+	}
+	
+	public Link getLink()
+	{
+		return link;
+	}
+	
 	@Override
 	public String toKml(String id)
 	{
 		StringBuffer buffer = new StringBuffer();
 		
-		buffer.append("<Placemark>\r\n");
+		buffer.append("<NetworkLink>\r\n");
 		
 		if (name != null) {
 			buffer.append("<name>" + name + "</name>\r\n");
 		}
 		
-		if (geometry != null) {
-			buffer.append(geometry.toKml());
+		if (region != null) {
+			buffer.append(region.toKml());
 		}
 		
-		buffer.append("</Placemark>\r\n");
+		if (link != null) {
+			buffer.append(link.toKml());
+		}
 		
+		buffer.append("</NetworkLink>\r\n");
 		return buffer.toString();
 	}
 }

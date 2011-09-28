@@ -16,37 +16,39 @@
 
 package us.wthr.jdem846.kml;
 
-public class Placemark extends KmlElement
+public class Region extends KmlElement
 {
 	
-	private String name;
-	private Geometry geometry;
+	private LatLonAltBox latLonAltBox;
+	private Lod lod;
 	
-	
-	public Placemark(String name, Geometry geometry)
+	public Region(double north, double south, double east, double west)
 	{
-		setName(name);
-		setGeometry(geometry);
-	}
-	
-	public String getName()
-	{
-		return name;
+		
+		latLonAltBox = new LatLonAltBox(north, south, east, west);
+		
 	}
 
-	public void setName(String name)
+	
+	
+	public Lod getLod()
 	{
-		this.name = name;
+		return lod;
 	}
 
-	public Geometry getGeometry()
+	public void setLod(Lod lod)
 	{
-		return geometry;
+		this.lod = lod;
 	}
 
-	public void setGeometry(Geometry geometry)
+	public LatLonAltBox getLatLonAltBox()
 	{
-		this.geometry = geometry;
+		return latLonAltBox;
+	}
+
+	public void setLatLonAltBox(LatLonAltBox latLonAltBox)
+	{
+		this.latLonAltBox = latLonAltBox;
 	}
 
 	@Override
@@ -54,18 +56,21 @@ public class Placemark extends KmlElement
 	{
 		StringBuffer buffer = new StringBuffer();
 		
-		buffer.append("<Placemark>\r\n");
-		
-		if (name != null) {
-			buffer.append("<name>" + name + "</name>\r\n");
+		if (id != null) {
+			buffer.append("<Region id=\"" + id + "\">\r\n");
+		} else {
+			buffer.append("<Region>\r\n");
 		}
 		
-		if (geometry != null) {
-			buffer.append(geometry.toKml());
+		buffer.append(latLonAltBox.toKml());
+		
+		if (lod != null) {
+			buffer.append(lod.toKml());
 		}
 		
-		buffer.append("</Placemark>\r\n");
+		buffer.append("</Region>\r\n");
 		
 		return buffer.toString();
 	}
+	
 }
