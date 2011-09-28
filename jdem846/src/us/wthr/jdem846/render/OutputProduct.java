@@ -20,7 +20,7 @@ public class OutputProduct<E>
 {
 	public static final int IMAGE = 0;
 	public static final int ELEVATION_DATA = 1;
-	
+	public static final int EXPORT_SPEC = 2;
 	
 	private E product;
 	private int type;
