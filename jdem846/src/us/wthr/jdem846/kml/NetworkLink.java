@@ -16,11 +16,13 @@
 
 package us.wthr.jdem846.kml;
 
-public class NetworkLink extends KmlElement
+import org.dom4j.Element;
+
+public class NetworkLink extends Feature
 {
-	private String name;
-	private Region region;
 	private Link link;
+	private boolean flyToView = false;
+	private boolean refreshVisibility = false;
 	
 	public NetworkLink()
 	{
@@ -37,6 +39,26 @@ public class NetworkLink extends KmlElement
 		setName(name);
 		link = new Link(href);
 	}
+	
+	public boolean isFlyToView()
+	{
+		return flyToView;
+	}
+
+	public void setFlyToView(boolean flyToView)
+	{
+		this.flyToView = flyToView;
+	}
+
+	public boolean isRefreshVisibility()
+	{
+		return refreshVisibility;
+	}
+
+	public void setRefreshVisibility(boolean refreshVisibility)
+	{
+		this.refreshVisibility = refreshVisibility;
+	}
 
 	public void setHref(String href)
 	{
@@ -52,26 +74,6 @@ public class NetworkLink extends KmlElement
 		}
 	}
 	
-	public String getName()
-	{
-		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-	
-	public Region getRegion()
-	{
-		return region;
-	}
-
-	public void setRegion(Region region)
-	{
-		this.region = region;
-	}
-	
 	public void setLink(Link link)
 	{
 		this.link = link;
@@ -82,26 +84,29 @@ public class NetworkLink extends KmlElement
 		return link;
 	}
 	
-	@Override
-	public String toKml(String id)
+	protected void loadKmlChildren(Element element)
 	{
-		StringBuffer buffer = new StringBuffer();
-		
-		buffer.append("<NetworkLink>\r\n");
-		
-		if (name != null) {
-			buffer.append("<name>" + name + "</name>\r\n");
-		}
-		
-		if (region != null) {
-			buffer.append(region.toKml());
-		}
+		super.loadKmlChildren(element);
 		
 		if (link != null) {
-			buffer.append(link.toKml());
+			link.toKml(element);
 		}
 		
-		buffer.append("</NetworkLink>\r\n");
-		return buffer.toString();
+		if (flyToView) { // Default is false
+			element.addElement("flyToView").addText("1");
+		}
+		
+		if (refreshVisibility) { // Default is false
+			element.addElement("refreshVisibility").addText("1");
+		}
 	}
+	
+	public void toKml(Element parent)
+	{
+		Element element = parent.addElement("NetworkLink");
+		loadKmlChildren(element);
+	}
+	
+	
+
 }

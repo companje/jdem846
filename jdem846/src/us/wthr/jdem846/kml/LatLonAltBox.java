@@ -16,14 +16,21 @@
 
 package us.wthr.jdem846.kml;
 
+import org.dom4j.Element;
+
 public class LatLonAltBox extends KmlElement
 {
+	private double VALUE_NOT_SET = -9999.9;
 	
 	private double north;
 	private double south;
 	private double east;
 	private double west;
 	
+	private double minAltitude = VALUE_NOT_SET;
+	private double maxAltitude = VALUE_NOT_SET;
+	
+	private AltitudeModeEnum altitudeMode = null;
 	
 	public LatLonAltBox(double north, double south, double east, double west)
 	{
@@ -72,22 +79,37 @@ public class LatLonAltBox extends KmlElement
 	{
 		this.west = west;
 	}
-
-	@Override
-	public String toKml(String id)
+	
+	
+	protected void loadKmlChildren(Element element)
 	{
-		StringBuffer buffer = new StringBuffer();
+		super.loadKmlChildren(element);
 		
-		buffer.append("<LatLonAltBox>\r\n");
+		element.addElement("north").addText(""+north);
+		element.addElement("south").addText(""+south);
+		element.addElement("east").addText(""+east);
+		element.addElement("west").addText(""+west);
 		
-		buffer.append("<north>" + north + "</north>\r\n");
-		buffer.append("<south>" + south + "</south>\r\n");
-		buffer.append("<east>" + east + "</east>\r\n");
-		buffer.append("<west>" + west + "</west>\r\n");
+		if (minAltitude != VALUE_NOT_SET) {
+			element.addElement("minAltitude").addText(""+minAltitude);
+		}
 		
-		buffer.append("</LatLonAltBox>\r\n");
-		return buffer.toString();
+		if (maxAltitude != VALUE_NOT_SET) {
+			element.addElement("maxAltitude").addText(""+maxAltitude);
+		}
+		
+		if (altitudeMode != null) {
+			element.addElement("altitudeMode").addText(altitudeMode.text());
+		}
+
 	}
+	
+	public void toKml(Element parent)
+	{
+		Element element = parent.addElement("LatLonAltBox");
+		loadKmlChildren(element);
+	}
+	
 	
 	
 }

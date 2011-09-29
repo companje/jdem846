@@ -16,6 +16,8 @@
 
 package us.wthr.jdem846.kml;
 
+import org.dom4j.Element;
+
 public class Lod extends KmlElement
 {
 	private static double VALUE_NOT_SET = -9999.9;
@@ -80,27 +82,34 @@ public class Lod extends KmlElement
 		this.maxFadeExtent = maxFadeExtent;
 	}
 
-	@Override
-	public String toKml(String id)
+	protected void loadKmlChildren(Element element)
 	{
-		StringBuffer buffer = new StringBuffer();
+		super.loadKmlChildren(element);
 		
-		buffer.append("<Lod>\r\n");
+		if (minLodPixels != VALUE_NOT_SET) {
+			element.addElement("minLodPixels").addText(""+minLodPixels);
+		}
 		
-		buffer.append("<minLodPixels>" + minLodPixels + "</minLodPixels>\r\n");
-		buffer.append("<maxLodPixels>" + maxLodPixels + "</maxLodPixels>\r\n");
+		if (maxLodPixels != VALUE_NOT_SET) {
+			element.addElement("maxLodPixels").addText(""+maxLodPixels);
+		}
 		
 		if (minFadeExtent != VALUE_NOT_SET) {
-			buffer.append("<minFadeExtent>" + minFadeExtent + "</minFadeExtent>\r\n");
+			element.addElement("minFadeExtent").addText(""+minFadeExtent);
 		}
 		
 		if (maxFadeExtent != VALUE_NOT_SET) {
-			buffer.append("<maxFadeExtent>" + maxFadeExtent + "</maxFadeExtent>\r\n");
+			element.addElement("maxFadeExtent").addText(""+maxFadeExtent);
 		}
 
-		buffer.append("</Lod>\r\n");
-		return buffer.toString();
-		
 	}
+	
+	public void toKml(Element parent)
+	{
+		Element element = parent.addElement("Lod");
+		loadKmlChildren(element);
+	}
+	
+
 	
 }

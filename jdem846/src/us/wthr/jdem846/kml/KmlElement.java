@@ -16,13 +16,69 @@
 
 package us.wthr.jdem846.kml;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.dom4j.Element;
+
+/** Base KML element class representing <Object>
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public abstract class KmlElement
 {
 	
-	public String toKml()
+	private String id = null;
+	private String targetId = null;
+	
+	public KmlElement()
 	{
-		return toKml(null);
+		
 	}
 	
-	public abstract String toKml(String id);
+	public KmlElement(String id)
+	{
+		
+	}
+	
+	public String getId()
+	{
+		return id;
+	}
+
+	public void setId(String id)
+	{
+		this.id = id;
+	}
+
+	public String getTargetId()
+	{
+		return targetId;
+	}
+
+	public void setTargetId(String targetId)
+	{
+		this.targetId = targetId;
+	}
+
+	
+	protected void loadKmlChildren(Element element)
+	{
+		if (id != null) {
+			element.addAttribute("id", id);
+		}
+		
+		if (targetId != null) {
+			element.addAttribute("targetId", targetId);
+		}
+	}
+
+	public void toKml(Element parent)
+	{
+		Element element = parent.addElement("Object");
+		loadKmlChildren(element);
+	}
+
+	
 }

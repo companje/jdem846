@@ -16,6 +16,8 @@
 
 package us.wthr.jdem846.kml;
 
+import org.dom4j.Element;
+
 public class LatLonBox extends KmlElement
 {
 	
@@ -103,28 +105,22 @@ public class LatLonBox extends KmlElement
 		this.south = south;
 	}
 	
-	@Override
-	public String toKml(String id)
+	
+	protected void loadKmlChildren(Element element)
 	{
-		StringBuffer buffer = new StringBuffer();
+		super.loadKmlChildren(element);
 		
-		if (id == null) {
-			buffer.append("		<LatLonBox>\r\n");
-		} else {
-			buffer.append("		<LatLonBox id=\"" + id + "\">\r\n");
-		}
-		
-		buffer.append("			<north>" + north +"</north>\r\n");
-		buffer.append("			<south>" + south +"</south>\r\n");
-		buffer.append("			<east>" + east +"</east>\r\n");
-		buffer.append("			<west>" + west +"</west>\r\n");
-		
-		if (rotation != 0.0) {
-			buffer.append("			<rotation>" + rotation + "</rotation>\r\n");
-		}
-		
-		buffer.append("		</LatLonBox>\r\n");
-		return buffer.toString();
+		element.addElement("north").addText(""+north);
+		element.addElement("south").addText(""+south);
+		element.addElement("east").addText(""+east);
+		element.addElement("west").addText(""+west);
+		element.addElement("rotation").addText(""+rotation);
 	}
 	
+	public void toKml(Element parent)
+	{
+		Element element = parent.addElement("LatLonBox");
+		loadKmlChildren(element);
+	}
+
 }

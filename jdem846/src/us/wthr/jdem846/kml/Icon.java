@@ -16,12 +16,18 @@
 
 package us.wthr.jdem846.kml;
 
+import org.dom4j.Element;
+
 public class Icon extends KmlElement
 {
 	private String href = null;
 	private double viewBoundScale = -1;
-	private String refreshMode = null;
-	private String viewFreshMode = null;
+	private RefreshModeEnum refreshMode = null;
+	private ViewRefreshModeEnum viewFreshMode = null;
+	private double refreshInterval = -1;
+	private String viewFormat = null;
+	private String httpQuery = null;
+	
 	
 	public Icon()
 	{
@@ -37,30 +43,6 @@ public class Icon extends KmlElement
 	{
 		setHref(href);
 		setViewBoundScale(viewBoundScale);
-	}
-
-	
-	
-	public String getRefreshMode()
-	{
-		return refreshMode;
-	}
-
-	public void setRefreshMode(String refreshMode)
-	{
-		this.refreshMode = refreshMode;
-	}
-
-	
-	
-	public String getViewFreshMode()
-	{
-		return viewFreshMode;
-	}
-
-	public void setViewFreshMode(String viewFreshMode)
-	{
-		this.viewFreshMode = viewFreshMode;
 	}
 
 	public String getHref()
@@ -83,28 +65,95 @@ public class Icon extends KmlElement
 		this.viewBoundScale = viewBoundScale;
 	}
 	
-	
-	@Override
-	public String toKml(String id)
+	public RefreshModeEnum getRefreshMode()
 	{
-		StringBuffer buffer = new StringBuffer();
+		return refreshMode;
+	}
+
+	public void setRefreshMode(RefreshModeEnum refreshMode)
+	{
+		this.refreshMode = refreshMode;
+	}
+
+	public ViewRefreshModeEnum getViewFreshMode()
+	{
+		return viewFreshMode;
+	}
+
+	public void setViewFreshMode(ViewRefreshModeEnum viewFreshMode)
+	{
+		this.viewFreshMode = viewFreshMode;
+	}
+
+	public double getRefreshInterval()
+	{
+		return refreshInterval;
+	}
+
+	public void setRefreshInterval(double refreshInterval)
+	{
+		this.refreshInterval = refreshInterval;
+	}
+
+	public String getViewFormat()
+	{
+		return viewFormat;
+	}
+
+	public void setViewFormat(String viewFormat)
+	{
+		this.viewFormat = viewFormat;
+	}
+
+	public String getHttpQuery()
+	{
+		return httpQuery;
+	}
+
+	public void setHttpQuery(String httpQuery)
+	{
+		this.httpQuery = httpQuery;
+	}
+
+	protected void loadKmlChildren(Element element)
+	{
+		super.loadKmlChildren(element);
 		
-		buffer.append("		<Icon>\r\n");
-		buffer.append("			<href>" + href + "</href>\r\n");
+		if (href != null) {
+			element.addElement("href").addText(href);
+		}
 		
 		if (viewBoundScale != -1) {
-			buffer.append("			<viewBoundScale>" + viewBoundScale + "</viewBoundScale>\r\n");
+			element.addElement("viewBoundScale").addText(""+viewBoundScale);
 		}
 		
 		if (refreshMode != null) {
-			buffer.append("			<refreshMode>" + refreshMode + "</refreshMode>\r\n");
+			element.addElement("refreshMode").addText(refreshMode.text());
 		}
-		
+	
 		if (viewFreshMode != null) {
-			buffer.append("			<viewFreshMode>" + viewFreshMode + "</viewFreshMode>\r\n");
+			element.addElement("viewFreshMode").addText(viewFreshMode.text());
 		}
 		
-		buffer.append("		</Icon>\r\n");
-		return buffer.toString();
+		if (refreshInterval != -1) {
+			element.addElement("refreshInterval").addText(""+refreshInterval);
+		}
+		
+		if (viewFormat != null) {
+			element.addElement("viewFormat").addText(viewFormat);
+		}
+		
+		if (httpQuery != null) {
+			element.addElement("httpQuery").addText(httpQuery);
+		}
 	}
+	
+	public void toKml(Element parent)
+	{
+		Element element = parent.addElement("Icon");
+		loadKmlChildren(element);
+	}
+	
+	
+	
 }

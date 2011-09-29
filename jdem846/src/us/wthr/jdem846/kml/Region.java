@@ -16,6 +16,8 @@
 
 package us.wthr.jdem846.kml;
 
+import org.dom4j.Element;
+
 public class Region extends KmlElement
 {
 	
@@ -51,26 +53,28 @@ public class Region extends KmlElement
 		this.latLonAltBox = latLonAltBox;
 	}
 
-	@Override
-	public String toKml(String id)
+	
+	
+	protected void loadKmlChildren(Element element)
 	{
-		StringBuffer buffer = new StringBuffer();
+		super.loadKmlChildren(element);
 		
-		if (id != null) {
-			buffer.append("<Region id=\"" + id + "\">\r\n");
-		} else {
-			buffer.append("<Region>\r\n");
+		if (latLonAltBox != null) {
+			latLonAltBox.toKml(element);
 		}
-		
-		buffer.append(latLonAltBox.toKml());
 		
 		if (lod != null) {
-			buffer.append(lod.toKml());
+			lod.toKml(element);
 		}
-		
-		buffer.append("</Region>\r\n");
-		
-		return buffer.toString();
+
 	}
+	
+	public void toKml(Element parent)
+	{
+		Element element = parent.addElement("Region");
+		loadKmlChildren(element);
+	}
+	
+
 	
 }

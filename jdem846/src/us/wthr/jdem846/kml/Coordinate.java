@@ -16,7 +16,7 @@
 
 package us.wthr.jdem846.kml;
 
-public class Coordinate extends KmlElement
+public class Coordinate
 {
 	private double latitude;
 	private double longitude;
@@ -66,8 +66,7 @@ public class Coordinate extends KmlElement
 		this.altitude = altitude;
 	}
 	
-	@Override
-	public String toKml(String id)
+	public String toString()
 	{
 		StringBuffer buffer = new StringBuffer();
 		
@@ -78,4 +77,5 @@ public class Coordinate extends KmlElement
 		
 		return buffer.toString();
 	}
+
 }

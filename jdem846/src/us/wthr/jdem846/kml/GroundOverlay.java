@@ -16,13 +16,14 @@
 
 package us.wthr.jdem846.kml;
 
-public class GroundOverlay extends KmlElement
+import org.dom4j.Element;
+
+public class GroundOverlay extends Overlay
 {
 	
-	private String name;
-	private Icon icon;
+	
+	private AltitudeModeEnum altitudeMode = null;
 	private LatLonBox latLonBox;
-	private int drawOrder = 0;
 	
 	public GroundOverlay()
 	{
@@ -43,37 +44,9 @@ public class GroundOverlay extends KmlElement
 		setLatLonBox(latLonBox);
 	}
 	
-	
-	
-	public String getName()
-	{
-		return name;
-	}
 
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-	
-	public int getDrawOrder()
-	{
-		return drawOrder;
-	}
 
-	public void setDrawOrder(int drawOrder)
-	{
-		this.drawOrder = drawOrder;
-	}
 
-	public Icon getIcon()
-	{
-		return icon;
-	}
-
-	public void setIcon(Icon icon)
-	{
-		this.icon = icon;
-	}
 
 	public LatLonBox getLatLonBox()
 	{
@@ -85,26 +58,40 @@ public class GroundOverlay extends KmlElement
 		this.latLonBox = latLonBox;
 	}
 
-	@Override
-	public String toKml(String id)
+	
+	
+	
+	public AltitudeModeEnum getAltitudeMode()
 	{
-		StringBuffer buffer = new StringBuffer();
+		return altitudeMode;
+	}
+
+	public void setAltitudeMode(AltitudeModeEnum altitudeMode)
+	{
+		this.altitudeMode = altitudeMode;
+	}
+
+	protected void loadKmlChildren(Element element)
+	{
+		super.loadKmlChildren(element);
 		
-		buffer.append("		<GroundOverlay>\r\n");
-		buffer.append("		<name>" + name + "</name>\r\n");
 		
-		if (icon != null) {
-			buffer.append(icon.toKml());
+		
+		if (altitudeMode != null) {
+			element.addElement("altitudeMode").addText(altitudeMode.text());
 		}
 		
 		if (latLonBox != null) {
-			buffer.append(latLonBox.toKml());
+			latLonBox.toKml(element);
 		}
-		
-		buffer.append("<drawOrder>" + drawOrder + "</drawOrder>\r\n");
-		
-		buffer.append("		</GroundOverlay>\r\n");
-		
-		return buffer.toString();
+
 	}
+	
+	public void toKml(Element parent)
+	{
+		Element element = parent.addElement("GroundOverlay");
+		loadKmlChildren(element);
+	}
+	
+	
 }
