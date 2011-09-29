@@ -61,9 +61,11 @@ public class GriddedModelGenerator
 		
 		DemCanvas tileCanvas = new DemCanvas(new Color(0x0, 0x0, 0x0, 0x0), (int)modelDimensions.getTileSize(), (int)modelDimensions.getTileSize());
 
-		double latResolution = tileSize * modelDimensions.getyDim();
-		double lonResolution = tileSize * modelDimensions.getxDim();
+		//double latResolution = tileSize * modelDimensions.getyDim();
+		//double lonResolution = tileSize * modelDimensions.getxDim();
 		
+		double latResolution = tileSize * dataPackage.getAvgYDim();
+		double lonResolution = tileSize * dataPackage.getAvgXDim();
 		
 		GriddedModel model = new GriddedModel(latResolution, lonResolution);
 		model.setNorth(dataPackage.getMaxLatitude());
@@ -85,12 +87,12 @@ public class GriddedModelGenerator
 					if (toCol > dataCols)
 						toCol = dataCols;
 					
-					dem2d.loadDataSubset((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
-					dem2d.precacheData();
+					//dem2d.loadDataSubset((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
+					//dem2d.precacheData();
 					
 					tileCanvas.reset();
 					
-					dem2d.generate(fromRow, toRow, fromCol, toCol, tileCanvas);
+					//dem2d.generate(fromRow, toRow, fromCol, toCol, tileCanvas);
 					
 					//saveTileImage(DemCanvas canvas, int fromRow, int fromCol, int toRow, int toCol, String outputPath)
 					File tileFile = saveTileImage(tileCanvas, fromRow, fromCol, toRow, toCol, tempPath);
@@ -104,7 +106,7 @@ public class GriddedModelGenerator
 					Tile tile = new Tile(tileFile, fromRow, fromCol, toRow, toCol, north, south, east, west);
 					model.addTile(tile);
 
-					dem2d.unloadData();
+					//dem2d.unloadData();
 					
 					tileCol++;
 					
@@ -127,7 +129,7 @@ public class GriddedModelGenerator
 		String path = outputPath + "/" + fileName;
 		log.info("Writing image to " + path);
 
-		canvas.save(path);
+		//canvas.save(path);
 		
 		return (new File(path));
 	}

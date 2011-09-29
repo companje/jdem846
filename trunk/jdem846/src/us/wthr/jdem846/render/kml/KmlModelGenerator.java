@@ -24,13 +24,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.exception.KmlException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.kml.Folder;
+import us.wthr.jdem846.kml.Kml;
 import us.wthr.jdem846.kml.KmlDocument;
+import us.wthr.jdem846.kml.ListItemTypeEnum;
+import us.wthr.jdem846.kml.ListStyle;
 import us.wthr.jdem846.kml.Lod;
 import us.wthr.jdem846.kml.NetworkLink;
 import us.wthr.jdem846.kml.Region;
+import us.wthr.jdem846.kml.Style;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -101,7 +106,12 @@ public class KmlModelGenerator
 			kml.setDescription(description);
 		}
 		
-		kml.setHideChildren(false);
+		Style style = new Style();
+		ListStyle listStyle = new ListStyle(ListItemTypeEnum.CHECK_HIDE_CHILDREN);
+		listStyle.setId("ckHdChldrn");
+		style.addSubStyle(listStyle);
+		//kml.addStyle(style);
+		
 		
 		log.info("North: " + griddedModel.getNorth());
 		log.info("South: " + griddedModel.getSouth());
@@ -113,18 +123,29 @@ public class KmlModelGenerator
 			
 			int layerNumber =  ((int)multiple / layerMultiplier + 1);
 			
+			// latRes = tileSize * ydim
 			double latRes = griddedModel.getLatitudeResolution() * multiple;
+			
+			// lonRes = tileSize * xdim
 			double lonRes = griddedModel.getLongitudeResolution() * multiple;
 
 			Folder layerFolder = generateLayer(layerNumber, multiple);
-			kml.addElement(layerFolder);
-			
+			kml.addFeature(layerFolder);
+
 
 			multiple = multiple * layerMultiplier;
 			
-			if (dataPackage.getLongitudeWidth() / lonRes < 1.0 || dataPackage.getLatitudeHeight() / latRes < 1.0) {
+			if (lonRes > (dataPackage.getLongitudeWidth() * 2)) {
 				break;
 			}
+			
+			if (latRes > (dataPackage.getLatitudeHeight() * 2)) {
+				break;
+			}
+			
+			//if (dataPackage.getLongitudeWidth() / lonRes < 1.0 || dataPackage.getLatitudeHeight() / latRes < 1.0) {
+			//	break;
+			//}
 		}
 		
 		if (write) {
@@ -132,6 +153,8 @@ public class KmlModelGenerator
 				writeKml(kml);
 			} catch (IOException ex) {
 				throw new RenderEngineException("Error writing KML to disk: " + ex.getMessage(), ex);
+			} catch (KmlException ex) {
+				throw new RenderEngineException("Error generating KML: " + ex.getMessage(), ex);
 			}
 		}
 		
@@ -147,7 +170,10 @@ public class KmlModelGenerator
 		Folder layerFolder = new Folder();
 		layerFolder.setName("Layer #" + layerNumber);
 
+		// latRes = tileSize * ydim
 		double latRes = griddedModel.getLatitudeResolution() * multiple;
+		
+		// lonRes = tileSize * xdim
 		double lonRes = griddedModel.getLongitudeResolution() * multiple;
 		
 		int regionNum = 1;
@@ -155,8 +181,8 @@ public class KmlModelGenerator
 			double south = north - latRes;
 			
 			List<NetworkLink> networkLinks = generateSubRegion(layerNumber, regionNum, multiple, north, south, lonRes);
-			layerFolder.getElementsList().addAll(networkLinks);
-			
+			layerFolder.getFeaturesList().addAll(networkLinks);
+
 			regionNum++;
 			if (south < griddedModel.getSouth())
 				break;
@@ -193,7 +219,9 @@ public class KmlModelGenerator
 				networkLinks.add(networkLink);
 
 			} catch (IOException ex) {
-				throw new RenderEngineException("Failed to generate kml region: " + ex.getMessage(), ex);
+				throw new RenderEngineException("IO exception generating region: " + ex.getMessage(), ex);
+			} catch (KmlException ex) {
+				throw new RenderEngineException("KML exception generating region: " + ex.getMessage(), ex);
 			}
 			
 			subRegionNum++;
@@ -204,18 +232,22 @@ public class KmlModelGenerator
 		return networkLinks;
 	}
 	
-	protected void writeKml(KmlDocument kml) throws IOException
+	protected void writeKml(KmlDocument kmlDocument) throws IOException, KmlException
 	{
 		String writeTo = outputPath + "/doc.kml";
 		File kmlFile = new File(writeTo);
 		
+		Kml kml = new Kml(kmlDocument);
+		
 		try {
 			BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(kmlFile));
-			fos.write(kml.toKml().getBytes());
+			fos.write(kml.toXmlDocument(true).getBytes());
 			fos.flush();
 			fos.close();
 		} catch (IOException ex) {
 			throw new IOException("Failed to write KML document to " + writeTo, ex);
+		} catch (KmlException ex) {
+			throw new KmlException("Failed to write KML document to " + writeTo, ex);
 		}
 		
 		

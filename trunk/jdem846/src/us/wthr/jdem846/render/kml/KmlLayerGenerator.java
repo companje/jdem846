@@ -31,13 +31,19 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.exception.KmlException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.kml.GroundOverlay;
 import us.wthr.jdem846.kml.Icon;
+import us.wthr.jdem846.kml.Kml;
 import us.wthr.jdem846.kml.KmlDocument;
 import us.wthr.jdem846.kml.LatLonBox;
+import us.wthr.jdem846.kml.ListItemTypeEnum;
+import us.wthr.jdem846.kml.ListStyle;
 import us.wthr.jdem846.kml.Lod;
 import us.wthr.jdem846.kml.Region;
+import us.wthr.jdem846.kml.Style;
+import us.wthr.jdem846.kml.ViewRefreshModeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ImageUtilities;
@@ -186,7 +192,7 @@ public class KmlLayerGenerator
 
 		LatLonBox latLonBox = new LatLonBox(east, west, north, south);
 		Icon icon = new Icon(distTileFile.getName());
-		icon.setViewFreshMode("onRegion");
+		icon.setViewFreshMode(ViewRefreshModeEnum.ON_REGION);
 		
 		GroundOverlay groundOverlay = new GroundOverlay(overlayName, icon, latLonBox);
 		return groundOverlay;
@@ -202,28 +208,37 @@ public class KmlLayerGenerator
 		}
 	}
 	
-	protected void writeKml(KmlDocument kml) throws IOException
+	protected void writeKml(KmlDocument kmlDocument) throws IOException, KmlException
 	{
 		String writeTo = "/" + layerNumber + "/" + regionNumber + "/" + subRegionNumber + ".kml";
 		File kmlFile = new File(outputPath + writeTo);
 		
+		Kml kml = new Kml(kmlDocument);
+		
 		try {
 			BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(kmlFile));
-			fos.write(kml.toKml().getBytes());
+			fos.write(kml.toXmlDocument(true).getBytes());
 			fos.flush();
 			fos.close();
 		} catch (IOException ex) {
 			throw new IOException("Failed to write KML document to " + writeTo, ex);
+		} catch (KmlException ex) {
+			throw new KmlException("Failed to write KML document to " + writeTo, ex);
 		}
 		
 		
 	}
 	
-	protected KmlDocument generate(boolean write) throws IOException
+	protected KmlDocument generate(boolean write) throws IOException, KmlException
 	{
 		KmlDocument kml = new KmlDocument();
 		kml.setName("" + layerNumber + "/" + regionNumber + "/" + subRegionNumber);
-		kml.setHideChildren(false);
+
+		Style style = new Style();
+		ListStyle listStyle = new ListStyle(ListItemTypeEnum.CHECK_HIDE_CHILDREN);
+		listStyle.setId("ckHdChldrn");
+		style.addSubStyle(listStyle);
+		//kml.addStyle(style);
 		
 		checkPathExists();
 		
@@ -234,8 +249,9 @@ public class KmlLayerGenerator
 
 		Region region = new Region(north, south, east, west);
 		region.setLod(new Lod(128, -1));
-		kml.addElement(region);
-		kml.addElement(overlay);
+		kml.setRegion(region);
+		kml.addFeature(overlay);
+
 		
 		if (write) {
 			writeKml(kml);
@@ -257,7 +273,7 @@ public class KmlLayerGenerator
 										int subRegionNumber,
 										int scaleSize,
 										String outputPath, 
-										boolean write) throws IOException
+										boolean write) throws IOException, KmlException
 	{
 		
 		KmlLayerGenerator generator = new KmlLayerGenerator(dataPackage,

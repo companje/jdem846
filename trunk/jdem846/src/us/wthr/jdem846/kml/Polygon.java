@@ -16,11 +16,13 @@
 
 package us.wthr.jdem846.kml;
 
+import org.dom4j.Element;
+
 public class Polygon extends Geometry
 {
 
 	private boolean extrude = false;
-	private String altitudeMode = "clampToGround";
+	private AltitudeModeEnum altitudeMode = null;
 	private LinearRing outerBoundary = new LinearRing();
 	private LinearRing innerBoundary = new LinearRing();
 	
@@ -40,12 +42,12 @@ public class Polygon extends Geometry
 	}
 
 
-	public String getAltitudeMode()
+	public AltitudeModeEnum getAltitudeMode()
 	{
 		return altitudeMode;
 	}
 
-	public void setAltitudeMode(String altitudeMode)
+	public void setAltitudeMode(AltitudeModeEnum altitudeMode)
 	{
 		this.altitudeMode = altitudeMode;
 	}
@@ -69,40 +71,33 @@ public class Polygon extends Geometry
 	{
 		this.innerBoundary = innerBoundary;
 	}
-
-	@Override
-	public String toKml(String id)
+	
+	protected void loadKmlChildren(Element element)
 	{
-		StringBuffer buffer = new StringBuffer();
+		super.loadKmlChildren(element);
 		
-		if (id != null) {
-			buffer.append("<Polygon id=\"" + id + "\">\r\n");
-		} else {
-			buffer.append("<Polygon>\r\n");
+		element.addElement("extrude").addText((extrude ? "1" : "0"));
+		if (altitudeMode != null) {
+			element.addElement("altitudeMode").addText(altitudeMode.text());
 		}
 		
-		buffer.append("<extrude>" + (extrude ? 1 : 0) + "</extrude>\r\n");
-		
-		if (altitudeMode.equals("clampToGround") || altitudeMode.equals("clampToSearFloor")) {
-			buffer.append("<tessellate>1</tessellate>\r\n");
+		if (outerBoundary != null) {
+			outerBoundary.toKml(element);
 		}
 		
-		buffer.append("<altitudeMode>" + altitudeMode + "</altitudeMode>\r\n");
-		
-		buffer.append("<outerBoundaryIs>\r\n");
-		buffer.append(outerBoundary.toKml());
-		buffer.append("</outerBoundaryIs>\r\n");
-		
-		if (innerBoundary.getCoordinates().size() > 0) {
-			buffer.append("<innerBoundaryIs>\r\n");
-			buffer.append(innerBoundary.toKml());
-			buffer.append("</innerBoundaryIs>\r\n");
+		if (innerBoundary != null) {
+			innerBoundary.toKml(element);
 		}
-		
-		buffer.append("</Polygon>\r\n");
-		return buffer.toString();
+
 	}
 	
+	public void toKml(Element parent)
+	{
+		Element element = parent.addElement("LinearRing");
+		loadKmlChildren(element);
+	}
+	
+
 	
 	
 }

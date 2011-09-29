@@ -16,10 +16,12 @@
 
 package us.wthr.jdem846.kml;
 
-public class Placemark extends KmlElement
+import org.dom4j.Element;
+
+public class Placemark extends Feature
 {
 	
-	private String name;
+
 	private Geometry geometry;
 	
 	
@@ -27,16 +29,6 @@ public class Placemark extends KmlElement
 	{
 		setName(name);
 		setGeometry(geometry);
-	}
-	
-	public String getName()
-	{
-		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
 	}
 
 	public Geometry getGeometry()
@@ -49,23 +41,21 @@ public class Placemark extends KmlElement
 		this.geometry = geometry;
 	}
 
-	@Override
-	public String toKml(String id)
+	
+	protected void loadKmlChildren(Element element)
 	{
-		StringBuffer buffer = new StringBuffer();
-		
-		buffer.append("<Placemark>\r\n");
-		
-		if (name != null) {
-			buffer.append("<name>" + name + "</name>\r\n");
-		}
+		super.loadKmlChildren(element);
 		
 		if (geometry != null) {
-			buffer.append(geometry.toKml());
+			geometry.toKml(element);
 		}
 		
-		buffer.append("</Placemark>\r\n");
 		
-		return buffer.toString();
+	}
+	
+	public void toKml(Element parent)
+	{
+		Element element = parent.addElement("Placemark");
+		loadKmlChildren(element);
 	}
 }

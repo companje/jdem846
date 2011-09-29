@@ -19,6 +19,8 @@ package us.wthr.jdem846.kml;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.dom4j.Element;
+
 public class LinearRing extends Geometry
 {
 	
@@ -39,20 +41,23 @@ public class LinearRing extends Geometry
 		return coordinates;
 	}
 	
-	
-	@Override
-	public String toKml(String id)
+	protected void loadKmlChildren(Element element)
 	{
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("<LinearRing>\r\n");
-		buffer.append("	<coordinates>\r\n");
+		super.loadKmlChildren(element);
 		
+		StringBuffer coordsBuffer = new StringBuffer();
 		for (Coordinate coordinate : coordinates) {
-			buffer.append(coordinate.toKml() + "\r\n");
+			coordsBuffer.append(coordinate.toString() + "\r\n");
 		}
 		
-		buffer.append("	</coordinates>\r\n");
-		buffer.append("</LinearRing>\r\n");
-		return buffer.toString();
+		Element coordsElement = element.addElement("coordinates");
+		coordsElement.addText(coordsBuffer.toString());
 	}
+	
+	public void toKml(Element parent)
+	{
+		Element element = parent.addElement("LinearRing");
+		loadKmlChildren(element);
+	}
+
 }
