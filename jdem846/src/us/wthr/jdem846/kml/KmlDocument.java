@@ -23,7 +23,7 @@ import org.dom4j.Element;
 
 public class KmlDocument extends Container
 {
-	private String version = "2.1";
+	private String version = "2.2";
 
 
 	public KmlDocument()

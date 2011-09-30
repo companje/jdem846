@@ -21,6 +21,7 @@ public class Kml
 {
 	
 	private KmlDocument kmlDocument = null;
+	private String version = "2.2";
 	
 	public Kml()
 	{
@@ -30,6 +31,18 @@ public class Kml
 	public Kml(KmlDocument kmlDocument)
 	{
 		this.kmlDocument = kmlDocument;
+	}
+
+	
+	
+	public String getVersion()
+	{
+		return version;
+	}
+
+	public void setVersion(String version)
+	{
+		this.version = version;
 	}
 
 	public KmlDocument getDocument()
@@ -47,7 +60,7 @@ public class Kml
 	{
 		Document xmlDocument = DocumentHelper.createDocument();
         Element kml = xmlDocument.addElement("kml");
-        
+        kml.addAttribute("xmlns", "http://www.opengis.net/kml/"+version);
         if (kmlDocument != null) {
         	kmlDocument.toKml(kml);
         }

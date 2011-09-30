@@ -130,7 +130,7 @@ public class GriddedModelGenerator
 	
 	protected File saveTileImage(DemCanvas canvas, int fromRow, int fromCol, int toRow, int toCol, String outputPath) throws CanvasException
 	{
-		String fileName = "tile-" + fromRow + "-" + toRow + "-" + fromCol + "-" + toCol + ".jpg";
+		String fileName = "tile-" + fromRow + "-" + toRow + "-" + fromCol + "-" + toCol + ".png";
 		
 		String path = outputPath + "/" + fileName;
 		log.info("Writing image to " + path);
