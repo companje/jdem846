@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.List;
 
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
@@ -87,15 +88,20 @@ public class GriddedModelGenerator
 					if (toCol > dataCols)
 						toCol = dataCols;
 					
-					//dem2d.loadDataSubset((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
-					//dem2d.precacheData();
+					dem2d.loadDataSubset((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
+					dem2d.precacheData();
 					
 					tileCanvas.reset();
 					
-					//dem2d.generate(fromRow, toRow, fromCol, toCol, tileCanvas);
+					dem2d.generate(fromRow, toRow, fromCol, toCol, tileCanvas);
 					
 					//saveTileImage(DemCanvas canvas, int fromRow, int fromCol, int toRow, int toCol, String outputPath)
-					File tileFile = saveTileImage(tileCanvas, fromRow, fromCol, toRow, toCol, tempPath);
+					File tileFile = null;
+					try {
+						tileFile = saveTileImage(tileCanvas, fromRow, fromCol, toRow, toCol, tempPath);
+					} catch (CanvasException ex) {
+						throw new RenderEngineException("Failed to save tile image to disk: " + ex.getMessage(), ex);
+					}
 					
 					double west = dataPackage.columnToLongitude(fromCol - 1);
 					double east = dataPackage.columnToLongitude(toCol);
@@ -106,7 +112,7 @@ public class GriddedModelGenerator
 					Tile tile = new Tile(tileFile, fromRow, fromCol, toRow, toCol, north, south, east, west);
 					model.addTile(tile);
 
-					//dem2d.unloadData();
+					dem2d.unloadData();
 					
 					tileCol++;
 					
@@ -122,14 +128,14 @@ public class GriddedModelGenerator
 	
 	
 	
-	protected File saveTileImage(DemCanvas canvas, int fromRow, int fromCol, int toRow, int toCol, String outputPath)
+	protected File saveTileImage(DemCanvas canvas, int fromRow, int fromCol, int toRow, int toCol, String outputPath) throws CanvasException
 	{
-		String fileName = "tile-" + fromRow + "-" + toRow + "-" + fromCol + "-" + toCol + ".png";
+		String fileName = "tile-" + fromRow + "-" + toRow + "-" + fromCol + "-" + toCol + ".jpg";
 		
 		String path = outputPath + "/" + fileName;
 		log.info("Writing image to " + path);
 
-		//canvas.save(path);
+		canvas.save(path);
 		
 		return (new File(path));
 	}

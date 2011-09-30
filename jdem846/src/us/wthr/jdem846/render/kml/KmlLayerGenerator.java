@@ -31,7 +31,10 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.exception.KmlException;
+import us.wthr.jdem846.image.ImageUtilities;
+import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.kml.GroundOverlay;
 import us.wthr.jdem846.kml.Icon;
@@ -46,7 +49,6 @@ import us.wthr.jdem846.kml.Style;
 import us.wthr.jdem846.kml.ViewRefreshModeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.util.ImageUtilities;
 
 public class KmlLayerGenerator
 {
@@ -99,7 +101,7 @@ public class KmlLayerGenerator
 	
 	
 
-	protected File createImageTile() throws IOException
+	protected File createImageTile() throws KmlException, IOException
 	{
 		int tempTileSize = modelOptions.getTileSize();
 		
@@ -110,6 +112,12 @@ public class KmlLayerGenerator
 		
 		//getTilesIntersecting(double north, double south, double east, double west)
 		List<Tile> tilesIntersecting = griddedModel.getTilesIntersecting(north, south, east, west);
+		
+		// If there are no tiles in this area, don't bother making this
+		if (tilesIntersecting.size() == 0) {
+			return null;
+		}
+		
 		
 		// If -1, then set scaleTo to the rendered tile size (full size)
 		if (scaleSize == -1) {
@@ -171,15 +179,18 @@ public class KmlLayerGenerator
 		
 		g2d.dispose();
 		
-		String fileName = "" + layerNumber + "/" + regionNumber + "/" + subRegionNumber + ".png";
+		String fileName = "" + layerNumber + "/" + regionNumber + "/" + subRegionNumber + ".jpg";
 
 		String path = outputPath + "/" + fileName;
 		log.info("Writing image to " + path);
 		
 		File tileFile = new File(path);
-		
-		ImageIO.write(image, "png", tileFile);
-		
+		try {
+			ImageWriter.saveImage(image, path, ImageWriter.JPEG);
+		} catch (ImageException ex) {
+			throw new KmlException("Failed to save image tile to disk: " + ex.getMessage(), ex);
+		}
+
 		return tileFile;
 	}
 	
@@ -243,21 +254,25 @@ public class KmlLayerGenerator
 		checkPathExists();
 		
 		File distTileFile = createImageTile();
+		if (distTileFile != null) {
 		
-		GroundOverlay overlay = createGroundOverlay(distTileFile);
-		overlay.setDrawOrder(1000 - layerNumber);
-
-		Region region = new Region(north, south, east, west);
-		region.setLod(new Lod(128, -1));
-		kml.setRegion(region);
-		kml.addFeature(overlay);
-
-		
-		if (write) {
-			writeKml(kml);
+			GroundOverlay overlay = createGroundOverlay(distTileFile);
+			overlay.setDrawOrder(1000 - layerNumber);
+	
+			Region region = new Region(north, south, east, west);
+			region.setLod(new Lod(128, -1));
+			kml.setRegion(region);
+			kml.addFeature(overlay);
+	
+			
+			if (write) {
+				writeKml(kml);
+			}
+			
+			return kml;
+		} else {
+			return null;
 		}
-		
-		return kml;
 		
 	}
 	

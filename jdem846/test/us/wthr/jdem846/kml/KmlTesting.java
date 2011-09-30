@@ -70,23 +70,23 @@ public class KmlTesting
 	public void doTesting()
 	{
 		List<String> inputDataList = new LinkedList<String>();
-		/*
+		
 		inputDataList.add("C:/srv/elevation/Maui/15749574.flt");
 		inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
 
 		outputPath = "C:/srv/elevation/kml/maui/dist";
 		tempPath = "C:/srv/elevation/kml/maui/temp";
-		*/
 		
-		inputDataList.add("C:\\srv\\elevation\\etopo1_ice_g_f4\\etopo1_ice_g_f4.flt");
+		
+		//inputDataList.add("C:\\srv\\elevation\\etopo1_ice_g_f4\\etopo1_ice_g_f4.flt");
 
-		outputPath = "C:/srv/elevation/kml/etopo1/dist";
-		tempPath = "C:/srv/elevation/kml/etopo1/temp";
+		//outputPath = "C:/srv/elevation/kml/etopo1/dist";
+		//tempPath = "C:/srv/elevation/kml/etopo1/temp";
 		
 		
 		
 		overlayTileSize = 256;
-		layerMultiplier = 3;
+		layerMultiplier = 2;
 		
 		
 		
@@ -114,7 +114,7 @@ public class KmlTesting
 		dataPackage.prepare();
 
 		try {
-			//dataPackage.calculateElevationMinMax(true);
+			dataPackage.calculateElevationMinMax(true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return;
@@ -133,6 +133,7 @@ public class KmlTesting
 			ex.printStackTrace();
 		}
 		
+		log.info("COMPLETE");
 
 	}
 	

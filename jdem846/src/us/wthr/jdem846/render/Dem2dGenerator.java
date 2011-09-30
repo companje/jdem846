@@ -38,6 +38,7 @@ import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.dbase.ClassLoadException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.input.DataBounds;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.SubsetDataPackage;
@@ -53,7 +54,6 @@ import us.wthr.jdem846.shapefile.ShapeLayer;
 import us.wthr.jdem846.shapefile.ShapePath;
 import us.wthr.jdem846.shapefile.modeling.FeatureTypeStroke;
 import us.wthr.jdem846.shapefile.modeling.LineStroke;
-import us.wthr.jdem846.util.ImageIcons;
 
 @DemEngine(name="us.wthr.jdem846.render.demEngine2D.name", 
 	identifier="dem2d-gen",
