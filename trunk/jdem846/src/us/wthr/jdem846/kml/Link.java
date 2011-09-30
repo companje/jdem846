@@ -24,9 +24,9 @@ public class Link extends KmlElement
 	private String href;
 	private String refreshMode = null;
 	private String viewRefreshMode = null;
-	private float refreshInterval = -1;
-	private float viewRefreshTime = -1;
-	private float viewBoundScale = -1;
+	private double refreshInterval = -1;
+	private double viewRefreshTime = -1;
+	private double viewBoundScale = -1;
 	private String viewFormat = null;
 	private String httpQuery = null;
 	
@@ -70,32 +70,32 @@ public class Link extends KmlElement
 		this.viewRefreshMode = viewRefreshMode;
 	}
 
-	public float getRefreshInterval()
+	public double getRefreshInterval()
 	{
 		return refreshInterval;
 	}
 
-	public void setRefreshInterval(float refreshInterval)
+	public void setRefreshInterval(double refreshInterval)
 	{
 		this.refreshInterval = refreshInterval;
 	}
 
-	public float getViewRefreshTime()
+	public double getViewRefreshTime()
 	{
 		return viewRefreshTime;
 	}
 
-	public void setViewRefreshTime(float viewRefreshTime)
+	public void setViewRefreshTime(double viewRefreshTime)
 	{
 		this.viewRefreshTime = viewRefreshTime;
 	}
 
-	public float getViewBoundScale()
+	public double getViewBoundScale()
 	{
 		return viewBoundScale;
 	}
 
-	public void setViewBoundScale(float viewBoundScale)
+	public void setViewBoundScale(double viewBoundScale)
 	{
 		this.viewBoundScale = viewBoundScale;
 	}
