@@ -60,9 +60,7 @@
 </tr>
 <tr>
 <td colspan="2" align="center">
-<a href="http://jdem846.wthr.us/gallery/google-earth-kml-preview.png" >
-   <img src="http://jdem846.wthr.us/gallery/google-earth-kml-preview-450px.png" width="450"/> 
-</a>
+<a href="http://www.flickr.com/photos/kevinmgill/6198284438/" title="jDem846 Example: Google Earth by Kevin M. Gill, on Flickr"><img src="http://farm7.static.flickr.com/6162/6198284438_2eef0dc686.jpg" width="500" height="253" alt="jDem846 Example: Google Earth" /></a>
 </td>
 </tr>
 </table>
