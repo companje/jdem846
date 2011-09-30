@@ -1,4 +1,4 @@
-package us.wthr.jdem846.util;
+package us.wthr.jdem846.image;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

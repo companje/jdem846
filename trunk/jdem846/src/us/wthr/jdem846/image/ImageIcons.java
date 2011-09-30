@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.util;
+package us.wthr.jdem846.image;
 
 import java.awt.Image;
 import java.io.IOException;

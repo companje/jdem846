@@ -32,9 +32,12 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import us.wthr.jdem846.color.DemColor;
+import us.wthr.jdem846.exception.CanvasException;
+import us.wthr.jdem846.exception.ImageException;
+import us.wthr.jdem846.image.ImageUtilities;
+import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.util.ImageUtilities;
 
 public class DemCanvas implements ImageObserver
 {
@@ -189,22 +192,14 @@ public class DemCanvas implements ImageObserver
 	}
 	
 	
-	public void save(String saveTo)
+	public void save(String saveTo) throws CanvasException
 	{
-		String format = null;
-		if (saveTo.toLowerCase().endsWith(".png"))
-			format = "png";
-		else if (saveTo.toLowerCase().endsWith(".jpeg") || saveTo.toLowerCase().endsWith(".jpg"))
-			format = "jpg";
-		
-		File writeFile = new File(saveTo);
 		try {
-			ImageIO.write((BufferedImage)getImage(), format, writeFile);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			log.error("Failed to write image to disk: " + e.getMessage(), e);
-		} 
+			ImageWriter.saveImage((BufferedImage)getImage(), saveTo);
+		} catch (ImageException ex) {
+			throw new CanvasException("Failed to save image to disk: " + ex.getMessage(), ex);
+		}
+
 	}
 
 }

@@ -30,10 +30,10 @@ import javax.imageio.ImageIO;
 import javax.swing.JWindow;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Window;
-import us.wthr.jdem846.util.ImageIcons;
 
 @SuppressWarnings("serial")
 public class SplashScreen extends Window

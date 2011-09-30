@@ -39,10 +39,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
-import us.wthr.jdem846.util.ImageUtilities;
 
 @SuppressWarnings("serial")
 public class ImageDisplayPanel extends Panel

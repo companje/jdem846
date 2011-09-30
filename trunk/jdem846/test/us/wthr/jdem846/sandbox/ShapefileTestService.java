@@ -37,6 +37,7 @@ import us.wthr.jdem846.annotations.Destroy;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Service;
 import us.wthr.jdem846.annotations.ServiceRuntime;
+import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.InvalidFileFormatException;
 import us.wthr.jdem846.input.DataPackage;
@@ -176,7 +177,12 @@ public class ShapefileTestService extends AbstractLockableService
 		
 		
 		DemCanvas canvas = output.getProduct();
-		canvas.save(saveToPath + "dem2d.png");
+		try {
+			canvas.save(saveToPath + "dem2d.png");
+		} catch (CanvasException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		for (ShapeFileRequest shapeFilePath : dataPackage.getShapeFiles()) {
 			try {
@@ -213,7 +219,12 @@ public class ShapefileTestService extends AbstractLockableService
 		}
 		
 		log.info("Saving image");
-		canvas.save(saveToPath + "dem2d-filled-polygons.png");
+		try {
+			canvas.save(saveToPath + "dem2d-filled-polygons.png");
+		} catch (CanvasException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		log.info("Complete");
 		
 		this.setLocked(false);

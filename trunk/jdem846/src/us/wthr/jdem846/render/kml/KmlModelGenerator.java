@@ -209,14 +209,16 @@ public class KmlModelGenerator
 				int scaleTo = (layerNumber == 1) ? -1 : overlayTileSize;
 				KmlDocument kmlDoc = KmlLayerGenerator.generate(dataPackage, modelOptions, griddedModel, north, south, east, west, layerNumber, regionNum, subRegionNum, scaleTo, outputPath, true);
 				
-				String linkName = layerNumber + "/" + regionNum + "/" + subRegionNum;
-				String href = linkName + ".kml";
-				NetworkLink networkLink = new NetworkLink(linkName, href);
-				networkLink.getLink().setViewRefreshMode("onRegion");
-				Region region = new Region(north, south, east, west);
-				region.setLod(new Lod(128, -1));
-				networkLink.setRegion(region);
-				networkLinks.add(networkLink);
+				if (kmlDoc != null) {
+					String linkName = layerNumber + "/" + regionNum + "/" + subRegionNum;
+					String href = linkName + ".kml";
+					NetworkLink networkLink = new NetworkLink(linkName, href);
+					networkLink.getLink().setViewRefreshMode("onRegion");
+					Region region = new Region(north, south, east, west);
+					region.setLod(new Lod(128, -1));
+					networkLink.setRegion(region);
+					networkLinks.add(networkLink);
+				}
 
 			} catch (IOException ex) {
 				throw new RenderEngineException("IO exception generating region: " + ex.getMessage(), ex);

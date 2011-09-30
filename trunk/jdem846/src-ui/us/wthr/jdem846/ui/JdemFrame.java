@@ -46,6 +46,7 @@ import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.dbase.ClassLoadException;
 import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.ElevationDataLoaderInstance;
 import us.wthr.jdem846.logging.Log;
@@ -63,7 +64,6 @@ import us.wthr.jdem846.ui.base.Frame;
 import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.TabPane;
-import us.wthr.jdem846.util.ImageIcons;
 import us.wthr.jdem846.util.TempFiles;
 
 @SuppressWarnings("serial")

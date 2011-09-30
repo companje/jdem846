@@ -23,9 +23,9 @@ import java.io.IOException;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.util.ImageIcons;
 
 @SuppressWarnings("serial")
 public class MenuItem extends JMenuItem

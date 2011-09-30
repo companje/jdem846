@@ -45,6 +45,7 @@ import javax.swing.tree.TreeSelectionModel;
 import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.logging.Log;
@@ -53,7 +54,6 @@ import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.Tree;
-import us.wthr.jdem846.util.ImageIcons;
 
 @SuppressWarnings("serial")
 public class DataSetTree extends Panel
