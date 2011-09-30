@@ -10,56 +10,42 @@
 
 <table style="margin-left:auto;margin-right:auto;">
 <tr>
-<td>
-<a href="http://jdem846.wthr.us/gallery/screenshot-1.png" >
-   <img src="http://jdem846.wthr.us/gallery/screenshot-1-350px.png" />
-</a>
+<td valign="top">
+<a href="http://www.flickr.com/photos/kevinmgill/6197766105/" title="jDem846 Screenshot: Model Options Setup by Kevin M. Gill, on Flickr"><img src="http://farm7.static.flickr.com/6170/6197766105_3330a30d5d.jpg" width="350" alt="jDem846 Screenshot: Model Options Setup" /></a>
 </td>
-<td>
-<a href="http://jdem846.wthr.us/gallery/screenshot-2.png" >
-   <img src="http://jdem846.wthr.us/gallery/screenshot-2-350px.png"/>
-</a>
+<td valign="top">
+<a href="http://www.flickr.com/photos/kevinmgill/6198283708/" title="jDem846 Screenshot: Preview Pane by Kevin M. Gill, on Flickr"><img src="http://farm7.static.flickr.com/6165/6198283708_edcb2afb9b.jpg" width="350" alt="jDem846 Screenshot: Preview Pane" /></a>
 </td>
 </tr>
 <tr>
-<td>
-<a href="http://jdem846.wthr.us/gallery/screenshot-3.png" >
-   <img src="http://jdem846.wthr.us/gallery/screenshot-3-350px.png"/>
-</a>
+<td valign="top">
+<a href="http://www.flickr.com/photos/kevinmgill/6198283898/" title="jDem846 Screenshot: 2D Rendering With Shapefiles by Kevin M. Gill, on Flickr"><img src="http://farm7.static.flickr.com/6003/6198283898_ea4eb80cc8.jpg" width="350" alt="jDem846 Screenshot: 2D Rendering With Shapefiles" /></a>
 </td>
-<td>
-<a href="http://jdem846.wthr.us/gallery/screenshot-4.png" >
-   <img src="http://jdem846.wthr.us/gallery/screenshot-4-350px.png"/>
-</a>
+<td valign="top">
+<a href="http://www.flickr.com/photos/kevinmgill/6197766421/" title="jDem846 Screenshot: 3D Rendering by Kevin M. Gill, on Flickr"><img src="http://farm7.static.flickr.com/6152/6197766421_fc2fa664e5.jpg" width="350" alt="jDem846 Screenshot: 3D Rendering" /></a>
 </td>
 </tr>
 <tr>
-<td>
-<a href="http://jdem846.wthr.us/gallery/screenshot-5.png" >
-   <img src="http://jdem846.wthr.us/gallery/screenshot-5-350px.png"/>
-</a>
+<td valign="top">
+<a href="http://www.flickr.com/photos/kevinmgill/6197766607/" title="jDem846 Screenshot: 3D Rendering by Kevin M. Gill, on Flickr"><img src="http://farm7.static.flickr.com/6155/6197766607_9c159abe3f.jpg" width="350" alt="jDem846 Screenshot: 3D Rendering"/></a>
 </td>
-<td>
-<a href="http://jdem846.wthr.us/gallery/maui-hypso-1-3arc-second.png" >
-   <img src="http://jdem846.wthr.us/gallery/maui-hypso-1-3arc-second-350px.png" width="350"/>
-</a>
+<td valign="top">
+<a href="http://www.flickr.com/photos/kevinmgill/6198284598/" title="jDem846 Example: Maui, HI by Kevin M. Gill, on Flickr"><img src="http://farm7.static.flickr.com/6158/6198284598_4fc0d422cd.jpg" width="350"  alt="jDem846 Example: Maui, HI" /></a>
 </td>
 </tr>
 
 <tr>
-<td>
-<a href="http://jdem846.wthr.us/gallery/etopo1-bedrock.png" >
-   <img src="http://jdem846.wthr.us/gallery/etopo1-bedrock-350px.png" width="350"/>
-</a>
+<td valign="top">
+<a href="http://www.flickr.com/photos/kevinmgill/6174551481/" title="Global DEM using GEBCO 08 Elevation Dataset by Kevin M. Gill, on Flickr"><img src="http://farm7.static.flickr.com/6151/6174551481_aa69c47bc5.jpg" width="350"  alt="Global DEM using GEBCO 08 Elevation Dataset"/></a>
 </td>
-<td>
+<td valign="top">
 <a href="http://jdem846.wthr.us/gallery/maui-3d-preview.png" >
    <img src="http://jdem846.wthr.us/gallery/maui-3d-preview-350px.png" width="350"/>
 </a>
 </td>
 </tr>
 <tr>
-<td colspan="2" align="center">
+<td colspan="2" align="center"  valign="top">
 <a href="http://www.flickr.com/photos/kevinmgill/6198284438/" title="jDem846 Example: Google Earth by Kevin M. Gill, on Flickr"><img src="http://farm7.static.flickr.com/6162/6198284438_2eef0dc686.jpg" width="500" height="253" alt="jDem846 Example: Google Earth" /></a>
 </td>
 </tr>
