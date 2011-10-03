@@ -24,6 +24,7 @@ import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -39,13 +40,16 @@ public class GriddedModelGenerator
 	private DataPackage dataPackage;
 	private ModelOptions modelOptions;
 	private String tempPath;
+	private ImageTypeEnum imageType;
 	private List<TileCompletionListener> tileCompletionListeners;
 	
-	protected GriddedModelGenerator(DataPackage dataPackage, ModelOptions modelOptions, String tempPath, List<TileCompletionListener> tileCompletionListeners)
+	
+	protected GriddedModelGenerator(DataPackage dataPackage, ModelOptions modelOptions, String tempPath, ImageTypeEnum imageType, List<TileCompletionListener> tileCompletionListeners)
 	{
 		this.dataPackage = dataPackage;
 		this.modelOptions = modelOptions;
 		this.tempPath = tempPath;
+		this.imageType = imageType;
 		this.tileCompletionListeners = tileCompletionListeners;
 	}
 	
@@ -130,7 +134,7 @@ public class GriddedModelGenerator
 	
 	protected File saveTileImage(DemCanvas canvas, int fromRow, int fromCol, int toRow, int toCol, String outputPath) throws CanvasException
 	{
-		String fileName = "tile-" + fromRow + "-" + toRow + "-" + fromCol + "-" + toCol + ".jpg";
+		String fileName = "tile-" + fromRow + "-" + toRow + "-" + fromCol + "-" + toCol + "." + imageType.extension();
 		
 		String path = outputPath + "/" + fileName;
 		log.info("Writing image to " + path);
@@ -148,9 +152,9 @@ public class GriddedModelGenerator
 		}
 	}
 	
-	public static GriddedModel generate(DataPackage dataPackage, ModelOptions modelOptions, String tempPath, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException, DataSourceException
+	public static GriddedModel generate(DataPackage dataPackage, ModelOptions modelOptions, String tempPath, ImageTypeEnum imageType, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException, DataSourceException
 	{
-		GriddedModelGenerator generator = new GriddedModelGenerator(dataPackage, modelOptions, tempPath, tileCompletionListeners);
+		GriddedModelGenerator generator = new GriddedModelGenerator(dataPackage, modelOptions, tempPath, imageType, tileCompletionListeners);
 		
 		Dem2dGenerator dem2d = new Dem2dGenerator(dataPackage, modelOptions);
 		GriddedModel model = generator.generate(dem2d);

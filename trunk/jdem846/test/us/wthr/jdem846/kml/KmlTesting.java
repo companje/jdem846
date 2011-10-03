@@ -32,6 +32,7 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.gridfloat.GridFloat;
 import us.wthr.jdem846.logging.Log;
@@ -59,6 +60,7 @@ public class KmlTesting
 	private String tempPath = "C:/srv/kml/temp";
 	private int overlayTileSize = 256;
 	private int layerMultiplier = 3;
+	private ImageTypeEnum imageType = ImageTypeEnum.JPEG;
 	
 	public static void main(String[] args)
 	{
@@ -74,21 +76,21 @@ public class KmlTesting
 		//inputDataList.add("C:/srv/elevation/Maui/15749574.flt");
 		//inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
 		
-		inputDataList.add("C:\\srv\\elevation\\GEBCO_08\\gebco_08\\gebco_08_flt.flt");
-		outputPath = "C:\\srv\\elevation\\kml\\gebco_08/dist";
-		tempPath = "C:\\srv\\elevation\\kml\\gebco_08/temp";
+		//inputDataList.add("C:\\srv\\elevation\\GEBCO_08\\gebco_08\\gebco_08_flt.flt");
+		//outputPath = "C:\\srv\\elevation\\kml\\gebco_08/dist";
+		//tempPath = "C:\\srv\\elevation\\kml\\gebco_08/temp";
 		
 		
-		//inputDataList.add("C:\\srv\\elevation\\etopo1_ice_g_f4\\etopo1_ice_g_f4.flt");
+		inputDataList.add("C:\\srv\\elevation\\etopo1_ice_g_f4\\etopo1_ice_g_f4.flt");
 
-		//outputPath = "C:/srv/elevation/kml/etopo1/dist";
-		//tempPath = "C:/srv/elevation/kml/etopo1/temp";
+		outputPath = "C:/srv/elevation/kml/etopo1/dist.jpg";
+		tempPath = "C:/srv/elevation/kml/etopo1/temp";
 		
 		
 		
 		overlayTileSize = 256;
 		layerMultiplier = 2;
-		
+		imageType = ImageTypeEnum.JPEG;
 		
 		
 		try {
@@ -128,6 +130,7 @@ public class KmlTesting
 			generator.setTempPath(tempPath);
 			generator.setOverlayTileSize(overlayTileSize);
 			generator.setLayerMultiplier(layerMultiplier);
+			generator.setImageType(imageType);
 			OutputProduct<KmlDocument> product = generator.generate();
 			
 		} catch (RenderEngineException ex) {

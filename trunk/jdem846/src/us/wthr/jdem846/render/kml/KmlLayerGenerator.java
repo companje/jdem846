@@ -183,14 +183,14 @@ public class KmlLayerGenerator
 		
 		g2d.dispose();
 		
-		String fileName = "" + layerNumber + "/" + regionNumber + "/" + subRegionNumber + ".jpg";
+		String fileName = "" + layerNumber + "/" + regionNumber + "/" + subRegionNumber + "." + imageType.extension();
 
 		String path = outputPath + "/" + fileName;
 		log.info("Writing image to " + path);
 		
 		File tileFile = new File(path);
 		try {
-			ImageWriter.saveImage(image, path, ImageWriter.JPEG);
+			ImageWriter.saveImage(image, path, imageType);
 		} catch (ImageException ex) {
 			throw new KmlException("Failed to save image tile to disk: " + ex.getMessage(), ex);
 		}

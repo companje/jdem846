@@ -24,7 +24,7 @@ public enum ImageTypeEnum {
 	 * @param fileName A file name with an image format extension (e.g. 'foo.jpg' or 'foo.png')
 	 * @return The type number
 	 */
-	protected static ImageTypeEnum imageTypeFromFileName(String fileName)
+	public static ImageTypeEnum imageTypeFromFileName(String fileName)
 	{
 		if (fileName == null) {
 			return ImageTypeEnum.UNDEFINED_TYPE;
@@ -47,7 +47,7 @@ public enum ImageTypeEnum {
 	 * @param format A format type number.
 	 * @return True if the type number is supported, otherwise false.
 	 */
-	protected static boolean isSupportedFormat(ImageTypeEnum format)
+	public static boolean isSupportedFormat(ImageTypeEnum format)
 	{
 		switch (format) {
 		case JPEG:
