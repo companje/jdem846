@@ -4,7 +4,7 @@ public enum ImageTypeEnum {
 	
 	UNDEFINED_TYPE(null, null),
 	PNG("png", "PNG"),
-	JPEG("jpeg", "JPG");
+	JPEG("jpg", "JPG");
 	
 	private final String extension;
 	private final String formatName;

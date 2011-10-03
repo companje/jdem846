@@ -17,14 +17,19 @@
 package us.wthr.jdem846.render.kml;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageTypeEnum;
+import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -99,11 +104,14 @@ public class GriddedModelGenerator
 					
 					dem2d.generate(fromRow, toRow, fromCol, toCol, tileCanvas);
 					
+					//BufferedImage tileImage = (BufferedImage) tileCanvas.getImage();
+					BufferedImage tileImage = getCroppedImage(tileCanvas.getImage(), (toCol - fromCol) + 1, (toRow - fromRow) + 1);
+					
 					//saveTileImage(DemCanvas canvas, int fromRow, int fromCol, int toRow, int toCol, String outputPath)
 					File tileFile = null;
 					try {
-						tileFile = saveTileImage(tileCanvas, fromRow, fromCol, toRow, toCol, tempPath);
-					} catch (CanvasException ex) {
+						tileFile = saveTileImage(tileImage, fromRow, fromCol, toRow, toCol, tempPath);
+					} catch (ImageException ex) {
 						throw new RenderEngineException("Failed to save tile image to disk: " + ex.getMessage(), ex);
 					}
 					
@@ -131,15 +139,31 @@ public class GriddedModelGenerator
 	}
 	
 	
+	protected BufferedImage getCroppedImage(Image original, int width, int height)
+	{
+		log.info("Cropping image of width/height: " + width + "/" + height);
+		
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		
+		Graphics2D g2d = (Graphics2D) image.createGraphics();
+		g2d.drawImage(original, 0, 0, null);
+		g2d.dispose();
+		
+		
+		return image;
+	}
 	
-	protected File saveTileImage(DemCanvas canvas, int fromRow, int fromCol, int toRow, int toCol, String outputPath) throws CanvasException
+	protected File saveTileImage(BufferedImage image, int fromRow, int fromCol, int toRow, int toCol, String outputPath) throws ImageException
 	{
 		String fileName = "tile-" + fromRow + "-" + toRow + "-" + fromCol + "-" + toCol + "." + imageType.extension();
 		
 		String path = outputPath + "/" + fileName;
 		log.info("Writing image to " + path);
+		
 
-		canvas.save(path);
+		ImageWriter.saveImage(image, path, imageType);
+
+		//canvas.save(path);
 		
 		return (new File(path));
 	}

@@ -145,7 +145,13 @@ public class KmlLayerGenerator
 		
 		g2d.setColor(new Color(0, 0, 0, 0));
 		g2d.fillRect(0, 0, scaleSize, scaleSize);
-
+		
+		
+		int minX = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int minY = Integer.MAX_VALUE;
+		int maxY = Integer.MIN_VALUE;
+		
 		for (Tile tile : tilesIntersecting) {
 			BufferedImage subtile = tile.loadImage();
 
@@ -161,13 +167,22 @@ public class KmlLayerGenerator
 			int x2 = (int) Math.round(_x2 * scalePct);
 			int y2 = (int) Math.round(_y2 * scalePct);
 			
+			if (x < minX && x < 0)
+				minX = x;
+			if (x > maxX)
+				maxX = x;
+			if (y < minY && y < 0)
+				minY = y;
+			if (y > maxY)
+				maxY = y;
+			
 			int width = Math.abs(x2 - x);
 			int height = Math.abs(y2 - y);
 			
 			
 			log.info("x/y: " + x + "/" + y + ", width/height: " + width + "/" + height);
 			
-			BufferedImage scaled = ImageUtilities.getScaledInstance(subtile, width, width, RenderingHints.VALUE_INTERPOLATION_BILINEAR, true);
+			BufferedImage scaled = ImageUtilities.getScaledInstance(subtile, width, height, RenderingHints.VALUE_INTERPOLATION_BILINEAR, true);
 			
 			g2d.drawImage(scaled, x, y, width, height, new ImageObserver() {
 				public boolean imageUpdate(Image img, int infoflags, int x,
@@ -182,6 +197,12 @@ public class KmlLayerGenerator
 		
 		
 		g2d.dispose();
+		
+		
+		image = cropImageTile(image, minY, maxY, minX, maxX);
+		if (image == null) {
+			return null;
+		}
 		
 		String fileName = "" + layerNumber + "/" + regionNumber + "/" + subRegionNumber + "." + imageType.extension();
 
@@ -198,6 +219,46 @@ public class KmlLayerGenerator
 		return tileFile;
 	}
 	
+	
+	/** Crops the tile image to remove unfilled buffer space.
+	 * 
+	 * @param original
+	 * @param top
+	 * @param bottom
+	 * @param left
+	 * @param right
+	 * @return
+	 */
+	protected BufferedImage cropImageTile(BufferedImage original, int top, int bottom, int left, int right)
+	{
+		
+		if (top < 0)
+			top = 0;
+		if (left < 0)
+			left = 0;
+		
+		int height = bottom - top;
+		int width = right - left;
+		
+		if (height <= 0 || width <= 0)
+			return null;
+		
+		log.info("Cropped tile image with dimensions: T/B/L/R: " + top + "/" + bottom + "/" + left + "/" + right + ", W/H: " + width + "/" + height);
+		
+		BufferedImage cropped = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		
+		Graphics2D g2d = (Graphics2D) cropped.createGraphics();
+		
+		g2d.drawImage(original, left, top, width, height, new ImageObserver() {
+			public boolean imageUpdate(Image arg0, int arg1, int arg2, int arg3, int arg4, int arg5) {
+				return true;
+			}
+		});
+		
+		g2d.dispose();
+		
+		return cropped;
+	}
 	
 
 	protected GroundOverlay createGroundOverlay(File distTileFile)

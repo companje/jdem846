@@ -80,17 +80,21 @@ public class KmlTesting
 		//outputPath = "C:\\srv\\elevation\\kml\\gebco_08/dist";
 		//tempPath = "C:\\srv\\elevation\\kml\\gebco_08/temp";
 		
-		
+		/*
 		inputDataList.add("C:\\srv\\elevation\\etopo1_ice_g_f4\\etopo1_ice_g_f4.flt");
 
 		outputPath = "C:/srv/elevation/kml/etopo1/dist.jpg";
 		tempPath = "C:/srv/elevation/kml/etopo1/temp";
+		*/
 		
-		
+		inputDataList.add("/elev/etopo1_bed_g_f4/etopo1_bed_g_f4.flt");
+
+		outputPath = "/elev/etopo1_bed_g_f4/kml/dist.png";
+		tempPath = "/elev/etopo1_bed_g_f4/kml/temp";
 		
 		overlayTileSize = 256;
 		layerMultiplier = 2;
-		imageType = ImageTypeEnum.JPEG;
+		imageType = ImageTypeEnum.PNG;
 		
 		
 		try {
