@@ -82,9 +82,9 @@ public class KmlDemGenerator extends BasicRenderEngine
 		log.info("Total Tiles Generated: " + griddedModel.getTiles().size());
 		
 		try {
-			KmlDocument kml = KmlModelGenerator.generate(dataPackage, modelOptions, griddedModel, outputPath, overlayTileSize, layerMultiplier, "jDem846 Model", null, ImageTypeEnum.PNG, true);
+			KmlDocument kml = KmlModelGenerator.generate(dataPackage, modelOptions, griddedModel, outputPath, overlayTileSize, layerMultiplier, "jDem846 Model", null, imageType, true);
 			
-			cleanUpTemporaryFiles();
+			//cleanUpTemporaryFiles();
 			
 			return new OutputProduct<KmlDocument>(OutputProduct.EXPORT_SPEC, kml);
 		} catch (RenderEngineException ex) {

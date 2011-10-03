@@ -189,7 +189,7 @@ public class KmlModelGenerator
 			layerFolder.getFeaturesList().addAll(networkLinks);
 
 			regionNum++;
-			if (south < griddedModel.getSouth())
+			if (north < griddedModel.getSouth())
 				break;
 		}
 		
@@ -232,7 +232,7 @@ public class KmlModelGenerator
 			}
 			
 			subRegionNum++;
-			if (east > griddedModel.getEast())
+			if (west > griddedModel.getEast())
 				break;
 		}
 		
