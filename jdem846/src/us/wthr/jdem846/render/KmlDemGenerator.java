@@ -19,6 +19,7 @@ package us.wthr.jdem846.render;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.kml.KmlDocument;
 import us.wthr.jdem846.logging.Log;
@@ -80,7 +81,7 @@ public class KmlDemGenerator extends BasicRenderEngine
 		log.info("Total Tiles Generated: " + griddedModel.getTiles().size());
 		
 		try {
-			KmlDocument kml = KmlModelGenerator.generate(dataPackage, modelOptions, griddedModel, outputPath, overlayTileSize, layerMultiplier, "jDem846 Model", null, true);
+			KmlDocument kml = KmlModelGenerator.generate(dataPackage, modelOptions, griddedModel, outputPath, overlayTileSize, layerMultiplier, "jDem846 Model", null, ImageTypeEnum.PNG, true);
 			
 			cleanUpTemporaryFiles();
 			
