@@ -41,6 +41,7 @@ public class KmlDemGenerator extends BasicRenderEngine
 	private String tempPath;
 	private int overlayTileSize;
 	private int layerMultiplier;
+	private ImageTypeEnum imageType;
 	
 	public KmlDemGenerator()
 	{
@@ -73,7 +74,7 @@ public class KmlDemGenerator extends BasicRenderEngine
 		// TODO: tile completion listeners
 		try {
 			
-			griddedModel = GriddedModelGenerator.generate(dataPackage, modelOptions, tempPath, tileCompletionListeners);
+			griddedModel = GriddedModelGenerator.generate(dataPackage, modelOptions, tempPath, imageType, tileCompletionListeners);
 		} catch (Exception ex) {
 			throw new RenderEngineException("Failed to generate 2D DEM: " + ex.getMessage(), ex);
 		} 
@@ -137,6 +138,16 @@ public class KmlDemGenerator extends BasicRenderEngine
 	public void setLayerMultiplier(int layerMultiplier)
 	{
 		this.layerMultiplier = layerMultiplier;
+	}
+
+	public ImageTypeEnum getImageType()
+	{
+		return imageType;
+	}
+
+	public void setImageType(ImageTypeEnum imageType)
+	{
+		this.imageType = imageType;
 	}
 	
 	
