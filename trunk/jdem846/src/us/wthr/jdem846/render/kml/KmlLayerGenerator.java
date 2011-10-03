@@ -33,6 +33,7 @@ import javax.imageio.ImageIO;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.exception.KmlException;
+import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.input.DataPackage;
@@ -66,6 +67,7 @@ public class KmlLayerGenerator
 	private int regionNumber;
 	private int subRegionNumber;
 	private int scaleSize;
+	private ImageTypeEnum imageType;
 	private String outputPath;
 	
 	
@@ -80,6 +82,7 @@ public class KmlLayerGenerator
 								int regionNumber,
 								int subRegionNumber,
 								int scaleSize,
+								ImageTypeEnum imageType, 
 								String outputPath)
 	{
 		this.dataPackage = dataPackage;
@@ -93,6 +96,7 @@ public class KmlLayerGenerator
 		this.regionNumber = regionNumber;
 		this.subRegionNumber = subRegionNumber;
 		this.scaleSize = scaleSize;
+		this.imageType = imageType;
 		this.outputPath = outputPath;
 		
 	}
@@ -179,14 +183,14 @@ public class KmlLayerGenerator
 		
 		g2d.dispose();
 		
-		String fileName = "" + layerNumber + "/" + regionNumber + "/" + subRegionNumber + ".png";
+		String fileName = "" + layerNumber + "/" + regionNumber + "/" + subRegionNumber + ".jpg";
 
 		String path = outputPath + "/" + fileName;
 		log.info("Writing image to " + path);
 		
 		File tileFile = new File(path);
 		try {
-			ImageWriter.saveImage(image, path, ImageWriter.PNG);
+			ImageWriter.saveImage(image, path, ImageWriter.JPEG);
 		} catch (ImageException ex) {
 			throw new KmlException("Failed to save image tile to disk: " + ex.getMessage(), ex);
 		}
@@ -287,6 +291,7 @@ public class KmlLayerGenerator
 										int regionNumber,
 										int subRegionNumber,
 										int scaleSize,
+										ImageTypeEnum imageType, 
 										String outputPath, 
 										boolean write) throws IOException, KmlException
 	{
@@ -302,6 +307,7 @@ public class KmlLayerGenerator
 				regionNumber,
 				subRegionNumber,
 				scaleSize,
+				imageType,
 				outputPath);
 		
 		return generator.generate(write);

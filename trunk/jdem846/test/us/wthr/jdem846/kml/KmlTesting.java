@@ -71,11 +71,12 @@ public class KmlTesting
 	{
 		List<String> inputDataList = new LinkedList<String>();
 		
-		inputDataList.add("C:/srv/elevation/Maui/15749574.flt");
-		inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
-
-		outputPath = "C:/srv/elevation/kml/maui/dist";
-		tempPath = "C:/srv/elevation/kml/maui/temp";
+		//inputDataList.add("C:/srv/elevation/Maui/15749574.flt");
+		//inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
+		
+		inputDataList.add("C:\\srv\\elevation\\GEBCO_08\\gebco_08\\gebco_08_flt.flt");
+		outputPath = "C:\\srv\\elevation\\kml\\gebco_08/dist";
+		tempPath = "C:\\srv\\elevation\\kml\\gebco_08/temp";
 		
 		
 		//inputDataList.add("C:\\srv\\elevation\\etopo1_ice_g_f4\\etopo1_ice_g_f4.flt");
@@ -100,7 +101,7 @@ public class KmlTesting
 		
 
 		modelOptions = new ModelOptions();
-		//modelOptions.setColoringType("hypsometric-etopo1-tint");
+		modelOptions.setColoringType("hypsometric-etopo1-tint");
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setTileSize(1000);
 		

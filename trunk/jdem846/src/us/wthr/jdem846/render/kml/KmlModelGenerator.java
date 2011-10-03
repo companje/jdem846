@@ -26,6 +26,7 @@ import java.util.List;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.KmlException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.kml.Folder;
 import us.wthr.jdem846.kml.Kml;
@@ -54,6 +55,7 @@ public class KmlModelGenerator
 	private int layerMultiplier;
 	private String name;
 	private String description;
+	private ImageTypeEnum imageType;
 	
 	protected KmlModelGenerator(DataPackage dataPackage,
 								ModelOptions modelOptions,
@@ -62,7 +64,8 @@ public class KmlModelGenerator
 								int overlayTileSize,
 								int layerMultiplier,
 								String name,
-								String description)
+								String description,
+								ImageTypeEnum imageType)
 	{
 		this.dataPackage = dataPackage;
 		this.modelOptions = modelOptions;
@@ -72,6 +75,7 @@ public class KmlModelGenerator
 		this.layerMultiplier = layerMultiplier;
 		this.name = name;
 		this.description = description;
+		this.imageType = imageType;
 	}
 	
 	
@@ -83,10 +87,11 @@ public class KmlModelGenerator
 								int layerMultiplier,
 								String name,
 								String description,
+								ImageTypeEnum imageType, 
 								boolean write) throws RenderEngineException
 	{
 		
-		KmlModelGenerator generator = new KmlModelGenerator(dataPackage, modelOptions, griddedModel, outputPath, overlayTileSize, layerMultiplier, name, description);
+		KmlModelGenerator generator = new KmlModelGenerator(dataPackage, modelOptions, griddedModel, outputPath, overlayTileSize, layerMultiplier, name, description, imageType);
 		
 		KmlDocument kml = generator.generate(write);
 		
@@ -207,7 +212,7 @@ public class KmlModelGenerator
 
 			try {
 				int scaleTo = (layerNumber == 1) ? -1 : overlayTileSize;
-				KmlDocument kmlDoc = KmlLayerGenerator.generate(dataPackage, modelOptions, griddedModel, north, south, east, west, layerNumber, regionNum, subRegionNum, scaleTo, outputPath, true);
+				KmlDocument kmlDoc = KmlLayerGenerator.generate(dataPackage, modelOptions, griddedModel, north, south, east, west, layerNumber, regionNum, subRegionNum, scaleTo, imageType, outputPath, true);
 				
 				if (kmlDoc != null) {
 					String linkName = layerNumber + "/" + regionNum + "/" + subRegionNum;
