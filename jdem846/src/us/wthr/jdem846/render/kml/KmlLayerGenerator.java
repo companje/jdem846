@@ -167,10 +167,12 @@ public class KmlLayerGenerator
 			int x2 = (int) Math.round(_x2 * scalePct);
 			int y2 = (int) Math.round(_y2 * scalePct);
 			
+			int imgWidth = (int) Math.round((double)subtile.getWidth() * scalePct);
+			
 			if (x < minX && x < 0)
 				minX = x;
-			if (x > maxX)
-				maxX = x;
+			if (x2 > maxX)
+				maxX = x2;
 			if (y < minY && y < 0)
 				minY = y;
 			if (y > maxY)
@@ -231,6 +233,7 @@ public class KmlLayerGenerator
 	 */
 	protected BufferedImage cropImageTile(BufferedImage original, int top, int bottom, int left, int right)
 	{
+
 		
 		if (top < 0)
 			top = 0;
@@ -258,6 +261,7 @@ public class KmlLayerGenerator
 		g2d.dispose();
 		
 		return cropped;
+		
 	}
 	
 
