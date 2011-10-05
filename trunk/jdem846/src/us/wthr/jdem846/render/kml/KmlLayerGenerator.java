@@ -149,11 +149,13 @@ public class KmlLayerGenerator
 		
 		int minX = Integer.MAX_VALUE;
 		int maxX = Integer.MIN_VALUE;
-		int minY = Integer.MAX_VALUE;
-		int maxY = Integer.MIN_VALUE;
+		//int minY = Integer.MAX_VALUE;
+		//int maxY = Integer.MIN_VALUE;
+		
 		
 		for (Tile tile : tilesIntersecting) {
 			BufferedImage subtile = tile.loadImage();
+			
 
 			double _x = tile.getFromColumn() - fromCol;
 			double _y = tile.getFromRow() - fromRow;
@@ -167,16 +169,23 @@ public class KmlLayerGenerator
 			int x2 = (int) Math.round(_x2 * scalePct);
 			int y2 = (int) Math.round(_y2 * scalePct);
 			
-			int imgWidth = (int) Math.round((double)subtile.getWidth() * scalePct);
+			if (x2 < 0) {
+				x = x + (int) Math.round((dataPackage.getColumns() * scalePct));
+				x2 = x2 + (int) Math.round((dataPackage.getColumns() * scalePct));
+			}
+			
+			
+			//int imgWidth = (int) Math.round((double)subtile.getWidth() * scalePct);
 			
 			if (x < minX && x < 0)
 				minX = x;
 			if (x2 > maxX)
 				maxX = x2;
-			if (y < minY && y < 0)
-				minY = y;
-			if (y > maxY)
-				maxY = y;
+			//if (y < minY && y < 0)
+			//	minY = y;
+			//if (y > maxY)
+			//	maxY = y;
+			
 			
 			int width = Math.abs(x2 - x);
 			int height = Math.abs(y2 - y);
@@ -193,18 +202,25 @@ public class KmlLayerGenerator
 					return true;
 				}
 			});
-			
+				
+				
 
 		}
+		
+		// NOTE: Only works when the tile > 360 degrees longitude
+		//if (maxX < scaleSize) {
+		//	g2d.drawImage(image, maxX, 0, null);
+		//}
 		
 		
 		g2d.dispose();
 		
-		
+		/*
 		image = cropImageTile(image, minY, maxY, minX, maxX);
 		if (image == null) {
 			return null;
 		}
+		*/
 		
 		String fileName = "" + layerNumber + "/" + regionNumber + "/" + subRegionNumber + "." + imageType.extension();
 
