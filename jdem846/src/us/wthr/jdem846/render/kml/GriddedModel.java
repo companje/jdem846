@@ -45,8 +45,10 @@ public class GriddedModel
 		
 		for (Tile tile : tiles) {
 			
-			//boolean intersects(double _north, double _south, double _east, double _west)
+			
 			if (tile.intersects(north, south, east, west)) {
+				tilesIntersecting.add(tile);
+			} else if (tile.intersects(north, south, east-360.0, west-360.0)) {
 				tilesIntersecting.add(tile);
 			}
 		}
