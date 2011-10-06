@@ -24,6 +24,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author Kevin M. Gill
  *
  */
+@Discoverable
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Registry
 {

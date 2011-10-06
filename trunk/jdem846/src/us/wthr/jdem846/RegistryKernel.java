@@ -19,6 +19,7 @@ package us.wthr.jdem846;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.annotations.Initialize;
+import us.wthr.jdem846.exception.AnnotationIndexerException;
 import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -50,6 +52,22 @@ public class RegistryKernel
 	public void init() throws RegistryException
 	{
 		
+		List<Class<?>> clazzList = null;
+		
+		try {
+			clazzList = DiscoverableAnnotationIndexer.getAnnotatedClasses(Registry.class.getName());
+		} catch (AnnotationIndexerException ex) {
+			throw new RegistryException("Failed to retrieve registry classes: " + ex.getMessage(), ex);
+		}
+		
+		if (clazzList != null) {
+			for (Class<?> clazz : clazzList) {
+				initializeRegistry((Class<AppRegistry>)clazz);
+			}
+		}
+		
+		
+		/*
 		try {
 
 			AnnotationDB db = new AnnotationDB();
@@ -74,13 +92,13 @@ public class RegistryKernel
 			//ex.printStackTrace();
 			throw new  RegistryException("Failure in registry initialization", ex);
 		}
-		
+		*/
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected void initializeRegistry(String clazzName) throws RegistryException
+	protected void initializeRegistry(Class<AppRegistry> clazz) throws RegistryException
 	{
-		
+		/*
 		Class<AppRegistry> clazz = null;
 		try {
 			clazz = (Class<AppRegistry>) Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
@@ -89,26 +107,27 @@ public class RegistryKernel
 			ex.printStackTrace();
 			throw new RegistryException(clazzName, "Failed to load class '" + clazzName + "'", ex);
 		}
+		*/
 		
 		boolean initMethodInvoked = false;
 		
 		Method[] methods = clazz.getMethods();
 		for (Method method : methods) {
 			if (method.getAnnotation(Initialize.class) != null) {
-				log.info("Initializing " + clazzName + "." + method.getName());
+				log.info("Initializing " + clazz.getName() + "." + method.getName());
 				//System.out.println("RegistryKernel: Initializing " + clazzName + "." + method.getName());
 				try {
 					method.invoke(JDem846Properties.class);
 					initMethodInvoked = true;
 				} catch (Exception ex) {
 					//ex.printStackTrace();
-					throw new RegistryException(clazzName, "Failed to invoke initialization method", ex);
+					throw new RegistryException(clazz.getName(), "Failed to invoke initialization method", ex);
 				}
 			}
 		}
 		
 		if (!initMethodInvoked) {
-			throw new RegistryException(clazzName, "Initialization method not found for '" + clazzName + "'");
+			throw new RegistryException(clazz.getName(), "Initialization method not found for '" + clazz.getName() + "'");
 		}
 		
 	}
