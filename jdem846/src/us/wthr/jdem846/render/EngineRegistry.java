@@ -27,10 +27,14 @@ import org.scannotation.AnnotationDB;
 import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.AppRegistry;
+import us.wthr.jdem846.DiscoverableAnnotationIndexer;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.annotations.DemColoring;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
+import us.wthr.jdem846.exception.AnnotationIndexerException;
+import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -44,15 +48,15 @@ public class EngineRegistry  implements AppRegistry
 	private static Map<String, EngineInstance> engineMap = new HashMap<String, EngineInstance>();
 	
 
-	protected static void addEngineInstance(String clazzName) throws ClassNotFoundException
+	protected static void addEngineInstance(Class<?> clazz) throws ClassNotFoundException
 	{
-		Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
+		//Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
 		DemEngine annotation = (DemEngine) clazz.getAnnotation(DemEngine.class);
 
 		String name = annotation.name();
 		name = I18N.get(name, name);
 		
-		EngineInstance engineInstance = new EngineInstance(clazzName, name, annotation.identifier());
+		EngineInstance engineInstance = new EngineInstance(clazz.getName(), name, annotation.identifier());
 		engineInstance.setEnabled(annotation.enabled());
 		engineInstance.setUsesWidth(annotation.usesWidth());
 		engineInstance.setUsesHeight(annotation.usesHeight());
@@ -74,10 +78,10 @@ public class EngineRegistry  implements AppRegistry
 		
 		if (annotation.enabled()) {
 			EngineRegistry.engineMap.put(annotation.identifier(), engineInstance);
-			log.info("Adding render engine instance for " + clazzName + ": " + annotation.name());
+			log.info("Adding render engine instance for " + clazz.getName() + ": " + annotation.name());
 			//System.out.println("Adding render engine instance for " + clazzName + ": " + annotation.name());
 		} else {
-			log.info("Render engine is disabled: " + clazzName);
+			log.info("Render engine is disabled: " + clazz.getName());
 			//System.out.println("Render engine is disabled: " + clazzName);
 		}
 		
@@ -89,32 +93,27 @@ public class EngineRegistry  implements AppRegistry
 	}
 	
 	@Initialize
-	public static void init()
+	public static void init() throws RegistryException
 	{
 		//System.out.println("Static initialization of EngineRegistry");
 		log.info("Static initialization of EngineRegistry");
 		
+		List<Class<?>> clazzList = null;
+		
 		try {
-			AnnotationDB db = new AnnotationDB();
-			URL[] urls = ClasspathUrlFinder.findClassPaths();
-			
-			for (URL url : urls) {
-				log.info("Scanning Classpath URL: " + url);
-				db.scanArchives(url);
-			}
-
-			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
-			Set<String> engineClasses = annotationIndex.get(DemEngine.class.getName());
-			
-			if (engineClasses != null) {
-				for (String clazzName : engineClasses) {
-					addEngineInstance(clazzName);
+			clazzList = DiscoverableAnnotationIndexer.getAnnotatedClasses(DemEngine.class.getName());
+		} catch (AnnotationIndexerException ex) {
+			throw new RegistryException("Failed to retrieve DemEngine classes: " + ex.getMessage(), ex);
+		}
+		
+		try {
+			if (clazzList != null) {
+				for (Class<?> clazz : clazzList) {
+					addEngineInstance(clazz);
 				}
 			}
-			
 		} catch (Exception ex) {
-			log.error("Failure in engine registry initialization: " + ex.getMessage(), ex);
-			//ex.printStackTrace();
+			throw new RegistryException("Error loading engine class: " + ex.getMessage(), ex);
 		}
 	}
 

@@ -31,11 +31,13 @@ import org.scannotation.AnnotationDB;
 import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.AppRegistry;
+import us.wthr.jdem846.DiscoverableAnnotationIndexer;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.annotations.DemColoring;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.dbase.ClassLoadException;
+import us.wthr.jdem846.exception.AnnotationIndexerException;
 import us.wthr.jdem846.exception.GradientLoadException;
 import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.i18n.I18N;
@@ -51,8 +53,9 @@ public class ColoringRegistry implements AppRegistry
 	private static Map<String, ColoringInstance> instances = new HashMap<String, ColoringInstance>();
 
 	
-	protected static void addColoringInstance(String clazzName) throws ClassLoadException
+	protected static void addColoringInstance(Class<?> clazz) throws ClassLoadException
 	{
+		/*
 		Class<?> clazz = null;
 		try {
 			clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
@@ -60,6 +63,7 @@ public class ColoringRegistry implements AppRegistry
 			log.error("Error loading class '" + clazzName + "' into classloader: " + ex.getMessage(), ex);
 			throw new ClassLoadException(clazzName, "Error loading class '" + clazzName + "' into classloader", ex);
 		}
+		*/
 			
 		DemColoring annotation = (DemColoring) clazz.getAnnotation(DemColoring.class);
 		
@@ -67,10 +71,10 @@ public class ColoringRegistry implements AppRegistry
 		name = I18N.get(name, name);
 
 		
-		ColoringRegistry.instances.put(annotation.identifier(), new ColoringInstance(clazzName, name, annotation.identifier(), annotation.allowGradientConfig(), annotation.needsMinMaxElevation()));
+		ColoringRegistry.instances.put(annotation.identifier(), new ColoringInstance(clazz.getName(), name, annotation.identifier(), annotation.allowGradientConfig(), annotation.needsMinMaxElevation()));
 		//System.out.println("Adding coloring instance for " + clazzName + ": " + annotation.name());
 		
-		log.info("Adding coloring instance for " + clazzName + ": " + annotation.name());
+		log.info("Adding coloring instance for " + clazz.getName() + ": " + annotation.name());
 		
 	}
 	
@@ -162,32 +166,24 @@ public class ColoringRegistry implements AppRegistry
 		
 		log.info("Static initialization of ColoringRegistry by annotations");
 		
+		List<Class<?>> clazzList = null;
+		
 		try {
-
-			//URL url = ClasspathUrlFinder.findClassBase(JDem846Properties.class);
-			//log.info("Checking " + url + " for components");
-
-			AnnotationDB db = new AnnotationDB();
-			
-			URL[] urls = ClasspathUrlFinder.findClassPaths();
-			for (URL url : urls) {
-				log.info("Scanning Classpath URL: " + url);
-				db.scanArchives(url);
-			}
-			//db.crossReferenceImplementedInterfaces();
-					 	
-			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
-			Set<String> colorClasses = annotationIndex.get(DemColoring.class.getName());
-					
-			if (colorClasses != null) {
-				for (String clazzName : colorClasses) {
-					addColoringInstance(clazzName);
+			clazzList = DiscoverableAnnotationIndexer.getAnnotatedClasses(DemColoring.class.getName());
+		} catch (AnnotationIndexerException ex) {
+			throw new RegistryException("Failed to retrieve DemColoring classes: " + ex.getMessage(), ex);
+		}
+		
+		try {
+			if (clazzList != null) {
+				for (Class<?> clazz : clazzList) {
+					addColoringInstance(clazz);
 				}
 			}
-
 		} catch (Exception ex) {
 			throw new RegistryException("Error loading coloring class: " + ex.getMessage(), ex);
 		}
+
 	}
 	
 	//

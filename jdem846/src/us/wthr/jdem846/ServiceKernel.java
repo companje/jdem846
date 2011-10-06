@@ -30,8 +30,11 @@ import org.scannotation.ClasspathUrlFinder;
 import us.wthr.jdem846.annotations.Destroy;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.OnShutdown;
+import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.annotations.Service;
 import us.wthr.jdem846.annotations.ServiceRuntime;
+import us.wthr.jdem846.exception.AnnotationIndexerException;
+import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.exception.ServiceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -110,31 +113,27 @@ public class ServiceKernel extends Thread
 		
 		log.info("Initializing Services...");
 		
+		serviceThreadGroup = new ThreadGroup("JDEM Service Thread Group");
+		
+		List<Class<?>> clazzList = null;
+		
 		try {
-			
-			serviceThreadGroup = new ThreadGroup("JDEM Service Thread Group");
-			
-			AnnotationDB db = new AnnotationDB();
-			URL[] urls = ClasspathUrlFinder.findClassPaths();
-			for (URL url : urls) {
-				log.info("Scanning Classpath URL: " + url);
-				db.scanArchives(url);
-			}
-
-			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
-			Set<String> srvClasses = annotationIndex.get(Service.class.getName());
-			
-			if (srvClasses != null) {
-				for (String clazzName : srvClasses) {
-					initializeService(clazzName);
+			clazzList = DiscoverableAnnotationIndexer.getAnnotatedClasses(Service.class.getName());
+		} catch (AnnotationIndexerException ex) {
+			throw new ServiceException("Failed to retrieve service classes: " + ex.getMessage(), ex);
+		}
+		
+		try {
+			if (clazzList != null) {
+				for (Class<?> clazz : clazzList) {
+					initializeService((Class<AppService>)clazz);
 				}
 			}
-			
 		} catch (Exception ex) {
-			log.error("Failure in service initialization: " + ex.getMessage(), ex);
-			//ex.printStackTrace();
-			throw new  ServiceException("Failure in service initialization", ex);
+			throw new  ServiceException("Failure in service initialization: " + ex.getMessage(), ex);
 		}
+		
+		
 		
 		
 	}
@@ -198,9 +197,9 @@ public class ServiceKernel extends Thread
 	
 	
 	@SuppressWarnings("unchecked")
-	protected void initializeService(String clazzName) throws ServiceException
+	protected void initializeService(Class<AppService> clazz) throws ServiceException
 	{
-		
+		/*
 		Class<AppService> clazz = null;
 		try {
 			clazz = (Class<AppService>) Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
@@ -210,6 +209,7 @@ public class ServiceKernel extends Thread
 			log.error("Failed to load class '" + clazzName + "': " + ex.getMessage(), ex);
 			throw new ServiceException(clazzName, "Failed to load class '" + clazzName + "'", ex);
 		}
+		*/
 		
 		Service annotation = (Service) clazz.getAnnotation(Service.class);
 		String name = annotation.name();
@@ -227,8 +227,8 @@ public class ServiceKernel extends Thread
 			instance = clazz.newInstance();
 		} catch (Exception ex) {
 			//ex.printStackTrace();
-			log.error("Failed to create new instance of '" + clazzName + "': " + ex.getMessage(), ex);
-			throw new ServiceException(clazzName, "Failed to create new instance of '" + clazzName + "'", ex);
+			log.error("Failed to create new instance of '" + clazz.getName() + "': " + ex.getMessage(), ex);
+			throw new ServiceException(clazz.getName(), "Failed to create new instance of '" + clazz.getName() + "'", ex);
 		} 
 		
 		serviceInitialize(name, instance);

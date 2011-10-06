@@ -27,10 +27,14 @@ import org.scannotation.AnnotationDB;
 import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.AppRegistry;
+import us.wthr.jdem846.DiscoverableAnnotationIndexer;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
+import us.wthr.jdem846.exception.AnnotationIndexerException;
+import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -48,9 +52,9 @@ public class ElevationDataLoaderRegistry  implements AppRegistry
 		
 	}
 	
-	protected static void addElevationDataLoaderInstance(String clazzName) throws ClassNotFoundException
+	protected static void addElevationDataLoaderInstance(Class<?> clazz) throws ClassNotFoundException
 	{
-		Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
+		//Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
 		ElevationDataLoader annotation = (ElevationDataLoader) clazz.getAnnotation(ElevationDataLoader.class);
 		
 		if (!annotation.enabled())
@@ -60,40 +64,35 @@ public class ElevationDataLoaderRegistry  implements AppRegistry
 		name = I18N.get(name, name);
 		
 		
-		ElevationDataLoaderInstance instance = new ElevationDataLoaderInstance(clazzName, name, annotation.identifier(), annotation.extension());
+		ElevationDataLoaderInstance instance = new ElevationDataLoaderInstance(clazz.getName(), name, annotation.identifier(), annotation.extension());
 		instanceMap.put(annotation.identifier(), instance);
 	}
 	
 	@Initialize
-	public static void init()
+	public static void init() throws RegistryException
 	{
 		//System.out.println("Static initialization of ElevationDataLoaderRegistry");
 		
 		log.info("Static initialization of ElevationDataLoaderRegistry");
 		
+		List<Class<?>> clazzList = null;
+		
 		try {
-			//URL url = ClasspathUrlFinder.findClassBase(JDem846Properties.class);
-			AnnotationDB db = new AnnotationDB();
-			
-			URL[] urls = ClasspathUrlFinder.findClassPaths();
-			for (URL url : urls) {	
-				log.info("Scanning Classpath URL: " + url);
-				db.scanArchives(url);
-			}
-			//db.crossReferenceImplementedInterfaces();
-			 	
-			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
-			Set<String> colorClasses = annotationIndex.get(ElevationDataLoader.class.getName());
-			
-			if (colorClasses != null) {
-				for (String clazzName : colorClasses) {
-					addElevationDataLoaderInstance(clazzName);
+			clazzList = DiscoverableAnnotationIndexer.getAnnotatedClasses(ElevationDataLoader.class.getName());
+		} catch (AnnotationIndexerException ex) {
+			throw new RegistryException("Failed to retrieve elevation loader classes: " + ex.getMessage(), ex);
+		}
+		
+		try {
+			if (clazzList != null) {
+				for (Class<?> clazz : clazzList) {
+					addElevationDataLoaderInstance(clazz);
 				}
 			}
-			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			throw new RegistryException("Error loading elevation loader class: " + ex.getMessage(), ex);
 		}
+		
 	}
 	
 
