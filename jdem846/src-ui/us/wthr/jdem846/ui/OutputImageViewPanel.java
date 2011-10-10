@@ -35,6 +35,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.i18n.I18N;
@@ -95,7 +96,7 @@ public class OutputImageViewPanel extends JdemPanel
 		
 		// Create components
 		imageDisplay = new ImageDisplayPanel();
-		buttonBar = new OutputImageViewButtonBar();
+		buttonBar = new OutputImageViewButtonBar(this);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_SAVE, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_IN, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
@@ -211,7 +212,8 @@ public class OutputImageViewPanel extends JdemPanel
 		
 		
 		// Set layout
-		this.add(buttonBar, BorderLayout.NORTH);
+		MainButtonBar.addToolBar(buttonBar);
+		//this.add(buttonBar, BorderLayout.NORTH);
 		this.add(imageDisplay, BorderLayout.CENTER);
 		this.add(statusBar, BorderLayout.SOUTH);
 		
@@ -336,13 +338,15 @@ public class OutputImageViewPanel extends JdemPanel
 
 	}
 	
-	
-	public void cleanUp()
+	@Override
+	public void dispose() throws ComponentException
 	{
 		log.info("Closing output image pane.");
 		detachModelListeners(false);
 		MainMenuBar.removeMenu(modelMenu);
+		MainButtonBar.removeToolBar(buttonBar);
 	}
+
 	
 	public void detachModelListeners(boolean delayed)
 	{

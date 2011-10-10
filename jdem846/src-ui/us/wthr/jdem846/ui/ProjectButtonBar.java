@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +32,7 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
-public class ProjectButtonBar extends ToolBar
+public class ProjectButtonBar extends ComponentButtonBar
 {
 	public static final int BTN_ADD = 0;
 	public static final int BTN_REMOVE = 1;
@@ -45,8 +46,10 @@ public class ProjectButtonBar extends ToolBar
 	private ToolbarButton jbtnCreate;
 	private ToolbarButton jbtnExport;
 	
-	public ProjectButtonBar()
+	public ProjectButtonBar(Component owner)
 	{
+		super(owner);
+		
 		// Create components
 		
 		
@@ -79,7 +82,16 @@ public class ProjectButtonBar extends ToolBar
 		jbtnRemove.setToolTipText(I18N.get("us.wthr.jdem846.ui.projectButtonBar.removeTooltip"));
 		jbtnCreate.setToolTipText(I18N.get("us.wthr.jdem846.ui.projectButtonBar.createTooltip"));
 		jbtnExport.setToolTipText(I18N.get("us.wthr.jdem846.ui.projectButtonBar.exportTooltip"));
-
+		
+		
+		boolean displayText = JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.projectToolBar.displayText");
+		jbtnAdd.setTextDisplayed(displayText);
+		jbtnRemove.setTextDisplayed(displayText);
+		jbtnCreate.setTextDisplayed(displayText);
+		jbtnExport.setTextDisplayed(displayText);
+		
+		
+		
 		this.setMargin(new Insets(3, 3, 3, 3));
 		
 		// Create layout

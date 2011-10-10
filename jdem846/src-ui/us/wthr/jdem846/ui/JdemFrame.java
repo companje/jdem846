@@ -57,13 +57,14 @@ import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.render.RenderEngine;
-import us.wthr.jdem846.ui.ProjectPane.CreateModelListener;
 import us.wthr.jdem846.ui.TopButtonBar.ButtonClickedListener;
 import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Frame;
+import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.TabPane;
+import us.wthr.jdem846.ui.base.ToolBar;
 import us.wthr.jdem846.util.TempFiles;
 
 @SuppressWarnings("serial")
@@ -74,6 +75,7 @@ public class JdemFrame extends Frame
 	private TabPane tabPane;
 	private TopButtonBar topButtonBar;
 	private MainMenuBar menuBar;
+	private MainButtonBar mainButtonBar;
 	
 	private static JdemFrame instance = null;
 	
@@ -99,14 +101,23 @@ public class JdemFrame extends Frame
 		// Create components
 		buildJMenuBar();
 		
+		mainButtonBar = MainButtonBar.getInstance();
 		
 		topButtonBar = new TopButtonBar();
+		MainButtonBar.addToolBar(topButtonBar);
+		
+		
 		tabPane = new TabPane();
 		
 		topButtonBar.add(Box.createHorizontalGlue());
-		MemoryMonitor memory = new MemoryMonitor(1000);
-		memory.start();
-		topButtonBar.add(memory);
+		
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.jdemFrame.displayMemoryMonitor")) {
+			ToolBar memoryMonitorToolbar = new ToolBar();
+			MemoryMonitor memory = new MemoryMonitor(1000);
+			memory.start();
+			memoryMonitorToolbar.add(memory);
+			MainButtonBar.addToolBar(memoryMonitorToolbar);
+		}
 		
 		// Add listeners
 		topButtonBar.addButtonClickedListener(new ButtonClickedListener() {
@@ -148,7 +159,8 @@ public class JdemFrame extends Frame
 		this.setJMenuBar(menuBar);
 		
 		this.setLayout(new BorderLayout());
-		this.add(topButtonBar, BorderLayout.NORTH);
+		this.add(mainButtonBar, BorderLayout.NORTH);
+		//this.add(topButtonBar, BorderLayout.NORTH);
 		this.add(tabPane, BorderLayout.CENTER);
 
 		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.displayLogViewPanel")) {
@@ -255,7 +267,7 @@ public class JdemFrame extends Frame
 	public void saveProject()
 	{
 		Object tabObj = tabPane.getSelectedComponent();
-		if (tabObj == null || !(tabObj instanceof ProjectPane)) {
+		if (tabObj == null || !(tabObj instanceof DemProjectPane)) {
 			JOptionPane.showMessageDialog(getRootPane(),
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.invalidTab.message"),
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.invalidTab.title"),
@@ -263,7 +275,7 @@ public class JdemFrame extends Frame
 			return;
 		}
 		
-		ProjectPane projectPane = (ProjectPane) tabObj;
+		DemProjectPane projectPane = (DemProjectPane) tabObj;
 		ProjectModel projectModel = projectPane.getProjectModel();
 		
 		
@@ -341,7 +353,7 @@ public class JdemFrame extends Frame
 				projectModel = ProjectFileReader.readProject(filePath);
 			}
 			
-			ProjectPane projectPane = new ProjectPane(projectModel);
+			DemProjectPane projectPane = new DemProjectPane(projectModel);
 			
 			projectPane.addCreateModelListener(new CreateModelListener() {
 				public void onCreateModel(DataPackage dataPackage, ModelOptions modelOptions) {

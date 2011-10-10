@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
@@ -63,6 +64,8 @@ public class GradientConfigPanel extends TitledRoundedPanel
 		samplePanel = new GradientSamplePanel();
 		btnReset = new Button(I18N.get("us.wthr.jdem846.ui.gradientConfigPanel.resetButton.label"));
 		btnReset.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
+		
+		samplePanel.setPreferredSize(new Dimension(250, 250));
 		
 		// Set tooltips
 		btnReset.setToolTipText(I18N.get("us.wthr.jdem846.ui.gradientConfigPanel.resetButton.tooltip"));

@@ -23,6 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+
 
 import us.wthr.jdem846.dbase.DBaseFieldDescriptor;
 import us.wthr.jdem846.dbase.DBaseFile;
@@ -247,6 +250,11 @@ public class TestMain
 			String name = (String) o_name;
 			String value = props.getProperty(name);
 			System.out.println(name + ": " + value);
+		}
+		
+		
+		for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+			log.info("LaF: " + info.getClassName());
 		}
 		
 		

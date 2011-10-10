@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -86,6 +87,11 @@ public class OrderingButtonBar extends ToolBar
 		jbtnMoveBottom.setTextDisplayed(false);
 		
 		// Set layout
+		
+		FlowLayout layout = new FlowLayout();
+		layout.setAlignment(FlowLayout.LEFT);
+		this.setLayout(layout);
+		
 		add(jbtnMoveTop);
 		add(jbtnMoveUp);
 		add(jbtnMoveDown);

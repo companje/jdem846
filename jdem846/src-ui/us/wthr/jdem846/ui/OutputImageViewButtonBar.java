@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -38,7 +39,7 @@ import us.wthr.jdem846.ui.base.JComboBoxModel;
 import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
-public class OutputImageViewButtonBar extends ToolBar
+public class OutputImageViewButtonBar extends ComponentButtonBar
 {
 	public static final int BTN_SAVE = 0;
 	public static final int BTN_ZOOM_IN = 1;
@@ -58,12 +59,15 @@ public class OutputImageViewButtonBar extends ToolBar
 	private ComboBox cmbQuality;
 	private ImageQualityListModel qualityModel;
 	
-
+	private JLabel lblQuality;
+	
 	private List<ButtonClickedListener> buttonClickedListeners = new LinkedList<ButtonClickedListener>();	
 	private List<OptionChangeListener> optionChangeListeners = new LinkedList<OptionChangeListener>();
 	
-	public OutputImageViewButtonBar()
+	public OutputImageViewButtonBar(Component owner)
 	{
+		super(owner);
+		
 		// Create components
 		jbtnSave = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.saveButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-save.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -99,6 +103,7 @@ public class OutputImageViewButtonBar extends ToolBar
 
 		qualityModel = new ImageQualityListModel();
 		cmbQuality = new ComboBox(qualityModel);
+		lblQuality = new JLabel("Quality: ");
 		
 		// Set Tooltips
 		jbtnSave.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.saveTooltip"));
@@ -108,6 +113,17 @@ public class OutputImageViewButtonBar extends ToolBar
 		jbtnZoomFit.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomFitTooltip"));
 		cmbQuality.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.qualityTooltip"));
 		jbtnStop.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.stopTooltip"));
+		
+		
+		boolean displayText = JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.outputImageButtonBar.displayText");
+		jbtnSave.setTextDisplayed(displayText);
+		jbtnZoomIn.setTextDisplayed(displayText);
+		jbtnZoomOut.setTextDisplayed(displayText);
+		jbtnZoomActual.setTextDisplayed(displayText);
+		jbtnZoomFit.setTextDisplayed(displayText);
+		jbtnStop.setTextDisplayed(displayText);
+		lblQuality.setVisible(displayText);
+		
 		
 		// Add Listeners
 		cmbQuality.addItemListener(new ItemListener() {
@@ -131,7 +147,7 @@ public class OutputImageViewButtonBar extends ToolBar
 		addSeparator();
 		add(jbtnStop);
 		addSeparator();
-		add(new JLabel("Quality: "));
+		add(lblQuality);
 		add(cmbQuality);
 		
 	}

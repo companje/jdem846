@@ -51,24 +51,24 @@ public class TopButtonBar extends ToolBar
 	{
 		// Create components
 		
-		jbtnNewProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.24x24") + "/document-new.png", new ActionListener() {
+		jbtnNewProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-new.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_NEW_PROJECT);
 			}
 		});
 		
-		jbtnOpenProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.24x24") + "/document-open.png", new ActionListener() {
+		jbtnOpenProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-open.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_OPEN_PROJECT);
 			}
 		});
 		
-		jbtnSaveProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.24x24") + "/document-save.png", new ActionListener() {
+		jbtnSaveProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-save.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_SAVE_PROJECT);
 			}
 		});
-		jbtnExit = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.exitButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.24x24") + "/application-exit.png", new ActionListener() {
+		jbtnExit = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.exitButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/application-exit.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_EXIT);
 			}
@@ -94,6 +94,7 @@ public class TopButtonBar extends ToolBar
 		add(jbtnSaveProject);
 		addSeparator();
 		add(jbtnExit);
+		addSeparator();
 	}
 	
 	
