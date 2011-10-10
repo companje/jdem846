@@ -62,7 +62,6 @@ import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 import us.wthr.jdem846.ui.DataSetTree.DatasetSelectionListener;
-import us.wthr.jdem846.ui.ModelOptionsPanel.OptionsChangedListener;
 import us.wthr.jdem846.ui.MonitoredThread.ProgressListener;
 import us.wthr.jdem846.ui.OrderingButtonBar.OrderingButtonClickedListener;
 import us.wthr.jdem846.ui.ProjectButtonBar.ButtonClickedListener;
@@ -74,6 +73,7 @@ import us.wthr.jdem846.ui.base.SplitPane;
 import us.wthr.jdem846.ui.base.TabPane;
 
 @SuppressWarnings("serial")
+@Deprecated
 public class ProjectPane extends JdemPanel
 {
 	private static Log log = Logging.getLog(ProjectPane.class);
@@ -148,7 +148,7 @@ public class ProjectPane extends JdemPanel
 		
 		
 		// Create Components
-		projectButtonBar = new ProjectButtonBar();
+		projectButtonBar = new ProjectButtonBar(this);
 		//previewPanel = new VisualPreviewPanel(dataPackage, modelOptions);
 		modelOptionsPanel = new ModelOptionsPanel();
 		//inputList = new InputGridList();
@@ -377,11 +377,13 @@ public class ProjectPane extends JdemPanel
 		splitPane.setAlignmentY(TOP_ALIGNMENT);
 		
 		this.setLayout(new BorderLayout());
-		this.add(projectButtonBar, BorderLayout.NORTH);
+		//this.add(projectButtonBar, BorderLayout.NORTH);
 		this.add(splitPane, BorderLayout.CENTER);
 		
 		
 		this.add(southPanel, BorderLayout.SOUTH);
+		
+		MainButtonBar.addToolBar(projectButtonBar);
 		
 		onDataModelChanged();
 		
@@ -410,6 +412,7 @@ public class ProjectPane extends JdemPanel
 		log.info("Closing project pane.");
 		
 		MainMenuBar.removeMenu(projectMenu);
+		MainButtonBar.removeToolBar(projectButtonBar);
 		
 		try {
 			dataPackage.dispose();
@@ -715,11 +718,6 @@ public class ProjectPane extends JdemPanel
 			listener.onCreateModel(dataPackage.copy(), modelOptions.copy());
 		}
 	}
-	
-	public interface CreateModelListener
-	{
-		public void onCreateModel(DataPackage dataPackage, ModelOptions modelOptions);
-	}
-	
+
 	
 }

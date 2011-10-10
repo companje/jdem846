@@ -23,9 +23,10 @@ import javax.swing.JPanel;
 
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.panels.DockingContainerPanel;
 
 @SuppressWarnings("serial")
-public abstract class JdemPanel extends Panel
+public abstract class JdemPanel extends DockingContainerPanel
 {
 	private String title;
 	

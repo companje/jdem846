@@ -40,7 +40,7 @@ public class StandardBorder implements Border
 	
 	public StandardBorder()
 	{
-		this.cornerRadius = 10;
+		this.cornerRadius = 5;
 	}
 	
 	public StandardBorder(int cornerRadius)

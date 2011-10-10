@@ -665,8 +665,10 @@ public class DataPackage
 			throw new DataSourceException("Object already disposed of");
 		}
 		
-		for (PackagedReader reader : packagedReaderArray) {
-			reader.dispose();
+		if (packagedReaderArray != null) {
+			for (PackagedReader reader : packagedReaderArray) {
+				reader.dispose();
+			}
 		}
 		
 		dataSources.clear();

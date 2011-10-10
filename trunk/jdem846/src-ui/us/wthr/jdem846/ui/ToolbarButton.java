@@ -16,18 +16,25 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 
 import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Button;
+import us.wthr.jdem846.ui.border.ButtonBorder;
 
 @SuppressWarnings("serial")
 public class ToolbarButton extends Button
@@ -48,9 +55,13 @@ public class ToolbarButton extends Button
 		}
 		
 		this.addActionListener(actionListener);
+
+		// Only use this border on Windows with the native look & feel
+		if (UIManager.getSystemLookAndFeelClassName().contains("Windows")) {
+			this.setBorder(new ButtonBorder());
+		}
 		
-		this.setMargin(new Insets(3, 3, 3, 3));
-		
+		//this.setMargin(new Insets(3, 3, 3, 3));
 		textIsDisplayed = true;
 		addMouseHandlers();
 	}
@@ -89,10 +100,12 @@ public class ToolbarButton extends Button
 			public void mouseEntered(MouseEvent e)
 			{
 				mouseIsOver = true;
+				repaint();
 			}
 			public void mouseExited(MouseEvent e)
 			{
 				mouseIsOver = false;
+				repaint();
 			}
 		});
 	}

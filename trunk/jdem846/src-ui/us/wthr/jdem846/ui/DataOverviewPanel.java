@@ -41,34 +41,41 @@ public class DataOverviewPanel extends Panel
 	
 	public DataOverviewPanel()
 	{
-		GridLayout layout = new GridLayout(2, 6);
+		GridLayout layout = new GridLayout(3, 4);
 		layout.setVgap(5);
 		layout.setHgap(5);
 		setLayout(layout);
 		
-		Label label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.rows") + ":");
+		Label label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.columns") + ":");
+		add(label);
+		add(lblColumns);
+		
+		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.rows") + ":");
 		add(label);
 		add(lblRows);
 		
-		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.northLatitude") + ":");
-		add(label);
-		add(lblMaxLatitude);
-		
-		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.eastLongitude") + ":");
-		add(label);
-		add(lblMaxLongitude);
-		
-		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.columns") + ":");
-		add(label);
-		add(lblColumns);
 		
 		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.southLatitude") + ":");
 		add(label);
 		add(lblMinLatitude);
 		
+		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.northLatitude") + ":");
+		add(label);
+		add(lblMaxLatitude);
+		
+
 		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.westLongitude") + ":");
 		add(label);
 		add(lblMinLongitude);
+		
+		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.eastLongitude") + ":");
+		add(label);
+		add(lblMaxLongitude);
+		
+		
+		
+		
+		
 		
 		//label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.maxElevation") + ":");
 		//add(label);

@@ -33,6 +33,7 @@ import javax.swing.Timer;
 
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.ui.base.Label;
+import us.wthr.jdem846.ui.border.ButtonBorder;
 
 /** A really quick and dirty memory monitor histogram
  * 
@@ -51,7 +52,8 @@ public class MemoryMonitor extends Label
 		setToolTipText(I18N.get("us.wthr.jdem846.ui.memoryMonitor.tooltip"));
 		setText("                       ");
 		this.setOpaque(false);
-		this.setBorder(BorderFactory.createEtchedBorder());
+		//this.setBorder(BorderFactory.createEtchedBorder());
+		this.setBorder(new ButtonBorder());
 		///this.setPreferredSize(new Dimension(100, 25));
 		
 		this.addMouseListener(new MouseListener() {

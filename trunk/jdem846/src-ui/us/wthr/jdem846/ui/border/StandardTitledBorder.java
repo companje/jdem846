@@ -31,7 +31,7 @@ import java.awt.RenderingHints;
 public class StandardTitledBorder extends StandardBorder
 {
 	private String title;
-	private Font titleFont = new Font("SansSerif", Font.BOLD, 15);
+	private Font titleFont = new Font("SansSerif", Font.BOLD, 12);
 	
 	private Color titleColor = new Color(31, 64, 102);
 	
@@ -46,7 +46,7 @@ public class StandardTitledBorder extends StandardBorder
 	public Insets getBorderInsets(Component c, Insets insets)
 	{
 		Insets borderInserts = super.getBorderInsets(c, insets);
-		borderInserts.top = getTitleHeight(c) + 5;
+		borderInserts.top = getTitleHeight(c) + 3;
 		return borderInserts;
 	}
 	

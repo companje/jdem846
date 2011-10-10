@@ -63,7 +63,7 @@ import us.wthr.jdem846.ui.panels.FlexGridPanel;
 import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 
 @SuppressWarnings("serial")
-public class ModelOptionsPanel extends Panel
+public class ModelOptionsPanel extends TitledRoundedPanel
 {
 	private static Log log = Logging.getLog(ModelOptionsPanel.class);
 	
@@ -92,9 +92,9 @@ public class ModelOptionsPanel extends Panel
 	private PrecacheStrategyOptionsListModel precacheStrategyModel;
 	
 	
-	private ProjectionConfigPanel projectionConfigPanel;
-	private GradientConfigPanel gradientConfigPanel;
-	private LightPositionConfigPanel lightPositionConfigPanel;
+	//private ProjectionConfigPanel projectionConfigPanel;
+	//private GradientConfigPanel gradientConfigPanel;
+	//private LightPositionConfigPanel lightPositionConfigPanel;
 	
 	private ModelOptions modelOptions;
 	
@@ -104,15 +104,17 @@ public class ModelOptionsPanel extends Panel
 	
 	public ModelOptionsPanel()
 	{
+		super(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.controlGrid.title"));
 		//TitledRoundedPanel controlGrid = new TitledRoundedPanel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.controlGrid.title"));
 		//GridLayout gridLayout = new GridLayout(10, 2);
 		//gridLayout.setVgap(2);
 		//controlGrid.setLayout(gridLayout);
-		TitledRoundedPanel optionsGrid = new TitledRoundedPanel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.controlGrid.title"));
+		//TitledRoundedPanel optionsGrid = new TitledRoundedPanel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.controlGrid.title"));
 		
 		FlexGridPanel controlGrid = new FlexGridPanel(2);
-		optionsGrid.setLayout(new BorderLayout());
-		optionsGrid.add(controlGrid, BorderLayout.CENTER);
+		
+		//optionsGrid.setLayout(new BorderLayout());
+		//optionsGrid.add(controlGrid, BorderLayout.CENTER);
 		
 		//controlGrid.setBorder(new StandardTitledBorder("Model Options"));
 		
@@ -185,16 +187,13 @@ public class ModelOptionsPanel extends Panel
 			}
 		});
 		
-		gradientConfigPanel = new GradientConfigPanel();
-		projectionConfigPanel = new ProjectionConfigPanel();
-		//projectionConfigPanel.setBorder(new StandardTitledBorder("Projection"));
-		
-		lightPositionConfigPanel = new LightPositionConfigPanel();
-		lightPositionConfigPanel.setPreferredSize(new Dimension(200, 200));
-		lightPositionConfigPanel.setSize(new Dimension(200, 200));
-		
-		//lightPositionConfigPanel.setBorder(new StandardTitledBorder("Light Direction"));
-		//gradientConfigPanel.setBorder(new StandardTitledBorder("Gradients"));
+		//gradientConfigPanel = new GradientConfigPanel();
+		//projectionConfigPanel = new ProjectionConfigPanel();
+
+		//lightPositionConfigPanel = new LightPositionConfigPanel();
+		//lightPositionConfigPanel.setPreferredSize(new Dimension(200, 200));
+		//lightPositionConfigPanel.setSize(new Dimension(200, 200));
+
 		// Set tool tips
 		
 		txtWidth.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.widthText.tooltip"));
@@ -267,13 +266,14 @@ public class ModelOptionsPanel extends Panel
 		jsldRelativeLightIntensity.addChangeListener(sliderChangeListener);
 		jsldRelativeDarkIntensity.addChangeListener(sliderChangeListener);
 		
-		ChangeListener basicChangeListener = new ChangeListener() {
-			public void stateChanged(ChangeEvent e)
-			{
-				fireOptionsChangedListeners();
-			}
-		};
+		//ChangeListener basicChangeListener = new ChangeListener() {
+		//	public void stateChanged(ChangeEvent e)
+		//	{
+		//		fireOptionsChangedListeners();
+		//	}
+		//};
 		
+		/*
 		projectionConfigPanel.addChangeListener(basicChangeListener);
 		gradientConfigPanel.addChangeListener(basicChangeListener);
 		
@@ -290,6 +290,7 @@ public class ModelOptionsPanel extends Panel
 				fireOptionsChangedListeners();
 			}
 		});
+		*/
 		
 		// Set Layout
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.engineCombo.label") + ":"));
@@ -328,33 +329,33 @@ public class ModelOptionsPanel extends Panel
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.label") + ":"));
 		controlGrid.add(jsldElevationMultiple);
 		
+		BorderLayout layout = new BorderLayout();
+		setLayout(layout);
+		add(controlGrid, BorderLayout.CENTER);
+
+		//BoxLayout boxLayout = new BoxLayout(this, BoxLayout.X_AXIS);
+		//setLayout(boxLayout);
 		
-		//SpringLayout layout = new SpringLayout();
-		//setLayout(layout);
+		//add(optionsGrid);
 		
-		BoxLayout boxLayout = new BoxLayout(this, BoxLayout.X_AXIS);
-		setLayout(boxLayout);
+		//lightPositionConfigPanel.setMinimumSize(new Dimension(150, 150));
+		//projectionConfigPanel.setMinimumSize(new Dimension(150, 150));
+		//lightPositionConfigPanel.setPreferredSize(new Dimension(150, 150));
+		//projectionConfigPanel.setPreferredSize(new Dimension(150, 150));
 		
-		add(optionsGrid);
-		
-		lightPositionConfigPanel.setMinimumSize(new Dimension(150, 150));
-		projectionConfigPanel.setMinimumSize(new Dimension(150, 150));
-		lightPositionConfigPanel.setPreferredSize(new Dimension(150, 150));
-		projectionConfigPanel.setPreferredSize(new Dimension(150, 150));
-		
-		Panel lightAndProjectionPanel = new Panel();
-		BoxLayout lightAndProjectionBoxLayout = new BoxLayout(lightAndProjectionPanel, BoxLayout.PAGE_AXIS);
-		lightAndProjectionPanel.setLayout(lightAndProjectionBoxLayout);
+		//Panel lightAndProjectionPanel = new Panel();
+		//BoxLayout lightAndProjectionBoxLayout = new BoxLayout(lightAndProjectionPanel, BoxLayout.PAGE_AXIS);
+		//lightAndProjectionPanel.setLayout(lightAndProjectionBoxLayout);
 		//Box lightAndProjectionBox = Box.createVerticalBox();
-		BoxContainer lightAndProjectionBox = new BoxContainer(BoxLayout.Y_AXIS);
-		lightAndProjectionBox.add(lightPositionConfigPanel);
-		lightAndProjectionBox.add(projectionConfigPanel);
-		lightAndProjectionPanel.add(lightAndProjectionBox);
-		add(lightAndProjectionPanel);
+		//BoxContainer lightAndProjectionBox = new BoxContainer(BoxLayout.Y_AXIS);
+		//lightAndProjectionBox.add(lightPositionConfigPanel);
+		//lightAndProjectionBox.add(projectionConfigPanel);
+		//lightAndProjectionPanel.add(lightAndProjectionBox);
+		//add(lightAndProjectionPanel);
 		
 		
 		
-		add(gradientConfigPanel);
+		//add(gradientConfigPanel);
 
 		
 		// Set initial values
@@ -397,14 +398,14 @@ public class ModelOptionsPanel extends Panel
 		
 		jsldElevationMultiple.setValue((int)Math.round(modelOptions.getElevationMultiple()));
 		
-		gradientConfigPanel.setGradientIdentifier(modelOptions.getColoringType());
-		gradientConfigPanel.setConfigString(modelOptions.getGradientLevels());
-		lightPositionConfigPanel.setSolarAzimuth(modelOptions.getLightingAzimuth());
-		lightPositionConfigPanel.setSolarElevation(modelOptions.getLightingElevation());
+		//gradientConfigPanel.setGradientIdentifier(modelOptions.getColoringType());
+		//gradientConfigPanel.setConfigString(modelOptions.getGradientLevels());
+		//lightPositionConfigPanel.setSolarAzimuth(modelOptions.getLightingAzimuth());
+		//lightPositionConfigPanel.setSolarElevation(modelOptions.getLightingElevation());
 
-		projectionConfigPanel.setRotation(modelOptions.getProjection().getRotateX(),
-								modelOptions.getProjection().getRotateY(),
-								modelOptions.getProjection().getRotateZ());
+		//projectionConfigPanel.setRotation(modelOptions.getProjection().getRotateX(),
+		//						modelOptions.getProjection().getRotateY(),
+		//						modelOptions.getProjection().getRotateZ());
 		
 		onEngineSelectionChanged();
 		
@@ -427,7 +428,7 @@ public class ModelOptionsPanel extends Panel
 		modelOptions.setRelativeDarkIntensity((double)jsldRelativeDarkIntensity.getValue() / 100.0);
 		
 		modelOptions.setTileSize(txtTileSize.getInteger());
-		modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
+		//modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
 		
 		modelOptions.setAntialiased(antialiasingModel.getSelectedItemValue());
 		modelOptions.setPrecacheStrategy(precacheStrategyModel.getSelectedItemValue());
@@ -435,20 +436,16 @@ public class ModelOptionsPanel extends Panel
 		
 		
 		
-		modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
-		modelOptions.setLightingElevation(lightPositionConfigPanel.getSolarElevation());
-		
-		///int spotExp = (int) Math.round((((double)jsldSpotExponent.getValue() / 100) * (ModelOptions.SPOT_EXPONENT_MAXIMUM - ModelOptions.SPOT_EXPONENT_MINIMUM)) + ModelOptions.SPOT_EXPONENT_MINIMUM);
-		//if (spotExp < 1)
-		//	spotExp = 1;
-		
+		//modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
+		//modelOptions.setLightingElevation(lightPositionConfigPanel.getSolarElevation());
+
 		modelOptions.setSpotExponent(jsldSpotExponent.getValue());
 		
 		
 		
-		modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
-		modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
-		modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
+		//modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
+		//modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
+		//modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
 	}
 	
 	
@@ -468,18 +465,18 @@ public class ModelOptionsPanel extends Panel
 		jsldLightMultiple.setEnabled(engineInstance.usesLightMultiple());
 		jsldSpotExponent.setEnabled(engineInstance.usesSpotExponent());
 		txtTileSize.setEnabled(engineInstance.usesTileSize());
-		gradientConfigPanel.setEnabled(engineInstance.usesColoring());
+		//gradientConfigPanel.setEnabled(engineInstance.usesColoring());
 		
 		jsldRelativeLightIntensity.setEnabled(engineInstance.usesRelativeLightMultiple());
 		jsldRelativeDarkIntensity.setEnabled(engineInstance.usesRelativeDarkMultiple());
 		
-		gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());
-		projectionConfigPanel.setVisible(engineInstance.usesProjection());
-		lightPositionConfigPanel.setVisible(engineInstance.usesLightDirection());
+		//gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());
+		//projectionConfigPanel.setVisible(engineInstance.usesProjection());
+		//lightPositionConfigPanel.setVisible(engineInstance.usesLightDirection());
 		
-		if (engineInstance.usesLightDirection()) {
-			lightPositionConfigPanel.updatePreview(true);
-		}	
+		//if (engineInstance.usesLightDirection()) {
+		//	lightPositionConfigPanel.updatePreview(true);
+		//}	
 		
 		jsldLightMultiple.setEnabled(engineInstance.usesLightMultiple());
 		jsldElevationMultiple.setEnabled(engineInstance.usesElevationMultiple());
@@ -590,11 +587,6 @@ public class ModelOptionsPanel extends Panel
 			listener.onOptionsChanged(modelOptions);
 		}
 	}
-	
-	
-	public interface OptionsChangedListener
-	{
-		public void onOptionsChanged(ModelOptions options);
-	}
+
 	
 }
