@@ -35,6 +35,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
 @Registry
+@Deprecated
 public class ColorRegistry implements AppRegistry 
 {
 	private static Log log = Logging.getLog(ColorRegistry.class);

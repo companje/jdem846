@@ -91,6 +91,7 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 	private ComboBox cmbPrecacheStrategy;
 	private PrecacheStrategyOptionsListModel precacheStrategyModel;
 	
+	private ColorSelection colorSelection;
 	
 	//private ProjectionConfigPanel projectionConfigPanel;
 	//private GradientConfigPanel gradientConfigPanel;
@@ -141,7 +142,7 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		precacheStrategyModel = new PrecacheStrategyOptionsListModel();
 		cmbPrecacheStrategy = new ComboBox(precacheStrategyModel);
 
-		
+		colorSelection = new ColorSelection();
 		
 		jsldLightMultiple = new MonitoredSlider(0, 100, 50, new MonitoredValueListener() {
 			NumberFormat format = NumberFormat.getInstance();
@@ -199,7 +200,7 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		txtWidth.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.widthText.tooltip"));
 		txtHeight.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.heightText.tooltip"));
 		cmbEngine.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.engineCombo.tooltip"));
-		cmbBackgroundColor.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.tooltip"));
+		colorSelection.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.tooltip"));
 		cmbColoring.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.coloringCombo.tooltip"));
 		cmbHillshading.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.tooltip"));
 		txtTileSize.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.tooltip"));
@@ -266,12 +267,14 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		jsldRelativeLightIntensity.addChangeListener(sliderChangeListener);
 		jsldRelativeDarkIntensity.addChangeListener(sliderChangeListener);
 		
-		//ChangeListener basicChangeListener = new ChangeListener() {
-		//	public void stateChanged(ChangeEvent e)
-		//	{
-		//		fireOptionsChangedListeners();
-		//	}
-		//};
+		ChangeListener basicChangeListener = new ChangeListener() {
+			public void stateChanged(ChangeEvent e)
+			{
+				fireOptionsChangedListeners();
+			}
+		};
+		
+		colorSelection.addChangeListener(basicChangeListener);
 		
 		/*
 		projectionConfigPanel.addChangeListener(basicChangeListener);
@@ -301,8 +304,13 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		controlGrid.add(txtHeight);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.label") + ":"));
 		controlGrid.add(txtTileSize);
+		
+		//controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.label") + ":"));
+		//controlGrid.add(cmbBackgroundColor);
+		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.label") + ":"));
-		controlGrid.add(cmbBackgroundColor);
+		controlGrid.add(colorSelection);
+		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.coloringCombo.label") + ":"));
 		controlGrid.add(cmbColoring);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.label") + ":"));
@@ -382,9 +390,11 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		engineModel.setSelectedItemByValue(modelOptions.getEngine());
 		txtWidth.setText(""+modelOptions.getWidth());
 		txtHeight.setText(""+modelOptions.getHeight());
-		backgroundModel.setSelectedItemByValue(modelOptions.getBackgroundColor());
+		//backgroundModel.setSelectedItemByValue(modelOptions.getBackgroundColor());
 		coloringModel.setSelectedItemByValue(modelOptions.getColoringType());
 		hillShadingModel.setSelectedItemByValue(modelOptions.getHillShadeType());
+		
+		colorSelection.setValueString(modelOptions.getBackgroundColor());
 		
 		antialiasingModel.setSelectedItemByValue(modelOptions.isAntialiased());
 		precacheStrategyModel.setSelectedItemByValue(modelOptions.getPrecacheStrategy());
@@ -418,7 +428,9 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		modelOptions.setWidth(txtWidth.getInteger());
 		modelOptions.setHeight(txtHeight.getInteger());
 		
-		modelOptions.setBackgroundColor(backgroundModel.getSelectedItemValue());
+		//modelOptions.setBackgroundColor(backgroundModel.getSelectedItemValue());
+		modelOptions.setBackgroundColor(colorSelection.getValueString());
+		
 		modelOptions.setColoringType(coloringModel.getSelectedItemValue());
 		modelOptions.setHillShadeType(hillShadingModel.getSelectedItemValue());
 		modelOptions.setLightingMultiple((double)jsldLightMultiple.getValue() / 100.0);

@@ -46,6 +46,7 @@ public class EmbeddedTabbedPane extends TabPane
 
 		}
 		
+		/*
 		@Override
 		protected void paintTabBorder(Graphics g, int tabPlacement,
 				int tabIndex, int x, int y, int w, int h, boolean isSelected)
@@ -79,7 +80,8 @@ public class EmbeddedTabbedPane extends TabPane
 			g.setColor(tabPane.getBackground());
 			g.fillRect(left, top, w, h);
 		}
-
+		*/
+		
 		@Override
 		protected void paintContentBorderTopEdge(Graphics g, int tabPlacement,
 				int selectedIndex, int x, int y, int w, int h)

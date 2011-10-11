@@ -63,8 +63,8 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 		
 		sldSolarElevation.setOrientation(JSlider.VERTICAL);
 		previewPanel = new LightingPreviewPanel();
-		previewPanel.setPreferredSize(new Dimension(200, 200));
-		previewPanel.setSize(new Dimension(200, 200));
+		//previewPanel.setPreferredSize(new Dimension(100, 100));
+		//previewPanel.setSize(new Dimension(100, 100));
 		
 		// Set tooltips
 		sldSolarAzimuth.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightDirectionPanel.solarAzimuthSlider.tooltip"));

@@ -635,8 +635,8 @@ public class ProjectPane extends JdemPanel
 		overviewPanel.setMinLatitude(dataPackage.getMinLatitude());
 		overviewPanel.setMaxLongitude(dataPackage.getMaxLongitude());
 		overviewPanel.setMinLongitude(dataPackage.getMinLongitude());
-		overviewPanel.setMaxElevation(dataPackage.getMaxElevation());
-		overviewPanel.setMinElevation(dataPackage.getMinElevation());
+		//overviewPanel.setMaxElevation(dataPackage.getMaxElevation());
+		//overviewPanel.setMinElevation(dataPackage.getMinElevation());
 		
 		datasetTree.updateTreeNodes();
 		onDataSetSelected();

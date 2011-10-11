@@ -124,21 +124,21 @@ public class DataInputLayoutPane extends TitledRoundedPanel
 			double xRatio = (double)getWidth() / dataPackage.getColumns();
 			double yRatio = (double)getHeight() / dataPackage.getRows();
 			
-			g2d.setColor(Color.BLACK);
+			g2d.setColor(getBackground());
 			g2d.fillRect(0, 0, getWidth(), getHeight());
 			
-			Color stroke = Color.YELLOW;
+			Color stroke = Color.GRAY;
 			Color fill = new Color(stroke.getRed(), stroke.getGreen(), stroke.getBlue(), 0x7F);
 			Color text = Color.WHITE;
 			
 			//System.out.println("--------------------------------");
 			int i = 1;
 			for (DataBounds dataBounds : dataPackage.getDataBounds()) {
-				int x = (int) ((double)dataBounds.getLeftX() * xRatio);
-				int y = (int) ((double)dataBounds.getTopY() * yRatio);
+				int x = (int) Math.floor((double)dataBounds.getLeftX() * xRatio);
+				int y = (int) Math.floor((double)dataBounds.getTopY() * yRatio);
 				
-				int w = (int) ((double)dataBounds.getWidth() * xRatio);
-				int h = (int) ((double)dataBounds.getHeight() * yRatio);
+				int w = (int) Math.floor((double)dataBounds.getWidth() * xRatio) - 1;
+				int h = (int) Math.floor((double)dataBounds.getHeight() * yRatio) - 1;
 				
 				//System.out.println("x/y: " + x + "/" + y + ", w/h: " + w + "/" + h + ", x/y ratios: " + xRatio + "/" + yRatio);
 				
