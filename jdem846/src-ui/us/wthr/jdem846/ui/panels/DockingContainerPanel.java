@@ -71,8 +71,11 @@ public class DockingContainerPanel extends Panel
 		
 		outterSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 		outterSplit.setBorder(BorderFactory.createEmptyBorder());
+		outterSplit.setResizeWeight(0);
+		
 		innerSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 		innerSplit.setBorder(BorderFactory.createEmptyBorder());
+		innerSplit.setResizeWeight(1);
 		
 		innerSplit.add(centerTabPanel);
 		innerSplit.add(rightPanel);
@@ -95,7 +98,7 @@ public class DockingContainerPanel extends Panel
 			}
 			public void componentShown(ComponentEvent e)
 			{
-				innerSplit.setDividerLocation(innerSplit.getWidth() - 250);
+				innerSplit.setDividerLocation(innerSplit.getWidth() - 200);
 				removeComponentListener(this);
 			}
 			public void componentHidden(ComponentEvent e)

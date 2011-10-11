@@ -61,6 +61,7 @@ import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
+import us.wthr.jdem846.ui.scripting.ScriptEditorPanel;
 
 @SuppressWarnings("serial")
 public class DemProjectPane extends JdemPanel
@@ -79,6 +80,7 @@ public class DemProjectPane extends JdemPanel
 	private DataOverviewPanel overviewPanel;
 	private ModelPreviewPane previewPane;
 	private DataInputLayoutPane layoutPane;
+	private ScriptEditorPanel scriptPane;
 	
 	private ProjectButtonBar projectButtonBar;
 	private Menu projectMenu;
@@ -146,6 +148,7 @@ public class DemProjectPane extends JdemPanel
 		
 		layoutPane = new DataInputLayoutPane(dataPackage, modelOptions);
 		previewPane = new ModelPreviewPane(dataPackage, modelOptions);
+		scriptPane = new ScriptEditorPanel();
 		
 		statusBar = new StatusBar();
 		statusBar.setProgressVisible(false);
@@ -299,7 +302,8 @@ public class DemProjectPane extends JdemPanel
 		
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layout"), layoutPane);
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"), previewPane);
-
+		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.script"), scriptPane);
+		
 		this.addRight(gradientConfigPanel, false);
 		this.addRight(lightPositionConfigPanel, false);
 		this.addRight(projectionConfigPanel, false);
@@ -308,7 +312,9 @@ public class DemProjectPane extends JdemPanel
 		this.setSouth(statusBar);
 		
 		
-		onConfigurationChanged();
+		//onConfigurationChanged();
+		applyOptionsToUI();
+		applyEngineSelectionConfiguration();
 		onDataModelChanged();
 	}
 	
@@ -446,6 +452,13 @@ public class DemProjectPane extends JdemPanel
 			modelOptions = modelOptionsPanel.getModelOptions();
 		}
 		this.modelOptions = modelOptions;
+		
+		modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
+		modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
+		modelOptions.setLightingElevation(lightPositionConfigPanel.getSolarElevation());
+		modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
+		modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
+		modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
 		
 		applyOptionsToUI();
 		applyEngineSelectionConfiguration();
@@ -635,8 +648,8 @@ public class DemProjectPane extends JdemPanel
 		overviewPanel.setMinLatitude(dataPackage.getMinLatitude());
 		overviewPanel.setMaxLongitude(dataPackage.getMaxLongitude());
 		overviewPanel.setMinLongitude(dataPackage.getMinLongitude());
-		overviewPanel.setMaxElevation(dataPackage.getMaxElevation());
-		overviewPanel.setMinElevation(dataPackage.getMinElevation());
+		//overviewPanel.setMaxElevation(dataPackage.getMaxElevation());
+		//overviewPanel.setMinElevation(dataPackage.getMinElevation());
 		
 		datasetTree.updateTreeNodes();
 		onDataSetSelected();

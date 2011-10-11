@@ -42,7 +42,7 @@ public class ProjectionPreview extends Panel
 	
 	private Dimension dimension;
 	
-	private Line[] lines = new Line[7];
+	private Line[] lines = new Line[10];
 	
 	private Color lineColor = Color.YELLOW;
 	private Color backgroundColor = Color.BLACK;
@@ -83,12 +83,13 @@ public class ProjectionPreview extends Panel
 		
 		int[] color = {lineColor.getRed(), lineColor.getGreen(), lineColor.getBlue(), lineColor.getAlpha()};
 		
+		// Box
 		lines[0] = new Line(color, backLeft.copy(), frontLeft.copy());
 		lines[1] = new Line(color, frontLeft.copy(), frontRight.copy());
 		lines[2] = new Line(color, backRight.copy(), frontRight.copy());
 		lines[3] = new Line(color, backLeft.copy(), backRight.copy());
 		
-
+		// Arrow pointing south
 		lines[4] = new Line(color, new Vector(0, 0, 0), 
 									new Vector(0, 0, halfZ));
 		
@@ -97,6 +98,18 @@ public class ProjectionPreview extends Panel
 		
 		lines[6] = new Line(color, new Vector(0, 0, halfZ),
 									new Vector((halfX*.2), 0.0, halfZ*.8));
+		
+		// 'N' (for North)
+		
+		lines[7] = new Line(color, new Vector((halfX*.1), 0, -halfZ*1.3), 
+									new Vector((halfX*.1), 0, -halfZ*1.05));
+		
+		lines[8] = new Line(color, new Vector(-(halfX*.1), 0, -halfZ*1.3), 
+									new Vector(-(halfX*.1), 0, -halfZ*1.05));
+		
+		lines[9] = new Line(color, new Vector((halfX*.1), 0, -halfZ*1.3), 
+				new Vector(-(halfX*.1), 0, -halfZ*1.05));
+		
 	}
 
 	@Override
@@ -107,7 +120,7 @@ public class ProjectionPreview extends Panel
 		ViewportBuffer buffer = new ViewportBuffer(getWidth(), getHeight());
 		
 		Graphics2D g2d = (Graphics2D) g;
-		
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		Vector eye = new Vector(0, 0, getWidth());
 		Vector surface = new Vector(0, 0, getWidth() / 2.0);
@@ -129,6 +142,9 @@ public class ProjectionPreview extends Panel
 		Vector translate = new Vector(0, 0, translateZ);
 		
 		for (Line line : lines) {
+			if (line == null)
+				continue;
+			
 			Line copy = line.copy();
 			
 			

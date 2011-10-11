@@ -18,6 +18,7 @@ package us.wthr.jdem846.color;
 
 import java.awt.Color;
 
+@Deprecated
 public class ColorInstance {
 	
 	private Color color;

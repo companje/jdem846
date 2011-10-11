@@ -13,6 +13,7 @@ import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.SubsetDataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.util.ColorSerializationUtil;
 
 public abstract class BasicRenderEngine extends RenderEngine
 {
@@ -132,28 +133,10 @@ public abstract class BasicRenderEngine extends RenderEngine
 
 	public Color getDefinedColor(String identifier)
 	{
-		return ColorRegistry.getInstance(identifier).getColor();
+		log.info("COLOR: " + identifier);
+		return ColorSerializationUtil.stringToColor(identifier);
 	}
 	
-	public Color getDefinedColor(int colorConstant)
-	{
-		Color color = null;
-		switch(colorConstant) {
-		case DemConstants.BACKGROUND_BLACK:
-			color = Color.BLACK;
-			break;
-		case DemConstants.BACKGROUND_WHITE:
-			color = Color.WHITE;
-			break;
-		case DemConstants.BACKGROUND_BLUE:
-			color = new Color(0x2C, 0x49, 0x80, 0xFF);
-			break;
-		case DemConstants.BACKGROUND_TRANSPARENT:
-			color = new Color(0x0, 0x0, 0x0, 0x0);
-			break;	
-		}
-		return color;
-	}
 	
 	public DataPackage getDataPackage()
 	{

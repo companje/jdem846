@@ -16,129 +16,161 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
 
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.ScrollPane;
+import us.wthr.jdem846.ui.base.Table;
 
 @SuppressWarnings("serial")
 public class DataOverviewPanel extends Panel
 {
 	
-	private Label lblRows = new Label("");
-	private Label lblColumns = new Label("");
-	private Label lblMaxLatitude = new Label("");
-	private Label lblMinLatitude = new Label("");
-	private Label lblMaxLongitude = new Label("");
-	private Label lblMinLongitude = new Label("");
-	
-	private Label lblMaxElevation = new Label("");
-	private Label lblMinElevation = new Label("");
+
+	private OverviewTableModel tableModel;
 	
 	public DataOverviewPanel()
 	{
-		GridLayout layout = new GridLayout(3, 4);
-		layout.setVgap(5);
-		layout.setHgap(5);
+		
+		tableModel = new OverviewTableModel();
+		Table table = new Table(tableModel);
+		table.setTableHeader(null);
+		ScrollPane scroll = new ScrollPane(table);
+		scroll.setColumnHeaderView(null);
+		
+		BorderLayout layout = new BorderLayout();
 		setLayout(layout);
-		
-		Label label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.columns") + ":");
-		add(label);
-		add(lblColumns);
-		
-		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.rows") + ":");
-		add(label);
-		add(lblRows);
-		
-		
-		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.southLatitude") + ":");
-		add(label);
-		add(lblMinLatitude);
-		
-		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.northLatitude") + ":");
-		add(label);
-		add(lblMaxLatitude);
-		
+		add(scroll, BorderLayout.CENTER);
 
-		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.westLongitude") + ":");
-		add(label);
-		add(lblMinLongitude);
-		
-		label = new Label(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.eastLongitude") + ":");
-		add(label);
-		add(lblMaxLongitude);
-		
-		
-		
-		
-		
-		
-		//label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.maxElevation") + ":");
-		//add(label);
-		//add(jlblMaxElevation);
-		
-		//label = new JLabel(I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.minElevation") + ":");
-		//add(label);
-		//add(jlblMinElevation);
-		
-		
 	}
 	
 	public void setValuesVisible(boolean visible)
 	{
-		lblRows.setVisible(visible);
-		lblColumns.setVisible(visible);
-		lblMaxLatitude.setVisible(visible);
-		lblMinLatitude.setVisible(visible);
-		lblMaxLongitude.setVisible(visible);
-		lblMinLongitude.setVisible(visible);
-		lblMaxElevation.setVisible(visible);
-		lblMinElevation.setVisible(visible);
+		
 	}
 	
 	public void setRows(int rows)
 	{
-		lblRows.setText(""+rows);
+		tableModel.rows = rows;
 	}
 	
 	public void setColumns(int columns)
 	{
-		lblColumns.setText(""+columns);
+		tableModel.columns = columns;
 	}
 	
 	public void setMaxLatitude(float maxLatitude)
 	{
-		lblMaxLatitude.setText(""+maxLatitude);
+		tableModel.north = maxLatitude;
 	}
 	
 	public void setMinLatitude(float minLatitude)
 	{
-		lblMinLatitude.setText(""+minLatitude);
+		tableModel.south = minLatitude;
 	}
 	
 	public void setMaxLongitude(float maxLongitude)
 	{
-		lblMaxLongitude.setText(""+maxLongitude);
+		tableModel.east = maxLongitude;
 	}
 	
 	public void setMinLongitude(float minLongitude)
 	{
-		lblMinLongitude.setText(""+minLongitude);
+		tableModel.west = minLongitude;
 	}
 	
-	public void setMaxElevation(float maxElevation)
-	{
-		lblMaxElevation.setText(""+maxElevation);
-	}
+
 	
-	public void setMinElevation(float minElevation)
-	{
-		lblMinElevation.setText(""+minElevation);
+	class OverviewTableModel extends DefaultTableModel {
+		
+		public int rows;
+		public int columns;
+		
+		public double north;
+		public double south;
+		public double east;
+		public double west;
+		
+		
+		@Override
+		public int getRowCount()
+		{
+			return 6;
+		}
+
+		@Override
+		public int getColumnCount()
+		{
+			return 2;
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column)
+		{
+			return false;
+		}
+
+		@Override
+		public Object getValueAt(int row, int column)
+		{
+			switch (column) {
+			case 0:
+				return getRowTitle(row);
+			case 1:
+				return getRowValue(row);
+			default:
+				return "";
+			}
+		}
+		
+		public String getRowValue(int row)
+		{
+			switch(row) {
+			case 0:
+				return ""+rows;
+			case 1:
+				return ""+columns;
+			case 2:
+				return ""+north;
+			case 3:
+				return ""+south;
+			case 4:
+				return ""+east;
+			case 5:
+				return ""+west;
+			default:
+				return "";
+			}
+		}
+		
+		public String getRowTitle(int row)
+		{
+			switch (row) {
+			case 0:
+				return I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.rows") + ":";
+			case 1:
+				return I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.columns") + ":";
+			case 2: 
+				return I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.northLatitude") + ":";
+			case 3:
+				return I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.southLatitude") + ":";
+			case 4:
+				return I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.eastLongitude") + ":";
+			case 5:
+				return I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.westLongitude") + ":";
+			default:
+				return "";
+			}
+		}
+		
+		
 	}
-	
 	
 }
