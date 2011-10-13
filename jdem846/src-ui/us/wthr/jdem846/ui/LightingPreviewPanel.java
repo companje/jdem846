@@ -37,6 +37,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.exception.ComponentException;
@@ -72,8 +73,13 @@ public class LightingPreviewPanel extends Panel
 	private double renderedAzimuth = -1;
 	private double renderedElevation = -1;
 	
+	
+	
+	
 	private ModelOptions modelOptions;
 	private DataPackage dataPackage;
+	private ModelContext modelContext;
+	private Dem2dGenerator dem2d;
 	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
@@ -98,7 +104,7 @@ public class LightingPreviewPanel extends Panel
 			@Override
 			public void mouseClicked(MouseEvent e)
 			{
-				onMouseLocation(e.getX(), e.getY(), true);
+				//onMouseLocation(e.getX(), e.getY(), true);
 			}
 			
 		};
@@ -137,6 +143,10 @@ public class LightingPreviewPanel extends Panel
 			dataPackage.addDataSource(previewData);
 			dataPackage.prepare();
 			dataPackage.calculateElevationMinMax(true);
+			
+			modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+			
+			dem2d = new Dem2dGenerator(modelContext);
 		} catch (Exception e1) {
 			
 			e1.printStackTrace();
@@ -197,7 +207,8 @@ public class LightingPreviewPanel extends Panel
 			
 			try {
 				log.info("Updating lighting preview model image");
-				Dem2dGenerator dem2d = new Dem2dGenerator(dataPackage, modelOptions);
+				log.info("****************************************");
+				//Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 				OutputProduct<DemCanvas> product = dem2d.generate();
 				
 				prerendered = (BufferedImage) product.getProduct().getImage();

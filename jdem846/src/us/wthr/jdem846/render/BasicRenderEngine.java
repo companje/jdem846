@@ -5,6 +5,7 @@ import java.awt.image.ImageObserver;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColorRegistry;
 import us.wthr.jdem846.exception.DataSourceException;
@@ -13,27 +14,36 @@ import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.SubsetDataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
 public abstract class BasicRenderEngine extends RenderEngine
 {
 	private static Log log = Logging.getLog(Dem3dGenerator.class);
 	
-	protected DataPackage dataPackage;
+	
+	//protected DataPackage dataPackage;
 	protected SubsetDataPackage dataSubset;
-	protected ModelOptions modelOptions;
+	//protected ModelOptions modelOptions;
+	//protected ScriptProxy scriptProxy;
 	
+
 	
-	public BasicRenderEngine()
+	public BasicRenderEngine(ModelContext modelContext)
 	{
-		
+		super.initialize(modelContext);
+		//this.dataPackage = modelContext.getDataPackage();
+		//this.modelOptions = modelContext.getModelOptions();
+		//this.scriptProxy = modelContext.getScriptProxy();
 	}
 	
+	/*
 	public BasicRenderEngine(DataPackage dataPackage, ModelOptions modelOptions)
 	{
 		this.dataPackage = dataPackage;
 		this.modelOptions = modelOptions;
 	}
+	*/
 	
 	public void precacheData() throws DataSourceException
 	{
@@ -52,7 +62,7 @@ public abstract class BasicRenderEngine extends RenderEngine
 	public void loadDataSubset(int fromCol, int fromRow, int width, int height)
 	{
 		DataBounds tileBounds = new DataBounds(fromCol, fromRow, width, height);
-		dataSubset = dataPackage.getDataSubset(tileBounds);
+		dataSubset = getDataPackage().getDataSubset(tileBounds);
 	}
 
 	protected float getElevation(int row, int col) throws DataSourceException
@@ -60,7 +70,7 @@ public abstract class BasicRenderEngine extends RenderEngine
 		if (dataSubset != null) {
 			return dataSubset.getElevation(row, col);
 		} else {
-			return dataPackage.getElevation(row, col);
+			return getDataPackage().getElevation(row, col);
 		}
 	}
 	
@@ -75,7 +85,7 @@ public abstract class BasicRenderEngine extends RenderEngine
 		//DemPoint point = new DemPoint();
 
 
-		if (dataPackage == null) {
+		if (getDataPackage() == null) {
 			point.setCondition(DemConstants.STAT_NO_DATA_PACKAGE);
 			return;
 			//return point;
@@ -138,25 +148,30 @@ public abstract class BasicRenderEngine extends RenderEngine
 	}
 	
 	
-	public DataPackage getDataPackage()
-	{
-		return dataPackage;
-	}
+	//public ScriptProxy getScriptProxy()
+	//{
+	//	return getModelContext().getScriptProxy();
+	//}
+	
+	//public DataPackage getDataPackage()
+	//{
+	////	return getModelContext().getDataPackage();
+	//}
 
-	public void setDataPackage(DataPackage dataPackage)
-	{
-		this.dataPackage = dataPackage;
-	}
+	//public void setDataPackage(DataPackage dataPackage)
+	//{
+	//	this.dataPackage = dataPackage;
+	//}
 
-	public ModelOptions getModelOptions()
-	{
-		return modelOptions;
-	}
+	//public ModelOptions getModelOptions()
+	//{
+	//	return getModelContext().getModelOptions();
+	//}
 
-	public void setModelOptions(ModelOptions modelOptions)
-	{
-		this.modelOptions = modelOptions;
-	}
+	//public void setModelOptions(ModelOptions modelOptions)
+	//{
+	//	this.modelOptions = modelOptions;
+	//}
 	
 	
 	protected static double cos(double d)

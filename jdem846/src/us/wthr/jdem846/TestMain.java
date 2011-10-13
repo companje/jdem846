@@ -206,9 +206,12 @@ public class TestMain
 		modelOptions.setWidth(1000);
 		modelOptions.setHeight(1000);
 		modelOptions.setTileSize(2000);
-		ElevationDsFormatGenerator engine = new ElevationDsFormatGenerator();
-		engine.setDataPackage(dataPackage);
-		engine.setModelOptions(modelOptions);
+		
+		ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+		
+		ElevationDsFormatGenerator engine = new ElevationDsFormatGenerator(modelContext);
+		//engine.setDataPackage(dataPackage);
+		//engine.setModelOptions(modelOptions);
 		
 		start = System.currentTimeMillis();
 		try {

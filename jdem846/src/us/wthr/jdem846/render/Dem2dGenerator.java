@@ -28,6 +28,7 @@ import java.util.List;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.annotations.DemEngine;
@@ -63,20 +64,20 @@ public class Dem2dGenerator extends BasicRenderEngine
 	private static Log log = Logging.getLog(Dem2dGenerator.class);
 	
 
-	public Dem2dGenerator()
+	public Dem2dGenerator(ModelContext modelContext)
 	{
-		super();
+		super(modelContext);
 	}
 	
-	public Dem2dGenerator(DataPackage dataPackage, ModelOptions modelOptions)
-	{
-		super(dataPackage, modelOptions);
-	}
+	//public Dem2dGenerator(DataPackage dataPackage, ModelOptions modelOptions)
+	//{
+	//	super(dataPackage, modelOptions);
+	//}
 	
 	public OutputProduct<DemCanvas> generate() throws RenderEngineException
 	{
 		try {
-			DemCanvas canvas = generate(modelOptions.getWidth(), modelOptions.getHeight(), modelOptions.getTileSize(), false);
+			DemCanvas canvas = generate(getModelOptions().getWidth(), getModelOptions().getHeight(), getModelOptions().getTileSize(), false);
 			applyShapefileLayers(canvas);
 			return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
 		} catch (OutOfMemoryError err) {
@@ -91,7 +92,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 	public OutputProduct<DemCanvas> generate(boolean skipElevation) throws RenderEngineException
 	{
 		try {
-			DemCanvas canvas = generate(modelOptions.getWidth(), modelOptions.getHeight(), modelOptions.getTileSize(), skipElevation);
+			DemCanvas canvas = generate(getModelOptions().getWidth(), getModelOptions().getHeight(), getModelOptions().getTileSize(), skipElevation);
 			applyShapefileLayers(canvas);
 			return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
 		} catch (OutOfMemoryError err) {
@@ -105,12 +106,12 @@ public class Dem2dGenerator extends BasicRenderEngine
 	
 	public DemCanvas generate(int reqdWidth, int reqdHeight, int tileSize, boolean skipElevation) throws RenderEngineException
 	{
-		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(dataPackage, modelOptions);
-		dataPackage.setAvgXDim(modelDimensions.getxDim());
-		dataPackage.setAvgYDim(modelDimensions.getyDim());
+		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(getDataPackage(), getModelOptions());
+		getDataPackage().setAvgXDim(modelDimensions.getxDim());
+		getDataPackage().setAvgYDim(modelDimensions.getyDim());
 		
 		
-		Color background = getDefinedColor(modelOptions.getBackgroundColor());
+		Color background = getDefinedColor(getModelOptions().getBackgroundColor());
 
 		DemCanvas tileCanvas = new DemCanvas(background, (int)modelDimensions.getTileSize(), (int)modelDimensions.getTileSize());
 		DemCanvas outputCanvas = new DemCanvas(background, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
@@ -127,12 +128,12 @@ public class Dem2dGenerator extends BasicRenderEngine
 		log.info("Processing " + modelDimensions.getTileCount() + " tiles of size: " + tileSize);
 		
 
-		boolean tiledPrecaching = modelOptions.getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
+		boolean tiledPrecaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		if (tiledPrecaching) {
 			log.info("Data Precaching Strategy Set to TILED");
 		}
 		
-		if ((!skipElevation) && dataPackage.getDataSources().size() > 0) {
+		if ((!skipElevation) && getDataPackage().getDataSources().size() > 0) {
 			for (int fromRow = 0; fromRow < dataRows; fromRow+=tileSize) {
 				int toRow = fromRow + tileSize - 1;
 				if (toRow > dataRows)
@@ -236,8 +237,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 		//dataSubset.fillBuffer(buffer, fromRow, fromColumn, numRows, numCols);
 		
 		
-		double elevationMax = dataPackage.getMaxElevation();
-		double elevationMin = dataPackage.getMinElevation();
+		double elevationMax = getDataPackage().getMaxElevation();
+		double elevationMin = getDataPackage().getMinElevation();
 		
 		DemPoint point = new DemPoint();
 		
@@ -256,8 +257,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 		//modelOptions.getLightingElevation()
 		//-modelOptions.getLightingAzimuth()
 		//Vector rotate = new Vector(modelOptions.getLightingElevation(), 0, 0);
-		double solarElevation = modelOptions.getLightingElevation();
-		double solarAzimuth = modelOptions.getLightingAzimuth();
+		double solarElevation = getModelOptions().getLightingElevation();
+		double solarAzimuth = getModelOptions().getLightingAzimuth();
 		sun.rotate(solarElevation, Vector.X_AXIS);
 		sun.rotate(-solarAzimuth, Vector.Y_AXIS);
 		
@@ -293,7 +294,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		
 		if (canvas == null) {
 			//Color background = new Color(0x2C, 0x49, 0x80, 0xFF);
-			Color background = getDefinedColor(modelOptions.getBackgroundColor());
+			Color background = getDefinedColor(getModelOptions().getBackgroundColor());
 			int width = (int)(toColumn - fromColumn) + 1;
 			int height = (int)(toRow - fromRow) + 1;
 			//System.out.println("Creating default canvas of width/height: " + width + "/" + height);
@@ -301,7 +302,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 			canvas = new DemCanvas(background, width, height);
 		}
 		
-		ModelColoring modelColoring = ColoringRegistry.getInstance(modelOptions.getColoringType()).getImpl();
+		ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
 
 		
 		//System.out.println("Percent Complete: 0%");
@@ -346,7 +347,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 					////color.darkenColor((1.0 - dot));
 					
 					
-					if (modelOptions.getHillShadeType() != DemConstants.HILLSHADING_NONE) {
+					if (getModelOptions().getHillShadeType() != DemConstants.HILLSHADING_NONE) {
 						
 						hillshadeColor[0] = reliefColor[0];
 						hillshadeColor[1] = reliefColor[1];
@@ -357,9 +358,9 @@ public class Dem2dGenerator extends BasicRenderEngine
 						//dot *= modelOptions.getLightingMultiple();
 						//System.out.println("Spot Exponent: " + modelOptions.getSpotExponent());
 						//dot = Math.pow(dot, 0.4);
-						dot = Math.pow(dot, modelOptions.getSpotExponent());
+						dot = Math.pow(dot, getModelOptions().getSpotExponent());
 						
-						switch (modelOptions.getHillShadeType()) {
+						switch (getModelOptions().getHillShadeType()) {
 						case DemConstants.HILLSHADING_LIGHTEN:
 							dot = (dot + 1.0) / 2.0;
 							ColorAdjustments.adjustBrightness(hillshadeColor, 1.0 - dot);
@@ -372,9 +373,9 @@ public class Dem2dGenerator extends BasicRenderEngine
 						case DemConstants.HILLSHADING_COMBINED:
 							
 							if (dot > 0) {
-								dot *= modelOptions.getRelativeLightIntensity();
+								dot *= getModelOptions().getRelativeLightIntensity();
 							} else if (dot < 0) {
-								dot *= modelOptions.getRelativeDarkIntensity();
+								dot *= getModelOptions().getRelativeDarkIntensity();
 							}
 							
 							ColorAdjustments.adjustBrightness(hillshadeColor, dot);
@@ -382,7 +383,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 						}
 						
 						
-						ColorAdjustments.interpolateColor(reliefColor, hillshadeColor, color, modelOptions.getLightingMultiple());
+						ColorAdjustments.interpolateColor(reliefColor, hillshadeColor, color, getModelOptions().getLightingMultiple());
 						
 						
 					} else {
@@ -467,10 +468,10 @@ public class Dem2dGenerator extends BasicRenderEngine
 			return;
 		}
 		
-		int numLayers = dataPackage.getShapeFiles().size();
+		int numLayers = getDataPackage().getShapeFiles().size();
 		int layerNumber = 0;
 		
-		for (ShapeFileRequest shapeFilePath : dataPackage.getShapeFiles()) {
+		for (ShapeFileRequest shapeFilePath : getDataPackage().getShapeFiles()) {
 			layerNumber++;
 			try {
 				log.info("Loading shapefile from " + shapeFilePath.getPath());
@@ -487,8 +488,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 				shapeLayer.translate(new PointTranslateHandler() {
 					public void translatePoint(double[] coords)
 					{
-						double x = dataPackage.longitudeToColumn((float) coords[0]);
-						double y = dataPackage.latitudeToRow((float) coords[1]);
+						double x = getDataPackage().longitudeToColumn((float) coords[0]);
+						double y = getDataPackage().latitudeToRow((float) coords[1]);
 						coords[0] = x;
 						coords[1] = y;
 					}
@@ -496,7 +497,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 				
 				shapeLayer = shapeLayer.getCombinedPathsByTypes();
 				
-				Image layerImage = renderLayer(dataPackage, shapeLayer);
+				Image layerImage = renderLayer(shapeLayer);
 				layerImage = layerImage.getScaledInstance(canvas.getWidth(), canvas.getHeight(), Image.SCALE_SMOOTH);
 				canvas.overlay(layerImage, 0, 0);
 				
@@ -521,10 +522,10 @@ public class Dem2dGenerator extends BasicRenderEngine
 	}
 	
 
-	public Image renderLayer(DataPackage dataPackage, ShapeLayer shapeLayer)
+	public Image renderLayer(ShapeLayer shapeLayer)
 	{
 		//Image image = canvas.getImage();
-		BufferedImage image = new BufferedImage((int)dataPackage.getColumns(), (int)dataPackage.getRows(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage((int)getDataPackage().getColumns(), (int)getDataPackage().getRows(), BufferedImage.TYPE_INT_ARGB);
 		
 		Graphics2D g2d = (Graphics2D) image.getGraphics();
 		g2d.setColor(new Color(0, 0, 0, 0));

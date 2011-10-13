@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.exception.KmlException;
@@ -56,8 +57,7 @@ public class KmlLayerGenerator
 	private static Log log = Logging.getLog(KmlLayerGenerator.class);
 	
 	
-	private DataPackage dataPackage;
-	private ModelOptions modelOptions;
+	private ModelContext modelContext;
 	private GriddedModel griddedModel;
 	private double north;
 	private double south;
@@ -71,8 +71,7 @@ public class KmlLayerGenerator
 	private String outputPath;
 	
 	
-	protected KmlLayerGenerator(DataPackage dataPackage, 
-								ModelOptions modelOptions, 
+	protected KmlLayerGenerator(ModelContext modelContext, 
 								GriddedModel griddedModel,
 								double north,
 								double south,
@@ -85,8 +84,7 @@ public class KmlLayerGenerator
 								ImageTypeEnum imageType, 
 								String outputPath)
 	{
-		this.dataPackage = dataPackage;
-		this.modelOptions = modelOptions;
+		this.modelContext = modelContext;
 		this.griddedModel = griddedModel;
 		this.north = north;
 		this.south = south;
@@ -107,12 +105,12 @@ public class KmlLayerGenerator
 
 	protected File createImageTile() throws KmlException, IOException
 	{
-		int tempTileSize = modelOptions.getTileSize();
+		int tempTileSize = modelContext.getModelOptions().getTileSize();
 		
-		int fromRow = Math.round(dataPackage.latitudeToRow((float)north));
-		int toRow = Math.round(dataPackage.latitudeToRow((float)south));
-		int fromCol = Math.round(dataPackage.longitudeToColumn((float)west));
-		int toCol = Math.round(dataPackage.longitudeToColumn((float)east));
+		int fromRow = Math.round(modelContext.getDataPackage().latitudeToRow((float)north));
+		int toRow = Math.round(modelContext.getDataPackage().latitudeToRow((float)south));
+		int fromCol = Math.round(modelContext.getDataPackage().longitudeToColumn((float)west));
+		int toCol = Math.round(modelContext.getDataPackage().longitudeToColumn((float)east));
 		
 		//getTilesIntersecting(double north, double south, double east, double west)
 		List<Tile> tilesIntersecting = griddedModel.getTilesIntersecting(north, south, east, west);
@@ -170,8 +168,8 @@ public class KmlLayerGenerator
 			int y2 = (int) Math.round(_y2 * scalePct);
 			
 			if (x2 < 0) {
-				x = x + (int) Math.round((dataPackage.getColumns() * scalePct));
-				x2 = x2 + (int) Math.round((dataPackage.getColumns() * scalePct));
+				x = x + (int) Math.round((modelContext.getDataPackage().getColumns() * scalePct));
+				x2 = x2 + (int) Math.round((modelContext.getDataPackage().getColumns() * scalePct));
 			}
 			
 			
@@ -361,8 +359,7 @@ public class KmlLayerGenerator
 		
 	}
 	
-	public static KmlDocument generate(DataPackage dataPackage, 
-										ModelOptions modelOptions, 
+	public static KmlDocument generate(ModelContext modelContext, 
 										GriddedModel griddedModel,
 										double north,
 										double south,
@@ -377,8 +374,7 @@ public class KmlLayerGenerator
 										boolean write) throws IOException, KmlException
 	{
 		
-		KmlLayerGenerator generator = new KmlLayerGenerator(dataPackage,
-				modelOptions,
+		KmlLayerGenerator generator = new KmlLayerGenerator(modelContext,
 				griddedModel,
 				north,
 				south,

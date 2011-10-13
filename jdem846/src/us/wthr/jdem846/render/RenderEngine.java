@@ -21,6 +21,7 @@ import java.awt.image.ImageObserver;
 import java.util.LinkedList;
 import java.util.List;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
@@ -30,6 +31,7 @@ import us.wthr.jdem846.input.ElevationDataLoaderInstance;
 import us.wthr.jdem846.input.ElevationDataLoaderRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.scripting.ScriptProxy;
 
 public abstract class RenderEngine  implements ImageObserver
 {
@@ -42,9 +44,17 @@ public abstract class RenderEngine  implements ImageObserver
 	
 	private boolean cancel = false;
 	
+	private ModelContext modelContext;
+	
 	public RenderEngine()
 	{
-
+		
+	}
+	
+	public void initialize(ModelContext modelContext)
+	{
+		this.modelContext = modelContext;
+		
 		annotation = (DemEngine) this.getClass().getAnnotation(DemEngine.class);
 		if (annotation != null) {
 			
@@ -52,6 +62,7 @@ public abstract class RenderEngine  implements ImageObserver
 			log.info("Loading Dem Engine with properties:");
 			log.info("Name: " + annotation.name());
 			log.info("Identifier: " + annotation.identifier());
+			/*
 			log.info("Enabled: " + annotation.enabled());
 			log.info("Uses Width: " + annotation.usesWidth());
 			log.info("Uses Height: " + annotation.usesHeight());
@@ -61,6 +72,7 @@ public abstract class RenderEngine  implements ImageObserver
 			log.info("Uses Light Multiple: " + annotation.usesLightMultiple());
 			log.info("Uses Tile Size: " + annotation.usesTileSize());
 			log.info("Generates Image: " + annotation.generatesImage());
+			*/
 			
 			Class<?> clazz = annotation.needsOutputFileOfType();
 			if (clazz != null && clazz != Object.class) {
@@ -72,6 +84,7 @@ public abstract class RenderEngine  implements ImageObserver
 			
 		}
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	public abstract OutputProduct generate() throws RenderEngineException;
@@ -79,13 +92,22 @@ public abstract class RenderEngine  implements ImageObserver
 	@SuppressWarnings("unchecked")
 	public abstract OutputProduct generate(boolean previewModel) throws RenderEngineException;
 	
-	public abstract DataPackage getDataPackage();
-	public abstract void setDataPackage(DataPackage dataPackage);
+	public DataPackage getDataPackage()
+	{
+		return modelContext.getDataPackage();
+	}
+	//public abstract void setDataPackage(DataPackage dataPackage);
 
-	public abstract ModelOptions getModelOptions();
-	public abstract void setModelOptions(ModelOptions modelOptions);
+	public ModelOptions getModelOptions()
+	{
+		return modelContext.getModelOptions();
+	}
+	//public abstract void setModelOptions(ModelOptions modelOptions);
 	
-	
+	public ScriptProxy getScriptProxy()
+	{
+		return modelContext.getScriptProxy();
+	}
 	
 	public boolean enabled() { return annotation.enabled(); }
 	public boolean usesWidth() { return annotation.usesWidth(); }
@@ -107,6 +129,12 @@ public abstract class RenderEngine  implements ImageObserver
 	}
 	
 	
+	
+	public ModelContext getModelContext()
+	{
+		return modelContext;
+	}
+
 	public void addTileCompletionListener(TileCompletionListener listener)
 	{
 		tileCompletionListeners.add(listener);

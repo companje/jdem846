@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
@@ -42,6 +43,7 @@ public class GriddedModelGenerator
 {
 	private static Log log = Logging.getLog(GriddedModelGenerator.class);
 	
+	private ModelContext modelContext;
 	private DataPackage dataPackage;
 	private ModelOptions modelOptions;
 	private String tempPath;
@@ -49,10 +51,11 @@ public class GriddedModelGenerator
 	private List<TileCompletionListener> tileCompletionListeners;
 	
 	
-	protected GriddedModelGenerator(DataPackage dataPackage, ModelOptions modelOptions, String tempPath, ImageTypeEnum imageType, List<TileCompletionListener> tileCompletionListeners)
+	protected GriddedModelGenerator(ModelContext modelContext, String tempPath, ImageTypeEnum imageType, List<TileCompletionListener> tileCompletionListeners)
 	{
-		this.dataPackage = dataPackage;
-		this.modelOptions = modelOptions;
+		this.modelContext = modelContext;
+		this.dataPackage = modelContext.getDataPackage();
+		this.modelOptions = modelContext.getModelOptions();
 		this.tempPath = tempPath;
 		this.imageType = imageType;
 		this.tileCompletionListeners = tileCompletionListeners;
@@ -176,11 +179,11 @@ public class GriddedModelGenerator
 		}
 	}
 	
-	public static GriddedModel generate(DataPackage dataPackage, ModelOptions modelOptions, String tempPath, ImageTypeEnum imageType, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException, DataSourceException
+	public static GriddedModel generate(ModelContext modelContext, String tempPath, ImageTypeEnum imageType, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException, DataSourceException
 	{
-		GriddedModelGenerator generator = new GriddedModelGenerator(dataPackage, modelOptions, tempPath, imageType, tileCompletionListeners);
+		GriddedModelGenerator generator = new GriddedModelGenerator(modelContext, tempPath, imageType, tileCompletionListeners);
 		
-		Dem2dGenerator dem2d = new Dem2dGenerator(dataPackage, modelOptions);
+		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 		GriddedModel model = generator.generate(dem2d);
 		
 		return model;

@@ -1,20 +1,20 @@
 
-def on2DModelBefore(dataPackage, modelOptions, tileCanvas):
+def on2DModelBefore(modelContext, tileCanvas):
     pass
  
-def onTileBefore(dataPackage, modelOptions, tileCanvas):
+def onTileBefore(modelContext, tileCanvas):
     pass
 
-def onTileAfter(dataPackage, modelOptions, tileCanvas):
+def onTileAfter(modelContext, tileCanvas):
     pass
 
-def on2DModelAfter(dataPackage, modelOptions, tileCanvas):
+def on2DModelAfter(modelContext, tileCanvas):
     pass
 
-def onGetElevationBefore(dataPackage, modelOptions, column, row):
+def onGetElevationBefore(modelContext, column, row):
     return None
 
-def onGetElevationAfter(dataPackage, modelOptions, column, row, elevation):
+def onGetElevationAfter(modelContext, column, row, elevation):
     return None
 
 # And so on...

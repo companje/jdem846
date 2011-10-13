@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.render;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.dbase.ClassLoadException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;

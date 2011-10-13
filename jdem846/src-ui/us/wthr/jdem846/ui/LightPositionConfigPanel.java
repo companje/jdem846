@@ -145,7 +145,7 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 		// Defaults
 		setSolarAzimuth(180);
 		setSolarElevation(45);
-		updatePreview(true);
+		//updatePreview(true);
 	}
 	
 	@Override
@@ -164,8 +164,8 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 	
 	protected void syncPreviewToInputs()
 	{
-		previewPanel.setSolarAzimuth(getSolarAzimuth());
-		previewPanel.setSolarElevation(getSolarElevation());
+		previewPanel.setSolarAzimuth(sldSolarAzimuth.getValue());
+		previewPanel.setSolarElevation(sldSolarElevation.getValue());
 		updatePreview(false);
 	}
 	
@@ -179,7 +179,8 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 	
 	public double getSolarAzimuth()
 	{
-		return sldSolarAzimuth.getValue();
+		return previewPanel.getSolarAzimuth();
+		//return sldSolarAzimuth.getValue();
 	}
 	
 	public void setSolarElevation(double solarElevation)
@@ -191,7 +192,8 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 	
 	public double getSolarElevation()
 	{
-		return sldSolarElevation.getValue();
+		return previewPanel.getSolarElevation();
+		//return sldSolarElevation.getValue();
 	}
 	
 	public void addChangeListener(ChangeListener listener)

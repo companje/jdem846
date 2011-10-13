@@ -1,6 +1,5 @@
 package us.wthr.jdem846.util;
 
-import java.util.UUID;
 
 public class InstanceIdentifier
 {
@@ -8,8 +7,7 @@ public class InstanceIdentifier
 	private static String instanceId;
 	
 	static {
-		UUID id = UUID.randomUUID();
-		instanceId = id.toString();
+		instanceId = UniqueIdentifierUtil.getNewIdentifier();
 		
 		System.setProperty("us.wthr.jdem846.instance.id", instanceId);
 	}

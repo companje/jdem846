@@ -30,6 +30,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
@@ -47,7 +48,7 @@ public class ModelPreviewPane extends TitledRoundedPanel
 	
 	private DataPackage dataPackage;
 	private ModelOptions modelOptions;
-	
+	//private ModelContext modelContext;
 	
 	private int previewWidth = 250;
 	private int previewHeight = 100;
@@ -63,6 +64,8 @@ public class ModelPreviewPane extends TitledRoundedPanel
 		((StandardBorder) this.getBorder()).setPadding(1);
 		
 		imagePanel = new ImagePanel();
+		
+		//modelContext = ModelContext.createInstance(dataPackage, modelOptions);
 		// Set properties
 		setDataPackage(dataPackage);
 		setModelOptions(modelOptions);
@@ -119,8 +122,10 @@ public class ModelPreviewPane extends TitledRoundedPanel
 			
 			if (width == 0 || height == 0)
 				return;
-
-			Dem2dGenerator dem2d = new Dem2dGenerator(dataPackage, modelOptions);
+			
+			ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+			
+			Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 			
 			dem2d.addTileCompletionListener(new TileCompletionListener() {
 				public void onTileCompleted(DemCanvas tileCanvas,
@@ -133,8 +138,8 @@ public class ModelPreviewPane extends TitledRoundedPanel
 				
 			});
 			
-			final String background = modelOptions.getBackgroundColor();
-			modelOptions.setBackgroundColor("White");
+			final String background = modelContext.getModelOptions().getBackgroundColor();
+			modelContext.getModelOptions().setBackgroundColor("White");
 			ModelingWorkerThread workerThread = new ModelingWorkerThread(dem2d);
 			workerThread.addModelCompletionListener(new ModelCompletionListener() {
 				public void onModelComplete(DemCanvas completeCanvas)
@@ -169,25 +174,6 @@ public class ModelPreviewPane extends TitledRoundedPanel
 	}
 	
 	
-	public DataPackage getDataPackage() 
-	{
-		return dataPackage;
-	}
-
-	public void setDataPackage(DataPackage dataPackage) 
-	{
-		this.dataPackage = dataPackage;
-	}
-
-	public ModelOptions getModelOptions() 
-	{
-		return modelOptions;
-	}
-
-	public void setModelOptions(ModelOptions modelOptions) 
-	{
-		this.modelOptions = modelOptions;
-	}
 
 	public int getPreviewWidth() 
 	{
@@ -209,8 +195,29 @@ public class ModelPreviewPane extends TitledRoundedPanel
 		this.previewHeight = previewHeight;
 	}
 	
+
 	
 	
+	public DataPackage getDataPackage()
+	{
+		return dataPackage;
+	}
+
+	public void setDataPackage(DataPackage dataPackage)
+	{
+		this.dataPackage = dataPackage;
+	}
+
+	public ModelOptions getModelOptions()
+	{
+		return modelOptions;
+	}
+
+	public void setModelOptions(ModelOptions modelOptions)
+	{
+		this.modelOptions = modelOptions;
+	}
+
 	protected Rectangle getWindowLocation()
 	{
 		Point pt = this.getLocationOnScreen();

@@ -1,5 +1,6 @@
 package us.wthr.jdem846.render;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -17,15 +18,15 @@ public class Dem2dTiledKmlGenerator extends BasicRenderEngine
 	
 	private static Log log = Logging.getLog(Dem2dTiledKmlGenerator.class);
 	
-	public Dem2dTiledKmlGenerator()
+	public Dem2dTiledKmlGenerator(ModelContext modelContext)
 	{
-		super();
+		super(modelContext);
 	}
 	
-	public Dem2dTiledKmlGenerator(DataPackage dataPackage, ModelOptions modelOptions)
-	{
-		super(dataPackage, modelOptions);
-	}
+	//public Dem2dTiledKmlGenerator(DataPackage dataPackage, ModelOptions modelOptions)
+	//{
+	//	super(dataPackage, modelOptions);
+	//}
 	
 	
 	@Override
@@ -46,7 +47,7 @@ public class Dem2dTiledKmlGenerator extends BasicRenderEngine
 	@Override
 	public OutputProduct<DemCanvas> generate(boolean skipElevation) throws RenderEngineException
 	{
-		Dem2dGenerator dem2d = new Dem2dGenerator(dataPackage, modelOptions);
+		Dem2dGenerator dem2d = new Dem2dGenerator(getModelContext());
 		
 		return null;
 	}

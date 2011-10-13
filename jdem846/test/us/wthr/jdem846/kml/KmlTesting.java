@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -53,6 +54,7 @@ public class KmlTesting
 {
 	private static Log log = Logging.getLog(KmlTesting.class);
 	
+	private ModelContext modelContext;
 	private DataPackage dataPackage;
 	private ModelOptions modelOptions;
 	private GriddedModel griddedModel;
@@ -127,9 +129,11 @@ public class KmlTesting
 			return;
 		} 
 		
+		modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+		
 		try {
 			
-			KmlDemGenerator generator = new KmlDemGenerator(dataPackage, modelOptions);
+			KmlDemGenerator generator = new KmlDemGenerator(modelContext);
 			generator.setOutputPath(outputPath);
 			generator.setTempPath(tempPath);
 			generator.setOverlayTileSize(overlayTileSize);
