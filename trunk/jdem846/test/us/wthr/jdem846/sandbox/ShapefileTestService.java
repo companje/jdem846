@@ -32,6 +32,7 @@ import java.util.List;
 
 import us.wthr.jdem846.AbstractLockableService;
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.Destroy;
 import us.wthr.jdem846.annotations.Initialize;
@@ -157,7 +158,10 @@ public class ShapefileTestService extends AbstractLockableService
 		modelOptions.setColoringType("green-tint");
 		//modelOptions.setHillShadeType(DemConstants.HILLSHADING_DARKEN);
 		modelOptions.setBackgroundColor("Blue");
-		Dem2dGenerator dem2d = new Dem2dGenerator(dataPackage, modelOptions);
+		
+		ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+		
+		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 		
 		log.info("Calculating elevation min/max");
 		try {

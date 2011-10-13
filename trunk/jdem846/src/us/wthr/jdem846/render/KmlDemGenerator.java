@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.render;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -43,15 +44,15 @@ public class KmlDemGenerator extends BasicRenderEngine
 	private int layerMultiplier;
 	private ImageTypeEnum imageType;
 	
-	public KmlDemGenerator()
+	public KmlDemGenerator(ModelContext modelContext)
 	{
-		super();
+		super(modelContext);
 	}
 	
-	public KmlDemGenerator(DataPackage dataPackage, ModelOptions modelOptions)
-	{
-		super(dataPackage, modelOptions);
-	}
+	//public KmlDemGenerator(DataPackage dataPackage, ModelOptions modelOptions)
+	//{
+	//	super(dataPackage, modelOptions);
+	//}
 	
 	@Override
 	public OutputProduct<KmlDocument> generate() throws RenderEngineException
@@ -74,7 +75,7 @@ public class KmlDemGenerator extends BasicRenderEngine
 		// TODO: tile completion listeners
 		try {
 			
-			griddedModel = GriddedModelGenerator.generate(dataPackage, modelOptions, tempPath, imageType, tileCompletionListeners);
+			griddedModel = GriddedModelGenerator.generate(getModelContext(), tempPath, imageType, tileCompletionListeners);
 		} catch (Exception ex) {
 			throw new RenderEngineException("Failed to generate 2D DEM: " + ex.getMessage(), ex);
 		} 
@@ -82,7 +83,7 @@ public class KmlDemGenerator extends BasicRenderEngine
 		log.info("Total Tiles Generated: " + griddedModel.getTiles().size());
 		
 		try {
-			KmlDocument kml = KmlModelGenerator.generate(dataPackage, modelOptions, griddedModel, outputPath, overlayTileSize, layerMultiplier, "jDem846 Model", null, imageType, true);
+			KmlDocument kml = KmlModelGenerator.generate(getModelContext(), griddedModel, outputPath, overlayTileSize, layerMultiplier, "jDem846 Model", null, imageType, true);
 			
 			//cleanUpTemporaryFiles();
 			

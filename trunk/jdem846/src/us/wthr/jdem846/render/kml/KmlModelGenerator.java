@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.KmlException;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -47,8 +48,9 @@ public class KmlModelGenerator
 	private static Log log = Logging.getLog(KmlModelGenerator.class);
 	
 	
-	private DataPackage dataPackage;
-	private ModelOptions modelOptions;
+	//private DataPackage dataPackage;
+	//private ModelOptions modelOptions;
+	private ModelContext modelContext;
 	private GriddedModel griddedModel;
 	private String outputPath;
 	private int overlayTileSize;
@@ -57,8 +59,7 @@ public class KmlModelGenerator
 	private String description;
 	private ImageTypeEnum imageType;
 	
-	protected KmlModelGenerator(DataPackage dataPackage,
-								ModelOptions modelOptions,
+	protected KmlModelGenerator(ModelContext modelContext,
 								GriddedModel griddedModel,
 								String outputPath,
 								int overlayTileSize,
@@ -67,8 +68,7 @@ public class KmlModelGenerator
 								String description,
 								ImageTypeEnum imageType)
 	{
-		this.dataPackage = dataPackage;
-		this.modelOptions = modelOptions;
+		this.modelContext = modelContext;
 		this.griddedModel = griddedModel;
 		this.outputPath = outputPath;
 		this.overlayTileSize = overlayTileSize;
@@ -79,8 +79,7 @@ public class KmlModelGenerator
 	}
 	
 	
-	public static KmlDocument generate(DataPackage dataPackage,
-								ModelOptions modelOptions,
+	public static KmlDocument generate(ModelContext modelContext,
 								GriddedModel griddedModel,
 								String outputPath,
 								int overlayTileSize,
@@ -91,7 +90,7 @@ public class KmlModelGenerator
 								boolean write) throws RenderEngineException
 	{
 		
-		KmlModelGenerator generator = new KmlModelGenerator(dataPackage, modelOptions, griddedModel, outputPath, overlayTileSize, layerMultiplier, name, description, imageType);
+		KmlModelGenerator generator = new KmlModelGenerator(modelContext, griddedModel, outputPath, overlayTileSize, layerMultiplier, name, description, imageType);
 		
 		KmlDocument kml = generator.generate(write);
 		
@@ -140,11 +139,11 @@ public class KmlModelGenerator
 
 			multiple = multiple * layerMultiplier;
 			
-			if (lonRes > (dataPackage.getLongitudeWidth() * 2)) {
+			if (lonRes > (modelContext.getDataPackage().getLongitudeWidth() * 2)) {
 				break;
 			}
 			
-			if (latRes > (dataPackage.getLatitudeHeight() * 2)) {
+			if (latRes > (modelContext.getDataPackage().getLatitudeHeight() * 2)) {
 				break;
 			}
 			
@@ -212,7 +211,7 @@ public class KmlModelGenerator
 
 			try {
 				int scaleTo = (layerNumber == 1) ? -1 : overlayTileSize;
-				KmlDocument kmlDoc = KmlLayerGenerator.generate(dataPackage, modelOptions, griddedModel, north, south, east, west, layerNumber, regionNum, subRegionNum, scaleTo, imageType, outputPath, true);
+				KmlDocument kmlDoc = KmlLayerGenerator.generate(modelContext, griddedModel, north, south, east, west, layerNumber, regionNum, subRegionNum, scaleTo, imageType, outputPath, true);
 				
 				if (kmlDoc != null) {
 					String linkName = layerNumber + "/" + regionNum + "/" + subRegionNum;

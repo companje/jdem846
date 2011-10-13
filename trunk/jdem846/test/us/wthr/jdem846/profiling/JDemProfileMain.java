@@ -7,6 +7,7 @@ import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.i18n.I18N;
@@ -182,7 +183,9 @@ public class JDemProfileMain
 		dataPackage.prepare();
 		dataPackage.calculateElevationMinMax(true);
 		
-		Dem2dGenerator dem2d = new Dem2dGenerator(dataPackage, modelOptions);
+		ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+		
+		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 		
 		long start = System.currentTimeMillis();
 		OutputProduct<DemCanvas> product = generate(dem2d);

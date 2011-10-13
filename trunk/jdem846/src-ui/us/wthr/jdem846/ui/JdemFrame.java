@@ -42,6 +42,7 @@ import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.dbase.ClassLoadException;
 import us.wthr.jdem846.exception.ProjectParseException;
@@ -419,9 +420,13 @@ public class JdemFrame extends Frame
 		String engineIdentifier = modelOptions.getEngine();
 		EngineInstance engineInstance = EngineRegistry.getInstance(engineIdentifier);
 		
+		// TODO: Add scripting proxy
+		ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+		
 		RenderEngine engine;
 		try {
 			engine = engineInstance.getImpl();
+			engine.initialize(modelContext);
 		} catch (ClassLoadException ex) {
 			ex.printStackTrace();
 			log.error("Failed to load engine class '" + ex.getClassName() + "': " + ex.getMessage(), ex);
@@ -432,8 +437,8 @@ public class JdemFrame extends Frame
 				    JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		engine.setDataPackage(dataPackage);
-		engine.setModelOptions(modelOptions);
+		//engine.setDataPackage(dataPackage);
+		//engine.setModelOptions(modelOptions);
 		
 		
 		ElevationDataLoaderInstance dataLoaderInstance = engine.needsOutputFileOfType();

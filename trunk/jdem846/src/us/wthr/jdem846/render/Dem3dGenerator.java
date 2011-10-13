@@ -33,6 +33,7 @@ import javax.imageio.ImageIO;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.annotations.DemEngine;
@@ -60,15 +61,15 @@ public class Dem3dGenerator extends BasicRenderEngine
 	private static final int UNDEFINED = 0;
 	private static final int CLOCKWISE = 1;
 
-	public Dem3dGenerator()
+	public Dem3dGenerator(ModelContext modelContext)
 	{
-		super();
+		super(modelContext);
 	}
 	
-	public Dem3dGenerator(DataPackage dataPackage, ModelOptions modelOptions)
-	{
-		super(dataPackage, modelOptions);
-	}
+	//public Dem3dGenerator(DataPackage dataPackage, ModelOptions modelOptions)
+	//{
+	//	super(dataPackage, modelOptions);
+	//}
 
 	@Override
 	public OutputProduct<DemCanvas> generate() throws RenderEngineException
@@ -87,10 +88,13 @@ public class Dem3dGenerator extends BasicRenderEngine
 	@Override
 	public OutputProduct<DemCanvas> generate(boolean skipElevation) throws RenderEngineException
 	{
-		Dem2dGenerator dem2d = new Dem2dGenerator(dataPackage, modelOptions);
+		Dem2dGenerator dem2d = new Dem2dGenerator(getModelContext());
 		
 		OutputProduct<DemCanvas> product2d = dem2d.generate(skipElevation);
 		DemCanvas canvas2d = product2d.getProduct();
+		
+		DataPackage dataPackage = getModelContext().getDataPackage();
+		ModelOptions modelOptions = getModelContext().getModelOptions();
 		
 		/*
 		// Testing an orthoimage overlay...
@@ -386,7 +390,7 @@ public class Dem3dGenerator extends BasicRenderEngine
 		int bottom = original.getHeight();
 		int right = original.getWidth();
 		
-		int bgRGB = getDefinedColor(modelOptions.getBackgroundColor()).getRGB();
+		int bgRGB = getDefinedColor(getModelContext().getModelOptions().getBackgroundColor()).getRGB();
 		
 		for (int y = 0; y < original.getHeight(); y++) {
 			for (int x = 0; x < original.getWidth(); x++) {

@@ -17,6 +17,8 @@
 package us.wthr.jdem846.render;
 
 import java.awt.Rectangle;
+
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.exception.DataSourceException;
@@ -56,20 +58,20 @@ public class ElevationDsFormatGenerator extends RenderEngine
 	
 	private static Log log = Logging.getLog(ElevationDsFormatGenerator.class);
 	
-	private DataPackage dataPackage;
-	private ModelOptions modelOptions;
+	//private DataPackage dataPackage;
+	//private ModelOptions modelOptions;
 	
 	
-	public ElevationDsFormatGenerator()
+	public ElevationDsFormatGenerator(ModelContext modelContext)
 	{
-		
+		super.initialize(modelContext);
 	}
 	
-	public ElevationDsFormatGenerator(DataPackage dataPackage, ModelOptions modelOptions)
-	{
-		this.dataPackage = dataPackage;
-		this.modelOptions = modelOptions;
-	}
+	//public ElevationDsFormatGenerator(DataPackage dataPackage, ModelOptions modelOptions)
+	//{
+	//	this.dataPackage = dataPackage;
+	//	this.modelOptions = modelOptions;
+	//}
 
 	
 	
@@ -83,6 +85,9 @@ public class ElevationDsFormatGenerator extends RenderEngine
 	@SuppressWarnings("unchecked")
 	public OutputProduct generate(boolean skipElevation) throws RenderEngineException
 	{
+		ModelOptions modelOptions = getModelContext().getModelOptions();
+		DataPackage dataPackage = getModelContext().getDataPackage();
+		
 		String writeTo = modelOptions.getWriteTo();
 		if (writeTo == null) {
 			writeTo = System.getProperty("user.home") + "/" + "output.edef";
@@ -170,6 +175,7 @@ public class ElevationDsFormatGenerator extends RenderEngine
 	
 	public FloatRaster generate(int fromRow, int toRow, int fromColumn, int toColumn, FloatRaster raster) throws RenderEngineException
 	{
+		DataPackage dataPackage = getModelContext().getDataPackage();
 		
 		int numRows = (toRow - fromRow) + 1;
 		int numCols = (toColumn - fromColumn) + 1;
@@ -206,6 +212,7 @@ public class ElevationDsFormatGenerator extends RenderEngine
 	
 	public void writeOutput(String writeTo, FloatRaster raster, float cellSizeRatio)
 	{
+		DataPackage dataPackage = getModelContext().getDataPackage();
 		ElevationDatasetExchangeHeader header = new ElevationDatasetExchangeHeader();
 		header.setCellSize(dataPackage.getAvgXDim());
 		header.setColumns(raster.getWidth());
@@ -242,25 +249,25 @@ public class ElevationDsFormatGenerator extends RenderEngine
 	
 	
 	
-	public DataPackage getDataPackage()
-	{
-		return dataPackage;
-	}
+	//public DataPackage getDataPackage()
+	//{
+	//	return dataPackage;
+	//}
 
-	public void setDataPackage(DataPackage dataPackage) 
-	{
-		this.dataPackage = dataPackage;
-	}
+	//public void setDataPackage(DataPackage dataPackage) 
+	//{
+	//	this.dataPackage = dataPackage;
+	//}
 
-	public ModelOptions getModelOptions() 
-	{
-		return modelOptions;
-	}
+	//public ModelOptions getModelOptions() 
+	//{
+	//	return modelOptions;
+	//}
 
-	public void setModelOptions(ModelOptions modelOptions)
-	{
-		this.modelOptions = modelOptions;
-	}
+	//public void setModelOptions(ModelOptions modelOptions)
+	//{
+	//	this.modelOptions = modelOptions;
+	//}
 	
 	
 	

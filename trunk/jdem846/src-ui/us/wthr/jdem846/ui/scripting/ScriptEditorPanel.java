@@ -17,12 +17,27 @@
 package us.wthr.jdem846.ui.scripting;
 
 import java.awt.BorderLayout;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.InputMethodListener;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.swing.Action;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.AttributeSet;
 
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
@@ -38,6 +53,8 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 	private static Log log = Logging.getLog(ScriptEditorPanel.class);
 	
 	private JEditorPane editorPane;
+	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
+	
 	
 	static {
 		
@@ -58,7 +75,16 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 		
 		// Create Components
 		final JEditorPane editorPane = new JEditorPane();
+		
 		this.editorPane = editorPane;
+		
+		log.info("Document: " + editorPane.getDocument());
+		//Action[] actions = editorPane.getActions();
+		//for (Action action : actions) {
+		//	log.info("Action: " + action.toString());
+		//}
+		
+
 		
 		JScrollPane scrollPane = new JScrollPane(editorPane);
 		
@@ -71,7 +97,49 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 		
 		editorPane.setContentType("text/groovy");
 		editorPane.setText(template);
+		editorPane.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void insertUpdate(DocumentEvent e)
+			{
+				fireChangeListeners();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e)
+			{
+				fireChangeListeners();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e)
+			{
+				fireChangeListeners();
+			}
+			
+		});
 	}
+	
+	
+	
+	public void fireChangeListeners()
+	{
+		ChangeEvent e = new ChangeEvent(this);
+		for (ChangeListener listener : changeListeners) {
+			listener.stateChanged(e);
+		}
+	}
+	
+	public void addChangeListener(ChangeListener listener)
+	{
+		changeListeners.add(listener);
+	}
+	
+	public boolean removeChangeListener(ChangeListener listener)
+	{
+		return changeListeners.remove(listener);
+	}
+	
 	
 	
 	
