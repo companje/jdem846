@@ -38,6 +38,7 @@ import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
+import us.wthr.jdem846.render.render2d.TileRenderer;
 
 public class GriddedModelGenerator
 {
@@ -61,7 +62,7 @@ public class GriddedModelGenerator
 		this.tileCompletionListeners = tileCompletionListeners;
 	}
 	
-	protected GriddedModel generate(Dem2dGenerator dem2d) throws RenderEngineException, DataSourceException
+	protected GriddedModel generate() throws RenderEngineException, DataSourceException
 	{
 		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(dataPackage, modelOptions);
 
@@ -100,17 +101,19 @@ public class GriddedModelGenerator
 					if (toCol > dataCols)
 						toCol = dataCols;
 					
-					dem2d.loadDataSubset((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
-					dem2d.precacheData();
+					//dem2d.loadDataSubset((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
+					//dem2d.precacheData();
 					
 					tileCanvas.reset();
 					
-					dem2d.generate(fromRow, toRow, fromCol, toCol, tileCanvas);
 					
-					//BufferedImage tileImage = (BufferedImage) tileCanvas.getImage();
+					//dem2d.generate(fromRow, toRow, fromCol, toCol, tileCanvas);
+					
+					// TODO: TEST THIS!
+					TileRenderer.render(fromRow, toRow, fromCol, toCol, modelContext, tileCanvas);
+					
 					BufferedImage tileImage = getCroppedImage(tileCanvas.getImage(), (toCol - fromCol) + 1, (toRow - fromRow) + 1);
 					
-					//saveTileImage(DemCanvas canvas, int fromRow, int fromCol, int toRow, int toCol, String outputPath)
 					File tileFile = null;
 					try {
 						tileFile = saveTileImage(tileImage, fromRow, fromCol, toRow, toCol, tempPath);
@@ -127,7 +130,7 @@ public class GriddedModelGenerator
 					Tile tile = new Tile(tileFile, fromRow, fromCol, toRow, toCol, north, south, east, west);
 					model.addTile(tile);
 
-					dem2d.unloadData();
+					//dem2d.unloadData();
 					
 					tileCol++;
 					
@@ -183,8 +186,8 @@ public class GriddedModelGenerator
 	{
 		GriddedModelGenerator generator = new GriddedModelGenerator(modelContext, tempPath, imageType, tileCompletionListeners);
 		
-		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
-		GriddedModel model = generator.generate(dem2d);
+		//Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
+		GriddedModel model = generator.generate();
 		
 		return model;
 	}

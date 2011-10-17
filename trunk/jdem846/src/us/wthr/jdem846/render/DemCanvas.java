@@ -23,6 +23,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.WritableRaster;
@@ -121,6 +122,13 @@ public class DemCanvas implements ImageObserver
 		
 		return image.getRGB(x, y);
 	}
+	
+	public void fill(Color color, Path2D.Double path)
+	{
+		graphics.setColor(color);
+		graphics.fill(path);
+	}
+	
 	
 	public DemCanvas getScaled(int width, int height)
 	{
