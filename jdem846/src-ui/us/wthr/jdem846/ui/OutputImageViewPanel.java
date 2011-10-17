@@ -35,6 +35,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.color.ColoringRegistry;
+import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -71,7 +74,7 @@ public class OutputImageViewPanel extends JdemPanel
 	private ProcessWorkingSpinner spinner;
 	
 	private DataPackage dataPackage;
-	//private ModelOptions modelOptions;
+	private ModelOptions modelOptions;
 	//private RenderEngine engine;
 	
 	private boolean isWorking = false;
@@ -92,7 +95,7 @@ public class OutputImageViewPanel extends JdemPanel
 		this.setLayout(new BorderLayout());
 		//this.engine = engine;
 		this.dataPackage = engine.getDataPackage();
-		//this.modelOptions = engine.getModelOptions();
+		this.modelOptions = engine.getModelOptions();
 		
 		// Create components
 		imageDisplay = new ImageDisplayPanel();
@@ -242,8 +245,12 @@ public class OutputImageViewPanel extends JdemPanel
 				long elapsed = 0;
 				
 				start = System.currentTimeMillis();
+				
+				boolean requiresMinMaxElevation = ColoringRegistry.getInstance(modelOptions.getColoringType()).requiresMinMaxElevation();
 				try {
-					dataPackage.calculateElevationMinMax(true);
+					if (requiresMinMaxElevation) {
+						dataPackage.calculateElevationMinMax(true);
+					}
 				} catch (Exception ex) {
 					throw new RenderEngineException("Error calculating elevation min/max: " + ex.getMessage(), ex);
 				}

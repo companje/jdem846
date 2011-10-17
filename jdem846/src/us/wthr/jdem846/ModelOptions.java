@@ -33,6 +33,7 @@ public class ModelOptions
 	public static final String OPTION_WRITE_TO = "us.wthr.jdem846.modelOptions.writeTo";
 	public static final String OPTION_WIDTH = "us.wthr.jdem846.modelOptions.width";
 	public static final String OPTION_HEIGHT = "us.wthr.jdem846.modelOptions.height";
+	public static final String OPTION_GRID_SIZE = "us.wthr.jdem846.modelOptions.gridSize";
 	public static final String OPTION_BACKGROUND_COLOR = "us.wthr.jdem846.modelOptions.backgroundColor";
 	public static final String OPTION_HILLSHADING = "us.wthr.jdem846.modelOptions.hillShading";
 	public static final String OPTION_HILLSHADE_TYPE = "us.wthr.jdem846.modelOptions.hillShadeType";
@@ -66,6 +67,7 @@ public class ModelOptions
 	
 	private int width = 3000;
 	private int height = 3000;
+	private int gridSize = 1;
 	private double elevationMultiple = 1.0;
 	private int tileSize = 1000;
 	private double lightingMultiple = 0.5f;
@@ -117,7 +119,11 @@ public class ModelOptions
 			setWidth(Integer.parseInt(property));
 		}
 		
-		
+		property = JDem846Properties.getProperty(OPTION_GRID_SIZE);
+		if (property != null) {
+			setGridSize(Integer.parseInt(property));
+		}
+
 		property = JDem846Properties.getProperty(OPTION_HEIGHT);
 		if (property != null) {
 			setHeight(Integer.parseInt(property));
@@ -247,6 +253,7 @@ public class ModelOptions
 		projectModel.setOption(OPTION_GRADIENT_LEVELS, this.getGradientLevels());
 		projectModel.setOption(OPTION_WRITE_TO, this.getWriteTo());
 		projectModel.setOption(OPTION_WIDTH, this.getWidth());
+		projectModel.setOption(OPTION_GRID_SIZE, this.getGridSize());
 		projectModel.setOption(OPTION_HEIGHT, this.getHeight());
 		projectModel.setOption(OPTION_ELEVATION_MULTIPLE, this.getElevationMultiple());
 		projectModel.setOption(OPTION_BACKGROUND_COLOR, this.getBackgroundColor());
@@ -285,6 +292,7 @@ public class ModelOptions
 		this.setWriteTo(projectModel.getOption(OPTION_WRITE_TO));
 		this.setWidth(projectModel.getIntegerOption(OPTION_WIDTH));
 		this.setHeight(projectModel.getIntegerOption(OPTION_HEIGHT));
+		this.setGridSize(projectModel.getIntegerOption(OPTION_GRID_SIZE));
 		this.setElevationMultiple(projectModel.getDoubleOption(OPTION_ELEVATION_MULTIPLE));
 		this.setBackgroundColor(projectModel.getOption(OPTION_BACKGROUND_COLOR));
 		this.setHillShading(projectModel.getBooleanOption(OPTION_HILLSHADING));
@@ -490,9 +498,17 @@ public class ModelOptions
 		this.height = height;
 	}
 
-	
-	
-	
+
+	public int getGridSize()
+	{
+		return gridSize;
+	}
+
+	public void setGridSize(int gridSize)
+	{
+		this.gridSize = gridSize;
+	}
+
 	public double getElevationMultiple()
 	{
 		return elevationMultiple;
@@ -583,6 +599,7 @@ public class ModelOptions
 		clone.height = this.height;
 		clone.elevationMultiple = this.elevationMultiple;
 		clone.tileSize = this.tileSize;
+		clone.gridSize = this.gridSize;
 		clone.lightingMultiple = this.lightingMultiple;
 		clone.lightingAzimuth = this.lightingAzimuth;
 		clone.lightingElevation = this.lightingElevation;

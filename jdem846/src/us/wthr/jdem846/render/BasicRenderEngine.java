@@ -27,7 +27,10 @@ public abstract class BasicRenderEngine extends RenderEngine
 	//protected ModelOptions modelOptions;
 	//protected ScriptProxy scriptProxy;
 	
-
+	public BasicRenderEngine()
+	{
+		
+	}
 	
 	public BasicRenderEngine(ModelContext modelContext)
 	{
@@ -133,7 +136,7 @@ public abstract class BasicRenderEngine extends RenderEngine
 		}
 		
 
-		point.setMiddleElevation((point.getBackLeftElevation() + point.getBackRightElevation() + point.getFrontLeftElevation() + point.getFrontRightElevation()) / 4.0f);
+		point.setMiddleElevation((point.getBackLeftElevation() + point.getBackRightElevation() + point.getFrontLeftElevation()) / 3.0f);
 		
 		point.setCondition(DemConstants.STAT_SUCCESSFUL);
 		
