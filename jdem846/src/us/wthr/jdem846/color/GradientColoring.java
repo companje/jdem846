@@ -121,30 +121,26 @@ public class GradientColoring implements ModelColoring
 			}
 		}
 		
-		if (upper == null)
-			upper = lower;
 		
-		if (lower == null)
-			lower = upper;
 		
 		if (upper == null && lower == null) {
 			defaultColor.toList(color);
 			return;
-			//return defaultColor.getCopy();
+		} else if (upper == null) { // lower != null is implied by the first condition
+			upper = lower;
+		} else if (lower == null) { // upper != null is implied by the first condition
+			lower = upper;
 		}
-		
+			
 		
 		double color_ratio = (meters - lower.getPosition()) / (upper.getPosition() - lower.getPosition());
 		if (Double.isNaN(color_ratio))
 			color_ratio = 1.0;
 
-		double red = (lower.getColor().getRed() * (1.0 - color_ratio)) + (upper.getColor().getRed() * color_ratio);
-		double green = (lower.getColor().getGreen() * (1.0 - color_ratio)) + (upper.getColor().getGreen() * color_ratio);
-		double blue = (lower.getColor().getBlue() * (1.0 - color_ratio)) + (upper.getColor().getBlue() * color_ratio);
 
-		color[0] = (int)Math.round((red * 0xFF));
-		color[1] = (int)Math.round((green * 0xFF));
-		color[2] = (int)Math.round((blue * 0xFF));
+		color[0] = (int)Math.round(((lower.getColor().getRed() * (1.0 - color_ratio)) + (upper.getColor().getRed() * color_ratio)) * 255.0);
+		color[1] = (int)Math.round(((lower.getColor().getGreen() * (1.0 - color_ratio)) + (upper.getColor().getGreen() * color_ratio)) * 255.0);
+		color[2] = (int)Math.round(((lower.getColor().getBlue() * (1.0 - color_ratio)) + (upper.getColor().getBlue() * color_ratio)) * 255.0);
 		color[3] = 0xFF;
 		
 		
@@ -173,16 +169,13 @@ public class GradientColoring implements ModelColoring
 			}
 		}
 		
-		if (upper == null)
-			upper = lower;
-		
-		if (lower == null)
-			lower = upper;
-
 		if (upper == null && lower == null) {
 			defaultColor.toList(color);
 			return;
-			//return defaultColor.getCopy();
+		} else if (upper == null) { // lower != null is implied by the first condition
+			upper = lower;
+		} else if (lower == null) { // upper != null is implied by the first condition
+			lower = upper;
 		}
 		
 		
@@ -193,20 +186,19 @@ public class GradientColoring implements ModelColoring
 		}
 		
 		double color_ratio = (ratio - lower.getPosition()) / (upper.getPosition() - lower.getPosition());
-		
-		double red = (lower.getColor().getRed() * (1.0 - color_ratio)) + (upper.getColor().getRed() * color_ratio);
-		double green = (lower.getColor().getGreen() * (1.0 - color_ratio)) + (upper.getColor().getGreen() * color_ratio);
-		double blue = (lower.getColor().getBlue() * (1.0 - color_ratio)) + (upper.getColor().getBlue() * color_ratio);
+		if (Double.isNaN(color_ratio))
+			color_ratio = 1.0;
 
-		color[0] = (int)Math.round((red * 0xFF));
-		color[1] = (int)Math.round((green * 0xFF));
-		color[2] = (int)Math.round((blue * 0xFF));
+		
+		color[0] = (int)Math.round(((lower.getColor().getRed() * (1.0 - color_ratio)) + (upper.getColor().getRed() * color_ratio)) * 255.0);
+		color[1] = (int)Math.round(((lower.getColor().getGreen() * (1.0 - color_ratio)) + (upper.getColor().getGreen() * color_ratio)) * 255.0);
+		color[2] = (int)Math.round(((lower.getColor().getBlue() * (1.0 - color_ratio)) + (upper.getColor().getBlue() * color_ratio)) * 255.0);
 		color[3] = 0xFF;
 		//return new DemColor(red, green, blue, 0xFF);
 	}
 
 	@Override
-	public void getGradientColor(float elevation, float minElevation, float maxElevation, int[] color) 
+	public void getGradientColor(double elevation, double minElevation, double maxElevation, int[] color) 
 	{
 		if (units == UNITS_PERCENT) {
 			double ratio = (elevation - minElevation) / (maxElevation - minElevation);

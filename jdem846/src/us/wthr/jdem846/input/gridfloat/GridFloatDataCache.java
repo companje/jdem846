@@ -112,7 +112,7 @@ public class GridFloatDataCache extends DataCache
 		isDisposed = true;
 	}
 	
-	public float get(int position)
+	public double get(int position)
 	{
 		int offset = cacheOffset + (position * 4);
 		if (offset < 0 || offset+3 >= buffer.length)
@@ -125,7 +125,7 @@ public class GridFloatDataCache extends DataCache
 	}
 	
 	@Override
-	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	public void load(double[] valueBuffer, int start, int length) throws DataSourceException
 	{
 		if (inputData == null) {
 			try {

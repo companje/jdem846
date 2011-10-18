@@ -71,9 +71,9 @@ public class BilInt16DataCache extends DataCache
 		isDisposed = true;
 	}
 	
-	public float get(int position)
+	public double get(int position)
 	{
-		float elevation = 0;
+		double elevation = 0;
 		
 		int offset = (position * 2);
 		

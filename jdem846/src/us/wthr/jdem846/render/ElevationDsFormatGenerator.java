@@ -186,7 +186,7 @@ public class ElevationDsFormatGenerator extends RenderEngine
 			raster = new FloatRaster((int)numCols, (int)numRows);
 		}
 		
-		float elevation = 0;
+		double elevation = 0;
 		
 		try {
 			for (int row = fromRow; row <= toRow; row++) {
@@ -198,7 +198,7 @@ public class ElevationDsFormatGenerator extends RenderEngine
 					
 					
 					elevation = dataPackage.getElevation(row, column);
-					raster.set(dataCol, dataRow, elevation);
+					raster.set(dataCol, dataRow, (float)elevation);
 	
 				}
 				
@@ -214,15 +214,15 @@ public class ElevationDsFormatGenerator extends RenderEngine
 	{
 		DataPackage dataPackage = getModelContext().getDataPackage();
 		ElevationDatasetExchangeHeader header = new ElevationDatasetExchangeHeader();
-		header.setCellSize(dataPackage.getAvgXDim());
+		header.setCellSize((float)dataPackage.getAvgXDim());
 		header.setColumns(raster.getWidth());
 		header.setRows(raster.getHeight());
-		header.setMaxElevation(dataPackage.getMaxElevation());
-		header.setMinElevation(dataPackage.getMinElevation());
-		header.setxCellSize(dataPackage.getAvgXDim() / cellSizeRatio);
-		header.setyCellSize(dataPackage.getAvgYDim() / cellSizeRatio);
-		header.setxLowerLeft(dataPackage.getMinLongitude());
-		header.setyLowerLeft(dataPackage.getMinLatitude());
+		header.setMaxElevation((float)dataPackage.getMaxElevation());
+		header.setMinElevation((float)dataPackage.getMinElevation());
+		header.setxCellSize((float)dataPackage.getAvgXDim() / cellSizeRatio);
+		header.setyCellSize((float)dataPackage.getAvgYDim() / cellSizeRatio);
+		header.setxLowerLeft((float)dataPackage.getMinLongitude());
+		header.setyLowerLeft((float)dataPackage.getMinLatitude());
 		
 		log.info("Writing EDEF to " + writeTo);
 		ElevationDatasetExchangeWriter writer = new ElevationDatasetExchangeWriter(writeTo, header);

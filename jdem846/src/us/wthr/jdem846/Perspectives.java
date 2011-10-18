@@ -24,63 +24,66 @@ package us.wthr.jdem846;
  */
 public class Perspectives 
 {
-	
+	private double buffer0[] = {0.0, 0.0, 0.0};
+	private double buffer1[] = {0.0, 0.0, 0.0};
+	private double buffer2[] = {0.0, 0.0, 0.0};
 
-	public static void subtract(double[] pt0, double[] pt1, double[] usr)
+	
+	public Perspectives()
+	{
+		
+	}
+	
+	public  void subtract(double[] pt0, double[] pt1, double[] usr)
 	{
 		usr[0] = pt0[0] - pt1[0];
 		usr[1] = pt0[1] - pt1[1];
 		usr[2] = pt0[2] - pt1[2];
 	}
 
-	public static void crossProduct(double[] pt0, double[] pt1, double[] usr)
+	public  void crossProduct(double[] pt0, double[] pt1, double[] usr)
 	{
 		usr[0] = pt0[1] * pt1[2] - pt1[1] * pt0[2];
 		usr[1] = pt0[2] * pt1[0] - pt1[2] * pt0[0];
 		usr[2] = pt0[0] * pt1[1] - pt1[0] * pt0[1];
 	}
 
-	public static double dotProduct(double[] pt0, double[] pt1)
+	public  double dotProduct(double[] pt0, double[] pt1)
 	{
 		double dot = 0.0f;
 		
-		double no0[] = {0.0f, 0.0f, 0.0f};
-		double no1[] = {0.0f, 0.0f, 0.0f};
-		
-		normalize(pt0, no0);
-		normalize(pt1, no1);
+		normalize(pt0, buffer0);
+		normalize(pt1, buffer1);
 
-		dot = no0[0] * no1[0] + no0[1] * no1[1] + no0[2] * no1[2];
+		dot = buffer0[0] * buffer1[0] + buffer0[1] * buffer1[1] + buffer0[2] * buffer1[2];
 
 		return dot;
 	}
 
-	public static void normalize(double[] pt0, double[] no)
+	public  void normalize(double[] pt0, double[] no)
 	{
 		double len = (double) (Math.sqrt((pt0[0] * pt0[0]) + (pt0[1] * pt0[1]) + (pt0[2] * pt0[2])));
 		if (len == 0.0) 
-			len = 1.0f;
+			len = 1.0;
 
 		no[0] = pt0[0] / len;
 		no[1] = pt0[1] / len;
 		no[2] = pt0[2] / len;
 	}
 
-	public static void calcNormal(double[] pt0, double[] pt1, double[] pt2, double[] no)
+	public  void calcNormal(double[] pt0, double[] pt1, double[] pt2, double[] no)
 	{
 		if (pt2 == null) {
 			no[0] = pt0[1] * pt1[2] - pt1[2] * pt0[2];
 	        no[1] = pt0[0] * pt1[2] - pt1[0] * pt0[2];
 	        no[2] = pt0[0] * pt1[1] - pt1[0] * pt0[1];
 		} else {
-			double e0[] = {0.0f, 0.0f, 0.0f};
-			double e1[] = {0.0f, 0.0f, 0.0f};
-			double cp[] = {0.0f, 0.0f, 0.0f};
+			
+			subtract(pt0, pt1, buffer0);
+			subtract(pt1, pt2, buffer1);
+			crossProduct(buffer0, buffer1, buffer2);
+			normalize(buffer2, no);
 
-			subtract(pt0, pt1, e0);
-			subtract(pt1, pt2, e1);
-			crossProduct(e0, e1, cp);
-			normalize(cp, no);
 		}
 		
 	}

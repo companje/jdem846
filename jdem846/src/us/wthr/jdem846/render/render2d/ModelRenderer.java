@@ -56,6 +56,9 @@ public class ModelRenderer
 		int tileSize = modelDimensions.getTileSize();
 		long tileCount = modelDimensions.getTileCount();
 		
+		int tileOutputWidth = (int) modelDimensions.getTileOutputWidth();
+		int tileOutputHeight = (int) modelDimensions.getTileOutputHeight();
+		
 		//double scaledWidthPercent = (double) modelDimensions.getOutputWidth() / (double) dataCols;
 		//double scaledHeightPercent = (double) modelDimensions.getOutputHeight() / (double) dataRows;
 		
@@ -79,15 +82,18 @@ public class ModelRenderer
 					tileCanvas.reset();
 						
 					tileRenderer.renderTile(fromRow, toRow, fromCol, toCol);//, scaledWidthPercent, scaledHeightPercent);
+
+					DemCanvas scaled = tileCanvas.getScaled(tileOutputWidth, tileOutputHeight);
+					int overlayX = (int)Math.floor(tileCol * modelDimensions.getTileOutputWidth());
+					int overlayY = (int)Math.floor(tileRow * modelDimensions.getTileOutputHeight());
+					int scaledWidth = scaled.getWidth();
+					int scaledHeight = scaled.getHeight();
 					
-					DemCanvas scaled = tileCanvas.getScaled((int)modelDimensions.getTileOutputWidth(), (int) modelDimensions.getTileOutputHeight());
-					
-					outputCanvas.overlay(scaled.getImage(), (int)Math.floor(tileCol * modelDimensions.getTileOutputWidth()), (int)Math.floor(tileRow * modelDimensions.getTileOutputHeight()), scaled.getWidth(), scaled.getHeight());
-					
+					outputCanvas.overlay(scaled.getImage(), overlayX, overlayY, scaledWidth, scaledHeight);
+
 					tileNum++;
 					tileCol++;	
 					
-					// fireTileCompletionListeners
 					double pctComplete = (double)tileNum / (double)tileCount;
 					fireTileCompletionListeners(tileCanvas, outputCanvas, pctComplete);
 					

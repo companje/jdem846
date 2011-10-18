@@ -107,10 +107,10 @@ public class KmlLayerGenerator
 	{
 		int tempTileSize = modelContext.getModelOptions().getTileSize();
 		
-		int fromRow = Math.round(modelContext.getDataPackage().latitudeToRow((float)north));
-		int toRow = Math.round(modelContext.getDataPackage().latitudeToRow((float)south));
-		int fromCol = Math.round(modelContext.getDataPackage().longitudeToColumn((float)west));
-		int toCol = Math.round(modelContext.getDataPackage().longitudeToColumn((float)east));
+		int fromRow = (int) Math.round(modelContext.getDataPackage().latitudeToRow(north));
+		int toRow = (int) Math.round(modelContext.getDataPackage().latitudeToRow(south));
+		int fromCol = (int) Math.round(modelContext.getDataPackage().longitudeToColumn(west));
+		int toCol = (int) Math.round(modelContext.getDataPackage().longitudeToColumn(east));
 		
 		//getTilesIntersecting(double north, double south, double east, double west)
 		List<Tile> tilesIntersecting = griddedModel.getTilesIntersecting(north, south, east, west);

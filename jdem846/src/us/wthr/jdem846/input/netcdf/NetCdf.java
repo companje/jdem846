@@ -76,14 +76,14 @@ public class NetCdf extends DataSource
 	}
 
 	@Override
-	public float getElevation(int column) throws DataSourceException
+	public double getElevation(int column) throws DataSourceException
 	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public float getElevation(int row, int column) throws DataSourceException
+	public double getElevation(int row, int column) throws DataSourceException
 	{
 		// TODO Auto-generated method stub
 		return 0;
@@ -130,42 +130,42 @@ public class NetCdf extends DataSource
 	}
 
 	@Override
-	protected void setMaxElevation(float maxElevation)
+	protected void setMaxElevation(double maxElevation)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public float getMaxElevation()
+	public double getMaxElevation()
 	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	protected void setMinElevation(float minElevation)
+	protected void setMinElevation(double minElevation)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public float getMinElevation()
+	public double getMinElevation()
 	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	protected void setResolution(float resolution)
+	protected void setResolution(double resolution)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public float getResolution()
+	public double getResolution()
 	{
 		// TODO Auto-generated method stub
 		return 0;

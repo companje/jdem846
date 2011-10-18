@@ -90,7 +90,7 @@ public class GridAsciiDataCache extends DataCache
 	}
 	
 	@Override
-	public float get(int position) throws DataSourceException
+	public double get(int position) throws DataSourceException
 	{
 		int offset = (position * 4);
 		return ByteConversions.bytesToFloat(buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3], byteOrder);
@@ -98,7 +98,7 @@ public class GridAsciiDataCache extends DataCache
 	
 
 	@Override
-	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	public void load(double[] valueBuffer, int start, int length) throws DataSourceException
 	{
 		if (cacheFile == null) {
 			createBinaryCacheFile();

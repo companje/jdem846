@@ -71,11 +71,11 @@ public class StandardModelColoring implements ModelColoring
 	}
 
 	@Override
-	public void getGradientColor(float elevation, float min_elevation,
-			float max_elevation, int[] color)
+	public void getGradientColor(double elevation, double min_elevation,
+			double max_elevation, int[] color)
 	{
-		float effMin = 0;
-		float effMax = 0;
+		double effMin = 0;
+		double effMax = 0;
 		double ratio = 0;
 		
 		if (elevation <= 0) {

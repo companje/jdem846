@@ -138,6 +138,7 @@ public class LightingPreviewPanel extends Panel
 			modelOptions.setHeight(previewData.getHeader().getRows());
 			modelOptions.setRelativeLightIntensity(1.0);
 			modelOptions.setRelativeDarkIntensity(1.0);
+			modelOptions.setDoublePrecisionHillshading(false);
 			
 			dataPackage = new DataPackage();
 			dataPackage.addDataSource(previewData);

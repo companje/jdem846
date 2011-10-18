@@ -68,7 +68,7 @@ public abstract class BasicRenderEngine extends RenderEngine
 		dataSubset = getDataPackage().getDataSubset(tileBounds);
 	}
 
-	protected float getElevation(int row, int col) throws DataSourceException
+	protected double getElevation(int row, int col) throws DataSourceException
 	{
 		if (dataSubset != null) {
 			return dataSubset.getElevation(row, col);
@@ -97,9 +97,9 @@ public abstract class BasicRenderEngine extends RenderEngine
 		//float elevationMax = dataPackage.getMaxElevation();
 		//float elevationMin = dataPackage.getMinElevation();
 
-		float elevation_bl = getElevation(row, column);
-		float elevation_br = getElevation(row, column + gridSize);
-		float elevation_fl = getElevation(row + gridSize, column);
+		double elevation_bl = getElevation(row, column);
+		double elevation_br = getElevation(row, column + gridSize);
+		double elevation_fl = getElevation(row + gridSize, column);
 		//float elevation_fr = getElevation(row + gridSize, column + gridSize);
 
 		if (elevation_bl == DemConstants.ELEV_NO_DATA) {

@@ -27,7 +27,7 @@ public class NetCdfDataCache extends DataCache
 	}
 
 	@Override
-	public float get(int position) throws DataSourceException
+	public double get(int position) throws DataSourceException
 	{
 		// TODO Auto-generated method stub
 		return 0;

@@ -32,30 +32,30 @@ public class DataPackage
 {
 	private static Log log = Logging.getLog(DataPackage.class);
 	
-	private float avgXDim;
-	private float avgYDim;
+	private double avgXDim;
+	private double avgYDim;
 	
-	private float maxLongitude;
-	private float minLongitude;
-	private float longitudeWidth;
-	private float centerLongitude;
+	private double maxLongitude;
+	private double minLongitude;
+	private double longitudeWidth;
+	private double centerLongitude;
 	
-	private float maxLatitude;
-	private float minLatitude;
-	private float latitudeHeight;
-	private float centerLatitude;
+	private double maxLatitude;
+	private double minLatitude;
+	private double latitudeHeight;
+	private double centerLatitude;
 	
-	private float rows;
-	private float columns;
+	private double rows;
+	private double columns;
 	private int halfRows;
 	private int halfColumns;
 	
-	private float maxElevation;
-	private float minElevation;
+	private double maxElevation;
+	private double minElevation;
 	
-	private float noData;
+	private double noData;
 	
-	private float averageResolution;
+	private double averageResolution;
 	
 	private List<DataSource> dataSources = new LinkedList<DataSource>();
 	private List<DataBounds> dataBounds = new LinkedList<DataBounds>();
@@ -163,13 +163,13 @@ public class DataPackage
 					Box box = shapeBase.getBounds();
 					
 					if (box.getxMax() > maxLongitude)
-						maxLongitude = (float) box.getxMax();
+						maxLongitude = (double) box.getxMax();
 					if (box.getxMin() < minLongitude)
-						minLongitude = (float) box.getxMin();
+						minLongitude = (double) box.getxMin();
 					if (box.getyMax() > maxLatitude)
-						maxLatitude  = (float) box.getyMax();
+						maxLatitude  = (double) box.getyMax();
 					if (box.getyMin() < minLatitude)
-						minLatitude = (float) box.getyMin();
+						minLatitude = (double) box.getyMin();
 
 					shapeBase.close();
 				} catch (Exception ex) {
@@ -245,14 +245,14 @@ public class DataPackage
 			
 
 			for (DataSource dataSource : this.dataSources) {
-				float nrows = (float) dataSource.getHeader().getRows();
-				float ncols = (float) dataSource.getHeader().getColumns();
+				double nrows = (double) dataSource.getHeader().getRows();
+				double ncols = (double) dataSource.getHeader().getColumns();
 
-				float lon = dataSource.getHeader().getxLowerLeft();
-				float rightLon = lon + (ncols * avgXDim);
+				double lon = dataSource.getHeader().getxLowerLeft();
+				double rightLon = lon + (ncols * avgXDim);
 				
-				float bottomLat = dataSource.getHeader().getyLowerLeft();
-				float lat = bottomLat + (nrows * avgYDim);
+				double bottomLat = dataSource.getHeader().getyLowerLeft();
+				double lat = bottomLat + (nrows * avgYDim);
 
 				if (rightLon > maxLongitude)
 					maxLongitude = rightLon;
@@ -300,7 +300,7 @@ public class DataPackage
 		}
 	}
 	
-	public float getElevation(int row, int col) throws DataSourceException
+	public double getElevation(int row, int col) throws DataSourceException
 	{
 		int testCol = (col - halfColumns);
 		int testRow = (row - halfRows);
@@ -318,32 +318,32 @@ public class DataPackage
 		
 	}
 	
-	public float latitudeToRow(float latitude)
+	public double latitudeToRow(double latitude)
 	{
-		float latMinDiff = latitude - minLatitude;
-		float pctDiff = latMinDiff / latitudeHeight;
-		float row = Math.round(rows * (1.0 - pctDiff));
+		double latMinDiff = latitude - minLatitude;
+		double pctDiff = latMinDiff / latitudeHeight;
+		double row = Math.round(rows * (1.0 - pctDiff));
 		return row;
 	}
 	
 	
-	public float longitudeToColumn(float longitude)
+	public double longitudeToColumn(double longitude)
 	{
-		float lonMinDiff = longitude - minLongitude;
-		float pctDiff = lonMinDiff / longitudeWidth;
-		float col = Math.round(columns * pctDiff);
+		double lonMinDiff = longitude - minLongitude;
+		double pctDiff = lonMinDiff / longitudeWidth;
+		double col = Math.round(columns * pctDiff);
 		return col;
 	}
 	
-	public float rowToLatitude(float row)
+	public double rowToLatitude(double row)
 	{
-		float latAdj = row * avgYDim;
+		double latAdj = row * avgYDim;
 		return (maxLatitude - latAdj);
 	}
 	
-	public float columnToLongitude(float column)
+	public double columnToLongitude(double column)
 	{
-		float lonAdj = column * avgXDim;
+		double lonAdj = column * avgXDim;
 		return (minLongitude + lonAdj);
 
 	}
@@ -375,162 +375,162 @@ public class DataPackage
 		return subset;
 	}
 	
-	public float getAvgXDim()
+	public double getAvgXDim()
 	{
 		return avgXDim;
 	}
 
-	public void setAvgXDim(float avgXDim)
+	public void setAvgXDim(double avgXDim)
 	{
 		this.avgXDim = avgXDim;
 	}
 
-	public float getAvgYDim() 
+	public double getAvgYDim() 
 	{
 		return avgYDim;
 	}
 
-	public void setAvgYDim(float avgYDim) 
+	public void setAvgYDim(double avgYDim) 
 	{
 		this.avgYDim = avgYDim;
 	}
 
-	public float getMaxLongitude()
+	public double getMaxLongitude()
 	{
 		return maxLongitude;
 	}
 
-	public void setMaxLongitude(float maxLongitude) 
+	public void setMaxLongitude(double maxLongitude) 
 	{
 		this.maxLongitude = maxLongitude;
 	}
 
-	public float getMinLongitude()
+	public double getMinLongitude()
 	{
 		return minLongitude;
 	}
 
-	public void setMinLongitude(float minLongitude) 
+	public void setMinLongitude(double minLongitude) 
 	{
 		this.minLongitude = minLongitude;
 	}
 
-	public float getLongitudeWidth() 
+	public double getLongitudeWidth() 
 	{
 		return longitudeWidth;
 	}
 
-	public void setLongitudeWidth(float longitudeWidth) 
+	public void setLongitudeWidth(double longitudeWidth) 
 	{
 		this.longitudeWidth = longitudeWidth;
 	}
 
-	public float getCenterLongitude()
+	public double getCenterLongitude()
 	{
 		return centerLongitude;
 	}
 
-	public void setCenterLongitude(float centerLongitude) 
+	public void setCenterLongitude(double centerLongitude) 
 	{
 		this.centerLongitude = centerLongitude;
 	}
 
-	public float getMaxLatitude() 
+	public double getMaxLatitude() 
 	{
 		return maxLatitude;
 	}
 
-	public void setMaxLatitude(float maxLatitude) 
+	public void setMaxLatitude(double maxLatitude) 
 	{
 		this.maxLatitude = maxLatitude;
 	}
 
-	public float getMinLatitude() 
+	public double getMinLatitude() 
 	{
 		return minLatitude;
 	}
 
-	public void setMinLatitude(float minLatitude)
+	public void setMinLatitude(double minLatitude)
 	{
 		this.minLatitude = minLatitude;
 	}
 
-	public float getLatitudeHeight()
+	public double getLatitudeHeight()
 	{
 		return latitudeHeight;
 	}
 
-	public void setLatitudeHeight(float latitudeHeight) 
+	public void setLatitudeHeight(double latitudeHeight) 
 	{
 		this.latitudeHeight = latitudeHeight;
 	}
 
-	public float getCenterLatitude() 
+	public double getCenterLatitude() 
 	{
 		return centerLatitude;
 	}
 
-	public void setCenterLatitude(float centerLatitude)
+	public void setCenterLatitude(double centerLatitude)
 	{
 		this.centerLatitude = centerLatitude;
 	}
 
-	public float getRows() 
+	public double getRows() 
 	{
 		return rows;
 	}
 
-	public void setRows(float rows) 
+	public void setRows(double rows) 
 	{
 		this.rows = rows;
 	}
 
-	public float getColumns() 
+	public double getColumns() 
 	{
 		return columns;
 	}
 
-	public void setColumns(float columns) 
+	public void setColumns(double columns) 
 	{
 		this.columns = columns;
 	}
 
-	public float getMaxElevation() 
+	public double getMaxElevation() 
 	{
 		return maxElevation;
 	}
 
-	public void setMaxElevation(float maxElevation)
+	public void setMaxElevation(double maxElevation)
 	{
 		this.maxElevation = maxElevation;
 	}
 
-	public float getMinElevation() 
+	public double getMinElevation() 
 	{
 		return minElevation;
 	}
 
-	public void setMinElevation(float minElevation)
+	public void setMinElevation(double minElevation)
 	{
 		this.minElevation = minElevation;
 	}
 
-	public float getNoData() 
+	public double getNoData() 
 	{
 		return noData;
 	}
 
-	public void setNoData(float noData)
+	public void setNoData(double noData)
 	{
 		this.noData = noData;
 	}
 
-	public float getAverageResolution() 
+	public double getAverageResolution() 
 	{
 		return averageResolution;
 	}
 
-	public void setAverageResolution(float averageResolution) 
+	public void setAverageResolution(double averageResolution) 
 	{
 		this.averageResolution = averageResolution;
 	}

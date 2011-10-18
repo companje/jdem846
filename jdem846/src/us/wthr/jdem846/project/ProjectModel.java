@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
 
@@ -47,14 +48,31 @@ public class ProjectModel
 		optionsMap.put(key, value);
 	}
 	
+	public void setOption(ModelOptionNamesEnum key, String value)
+	{
+		setOption(key.optionName(), value);
+	}
+	
 	public void setOption(String key, Object value)
 	{
 		optionsMap.put(key, value.toString());
 	}
 	
+	public void setOption(ModelOptionNamesEnum key, Object value)
+	{
+		setOption(key.optionName(), value);
+	}
+	
+	
+	
 	public String getOption(String key)
 	{
 		return optionsMap.get(key);
+	}
+	
+	public String getOption(ModelOptionNamesEnum key)
+	{
+		return getOption(key.optionName());
 	}
 	
 	public int getIntegerOption(String key)
@@ -62,9 +80,19 @@ public class ProjectModel
 		return Integer.parseInt(getOption(key));
 	}
 	
+	public int getIntegerOption(ModelOptionNamesEnum key)
+	{
+		return getIntegerOption(key.optionName());
+	}
+	
 	public double getDoubleOption(String key)
 	{
 		return Double.parseDouble(getOption(key));
+	}
+	
+	public double getDoubleOption(ModelOptionNamesEnum key)
+	{
+		return getDoubleOption(key.optionName());
 	}
 	
 	public float getFloatOption(String key)
@@ -72,11 +100,20 @@ public class ProjectModel
 		return Float.parseFloat(getOption(key));
 	}
 	
+	public float getFloatOption(ModelOptionNamesEnum key)
+	{
+		return getFloatOption(key.optionName());
+	}
+	
 	public boolean getBooleanOption(String key)
 	{
 		return Boolean.parseBoolean(getOption(key));
 	}
-	
+
+	public boolean getBooleanOption(ModelOptionNamesEnum key)
+	{
+		return getBooleanOption(key.optionName());
+	}
 	
 	
 	public String removeOption(String key)
@@ -84,6 +121,10 @@ public class ProjectModel
 		return optionsMap.remove(key);
 	}
 	
+	public String removeOption(ModelOptionNamesEnum key)
+	{
+		return removeOption(key.optionName());
+	}
 	
 	public Set<String> getOptionKeys()
 	{

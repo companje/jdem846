@@ -44,6 +44,8 @@ public class Square implements Renderable
 	private boolean normalProvided = false;
 	private double dotProduct = 0;
 	
+	private Perspectives perspectives = new Perspectives();
+	
 	private BoundedArea boundedArea = null;
 	private Path2D.Double polygon = null;
 	
@@ -143,9 +145,9 @@ public class Square implements Renderable
 		p2Points[0] = vectors[2].getX(); p2Points[1] = vectors[2].getY(); p2Points[2] = vectors[2].getZ();
 
 		if (!this.normalProvided)
-			Perspectives.calcNormal(p0Points, p1Points, p2Points, normal);
+			perspectives.calcNormal(p0Points, p1Points, p2Points, normal);
 		
-		double dot = Perspectives.dotProduct(normal, lightSource);
+		double dot = perspectives.dotProduct(normal, lightSource);
 		double dotOrig = dot;
 		dot = Math.pow(dot, specularExponent);
 		

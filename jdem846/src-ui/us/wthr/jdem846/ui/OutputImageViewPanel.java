@@ -492,7 +492,7 @@ public class OutputImageViewPanel extends JdemPanel
 		String strMouseLatitude = formatter.format(mouseLatitude);
 		String strMouseLongitude = formatter.format(mouseLongitude);;
 		
-		float elevation = 0;
+		double elevation = 0;
 		try {
 			elevation = dataPackage.getElevation(trueY, trueX);
 		} catch (DataSourceException ex) {
