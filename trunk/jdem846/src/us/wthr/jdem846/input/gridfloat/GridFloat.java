@@ -35,10 +35,10 @@ public class GridFloat extends DataSource
 	
 	private int bits = 32;
 	private int totalRowBytes;
-	private float maxDifference;
-	private float maxElevation;
-    private float minElevation;
-    private float resolution;
+	private double maxDifference;
+	private double maxElevation;
+    private double minElevation;
+    private double resolution;
     private int maxRow;
     private int maxCol;
     private String filePath;
@@ -78,7 +78,7 @@ public class GridFloat extends DataSource
 	}
 
 	@Override
-	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	public void load(double[] valueBuffer, int start, int length) throws DataSourceException
 	{
 		cache.load(valueBuffer, start, length);
 	}
@@ -110,7 +110,7 @@ public class GridFloat extends DataSource
 	}
 
 	
-	private float __get(int row, int col)
+	private double __get(int row, int col)
 	{
 		
 		//if (col < 0 || col > header.getColumns() || row < 0 || row > header.getRows())
@@ -132,14 +132,14 @@ public class GridFloat extends DataSource
 		
 	}
 
-	public float getElevation(int col)
+	public double getElevation(int col)
 	{
 		return this.getElevation(cachedRow, col);
 	}
 
-	public float getElevation(int row, int column)
+	public double getElevation(int row, int column)
 	{
-		float elevation = this.__get(row, column);
+		double elevation = this.__get(row, column);
 		if (elevation == header.getNoData())
 			elevation = DemConstants.ELEV_NO_DATA;
 
@@ -181,42 +181,42 @@ public class GridFloat extends DataSource
 		this.totalRowBytes = totalRowBytes;
 	}
 
-	public float getMaxDifference() 
+	public double getMaxDifference() 
 	{
 		return maxDifference;
 	}
 
-	public void setMaxDifference(float maxDifference) 
+	public void setMaxDifference(double maxDifference) 
 	{
 		this.maxDifference = maxDifference;
 	}
 
-	public float getMaxElevation() 
+	public double getMaxElevation() 
 	{
 		return maxElevation;
 	}
 
-	public void setMaxElevation(float maxElevation) 
+	public void setMaxElevation(double maxElevation) 
 	{
 		this.maxElevation = maxElevation;
 	}
 
-	public float getMinElevation() 
+	public double getMinElevation() 
 	{
 		return minElevation;
 	}
 
-	public void setMinElevation(float minElevation) 
+	public void setMinElevation(double minElevation) 
 	{
 		this.minElevation = minElevation;
 	}
 
-	public float getResolution()
+	public double getResolution()
 	{
 		return resolution;
 	}
 
-	public void setResolution(float resolution)
+	public void setResolution(double resolution)
 	{
 		this.resolution = resolution;
 	}

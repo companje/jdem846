@@ -31,6 +31,8 @@ public class Triangle implements Renderable
 	private double[] normal = {0, 0, 0};
 	private boolean normalProvided = false;
 	
+	private Perspectives perspectives = new Perspectives();
+	
 	private BoundedArea boundedArea = null;
 	private Path2D.Double polygon = null;
 	
@@ -139,9 +141,9 @@ public class Triangle implements Renderable
 		double p2Points[] = {p2.getX(), p2.getY(), p2.getZ()};;
 		
 		if (!this.normalProvided)
-			Perspectives.calcNormal(p0Points, p1Points, p2Points, normal);
+			perspectives.calcNormal(p0Points, p1Points, p2Points, normal);
 		
-		double dot = Perspectives.dotProduct(normal, lightSource);
+		double dot = perspectives.dotProduct(normal, lightSource);
 		dot = Math.pow(dot, specularExponent);
 
 		//ColorUtil.adjustBrightness(dot, setToColor);

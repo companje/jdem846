@@ -31,7 +31,7 @@ import us.wthr.jdem846.input.bil.BilInt16;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
-/** Elevation storage format based on GridFloat with a raster of floating-point values and embedded projection
+/** Elevation storage format based on GridFloat with a raster of doubleing-point values and embedded projection
  * and meta data information. The format is designed for simple reading & writing and does not require
  * any additional accompanying files. The specification is free & open.
  * 
@@ -47,9 +47,9 @@ public class ElevationDatasetExchange extends DataSource
 	
 	private int bits = 32;
 	private int totalRowBytes;
-	private float maxElevation = -50000;
-    private float minElevation = 50000;;
-    private float resolution;
+	private double maxElevation = -50000;
+    private double minElevation = 50000;;
+    private double resolution;
     private int maxRow;
     private int maxCol;
     private String filePath;
@@ -134,7 +134,7 @@ public class ElevationDatasetExchange extends DataSource
 		cache.unload();
 	}
 	
-	private float __get(int row, int col)
+	private double __get(int row, int col)
 	{
 		if (col < 0 || col > header.getColumns() || row < 0 || row > header.getRows())
 			return DemConstants.ELEV_NO_DATA;
@@ -147,18 +147,18 @@ public class ElevationDatasetExchange extends DataSource
 			col = header.getColumns() + col;
 		}
 	
-		float elevation = cache.get(col);
+		double elevation = cache.get(col);
 		return elevation;
 	}
 
-	public float getElevation(int col)
+	public double getElevation(int col)
 	{
 		return this.getElevation(cachedRow, col);
 	}
 
-	public float getElevation(int row, int column)
+	public double getElevation(int row, int column)
 	{
-		float elevation = this.__get(row, column);
+		double elevation = this.__get(row, column);
 		if (elevation == header.getNoData())
 			elevation = DemConstants.ELEV_NO_DATA;
 
@@ -209,42 +209,42 @@ public class ElevationDatasetExchange extends DataSource
 
 
 
-	public float getMaxElevation()
+	public double getMaxElevation()
 	{
 		return maxElevation;
 	}
 
 
 
-	public void setMaxElevation(float maxElevation)
+	public void setMaxElevation(double maxElevation)
 	{
 		this.maxElevation = maxElevation;
 	}
 
 
 
-	public float getMinElevation()
+	public double getMinElevation()
 	{
 		return minElevation;
 	}
 
 
 
-	public void setMinElevation(float minElevation)
+	public void setMinElevation(double minElevation)
 	{
 		this.minElevation = minElevation;
 	}
 
 
 
-	public float getResolution()
+	public double getResolution()
 	{
 		return resolution;
 	}
 
 
 
-	public void setResolution(float resolution)
+	public void setResolution(double resolution)
 	{
 		this.resolution = resolution;
 	}

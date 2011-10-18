@@ -22,7 +22,7 @@ public interface ModelColoring
 	public GradientLoader getGradientLoader();
 	public void getColorByPercent(double ratio, int[] color);
 	public void getColorByMeters(double meters, int[] color);
-	public void getGradientColor(float elevation, float min_elevation, float max_elevation, int[] color);
+	public void getGradientColor(double elevation, double min_elevation, double max_elevation, int[] color);
 
 	public double getMinimumSupported();
 	public double getMaximumSupported();

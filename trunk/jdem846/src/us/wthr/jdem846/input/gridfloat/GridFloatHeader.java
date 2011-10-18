@@ -36,10 +36,10 @@ public class GridFloatHeader implements DataSourceHeader
 	
 	private int columns = 0;
 	private int rows = 0;
-	private float xLowerLeft = 0;
-	private float yLowerLeft = 0;
-	private float cellSize = 0;
-	private float noData = 0;
+	private double xLowerLeft = 0;
+	private double yLowerLeft = 0;
+	private double cellSize = 0;
+	private double noData = 0;
 	private ByteOrder byteOrder = ByteOrder.LSBFIRST;
 	
 	
@@ -133,48 +133,48 @@ public class GridFloatHeader implements DataSourceHeader
 	}
 
 
-	public float getxLowerLeft() 
+	public double getxLowerLeft() 
 	{
 		return xLowerLeft;
 	}
 
 
-	public void setxLowerLeft(float xLowerLeft)
+	public void setxLowerLeft(double xLowerLeft)
 	{
 		this.xLowerLeft = xLowerLeft;
 	}
 
 
-	public float getyLowerLeft()
+	public double getyLowerLeft()
 	{
 		return yLowerLeft;
 	}
 
 
-	public void setyLowerLeft(float yLowerLeft) 
+	public void setyLowerLeft(double yLowerLeft) 
 	{
 		this.yLowerLeft = yLowerLeft;
 	}
 
 
-	public float getCellSize() 
+	public double getCellSize() 
 	{
 		return cellSize;
 	}
 
 
-	public void setCellSize(float cellSize) 
+	public void setCellSize(double cellSize) 
 	{
 		this.cellSize = cellSize;
 	}
 
 
-	public float getNoData() {
+	public double getNoData() {
 		return noData;
 	}
 
 
-	public void setNoData(float noData) 
+	public void setNoData(double noData) 
 	{
 		this.noData = noData;
 	}

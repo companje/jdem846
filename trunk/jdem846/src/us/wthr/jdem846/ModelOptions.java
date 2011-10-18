@@ -16,7 +16,15 @@
 
 package us.wthr.jdem846;
 
+import java.awt.Color;
+import java.security.InvalidParameterException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import us.wthr.jdem846.project.ProjectModel;
+import us.wthr.jdem846.util.ColorSerializationUtil;
+import us.wthr.jdem846.util.NumberFormattingUtil;
 
 /** Options for model processing.
  * 
@@ -28,36 +36,11 @@ public class ModelOptions
 	public static final int SPOT_EXPONENT_MINIMUM = 1;
 	public static final int SPOT_EXPONENT_MAXIMUM = 5;
 	
-	public static final String OPTION_ENGINE = "us.wthr.jdem846.modelOptions.engine";
-	public static final String OPTION_GRADIENT_LEVELS = "us.wthr.jdem846.modelOptions.gradientLevels";
-	public static final String OPTION_WRITE_TO = "us.wthr.jdem846.modelOptions.writeTo";
-	public static final String OPTION_WIDTH = "us.wthr.jdem846.modelOptions.width";
-	public static final String OPTION_HEIGHT = "us.wthr.jdem846.modelOptions.height";
-	public static final String OPTION_GRID_SIZE = "us.wthr.jdem846.modelOptions.gridSize";
-	public static final String OPTION_BACKGROUND_COLOR = "us.wthr.jdem846.modelOptions.backgroundColor";
-	public static final String OPTION_HILLSHADING = "us.wthr.jdem846.modelOptions.hillShading";
-	public static final String OPTION_HILLSHADE_TYPE = "us.wthr.jdem846.modelOptions.hillShadeType";
-	public static final String OPTION_COLORING_TYPE = "us.wthr.jdem846.modelOptions.coloringType";
-	public static final String OPTION_LIGHTING_AZIMUTH = "us.wthr.jdem846.modelOptions.lightingAzimuth";
-	public static final String OPTION_LIGHTING_ELEVATION = "us.wthr.jdem846.modelOptions.lightingElevation";
-	public static final String OPTION_TILE_SIZE = "us.wthr.jdem846.modelOptions.tileSize";
-	public static final String OPTION_LIGHTING_MULTIPLE = "us.wthr.jdem846.modelOptions.lightingMultiple";
-	public static final String OPTION_SPOT_EXPONENT = "us.wthr.jdem846.modelOptions.spotExponent";
-	public static final String OPTION_ELEVATION_MULTIPLE = "us.wthr.jdem846.modelOptions.elevationMultiple";
+
 	
-	public static final String OPTION_RELATIVE_LIGHT_INTENSITY = "us.wthr.jdem846.modelOptions.relativeLightIntensity";
-	public static final String OPTION_RELATIVE_DARK_INTENSITY = "us.wthr.jdem846.modelOptions.relativeDarkIntensity";
+	private Map<String, String> optionsMap = new HashMap<String, String>();
 	
-	public static final String OPTION_PROJECTION_ROTATE_X = "us.wthr.jdem846.modelOptions.projection.rotateX";
-	public static final String OPTION_PROJECTION_ROTATE_Y = "us.wthr.jdem846.modelOptions.projection.rotateY";
-	public static final String OPTION_PROJECTION_ROTATE_Z = "us.wthr.jdem846.modelOptions.projection.rotateZ";
-	public static final String OPTION_PROJECTION_SHIFT_X = "us.wthr.jdem846.modelOptions.projection.shiftX";
-	public static final String OPTION_PROJECTION_SHIFT_Y = "us.wthr.jdem846.modelOptions.projection.shiftY";
-	public static final String OPTION_PROJECTION_SHIFT_Z = "us.wthr.jdem846.modelOptions.projection.shiftZ";
-	
-	public static final String OPTION_PRECACHE_STRATEGY = "us.wthr.jdem846.modelOptions.precacheStrategy";
-	public static final String OPTION_ANTIALIASED = "us.wthr.jdem846.modelOptions.antialiased";
-	
+	/*
 	private String engine = "dem2d-gen";
 	private boolean hillShading = true;
 	private int hillShadeType = DemConstants.HILLSHADING_COMBINED;
@@ -77,10 +60,12 @@ public class ModelOptions
 	
 	private double relativeLightIntensity = 1.0;
 	private double relativeDarkIntensity = 1.0;
+	*/
 	
 	/** Sets the spot exponent for the intensity distribution of the lighting. 
 	 * Should be a value between 0.4 and 10.0 (default: 1.0)
 	 */
+	/*
 	private int spotExponent = 1;
 	
 	private String gradientLevels = null;
@@ -91,12 +76,26 @@ public class ModelOptions
 
 	private String precacheStrategy;
 	private boolean antialiased;
+	*/
+	
+	private Projection projection = new Projection();
+	private String writeTo = null;
 	
 	public ModelOptions()
 	{
 		//JDem846Properties properties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
 		///JDem846Properties properties = JDem846Properties.getInstance();
 		
+		for (ModelOptionNamesEnum optionName : ModelOptionNamesEnum.values()) {
+			String property = JDem846Properties.getProperty(optionName.optionName());
+			if (property != null) {
+				setOption(optionName.optionName(), property);
+			}
+		}
+		
+		
+		
+		/*
 		String property = null;
 		
 		property = JDem846Properties.getProperty(ModelOptions.OPTION_ENGINE);
@@ -236,10 +235,141 @@ public class ModelOptions
 		if (property != null) {
 			projection.setShiftZ(Double.parseDouble(property));
 		}
+		*/
 		
 		
 		
+	}
+	
+	public Set<String> getOptionNames()
+	{
+		return optionsMap.keySet();
+	}
+	
+	public void setOption(String name, Object value)
+	{
+		String sValue = null;
 		
+		if (value == null) {
+			return;
+		}
+		
+		if (value instanceof String) {
+			sValue = (String) value;
+		} else if (value instanceof Integer ||
+					value instanceof Double ||
+					value instanceof Long ||
+					value instanceof Float) {
+			sValue = NumberFormattingUtil.format(value);
+		} else if (value instanceof Boolean){
+			sValue = Boolean.toString((Boolean)value);
+		} else {
+			throw new InvalidParameterException("Invalid parameter type: " + value.getClass().getName());
+		}
+		
+		optionsMap.put(name, sValue);
+	}
+	
+	public void setOption(ModelOptionNamesEnum name, Object value)
+	{
+		setOption(name.optionName(), value);
+	}
+	
+
+	
+	public String getOption(String name)
+	{
+		return optionsMap.get(name);
+	}
+	
+	public String getOption(ModelOptionNamesEnum name)
+	{
+		return getOption(name.optionName());
+	}
+	
+	public boolean hasOption(String name)
+	{
+		return (optionsMap.containsKey(name));
+	}
+	
+	public boolean hasOption(ModelOptionNamesEnum name)
+	{
+		return hasOption(name.optionName());
+	}
+	
+	public String removeOption(String name)
+	{
+		return optionsMap.remove(name);
+	}
+	
+	public String removeOption(ModelOptionNamesEnum name)
+	{
+		return removeOption(name.optionName());
+	}
+	
+	public boolean getBooleanOption(String name)
+	{
+		if (hasOption(name))
+			return Boolean.parseBoolean(getOption(name));
+		else
+			return false;
+	}
+	
+	public boolean getBooleanOption(ModelOptionNamesEnum name)
+	{
+		return getBooleanOption(name.optionName());
+	}
+	
+	public int getIntegerOption(String name)
+	{
+		if (hasOption(name))
+			return Integer.parseInt(getOption(name));
+		else
+			return 0;
+	}
+	
+	public int getIntegerOption(ModelOptionNamesEnum name)
+	{
+		return getIntegerOption(name.optionName());
+	}
+	
+	public double getDoubleOption(String name)
+	{
+		if (hasOption(name))
+			return Double.parseDouble(getOption(name));
+		else
+			return 0.0;
+	}
+	
+	public double getDoubleOption(ModelOptionNamesEnum name)
+	{
+		return getDoubleOption(name.optionName());
+	}
+	
+	public float getFloatOption(String name)
+	{
+		if (hasOption(name))
+			return Float.parseFloat(getOption(name));
+		else
+			return 0.0f;
+	}
+	
+	public float getFloatOption(ModelOptionNamesEnum name)
+	{
+		return getFloatOption(name.optionName());
+	}
+	
+	public long getLongOption(String name)
+	{
+		if (hasOption(name))
+			return Long.parseLong(getOption(name));
+		else
+			return 0;
+	}
+	
+	public long getLongOption(ModelOptionNamesEnum name)
+	{
+		return getLongOption(name.optionName());
 	}
 
 	
@@ -249,35 +379,17 @@ public class ModelOptions
 	 */
 	public void syncToProjectModel(ProjectModel projectModel)
 	{
-		projectModel.setOption(OPTION_ENGINE, this.getEngine());
-		projectModel.setOption(OPTION_GRADIENT_LEVELS, this.getGradientLevels());
-		projectModel.setOption(OPTION_WRITE_TO, this.getWriteTo());
-		projectModel.setOption(OPTION_WIDTH, this.getWidth());
-		projectModel.setOption(OPTION_GRID_SIZE, this.getGridSize());
-		projectModel.setOption(OPTION_HEIGHT, this.getHeight());
-		projectModel.setOption(OPTION_ELEVATION_MULTIPLE, this.getElevationMultiple());
-		projectModel.setOption(OPTION_BACKGROUND_COLOR, this.getBackgroundColor());
-		projectModel.setOption(OPTION_HILLSHADING, this.isHillShading());
-		projectModel.setOption(OPTION_HILLSHADE_TYPE, this.getHillShadeType());
-		projectModel.setOption(OPTION_COLORING_TYPE, this.getColoringType());
-		projectModel.setOption(OPTION_LIGHTING_AZIMUTH, this.getLightingAzimuth());
-		projectModel.setOption(OPTION_LIGHTING_ELEVATION, this.getLightingElevation());
-		projectModel.setOption(OPTION_TILE_SIZE, this.getTileSize());
-		projectModel.setOption(OPTION_LIGHTING_MULTIPLE, this.getLightingMultiple());
-		projectModel.setOption(OPTION_SPOT_EXPONENT, this.getSpotExponent());
-		projectModel.setOption(OPTION_RELATIVE_LIGHT_INTENSITY, this.getRelativeLightIntensity());
-		projectModel.setOption(OPTION_RELATIVE_DARK_INTENSITY, this.getRelativeDarkIntensity());
+		for (String optionName : getOptionNames()) {
+			projectModel.setOption(optionName, optionsMap.get(optionName).toString());
+		}
+
+		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_ROTATE_X, projection.getRotateX());
+		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Y, projection.getRotateY());
+		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Z, projection.getRotateZ());
 		
-		projectModel.setOption(OPTION_PRECACHE_STRATEGY, this.getPrecacheStrategy());
-		projectModel.setOption(OPTION_ANTIALIASED, this.isAntialiased());
-		
-		projectModel.setOption(OPTION_PROJECTION_ROTATE_X, projection.getRotateX());
-		projectModel.setOption(OPTION_PROJECTION_ROTATE_Y, projection.getRotateY());
-		projectModel.setOption(OPTION_PROJECTION_ROTATE_Z, projection.getRotateZ());
-		
-		projectModel.setOption(OPTION_PROJECTION_SHIFT_X, projection.getShiftX());
-		projectModel.setOption(OPTION_PROJECTION_SHIFT_Y, projection.getShiftY());
-		projectModel.setOption(OPTION_PROJECTION_SHIFT_Z, projection.getShiftZ());
+		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_SHIFT_X, projection.getShiftX());
+		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Y, projection.getShiftY());
+		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Z, projection.getShiftZ());
 	}
 	
 	/** Synchronizes values from a ProjectModel object to this object.
@@ -287,35 +399,19 @@ public class ModelOptions
 	public void syncFromProjectModel(ProjectModel projectModel)
 	{
 		
-		this.setEngine(projectModel.getOption(OPTION_ENGINE));
-		this.setGradientLevels(projectModel.getOption(OPTION_GRADIENT_LEVELS));
-		this.setWriteTo(projectModel.getOption(OPTION_WRITE_TO));
-		this.setWidth(projectModel.getIntegerOption(OPTION_WIDTH));
-		this.setHeight(projectModel.getIntegerOption(OPTION_HEIGHT));
-		this.setGridSize(projectModel.getIntegerOption(OPTION_GRID_SIZE));
-		this.setElevationMultiple(projectModel.getDoubleOption(OPTION_ELEVATION_MULTIPLE));
-		this.setBackgroundColor(projectModel.getOption(OPTION_BACKGROUND_COLOR));
-		this.setHillShading(projectModel.getBooleanOption(OPTION_HILLSHADING));
-		this.setHillShadeType(projectModel.getIntegerOption(OPTION_HILLSHADE_TYPE));
-		this.setColoringType(projectModel.getOption(OPTION_COLORING_TYPE));
-		this.setLightingAzimuth(projectModel.getDoubleOption(OPTION_LIGHTING_AZIMUTH));
-		this.setLightingElevation(projectModel.getDoubleOption(OPTION_LIGHTING_ELEVATION));
-		this.setTileSize(projectModel.getIntegerOption(OPTION_TILE_SIZE));
-		this.setLightingMultiple(projectModel.getDoubleOption(OPTION_LIGHTING_MULTIPLE));
-		this.setSpotExponent(projectModel.getIntegerOption(OPTION_SPOT_EXPONENT));
-		this.setPrecacheStrategy(projectModel.getOption(OPTION_PRECACHE_STRATEGY));
-		this.setAntialiased(projectModel.getBooleanOption(OPTION_ANTIALIASED));
+		for (String optionName : projectModel.getOptionKeys()) {
+			this.setOption(optionName, projectModel.getOption(optionName));
+		}
 		
-		this.setRelativeLightIntensity(projectModel.getDoubleOption(OPTION_RELATIVE_LIGHT_INTENSITY));
-		this.setRelativeDarkIntensity(projectModel.getDoubleOption(OPTION_RELATIVE_DARK_INTENSITY));
 		
-		this.projection.setRotateX(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_X));
-		this.projection.setRotateY(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_Y));
-		this.projection.setRotateZ(projectModel.getDoubleOption(OPTION_PROJECTION_ROTATE_Z));
+
+		this.projection.setRotateX(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_X));
+		this.projection.setRotateY(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Y));
+		this.projection.setRotateZ(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Z));
 		
-		this.projection.setShiftX(projectModel.getDoubleOption(OPTION_PROJECTION_SHIFT_X));
-		this.projection.setShiftY(projectModel.getDoubleOption(OPTION_PROJECTION_SHIFT_Y));
-		this.projection.setShiftZ(projectModel.getDoubleOption(OPTION_PROJECTION_SHIFT_Z));
+		this.projection.setShiftX(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_X));
+		this.projection.setShiftY(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Y));
+		this.projection.setShiftZ(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Z));
 		
 		
 	}
@@ -323,55 +419,55 @@ public class ModelOptions
 	
 	public String getEngine() 
 	{
-		return engine;
+		return getOption(ModelOptionNamesEnum.ENGINE);
 	}
 
 	public void setEngine(String engine)
 	{
-		this.engine = engine;
+		setOption(ModelOptionNamesEnum.ENGINE, engine);
 	}
 
 
 	public double getLightingMultiple() 
 	{
-		return lightingMultiple;
+		return getDoubleOption(ModelOptionNamesEnum.LIGHTING_MULTIPLE);
 	}
 
 
 	public void setLightingMultiple(double lightingMultiple)
 	{
-		this.lightingMultiple = lightingMultiple;
+		setOption(ModelOptionNamesEnum.LIGHTING_MULTIPLE, lightingMultiple);
 	}
 
 
 	public double getRelativeLightIntensity()
 	{
-		return relativeLightIntensity;
+		return getDoubleOption(ModelOptionNamesEnum.RELATIVE_LIGHT_INTENSITY);
 	}
 
 
 	public void setRelativeLightIntensity(double relativeLightIntensity)
 	{
-		this.relativeLightIntensity = relativeLightIntensity;
+		setOption(ModelOptionNamesEnum.RELATIVE_LIGHT_INTENSITY, relativeLightIntensity);
 	}
 
 
 	public double getRelativeDarkIntensity()
 	{
-		return relativeDarkIntensity;
+		return getDoubleOption(ModelOptionNamesEnum.RELATIVE_DARK_INTENSITY);
 	}
 
 
 	public void setRelativeDarkIntensity(double relativeDarkIntensity)
 	{
-		this.relativeDarkIntensity = relativeDarkIntensity;
+		setOption(ModelOptionNamesEnum.RELATIVE_DARK_INTENSITY, relativeDarkIntensity);
 	}
 
 	
 	
 	public int getSpotExponent()
 	{
-		return spotExponent;
+		return getIntegerOption(ModelOptionNamesEnum.SPOT_EXPONENT);
 	}
 	
 	/** Sets the spot exponent for the intensity distribution of the lighting. 
@@ -380,23 +476,23 @@ public class ModelOptions
 	 */
 	public void setSpotExponent(int spotExponent)
 	{
-		this.spotExponent = spotExponent;
+		setOption(ModelOptionNamesEnum.SPOT_EXPONENT, spotExponent);
 	}
 
 	public double getLightingAzimuth()
 	{
-		return lightingAzimuth;
+		return getDoubleOption(ModelOptionNamesEnum.LIGHTING_AZIMUTH);
 	}
 
 
 	public void setLightingAzimuth(double lightingAzimuth)
 	{
-		this.lightingAzimuth = lightingAzimuth;
+		setOption(ModelOptionNamesEnum.LIGHTING_AZIMUTH, lightingAzimuth);
 	}
 
 	public double getLightingElevation()
 	{
-		return lightingElevation;
+		return getDoubleOption(ModelOptionNamesEnum.LIGHTING_ELEVATION);
 	}
 
 
@@ -404,7 +500,7 @@ public class ModelOptions
 
 	public void setLightingElevation(double lightingElevation)
 	{
-		this.lightingElevation = lightingElevation;
+		setOption(ModelOptionNamesEnum.LIGHTING_ELEVATION, lightingElevation);
 	}
 
 
@@ -412,12 +508,12 @@ public class ModelOptions
 
 	public int getTileSize() 
 	{
-		return tileSize;
+		return getIntegerOption(ModelOptionNamesEnum.TILE_SIZE);
 	}
 
 	public void setTileSize(int tileSize) 
 	{
-		this.tileSize = tileSize;
+		setOption(ModelOptionNamesEnum.TILE_SIZE, tileSize);
 	}
 
 	
@@ -425,136 +521,156 @@ public class ModelOptions
 
 	public String getBackgroundColor()
 	{
-		return backgroundColor;
+		return getOption(ModelOptionNamesEnum.BACKGROUND_COLOR);
 	}
 
-
+	public Color getBackgroundColorInstance()
+	{
+		String colorString = getBackgroundColor();
+		if (colorString != null) {
+			return ColorSerializationUtil.stringToColor(colorString);
+		} else {
+			return null;
+		}
+	}
 
 
 	public void setBackgroundColor(String backgroundColor)
 	{
-		this.backgroundColor = backgroundColor;
+		setOption(ModelOptionNamesEnum.BACKGROUND_COLOR, backgroundColor);
 	}
 
-
+	public void setBackgroundColor(Color backgroundColor)
+	{
+		setOption(ModelOptionNamesEnum.BACKGROUND_COLOR, ColorSerializationUtil.colorToString(backgroundColor));
+	}
 
 
 	public boolean isHillShading() 
 	{
-		return hillShading;
+		return getBooleanOption(ModelOptionNamesEnum.HILLSHADING);
 	}
 
 
 	public void setHillShading(boolean hillShading) 
 	{
-		this.hillShading = hillShading;
+		setOption(ModelOptionNamesEnum.HILLSHADING, hillShading);
 	}
 
 
 	public int getHillShadeType()
 	{
-		return hillShadeType;
+		return getIntegerOption(ModelOptionNamesEnum.HILLSHADE_TYPE);
 	}
 
 
 	public void setHillShadeType(int hillShadeType) 
 	{
-		this.hillShadeType = hillShadeType;
+		setOption(ModelOptionNamesEnum.HILLSHADE_TYPE, hillShadeType);
 	}
 
+	public boolean getDoublePrecisionHillshading()
+	{
+		return getBooleanOption(ModelOptionNamesEnum.DOUBLE_PRECISION_HILLSHADING);
+	}
 
+	public void setDoublePrecisionHillshading(boolean doublePrecisionHillshading)
+	{
+		setOption(ModelOptionNamesEnum.DOUBLE_PRECISION_HILLSHADING, doublePrecisionHillshading);
+	}
+	
 	public String getColoringType()
 	{
-		return coloringType;
+		return getOption(ModelOptionNamesEnum.COLORING_TYPE);
 	}
 
 
 	public void setColoringType(String coloringType)
 	{
-		this.coloringType = coloringType;
+		setOption(ModelOptionNamesEnum.COLORING_TYPE, coloringType);
 	}
 
 
 	public int getWidth() 
 	{
-		return width;
+		return getIntegerOption(ModelOptionNamesEnum.WIDTH);
 	}
 
 
 	public void setWidth(int width) 
 	{
-		this.width = width;
+		setOption(ModelOptionNamesEnum.WIDTH, width);
 	}
 
 
 	public int getHeight()
 	{
-		return height;
+		return getIntegerOption(ModelOptionNamesEnum.HEIGHT);
 	}
 
 
 	public void setHeight(int height) 
 	{
-		this.height = height;
+		setOption(ModelOptionNamesEnum.HEIGHT, height);
 	}
 
 
 	public int getGridSize()
 	{
-		return gridSize;
+		return getIntegerOption(ModelOptionNamesEnum.GRID_SIZE);
 	}
 
 	public void setGridSize(int gridSize)
 	{
-		this.gridSize = gridSize;
+		setOption(ModelOptionNamesEnum.GRID_SIZE, gridSize);
 	}
 
 	public double getElevationMultiple()
 	{
-		return elevationMultiple;
+		return getDoubleOption(ModelOptionNamesEnum.ELEVATION_MULTIPLE);
 	}
 
 
 
 	public void setElevationMultiple(double elevationMultiple)
 	{
-		this.elevationMultiple = elevationMultiple;
+		setOption(ModelOptionNamesEnum.ELEVATION_MULTIPLE, elevationMultiple);
 	}
 
 
 
 	public String getGradientLevels()
 	{
-		return gradientLevels;
+		return getOption(ModelOptionNamesEnum.GRADIENT_LEVELS);
 	}
 
 	public void setGradientLevels(String gradientLevels)
 	{
-		this.gradientLevels = gradientLevels;
+		setOption(ModelOptionNamesEnum.GRADIENT_LEVELS, gradientLevels);
 	}
 
 
 	public String getPrecacheStrategy() 
 	{
-		return precacheStrategy;
+		return getOption(ModelOptionNamesEnum.PRECACHE_STRATEGY);
 	}
 
 
 	public void setPrecacheStrategy(String precacheStrategy) 
 	{
-		this.precacheStrategy = precacheStrategy;
+		setOption(ModelOptionNamesEnum.PRECACHE_STRATEGY, precacheStrategy);
 	}
 
 
 	public boolean isAntialiased() 
 	{
-		return antialiased;
+		return getBooleanOption(ModelOptionNamesEnum.ANTIALIASED);
 	}
 
 
 	public void setAntialiased(boolean antialiased) 
 	{
-		this.antialiased = antialiased;
+		setOption(ModelOptionNamesEnum.ANTIALIASED, antialiased);
 	}
 
 
@@ -590,28 +706,15 @@ public class ModelOptions
 	{
 		ModelOptions clone = new ModelOptions();
 		
-		clone.engine = this.engine;
-		clone.hillShading = this.hillShading;
-		clone.hillShadeType = this.hillShadeType;
-		clone.coloringType = this.coloringType;
-		clone.backgroundColor = this.backgroundColor;
-		clone.width = this.width;
-		clone.height = this.height;
-		clone.elevationMultiple = this.elevationMultiple;
-		clone.tileSize = this.tileSize;
-		clone.gridSize = this.gridSize;
-		clone.lightingMultiple = this.lightingMultiple;
-		clone.lightingAzimuth = this.lightingAzimuth;
-		clone.lightingElevation = this.lightingElevation;
-		clone.spotExponent = this.spotExponent;
-		clone.gradientLevels = this.gradientLevels;
-		clone.antialiased = this.antialiased;
-		clone.precacheStrategy = this.precacheStrategy.toString();
+		for (String optionName : getOptionNames()) {
+			clone.setOption(optionName, optionsMap.get(optionName).toString());
+		}
 		
-		clone.relativeLightIntensity = this.relativeLightIntensity;
-		clone.relativeDarkIntensity = this.relativeDarkIntensity;
 		
-		clone.writeTo = this.writeTo;
+		if (this.writeTo != null) {
+			clone.writeTo = this.writeTo.toString();
+		}
+		
 		if (projection != null) {
 			clone.projection = this.projection.copy();
 		}

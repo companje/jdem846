@@ -58,8 +58,8 @@ public class GreenTint implements ModelColoring
 	}
 
 	@Override
-	public void getGradientColor(float elevation, float minElevation,
-			float maxElevation, int[] color) 
+	public void getGradientColor(double elevation, double minElevation,
+			double maxElevation, int[] color) 
 	{
 		defaultColor.toList(color);
 		//return defaultColor.getCopy();

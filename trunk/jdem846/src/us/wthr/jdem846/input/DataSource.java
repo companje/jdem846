@@ -55,7 +55,7 @@ public abstract class DataSource
 		double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 		double d = R * c * 1000;
-		setResolution((float) d);
+		setResolution(d);
 	}
 	
 	
@@ -64,14 +64,14 @@ public abstract class DataSource
 		setMaxElevation(-50000);
 		setMinElevation(50000);
 
-		float elevation = 0;
+		double elevation = 0;
 		
 		int rows = getHeader().getRows();
 		int columns = getHeader().getColumns();
-		float nodata = getHeader().getNoData();
+		double nodata = getHeader().getNoData();
 		
-		float max = getMaxElevation();
-		float min = getMinElevation();
+		double max = getMaxElevation();
+		double min = getMinElevation();
 		
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < columns; col++) {
@@ -104,7 +104,7 @@ public abstract class DataSource
 		return false;
 	}
 	
-	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	public void load(double[] valueBuffer, int start, int length) throws DataSourceException
 	{
 		throw new DataSourceException("Not implemented");
 	}
@@ -113,8 +113,8 @@ public abstract class DataSource
 	public abstract void initDataCache() throws DataSourceException;
 	public abstract void unloadDataCache() throws DataSourceException;
 	
-	public abstract float getElevation(int column)  throws DataSourceException;
-	public abstract float getElevation(int row, int column)  throws DataSourceException;
+	public abstract double getElevation(int column)  throws DataSourceException;
+	public abstract double getElevation(int row, int column)  throws DataSourceException;
 	
 	public abstract String getFilePath();
 	public abstract DataSourceHeader getHeader();
@@ -125,14 +125,14 @@ public abstract class DataSource
 	public abstract int getMaxRow();
 
 	
-	protected abstract void setMaxElevation(float maxElevation);
-	public abstract float getMaxElevation();
+	protected abstract void setMaxElevation(double maxElevation);
+	public abstract double getMaxElevation();
 	
-	protected abstract void setMinElevation(float minElevation);
-	public abstract float getMinElevation();
+	protected abstract void setMinElevation(double minElevation);
+	public abstract double getMinElevation();
 	
-	protected abstract void setResolution(float resolution);
-	public abstract float getResolution();
+	protected abstract void setResolution(double resolution);
+	public abstract double getResolution();
 
 	public abstract DataSource copy();
 	public abstract void dispose() throws DataSourceException;

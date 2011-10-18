@@ -35,10 +35,10 @@ public class GridAscii extends DataSource
 	
 	private int bits = 16;
 	private int totalRowBytes;
-	private float maxDifference;
-	private float maxElevation;
-    private float minElevation;
-    private float resolution;
+	private double maxDifference;
+	private double maxElevation;
+    private double minElevation;
+    private double resolution;
     private int maxRow;
     private int maxCol;
     private String filePath;
@@ -76,7 +76,7 @@ public class GridAscii extends DataSource
 		isDisposed = true;
 	}
     
-	private float __get(int row, int col)  throws DataSourceException
+	private double __get(int row, int col)  throws DataSourceException
 	{
 		if (col < 0 || col > header.getColumns() || row < 0 || row > header.getRows())
 			return DemConstants.ELEV_NO_DATA;
@@ -93,12 +93,12 @@ public class GridAscii extends DataSource
 			log.warn("Column too high!!! -- " + row + "/" + col + " -- " + header.getColumns() + " -- " + col);
 		}
 		
-		float elevation = cache.get(col);
+		double elevation = cache.get(col);
 		return elevation;
 	}
 	
 	
-	public float getElevation(int col) throws DataSourceException
+	public double getElevation(int col) throws DataSourceException
 	{
 		if (col >= header.getColumns())
 			return DemConstants.ELEV_NO_DATA;
@@ -106,12 +106,12 @@ public class GridAscii extends DataSource
 		return this.getElevation(cachedRow, col);
 	}
 
-	public float getElevation(int row, int column) throws DataSourceException
+	public double getElevation(int row, int column) throws DataSourceException
 	{
 		if (column >= header.getColumns() || row > header.getRows())
 			return DemConstants.ELEV_NO_DATA;
 		
-		float elevation = this.__get(row, column);
+		double elevation = this.__get(row, column);
 		if (elevation == header.getNoData())
 			elevation = DemConstants.ELEV_NO_DATA;
 
@@ -126,7 +126,7 @@ public class GridAscii extends DataSource
 	}
 	
 	@Override
-	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	public void load(double[] valueBuffer, int start, int length) throws DataSourceException
 	{
 		cache.load(valueBuffer, start, length);
 	}
@@ -177,42 +177,42 @@ public class GridAscii extends DataSource
 		this.totalRowBytes = totalRowBytes;
 	}
 
-	public float getMaxDifference()
+	public double getMaxDifference()
 	{
 		return maxDifference;
 	}
 
-	public void setMaxDifference(float maxDifference)
+	public void setMaxDifference(double maxDifference)
 	{
 		this.maxDifference = maxDifference;
 	}
 
-	public float getMaxElevation()
+	public double getMaxElevation()
 	{
 		return maxElevation;
 	}
 
-	public void setMaxElevation(float maxElevation)
+	public void setMaxElevation(double maxElevation)
 	{
 		this.maxElevation = maxElevation;
 	}
 
-	public float getMinElevation()
+	public double getMinElevation()
 	{
 		return minElevation;
 	}
 
-	public void setMinElevation(float minElevation)
+	public void setMinElevation(double minElevation)
 	{
 		this.minElevation = minElevation;
 	}
 
-	public float getResolution()
+	public double getResolution()
 	{
 		return resolution;
 	}
 
-	public void setResolution(float resolution)
+	public void setResolution(double resolution)
 	{
 		this.resolution = resolution;
 	}

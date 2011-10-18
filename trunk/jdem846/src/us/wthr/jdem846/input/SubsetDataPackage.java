@@ -64,7 +64,7 @@ public class SubsetDataPackage
 		return null;
 	}
 	
-	public float getElevation(int row, int col) throws DataSourceException
+	public double getElevation(int row, int col) throws DataSourceException
 	{
 		PackagedReader pack = getByRowAndColumn(row, col);
 		if (pack != null) {
@@ -107,11 +107,11 @@ public class SubsetDataPackage
 	}
 	
 	/*
-	public void fillBuffer(float[][] buffer, int topRow, int leftColumn, int rows, int columns)
+	public void fillBuffer(double[][] buffer, int topRow, int leftColumn, int rows, int columns)
 	{
 		for (int row = 0; row < rows; row++) {
 			for (int column = 0; column < columns; column++) {
-				float elevation = getElevation(row+topRow, column+leftColumn);
+				double elevation = getElevation(row+topRow, column+leftColumn);
 				buffer[row][column] = elevation;
 				
 			}

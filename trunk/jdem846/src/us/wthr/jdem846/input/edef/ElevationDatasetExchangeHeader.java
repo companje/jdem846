@@ -36,15 +36,15 @@ public class ElevationDatasetExchangeHeader  implements DataSourceHeader
 	
 	private int columns = 0;
 	private int rows = 0;
-	private float xLowerLeft = 0;
-	private float yLowerLeft = 0;
-	private float xCellSize = 0;
-	private float yCellSize = 0;
-	private float noData = DemConstants.ELEV_NO_DATA;
+	private double xLowerLeft = 0;
+	private double yLowerLeft = 0;
+	private double xCellSize = 0;
+	private double yCellSize = 0;
+	private double noData = DemConstants.ELEV_NO_DATA;
 	private ByteOrder byteOrder = ByteOrder.LSBFIRST;
-	private float maxElevation = 0;
-	private float minElevation = 0;
-	private float meanElevation = 0;
+	private double maxElevation = 0;
+	private double minElevation = 0;
+	private double meanElevation = 0;
 	private Projections projection = Projections.Proj_Geographic;
 	private Projections datum = Projections.DatumE_GRS1980;
 	private Projections zUnits = Projections.Linear_Meter;
@@ -66,14 +66,14 @@ public class ElevationDatasetExchangeHeader  implements DataSourceHeader
 		ByteArrayReader reader = new ByteArrayReader(binData);
 		this.rows =  reader.getNextInt();
 		this.columns = reader.getNextInt();
-		this.xLowerLeft = reader.getNextFloat();
-		this.yLowerLeft = reader.getNextFloat();
-		this.xCellSize = reader.getNextFloat();
-		this.yCellSize = reader.getNextFloat();
-		this.noData = reader.getNextFloat();
-		this.maxElevation = reader.getNextFloat();
-		this.minElevation = reader.getNextFloat();
-		this.meanElevation = reader.getNextFloat();
+		this.xLowerLeft = reader.getNextDouble();
+		this.yLowerLeft = reader.getNextDouble();
+		this.xCellSize = reader.getNextDouble();
+		this.yCellSize = reader.getNextDouble();
+		this.noData = reader.getNextDouble();
+		this.maxElevation = reader.getNextDouble();
+		this.minElevation = reader.getNextDouble();
+		this.meanElevation = reader.getNextDouble();
 		
 		this.projection = getProjectionInstance(reader.getNextInt());
 		this.datum = getProjectionInstance(reader.getNextInt());
@@ -110,14 +110,14 @@ public class ElevationDatasetExchangeHeader  implements DataSourceHeader
 		
 		buffer.putInt(rows);
 		buffer.putInt(columns);
-		buffer.putFloat(xLowerLeft);
-		buffer.putFloat(yLowerLeft);
-		buffer.putFloat(xCellSize);
-		buffer.putFloat(yCellSize);
-		buffer.putFloat(noData);
-		buffer.putFloat(maxElevation);
-		buffer.putFloat(minElevation);
-		buffer.putFloat(meanElevation);
+		buffer.putDouble(xLowerLeft);
+		buffer.putDouble(yLowerLeft);
+		buffer.putDouble(xCellSize);
+		buffer.putDouble(yCellSize);
+		buffer.putDouble(noData);
+		buffer.putDouble(maxElevation);
+		buffer.putDouble(minElevation);
+		buffer.putDouble(meanElevation);
 		buffer.putInt(this.projection.id());
 		buffer.putInt(this.datum.id());
 		buffer.putInt(this.zUnits.id());
@@ -158,42 +158,42 @@ public class ElevationDatasetExchangeHeader  implements DataSourceHeader
 		this.rows = rows;
 	}
 
-	public float getxLowerLeft()
+	public double getxLowerLeft()
 	{
 		return xLowerLeft;
 	}
 
-	public void setxLowerLeft(float xLowerLeft) 
+	public void setxLowerLeft(double xLowerLeft) 
 	{
 		this.xLowerLeft = xLowerLeft;
 	}
 
-	public float getyLowerLeft() 
+	public double getyLowerLeft() 
 	{
 		return yLowerLeft;
 	}
 
-	public void setyLowerLeft(float yLowerLeft)
+	public void setyLowerLeft(double yLowerLeft)
 	{
 		this.yLowerLeft = yLowerLeft;
 	}
 
-	public float getCellSize() 
+	public double getCellSize() 
 	{
 		return xCellSize;
 	}
 
-	public void setCellSize(float xCellSize) 
+	public void setCellSize(double xCellSize) 
 	{
 		this.xCellSize = xCellSize;
 	}
 
-	public float getNoData() 
+	public double getNoData() 
 	{
 		return noData;
 	}
 
-	public void setNoData(float noData)
+	public void setNoData(double noData)
 	{
 		this.noData = noData;
 	}
@@ -215,52 +215,52 @@ public class ElevationDatasetExchangeHeader  implements DataSourceHeader
 	
 	
 	
-	public float getxCellSize()
+	public double getxCellSize()
 	{
 		return xCellSize;
 	}
 
-	public void setxCellSize(float xCellSize)
+	public void setxCellSize(double xCellSize)
 	{
 		this.xCellSize = xCellSize;
 	}
 
-	public float getyCellSize()
+	public double getyCellSize()
 	{
 		return yCellSize;
 	}
 
-	public void setyCellSize(float yCellSize)
+	public void setyCellSize(double yCellSize)
 	{
 		this.yCellSize = yCellSize;
 	}
 
-	public float getMaxElevation()
+	public double getMaxElevation()
 	{
 		return maxElevation;
 	}
 
-	public void setMaxElevation(float maxElevation)
+	public void setMaxElevation(double maxElevation)
 	{
 		this.maxElevation = maxElevation;
 	}
 
-	public float getMinElevation()
+	public double getMinElevation()
 	{
 		return minElevation;
 	}
 
-	public void setMinElevation(float minElevation)
+	public void setMinElevation(double minElevation)
 	{
 		this.minElevation = minElevation;
 	}
 
-	public float getMeanElevation()
+	public double getMeanElevation()
 	{
 		return meanElevation;
 	}
 
-	public void setMeanElevation(float meanElevation)
+	public void setMeanElevation(double meanElevation)
 	{
 		this.meanElevation = meanElevation;
 	}

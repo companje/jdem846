@@ -66,22 +66,22 @@ public class DataOverviewPanel extends Panel
 		tableModel.columns = columns;
 	}
 	
-	public void setMaxLatitude(float maxLatitude)
+	public void setMaxLatitude(double maxLatitude)
 	{
 		tableModel.north = maxLatitude;
 	}
 	
-	public void setMinLatitude(float minLatitude)
+	public void setMinLatitude(double minLatitude)
 	{
 		tableModel.south = minLatitude;
 	}
 	
-	public void setMaxLongitude(float maxLongitude)
+	public void setMaxLongitude(double maxLongitude)
 	{
 		tableModel.east = maxLongitude;
 	}
 	
-	public void setMinLongitude(float minLongitude)
+	public void setMinLongitude(double minLongitude)
 	{
 		tableModel.west = minLongitude;
 	}

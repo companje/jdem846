@@ -65,17 +65,17 @@ public class TestMain
 	public static void convertToEdef(DataPackage dataPackage, String outputPath, int toWidth, int toHeight)
 	{
 		ElevationDatasetExchangeHeader header = new ElevationDatasetExchangeHeader();
-		header.setCellSize(dataPackage.getAvgXDim());
+		//header.setCellSize(dataPackage.getAvgXDim());
 		//header.setColumns((int)Math.ceil(dataPackage.getColumns()));
 		//header.setRows((int)dataPackage.getRows());
-		header.setColumns(toWidth);
-		header.setRows(toHeight);
-		header.setMaxElevation(dataPackage.getMaxElevation());
-		header.setMinElevation(dataPackage.getMinElevation());
-		header.setxCellSize(dataPackage.getAvgXDim());
-		header.setyCellSize(dataPackage.getAvgYDim());
-		header.setxLowerLeft(dataPackage.getMinLongitude());
-		header.setyLowerLeft(dataPackage.getMinLatitude());
+		//header.setColumns(toWidth);
+		//header.setRows(toHeight);
+		//header.setMaxElevation(dataPackage.getMaxElevation());
+		//header.setMinElevation(dataPackage.getMinElevation());
+		//header.setxCellSize(dataPackage.getAvgXDim());
+		//header.setyCellSize(dataPackage.getAvgYDim());
+		//header.setxLowerLeft(dataPackage.getMinLongitude());
+		//header.setyLowerLeft(dataPackage.getMinLatitude());
 		
 		int width = (int)Math.ceil(dataPackage.getColumns());
 		int height = (int)dataPackage.getRows();
@@ -88,8 +88,8 @@ public class TestMain
 			FloatRaster raster = new FloatRaster(width, height);
 			for (int row = 0; row < height; row++) {
 				for (int column = 0; column < width; column++) {
-					float elevation = dataPackage.getElevation(row, column);
-					raster.set(column, row, elevation);
+					//float elevation = dataPackage.getElevation(row, column);
+					//raster.set(column, row, elevation);
 					//writer.write(elevation);
 					
 				}
@@ -146,9 +146,9 @@ public class TestMain
 			
 			for (int row = 0; row < dataSource.getHeader().getRows(); row++) {
 				for (int column = 0; column < dataSource.getHeader().getColumns(); column++) {
-					float elevation = dataSource.getElevation(row, column);
+					double elevation = dataSource.getElevation(row, column);
 					
-					writer.write(elevation);
+					//writer.write(elevation);
 					
 				}
 			}

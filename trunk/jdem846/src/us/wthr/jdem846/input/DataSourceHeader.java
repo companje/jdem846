@@ -27,13 +27,13 @@ public interface DataSourceHeader
 {
 	
 	public ByteOrder getByteOrder();
-	public float getCellSize();
-	public float getNoData();
+	public double getCellSize();
+	public double getNoData();
 	
 	public int getRows();
 	public int getColumns();
 	
-	public float getxLowerLeft();
-	public float getyLowerLeft();
+	public double getxLowerLeft();
+	public double getyLowerLeft();
 	
 }

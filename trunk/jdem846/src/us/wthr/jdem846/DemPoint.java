@@ -19,11 +19,11 @@ package us.wthr.jdem846;
 public class DemPoint 
 {
 	
-	private float backRightElevation;
-	private float backLeftElevation;
-	private float frontRightElevation;
-	private float frontLeftElevation;
-	private float middleElevation;
+	private double backRightElevation;
+	private double backLeftElevation;
+	private double frontRightElevation;
+	private double frontLeftElevation;
+	private double middleElevation;
 	private int condition;
 	
 	public DemPoint()
@@ -47,52 +47,52 @@ public class DemPoint
 
 
 
-	public float getBackRightElevation()
+	public double getBackRightElevation()
 	{
 		return backRightElevation;
 	}
 
-	public void setBackRightElevation(float backRightElevation)
+	public void setBackRightElevation(double backRightElevation)
 	{
 		this.backRightElevation = backRightElevation;
 	}
 
-	public float getBackLeftElevation()
+	public double getBackLeftElevation()
 	{
 		return backLeftElevation;
 	}
 
-	public void setBackLeftElevation(float backLeftElevation) 
+	public void setBackLeftElevation(double backLeftElevation) 
 	{
 		this.backLeftElevation = backLeftElevation;
 	}
 
-	public float getFrontRightElevation() 
+	public double getFrontRightElevation() 
 	{
 		return frontRightElevation;
 	}
 
-	public void setFrontRightElevation(float frontRightElevation) 
+	public void setFrontRightElevation(double frontRightElevation) 
 	{
 		this.frontRightElevation = frontRightElevation;
 	}
 
-	public float getFrontLeftElevation() 
+	public double getFrontLeftElevation() 
 	{
 		return frontLeftElevation;
 	}
 
-	public void setFrontLeftElevation(float frontLeftElevation)
+	public void setFrontLeftElevation(double frontLeftElevation)
 	{
 		this.frontLeftElevation = frontLeftElevation;
 	}
 
-	public float getMiddleElevation() 
+	public double getMiddleElevation() 
 	{
 		return middleElevation;
 	}
 
-	public void setMiddleElevation(float middleElevation) 
+	public void setMiddleElevation(double middleElevation) 
 	{
 		this.middleElevation = middleElevation;
 	}

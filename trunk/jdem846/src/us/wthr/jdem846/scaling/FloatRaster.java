@@ -155,7 +155,7 @@ public class FloatRaster
 		} else if (s3 != DemConstants.ELEV_NO_DATA) {
 			return s3;
 		} else {
-			return DemConstants.ELEV_NO_DATA;
+			return (float) DemConstants.ELEV_NO_DATA;
 		}
 	}
 	

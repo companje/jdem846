@@ -48,14 +48,14 @@ public class NetCdfHeader implements DataSourceHeader
 	}
 
 	@Override
-	public float getCellSize()
+	public double getCellSize()
 	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public float getNoData()
+	public double getNoData()
 	{
 		// TODO Auto-generated method stub
 		return 0;
@@ -76,14 +76,14 @@ public class NetCdfHeader implements DataSourceHeader
 	}
 
 	@Override
-	public float getxLowerLeft()
+	public double getxLowerLeft()
 	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public float getyLowerLeft()
+	public double getyLowerLeft()
 	{
 		// TODO Auto-generated method stub
 		return 0;

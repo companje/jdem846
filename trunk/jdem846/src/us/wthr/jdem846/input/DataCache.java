@@ -31,14 +31,14 @@ public abstract class DataCache
 	 * @return The length of the data file in bytes.
 	 */
 	public abstract long getDataLength();
-	public abstract float get(int position) throws DataSourceException;
+	public abstract double get(int position) throws DataSourceException;
 	public abstract void load(long start) throws DataSourceException;
 	public abstract void unload();
 	public abstract boolean isLoaded();
 	public abstract void setLoaded(boolean isLoaded);
 	public abstract void dispose() throws DataSourceException;
 	
-	public void load(float[] valueBuffer, int start, int length) throws DataSourceException
+	public void load(double[] valueBuffer, int start, int length) throws DataSourceException
 	{
 		throw new DataSourceException("Not implemented");
 	}

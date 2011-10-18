@@ -1,6 +1,7 @@
 package us.wthr.jdem846.render.render2d;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 
 import us.wthr.jdem846.DemConstants;
@@ -30,6 +31,22 @@ public class TileRenderer
 	private ModelColoring modelColoring;
 	private DemCanvas canvas;
 	private SubsetDataPackage dataSubset;
+	private Perspectives perspectives;
+	
+	private int gridSize;
+	private double elevationMultiple;
+	private boolean doublePrecisionHillshading;
+	private double relativeLightIntensity;
+	private double relativeDarkIntensity;
+	private int hillShadeType;
+	private int spotExponent;
+	private double lightingMultiple;
+	private double elevationMax;
+	private double elevationMin;
+	private double solarElevation;
+	private double solarAzimuth;
+	private boolean tiledPrecaching;
+	private int tileSize;
 	
 	private int[] triangleColorNW = {0, 0, 0, 0};
 	private int[] triangleColorSE = {0, 0, 0, 0};
@@ -55,6 +72,23 @@ public class TileRenderer
 		this.modelContext = modelContext;
 		this.modelColoring = modelColoring;
 		this.canvas = canvas;
+		this.perspectives = new Perspectives();
+		
+		gridSize = getModelOptions().getGridSize();
+		
+		tiledPrecaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
+		elevationMultiple = getModelOptions().getElevationMultiple();
+		doublePrecisionHillshading = getModelOptions().getDoublePrecisionHillshading();
+		relativeLightIntensity = getModelOptions().getRelativeLightIntensity();
+		relativeDarkIntensity = getModelOptions().getRelativeDarkIntensity();
+		hillShadeType = getModelOptions().getHillShadeType();
+		spotExponent = getModelOptions().getSpotExponent();
+		lightingMultiple = getModelOptions().getLightingMultiple();
+		elevationMax = getDataPackage().getMaxElevation();
+		elevationMin = getDataPackage().getMinElevation();
+		solarElevation = getModelOptions().getLightingElevation();
+		solarAzimuth = getModelOptions().getLightingAzimuth();
+		tileSize = getModelOptions().getTileSize();
 	}
 	
 	
@@ -62,19 +96,16 @@ public class TileRenderer
 	{
 		int numRows = (toRow - fromRow) + 1;
 		int numColumns = (toColumn - fromColumn) + 1;
-		int gridSize = getModelOptions().getGridSize();
 		
-		dataSubset = loadDataSubset(fromColumn, fromRow, numColumns, numRows);
+		
+		dataSubset = loadDataSubset(fromColumn, fromRow, tileSize, tileSize);
 		
 		if (!dataSubset.containsData())
 			return;
 		
-		boolean tiledPrecaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
-		if (tiledPrecaching) {
-			log.info("Data Precaching Strategy Set to TILED");
-		}
 		
 		if (tiledPrecaching) {
+			log.info("Data Precaching Strategy Set to TILED");
 			try {
 				dataSubset.precacheData();
 			} catch (DataSourceException ex) {
@@ -83,22 +114,17 @@ public class TileRenderer
 		}
 		
 		resetBuffers();
-		
-		
-		
+
 		setUpLightSource();
 		
 		int imgRow = -1;
 		int imgCol = -1;
 		
-		double progress = 0;
 
 		log.info("Tile Row from/to: " + fromRow + "/" + toRow + ", Column from/to: " + fromColumn + "/" + toColumn);
 		log.info("Tile Percent Complete: 0%");
 		
-		int reportProgressRows = (int)Math.round(((double)numRows) * 0.25);
-		
-		
+
 		for (int row = fromRow; row <= toRow; row+=gridSize) {
 			imgRow++;
 			imgCol = -1;
@@ -108,25 +134,8 @@ public class TileRenderer
 				
 				
 				renderCell(row, column, imgRow, imgCol);
-				
-				
-				
-				
-				if (isCancelled()) {
-					log.warn("Render process cancelled, model not complete.");
-					break;
-				}
+
 			}
-			
-			if (row % reportProgressRows == 0) {
-				double pctComplete = ((double)row - fromRow) / ((double)numRows);
-				pctComplete = Math.floor(pctComplete * 100);
-				if (pctComplete > progress) {
-					log.info("Percent Complete: " + pctComplete + "%");
-				}
-				progress = pctComplete;
-			}
-			
 			
 			if (isCancelled()) {
 				log.warn("Render process cancelled, model not complete.");
@@ -136,8 +145,7 @@ public class TileRenderer
 		
 		
 		log.info("Tile Percent Complete: 100%");
-		
-		
+
 		if (tiledPrecaching) {
 			try {
 				dataSubset.unloadData();
@@ -151,8 +159,7 @@ public class TileRenderer
 	
 	protected void renderCell(int row, int column, int imageRow, int imageColumn) throws RenderEngineException
 	{
-		double elevationMultiple = getModelOptions().getElevationMultiple();
-		int gridSize = getModelOptions().getGridSize();
+		
 		
 		try {
 			getPoint(row, column, gridSize, point);
@@ -172,12 +179,20 @@ public class TileRenderer
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
 			renderTriangle(avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
-			// South East
-			double avgElevationSE = (frontRightPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
-			renderTriangle(avgElevationSE, frontLeftPoints, frontRightPoints, backRightPoints, triangleColorSE);
-
-			ColorAdjustments.interpolateColor(triangleColorNW, triangleColorSE, color, 0.5);
-			
+			if (doublePrecisionHillshading) {
+				
+				// South East
+				double avgElevationSE = (frontRightPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
+				renderTriangle(avgElevationSE, frontLeftPoints, frontRightPoints, backRightPoints, triangleColorSE);
+	
+				ColorAdjustments.interpolateColor(triangleColorNW, triangleColorSE, color, 0.5);
+				
+			} else {
+				color[0] = triangleColorNW[0];
+				color[1] = triangleColorNW[1];
+				color[2] = triangleColorNW[2];
+				color[3] = triangleColorNW[3];
+			}
 			/*
 			Path2D.Double path = new Path2D.Double();
 
@@ -203,22 +218,21 @@ public class TileRenderer
 	
 	protected void renderTriangle(double pointElevation, double[] p0, double[] p1, double[] p2, int[] triangeColor) throws RenderEngineException
 	{
-		double elevationMax = getDataPackage().getMaxElevation();
-		double elevationMin = getDataPackage().getMinElevation();
 		
-		Perspectives.calcNormal(p0, p1, p2, normal);
+		
+		perspectives.calcNormal(p0, p1, p2, normal);
 		modelColoring.getGradientColor((float)pointElevation, (float)elevationMin, (float)elevationMax, reliefColor);
 		
 		
-		if (getModelOptions().getHillShadeType() != DemConstants.HILLSHADING_NONE) {
+		if (hillShadeType != DemConstants.HILLSHADING_NONE) {
 			hillshadeColor[0] = reliefColor[0];
 			hillshadeColor[1] = reliefColor[1];
 			hillshadeColor[2] = reliefColor[2];
 			
-			double dot = Perspectives.dotProduct(normal, sunsource);
-			dot = Math.pow(dot, getModelOptions().getSpotExponent());
+			double dot = perspectives.dotProduct(normal, sunsource);
+			dot = Math.pow(dot, spotExponent);
 			
-			switch (getModelOptions().getHillShadeType()) {
+			switch (hillShadeType) {
 			case DemConstants.HILLSHADING_LIGHTEN:
 				dot = (dot + 1.0) / 2.0;
 				ColorAdjustments.adjustBrightness(hillshadeColor, 1.0 - dot);
@@ -231,9 +245,9 @@ public class TileRenderer
 			case DemConstants.HILLSHADING_COMBINED:
 				
 				if (dot > 0) {
-					dot *= getModelOptions().getRelativeLightIntensity();
+					dot *= relativeLightIntensity;
 				} else if (dot < 0) {
-					dot *= getModelOptions().getRelativeDarkIntensity();
+					dot *= relativeDarkIntensity;
 				}
 				
 				ColorAdjustments.adjustBrightness(hillshadeColor, dot);
@@ -241,7 +255,7 @@ public class TileRenderer
 			}
 			
 			
-			ColorAdjustments.interpolateColor(reliefColor, hillshadeColor, triangeColor, getModelOptions().getLightingMultiple());
+			ColorAdjustments.interpolateColor(reliefColor, hillshadeColor, triangeColor, lightingMultiple);
 			
 			
 		} else {
@@ -258,9 +272,6 @@ public class TileRenderer
 	
 	protected void setUpLightSource()
 	{
-		double solarElevation = getModelOptions().getLightingElevation();
-		double solarAzimuth = getModelOptions().getLightingAzimuth();
-		
 		Vector sun = new Vector(0.0, 0.0, -1.0);
 
 		sun.rotate(solarElevation, Vector.X_AXIS);
@@ -273,7 +284,7 @@ public class TileRenderer
 	}
 	
 	
-	protected float getElevation(int row, int col) throws DataSourceException
+	protected double getElevation(int row, int col) throws DataSourceException
 	{
 		if (dataSubset != null) {
 			return dataSubset.getElevation(row, col);
@@ -297,16 +308,17 @@ public class TileRenderer
 			return;
 		}
 
-		float elevation_bl = getElevation(row, column);
-		float elevation_br = getElevation(row, column + gridSize);
-		float elevation_fl = getElevation(row + gridSize, column);
-		float elevation_fr = getElevation(row + gridSize, column + gridSize);
-
+		double elevation_bl = getElevation(row, column);
 		if (elevation_bl == DemConstants.ELEV_NO_DATA) {
 			point.setCondition(DemConstants.STAT_INVALID_ELEVATION);
 			return;
 		}
 		
+		
+		double elevation_br = getElevation(row, column + gridSize);
+		double elevation_fl = getElevation(row + gridSize, column);
+		double elevation_fr = getElevation(row + gridSize, column + gridSize);
+
 		point.setBackLeftElevation(elevation_bl);
 
 		if (elevation_br != DemConstants.ELEV_NO_DATA) {
@@ -327,20 +339,20 @@ public class TileRenderer
 			point.setFrontRightElevation(point.getBackLeftElevation());
 		}
 		
+		
 		if (point.getBackLeftElevation() == 0 
 			&& point.getBackRightElevation() == 0 
 			&& point.getFrontLeftElevation() == 0
 			&& point.getFrontRightElevation() == 0) {
+			//point.setMiddleElevation(0);
 			point.setCondition(DemConstants.STAT_FLAT_SEA_LEVEL);
-			return;
+		} else {
+			//point.setMiddleElevation((point.getBackLeftElevation() + point.getBackRightElevation() + point.getFrontLeftElevation() + point.getFrontRightElevation()) / 4.0f);
+			point.setCondition(DemConstants.STAT_SUCCESSFUL);
 		}
 		
 
-		point.setMiddleElevation((point.getBackLeftElevation() + point.getBackRightElevation() + point.getFrontLeftElevation() + point.getFrontRightElevation()) / 4.0f);
 		
-		point.setCondition(DemConstants.STAT_SUCCESSFUL);
-		
-		return;
 	}
 	
 	

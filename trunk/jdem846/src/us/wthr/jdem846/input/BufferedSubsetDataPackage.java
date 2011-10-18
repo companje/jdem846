@@ -19,7 +19,7 @@ public class BufferedSubsetDataPackage extends SubsetDataPackage
 	private int totalRows = 0;
 	private int totalColumns = 0;
 	
-	private float[][] buffer = null;
+	private double[][] buffer = null;
 	
 	public BufferedSubsetDataPackage(int topRow, int leftColumn, int totalRows, int totalColumns, int rows, int columns)
 	{
@@ -35,7 +35,7 @@ public class BufferedSubsetDataPackage extends SubsetDataPackage
 	@Override
 	public void precacheData() throws DataSourceException
 	{
-		buffer = new float[rows][columns];
+		buffer = new double[rows][columns];
 		fillBuffer();
 	}
 	
@@ -46,7 +46,7 @@ public class BufferedSubsetDataPackage extends SubsetDataPackage
 	}
 	
 	@Override
-	public float getElevation(int row, int col) throws DataSourceException
+	public double getElevation(int row, int col) throws DataSourceException
 	{
 		if (buffer != null) {
 			int bufferRow = row - topRow;
@@ -70,7 +70,7 @@ public class BufferedSubsetDataPackage extends SubsetDataPackage
 		int halfRows = (int) Math.round((double)totalRows / 2.0);
 		
 		
-		float[] floatBuffer = new float[columns];
+		double[] floatBuffer = new double[columns];
 		for (int row = 0; row < rows; row++) {
 			Arrays.fill(buffer[row], DemConstants.ELEV_NO_DATA);
 			Arrays.fill(floatBuffer, DemConstants.ELEV_NO_DATA);
@@ -84,7 +84,7 @@ public class BufferedSubsetDataPackage extends SubsetDataPackage
 				
 				
 				if (pack != null) {
-					float noData = pack.getDataSource().getHeader().getNoData();
+					double noData = pack.getDataSource().getHeader().getNoData();
 					int start = column + ((topRow + row) * (int)pack.getColumns());
 
 					pack.getDataSource().load(floatBuffer, start, columns);
