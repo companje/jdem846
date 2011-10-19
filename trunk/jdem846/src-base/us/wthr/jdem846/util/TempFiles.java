@@ -22,8 +22,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.omg.CORBA_2_3.portable.OutputStream;
-
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 

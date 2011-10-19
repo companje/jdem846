@@ -8,6 +8,27 @@
 	<property name="stage.dir" value="${build.dir}/stage" />
 	<property name="dist.dir" value="${build.dir}/dist" />
 	
+	
+	<property name="base.src.dir" value="src-base" />
+	<property name="base.build.dir" value="${build.dir}/base" />
+	<property name="base.jar.file" value="${stage.dir}/jdem846-base.jar" />
+	<property name="base.javadoc.dir" value="${javadoc.dir}/base" />
+	
+	<property name="dbase.src.dir" value="src-dbase" />
+	<property name="dbase.build.dir" value="${build.dir}/dbase" />
+	<property name="dbase.jar.file" value="${stage.dir}/jdem846-dbase.jar" />
+	<property name="dbase.javadoc.dir" value="${javadoc.dir}/dbase" />
+	
+	<property name="shapefile.src.dir" value="src-shapefile" />
+	<property name="shapefile.build.dir" value="${build.dir}/shapefile" />
+	<property name="shapefile.jar.file" value="${stage.dir}/jdem846-shapefile.jar" />
+	<property name="shapefile.javadoc.dir" value="${javadoc.dir}/shapefile" />
+	
+	<property name="kml.src.dir" value="src-kml" />
+	<property name="kml.build.dir" value="${build.dir}/kml" />
+	<property name="kml.jar.file" value="${stage.dir}/jdem846-kml.jar" />
+	<property name="kml.javadoc.dir" value="${javadoc.dir}/kml" />
+	
 	<property name="core.src.dir" value="src" />
 	<property name="core.build.dir" value="${build.dir}/core" />
 	<property name="core.jar.file" value="${stage.dir}/jdem846-core.jar" />
@@ -52,6 +73,35 @@
 		<include name="**/?*.jar" />
 	</patternset>
 	
+	
+	<!-- ============================== -->
+	<!-- Source Paths                   -->
+	<!-- ============================== -->
+	
+	<path id="base.build.sourcepath">
+		<dirset dir=".">
+			<include name="${base.src.dir}" />
+		</dirset>
+	</path>
+	
+	<path id="dbase.build.sourcepath">
+		<dirset dir=".">
+			<include name="${dbase.src.dir}" />
+		</dirset>
+	</path>
+	
+	<path id="shapefile.build.sourcepath">
+		<dirset dir=".">
+			<include name="${shapefile.src.dir}" />
+		</dirset>
+	</path>
+	
+	<path id="kml.build.sourcepath">
+		<dirset dir=".">
+			<include name="${kml.src.dir}" />
+		</dirset>
+	</path>
+	
 	<path id="core.build.sourcepath">
 		<dirset dir=".">
 			<include name="${core.src.dir}" />
@@ -64,27 +114,141 @@
 		</dirset>
 	</path>
 	
+	<!-- ============================== -->
+	<!-- Class Paths                    -->
+	<!-- ============================== -->
+	
+	<path id="base.build.classpath">
+		<fileset refid="lib" />
+	</path>
+	
+	<path id="dbase.build.classpath">
+		<fileset refid="lib" />
+		<dirset dir=".">
+			<include name="${base.build.dir}" />
+		</dirset>
+	</path>
+	
+	<path id="shapefile.build.classpath">
+		<fileset refid="lib" />
+		<dirset dir=".">
+			<include name="${dbase.build.dir}" />
+			<include name="${base.build.dir}" />
+		</dirset>
+	</path>
+	
+	<path id="kml.build.classpath">
+		<fileset refid="lib" />
+		<dirset dir=".">
+			<include name="${base.build.dir}" />
+		</dirset>
+	</path>
+	
 	<path id="core.build.classpath">
 		<fileset refid="lib" />
+		<dirset dir=".">
+			<include name="${base.build.dir}" />
+			<include name="${dbase.build.dir}" />
+			<include name="${shapefile.build.dir}" />
+			<include name="${kml.build.dir}" />
+		</dirset>
 	</path>
 	
 	<path id="ui.build.classpath">
 		<fileset refid="lib" />
 		<dirset dir=".">
+			<include name="${base.build.dir}" />
 			<include name="${core.build.dir}" />
+			<include name="${dbase.build.dir}" />
+			<include name="${shapefile.build.dir}" />
+			<include name="${kml.build.dir}" />
 		</dirset>
 	</path>
+	
+	
+	<!-- ============================== -->
+	<!-- Targets                        -->
+	<!-- ============================== -->
 	
 	<target name="init" description="Initialize the build">
 		<mkdir dir="${build.dir}" />
 		<mkdir dir="${stage.dir}" />
 		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${base.build.dir}" />
+		<mkdir dir="${dbase.build.dir}" />
+		<mkdir dir="${shapefile.build.dir}" />
+		<mkdir dir="${kml.build.dir}" />
 		<mkdir dir="${core.build.dir}" />
 		<mkdir dir="${ui.build.dir}" />
 		<mkdir dir="${resources.build.dir}" />
 	</target>
 	
-	<target name="core.compile" depends="init" description="">
+	
+	<!-- ============================== -->
+	<!-- Compile Targets                -->
+	<!-- ============================== -->
+	
+	<target name="base.compile" depends="init" description="">
+		<javac destdir="${base.build.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" includeantruntime="false" fork="true">
+			<compilerarg line="${compiler.args}" />
+			<classpath refid="base.build.classpath" />
+			<src refid="base.build.sourcepath" />
+			<patternset refid="ignored.files" />
+		</javac>
+		<copy todir="${base.build.dir}">
+			<fileset dir="${base.src.dir}">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="dbase.compile" depends="init,base.compile" description="">
+		<javac destdir="${dbase.build.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" includeantruntime="false" fork="true">
+			<compilerarg line="${compiler.args}" />
+			<classpath refid="dbase.build.classpath" />
+			<src refid="dbase.build.sourcepath" />
+			<patternset refid="ignored.files" />
+		</javac>
+		<copy todir="${dbase.build.dir}">
+			<fileset dir="${dbase.src.dir}">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="shapefile.compile" depends="init,dbase.compile" description="">
+		<javac destdir="${shapefile.build.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" includeantruntime="false" fork="true">
+			<compilerarg line="${compiler.args}" />
+			<classpath refid="shapefile.build.classpath" />
+			<src refid="shapefile.build.sourcepath" />
+			<patternset refid="ignored.files" />
+		</javac>
+		<copy todir="${shapefile.build.dir}">
+			<fileset dir="${shapefile.src.dir}">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="kml.compile" depends="init" description="">
+		<javac destdir="${kml.build.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" includeantruntime="false" fork="true">
+			<compilerarg line="${compiler.args}" />
+			<classpath refid="kml.build.classpath" />
+			<src refid="kml.build.sourcepath" />
+			<patternset refid="ignored.files" />
+		</javac>
+		<copy todir="${kml.build.dir}">
+			<fileset dir="${kml.src.dir}">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="core.compile" depends="init,base.compile,dbase.compile,shapefile.compile,kml.compile" description="">
 		<javac destdir="${core.build.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" includeantruntime="false" fork="true">
 			<compilerarg line="${compiler.args}" />
 			<classpath refid="core.build.classpath" />
@@ -123,8 +287,37 @@
 		</copy>
 	</target>
 	
-	<target name="compile" depends="init,core.compile,ui.compile,resources.compile" description="">
+	<target name="compile" depends="init,base.compile,dbase.compile,shapefile.compile,kml.compile,core.compile,ui.compile,resources.compile" description="">
 
+	</target>
+	
+	
+	<!-- ============================== -->
+	<!-- Jar Targets                    -->
+	<!-- ============================== -->
+	
+	<target name="base.jar" depends="compile">
+		<jar destfile="${base.jar.file}" duplicate="add">
+			<zipfileset dir="${base.build.dir}" />
+		</jar>
+	</target>
+	
+	<target name="dbase.jar" depends="compile">
+		<jar destfile="${dbase.jar.file}" duplicate="add">
+			<zipfileset dir="${dbase.build.dir}" />
+		</jar>
+	</target>
+	
+	<target name="shapefile.jar" depends="compile">
+		<jar destfile="${shapefile.jar.file}" duplicate="add">
+			<zipfileset dir="${shapefile.build.dir}" />
+		</jar>
+	</target>
+	
+	<target name="kml.jar" depends="compile">
+		<jar destfile="${kml.jar.file}" duplicate="add">
+			<zipfileset dir="${kml.build.dir}" />
+		</jar>
 	</target>
 	
 	<target name="core.jar" depends="compile">
@@ -149,15 +342,85 @@
 		</jar>
 	</target>
 	
-	<target name="jar" depends="compile,core.jar,ui.jar,resources.jar">
+	<target name="jar" depends="compile,base.jar,dbase.jar,shapefile.jar,kml.jar,core.jar,ui.jar,resources.jar">
 		
 	</target>
+	
+	
+	<!-- ============================== -->
+	<!-- Clean Targets                  -->
+	<!-- ============================== -->
 	
 	<target name="clean">
 		<delete dir="${build.dir}" />
 		<delete dir="${javadoc.dir}" />
 	</target>
 
+
+	<!-- ============================== -->
+	<!-- Javadoc Targets                -->
+	<!-- ============================== -->
+	
+	<target name="base.javadoc">
+		<javadoc
+			destdir="${base.javadoc.dir}"
+			sourcepath="${dbase.src.dir}"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="jDem846 Base API">
+
+
+			<doctitle><![CDATA[<h1>jDem846 Base</h1>]]></doctitle>
+		    <bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
+		</javadoc>
+	</target>
+	
+	<target name="dbase.javadoc">
+		<javadoc
+			destdir="${dbase.javadoc.dir}"
+			sourcepath="${dbase.src.dir}"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="jDem846 dBase API">
+
+
+			<doctitle><![CDATA[<h1>jDem846 dBase</h1>]]></doctitle>
+		    <bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
+		</javadoc>
+	</target>
+	
+	<target name="shapefile.javadoc">
+		<javadoc
+			destdir="${shapefile.javadoc.dir}"
+			sourcepath="${shapefile.src.dir}"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="jDem846 ESRI ShapeFile API">
+
+
+			<doctitle><![CDATA[<h1>jDem846 ESRI ShapeFile</h1>]]></doctitle>
+		    <bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
+		</javadoc>
+	</target>
+	
+	<target name="kml.javadoc">
+		<javadoc
+			destdir="${kml.javadoc.dir}"
+			sourcepath="${kml.src.dir}"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="jDem846 KML API">
+
+
+			<doctitle><![CDATA[<h1>jDem846 KML</h1>]]></doctitle>
+		    <bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
+		</javadoc>
+	</target>
+	
 	<target name="core.javadoc">
 		<javadoc
 			destdir="${core.javadoc.dir}"
@@ -188,20 +451,30 @@
 		</javadoc>
 	</target>
 	
-	
-	<target name="javadoc" depends="compile,core.javadoc,ui.javadoc">
+	<target name="javadoc" depends="compile,base.javadoc,dbase.javadoc,shapefile.javadoc,kml.javadoc,core.javadoc,ui.javadoc">
 				
 	</target>
 	
+	<!-- ============================== -->
+	<!-- Distribution Packaging Targets -->
+	<!-- ============================== -->
+	
 	<target name="dist-init" depends="">
 		<mkdir dir="${dist.stage.dir}/lib" />
+		<mkdir dir="${dist.stage.dir}/docs/api/base" />
+		<mkdir dir="${dist.stage.dir}/docs/api/dbase" />
+		<mkdir dir="${dist.stage.dir}/docs/api/shapefile" />
+		<mkdir dir="${dist.stage.dir}/docs/api/kml" />
 		<mkdir dir="${dist.stage.dir}/docs/api/core" />
 		<mkdir dir="${dist.stage.dir}/docs/api/ui" />
 	</target>
 		
 	<target name="dist" depends="jar,javadoc,dist-init">
 		
-		
+		<copy file="${base.jar.file}" todir="${dist.stage.dir}/lib" />
+		<copy file="${dbase.jar.file}" todir="${dist.stage.dir}/lib" />
+		<copy file="${shapefile.jar.file}" todir="${dist.stage.dir}/lib" />
+		<copy file="${kml.jar.file}" todir="${dist.stage.dir}/lib" />
 		
 		<copy file="${ui.jar.file}" todir="${dist.stage.dir}/lib" />
 		<copy file="${core.jar.file}" todir="${dist.stage.dir}/lib" />
@@ -217,6 +490,19 @@
 				<patternset refid="lib.resources" />
 				<type type="file" />
 			</fileset>
+		</copy>
+		
+		<copy todir="${dist.stage.dir}/docs/api/base">
+			<fileset dir="${base.javadoc.dir}" />
+		</copy>
+		<copy todir="${dist.stage.dir}/docs/api/dbase">
+			<fileset dir="${dbase.javadoc.dir}" />
+		</copy>
+		<copy todir="${dist.stage.dir}/docs/api/shapefile">
+			<fileset dir="${shapefile.javadoc.dir}" />
+		</copy>
+		<copy todir="${dist.stage.dir}/docs/api/kml">
+			<fileset dir="${kml.javadoc.dir}" />
 		</copy>
 		
 		<copy todir="${dist.stage.dir}/docs/api/core">

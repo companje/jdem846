@@ -1,0 +1,8 @@
+compile
+core.compile
+dbase.compile
+init
+kml.compile
+resources.compile
+shapefile.compile
+ui.compile

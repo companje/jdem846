@@ -10,7 +10,7 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
-import us.wthr.jdem846.exception.KmlException;
+import us.wthr.jdem846.kml.exception.KmlException;
 
 /** Contains and constructs a KML document
  * 
