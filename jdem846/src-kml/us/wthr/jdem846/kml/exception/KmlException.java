@@ -1,4 +1,4 @@
-package us.wthr.jdem846.exception;
+package us.wthr.jdem846.kml.exception;
 
 import us.wthr.jdem846.kml.KmlDocument;
 

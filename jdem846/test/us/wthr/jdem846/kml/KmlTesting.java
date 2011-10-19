@@ -89,14 +89,14 @@ public class KmlTesting
 		tempPath = "C:/srv/elevation/kml/etopo1/temp";
 		*/
 		
-		inputDataList.add("/elev/etopo1_bed_g_f4/etopo1_bed_g_f4.flt");
+		inputDataList.add("C:/srv/elevation/etopo1_ice_g_f4/etopo1_ice_g_f4.flt");
 
-		outputPath = "/elev/etopo1_bed_g_f4/kml/dist.png";
-		tempPath = "/elev/etopo1_bed_g_f4/kml/temp";
+		outputPath = "C:/srv/elevation/kml/etopo1/dist.jpg.double";
+		tempPath = "C:/srv/elevation/kml/etopo1/temp";
 		
 		overlayTileSize = 256;
 		layerMultiplier = 2;
-		imageType = ImageTypeEnum.PNG;
+		imageType = ImageTypeEnum.JPEG;
 		
 		
 		try {
@@ -112,6 +112,7 @@ public class KmlTesting
 		modelOptions.setColoringType("hypsometric-etopo1-tint");
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setTileSize(1000);
+		modelOptions.setDoublePrecisionHillshading(true);
 		
 		dataPackage = new DataPackage();
 		

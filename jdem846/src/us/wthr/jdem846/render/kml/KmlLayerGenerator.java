@@ -33,7 +33,6 @@ import javax.imageio.ImageIO;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.ImageException;
-import us.wthr.jdem846.exception.KmlException;
 import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.image.ImageWriter;
@@ -49,6 +48,7 @@ import us.wthr.jdem846.kml.Lod;
 import us.wthr.jdem846.kml.Region;
 import us.wthr.jdem846.kml.Style;
 import us.wthr.jdem846.kml.ViewRefreshModeEnum;
+import us.wthr.jdem846.kml.exception.KmlException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -319,6 +319,7 @@ public class KmlLayerGenerator
 		} catch (KmlException ex) {
 			throw new KmlException("Failed to write KML document to " + writeTo, ex);
 		}
+		
 		
 		
 	}

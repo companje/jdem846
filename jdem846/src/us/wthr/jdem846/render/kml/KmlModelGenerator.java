@@ -25,7 +25,6 @@ import java.util.List;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.exception.KmlException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.input.DataPackage;
@@ -38,6 +37,7 @@ import us.wthr.jdem846.kml.Lod;
 import us.wthr.jdem846.kml.NetworkLink;
 import us.wthr.jdem846.kml.Region;
 import us.wthr.jdem846.kml.Style;
+import us.wthr.jdem846.kml.exception.KmlException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
