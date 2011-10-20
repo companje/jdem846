@@ -1,4 +1,7 @@
 
+def initialize(modelContext):
+    pass
+
 def on2DModelBefore(modelContext, tileCanvas):
     pass
  
@@ -17,4 +20,6 @@ def onGetElevationBefore(modelContext, column, row):
 def onGetElevationAfter(modelContext, column, row, elevation):
     return None
 
+def destroy(modelContext):
+    pass
 # And so on...

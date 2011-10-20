@@ -4,14 +4,7 @@ import org.dom4j.Element;
 
 public class Location extends KmlElement
 {
-	/*
-	<Location>
-  <longitude>39.55375305703105</longitude>  
-  <latitude>-118.9813220168456</latitude> 
-  <altitude>1223</altitude> 
-</Location> 
-	*/
-	
+
 	// angle180Type
 	private double longitude;
 	

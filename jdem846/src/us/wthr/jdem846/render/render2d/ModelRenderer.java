@@ -15,6 +15,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
+import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
 public class ModelRenderer
@@ -65,7 +66,12 @@ public class ModelRenderer
 		
 		ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
 		
+		on2DModelBefore(outputCanvas);
+		
+		
 		TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, tileCanvas);
+		
+		
 		
 		if ((!skipElevation) && getDataPackage().getDataSources().size() > 0) {
 			for (int fromRow = 0; fromRow < dataRows; fromRow+=tileSize) {
@@ -110,7 +116,9 @@ public class ModelRenderer
 				}
 			}
 		}
-
+		
+		on2DModelAfter(outputCanvas);
+		
 		return outputCanvas;
 	}
 	
@@ -151,6 +159,34 @@ public class ModelRenderer
 	{
 		return cancel;
 	}
+	
+	protected void on2DModelBefore(DemCanvas outputCanvas) throws RenderEngineException
+	{
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.on2DModelBefore(modelContext, outputCanvas);
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+	}
+	
+	protected void on2DModelAfter(DemCanvas outputCanvas) throws RenderEngineException
+	{
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.on2DModelAfter(modelContext, outputCanvas);
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+	}
+
+	
+	
 	
 	public static DemCanvas render(ModelContext modelContext) throws RenderEngineException
 	{

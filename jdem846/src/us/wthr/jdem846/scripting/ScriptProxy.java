@@ -29,14 +29,17 @@ import us.wthr.jdem846.render.DemCanvas;
 public interface ScriptProxy
 {
 	
+	public void initialize(ModelContext modelContext);
+	public void destroy(ModelContext modelContext);
+	
 	public void on2DModelBefore(ModelContext modelContext, DemCanvas tileCanvas);
 	public void on2DModelAfter(ModelContext modelContext, DemCanvas tileCanvas);
 	
 	public void onTileBefore(ModelContext modelContext, DemCanvas tileCanvas);
 	public void onTileAfter(ModelContext modelContext, DemCanvas tileCanvas);
 
-	public float onGetElevationBefore(ModelContext modelContext, int column, int row);
-	public float onGetElevationAfter(ModelContext modelContext, int column, int row, float elevation);
+	public Object onGetElevationBefore(ModelContext modelContext, int column, int row);
+	public Object onGetElevationAfter(ModelContext modelContext, int column, int row, double elevation);
 
 	
 }

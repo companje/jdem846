@@ -46,6 +46,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
@@ -713,9 +714,9 @@ public class ProjectPane extends JdemPanel
 	
 	public void fireCreateModelListeners()
 	{
-
+		ModelContext modelContext = ModelContext.createInstance(dataPackage.copy(), modelOptions.copy());
 		for (CreateModelListener listener : createModelListeners) {
-			listener.onCreateModel(dataPackage.copy(), modelOptions.copy());
+			listener.onCreateModel(modelContext);
 		}
 	}
 

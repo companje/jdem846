@@ -23,6 +23,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.render2d.ModelRenderer;
 import us.wthr.jdem846.render.shapelayer.ShapeLayerRenderer;
+import us.wthr.jdem846.scripting.ScriptProxy;
 
 @DemEngine(name="us.wthr.jdem846.render.demEngine2D.name", 
 	identifier="dem2d-gen",
@@ -49,10 +50,22 @@ public class Dem2dGenerator extends BasicRenderEngine
 	
 	public OutputProduct<DemCanvas> generate(boolean skipElevation) throws RenderEngineException
 	{
+		OutputProduct<DemCanvas> product = null;
+		
+		try {
+			ScriptProxy scriptProxy = getModelContext().getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.initialize(getModelContext());
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+		
 		try {
 			DemCanvas canvas = ModelRenderer.render(getModelContext(), skipElevation, this.tileCompletionListeners);
 			ShapeLayerRenderer.render(getModelContext(), canvas, this.tileCompletionListeners);
-			return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
+			product = new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
 		} catch (OutOfMemoryError err) {
 			log.error("Out of memory error when generating model", err);
 			throw new RenderEngineException("Out of memory error when generating model", err);
@@ -60,6 +73,17 @@ public class Dem2dGenerator extends BasicRenderEngine
 			log.error("Error occured generating model", ex);
 			throw new RenderEngineException("Error occured generating model", ex);
 		}
+		
+		try {
+			ScriptProxy scriptProxy = getModelContext().getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.destroy(getModelContext());
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+		return product;
 	}
 	
 	

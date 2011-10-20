@@ -3,6 +3,7 @@ package us.wthr.jdem846.render.render2d;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
+import java.math.BigDecimal;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
@@ -21,6 +22,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.gfx.Vector;
+import us.wthr.jdem846.scripting.ScriptProxy;
 
 public class TileRenderer
 {
@@ -98,6 +100,8 @@ public class TileRenderer
 		int numColumns = (toColumn - fromColumn) + 1;
 		
 		
+		onTileBefore(canvas);
+		
 		dataSubset = loadDataSubset(fromColumn, fromRow, tileSize, tileSize);
 		
 		if (!dataSubset.containsData())
@@ -154,7 +158,7 @@ public class TileRenderer
 			}
 		}
 		
-		
+		onTileAfter(canvas);
 	}
 	
 	protected void renderCell(int row, int column, int imageRow, int imageColumn) throws RenderEngineException
@@ -284,24 +288,59 @@ public class TileRenderer
 	}
 	
 	
-	protected double getElevation(int row, int col) throws DataSourceException
+	protected double getElevation(int row, int col) throws DataSourceException, RenderEngineException
 	{
-		if (dataSubset != null) {
-			return dataSubset.getElevation(row, col);
-		} else {
-			return getDataPackage().getElevation(row, col);
+		double elevation = 0;
+		
+		try {
+			Object before = onGetElevationBefore(col, row);
+			
+			if (before instanceof Double) {
+				return (Double) before;
+			} else if (before instanceof BigDecimal) {
+				return ((BigDecimal)before).doubleValue();
+			} else if (before instanceof Integer) {
+				return ((Integer)before).doubleValue();
+			}
+			
+		} catch (Exception ex) {
+			throw new RenderEngineException("Error executing onGetElevationBefore(" + col + ", " + row + ")", ex);
 		}
+		
+		if (dataSubset != null) {
+			elevation = dataSubset.getElevation(row, col);
+		} else {
+			elevation = getDataPackage().getElevation(row, col);
+		}
+		
+		
+		try {
+			Object after = onGetElevationAfter(col, row, elevation);
+			
+			if (after instanceof Double) {
+				elevation = (Double) after;
+			} else if (after instanceof BigDecimal) {
+				elevation = ((BigDecimal)after).doubleValue();
+			} else if (after instanceof Integer) {
+				elevation = ((Integer)after).doubleValue();
+			}
+			
+		} catch (Exception ex) {
+			throw new RenderEngineException("Error executing onGetElevationAfter(" + col + ", " + row + ")", ex);
+		}
+		
+		return elevation;
 	}
 	
 	
-	protected void getPoint(int row, int column, DemPoint point) throws DataSourceException
+	protected void getPoint(int row, int column, DemPoint point) throws DataSourceException, RenderEngineException
 	{
 		getPoint(row, column, 1, point);
 	}
 	
 	
 	
-	protected void getPoint(int row, int column, int gridSize, DemPoint point) throws DataSourceException
+	protected void getPoint(int row, int column, int gridSize, DemPoint point) throws DataSourceException, RenderEngineException
 	{
 		if (getDataPackage() == null) {
 			point.setCondition(DemConstants.STAT_NO_DATA_PACKAGE);
@@ -419,6 +458,64 @@ public class TileRenderer
 	public boolean isCancelled()
 	{
 		return cancel;
+	}
+	
+	
+	protected void onTileBefore(DemCanvas tileCanvas) throws RenderEngineException
+	{
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.onTileBefore(modelContext, tileCanvas);
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+	}
+	
+	protected void onTileAfter(DemCanvas tileCanvas) throws RenderEngineException
+	{
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.onTileBefore(modelContext, tileCanvas);
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+	}
+	
+	
+	protected Object onGetElevationBefore(int column, int row) throws RenderEngineException
+	{
+		Object result = null;
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			if (scriptProxy != null) {
+				result = scriptProxy.onGetElevationBefore(modelContext, column, row);
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+		return result;
+	}
+
+	protected Object onGetElevationAfter(int column, int row, double elevation) throws RenderEngineException
+	{
+		Object result = null;
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			if (scriptProxy != null) {
+				result = scriptProxy.onGetElevationAfter(modelContext, column, row, elevation);
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+		return result;
 	}
 	
 	
