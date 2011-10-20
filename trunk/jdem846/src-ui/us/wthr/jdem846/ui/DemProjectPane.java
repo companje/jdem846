@@ -34,6 +34,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
@@ -51,6 +52,9 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
+import us.wthr.jdem846.scripting.ScriptLanguageEnum;
+import us.wthr.jdem846.scripting.ScriptProxy;
+import us.wthr.jdem846.scripting.ScriptProxyFactory;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 import us.wthr.jdem846.ui.DataSetTree.DatasetSelectionListener;
@@ -179,7 +183,7 @@ public class DemProjectPane extends JdemPanel
 		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.create"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/stock_update-data.png", KeyEvent.VK_C, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				fireCreateModelListeners();
+				onCreateModel();
 			}
 		}));
 		
@@ -196,7 +200,7 @@ public class DemProjectPane extends JdemPanel
 				openInputData();
 			}
 			public void onCreateClicked() {
-				fireCreateModelListeners();
+				onCreateModel();
 			}
 			public void onRemoveClicked() {
 				int selectedType = datasetTree.getSelectedDatasetType();
@@ -726,11 +730,39 @@ public class DemProjectPane extends JdemPanel
 		createModelListeners.remove(listener);
 	}
 	
-	public void fireCreateModelListeners()
+	
+	public void onCreateModel()
+	{
+		
+		DataPackage dataPackage = this.dataPackage.copy();
+		ModelOptions modelOptions = this.modelOptions.copy();
+		
+		String scriptContent = scriptPane.getScriptContent();
+		ScriptProxy scriptProxy = null;
+		ModelContext modelContext = null;
+		
+		try {
+
+			scriptProxy = ScriptProxyFactory.createScriptProxy(ScriptLanguageEnum.GROOVY, scriptContent);
+
+		} catch (Exception ex) {
+			log.warn("Error compiling script: " + ex.getMessage(), ex);
+			JOptionPane.showMessageDialog(this.getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.message") + ": " + ex.getMessage(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.title"),
+				    JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		modelContext = ModelContext.createInstance(dataPackage, modelOptions, scriptProxy);
+		fireCreateModelListeners(modelContext);
+	}
+	
+	public void fireCreateModelListeners(ModelContext modelContext)
 	{
 
 		for (CreateModelListener listener : createModelListeners) {
-			listener.onCreateModel(dataPackage.copy(), modelOptions.copy());
+			listener.onCreateModel(modelContext);
 		}
 	}
 

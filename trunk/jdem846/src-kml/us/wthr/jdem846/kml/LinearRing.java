@@ -31,6 +31,11 @@ public class LinearRing extends Geometry
 		
 	}
 	
+	public void setCoordinates(List<Coordinate> coordinates)
+	{
+		this.coordinates = coordinates;
+	}
+	
 	public void addCoordinate(Coordinate coordinate)
 	{
 		coordinates.add(coordinate);

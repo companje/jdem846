@@ -158,4 +158,9 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 		
 		return templateBuffer.toString();
 	}
+	
+	public String getScriptContent()
+	{
+		return editorPane.getText();
+	}
 }

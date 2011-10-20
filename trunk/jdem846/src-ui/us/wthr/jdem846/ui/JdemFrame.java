@@ -357,8 +357,8 @@ public class JdemFrame extends Frame
 			DemProjectPane projectPane = new DemProjectPane(projectModel);
 			
 			projectPane.addCreateModelListener(new CreateModelListener() {
-				public void onCreateModel(DataPackage dataPackage, ModelOptions modelOptions) {
-					onCreateModelTab(dataPackage, modelOptions);
+				public void onCreateModel(ModelContext modelContext) {
+					onCreateModelTab(modelContext);
 				}
 			});
 			
@@ -414,14 +414,16 @@ public class JdemFrame extends Frame
 		
 	}
 	
-	protected void onCreateModelTab(DataPackage dataPackage, ModelOptions modelOptions)
+	protected void onCreateModelTab(ModelContext modelContext)
 	{
 		
-		String engineIdentifier = modelOptions.getEngine();
+		
+		
+		String engineIdentifier = modelContext.getModelOptions().getEngine();
 		EngineInstance engineInstance = EngineRegistry.getInstance(engineIdentifier);
 		
 		// TODO: Add scripting proxy
-		ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+		//ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
 		
 		RenderEngine engine;
 		try {
@@ -451,7 +453,7 @@ public class JdemFrame extends Frame
 		    int returnVal = chooser.showSaveDialog(this);
 		    if(returnVal == JFileChooser.APPROVE_OPTION) {
 		    	File selectedFile = chooser.getSelectedFile();
-		    	modelOptions.setWriteTo(selectedFile.getAbsolutePath());
+		    	modelContext.getModelOptions().setWriteTo(selectedFile.getAbsolutePath());
 		    } else {
 		    	JOptionPane.showMessageDialog(getRootPane(),
 					    I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.fileNotSelected.message"),
