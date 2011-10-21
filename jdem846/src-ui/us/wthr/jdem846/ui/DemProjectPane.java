@@ -20,7 +20,9 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,6 +37,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
@@ -316,6 +319,8 @@ public class DemProjectPane extends JdemPanel
 		this.setSouth(statusBar);
 		
 		
+		loadDefaultScripting();
+		
 		//onConfigurationChanged();
 		applyOptionsToUI();
 		applyEngineSelectionConfiguration();
@@ -323,7 +328,69 @@ public class DemProjectPane extends JdemPanel
 	}
 	
 	
+	public void loadDefaultScripting()
+	{
+		// If this script isn't null or it's longer than 0 characters, then we
+		// can assume that the user has already provided one.
+		if (modelOptions.getUserScript() != null && modelOptions.getUserScript().length() > 0) {
+			return;
+		}
+		
+		// Default/Hardcode to Groovy for now...
+		
+		String scriptTemplatePath = null;
+		
+		if (modelOptions.getScriptLanguage() == ScriptLanguageEnum.GROOVY) {
+			scriptTemplatePath = modelOptions.getOption(ModelOptionNamesEnum.USER_SCRIPT_GROOVY_TEMPLATE);
+		} else if (modelOptions.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
+			scriptTemplatePath = modelOptions.getOption(ModelOptionNamesEnum.USER_SCRIPT_JYTHON_TEMPLATE);
+		} else {
+			// fail silently for now
+			// TODO: Don't 
+			log.warn("Script language '" + modelOptions.getScriptLanguage() + "' is null or invalid; Cannot load template");
+			return;
+		}
+
+		String scriptTemplate = null;
+		try {
+			scriptTemplate = loadTemplateFile(scriptTemplatePath);
+		} catch (Exception ex) {
+			log.error("Error when loading script template file from '" + scriptTemplatePath + "': " + ex.getMessage(), ex);
+			JOptionPane.showMessageDialog(getRootPane(),
+					I18N.get("us.wthr.jdem846.ui.projectPane.scripting.loadTemplateFailure.message"),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.scripting.loadTemplateFailure.title"),
+				    JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if (scriptTemplate != null) {
+			modelOptions.setUserScript(scriptTemplate);
+		}
+		
+		
+	}
 	
+	protected String loadTemplateFile(String path) throws IOException
+	{
+		if (path == null) {
+			log.warn("Cannot load template file: path is null");
+			return null;
+		}
+		
+		log.info("Loading script template file from path '" + path + "'");
+		StringBuffer templateBuffer = new StringBuffer();
+
+		BufferedInputStream in = new BufferedInputStream(DemProjectPane.class.getResourceAsStream(path));
+		
+		int length = 0;
+		byte[] buffer = new byte[1024];
+		
+		while((length = in.read(buffer)) > 0) {
+			templateBuffer.append(new String(buffer, 0, length));
+		}
+		
+		return templateBuffer.toString();
+	}
 	
 	
 	
@@ -463,6 +530,8 @@ public class DemProjectPane extends JdemPanel
 		modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
 		modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
 		modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
+		modelOptions.setUserScript(scriptPane.getScriptContent());
+		modelOptions.setScriptLanguage(scriptPane.getScriptLanguage());
 		
 		applyOptionsToUI();
 		applyEngineSelectionConfiguration();
@@ -485,6 +554,12 @@ public class DemProjectPane extends JdemPanel
 								modelOptions.getProjection().getRotateY(),
 								modelOptions.getProjection().getRotateZ());
 		
+		scriptPane.setScriptLanguage(modelOptions.getScriptLanguage());
+		if (modelOptions.getUserScript() != null && modelOptions.getUserScript().length() > 0) {
+			scriptPane.setScriptContent(modelOptions.getUserScript());
+		}
+		
+	
 		
 		ignoreValueChanges = false;
 	}
@@ -525,6 +600,10 @@ public class DemProjectPane extends JdemPanel
 		modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
 		modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
 		modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
+		
+		
+		modelOptions.setUserScript(scriptPane.getScriptContent());
+		modelOptions.setScriptLanguage(scriptPane.getScriptLanguage());
 	}
 	
 	

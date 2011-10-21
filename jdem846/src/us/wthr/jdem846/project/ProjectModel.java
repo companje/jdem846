@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import us.wthr.jdem846.ModelOptionNamesEnum;
+import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
 
@@ -33,6 +34,9 @@ public class ProjectModel
 	private Map<String, String> optionsMap = new HashMap<String, String>();
 	private List<String> inputFiles = new LinkedList<String>();
 	private List<ShapeFileRequest> shapeFiles = new LinkedList<ShapeFileRequest>();
+	
+	private String userScript = null;
+	private ScriptLanguageEnum scriptLanguage = null;
 	
 	private String loadedFrom = null;
 	
@@ -161,8 +165,32 @@ public class ProjectModel
 	{
 		this.loadedFrom = loadedFrom;
 	}
+
+	public String getUserScript()
+	{
+		return userScript;
+	}
+
+	public void setUserScript(String userScript)
+	{
+		this.userScript = userScript;
+	}
+
+	public ScriptLanguageEnum getScriptLanguage()
+	{
+		return scriptLanguage;
+	}
+
+	public void setScriptLanguage(ScriptLanguageEnum scriptLanguage)
+	{
+		this.scriptLanguage = scriptLanguage;
+	}
 	
-	
+	public void setScriptLanguage(String scriptLanguageString)
+	{
+		ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.getLanguageFromString(scriptLanguageString);
+		this.setScriptLanguage(scriptLanguage);
+	}
 	
 	
 	

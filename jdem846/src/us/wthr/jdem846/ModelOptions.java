@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import us.wthr.jdem846.project.ProjectModel;
+import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 import us.wthr.jdem846.util.NumberFormattingUtil;
 
@@ -39,204 +40,26 @@ public class ModelOptions
 
 	
 	private Map<String, String> optionsMap = new HashMap<String, String>();
-	
-	/*
-	private String engine = "dem2d-gen";
-	private boolean hillShading = true;
-	private int hillShadeType = DemConstants.HILLSHADING_COMBINED;
-	private String coloringType = "hypsometric-tint";
-	
-	private String backgroundColor = "Blue";
-	
-	private int width = 3000;
-	private int height = 3000;
-	private int gridSize = 1;
-	private double elevationMultiple = 1.0;
-	private int tileSize = 1000;
-	private double lightingMultiple = 0.5f;
-	
-	private double lightingAzimuth = 135;
-	private double lightingElevation = 45;
-	
-	private double relativeLightIntensity = 1.0;
-	private double relativeDarkIntensity = 1.0;
-	*/
-	
-	/** Sets the spot exponent for the intensity distribution of the lighting. 
-	 * Should be a value between 0.4 and 10.0 (default: 1.0)
-	 */
-	/*
-	private int spotExponent = 1;
-	
-	private String gradientLevels = null;
-	
-	private Projection projection = new Projection();
-	private String writeTo = null;
-	
 
-	private String precacheStrategy;
-	private boolean antialiased;
-	*/
+	
+	private String userScript = null;
+	private ScriptLanguageEnum scriptLanguage = null;
 	
 	private Projection projection = new Projection();
 	private String writeTo = null;
 	
 	public ModelOptions()
 	{
-		//JDem846Properties properties = new JDem846Properties(JDem846Properties.CORE_PROPERTIES);
-		///JDem846Properties properties = JDem846Properties.getInstance();
-		
+
 		for (ModelOptionNamesEnum optionName : ModelOptionNamesEnum.values()) {
 			String property = JDem846Properties.getProperty(optionName.optionName());
 			if (property != null) {
 				setOption(optionName.optionName(), property);
 			}
 		}
-		
-		
-		
-		/*
-		String property = null;
-		
-		property = JDem846Properties.getProperty(ModelOptions.OPTION_ENGINE);
-		if (property != null) {
-			setEngine(property);
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_GRADIENT_LEVELS);
-		if (property != null) {
-			setGradientLevels(property);
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_WRITE_TO);
-		if (property != null) {
-			setWriteTo(property);
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_WIDTH);
-		if (property != null) {
-			setWidth(Integer.parseInt(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_GRID_SIZE);
-		if (property != null) {
-			setGridSize(Integer.parseInt(property));
-		}
 
-		property = JDem846Properties.getProperty(OPTION_HEIGHT);
-		if (property != null) {
-			setHeight(Integer.parseInt(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_ELEVATION_MULTIPLE);
-		if (property != null) {
-			setElevationMultiple(Double.parseDouble(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_BACKGROUND_COLOR);
-		if (property != null) {
-			setBackgroundColor(property);
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_HILLSHADING);
-		if (property != null) {
-			setHillShading(Boolean.parseBoolean(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_HILLSHADE_TYPE);
-		if (property != null) {
-			setHillShadeType(Integer.parseInt(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_COLORING_TYPE);
-		if (property != null) {
-			setColoringType(property);
-		}
-		
-		
-		
-		
-		
-		property = JDem846Properties.getProperty(OPTION_LIGHTING_AZIMUTH);
-		if (property != null) {
-			setLightingAzimuth(Double.parseDouble(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_LIGHTING_ELEVATION);
-		if (property != null) {
-			setLightingElevation(Double.parseDouble(property));
-		}
-		
-		
-		property = JDem846Properties.getProperty(OPTION_TILE_SIZE);
-		if (property != null) {
-			setTileSize(Integer.parseInt(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_LIGHTING_MULTIPLE);
-		if (property != null) {
-			setLightingMultiple(Double.parseDouble(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_RELATIVE_LIGHT_INTENSITY);
-		if (property != null) {
-			setRelativeLightIntensity(Double.parseDouble(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_RELATIVE_DARK_INTENSITY);
-		if (property != null) {
-			setRelativeDarkIntensity(Double.parseDouble(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_SPOT_EXPONENT);
-		if (property != null) {
-			setSpotExponent(Integer.parseInt(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_PRECACHE_STRATEGY);
-		if (property != null) {
-			setPrecacheStrategy(property);
-		}
-
-		property = JDem846Properties.getProperty(OPTION_ANTIALIASED);
-		if (property != null) {
-			setAntialiased(Boolean.parseBoolean(property));
-		}
-		
-		
-		
-		property = JDem846Properties.getProperty(OPTION_PROJECTION_ROTATE_X);
-		if (property != null) {
-			projection.setRotateX(Double.parseDouble(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_PROJECTION_ROTATE_Y);
-		if (property != null) {
-			projection.setRotateY(Double.parseDouble(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_PROJECTION_ROTATE_Z);
-		if (property != null) {
-			projection.setRotateZ(Double.parseDouble(property));
-		}
-		
-		
-		property = JDem846Properties.getProperty(OPTION_PROJECTION_SHIFT_X);
-		if (property != null) {
-			projection.setShiftX(Double.parseDouble(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_PROJECTION_SHIFT_Y);
-		if (property != null) {
-			projection.setShiftY(Double.parseDouble(property));
-		}
-		
-		property = JDem846Properties.getProperty(OPTION_PROJECTION_SHIFT_Z);
-		if (property != null) {
-			projection.setShiftZ(Double.parseDouble(property));
-		}
-		*/
-		
+		String scriptLanguageString = JDem846Properties.getProperty(ModelOptionNamesEnum.USER_SCRIPT_LANGUAGE.optionName());
+		setScriptLanguage(scriptLanguageString);
 		
 		
 	}
@@ -390,6 +213,10 @@ public class ModelOptions
 		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_SHIFT_X, projection.getShiftX());
 		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Y, projection.getShiftY());
 		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Z, projection.getShiftZ());
+		
+		projectModel.setUserScript(getUserScript());
+		projectModel.setScriptLanguage(getScriptLanguage());
+		
 	}
 	
 	/** Synchronizes values from a ProjectModel object to this object.
@@ -400,11 +227,20 @@ public class ModelOptions
 	{
 		
 		for (String optionName : projectModel.getOptionKeys()) {
-			this.setOption(optionName, projectModel.getOption(optionName));
+			String optionValue = projectModel.getOption(optionName);
+			if (optionValue != null) {
+				this.setOption(optionName, optionValue);
+			}
 		}
 		
+		if (projectModel.getUserScript() != null) {
+			this.setUserScript(projectModel.getUserScript());
+		}
 		
-
+		if (projectModel.getScriptLanguage() != null) {
+			this.setScriptLanguage(projectModel.getScriptLanguage());
+		}
+		
 		this.projection.setRotateX(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_X));
 		this.projection.setRotateY(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Y));
 		this.projection.setRotateZ(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Z));
@@ -463,8 +299,7 @@ public class ModelOptions
 		setOption(ModelOptionNamesEnum.RELATIVE_DARK_INTENSITY, relativeDarkIntensity);
 	}
 
-	
-	
+
 	public int getSpotExponent()
 	{
 		return getIntegerOption(ModelOptionNamesEnum.SPOT_EXPONENT);
@@ -697,7 +532,32 @@ public class ModelOptions
 		this.projection = projection;
 	}
 
+	public String getUserScript()
+	{
+		return userScript;
+	}
 
+	public void setUserScript(String userScript)
+	{
+		this.userScript = userScript;
+	}
+
+	public ScriptLanguageEnum getScriptLanguage()
+	{
+		return scriptLanguage;
+	}
+
+	public void setScriptLanguage(ScriptLanguageEnum scriptLanguage)
+	{
+		this.scriptLanguage = scriptLanguage;
+	}
+	
+	public void setScriptLanguage(String scriptLanguageString)
+	{
+		ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.getLanguageFromString(scriptLanguageString);
+		this.setScriptLanguage(scriptLanguage);
+	}
+	
 	/** Creates a value-by-value copy of this object.
 	 * 
 	 * @return A value-by-value copy of this object.
@@ -717,6 +577,14 @@ public class ModelOptions
 		
 		if (projection != null) {
 			clone.projection = this.projection.copy();
+		}
+		
+		if (scriptLanguage != null) {
+			clone.scriptLanguage = this.scriptLanguage;
+		}
+		
+		if (userScript != null) {
+			clone.userScript = this.userScript.toString();
 		}
 		
 		return clone;

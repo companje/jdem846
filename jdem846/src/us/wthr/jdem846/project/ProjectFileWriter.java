@@ -69,6 +69,16 @@ public class ProjectFileWriter
         }
         
         
+        Element scripting = project.addElement("scripting");
+        if (projectModel.getScriptLanguage() != null) {
+        	scripting.addElement("language").addText(projectModel.getScriptLanguage().text());
+        }
+        
+        if (projectModel.getUserScript() != null) {
+        	Element script = scripting.addElement("script");
+        	script.addCDATA(projectModel.getUserScript());
+        }
+        
         Element inputFiles = project.addElement("input-files");
         for (String inputFile : projectModel.getInputFiles()) {
         	inputFiles.addElement("input").addText(inputFile);

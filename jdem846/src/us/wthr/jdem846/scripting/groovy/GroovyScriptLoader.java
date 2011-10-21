@@ -22,6 +22,8 @@ public class GroovyScriptLoader
 		ClassLoader parent = GroovyScriptLoader.class.getClassLoader();
 		GroovyClassLoader loader = new GroovyClassLoader(parent);
 		
+		
+		
 		Class<?> clazz = null;
 		GroovyObject groovyObject = null;
 		
@@ -34,9 +36,9 @@ public class GroovyScriptLoader
 		
 		try {
 			groovyObject = (GroovyObject) clazz.newInstance();
-			for (Field field : groovyObject.getClass().getFields()) {
-				log.info("Groovy Field: " + field.getName());
-			}
+			//for (Field field : groovyObject.getClass().getFields()) {
+			//	log.info("Groovy Field: " + field.getName());
+			//}
 			
 			
 		} catch (InstantiationException ex) {

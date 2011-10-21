@@ -1,40 +1,50 @@
 
-def initialize(modelContext) {
+import us.wthr.jdem846.*
+import us.wthr.jdem846.logging.*
+import us.wthr.jdem846.image.*
+import us.wthr.jdem846.input.*
+
+class JDemScript {
 	
-}
-
-def on2DModelBefore(modelContext, outputCanvas) {
+	def log = Logging.getLog(JDemScript.class)
+	
+	def initialize(modelContext) {
+		
+	}
+	
+	def on2DModelBefore(modelContext, outputCanvas) {
+		
+		
+	}
+	
+	def onTileBefore(modelContext, tileCanvas) {
+		
+		
+	}
+	
+	def onTileAfter(modelContext, tileCanvas) {
 	
 	
-}
-
-def onTileBefore(modelContext, tileCanvas) {
+	}
+	
+	def on2DModelAfter(modelContext, outputCanvas) {
 	
 	
-}
-
-def onTileAfter(modelContext, tileCanvas) {
-
-
-}
-
-def on2DModelAfter(modelContext, outputCanvas) {
-
-
-}
-
-def onGetElevationBefore(modelContext, column, row) {
+	}
 	
-	return null
-}
-
-def onGetElevationAfter(modelContext, column, row, elevation) {
+	def onGetElevationBefore(modelContext, column, row) {
+		
+		return null
+	}
 	
-	return null
-}
-
-
-def destroy(modelContext) {
-
+	def onGetElevationAfter(modelContext, column, row, elevation) {
+		
+		return null
+	}
+	
+	
+	def destroy(modelContext) {
+	
+	}
 }
 // And so on....
