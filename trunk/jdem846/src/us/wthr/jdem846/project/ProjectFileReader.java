@@ -90,7 +90,20 @@ public class ProjectFileReader
 			Node inputNode = (Node) iter.next();
 			projectModel.getInputFiles().add(inputNode.getText());
 		}
+		
+		Node scriptLanguageNode = doc.selectSingleNode("//jdem846/project/scripting/language");
+		Node scriptContentNode = doc.selectSingleNode("//jdem846/project/scripting/script");
 
+		if (scriptLanguageNode != null) {
+			projectModel.setScriptLanguage(scriptLanguageNode.getText());
+		}
+		
+		if (scriptContentNode != null) {
+			projectModel.setUserScript(scriptContentNode.getText());
+		}
+		
+		
+		
 		List shapeList = doc.selectNodes( "//jdem846/project/input-files/shapefile" );
 		for (Iterator iter = shapeList.iterator(); iter.hasNext(); ) {
 			Node shapeNode = (Node) iter.next();

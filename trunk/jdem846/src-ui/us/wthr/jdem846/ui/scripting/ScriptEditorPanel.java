@@ -42,6 +42,7 @@ import javax.swing.text.AttributeSet;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.ui.TitledRoundedPanel;
 import us.wthr.jdem846.ui.base.EditorPane;
 import us.wthr.jdem846.ui.base.ScrollPane;
@@ -55,6 +56,7 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 	private JEditorPane editorPane;
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
+	private ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.GROOVY;
 	
 	static {
 		
@@ -66,12 +68,6 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 		
 		jsyntaxpane.DefaultSyntaxKit.initKit();
 		
-		String template = "";
-		try {
-			template = loadTemplateFile("/scripting/template-dem.groovy");
-		} catch (IOException ex) {
-			log.warn("Failed to load template file: " + ex.getMessage(), ex);
-		}
 		
 		// Create Components
 		final JEditorPane editorPane = new JEditorPane();
@@ -95,8 +91,10 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 		
 		this.doLayout();
 		
-		editorPane.setContentType("text/groovy");
-		editorPane.setText(template);
+		if (this.scriptLanguage != null) {
+			editorPane.setContentType(scriptLanguage.mime());
+		}
+		
 		editorPane.getDocument().addDocumentListener(new DocumentListener() {
 
 			@Override
@@ -143,24 +141,26 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 	
 	
 	
-	protected String loadTemplateFile(String path) throws IOException
-	{
-		StringBuffer templateBuffer = new StringBuffer();
-
-		BufferedInputStream in = new BufferedInputStream(ScriptEditorPanel.class.getResourceAsStream(path));
-		
-		int length = 0;
-		byte[] buffer = new byte[1024];
-		
-		while((length = in.read(buffer)) > 0) {
-			templateBuffer.append(new String(buffer, 0, length));
-		}
-		
-		return templateBuffer.toString();
-	}
+	
 	
 	public String getScriptContent()
 	{
 		return editorPane.getText();
+	}
+	
+	public void setScriptContent(String scriptContent)
+	{
+		editorPane.setText(scriptContent);
+		editorPane.setCaretPosition(0);
+	}
+	
+	public ScriptLanguageEnum getScriptLanguage()
+	{
+		return scriptLanguage;
+	}
+	
+	public void setScriptLanguage(ScriptLanguageEnum scriptLanguage)
+	{
+		this.scriptLanguage = scriptLanguage;
 	}
 }

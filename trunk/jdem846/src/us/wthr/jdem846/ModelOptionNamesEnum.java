@@ -32,7 +32,11 @@ public enum ModelOptionNamesEnum
 	PROJECTION_SHIFT_Z("us.wthr.jdem846.modelOptions.projection.shiftZ"),
 	
 	PRECACHE_STRATEGY("us.wthr.jdem846.modelOptions.precacheStrategy"),
-	ANTIALIASED("us.wthr.jdem846.modelOptions.antialiased");
+	ANTIALIASED("us.wthr.jdem846.modelOptions.antialiased"),
+	
+	USER_SCRIPT_LANGUAGE("us.wthr.jdem846.modelOptions.userScript.language"),
+	USER_SCRIPT_GROOVY_TEMPLATE("us.wthr.jdem846.modelOptions.userScript.groovy.template"),
+	USER_SCRIPT_JYTHON_TEMPLATE("us.wthr.jdem846.modelOptions.userScript.jython.template");
 	
 	private final String optionName;
 	
