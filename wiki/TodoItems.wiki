@@ -57,6 +57,11 @@ The following is a list of outstanding tasks for development and/or design. Thes
    * Switch from row/column iteration to latitude/longitude
    * Add support for multiple data resolutions.
 
+= Scripting =
+  * Strengthen script model/callbackd
+  * Create reasonable API 
+  * Better error handling/user feedback
+
 = Internationalization (I18N) = 
   * Utility to list available translations
   * Translations
