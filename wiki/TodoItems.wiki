@@ -24,6 +24,8 @@ The following is a list of outstanding tasks for development and/or design. Thes
     * Add annotations
   * Latitude/longitude label for 3D projections on completed model panel
   * Improved thread-safety for Swing components
+  * Options required for KML output
+  
 
 = Image/Canvas = 
   * Additional output formats
@@ -39,14 +41,21 @@ The following is a list of outstanding tasks for development and/or design. Thes
   * Add elevation gradient level key to model
   * Add north arrow to model
   * Add customizable copyright label to model
+  * Reimplement process stop functionality
+  * Add a "pause" option
 
 = DEM 3D = 
-  * Replace polygon rendering with texture mapping from 2D image
-  * Tiled rendering
+  * Fix color bleedthrough of hidden layers
 
 = Raster Input Formats = 
   * Validate BIL 16INT
   * Add additional specifications
+
+= Data Input Proxy (DataPackage) =
+  * Dearchitect
+   * It's still more-or-less based on the original hastily-written C++ code from which it was ported
+   * Switch from row/column iteration to latitude/longitude
+   * Add support for multiple data resolutions.
 
 = Internationalization (I18N) = 
   * Utility to list available translations
