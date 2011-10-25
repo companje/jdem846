@@ -41,5 +41,6 @@ public interface ScriptProxy
 	public Object onGetElevationBefore(ModelContext modelContext, int column, int row);
 	public Object onGetElevationAfter(ModelContext modelContext, int column, int row, double elevation);
 
-	
+	// getGradientColor
+	// onException
 }
