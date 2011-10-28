@@ -2,12 +2,40 @@ package us.wthr.jdem846.rasterdata;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 
 public abstract class AbstractRasterDataProvider implements RasterData
 {
+	private static Log log = Logging.getLog(AbstractRasterDataProvider.class);
+	
+	
+	private double latitudeResolution;
+	private double longitudeResolution;
+	
 
-	protected abstract void setDataMinimum(double value);
-	protected abstract void setDataMaximum(double value);
+	private double dataMinimum;
+	private double dataMaximum;
+	
+	private double north;
+	private double south;
+	private double east;
+	private double west;
+	
+	private int rows;
+	private int columns;
+
+	
+	public boolean contains(double latitude, double longitude)
+	{
+		// TODO: This is overly simplistic. Make this a bit more robust.
+		
+		if (latitude >= south && latitude <= north && longitude >= west && longitude <= east) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	public double  getMetersResolution()
 	{
@@ -65,4 +93,130 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		setDataMaximum(max);
 	}
 	
+	protected int latitudeToRow(double latitude)
+	{
+		// Nearest neighbor
+		return (int) Math.round((north - latitude) / this.getLatitudeResolution());
+	}
+	
+	protected double rowToLatitude(int row)
+	{
+		return (north - ((double)row * this.getLatitudeResolution()));
+	}
+	
+	protected int longitudeToColumn(double longitude)
+	{
+		// Nearest neighbor
+		return (int) Math.round((longitude - west) / this.getLongitudeResolution());
+	}
+	
+	public double columnToLongitude(int column)
+	{
+		return west + ((double)column * this.getLongitudeResolution());
+	}
+	
+	public double getLatitudeResolution()
+	{
+		return latitudeResolution;
+	}
+	
+	protected void setLatitudeResolution(double latitudeResolution)
+	{
+		this.latitudeResolution = latitudeResolution;
+	}
+	
+	public double getLongitudeResolution()
+	{
+		return longitudeResolution;
+	}
+	
+	protected void setLongitudeResolution(double longitudeResolution)
+	{
+		this.longitudeResolution = longitudeResolution;
+	}
+	
+	public double getNorth()
+	{
+		return north;
+	}
+	
+	protected void setNorth(double north) 
+	{
+		this.north = north;
+	}
+	
+	public double getSouth()
+	{
+		return south;
+	}
+	
+	protected void setSouth(double south) 
+	{
+		this.south = south;
+	}
+	
+	public double getEast()
+	{
+		return east;
+	}
+	
+	protected void setEast(double east)
+	{
+		this.east = east;
+	}
+	
+	public double getWest()
+	{
+		return west;
+	}
+	
+	protected void setWest(double west)
+	{
+		this.west = west;
+	}
+	
+	public int getRows()
+	{
+		return rows;
+	}
+	
+	protected void setRows(int rows)
+	{
+		this.rows = rows;
+	}
+	
+	public int getColumns()
+	{
+		return columns;
+	}
+	
+	protected void setColumns(int columns)
+	{
+		this.columns = columns;
+	}
+	
+	public double getDataMinimum()
+	{
+		return dataMinimum;
+	}
+	
+	protected void setDataMinimum(double dataMinimum) 
+	{
+		this.dataMinimum = dataMinimum;
+	}	
+	
+	public double getDataMaximum() 
+	{
+		return dataMaximum;
+	}
+
+
+	protected void setDataMaximum(double dataMaximum) 
+	{
+		this.dataMaximum = dataMaximum;
+	}
+		
+	
+	
+
 }

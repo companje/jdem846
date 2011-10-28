@@ -28,6 +28,7 @@ import us.wthr.jdem846.shapefile.ShapeBase;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 
+@Deprecated
 public class DataPackage
 {
 	private static Log log = Logging.getLog(DataPackage.class);
