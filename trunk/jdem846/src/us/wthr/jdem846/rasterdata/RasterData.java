@@ -19,6 +19,8 @@ public interface RasterData {
 	public double getEast();
 	public double getWest();
 	
+	public boolean contains(double latitude, double longitude);
+	
 	public int getRows();
 	public int getColumns();
 	
