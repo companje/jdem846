@@ -37,7 +37,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	{
 		// TODO: This is overly simplistic. Make this a bit more robust.
 		
-		if (latitude >= south && latitude <= north && longitude >= west && longitude <= east) {
+		if (latitude > south && latitude < north && longitude > west && longitude < east) {
 			return true;
 		} else {
 			return false;
@@ -72,7 +72,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	}
 	
 	
-	public void calculatenMinAndMax() throws DataSourceException
+	public void calculateMinAndMax() throws DataSourceException
 	{
 		setDataMaximum(-50000);
 		setDataMinimum(50000);
@@ -108,7 +108,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	protected int latitudeToRow(double latitude)
 	{
 		// Nearest neighbor
-		return (int) Math.round((north - latitude) / this.getLatitudeResolution());
+		return (int) Math.floor((north - latitude) / this.getLatitudeResolution());
 	}
 	
 	protected double rowToLatitude(int row)
@@ -119,7 +119,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	protected int longitudeToColumn(double longitude)
 	{
 		// Nearest neighbor
-		return (int) Math.round((longitude - west) / this.getLongitudeResolution());
+		return (int) Math.floor((longitude - west) / this.getLongitudeResolution());
 	}
 	
 	public double columnToLongitude(int column)
@@ -127,6 +127,15 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		return west + ((double)column * this.getLongitudeResolution());
 	}
 	
+	@Override
+	public double getData(double latitude, double longitude) throws DataSourceException
+	{
+		int row = this.latitudeToRow(latitude);
+		int column = this.longitudeToColumn(longitude);
+		return this.getData(row, column);
+		
+	}
+
 	public double getLatitudeResolution()
 	{
 		return latitudeResolution;

@@ -19,6 +19,7 @@ public class GridFloatDataReader
 	private int rows;
 	private int columns;
 	private ByteOrder byteOrder;
+	private boolean isDisposed = false;
 	
 	private RandomAccessFile dataReader = null;
 	
@@ -33,6 +34,24 @@ public class GridFloatDataReader
 		this.byteOrder = byteOrder;
 	}
 	
+	
+	public void dispose() throws DataSourceException
+	{
+		if (isDisposed()) {
+			throw new DataSourceException("Raster data reader already disposed.");
+		}
+		
+		
+		
+		// TODO: Finish
+		isDisposed = true;
+	}
+
+	
+	public boolean isDisposed()
+	{
+		return isDisposed;
+	}
 	
 	public double get(int row, int column) throws DataSourceException
 	{
@@ -118,6 +137,16 @@ public class GridFloatDataReader
 		
 		long pos = (row * columns) + column;
 		long seekStart = (long) pos * (long) (Float.SIZE / 8);
+		
+		try {
+			long length = dataReader.length();
+			if (seekStart >= length) {
+				throw new DataSourceException("Cannot seek past end of file (seek to: " + seekStart + ", length: " + length + ")");
+			}
+		} catch (IOException ex) {
+			throw new DataSourceException("Failed to determine file length: " + ex.getMessage(), ex);
+		}
+		
 		try {
 			dataReader.seek(seekStart);
 		} catch (IOException ex) {

@@ -9,6 +9,8 @@ public interface RasterData {
 	public void dispose() throws DataSourceException;
 	public boolean isDisposed();
 	
+	public String getFilePath();
+	
 	public double getLatitudeResolution();
 	public double getLongitudeResolution();
 	
@@ -27,7 +29,7 @@ public interface RasterData {
 	public int getRows();
 	public int getColumns();
 	
-	public void calculatenMinAndMax() throws DataSourceException;
+	public void calculateMinAndMax() throws DataSourceException;
 	
 	public double getData(double latitude, double longitude) throws DataSourceException;
 	public double getData(int row, int column) throws DataSourceException;
