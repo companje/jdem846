@@ -25,6 +25,13 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	private int rows;
 	private int columns;
 
+	private RasterDataLatLongBox dataLatLongBox;
+	
+	
+	protected void prepare()
+	{
+		dataLatLongBox = new RasterDataLatLongBox(getNorth(), getSouth(), getEast(), getWest());
+	}
 	
 	public boolean contains(double latitude, double longitude)
 	{
@@ -35,6 +42,11 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		} else {
 			return false;
 		}
+	}
+	
+	public boolean intersects(RasterDataLatLongBox otherBox)
+	{
+		return dataLatLongBox.intersects(otherBox);
 	}
 	
 	public double  getMetersResolution()
@@ -143,6 +155,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	protected void setNorth(double north) 
 	{
 		this.north = north;
+		prepare();
 	}
 	
 	public double getSouth()
@@ -153,6 +166,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	protected void setSouth(double south) 
 	{
 		this.south = south;
+		prepare();
 	}
 	
 	public double getEast()
@@ -163,6 +177,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	protected void setEast(double east)
 	{
 		this.east = east;
+		prepare();
 	}
 	
 	public double getWest()
@@ -173,6 +188,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	protected void setWest(double west)
 	{
 		this.west = west;
+		prepare();
 	}
 	
 	public int getRows()

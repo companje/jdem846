@@ -14,6 +14,8 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 	private GridFloatHeader header;
 	private File dataFile;
 	
+	private boolean isDisposed = false;
+	
 	public GridFloatRasterDataProvider()
 	{
 		
@@ -49,10 +51,21 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 	@Override
 	public void dispose() throws DataSourceException
 	{
-		// TODO Auto-generated method stub
+		if (isDisposed()) {
+			throw new DataSourceException("Raster data provider already disposed.");
+		}
 		
+		
+		
+		// TODO: Finish
 	}
 
+	@Override
+	public boolean isDisposed()
+	{
+		return isDisposed;
+	}
+	
 
 	@Override
 	public double getData(double latitude, double longitude)

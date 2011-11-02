@@ -5,7 +5,9 @@ import us.wthr.jdem846.exception.DataSourceException;
 public interface RasterData {
 
 	public void create(String file) throws DataSourceException;
+	
 	public void dispose() throws DataSourceException;
+	public boolean isDisposed();
 	
 	public double getLatitudeResolution();
 	public double getLongitudeResolution();
@@ -20,6 +22,7 @@ public interface RasterData {
 	public double getWest();
 	
 	public boolean contains(double latitude, double longitude);
+	public boolean intersects(RasterDataLatLongBox otherBox);
 	
 	public int getRows();
 	public int getColumns();
