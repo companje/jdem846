@@ -1,5 +1,6 @@
 package us.wthr.jdem846.rasterdata;
 
+import java.awt.Rectangle;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 
@@ -11,7 +12,10 @@ public class RasterDataLatLongBox
 	private double east;
 	private double west;
 	
-	private Path2D.Double box = null;
+	private double width;
+	private double height;
+	
+	private Rectangle2D.Double rectangle = null;
 	
 	public RasterDataLatLongBox(double north, double south, double east, double west)
 	{
@@ -20,30 +24,48 @@ public class RasterDataLatLongBox
 		this.east = east;
 		this.west = west;
 		
+		// TODO: Too simplistic
+		width = (east - west);
+		height = (north - south);
+		
+		
+		rectangle = new Rectangle2D.Double(west, north, width, height);
+		/*
 		box = new Path2D.Double();
 		box.moveTo(west, north);
 		box.lineTo(west, south);
 		box.lineTo(east, south);
 		box.lineTo(east, north);
 		box.closePath();
+		*/
 	}
 	
 	public boolean intersects(RasterDataLatLongBox other)
 	{
-		return box.intersects(other.getNorth(), other.getWest(), other.getWidth(), other.getHeight());
+		return rectangle.intersects(other.rectangle);	
+		/*
+		return rectangle.contains(other.getLeftX(), other.getTopY())
+				|| rectangle.contains(other.getLeftX(), other.getBottomY())
+				|| rectangle.contains(other.getRightX(), other.getTopY())
+				|| rectangle.contains(other.getRightX(), other.getBottomY())
+				|| bounds.contains(getLeftX(), getTopY())
+				|| bounds.contains(getLeftX(), getBottomY())
+				|| bounds.contains(getRightX(), getTopY())
+				|| bounds.contains(getRightX(), getBottomY());
+				*/
+		//return box.intersects(other.getNorth(), other.getWest(), other.getWidth(), other.getHeight());
 	}
 
 	
 	public double getWidth()
 	{
-		// TODO: Too simplistic
-		return (east - west);
+		
+		return width;
 	}
 	
 	public double getHeight()
 	{
-		// TODO: Too simplistic
-		return (north - south);
+		return height;
 	}
 
 	public double getNorth()

@@ -30,10 +30,10 @@ public class RasterDataProxy
 	public void prepare() throws DataSourceException
 	{
 		
-		east = Double.MIN_VALUE;
-		west = Double.MAX_VALUE;
-		north = Double.MIN_VALUE;
-		south = Double.MAX_VALUE;
+		east = -180.0;
+		west = 180.0;
+		north = -90.0;
+		south = 90.0;
 		
 		latitudeResolution = Double.MAX_VALUE;
 		longitudeResolution = Double.MAX_VALUE;
@@ -87,6 +87,22 @@ public class RasterDataProxy
 	{
 		return rasterDataList.size();
 	}
+	
+	public void fillBuffers(double north, double south, double east, double west) throws DataSourceException
+	{
+		for (RasterData rasterData : rasterDataList) {
+			rasterData.fillBuffer(north, south, east, west);
+		}
+	}
+	
+	public void clearBuffers() throws DataSourceException
+	{
+		for (RasterData rasterData : rasterDataList) {
+			rasterData.clearBuffer();
+		}
+	}
+	
+	
 
 	public double getData(double latitude, double longitude) throws DataSourceException
 	{
