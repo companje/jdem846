@@ -14,6 +14,7 @@ import us.wthr.jdem846.exception.DataSourceException;
  * @see DataSource
  * @see PackagedReader
  */
+@Deprecated
 public class SubsetDataPackage 
 {
 	

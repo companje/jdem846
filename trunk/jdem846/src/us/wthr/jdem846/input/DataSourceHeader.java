@@ -23,6 +23,7 @@ import us.wthr.jdem846.ByteOrder;
  * @author Kevin M. Gill
  *
  */
+@Deprecated
 public interface DataSourceHeader 
 {
 	

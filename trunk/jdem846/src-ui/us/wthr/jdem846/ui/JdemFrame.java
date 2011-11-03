@@ -48,8 +48,10 @@ import us.wthr.jdem846.dbase.ClassLoadException;
 import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.ImageIcons;
-import us.wthr.jdem846.input.DataPackage;
-import us.wthr.jdem846.input.ElevationDataLoaderInstance;
+//import us.wthr.jdem846.input.DataPackage;
+//import us.wthr.jdem846.input.ElevationDataLoaderInstance;
+import us.wthr.jdem846.rasterdata.RasterDataProxy;
+import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectFileReader;
@@ -440,9 +442,9 @@ public class JdemFrame extends Frame
 			return;
 		}
 		//engine.setDataPackage(dataPackage);
-		//engine.setModelOptions(modelOptions);
 		
-		
+		// TODO: Restore this functionality
+		/*
 		ElevationDataLoaderInstance dataLoaderInstance = engine.needsOutputFileOfType();
 		if (dataLoaderInstance != null) {
 			
@@ -464,6 +466,7 @@ public class JdemFrame extends Frame
 			
 
 		}
+		*/
 		
 		if (engine.generatesImage()) {
 			OutputImageViewPanel outputPanel = new OutputImageViewPanel(engine);

@@ -41,6 +41,7 @@ import us.wthr.jdem846.logging.Logging;
 
 
 @Registry
+@Deprecated
 public class ElevationDataLoaderRegistry  implements AppRegistry
 {
 	private static Log log = Logging.getLog(ElevationDataLoaderRegistry.class);

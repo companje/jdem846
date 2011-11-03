@@ -18,6 +18,7 @@ package us.wthr.jdem846.input;
 
 import us.wthr.jdem846.exception.DataSourceException;
 
+@Deprecated
 public class PackagedReader 
 {
 	private double rows;

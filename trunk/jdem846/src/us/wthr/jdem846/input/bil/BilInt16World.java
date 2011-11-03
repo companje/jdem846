@@ -25,6 +25,7 @@ import java.io.IOException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+@Deprecated
 public class BilInt16World {
 	
 	private static Log log = Logging.getLog(BilInt16World.class);

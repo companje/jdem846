@@ -16,7 +16,7 @@
 
 package us.wthr.jdem846.input;
 
-
+@Deprecated
 public class ElevationDataLoaderInstance {
 	
 	private String clazzName;
