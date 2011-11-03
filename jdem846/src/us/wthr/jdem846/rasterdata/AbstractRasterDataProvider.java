@@ -30,14 +30,14 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	
 	protected void prepare()
 	{
-		dataLatLongBox = new RasterDataLatLongBox(getNorth(), getSouth(), getEast(), getWest());
+		dataLatLongBox = new RasterDataLatLongBox(getNorth(), getSouth() + latitudeResolution, getEast(), getWest() - longitudeResolution);
 	}
 	
 	public boolean contains(double latitude, double longitude)
 	{
 		// TODO: This is overly simplistic. Make this a bit more robust.
 		
-		if (latitude > south && latitude < north && longitude > west && longitude < east) {
+		if (latitude > south && latitude <= north && longitude >= west && longitude < east) {
 			return true;
 		} else {
 			return false;

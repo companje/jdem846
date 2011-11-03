@@ -19,6 +19,7 @@ package us.wthr.jdem846;
 import java.util.UUID;
 
 import us.wthr.jdem846.input.DataPackage;
+import us.wthr.jdem846.rasterdata.RasterDataProxy;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.util.UniqueIdentifierUtil;
 
@@ -30,11 +31,17 @@ import us.wthr.jdem846.util.UniqueIdentifierUtil;
 public class ModelContext
 {
 	
+	
+	
+	@Deprecated
 	private DataPackage dataPackage;
+	
+	private RasterDataProxy rasterDataProxy;
 	private ModelOptions modelOptions;
 	private ScriptProxy scriptProxy;
 	private String contextId;
 	
+	@Deprecated
 	protected ModelContext(DataPackage dataPackage, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
 	{
 		this.dataPackage = dataPackage;
@@ -42,6 +49,19 @@ public class ModelContext
 		this.scriptProxy = scriptProxy;
 	}
 	
+	protected ModelContext(RasterDataProxy rasterDataProxy, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
+	{
+		this.rasterDataProxy = rasterDataProxy;
+		this.modelOptions = modelOptions;
+		this.scriptProxy = scriptProxy;
+	}
+
+	public RasterDataProxy getRasterDataProxy()
+	{
+		return rasterDataProxy;
+	}
+	
+	@Deprecated
 	public DataPackage getDataPackage()
 	{
 		return dataPackage;
@@ -62,15 +82,30 @@ public class ModelContext
 		return contextId;
 	}
 	
+	@Deprecated
 	public static ModelContext createInstance(DataPackage dataPackage, ModelOptions modelOptions)
 	{
 		return ModelContext.createInstance(dataPackage, modelOptions, null);
 	}
 	
+	@Deprecated
 	public static ModelContext createInstance(DataPackage dataPackage, ModelOptions modelOptions, ScriptProxy scriptProxy)
 	{
 		String contextId = ModelContext.generateContextId();
 		ModelContext modelContext = new ModelContext(dataPackage, modelOptions, scriptProxy, contextId);
+		
+		return modelContext;
+	}
+	
+	public static ModelContext createInstance(RasterDataProxy rasterDataProxy, ModelOptions modelOptions)
+	{
+		return ModelContext.createInstance(rasterDataProxy, modelOptions, null);
+	}
+	
+	public static ModelContext createInstance(RasterDataProxy rasterDataProxy, ModelOptions modelOptions, ScriptProxy scriptProxy)
+	{
+		String contextId = ModelContext.generateContextId();
+		ModelContext modelContext = new ModelContext(rasterDataProxy, modelOptions, scriptProxy, contextId);
 		
 		return modelContext;
 	}

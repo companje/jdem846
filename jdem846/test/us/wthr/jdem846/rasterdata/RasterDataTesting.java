@@ -4,6 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -19,32 +22,22 @@ public class RasterDataTesting
 		List<String> inputDataList = new LinkedList<String>();
 		//inputDataList.add("C:/srv/elevation/Pawtuckaway/74339812.flt");
 		
-		inputDataList.add("C:/srv/elevation/Maui/15749574.flt");
-		inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
+		//inputDataList.add("C:/srv/elevation/Maui/15749574.flt");
+		//inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
+		
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
 		
 		RasterDataTesting testing = new RasterDataTesting();
 		
 		
 		try {
 			long start = System.currentTimeMillis();
-			//testing.doTest(inputDataList, false);
+			testing.doTest(inputDataList, true);
 			long done = System.currentTimeMillis();
 			
-			long noBufferDuration = (done - start);
-			log.info("No Buffer Duration: " + noBufferDuration);
-			
-			log.info("=================================================================");
-			
-			start = System.currentTimeMillis();
-			testing.doTest(inputDataList, true);
-			done = System.currentTimeMillis();
-			
-			long bufferingDuration = (done - start);
-			log.info("Buffering Duration: " + bufferingDuration);
-			
-			double durationPercentDiff = ((double) (noBufferDuration - bufferingDuration) / (double) noBufferDuration) * 100.0;
-			
-			log.info("Difference in duration: " + (noBufferDuration - bufferingDuration) + " (" + durationPercentDiff + "% improvement)");
+			long duration = (done - start);
+			log.info("Duration: " + duration);
 			
 			
 		} catch (Exception ex) {
@@ -69,8 +62,21 @@ public class RasterDataTesting
 			
 		}
 		
+		ModelOptions modelOptions = new ModelOptions();
+		
+		modelOptions.setTileSize(1000);
+		
+		ModelContext modelContext = ModelContext.createInstance(dataProxy, modelOptions);
 		
 		
+		rasterTest(modelContext, buffered);
+		
+	}
+	
+	
+	public void rasterTest(ModelContext modelContext, boolean buffered) throws Exception
+	{
+		RasterDataProxy dataProxy = modelContext.getRasterDataProxy();
 		
 		double northLimit = dataProxy.getNorth();
 		double southLimit = dataProxy.getSouth();
@@ -80,29 +86,84 @@ public class RasterDataTesting
 		double latitudeResolution = dataProxy.getLatitudeResolution();
 		double longitudeResolution = dataProxy.getLongitudeResolution();
 		
-		RasterDataProxy subsetDataProxy = dataProxy.getSubSet(northLimit, southLimit, eastLimit, westLimit);
-
-		RasterDataProxy testDataProxy = subsetDataProxy;
+		double tileSize = modelContext.getModelOptions().getTileSize();
 		
-		if (buffered) {
-			testDataProxy.fillBuffers(northLimit, southLimit, eastLimit, westLimit);
+		double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
+		double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
+		
+		log.info("Tile Size: " + tileSize);
+		log.info("Tile Latitude Height: " + tileLatitudeHeight);
+		log.info("Tile Longitude Width: " + tileLongitudeWidth);
+		
+		int tileNumber = 0;
+		int tileRow = 0;
+		int tileColumn = 0;
+		// Latitude
+		for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
+			double tileSouth = tileNorth - tileLatitudeHeight;
+			if (tileSouth <= southLimit) {
+				tileSouth = southLimit + latitudeResolution;
+			}
+			tileRow++;
+			tileColumn = 0;
+			
+			// Longitude
+			for (double tileWest = westLimit; tileWest < eastLimit; tileWest += tileLongitudeWidth) {
+				double tileEast = tileWest + tileLongitudeWidth;
+				
+				if (tileEast >= eastLimit) {
+					tileEast = eastLimit - longitudeResolution;
+				}
+				
+				tileColumn++;
+				tileNumber++;
+				
+				log.info("Tile #" + tileNumber + ", Row #" + tileRow + ", Column #" + tileColumn);
+				log.info("    North: " + tileNorth);
+				log.info("    South: " + tileSouth);
+				log.info("    East: " + tileEast);
+				log.info("    West: " + tileWest);
+				
+				
+				rasterTileTest(modelContext, buffered, tileNorth, tileSouth, tileEast, tileWest);
+			}
+			
 		}
 		
-		int pointsProcessed = 0;
+	}
+	
+	
+	public void rasterTileTest(ModelContext modelContext, boolean buffered, double northLimit, double southLimit, double eastLimit, double westLimit) throws Exception
+	{
+
+		double latitudeResolution = modelContext.getRasterDataProxy().getLatitudeResolution();
+		double longitudeResolution = modelContext.getRasterDataProxy().getLongitudeResolution();
+		
+
+		
+		RasterDataProxy dataProxy = modelContext.getRasterDataProxy();//.getSubSet(northLimit, southLimit, eastLimit, westLimit);
+
+		
+		if (buffered) {
+			try {
+				dataProxy.fillBuffers(northLimit, southLimit, eastLimit, westLimit);
+			} catch (Exception ex) {
+				throw new DataSourceException("Failed to buffer data: " + ex.getMessage(), ex);
+			}
+		}
+
 		int validDataPoints = 0;
 		int invalidDataPoints = 0;
 		
 		double minData = Double.MAX_VALUE;
 		double maxData = Double.MIN_VALUE;
 		
-		
-		
-		
+
 		for (double latitude = northLimit; latitude > southLimit; latitude -= latitudeResolution) {
 			
 			for (double longitude = westLimit; longitude < eastLimit; longitude += longitudeResolution) {
 				
-				double data = testDataProxy.getData(latitude, longitude);
+				double data = dataProxy.getData(latitude, longitude);
 				
 				if (data == DemConstants.ELEV_NO_DATA) {
 					invalidDataPoints++;
@@ -116,23 +177,19 @@ public class RasterDataTesting
 					
 				}
 				
-				pointsProcessed++;
 			}
 			
 		}
 		
 		if (buffered) {
-			testDataProxy.clearBuffers();
+			dataProxy.clearBuffers();
 		}
 		
-		log.info("Points Processed: " + pointsProcessed);
+		log.info("Points Processed: " + (invalidDataPoints + validDataPoints));
 		log.info("Valid Data Points: " + validDataPoints);
 		log.info("Invalid Data Points: " + invalidDataPoints);
 		log.info("Max Data Value: " + maxData);
 		log.info("Min Data Value: " + minData);
-		
 	}
-	
-	
 	
 }

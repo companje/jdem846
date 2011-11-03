@@ -60,6 +60,7 @@ public class RasterDataProxy
 			
 		}
 		
+
 		log.info("Prepared RasterDataProxy to region N/S/E/W: " + north + "/" + south + "/" + east + "/" + west);
 		log.info("Prepared RasterDataProxy to lat/long resolutions: " + latitudeResolution + "/" + longitudeResolution);
 		
@@ -121,7 +122,8 @@ public class RasterDataProxy
 	public RasterDataProxy getSubSet(double north, double south, double east, double west) throws DataSourceException
 	{
 		RasterDataLatLongBox subsetLatLongBox = new RasterDataLatLongBox(north, south, east, west);
-		
+		// TODO: This isn't working properly.
+
 		RasterDataProxy newDataProxy = new RasterDataProxy();
 		
 		for (RasterData rasterData : rasterDataList) {
@@ -132,6 +134,7 @@ public class RasterDataProxy
 		}
 		
 		newDataProxy.prepare();
+
 		
 		return newDataProxy;
 	}
