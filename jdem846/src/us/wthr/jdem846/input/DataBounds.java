@@ -23,6 +23,7 @@ import java.awt.Rectangle;
  * @author Kevin M. Gill
  *
  */
+@Deprecated
 public class DataBounds
 {
 	private Rectangle rectangle;

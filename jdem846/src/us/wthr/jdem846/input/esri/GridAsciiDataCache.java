@@ -35,6 +35,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ByteConversions;
 import us.wthr.jdem846.util.TempFiles;
 
+@Deprecated
 public class GridAsciiDataCache extends DataCache
 {
 	private static Log log = Logging.getLog(GridAsciiDataCache.class);

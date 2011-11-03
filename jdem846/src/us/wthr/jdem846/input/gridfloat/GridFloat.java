@@ -26,6 +26,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ResourceLoader;
 
+@Deprecated
 @ElevationDataLoader(name="us.wthr.jdem846.input.gridFloat.name", identifier="gridfloat", extension="flt")
 public class GridFloat extends DataSource
 {

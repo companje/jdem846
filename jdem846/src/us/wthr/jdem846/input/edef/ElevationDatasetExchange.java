@@ -38,6 +38,7 @@ import us.wthr.jdem846.logging.Logging;
  * @author Kevin M. Gill
  *
  */
+@Deprecated
 @ElevationDataLoader(name="us.wthr.jdem846.input.edef.elevationDatasetExchangeFormat.name", identifier="edef", extension="edef")
 public class ElevationDatasetExchange extends DataSource
 {

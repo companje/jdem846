@@ -26,6 +26,7 @@ import us.wthr.jdem846.input.bil.BilInt16;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+@Deprecated
 @ElevationDataLoader(name="us.wthr.jdem846.input.esri.gridAscii.name", identifier="esri-gridascii", extension="asc")
 public class GridAscii extends DataSource
 {

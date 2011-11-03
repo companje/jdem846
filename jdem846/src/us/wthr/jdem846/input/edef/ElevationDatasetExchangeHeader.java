@@ -26,7 +26,7 @@ import us.wthr.jdem846.util.ByteArrayReader;
 import us.wthr.jdem846.util.ByteArrayWriter;
 
 
-
+@Deprecated
 public class ElevationDatasetExchangeHeader  implements DataSourceHeader 
 {
 	private static Log log = Logging.getLog(ElevationDatasetExchangeHeader.class);

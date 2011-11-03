@@ -25,6 +25,8 @@ public class RasterDataProxy
 	private double dataMinimumValue = 0;
 	private double dataMaximumValue = 0;
 	
+	private boolean isDisposed = false;
+	
 	public RasterDataProxy()
 	{
 		
@@ -69,6 +71,30 @@ public class RasterDataProxy
 		
 	}
 	
+	
+	public void dispose() throws DataSourceException
+	{
+		if (isDisposed()) {
+			throw new DataSourceException("Raster data proxy already disposed.");
+		}
+		
+		for (RasterData rasterData : rasterDataList) {
+			if (!rasterData.isDisposed()) {
+				rasterData.dispose();
+			}
+		}
+		
+		
+		// TODO: Finish
+		isDisposed = true;
+	}
+
+	
+	public boolean isDisposed()
+	{
+		return isDisposed;
+	}
+	
 	public void calculateElevationMinMax() throws DataSourceException
 	{
 		log.info("Calculating elevation minimums & Maximums");
@@ -100,6 +126,13 @@ public class RasterDataProxy
 		if (rasterDataList.remove(rasterData)) {
 			prepare();
 		}
+	}
+	
+	public RasterData removeRasterData(int index) throws DataSourceException
+	{
+		RasterData removed = rasterDataList.remove(index);
+		prepare();
+		return removed;
 	}
 	
 	public List<RasterData> getRasterDataList()
@@ -243,5 +276,8 @@ public class RasterDataProxy
 		return dataMaximumValue;
 	}
 	
-	
+	public RasterDataProxy copy() throws DataSourceException
+	{
+		return null;
+	}
 }

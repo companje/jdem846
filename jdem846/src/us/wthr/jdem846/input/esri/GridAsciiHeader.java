@@ -26,6 +26,7 @@ import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.input.DataSourceHeader;
 
+@Deprecated
 public class GridAsciiHeader implements DataSourceHeader 
 {
 	private int columns = 0;

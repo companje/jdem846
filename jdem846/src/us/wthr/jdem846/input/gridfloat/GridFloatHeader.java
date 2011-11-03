@@ -30,6 +30,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ResourceLoader;
 
+@Deprecated
 public class GridFloatHeader implements DataSourceHeader 
 {
 	private static Log log = Logging.getLog(GridFloatHeader.class);

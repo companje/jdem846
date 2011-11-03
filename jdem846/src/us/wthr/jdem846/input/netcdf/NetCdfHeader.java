@@ -10,6 +10,7 @@ import us.wthr.jdem846.input.DataSourceHeader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+@Deprecated
 public class NetCdfHeader implements DataSourceHeader 
 {
 	private static Log log = Logging.getLog(NetCdfHeader.class);

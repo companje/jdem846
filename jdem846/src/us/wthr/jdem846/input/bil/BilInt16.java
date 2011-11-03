@@ -26,6 +26,7 @@ import us.wthr.jdem846.input.DataSourceHeader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+@Deprecated
 @ElevationDataLoader(name="us.wthr.jdem846.input.bilInt16.name", identifier="bil-16int", extension="bil")
 public class BilInt16 extends DataSource
 {

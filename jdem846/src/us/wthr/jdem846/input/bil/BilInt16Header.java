@@ -28,6 +28,7 @@ import us.wthr.jdem846.input.DataSourceHeader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+@Deprecated
 public class BilInt16Header implements DataSourceHeader 
 {
 	private static Log log = Logging.getLog(BilInt16Header.class);

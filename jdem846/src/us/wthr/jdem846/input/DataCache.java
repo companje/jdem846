@@ -23,6 +23,7 @@ import us.wthr.jdem846.exception.DataSourceException;
  * @author Kevin M. Gill
  *
  */
+@Deprecated
 public abstract class DataCache 
 {
 	

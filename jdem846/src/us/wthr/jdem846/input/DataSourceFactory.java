@@ -28,6 +28,7 @@ import us.wthr.jdem846.input.netcdf.NetCdf;
  * @author Kevin M. Gill
  *
  */
+@Deprecated
 public class DataSourceFactory 
 {
 	

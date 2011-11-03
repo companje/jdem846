@@ -6,6 +6,7 @@ import us.wthr.jdem846.input.DataCache;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+@Deprecated
 public class NetCdfDataCache extends DataCache
 {
 	private static Log log = Logging.getLog(NetCdfDataCache.class);

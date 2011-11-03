@@ -27,6 +27,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ByteConversions;
 
+@Deprecated
 public class ElevationDatasetExchangeWriter
 {
 	private static Log log = Logging.getLog(ElevationDatasetExchangeWriter.class);
