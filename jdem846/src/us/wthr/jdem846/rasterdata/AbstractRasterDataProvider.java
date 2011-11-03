@@ -85,10 +85,18 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		double max = getDataMaximum();
 		double min = getDataMinimum();
 		
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < columns; col++) {
-				elevation = getData(row, col);
-					
+		double northLimit = getNorth();
+		double southLimit = getSouth();
+		double eastLimit = getEast();
+		double westLimit = getWest();
+		
+		double latitudeResolution = this.getLatitudeResolution();
+		double longitudeResolution = this.getLongitudeResolution();
+		
+		for (double latitude = northLimit; latitude > southLimit; latitude-=latitudeResolution) {
+			
+			for (double longitude = westLimit; longitude < eastLimit; longitude+=longitudeResolution) {
+				elevation = getData(latitude, longitude);
 				if (elevation == DemConstants.ELEV_NO_DATA)
 					continue;
 
@@ -99,16 +107,18 @@ public abstract class AbstractRasterDataProvider implements RasterData
 					min = elevation;
 				}
 			}
+			
 		}
+		
+		
 		
 		setDataMinimum(min);
 		setDataMaximum(max);
 	}
 	
-	protected int latitudeToRow(double latitude)
+	protected double latitudeToRow(double latitude)
 	{
-		// Nearest neighbor
-		return (int) Math.floor((north - latitude) / this.getLatitudeResolution());
+		return ((north - latitude) / this.getLatitudeResolution());
 	}
 	
 	protected double rowToLatitude(int row)
@@ -116,13 +126,12 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		return (north - ((double)row * this.getLatitudeResolution()));
 	}
 	
-	protected int longitudeToColumn(double longitude)
+	protected double longitudeToColumn(double longitude)
 	{
-		// Nearest neighbor
-		return (int) Math.floor((longitude - west) / this.getLongitudeResolution());
+		return ((longitude - west) / this.getLongitudeResolution());
 	}
 	
-	public double columnToLongitude(int column)
+	protected double columnToLongitude(int column)
 	{
 		return west + ((double)column * this.getLongitudeResolution());
 	}
@@ -130,10 +139,39 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	@Override
 	public double getData(double latitude, double longitude) throws DataSourceException
 	{
-		int row = this.latitudeToRow(latitude);
-		int column = this.longitudeToColumn(longitude);
-		return this.getData(row, column);
+		double fetchRow = this.latitudeToRow(latitude);
+		double fetchColumn = this.longitudeToColumn(longitude);
 		
+		int row = (int) fetchRow;
+		int column = (int) fetchColumn;
+		
+		
+		
+		
+		if ((fetchRow != row || fetchColumn != column) &&
+				(column + 1 < columns && row + 1 < rows)) {
+			
+			double data = interpolate(getData(row, column), // s00
+					getData(row, column + 1),				// s01
+					getData(row + 1, column),				// s10
+					getData(row + 1, column + 1),			// s11
+					fetchColumn - column,					// xFrac
+					fetchRow - row);						// yFrac
+
+			return data;
+		} else {
+			return this.getData(row, column);
+		}
+		
+		
+		
+	}
+	
+	protected double interpolate(double s00, double s01, double s10, double s11, double xFrac, double yFrac)
+	{
+		double s0 = (s01 - s00)*xFrac + s00;
+        double s1 = (s11 - s10)*xFrac + s10;
+        return (s1 - s0)*yFrac + s0;
 	}
 
 	public double getLatitudeResolution()

@@ -94,7 +94,7 @@ public class GridFloatDataReader
 		
 	}
 	
-	public void get(int startRow, int startColumn, double[][] buffer)  throws DataSourceException
+	public void get(int startColumn, int startRow, double[][] buffer)  throws DataSourceException
 	{
 		for (int i = 0; i < buffer.length; i++) {
 			get(startRow+i, startColumn, buffer[i]);
@@ -136,15 +136,17 @@ public class GridFloatDataReader
 		open();
 		
 		long pos = (row * columns) + column;
-		long seekStart = (long) pos * (long) (Float.SIZE / 8);
+		long seekStart = pos * (Float.SIZE / 8);
+		long length = 0;
 		
 		try {
-			long length = dataReader.length();
-			if (seekStart >= length) {
-				throw new DataSourceException("Cannot seek past end of file (seek to: " + seekStart + ", length: " + length + ")");
-			}
+			length = dataReader.length();
 		} catch (IOException ex) {
 			throw new DataSourceException("Failed to determine file length: " + ex.getMessage(), ex);
+		}
+		
+		if (seekStart >= length) {
+			throw new DataSourceException("Cannot seek past end of file (seek to: " + seekStart + ", length: " + length + ")");
 		}
 		
 		try {

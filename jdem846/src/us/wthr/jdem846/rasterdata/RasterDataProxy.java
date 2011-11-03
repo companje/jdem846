@@ -22,6 +22,9 @@ public class RasterDataProxy
 	private double latitudeResolution;
 	private double longitudeResolution;
 	
+	private double dataMinimumValue = 0;
+	private double dataMaximumValue = 0;
+	
 	public RasterDataProxy()
 	{
 		
@@ -66,6 +69,26 @@ public class RasterDataProxy
 		
 	}
 	
+	public void calculateElevationMinMax() throws DataSourceException
+	{
+		log.info("Calculating elevation minimums & Maximums");
+		
+		dataMinimumValue = Double.MAX_VALUE;
+		dataMaximumValue = Double.MIN_VALUE;
+		
+		for (RasterData rasterData : rasterDataList) {
+			rasterData.calculateMinAndMax();
+			
+			if (rasterData.getDataMinimum() < dataMinimumValue)
+				dataMinimumValue = rasterData.getDataMinimum();
+			
+			if (rasterData.getDataMaximum() > dataMaximumValue)
+				dataMaximumValue = rasterData.getDataMaximum();
+			
+		}
+		
+	}
+	
 	public void addRasterData(RasterData rasterData) throws DataSourceException
 	{
 		rasterDataList.add(rasterData);
@@ -91,9 +114,15 @@ public class RasterDataProxy
 	
 	public void fillBuffers(double north, double south, double east, double west) throws DataSourceException
 	{
+		int fillCount = 0;
 		for (RasterData rasterData : rasterDataList) {
-			rasterData.fillBuffer(north, south, east, west);
+			if (rasterData.fillBuffer(north, south, east, west)) {
+				fillCount++;
+			}
 		}
+
+		log.info("" + fillCount + " data rasters matched the caching range");
+		
 	}
 	
 	public void clearBuffers() throws DataSourceException
@@ -118,6 +147,7 @@ public class RasterDataProxy
 		
 		return value;
 	}
+
 	
 	public RasterDataProxy getSubSet(double north, double south, double east, double west) throws DataSourceException
 	{
@@ -140,7 +170,27 @@ public class RasterDataProxy
 	}
 	
 	
+	public int latitudeToRow(double latitude)
+	{
+		// Nearest neighbor
+		return (int) Math.floor((north - latitude) / this.getLatitudeResolution());
+	}
 	
+	public double rowToLatitude(int row)
+	{
+		return (north - ((double)row * this.getLatitudeResolution()));
+	}
+	
+	public int longitudeToColumn(double longitude)
+	{
+		// Nearest neighbor
+		return (int) Math.floor((longitude - west) / this.getLongitudeResolution());
+	}
+	
+	public double columnToLongitude(int column)
+	{
+		return west + ((double)column * this.getLongitudeResolution());
+	}
 	
 	
 	public double getNorth()
@@ -163,6 +213,15 @@ public class RasterDataProxy
 		return west;
 	}
 	
+	public int getDataRows()
+	{
+		return (int) Math.floor((north - south) / this.getLatitudeResolution());
+	}
+	
+	public int getDataColumns()
+	{
+		return (int) Math.floor((east - west) / this.getLongitudeResolution());
+	}
 	
 	public double getLatitudeResolution() 
 	{
@@ -173,4 +232,16 @@ public class RasterDataProxy
 	{
 		return longitudeResolution;
 	}
+
+	public double getDataMinimumValue()
+	{
+		return dataMinimumValue;
+	}
+
+	public double getDataMaximumValue()
+	{
+		return dataMaximumValue;
+	}
+	
+	
 }
