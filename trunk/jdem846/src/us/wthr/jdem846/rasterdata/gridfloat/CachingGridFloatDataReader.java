@@ -60,16 +60,16 @@ public class CachingGridFloatDataReader
 		bufferRows = rows;
 		bufferColumns = columns;
 		
-		if (rows <= 0 || columns <= 0) {
-			throw new DataSourceException("Invalid buffer size: " + rows + "/" + columns + " (rows/columns); " + " (x/y: " + x + "/" + y + ")");
-		}
+		//if (rows <= 0 || columns <= 0) {
+		//	throw new DataSourceException("Invalid buffer size: " + rows + "/" + columns + " (rows/columns); " + " (x/y: " + x + "/" + y + ")");
+		//}
 		
-		log.info("Fulling buffer with " + rows + " rows and " + columns + " columns");
+		log.info("Filling buffer with " + rows + " rows and " + columns + " columns");
 		buffer = new double[rows][columns];
 		
 		dataReader.get(x, y, buffer);
 
-		return false;
+		return true;
 	}
 	
 	public void clearBuffer() throws DataSourceException
@@ -101,6 +101,9 @@ public class CachingGridFloatDataReader
 			throw new DataSourceException("Data reader has been disposed.");
 		}
 		
+		
+
+		
 		if (isPointInBuffer(row, column)) {
 			int bufferRow = row - bufferY;
 			int bufferColumn = column - bufferX;
@@ -115,8 +118,13 @@ public class CachingGridFloatDataReader
 			
 			return buffer[bufferRow][bufferColumn];
 		} else {
-			return dataReader.get(row, column);
+			if (buffer != null) {
+				return 1000.0;//DemConstants.ELEV_NO_DATA;
+			} else {
+				return dataReader.get(row, column);
+			}
 		}
+		
 	}
 	
 	

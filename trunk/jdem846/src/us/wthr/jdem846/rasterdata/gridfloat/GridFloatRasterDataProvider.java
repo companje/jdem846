@@ -111,38 +111,57 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 	{
 		
 		RasterDataLatLongBox bufferBox = new RasterDataLatLongBox(north, south, east, west);
-		if (!this.intersects(bufferBox))
+		if (!this.intersects(bufferBox)) {
 			return false;
+		}
 		
 		// Adjust the range to fit what this data supports
 		
 
-		
+		// TODO: Too simplistic
 		if (north > this.getNorth())
 			north = this.getNorth();
-		if (south <= this.getSouth())
-			south = this.getSouth() + this.getLatitudeResolution();
-		if (east >= this.getEast())
-			east = this.getEast() - this.getLongitudeResolution();
+		if (south < this.getSouth())
+			south = this.getSouth();
+		if (east > this.getEast())
+			east = this.getEast();
 		if (west < this.getWest())
 			west = this.getWest();
 		
-		
-		int x = this.latitudeToRow(north);
-		int y = this.longitudeToColumn(west);
-
 		// TODO: Too simplistic
-		int columns = (int) Math.ceil((east - west) / this.getLongitudeResolution()) + 1;
-		int rows = (int) Math.ceil((north - south) / this.getLatitudeResolution());
+		int x = (int) Math.floor(this.longitudeToColumn(west));
+		int y = (int) Math.floor(this.latitudeToRow(north));
+
+		int x2 = (int) Math.ceil(this.longitudeToColumn(east));
+		int y2 = (int) Math.ceil(this.latitudeToRow(south));
 		
+		// We add 2 columns & 2 rows to support data point interpolation (done in AbstractRasterDataProvider)
+		int columns = x2 - x + 2;
+		int rows = y2 - y + 2;
+
 		if (columns <= 0 || rows <= 0) {
 			return false;
 		}
 		
-		log.info("Filling raster buffer...");
-		boolean status = dataReader.fillBuffer(x, y, columns, rows);
-		log.info("Filled raster buffer");
+		if (x + columns > header.getColumns()) {
+			columns = header.getColumns() - x;
+		}
 		
+		if (y + rows > header.getRows()) {
+			rows = header.getRows() - y;
+		}
+		
+		log.info("Filling raster buffer...");
+		boolean status;
+		try {
+			if ((status = dataReader.fillBuffer(x, y, columns, rows))) {
+				log.info("Filled raster buffer");
+			} else {
+				log.info("Raster buffer not filled.");
+			}
+		} catch (Exception ex) {
+			throw new DataSourceException("Error attempting to cache more data than actually exists: " + ex.getMessage(), ex);
+		}
 		return status;
 	}
 

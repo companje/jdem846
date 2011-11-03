@@ -1,14 +1,19 @@
 package us.wthr.jdem846.rasterdata;
 
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.render2d.ModelRenderer;
 
 public class RasterDataTesting
 {
@@ -19,6 +24,15 @@ public class RasterDataTesting
 	public static void main(String[] args)
 	{
 		
+		try {
+			RegistryKernel regKernel = new RegistryKernel();
+			regKernel.init();
+		} catch (Exception ex) {
+			log.error("Failed to initialize registry configuration: " + ex.getMessage(), ex);
+			return;
+		}
+		
+		
 		List<String> inputDataList = new LinkedList<String>();
 		//inputDataList.add("C:/srv/elevation/Pawtuckaway/74339812.flt");
 		
@@ -28,12 +42,15 @@ public class RasterDataTesting
 		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
 		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
 		
+		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/test-output.png";
+		
 		RasterDataTesting testing = new RasterDataTesting();
 		
 		
 		try {
 			long start = System.currentTimeMillis();
-			testing.doTest(inputDataList, true);
+			//testing.doTest(inputDataList, true);
+			testing.doModelRenderTest(inputDataList, saveOutputTo);
 			long done = System.currentTimeMillis();
 			
 			long duration = (done - start);
@@ -47,6 +64,36 @@ public class RasterDataTesting
 		
 		
 		
+		
+	}
+	
+	
+	public void doModelRenderTest(List<String> inputDataList, String saveOutputTo) throws Exception
+	{
+		RasterDataProxy dataProxy = new RasterDataProxy();
+		
+		for (String inputDataPath : inputDataList) {
+			log.info("Adding raster data @ '" + inputDataPath + "'");
+			RasterData rasterData = RasterDataProviderFactory.loadRasterData(inputDataPath);
+			dataProxy.addRasterData(rasterData);
+			
+		}
+		dataProxy.calculateElevationMinMax();
+		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
+		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
+		
+		ModelOptions modelOptions = new ModelOptions();
+		
+		modelOptions.setTileSize(1000);
+		modelOptions.setWidth(dataProxy.getDataColumns());
+		modelOptions.setHeight(dataProxy.getDataRows());
+		
+		ModelContext modelContext = ModelContext.createInstance(dataProxy, modelOptions);
+		
+		
+		DemCanvas canvas = ModelRenderer.render(modelContext);
+		
+		ImageWriter.saveImage((BufferedImage)canvas.getImage(), saveOutputTo);
 		
 	}
 	

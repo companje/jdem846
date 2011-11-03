@@ -42,7 +42,20 @@ public class RasterDataLatLongBox
 	
 	public boolean intersects(RasterDataLatLongBox other)
 	{
-		return rectangle.intersects(other.rectangle);	
+		if (this.contains(other.getNorth(), other.getWest())
+				|| this.contains(other.getSouth(), other.getWest())
+				|| this.contains(other.getSouth(), other.getEast())
+				|| this.contains(other.getNorth(), other.getEast())
+				|| other.contains(this.getNorth(), this.getWest())
+				|| other.contains(this.getSouth(), this.getWest())
+				|| other.contains(this.getSouth(), this.getEast())
+				|| other.contains(this.getNorth(), this.getEast())) {
+			return true;
+		} else {
+			return false;
+		}
+		
+		//return (rectangle.intersects(other.rectangle) || other.rectangle.intersects(rectangle));	
 		/*
 		return rectangle.contains(other.getLeftX(), other.getTopY())
 				|| rectangle.contains(other.getLeftX(), other.getBottomY())
@@ -56,6 +69,18 @@ public class RasterDataLatLongBox
 		//return box.intersects(other.getNorth(), other.getWest(), other.getWidth(), other.getHeight());
 	}
 
+	
+	public boolean contains(double latitude, double longitude)
+	{
+		if (latitude >= getSouth() 
+				&& latitude <= getNorth()
+				&& longitude >= getWest()
+				&& longitude <= getEast()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	public double getWidth()
 	{
