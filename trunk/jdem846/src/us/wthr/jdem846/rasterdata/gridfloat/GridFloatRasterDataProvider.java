@@ -116,14 +116,17 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 		
 		// Adjust the range to fit what this data supports
 		
+
+		
 		if (north > this.getNorth())
 			north = this.getNorth();
-		if (south < this.getSouth())
-			south = this.getSouth();
-		if (east > this.getEast())
-			east = this.getEast();
+		if (south <= this.getSouth())
+			south = this.getSouth() + this.getLatitudeResolution();
+		if (east >= this.getEast())
+			east = this.getEast() - this.getLongitudeResolution();
 		if (west < this.getWest())
 			west = this.getWest();
+		
 		
 		int x = this.latitudeToRow(north);
 		int y = this.longitudeToColumn(west);
@@ -131,6 +134,10 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 		// TODO: Too simplistic
 		int columns = (int) Math.ceil((east - west) / this.getLongitudeResolution()) + 1;
 		int rows = (int) Math.ceil((north - south) / this.getLatitudeResolution());
+		
+		if (columns <= 0 || rows <= 0) {
+			return false;
+		}
 		
 		log.info("Filling raster buffer...");
 		boolean status = dataReader.fillBuffer(x, y, columns, rows);

@@ -60,6 +60,11 @@ public class CachingGridFloatDataReader
 		bufferRows = rows;
 		bufferColumns = columns;
 		
+		if (rows <= 0 || columns <= 0) {
+			throw new DataSourceException("Invalid buffer size: " + rows + "/" + columns + " (rows/columns); " + " (x/y: " + x + "/" + y + ")");
+		}
+		
+		log.info("Fulling buffer with " + rows + " rows and " + columns + " columns");
 		buffer = new double[rows][columns];
 		
 		dataReader.get(x, y, buffer);
@@ -80,10 +85,10 @@ public class CachingGridFloatDataReader
 	{
 
 		if (isBufferFilled() &&
-				row >= bufferY 
-				&& row < bufferY + bufferColumns
-				&& column >= bufferX
-				&& column < bufferX + bufferRows) {
+				column >= bufferX 
+				&& column < bufferX + bufferColumns
+				&& row >= bufferY
+				&& row < bufferY + bufferRows) {
 			return true;
 		} else {
 			return false;
