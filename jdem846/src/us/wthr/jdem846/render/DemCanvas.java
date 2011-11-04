@@ -40,6 +40,7 @@ import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+@Deprecated
 public class DemCanvas implements ImageObserver
 {
 	private static Log log = Logging.getLog(DemCanvas.class);

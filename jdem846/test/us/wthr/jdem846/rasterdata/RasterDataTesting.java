@@ -13,6 +13,7 @@ import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.render2d.ModelRenderer;
 
 public class RasterDataTesting
@@ -92,9 +93,9 @@ public class RasterDataTesting
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, modelOptions);
 		
 		
-		DemCanvas canvas = ModelRenderer.render(modelContext);
+		ModelCanvas canvas = ModelRenderer.render(modelContext);
 		
-		ImageWriter.saveImage((BufferedImage)canvas.getImage(), saveOutputTo);
+		ImageWriter.saveImage((BufferedImage)canvas.getFinalizedImage(), saveOutputTo);
 		
 	}
 	

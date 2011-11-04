@@ -151,16 +151,16 @@ public abstract class RenderEngine  implements ImageObserver
 		tileCompletionListeners.remove(listener);
 	}
 	
-	protected void fireTileCompletionListeners(DemCanvas tileCanvas, DemCanvas outputCanvas, double pctComplete)
+	protected void fireTileCompletionListeners(ModelCanvas modelCanvas, double pctComplete)
 	{
 		for (TileCompletionListener listener : tileCompletionListeners) {
-			listener.onTileCompleted(tileCanvas, outputCanvas, pctComplete);
+			listener.onTileCompleted(modelCanvas, pctComplete);
 		}
 	}
 	
 	public interface TileCompletionListener
 	{
-		public void onTileCompleted(DemCanvas tileCanvas, DemCanvas outputCanvas, double pctComplete);
+		public void onTileCompleted(ModelCanvas modelCanvas, double pctComplete);
 	}
 	
 	/** Requests that a rendering process is stopped.

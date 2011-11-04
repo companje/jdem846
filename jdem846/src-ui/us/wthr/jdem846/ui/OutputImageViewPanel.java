@@ -47,6 +47,7 @@ import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.RenderEngine;
@@ -67,7 +68,7 @@ public class OutputImageViewPanel extends JdemPanel
 {
 	private static Log log = Logging.getLog(OutputImageViewPanel.class);
 	
-	private DemCanvas canvas;
+	private ModelCanvas canvas;
 	
 	private OutputImageViewButtonBar buttonBar;
 	private ImageDisplayPanel imageDisplay;
@@ -226,11 +227,11 @@ public class OutputImageViewPanel extends JdemPanel
 		// Set up worker thread
 		
 		tileCompletionListener = new TileCompletionListener() {
-			public void onTileCompleted(DemCanvas tileCanvas, DemCanvas outputCanvas, double pctComplete) {
+			public void onTileCompleted(ModelCanvas modelCanvas, double pctComplete) {
 				statusBar.setProgress((int)(pctComplete * 100));
-				imageDisplay.setImage(outputCanvas.getImage());
+				imageDisplay.setImage(modelCanvas.getFinalizedImage());
 				//imageDisplay.zoomFit();
-				canvas = outputCanvas;
+				canvas = modelCanvas;
 				repaint();
 			}
 		};
@@ -262,11 +263,11 @@ public class OutputImageViewPanel extends JdemPanel
 				
 
 				start = System.currentTimeMillis();
-				OutputProduct<DemCanvas> product = engine.generate(false);
+				OutputProduct<ModelCanvas> product = engine.generate(false);
 				elapsed = (System.currentTimeMillis() - start) / 1000;
-				DemCanvas demCanvas = product.getProduct();
+				ModelCanvas demCanvas = product.getProduct();
 				synchronized(imageDisplay) {
-					imageDisplay.setImage(demCanvas.getImage());
+					imageDisplay.setImage(demCanvas.getFinalizedImage());
 				}
 				//if (demCanvas != null) {
 				//	synchronized(canvas) {
@@ -431,7 +432,7 @@ public class OutputImageViewPanel extends JdemPanel
 	
 	protected void doSave(String path) 
 	{
-		FileSaveThread saveThread = new FileSaveThread(canvas.getImage(), path);
+		FileSaveThread saveThread = new FileSaveThread(canvas.getFinalizedImage(), path);
 		saveThread.addSaveCompletedListener(new SaveCompletedListener() {
 			public void onSaveSuccessful()
 			{

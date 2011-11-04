@@ -18,6 +18,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.scripting.ScriptProxy;
@@ -39,7 +40,7 @@ public class ModelRenderer
 		this.tileCompletionListeners = tileCompletionListeners;
 	}
 	
-	public DemCanvas renderModel(boolean skipElevation) throws RenderEngineException
+	public ModelCanvas renderModel(boolean skipElevation) throws RenderEngineException
 	{
 		//ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(getDataPackage(), getModelOptions());
 		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
@@ -52,9 +53,9 @@ public class ModelRenderer
 		
 		int gridSize = getModelOptions().getGridSize();
 		int tileSizeAdjusted = (int)Math.round((double)modelDimensions.getTileSize() / (double) gridSize);
-		DemCanvas tileCanvas = new DemCanvas(backgroundColor, tileSizeAdjusted, tileSizeAdjusted);
-		DemCanvas outputCanvas = new DemCanvas(backgroundColor, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
-		
+		//DemCanvas tileCanvas = new DemCanvas(backgroundColor, tileSizeAdjusted, tileSizeAdjusted);
+		//DemCanvas outputCanvas = new DemCanvas(backgroundColor, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
+		ModelCanvas modelCanvas = new ModelCanvas(modelContext);
 		
 		
 		//int tileRow = 0;
@@ -78,10 +79,11 @@ public class ModelRenderer
 		
 		ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
 		
-		on2DModelBefore(outputCanvas);
+		// TODO: Restore on2DModelBefore
+		//on2DModelBefore(outputCanvas);
 		
 		
-		TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, tileCanvas);
+		TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas);
 		
 		double northLimit = getRasterDataContext().getNorth();
 		double southLimit = getRasterDataContext().getSouth();
@@ -131,7 +133,7 @@ public class ModelRenderer
 					
 					
 					
-					tileCanvas.reset();
+					//tileCanvas.reset();
 					
 					
 					log.info("Tile #" + (tileNumber + 1) + ", Row #" + (tileRow + 1) + ", Column #" + (tileColumn + 1));
@@ -143,7 +145,7 @@ public class ModelRenderer
 					tileRenderer.renderTile(tileNorth, tileSouth, tileEast, tileWest);
 					
 
-					
+					/*
 					DemCanvas scaled = tileCanvas.getScaled(tileOutputWidth, tileOutputHeight);
 					int overlayX = (int)Math.floor(tileColumn * modelDimensions.getTileOutputWidth());
 					int overlayY = (int)Math.floor(tileRow * modelDimensions.getTileOutputHeight());
@@ -151,14 +153,16 @@ public class ModelRenderer
 					int scaledHeight = scaled.getHeight();
 					
 					outputCanvas.overlay(scaled.getImage(), overlayX, overlayY, scaledWidth, scaledHeight);
-
+					*/
+					
 					tileColumn++;
 					tileNumber++;
 
 					
 					
 					double pctComplete = (double)tileNumber / (double)tileCount;
-					fireTileCompletionListeners(tileCanvas, outputCanvas, pctComplete);
+					
+					fireTileCompletionListeners(modelCanvas, pctComplete);
 					
 					if (isCancelled()) {
 						log.warn("Render process cancelled, model not complete.");
@@ -184,18 +188,19 @@ public class ModelRenderer
 			}
 		}
 		
-		on2DModelAfter(outputCanvas);
+		// TODO: Restore on2DModelAfter
+		//on2DModelAfter(outputCanvas);
 		
 		
 		
-		return outputCanvas;
+		return modelCanvas;
 	}
 	
-	protected void fireTileCompletionListeners(DemCanvas tileCanvas, DemCanvas outputCanvas, double pctComplete)
+	protected void fireTileCompletionListeners(ModelCanvas modelCanvas, double pctComplete)
 	{
 		if (tileCompletionListeners != null) {
 			for (TileCompletionListener listener : tileCompletionListeners) {
-				listener.onTileCompleted(tileCanvas, outputCanvas, pctComplete);
+				listener.onTileCompleted(modelCanvas, pctComplete);
 			}
 		}
 	}
@@ -258,27 +263,27 @@ public class ModelRenderer
 	
 	
 	
-	public static DemCanvas render(ModelContext modelContext) throws RenderEngineException
+	public static ModelCanvas render(ModelContext modelContext) throws RenderEngineException
 	{
 		return ModelRenderer.render(modelContext, false, null);
 	}
 	
-	public static DemCanvas render(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException
+	public static ModelCanvas render(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException
 	{
 		return ModelRenderer.render(modelContext, false, tileCompletionListeners);
 	}
 	
-	public static DemCanvas render(ModelContext modelContext, boolean skipElevation) throws RenderEngineException
+	public static ModelCanvas render(ModelContext modelContext, boolean skipElevation) throws RenderEngineException
 	{
 		ModelRenderer renderer = new ModelRenderer(modelContext, null);
-		DemCanvas canvas = renderer.renderModel(skipElevation);
+		ModelCanvas canvas = renderer.renderModel(skipElevation);
 		return canvas;
 	}
 	
-	public static DemCanvas render(ModelContext modelContext, boolean skipElevation, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException
+	public static ModelCanvas render(ModelContext modelContext, boolean skipElevation, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException
 	{
 		ModelRenderer renderer = new ModelRenderer(modelContext, tileCompletionListeners);
-		DemCanvas canvas = renderer.renderModel(skipElevation);
+		ModelCanvas canvas = renderer.renderModel(skipElevation);
 		return canvas;
 	}
 }

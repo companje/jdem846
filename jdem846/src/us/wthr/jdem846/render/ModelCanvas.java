@@ -8,8 +8,10 @@ import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.awt.image.WritableRaster;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.image.ImageUtilities;
@@ -42,8 +44,12 @@ public class ModelCanvas
 		image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		graphics = (Graphics2D) image.createGraphics();
 		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-		graphics.setColor(backgroundColor);
-		graphics.fillRect(0, 0, getWidth(), getHeight());
+		
+		if (modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED)) {
+			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
+		//graphics.setColor(backgroundColor);
+		//graphics.fillRect(0, 0, getWidth(), getHeight());
 	}
 	
 	public void fillTriangle(int[] color, 
@@ -52,7 +58,7 @@ public class ModelCanvas
 								double latitude2, double longitude2)
 	{
 		pathBuffer.reset();
-		Color fillColor = new Color(color[0], color[1], color[2], color[3]);
+		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
 		
 		double row0 = latitudeToRow(latitude0);
 		double column0 = longitudeToColumn(longitude0);
@@ -117,19 +123,27 @@ public class ModelCanvas
 		graphics.draw(shape);
 	}
 	
-	public int latitudeToRow(double latitude)
+	public int getColor(int x, int y)
+	{
+		if (x < 0 || x >= image.getWidth() || y < 0 || y >= image.getHeight())
+			return 0;
+		
+		return image.getRGB(x, y);
+	}
+	
+	public double latitudeToRow(double latitude)
 	{
 		double range = getNorth() - getSouth();
 		double pos = range - (getNorth() - latitude);
-		int row = (int) Math.round((pos / range) * (double)getHeight());
+		double row = (1.0 - (pos / range)) * (double)getHeight();
 		return row;
 	}
 	
-	public int longitudeToColumn(double longitude)
+	public double longitudeToColumn(double longitude)
 	{
 		double range = getEast() - getWest();
 		double pos = range - (longitude - getWest());
-		int row = (int) Math.round((pos / range) * (double) getWidth());
+		double row = (1.0 - (pos / range)) * (double) getWidth();
 		return row;
 	}
 	
@@ -175,10 +189,70 @@ public class ModelCanvas
 		return image;
 	}
 	
+	public Image getFinalizedImage()
+	{
+		BufferedImage finalImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D graphics = (Graphics2D) finalImage.createGraphics();
+		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+		if (modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED)) {
+			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
+		graphics.drawImage(image, 0, 0, null);
+		stripAlphaChannel(finalImage);
+		applyBackgroundColor(finalImage);
+		graphics.dispose();
+		return finalImage;
+	}
+	
+	protected void applyBackgroundColor(BufferedImage image)
+	{
+		WritableRaster raster = image.getRaster();
+		int[] rasterPixel = new int[4];
+		
+		for (int row = 0; row < raster.getHeight(); row++) {
+			for (int column = 0; column < raster.getWidth(); column++) {
+				raster.getPixel(column, row, rasterPixel);
+				
+				if (rasterPixel[0] == 0 && rasterPixel[1] == 0 && rasterPixel[2] == 0 && rasterPixel[3] == 0) {
+					// Apply background color
+					
+					rasterPixel[0] = backgroundColor.getRed();
+					rasterPixel[1] = backgroundColor.getGreen();
+					rasterPixel[2] = backgroundColor.getBlue();
+					rasterPixel[3] = backgroundColor.getAlpha();
+					
+					raster.setPixel(column, row, rasterPixel);
+				} 
+			}
+			
+		}
+	}
+	
+	protected void stripAlphaChannel(BufferedImage image)
+	{
+		WritableRaster raster = image.getRaster();
+		int[] rasterPixel = new int[4];
+		
+		for (int row = 0; row < raster.getHeight(); row++) {
+			for (int column = 0; column < raster.getWidth(); column++) {
+				raster.getPixel(column, row, rasterPixel);
+				
+				if (!(rasterPixel[0] == 0 && rasterPixel[1] == 0 && rasterPixel[2] == 0 && rasterPixel[3] == 0)) {
+					// Remove alpha channel
+					
+					rasterPixel[3] = 255;
+					raster.setPixel(column, row, rasterPixel);
+				}
+			}
+			
+		}
+	}
+	
+	
 	public void save(String saveTo) throws CanvasException
 	{
 		try {
-			ImageWriter.saveImage((BufferedImage)getImage(), saveTo);
+			ImageWriter.saveImage((BufferedImage)getFinalizedImage(), saveTo);
 		} catch (ImageException ex) {
 			throw new CanvasException("Failed to save image to disk: " + ex.getMessage(), ex);
 		}

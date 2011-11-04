@@ -25,6 +25,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.RenderEngine;
@@ -81,7 +82,7 @@ public class ModelingWorkerThread extends Thread
 			
 			try {
 				start = System.currentTimeMillis();
-				OutputProduct<DemCanvas> product = engine.generate(this.isPreviewModel());
+				OutputProduct<ModelCanvas> product = engine.generate(this.isPreviewModel());
 				elapsed = (System.currentTimeMillis() - start) / 1000;
 				log.info("Completed render task in " + elapsed + " seconds");
 				
@@ -148,10 +149,10 @@ public class ModelingWorkerThread extends Thread
 		modelCompletionListeners.remove(listener);
 	}
 	
-	protected void fireModelCompletionListeners(DemCanvas canvas)
+	protected void fireModelCompletionListeners(ModelCanvas modelCanvas)
 	{
 		for (ModelCompletionListener listener : modelCompletionListeners) {
-			listener.onModelComplete(canvas);
+			listener.onModelComplete(modelCanvas);
 		}
 	}
 	
@@ -164,7 +165,7 @@ public class ModelingWorkerThread extends Thread
 	
 	public interface ModelCompletionListener
 	{
-		public void onModelComplete(DemCanvas canvas);
+		public void onModelComplete(ModelCanvas modelCanvas);
 		public void onModelFailed(Exception ex);
 	}
 	
