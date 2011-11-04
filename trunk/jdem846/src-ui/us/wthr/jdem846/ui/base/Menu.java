@@ -30,25 +30,21 @@ public class Menu extends JMenu
 	public Menu()
 	{
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Menu(Action a)
 	{
 		super(a);
-		// TODO Auto-generated constructor stub
 	}
 
 	public Menu(String s, boolean b)
 	{
 		super(s, b);
-		// TODO Auto-generated constructor stub
 	}
 
 	public Menu(String s)
 	{
 		super(s);
-		// TODO Auto-generated constructor stub
 	}
 	
 	

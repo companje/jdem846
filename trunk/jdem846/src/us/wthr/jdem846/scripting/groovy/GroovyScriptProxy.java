@@ -52,16 +52,16 @@ public class GroovyScriptProxy implements ScriptProxy
 	}
 
 	@Override
-	public Object onGetElevationBefore(ModelContext modelContext, int column, int row)
+	public Object onGetElevationBefore(ModelContext modelContext, double latitude, double longitude)
 	{
-		Object result = invokeMethod("onGetElevationBefore", modelContext, column, row);
+		Object result = invokeMethod("onGetElevationBefore", modelContext, latitude, longitude);
 		return result;
 	}
 
 	@Override
-	public Object onGetElevationAfter(ModelContext modelContext, int column, int row, double elevation)
+	public Object onGetElevationAfter(ModelContext modelContext, double latitude, double longitude, double elevation)
 	{
-		Object result = invokeMethod("onGetElevationAfter", modelContext, column, row, elevation);
+		Object result = invokeMethod("onGetElevationAfter", modelContext, latitude, longitude, elevation);
 		return result;
 	}
 	

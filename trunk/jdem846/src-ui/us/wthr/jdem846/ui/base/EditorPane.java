@@ -28,25 +28,21 @@ public class EditorPane extends JEditorPane
 	public EditorPane()
 	{
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public EditorPane(String type, String text)
 	{
 		super(type, text);
-		// TODO Auto-generated constructor stub
 	}
 
 	public EditorPane(String url) throws IOException
 	{
 		super(url);
-		// TODO Auto-generated constructor stub
 	}
 
 	public EditorPane(URL initialPage) throws IOException
 	{
 		super(initialPage);
-		// TODO Auto-generated constructor stub
 	}
 	
 }

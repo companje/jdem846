@@ -13,8 +13,10 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
+import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.PointTranslateHandler;
 import us.wthr.jdem846.shapefile.Shape;
 import us.wthr.jdem846.shapefile.ShapeBase;
@@ -49,10 +51,11 @@ public class ShapeLayerRenderer
 			return;
 		}
 		
-		int numLayers = getDataPackage().getShapeFiles().size();
+		//int numLayers = getDataPackage().getShapeFiles().size();
+		int numLayers = getShapeDataContext().getShapeDataListSize();
 		int layerNumber = 0;
 		
-		for (ShapeFileRequest shapeFilePath : getDataPackage().getShapeFiles()) {
+		for (ShapeFileRequest shapeFilePath : getShapeDataContext().getShapeFiles()) {
 			layerNumber++;
 			try {
 				log.info("Loading shapefile from " + shapeFilePath.getPath());
@@ -69,8 +72,8 @@ public class ShapeLayerRenderer
 				shapeLayer.translate(new PointTranslateHandler() {
 					public void translatePoint(double[] coords)
 					{
-						double x = getDataPackage().longitudeToColumn((float) coords[0]);
-						double y = getDataPackage().latitudeToRow((float) coords[1]);
+						double x = getRasterDataContext().longitudeToColumn((float) coords[0]);
+						double y = getRasterDataContext().latitudeToRow((float) coords[1]);
 						coords[0] = x;
 						coords[1] = y;
 					}
@@ -104,7 +107,7 @@ public class ShapeLayerRenderer
 
 	public Image renderLayer(ShapeLayer shapeLayer) throws RenderEngineException
 	{
-		BufferedImage image = new BufferedImage((int)getDataPackage().getColumns(), (int)getDataPackage().getRows(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage((int)getRasterDataContext().getDataColumns(), (int)getRasterDataContext().getDataRows(), BufferedImage.TYPE_INT_ARGB);
 		
 		Graphics2D g2d = (Graphics2D) image.getGraphics();
 		g2d.setColor(new Color(0, 0, 0, 0));
@@ -168,9 +171,14 @@ public class ShapeLayerRenderer
 
 	}
 	
-	protected DataPackage getDataPackage()
+	protected RasterDataContext getRasterDataContext()
 	{
-		return modelContext.getDataPackage();
+		return modelContext.getRasterDataContext();
+	}
+	
+	protected ShapeDataContext getShapeDataContext()
+	{
+		return modelContext.getShapeDataContext();
 	}
 	
 	protected ModelOptions getModelOptions()

@@ -107,10 +107,10 @@ public class KmlLayerGenerator
 	{
 		int tempTileSize = modelContext.getModelOptions().getTileSize();
 		
-		int fromRow = (int) Math.round(modelContext.getDataPackage().latitudeToRow(north));
-		int toRow = (int) Math.round(modelContext.getDataPackage().latitudeToRow(south));
-		int fromCol = (int) Math.round(modelContext.getDataPackage().longitudeToColumn(west));
-		int toCol = (int) Math.round(modelContext.getDataPackage().longitudeToColumn(east));
+		int fromRow = modelContext.getRasterDataContext().latitudeToRow(north);
+		int toRow = modelContext.getRasterDataContext().latitudeToRow(south);
+		int fromCol = modelContext.getRasterDataContext().longitudeToColumn(west);
+		int toCol = modelContext.getRasterDataContext().longitudeToColumn(east);
 		
 		//getTilesIntersecting(double north, double south, double east, double west)
 		List<Tile> tilesIntersecting = griddedModel.getTilesIntersecting(north, south, east, west);
@@ -168,8 +168,8 @@ public class KmlLayerGenerator
 			int y2 = (int) Math.round(_y2 * scalePct);
 			
 			if (x2 < 0) {
-				x = x + (int) Math.round((modelContext.getDataPackage().getColumns() * scalePct));
-				x2 = x2 + (int) Math.round((modelContext.getDataPackage().getColumns() * scalePct));
+				x = x + (int) Math.round((modelContext.getRasterDataContext().getDataColumns() * scalePct));
+				x2 = x2 + (int) Math.round((modelContext.getRasterDataContext().getDataColumns() * scalePct));
 			}
 			
 			

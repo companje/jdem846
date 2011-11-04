@@ -33,7 +33,6 @@ public class NetCdfHeader implements DataSourceHeader
 		try {
 			Array a = v.read();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		*/
@@ -44,49 +43,49 @@ public class NetCdfHeader implements DataSourceHeader
 	@Override
 	public ByteOrder getByteOrder()
 	{
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public double getCellSize()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public double getNoData()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public int getRows()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public int getColumns()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public double getxLowerLeft()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public double getyLowerLeft()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 	

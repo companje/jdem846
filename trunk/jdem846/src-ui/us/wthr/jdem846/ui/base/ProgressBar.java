@@ -30,31 +30,29 @@ public class ProgressBar extends JProgressBar
 	public ProgressBar()
 	{
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ProgressBar(BoundedRangeModel newModel)
 	{
 		super(newModel);
-		// TODO Auto-generated constructor stub
 	}
 
 	public ProgressBar(int orient, int min, int max)
 	{
 		super(orient, min, max);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ProgressBar(int min, int max)
 	{
 		super(min, max);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ProgressBar(int orient)
 	{
 		super(orient);
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	

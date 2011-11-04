@@ -91,7 +91,7 @@ public class ShapeIndexFile
 			throw new ShapeFileException("IO error reading from shape index file", ex);
 		}
 		
-		return indexRecord; // TODO: 
+		return indexRecord; 
 	}
 	
 }

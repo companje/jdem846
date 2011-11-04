@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
@@ -48,6 +49,9 @@ import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.gridfloat.GridFloat;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterData;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.OutputProduct;
@@ -77,7 +81,7 @@ public class LightingPreviewPanel extends Panel
 	
 	
 	private ModelOptions modelOptions;
-	private DataPackage dataPackage;
+	private RasterDataContext rasterDataContext;
 	private ModelContext modelContext;
 	private Dem2dGenerator dem2d;
 	
@@ -128,24 +132,24 @@ public class LightingPreviewPanel extends Panel
 			
 			tmpTempGridFloatHeader.renameTo(tmpGridFloatHeader);
 			
-			GridFloat previewData = new GridFloat(tmpGridFloatData.getAbsolutePath());
-			if (!previewData.setDataPrecached(true)) {
-				log.warn("Lighting preview data cannot be precached. Performance will be affected.");
-			}
+			RasterData rasterData = RasterDataProviderFactory.loadRasterData(tmpGridFloatData.getAbsolutePath());
+			
 			
 			modelOptions.setBackgroundColor(I18N.get("us.wthr.jdem846.color.transparent"));
-			modelOptions.setWidth(previewData.getHeader().getColumns());
-			modelOptions.setHeight(previewData.getHeader().getRows());
+			modelOptions.setWidth(rasterData.getColumns());
+			modelOptions.setHeight(rasterData.getRows());
 			modelOptions.setRelativeLightIntensity(1.0);
 			modelOptions.setRelativeDarkIntensity(1.0);
 			modelOptions.setDoublePrecisionHillshading(false);
+			modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
 			
-			dataPackage = new DataPackage();
-			dataPackage.addDataSource(previewData);
-			dataPackage.prepare();
-			dataPackage.calculateElevationMinMax(true);
+			rasterDataContext = new RasterDataContext();
+			rasterDataContext.addRasterData(rasterData);
+			rasterDataContext.prepare();
+			rasterDataContext.fillBuffers();
+			rasterDataContext.calculateElevationMinMax();
 			
-			modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+			modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
 			
 			dem2d = new Dem2dGenerator(modelContext);
 		} catch (Exception e1) {
@@ -209,9 +213,7 @@ public class LightingPreviewPanel extends Panel
 			try {
 				log.info("Updating lighting preview model image");
 				log.info("****************************************");
-				//Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 				OutputProduct<DemCanvas> product = dem2d.generate();
-				
 				prerendered = (BufferedImage) product.getProduct().getImage();
 				
 			} catch (RenderEngineException e) {
@@ -223,6 +225,7 @@ public class LightingPreviewPanel extends Panel
 				renderedAzimuth = solarAzimuth;
 				renderedElevation = solarElevation;
 			}
+			
 		}
 		
 		repaint();
@@ -488,13 +491,13 @@ public class LightingPreviewPanel extends Panel
 		log.info("Disposing of Lighting Preview Pane");
 		
 		try {
-			dataPackage.dispose();
+			rasterDataContext.dispose();
 		} catch (DataSourceException e) {
 			e.printStackTrace();
 			throw new ComponentException("Data source already disposed of", e);
 			
 		}
-		dataPackage = null;
+		rasterDataContext = null;
 		
 		isDisposed = true;
 		

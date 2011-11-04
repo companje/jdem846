@@ -38,9 +38,12 @@ public interface ScriptProxy
 	public void onTileBefore(ModelContext modelContext, DemCanvas tileCanvas);
 	public void onTileAfter(ModelContext modelContext, DemCanvas tileCanvas);
 
-	public Object onGetElevationBefore(ModelContext modelContext, int column, int row);
-	public Object onGetElevationAfter(ModelContext modelContext, int column, int row, double elevation);
+	public Object onGetElevationBefore(ModelContext modelContext, double latitude, double longitude);
+	public Object onGetElevationAfter(ModelContext modelContext, double latitude, double longitude, double elevation);
 
+	
+	// TODO: Add copy()
+	
 	// getGradientColor
 	// onException
 }

@@ -44,12 +44,14 @@ import javax.swing.tree.TreeSelectionModel;
 
 import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
@@ -69,7 +71,8 @@ public class DataSetTree extends Panel
 	private DefaultMutableTreeNode shapeNode;
 	private DefaultMutableTreeNode imageryNode;
 	
-	private DataPackage dataPackage;
+	//private DataPackage dataPackage;
+	private ModelContext modelContext;
 	
 	private Icon polygonIcon;
 	private Icon elevationIcon;
@@ -82,10 +85,10 @@ public class DataSetTree extends Panel
 	
 	private List<DatasetSelectionListener> datasetSelectionListeners = new LinkedList<DatasetSelectionListener>();
 	
-	public DataSetTree(DataPackage dataPackage)
+	public DataSetTree(ModelContext modelContext)
 	{
-		this.dataPackage = dataPackage;
-		
+		//this.dataPackage = dataPackage;
+		this.modelContext = modelContext;
 		
 		// Load icons
     	try {
@@ -189,11 +192,13 @@ public class DataSetTree extends Panel
 		shapeNode.removeAllChildren();
 		imageryNode.removeAllChildren();
 		
-		if (dataPackage.getDataSources().size() > 0) {
+		if (modelContext.getRasterDataContext().getRasterDataListSize() > 0) {
 			top.add(elevationNode);
 		}
 		
-		if (dataPackage.getShapeFiles().size() > 0) {
+		
+		//if (dataPackage.getShapeFiles().size() > 0) {
+		if (modelContext.getShapeDataContext().getShapeDataListSize() > 0) {
 			top.add(shapeNode);
 		}
 		
@@ -201,15 +206,15 @@ public class DataSetTree extends Panel
 		
 		//elevationNode.removeFromParent();
 		
-		List<DataSource> dataSources = dataPackage.getDataSources();
-		for (int i = 0; i < dataSources.size(); i++) {
-			DataSource dataSource = dataSources.get(i);
-			log.info("Adding elevation data: " + dataSource.getFilePath());
-			elevationNode.add(new DatasetTreeNode(elevationIcon, dataSource, i));
+		List<RasterData> rasterDataList = modelContext.getRasterDataContext().getRasterDataList();
+		for (int i = 0; i < rasterDataList.size(); i++) {
+			RasterData rasterData = rasterDataList.get(i);
+			log.info("Adding elevation data: " + rasterData.getFilePath());
+			elevationNode.add(new DatasetTreeNode(elevationIcon, rasterData, i));
 		}
 		
 		
-		List<ShapeFileRequest> shapeFileRequests = dataPackage.getShapeFiles();
+		List<ShapeFileRequest> shapeFileRequests = modelContext.getShapeDataContext().getShapeFiles();
 		for (int i = 0; i < shapeFileRequests.size(); i++) {
 			ShapeFileRequest shapeFileRequest = shapeFileRequests.get(i);
 			
@@ -290,9 +295,9 @@ public class DataSetTree extends Panel
 			this.type = TYPE_CATEGORY;
 		}
 		
-		public DatasetTreeNode(Icon icon, DataSource dataSource, int index)
+		public DatasetTreeNode(Icon icon, RasterData rasterData, int index)
 		{
-			super((new File(dataSource.getFilePath())).getName());
+			super((new File(rasterData.getFilePath())).getName());
 			this.index = index;
 			this.icon = icon;
 			this.type = TYPE_ELEVATION;

@@ -103,7 +103,6 @@ public class ServiceKernel extends Thread
 		try {
 			ServiceKernel.instance.invokeOnShutdowns();
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

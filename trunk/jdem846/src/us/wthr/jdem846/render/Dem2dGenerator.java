@@ -64,7 +64,13 @@ public class Dem2dGenerator extends BasicRenderEngine
 		
 		try {
 			DemCanvas canvas = ModelRenderer.render(getModelContext(), skipElevation, this.tileCompletionListeners);
-			ShapeLayerRenderer.render(getModelContext(), canvas, this.tileCompletionListeners);
+			
+			if (getModelContext().getShapeDataContext() != null) {
+				ShapeLayerRenderer.render(getModelContext(), canvas, this.tileCompletionListeners);
+			} else {
+				log.info("Shape data context is null, skipping render stage");
+			}
+			
 			product = new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
 		} catch (OutOfMemoryError err) {
 			log.error("Out of memory error when generating model", err);

@@ -26,12 +26,13 @@ import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.ElevationDataLoaderInstance;
 import us.wthr.jdem846.input.ElevationDataLoaderRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.scripting.ScriptProxy;
+import us.wthr.jdem846.shapedata.ShapeDataContext;
 
 public abstract class RenderEngine  implements ImageObserver
 {
@@ -92,10 +93,15 @@ public abstract class RenderEngine  implements ImageObserver
 	@SuppressWarnings("unchecked")
 	public abstract OutputProduct generate(boolean previewModel) throws RenderEngineException;
 	
-	public DataPackage getDataPackage()
+	public RasterDataContext getRasterDataContext()
 	{
-		return modelContext.getDataPackage();
+		return modelContext.getRasterDataContext();
 	}
+	public ShapeDataContext getShapeDataContext()
+	{
+		return modelContext.getShapeDataContext();
+	}
+	
 	//public abstract void setDataPackage(DataPackage dataPackage);
 
 	public ModelOptions getModelOptions()
@@ -180,7 +186,6 @@ public abstract class RenderEngine  implements ImageObserver
 	@Override
 	public boolean imageUpdate(Image img, int infoflags, int x, int y,
 			int width, int height) {
-		// TODO Auto-generated method stub
 		return true;
 	}
 }

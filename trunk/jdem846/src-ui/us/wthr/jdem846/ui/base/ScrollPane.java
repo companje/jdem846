@@ -34,25 +34,25 @@ public class ScrollPane extends JScrollPane implements Disposable
 	public ScrollPane()
 	{
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ScrollPane(Component view, int vsbPolicy, int hsbPolicy)
 	{
 		super(view, vsbPolicy, hsbPolicy);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ScrollPane(Component view)
 	{
 		super(view);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ScrollPane(int vsbPolicy, int hsbPolicy)
 	{
 		super(vsbPolicy, hsbPolicy);
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	@Override

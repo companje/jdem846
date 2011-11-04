@@ -32,19 +32,19 @@ public class Window extends JWindow
 	public Window()
 	{
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Window(Frame owner)
 	{
 		super(owner);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Window(GraphicsConfiguration gc)
 	{
 		super(gc);
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	

@@ -27,6 +27,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
@@ -50,11 +51,11 @@ public class VisualPreviewPanel extends Panel
 	
 	private Panel pnlCards;
 	
-	public VisualPreviewPanel(DataPackage dataPackage, ModelOptions modelOptions)
+	public VisualPreviewPanel(ModelContext modelContext)
 	{
 		// Create components
-		layoutPane = new DataInputLayoutPane(dataPackage, modelOptions);
-		previewPane = new ModelPreviewPane(dataPackage, modelOptions);
+		layoutPane = new DataInputLayoutPane(modelContext);
+		previewPane = new ModelPreviewPane(modelContext);
 		
 		NAME_PREVIEW = I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.preview.label");
 		NAME_LAYOUT = I18N.get("us.wthr.jdem846.ui.visualPreviewPanel.layout.label");
@@ -128,11 +129,11 @@ public class VisualPreviewPanel extends Panel
 	
 	
 	
-	public void setModelOptions(ModelOptions modelOptions)
-	{
-		layoutPane.setModelOptions(modelOptions);
-		previewPane.setModelOptions(modelOptions);
-	}
+	//public void setModelOptions(ModelOptions modelOptions)
+	//{
+	//	layoutPane.setModelOptions(modelOptions);
+	//	previewPane.setModelOptions(modelOptions);
+	//}
 	
 	public void update()
 	{

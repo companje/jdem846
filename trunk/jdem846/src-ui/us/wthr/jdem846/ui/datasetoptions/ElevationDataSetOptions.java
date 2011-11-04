@@ -19,17 +19,18 @@ package us.wthr.jdem846.ui.datasetoptions;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.input.DataSource;
+import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
 public class ElevationDataSetOptions extends Panel
 {
 	
-	private DataSource dataSource;
+	private RasterData rasterData;
 	
-	public ElevationDataSetOptions(DataSource dataSource)
+	public ElevationDataSetOptions(RasterData rasterData)
 	{
-		this.dataSource = dataSource;
+		this.rasterData = rasterData;
 	}
 	
 }

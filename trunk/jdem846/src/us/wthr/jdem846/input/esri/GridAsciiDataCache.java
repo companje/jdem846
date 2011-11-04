@@ -174,7 +174,6 @@ public class GridAsciiDataCache extends DataCache
 			inputData.read(buffer);
 		} catch (IOException ex) {
 			log.error("Error reading from binary data: " + ex.getMessage(), ex);
-			// TODO Auto-generated catch block
 			//e.printStackTrace();
 		}
 		
@@ -231,7 +230,6 @@ public class GridAsciiDataCache extends DataCache
 			this.inputData.close();
 		} catch (IOException e) {
 			log.error("Error closing input data file: " + e.getMessage(), e);
-			// TODO Auto-generated catch block
 			//e.printStackTrace();
 		}
 		this.inputData = null;

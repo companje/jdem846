@@ -30,6 +30,9 @@ import us.wthr.jdem846.input.edef.ElevationDatasetExchangeHeader;
 import us.wthr.jdem846.input.edef.ElevationDatasetExchangeWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.rasterdata.RasterDataLatLongBox;
+import us.wthr.jdem846.rasterdata.RasterDataRowColumnBox;
 import us.wthr.jdem846.scaling.FloatRaster;
 import us.wthr.jdem846.scaling.RasterScale;
 import us.wthr.jdem846.scaling.ResizeDimensions;
@@ -85,8 +88,10 @@ public class ElevationDsFormatGenerator extends RenderEngine
 	@SuppressWarnings("unchecked")
 	public OutputProduct generate(boolean skipElevation) throws RenderEngineException
 	{
-		ModelOptions modelOptions = getModelContext().getModelOptions();
-		DataPackage dataPackage = getModelContext().getDataPackage();
+		ModelOptions modelOptions = getModelOptions();
+		RasterDataContext rasterDataContext = getRasterDataContext();
+		//DataPackage dataPackage = getModelContext().getDataPackage();
+		
 		
 		String writeTo = modelOptions.getWriteTo();
 		if (writeTo == null) {
@@ -99,8 +104,8 @@ public class ElevationDsFormatGenerator extends RenderEngine
 		}
 		
 
-		int dataCols = (int)Math.round(dataPackage.getColumns());
-		int dataRows = (int)Math.round(dataPackage.getRows());
+		int dataCols = rasterDataContext.getDataColumns();
+		int dataRows = rasterDataContext.getDataRows();
 		
 		int tileSize = modelOptions.getTileSize();
 		if (tileSize > dataRows && dataRows > dataCols)
@@ -148,8 +153,8 @@ public class ElevationDsFormatGenerator extends RenderEngine
 				if (toCol > dataCols)
 					toCol = dataCols;
 				
-				DataBounds tileBounds = new DataBounds((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
-				if (dataPackage.dataOverlaps(tileBounds)) {
+				RasterDataRowColumnBox tileBounds = new RasterDataRowColumnBox((int) fromCol, (int) fromRow, (int) tileSize, (int) tileSize);
+				if (rasterDataContext.dataOverlaps(tileBounds)) {
 					log.info("Running tile #" + (tileNum + 1));
 					tileRaster.reset();
 					generate(fromRow, toRow, fromCol, toCol, tileRaster);
@@ -175,7 +180,9 @@ public class ElevationDsFormatGenerator extends RenderEngine
 	
 	public FloatRaster generate(int fromRow, int toRow, int fromColumn, int toColumn, FloatRaster raster) throws RenderEngineException
 	{
-		DataPackage dataPackage = getModelContext().getDataPackage();
+		//DataPackage dataPackage = getModelContext().getDataPackage();
+		
+		RasterDataContext rasterDataContext = getRasterDataContext();
 		
 		int numRows = (toRow - fromRow) + 1;
 		int numCols = (toColumn - fromColumn) + 1;
@@ -188,6 +195,8 @@ public class ElevationDsFormatGenerator extends RenderEngine
 		
 		double elevation = 0;
 		
+		// TODO: Rewrite for RasterData API
+		/*
 		try {
 			for (int row = fromRow; row <= toRow; row++) {
 				dataRow++;
@@ -206,12 +215,16 @@ public class ElevationDsFormatGenerator extends RenderEngine
 		} catch (DataSourceException ex) {
 			throw new RenderEngineException("Failed to read source data: " + ex.getMessage(), ex);
 		}
+		*/
 
 		return raster;
 	}
 	
 	public void writeOutput(String writeTo, FloatRaster raster, float cellSizeRatio)
 	{
+		// TODO: Rewrite for raster data api
+		log.warn("No implemented");
+		/*
 		DataPackage dataPackage = getModelContext().getDataPackage();
 		ElevationDatasetExchangeHeader header = new ElevationDatasetExchangeHeader();
 		header.setCellSize((float)dataPackage.getAvgXDim());
@@ -245,6 +258,8 @@ public class ElevationDsFormatGenerator extends RenderEngine
 		}
 		
 		log.info("Done");
+		*/
+		
 	}
 	
 	

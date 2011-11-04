@@ -30,37 +30,37 @@ public class Slider extends JSlider
 	public Slider()
 	{
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Slider(BoundedRangeModel brm)
 	{
 		super(brm);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Slider(int orientation, int min, int max, int value)
 	{
 		super(orientation, min, max, value);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Slider(int min, int max, int value)
 	{
 		super(min, max, value);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Slider(int min, int max)
 	{
 		super(min, max);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Slider(int orientation)
 	{
 		super(orientation);
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	

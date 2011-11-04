@@ -14,10 +14,10 @@ def onTileAfter(modelContext, tileCanvas):
 def on2DModelAfter(modelContext, tileCanvas):
     pass
 
-def onGetElevationBefore(modelContext, column, row):
+def onGetElevationBefore(modelContext, latitude, longitude):
     return None
 
-def onGetElevationAfter(modelContext, column, row, elevation):
+def onGetElevationAfter(modelContext, latitude, longitude, elevation):
     return None
 
 def destroy(modelContext):

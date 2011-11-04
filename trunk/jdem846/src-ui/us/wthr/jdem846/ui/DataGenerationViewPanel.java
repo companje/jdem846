@@ -22,6 +22,7 @@ import java.awt.GridBagLayout;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
@@ -33,9 +34,9 @@ import us.wthr.jdem846.ui.ModelingWorkerThread.ModelCompletionListener;
 @SuppressWarnings("serial")
 public class DataGenerationViewPanel extends JdemPanel
 {
-	private DataPackage dataPackage;
-	private ModelOptions modelOptions;
-	
+	//private DataPackage dataPackage;
+	//private ModelOptions modelOptions;
+	private ModelContext modelContext;
 	
 	private boolean isWorking = false;
 	private ModelingWorkerThread worker;
@@ -48,11 +49,12 @@ public class DataGenerationViewPanel extends JdemPanel
 	{
 		// Set Properties
 		//this.engine = engine;
-		this.dataPackage = engine.getDataPackage();
-		this.modelOptions = engine.getModelOptions();
+		this.modelContext = engine.getModelContext();
+		//this.dataPackage = engine.getDataPackage();
+		//this.modelOptions = engine.getModelOptions();
 		
 		// Create Components
-		previewPanel = new VisualPreviewPanel(dataPackage, modelOptions);
+		previewPanel = new VisualPreviewPanel(modelContext);
 		
 		statusBar = new StatusBar();
 		statusBar.setProgressVisible(true);

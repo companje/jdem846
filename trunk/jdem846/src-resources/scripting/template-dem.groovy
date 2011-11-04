@@ -32,12 +32,12 @@ class JDemScript {
 	
 	}
 	
-	def onGetElevationBefore(modelContext, column, row) {
+	def onGetElevationBefore(modelContext, latitude, longitude) {
 		
 		return null
 	}
 	
-	def onGetElevationAfter(modelContext, column, row, elevation) {
+	def onGetElevationAfter(modelContext, latitude, longitude, elevation) {
 		
 		return null
 	}

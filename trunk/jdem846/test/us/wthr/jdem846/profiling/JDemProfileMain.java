@@ -126,7 +126,7 @@ public class JDemProfileMain
 					double tiled = 0;
 					
 					for (int repetition = 0; repetition < tileSizeRepetitions; repetition++) {
-						defaulted += doTest(inputDataList, DemConstants.PRECACHE_STRATEGY_DEFAULT, tileSize, null);
+						defaulted += doTest(inputDataList, DemConstants.PRECACHE_STRATEGY_NONE, tileSize, null);
 						tiled += doTest(inputDataList, DemConstants.PRECACHE_STRATEGY_TILED, tileSize, null);
 						
 					}
@@ -159,7 +159,7 @@ public class JDemProfileMain
 		//inputDataList.add("C:/srv/elevation/Maui//58273983.flt");
 		//inputDataList.add("C:/srv/elevation/Shapefiles/Nashua NH 1-3 Arc Second//77591663.flt");
 		
-		
+		/*
 		boolean fullPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.precacheStrategy").equalsIgnoreCase("full");
 		if (fullPrecaching) {
 			log.info("Data Precaching Strategy Set to FULL");
@@ -197,8 +197,8 @@ public class JDemProfileMain
 		if (saveTo != null) {
 			product.getProduct().save(saveTo);
 		}
-		
-		return elapsed;
+		*/
+		return 0;//elapsed;
 	}
 	
 	

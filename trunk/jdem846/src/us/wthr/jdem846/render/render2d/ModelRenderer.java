@@ -9,13 +9,14 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.rasterdata.RasterDataProxy;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
@@ -41,11 +42,13 @@ public class ModelRenderer
 	public DemCanvas renderModel(boolean skipElevation) throws RenderEngineException
 	{
 		//ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(getDataPackage(), getModelOptions());
-		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(getRasterDataProxy(), getModelOptions());
+		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
 		//getDataPackage().setAvgXDim(modelDimensions.getxDim());
 		//getDataPackage().setAvgYDim(modelDimensions.getyDim());
 		
 		Color backgroundColor = ColorSerializationUtil.stringToColor(getModelOptions().getBackgroundColor());
+		
+		boolean fullCaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
 		
 		int gridSize = getModelOptions().getGridSize();
 		int tileSizeAdjusted = (int)Math.round((double)modelDimensions.getTileSize() / (double) gridSize);
@@ -80,13 +83,13 @@ public class ModelRenderer
 		
 		TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, tileCanvas);
 		
-		double northLimit = getRasterDataProxy().getNorth();
-		double southLimit = getRasterDataProxy().getSouth();
-		double eastLimit = getRasterDataProxy().getEast();
-		double westLimit = getRasterDataProxy().getWest();
+		double northLimit = getRasterDataContext().getNorth();
+		double southLimit = getRasterDataContext().getSouth();
+		double eastLimit = getRasterDataContext().getEast();
+		double westLimit = getRasterDataContext().getWest();
 		
-		double latitudeResolution = getRasterDataProxy().getLatitudeResolution();
-		double longitudeResolution = getRasterDataProxy().getLongitudeResolution();
+		double latitudeResolution = getRasterDataContext().getLatitudeResolution();
+		double longitudeResolution = getRasterDataContext().getLongitudeResolution();
 		
 		//double tileSize = modelContext.getModelOptions().getTileSize();
 		
@@ -98,8 +101,16 @@ public class ModelRenderer
 		log.info("Tile Longitude Width: " + tileLongitudeWidth);
 		
 		
+		if (fullCaching) {
+			try {
+				getRasterDataContext().fillBuffers();
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Failed to prebuffer raster data: " + ex.getMessage(), ex);
+			}
+		}
 		
-		if ((!skipElevation) && getRasterDataProxy().getRasterDataListSize() > 0) {
+		
+		if ((!skipElevation) && getRasterDataContext().getRasterDataListSize() > 0) {
 			
 			// Latitude
 			for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
@@ -131,11 +142,7 @@ public class ModelRenderer
 					
 					tileRenderer.renderTile(tileNorth, tileSouth, tileEast, tileWest);
 					
-					try {
-						ImageWriter.saveImage((BufferedImage)tileCanvas.getImage(), "C:/srv/elevation/DataRaster-Testing/tiles/tile-" + tileNumber + ".png");
-					} catch (ImageException ex) {
-						ex.printStackTrace();
-					}
+
 					
 					DemCanvas scaled = tileCanvas.getScaled(tileOutputWidth, tileOutputHeight);
 					int overlayX = (int)Math.floor(tileColumn * modelDimensions.getTileOutputWidth());
@@ -166,53 +173,20 @@ public class ModelRenderer
 				}
 				
 			}
-			
-			/*
-			for (int fromRow = 0; fromRow < dataRows; fromRow+=tileSize) {
-				int toRow = fromRow + tileSize - 1;
-				if (toRow > dataRows)
-					toRow = dataRows;
-			
-				tileCol = 0;
-				for (int fromCol = 0; fromCol < dataCols; fromCol+=tileSize) {
-					int toCol = fromCol + tileSize - 1;
-					if (toCol > dataCols)
-						toCol = dataCols;
 
-					tileCanvas.reset();
-						
-					tileRenderer.renderTile(fromRow, toRow, fromCol, toCol);//, scaledWidthPercent, scaledHeightPercent);
-
-					DemCanvas scaled = tileCanvas.getScaled(tileOutputWidth, tileOutputHeight);
-					int overlayX = (int)Math.floor(tileCol * modelDimensions.getTileOutputWidth());
-					int overlayY = (int)Math.floor(tileRow * modelDimensions.getTileOutputHeight());
-					int scaledWidth = scaled.getWidth();
-					int scaledHeight = scaled.getHeight();
-					
-					outputCanvas.overlay(scaled.getImage(), overlayX, overlayY, scaledWidth, scaledHeight);
-
-					tileNum++;
-					tileCol++;	
-					
-					double pctComplete = (double)tileNum / (double)tileCount;
-					fireTileCompletionListeners(tileCanvas, outputCanvas, pctComplete);
-					
-					if (isCancelled()) {
-						log.warn("Render process cancelled, model not complete.");
-						break;
-					}	
-				}
-				
-				tileRow++;
-				if (isCancelled()) {
-					log.warn("Render process cancelled, model not complete.");
-					break;
-				}
+		}
+		
+		if (fullCaching) {
+			try {
+				getRasterDataContext().clearBuffers();
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Failed to prebuffer raster data: " + ex.getMessage(), ex);
 			}
-			*/
 		}
 		
 		on2DModelAfter(outputCanvas);
+		
+		
 		
 		return outputCanvas;
 	}
@@ -226,16 +200,11 @@ public class ModelRenderer
 		}
 	}
 	
-	protected RasterDataProxy getRasterDataProxy()
+	protected RasterDataContext getRasterDataContext()
 	{
-		return modelContext.getRasterDataProxy();
+		return modelContext.getRasterDataContext();
 	}
-	
-	@Deprecated
-	protected DataPackage getDataPackage()
-	{
-		return modelContext.getDataPackage();
-	}
+
 	
 	protected ModelOptions getModelOptions()
 	{

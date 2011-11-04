@@ -46,6 +46,7 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.gfx.Line;
 import us.wthr.jdem846.render.gfx.Renderable;
 import us.wthr.jdem846.render.gfx.Square;
@@ -93,8 +94,8 @@ public class Dem3dGenerator extends BasicRenderEngine
 		OutputProduct<DemCanvas> product2d = dem2d.generate(skipElevation);
 		DemCanvas canvas2d = product2d.getProduct();
 		
-		DataPackage dataPackage = getModelContext().getDataPackage();
-		ModelOptions modelOptions = getModelContext().getModelOptions();
+		RasterDataContext rasterDataContext = getRasterDataContext();
+		ModelOptions modelOptions = getModelOptions();
 		
 		/*
 		// Testing an orthoimage overlay...
@@ -117,23 +118,23 @@ public class Dem3dGenerator extends BasicRenderEngine
 		double[] vectorBackRight = new double[3];
 		
 		double elevationMultiple = modelOptions.getElevationMultiple();
-		double elevationMax = dataPackage.getMaxElevation() * elevationMultiple;
-		double elevationMin = dataPackage.getMinElevation() * elevationMultiple;
+		double elevationMax = rasterDataContext.getDataMaximumValue() * elevationMultiple;//dataPackage.getMaxElevation() * elevationMultiple;
+		double elevationMin = rasterDataContext.getDataMinimumValue() * elevationMultiple;
 		double elevationDelta = elevationMax - elevationMin;
-		double resolution = dataPackage.getAverageResolution();
+		double resolution = (rasterDataContext.getLatitudeResolution() + rasterDataContext.getLongitudeResolution()) / 2.0;
 		
 		
-		double startZ =  -(dataPackage.getRows() / 2.0);
-		double startX = -(dataPackage.getColumns() / 2.0);
+		double startZ =  -(rasterDataContext.getDataRows() / 2.0);
+		double startX = -(rasterDataContext.getDataColumns() / 2.0);
 		
 		
 		double rotateX = modelOptions.getProjection().getRotateX();
 		double rotateY = modelOptions.getProjection().getRotateY();
 
-		double[] eyeVector = {0, 0, dataPackage.getColumns()};
-		double[] nearVector = {0, 0, (dataPackage.getColumns()/2.0f)};
+		double[] eyeVector = {0, 0, rasterDataContext.getDataColumns()};
+		double[] nearVector = {0, 0, (rasterDataContext.getDataColumns()/2.0f)};
 		
-		BufferedImage image = new BufferedImage((int)dataPackage.getColumns(), (int) dataPackage.getRows(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(rasterDataContext.getDataColumns(),  rasterDataContext.getDataRows(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = (Graphics2D) image.getGraphics();
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		//g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -161,11 +162,11 @@ public class Dem3dGenerator extends BasicRenderEngine
 		Path2D.Double path = new Path2D.Double();
 		
 		log.info("Projecting image onto 3D model");
-		for (int row = 0; row < dataPackage.getRows() - 1; row++) {
+		for (int row = 0; row < rasterDataContext.getDataRows() - 1; row++) {
 	//	for (int row = (int)dataPackage.getRows() - 2; row >= 0; row--) {
 			//resetImage(lineBuffer);
 			
-			for (int column = 0; column < dataPackage.getColumns() - 1; column++) {
+			for (int column = 0; column < rasterDataContext.getDataColumns() - 1; column++) {
 				try {
 					getPoint(row, column, 1, point);
 				} catch (DataSourceException ex) {
@@ -173,7 +174,7 @@ public class Dem3dGenerator extends BasicRenderEngine
 				}
 				
 				//if (point.getCondition() == DemConstants.STAT_SUCCESSFUL) {
-					double x = (dataPackage.getColumns() - column) + startX;
+					double x = (rasterDataContext.getDataColumns() - column) + startX;
 					double z = row + startZ;
 					
 

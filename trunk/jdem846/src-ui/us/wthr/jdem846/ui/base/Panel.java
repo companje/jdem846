@@ -37,7 +37,6 @@ public class Panel extends JPanel implements Disposable
 	public Panel()
 	{
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 
@@ -45,7 +44,6 @@ public class Panel extends JPanel implements Disposable
 	public Panel(boolean isDoubleBuffered)
 	{
 		super(isDoubleBuffered);
-		// TODO Auto-generated constructor stub
 	}
 
 
@@ -53,7 +51,6 @@ public class Panel extends JPanel implements Disposable
 	public Panel(LayoutManager layout, boolean isDoubleBuffered)
 	{
 		super(layout, isDoubleBuffered);
-		// TODO Auto-generated constructor stub
 	}
 
 
@@ -61,7 +58,6 @@ public class Panel extends JPanel implements Disposable
 	public Panel(LayoutManager layout)
 	{
 		super(layout);
-		// TODO Auto-generated constructor stub
 	}
 
 

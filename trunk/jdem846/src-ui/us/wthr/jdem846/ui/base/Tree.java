@@ -34,43 +34,43 @@ public class Tree extends JTree
 	public Tree()
 	{
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Tree(Hashtable<?, ?> value)
 	{
 		super(value);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Tree(Object[] value)
 	{
 		super(value);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Tree(TreeModel newModel)
 	{
 		super(newModel);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Tree(TreeNode root, boolean asksAllowsChildren)
 	{
 		super(root, asksAllowsChildren);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Tree(TreeNode root)
 	{
 		super(root);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Tree(Vector<?> value)
 	{
 		super(value);
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	

@@ -66,7 +66,6 @@ public class StandardModelColoring implements ModelColoring
 	
 	public void getColor(ModelColoring coloring, double ratio, int[] color)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
