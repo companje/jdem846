@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
@@ -34,11 +35,13 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.ui.ModelingWorkerThread.ModelCompletionListener;
@@ -139,10 +142,9 @@ public class ModelPreviewPane extends TitledRoundedPanel
 			Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 			
 			dem2d.addTileCompletionListener(new TileCompletionListener() {
-				public void onTileCompleted(DemCanvas tileCanvas,
-						DemCanvas outputCanvas, double pctComplete)
+				public void onTileCompleted(ModelCanvas modelCanvas, double pctComplete)
 				{
-					imagePanel.setCanvas(outputCanvas);
+					imagePanel.setCanvas(modelCanvas);
 					//canvas = outputCanvas;
 					repaint();
 				}
@@ -153,9 +155,9 @@ public class ModelPreviewPane extends TitledRoundedPanel
 			modelContext.getModelOptions().setBackgroundColor("White");
 			ModelingWorkerThread workerThread = new ModelingWorkerThread(dem2d);
 			workerThread.addModelCompletionListener(new ModelCompletionListener() {
-				public void onModelComplete(DemCanvas completeCanvas)
+				public void onModelComplete(ModelCanvas modelCanvas)
 				{
-					imagePanel.setCanvas(completeCanvas);
+					imagePanel.setCanvas(modelCanvas);
 					JdemFrame.getInstance().setGlassVisible(false);
 					repaint();
 				}
@@ -239,19 +241,19 @@ public class ModelPreviewPane extends TitledRoundedPanel
 	
 	class ImagePanel extends Panel
 	{
-		private DemCanvas canvas = null;
+		private ModelCanvas canvas = null;
 		
 		public ImagePanel()
 		{
 			
 		}
 		
-		public void setCanvas(DemCanvas canvas)
+		public void setCanvas(ModelCanvas canvas)
 		{
 			this.canvas = canvas;
 		}
 		
-		public DemCanvas getCanvas()
+		public ModelCanvas getCanvas()
 		{
 			return this.canvas;
 		}
@@ -299,7 +301,9 @@ public class ModelPreviewPane extends TitledRoundedPanel
 			int topLeftX = (int)Math.round((panelWidth / 2) - (scaleWidth / 2));
 			int topLeftY = (int)Math.round((panelHeight / 2) - (scaleHeight / 2));
 			
-			toPaint = canvas.getScaled((int)scaleWidth, (int)scaleHeight).getImage();
+			BufferedImage image = (BufferedImage) canvas.getFinalizedImage();
+			toPaint = ImageUtilities.getScaledInstance(image, (int)scaleWidth, (int)scaleHeight, RenderingHints.VALUE_INTERPOLATION_BILINEAR, true);
+			//toPaint = canvas.getScaled((int)scaleWidth, (int)scaleHeight).getImage();
 			
 			g2d.drawImage(toPaint, topLeftX, topLeftY, (int)scaleWidth, (int)scaleHeight, this);
 

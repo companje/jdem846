@@ -165,7 +165,7 @@ public class ElevationDsFormatGenerator extends RenderEngine
 					
 					tileNum++;
 					
-					fireTileCompletionListeners(null, null, ((double)tileNum) / ((double)numTiles));
+					fireTileCompletionListeners(null, ((double)tileNum) / ((double)numTiles));
 				}
 				tileCol++;	
 			}

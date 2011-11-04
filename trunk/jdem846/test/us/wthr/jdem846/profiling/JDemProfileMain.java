@@ -17,6 +17,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.util.TempFiles;
 
@@ -202,9 +203,9 @@ public class JDemProfileMain
 	}
 	
 	
-	protected static OutputProduct<DemCanvas> generate(Dem2dGenerator dem2d) throws Exception
+	protected static OutputProduct<ModelCanvas> generate(Dem2dGenerator dem2d) throws Exception
 	{
-		OutputProduct<DemCanvas> product = dem2d.generate();
+		OutputProduct<ModelCanvas> product = dem2d.generate();
 		return product;
 	}
 

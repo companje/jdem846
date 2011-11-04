@@ -73,7 +73,7 @@ public class Dem3dGenerator extends BasicRenderEngine
 	//}
 
 	@Override
-	public OutputProduct<DemCanvas> generate() throws RenderEngineException
+	public OutputProduct<ModelCanvas> generate() throws RenderEngineException
 	{
 		try {
 			return generate(false);
@@ -87,12 +87,12 @@ public class Dem3dGenerator extends BasicRenderEngine
 	}
 	
 	@Override
-	public OutputProduct<DemCanvas> generate(boolean skipElevation) throws RenderEngineException
+	public OutputProduct<ModelCanvas> generate(boolean skipElevation) throws RenderEngineException
 	{
 		Dem2dGenerator dem2d = new Dem2dGenerator(getModelContext());
 		
-		OutputProduct<DemCanvas> product2d = dem2d.generate(skipElevation);
-		DemCanvas canvas2d = product2d.getProduct();
+		OutputProduct<ModelCanvas> product2d = dem2d.generate(skipElevation);
+		ModelCanvas canvas2d = product2d.getProduct();
 		
 		RasterDataContext rasterDataContext = getRasterDataContext();
 		ModelOptions modelOptions = getModelOptions();
@@ -238,6 +238,7 @@ public class Dem3dGenerator extends BasicRenderEngine
 					//	continue;
 					//}
 					
+					
 					g2d.setColor(new Color(canvas2d.getColor(column, row)));
 					
 					
@@ -339,15 +340,16 @@ public class Dem3dGenerator extends BasicRenderEngine
 		
 		
 		
-		
-		DemCanvas canvas3d = new DemCanvas(image);
+		// TODO: Recreate image allocate
+		ModelCanvas canvas3d = null;// new ModelCanvas(image);
 		
 		if (!isCancelled()) {
 			log.info("Cropping image");
-			canvas3d = autoCrop(canvas3d);
+			// TODO: Restore autoCrop
+			//canvas3d = autoCrop(canvas3d);
 		}
 
-		return new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas3d);
+		return new OutputProduct<ModelCanvas>(OutputProduct.IMAGE, canvas3d);
 	}
 	
 	public void resetImage(BufferedImage image)

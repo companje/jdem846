@@ -54,6 +54,7 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.gfx.Renderable;
 import us.wthr.jdem846.render.gfx.Square;
@@ -213,7 +214,7 @@ public class LightingPreviewPanel extends Panel
 			try {
 				log.info("Updating lighting preview model image");
 				log.info("****************************************");
-				OutputProduct<DemCanvas> product = dem2d.generate();
+				OutputProduct<ModelCanvas> product = dem2d.generate();
 				prerendered = (BufferedImage) product.getProduct().getImage();
 				
 			} catch (RenderEngineException e) {

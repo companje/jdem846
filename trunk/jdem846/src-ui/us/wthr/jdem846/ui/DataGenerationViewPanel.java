@@ -27,6 +27,7 @@ import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RenderEngine;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.ui.ModelingWorkerThread.ModelCompletionListener;
@@ -66,7 +67,7 @@ public class DataGenerationViewPanel extends JdemPanel
 		// Set Listeners
 		worker = new ModelingWorkerThread(engine);
 		worker.addModelCompletionListener(new ModelCompletionListener() {
-			public void onModelComplete(DemCanvas completedCanvas) {
+			public void onModelComplete(ModelCanvas modelCanvas) {
 				statusBar.setProgressVisible(false);
 				setWorking(false);
 			}
@@ -84,7 +85,7 @@ public class DataGenerationViewPanel extends JdemPanel
 		});
 		
 		worker.addTileCompletionListener(new TileCompletionListener() {
-			public void onTileCompleted(DemCanvas tileCanvas, DemCanvas outputCanvas, double pctComplete) {
+			public void onTileCompleted(ModelCanvas modelCanvas, double pctComplete) {
 				statusBar.setProgress((int)(pctComplete * 100));
 			}
 		});

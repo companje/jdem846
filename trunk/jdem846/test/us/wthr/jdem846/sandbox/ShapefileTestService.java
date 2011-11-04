@@ -51,6 +51,7 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.modeling.FeatureTypeStroke;
@@ -178,7 +179,7 @@ public class ShapefileTestService extends AbstractLockableService
 		}
 		
 		log.info("Generating DEM2D image");
-		OutputProduct<DemCanvas> output = null;
+		OutputProduct<ModelCanvas> output = null;
 		try {
 			output = dem2d.generate();
 		} catch (Exception ex) {
@@ -186,7 +187,7 @@ public class ShapefileTestService extends AbstractLockableService
 		}
 		
 		
-		DemCanvas canvas = output.getProduct();
+		ModelCanvas canvas = output.getProduct();
 		try {
 			canvas.save(saveToPath + "dem2d.png");
 		} catch (CanvasException e) {
@@ -220,7 +221,7 @@ public class ShapefileTestService extends AbstractLockableService
 				
 				Image layerImage = renderLayer(rasterDataContext, shapeLayer);
 				layerImage = layerImage.getScaledInstance(canvas.getWidth(), canvas.getHeight(), Image.SCALE_SMOOTH);
-				canvas.overlay(layerImage, 0, 0);
+				//canvas.overlay(layerImage, 0, 0);
 	
 			} catch(Exception ex) {
 				ex.printStackTrace();

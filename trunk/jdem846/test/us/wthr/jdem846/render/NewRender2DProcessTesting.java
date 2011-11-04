@@ -82,7 +82,7 @@ public class NewRender2DProcessTesting
 		
 		ModelContext modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
 		
-		OutputProduct<DemCanvas> product = null;
+		OutputProduct<ModelCanvas> product = null;
 		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 		
 		double start = 0;

@@ -15,6 +15,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.PointTranslateHandler;
@@ -86,7 +87,8 @@ public class ShapeLayerRenderer
 				canvas.overlay(layerImage, 0, 0);
 				
 				shapeBase.close();
-				fireTileCompletionListeners(canvas, canvas, ((double)layerNumber) / ((double)numLayers));
+				// TODO: Restore proper canvas type
+				//fireTileCompletionListeners(canvas, ((double)layerNumber) / ((double)numLayers));
 				
 			} catch (OutOfMemoryError err) {
 				throw err;
@@ -206,11 +208,11 @@ public class ShapeLayerRenderer
 		return cancel;
 	}
 	
-	protected void fireTileCompletionListeners(DemCanvas tileCanvas, DemCanvas outputCanvas, double pctComplete)
+	protected void fireTileCompletionListeners(ModelCanvas modelCanvas, double pctComplete)
 	{
 		if (tileCompletionListeners != null) {
 			for (TileCompletionListener listener : tileCompletionListeners) {
-				listener.onTileCompleted(tileCanvas, outputCanvas, pctComplete);
+				listener.onTileCompleted(modelCanvas, pctComplete);
 			}
 		}
 	}

@@ -23,6 +23,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.BasicRenderEngine;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
@@ -33,7 +34,8 @@ public class TileRenderer
 	
 	private ModelContext modelContext;
 	private ModelColoring modelColoring;
-	private DemCanvas canvas;
+	//private DemCanvas canvas;
+	private ModelCanvas modelCanvas;
 	private Perspectives perspectives;
 	
 	protected RasterDataContext dataRasterContextSubset;
@@ -72,11 +74,11 @@ public class TileRenderer
 	
 	private boolean cancel = false;
 	
-	public TileRenderer(ModelContext modelContext, ModelColoring modelColoring, DemCanvas canvas)
+	public TileRenderer(ModelContext modelContext, ModelColoring modelColoring, ModelCanvas modelCanvas)
 	{
 		this.modelContext = modelContext;
 		this.modelColoring = modelColoring;
-		this.canvas = canvas;
+		this.modelCanvas = modelCanvas;
 		this.perspectives = new Perspectives();
 		
 		gridSize = getModelOptions().getGridSize();
@@ -154,7 +156,8 @@ public class TileRenderer
 	protected void renderCell(double latitude, double longitude, int imageRow, int imageColumn) throws RenderEngineException
 	{
 		
-
+		double latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
+		double longitudeResolution = modelContext.getRasterDataContext().getLongitudeResolution();
 		
 		try {
 			getPoint(latitude, longitude, gridSize, point);
@@ -174,6 +177,12 @@ public class TileRenderer
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
 			renderTriangle(avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
+			modelCanvas.fillTriangle(triangleColorNW, 
+									latitude, longitude, 
+									latitude-latitudeResolution, longitude, 
+									latitude, longitude+longitudeResolution);
+			
+			
 			if (doublePrecisionHillshading) {
 				
 				// South East
@@ -181,15 +190,20 @@ public class TileRenderer
 				renderTriangle(avgElevationSE, frontLeftPoints, frontRightPoints, backRightPoints, triangleColorSE);
 	
 				ColorAdjustments.interpolateColor(triangleColorNW, triangleColorSE, color, 0.5);
-				
+
 			} else {
 				color[0] = triangleColorNW[0];
 				color[1] = triangleColorNW[1];
 				color[2] = triangleColorNW[2];
 				color[3] = triangleColorNW[3];
 			}
+			
+			modelCanvas.fillTriangle(color, 
+					latitude-latitudeResolution, longitude, 
+					latitude-latitudeResolution, longitude+longitudeResolution, 
+					latitude, longitude+longitudeResolution);
 
-			canvas.setColor(imageColumn, imageRow, color);
+			//canvas.setColor(imageColumn, imageRow, color);
 			
 		}
 		
@@ -532,30 +546,31 @@ public class TileRenderer
 	}
 	
 	
-	public static DemCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext) throws RenderEngineException
+	public static ModelCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext) throws RenderEngineException
 	{
 		ModelColoring modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
 		return TileRenderer.render(fromRow, toRow, fromColumn, toColumn, modelContext, modelColoring, null);
 	}
 	
-	public static DemCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext, DemCanvas canvas) throws RenderEngineException
+	public static ModelCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext, ModelCanvas canvas) throws RenderEngineException
 	{
 		ModelColoring modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
 		return TileRenderer.render(fromRow, toRow, fromColumn, toColumn, modelContext, modelColoring, canvas);
 	}
 	
-	public static DemCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext, ModelColoring modelColoring) throws RenderEngineException
+	public static ModelCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext, ModelColoring modelColoring) throws RenderEngineException
 	{
 		return TileRenderer.render(fromRow, toRow, fromColumn, toColumn, modelContext, modelColoring, null);
 	}
 	
-	public static DemCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext, ModelColoring modelColoring, DemCanvas canvas) throws RenderEngineException
+	public static ModelCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext, ModelColoring modelColoring, ModelCanvas canvas) throws RenderEngineException
 	{
 		if (canvas == null) {
             int width = (int)(toColumn - fromColumn) + 1;
             int height = (int)(toRow - fromRow) + 1;
             log.info("Creating default canvas of width/height: " + width + "/" + height);
-            canvas = new DemCanvas(DEFAULT_BACKGROUND, width, height);
+            canvas = new ModelCanvas(modelContext);
+            //canvas = new DemCanvas(DEFAULT_BACKGROUND, width, height);
 		}
 		
 		TileRenderer renderer = new TileRenderer(modelContext, modelColoring, canvas);

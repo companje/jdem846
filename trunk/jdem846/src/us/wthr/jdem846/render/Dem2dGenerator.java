@@ -43,14 +43,14 @@ public class Dem2dGenerator extends BasicRenderEngine
 		super(modelContext);
 	}
 	
-	public OutputProduct<DemCanvas> generate() throws RenderEngineException
+	public OutputProduct<ModelCanvas> generate() throws RenderEngineException
 	{
 		return generate(false);
 	}
 	
-	public OutputProduct<DemCanvas> generate(boolean skipElevation) throws RenderEngineException
+	public OutputProduct<ModelCanvas> generate(boolean skipElevation) throws RenderEngineException
 	{
-		OutputProduct<DemCanvas> product = null;
+		OutputProduct<ModelCanvas> product = null;
 		
 		try {
 			ScriptProxy scriptProxy = getModelContext().getScriptProxy();
@@ -63,15 +63,16 @@ public class Dem2dGenerator extends BasicRenderEngine
 		
 		
 		try {
-			DemCanvas canvas = ModelRenderer.render(getModelContext(), skipElevation, this.tileCompletionListeners);
+			ModelCanvas canvas = ModelRenderer.render(getModelContext(), skipElevation, this.tileCompletionListeners);
 			
 			if (getModelContext().getShapeDataContext() != null) {
-				ShapeLayerRenderer.render(getModelContext(), canvas, this.tileCompletionListeners);
+				// TODO: Restore shape render method call
+				//ShapeLayerRenderer.render(getModelContext(), canvas, this.tileCompletionListeners);
 			} else {
 				log.info("Shape data context is null, skipping render stage");
 			}
 			
-			product = new OutputProduct<DemCanvas>(OutputProduct.IMAGE, canvas);
+			product = new OutputProduct<ModelCanvas>(OutputProduct.IMAGE, canvas);
 		} catch (OutOfMemoryError err) {
 			log.error("Out of memory error when generating model", err);
 			throw new RenderEngineException("Out of memory error when generating model", err);

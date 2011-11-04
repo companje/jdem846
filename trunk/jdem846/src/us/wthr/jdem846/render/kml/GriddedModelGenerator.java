@@ -37,6 +37,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.render2d.TileRenderer;
@@ -111,8 +112,8 @@ public class GriddedModelGenerator
 					
 					//dem2d.generate(fromRow, toRow, fromCol, toCol, tileCanvas);
 					
-					// TODO: TEST THIS!
-					TileRenderer.render(fromRow, toRow, fromCol, toCol, modelContext, tileCanvas);
+					// TODO: Restore render method call with ModelCanvas
+					//TileRenderer.render(fromRow, toRow, fromCol, toCol, modelContext, tileCanvas);
 					
 					BufferedImage tileImage = getCroppedImage(tileCanvas.getImage(), (toCol - fromCol) + 1, (toRow - fromRow) + 1);
 					
@@ -136,7 +137,8 @@ public class GriddedModelGenerator
 					
 					tileCol++;
 					
-					fireTileCompletionListeners(tileCanvas,((double)tileNum) / ((double)modelDimensions.getTileCount()));
+					// TODO: Restore correct canvas type
+					//fireTileCompletionListeners(modelCanvas,((double)tileNum) / ((double)modelDimensions.getTileCount()));
 				}
 				
 				tileRow++;
@@ -177,10 +179,10 @@ public class GriddedModelGenerator
 	}
 	
 	
-	protected void fireTileCompletionListeners(DemCanvas tileCanvas, double pctComplete)
+	protected void fireTileCompletionListeners(ModelCanvas modelCanvas, double pctComplete)
 	{
 		for (TileCompletionListener listener : tileCompletionListeners) {
-			listener.onTileCompleted(tileCanvas, tileCanvas, pctComplete);
+			listener.onTileCompleted(modelCanvas, pctComplete);
 		}
 	}
 	
