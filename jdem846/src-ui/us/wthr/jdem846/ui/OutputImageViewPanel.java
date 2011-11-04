@@ -35,6 +35,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
@@ -73,9 +74,10 @@ public class OutputImageViewPanel extends JdemPanel
 	private StatusBar statusBar;
 	private ProcessWorkingSpinner spinner;
 	
-	private DataPackage dataPackage;
-	private ModelOptions modelOptions;
+	//private DataPackage dataPackage;
+	//private ModelOptions modelOptions;
 	//private RenderEngine engine;
+	private ModelContext modelContext;
 	
 	private boolean isWorking = false;
 	
@@ -94,8 +96,9 @@ public class OutputImageViewPanel extends JdemPanel
 		//this.canvas = canvas;
 		this.setLayout(new BorderLayout());
 		//this.engine = engine;
-		this.dataPackage = engine.getDataPackage();
-		this.modelOptions = engine.getModelOptions();
+		//this.dataPackage = engine.getDataPackage();
+		//this.modelOptions = engine.getModelOptions();
+		this.modelContext = engine.getModelContext();
 		
 		// Create components
 		imageDisplay = new ImageDisplayPanel();
@@ -246,10 +249,10 @@ public class OutputImageViewPanel extends JdemPanel
 				
 				start = System.currentTimeMillis();
 				
-				boolean requiresMinMaxElevation = ColoringRegistry.getInstance(modelOptions.getColoringType()).requiresMinMaxElevation();
+				boolean requiresMinMaxElevation = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).requiresMinMaxElevation();
 				try {
 					if (requiresMinMaxElevation) {
-						dataPackage.calculateElevationMinMax(true);
+						modelContext.getRasterDataContext().calculateElevationMinMax();
 					}
 				} catch (Exception ex) {
 					throw new RenderEngineException("Error calculating elevation min/max: " + ex.getMessage(), ex);
@@ -485,20 +488,21 @@ public class OutputImageViewPanel extends JdemPanel
 			return;
 		}
 		
-		double mouseLatitude = dataPackage.rowToLatitude(trueY);
-		double mouseLongitude = dataPackage.columnToLongitude(trueX);
+		double mouseLatitude = modelContext.getRasterDataContext().rowToLatitude(trueY);
+		double mouseLongitude = modelContext.getRasterDataContext().columnToLongitude(trueX);
 		
 		DecimalFormat formatter = new DecimalFormat(I18N.get("us.wthr.jdem846.ui.decimalFormat"));
 		String strMouseLatitude = formatter.format(mouseLatitude);
 		String strMouseLongitude = formatter.format(mouseLongitude);;
 		
+		
 		double elevation = 0;
 		try {
-			elevation = dataPackage.getElevation(trueY, trueX);
+			elevation = modelContext.getRasterDataContext().getData(mouseLatitude, mouseLongitude);
 		} catch (DataSourceException ex) {
 			log.warn("Failed to retrieve elevation data: " + ex.getMessage(), ex);
 		}
-		if (elevation == DemConstants.ELEV_NO_DATA || elevation == dataPackage.getNoData())
+		if (elevation == DemConstants.ELEV_NO_DATA)
 			elevation = 0;
 		
 		statusBar.setStatus("X/Y: " + trueX + " / " + trueY + ", " + I18N.get("us.wthr.jdem846.ui.latitude") + "/" + I18N.get("us.wthr.jdem846.ui.longitude") + ": " + strMouseLatitude + " / " + strMouseLongitude + ", " + I18N.get("us.wthr.jdem846.ui.elevation") + ": " + elevation);

@@ -146,25 +146,35 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		int column = (int) fetchColumn;
 		
 		
+		double s00 = 0;
+		double s01 = 0;
+		double s10 = 0;
+		double s11 = 0;
 		
+		double xFrac = fetchColumn - column;
+		double yFrac = fetchRow - row;
 		
-		if ((fetchRow != row || fetchColumn != column) &&
-				(column + 1 < columns && row + 1 < rows)) {
+		s00 = getData(row, column);
+		
+		if ((column + 1 < columns && row + 1 < rows)) {
 			
-			double data = interpolate(getData(row, column), // s00
-					getData(row, column + 1),				// s01
-					getData(row + 1, column),				// s10
-					getData(row + 1, column + 1),			// s11
-					fetchColumn - column,					// xFrac
-					fetchRow - row);						// yFrac
+			s01 = getData(row, column + 1);
+			s01 = (s01 != DemConstants.ELEV_NO_DATA) ? s01 : s00;
+			
+			s10 = getData(row + 1, column);
+			s10 = (s10 != DemConstants.ELEV_NO_DATA) ? s10 : s00;
+			
+			s11 = getData(row + 1, column + 1);
+			s11 = (s11 != DemConstants.ELEV_NO_DATA) ? s11 : s00;
 
-			return data;
 		} else {
-			return this.getData(row, column);
+			s11 = s10 = s01 = s00;
 		}
 		
-		
-		
+
+		double data = interpolate(s00, s01, s10, s11, xFrac, yFrac);
+		return data;
+
 	}
 	
 	protected double interpolate(double s00, double s01, double s10, double s11, double xFrac, double yFrac)
@@ -280,6 +290,20 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	}
 		
 	
-	
+	protected void copyFields(AbstractRasterDataProvider clone) throws DataSourceException
+	{
+		clone.latitudeResolution = this.getLatitudeResolution();
+		clone.longitudeResolution = this.getLongitudeResolution();
+		clone.dataMinimum = this.getDataMinimum();
+		clone.dataMaximum = this.getDataMaximum();
+		clone.north = this.getNorth();
+		clone.south = this.getSouth();
+		clone.east = this.getEast();
+		clone.west = this.getWest();
+		clone.rows = this.getRows();
+		clone.columns = this.getColumns();
+		clone.dataLatLongBox = this.dataLatLongBox.copy();
+
+	}
 
 }

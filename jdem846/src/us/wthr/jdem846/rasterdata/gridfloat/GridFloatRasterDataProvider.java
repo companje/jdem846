@@ -8,6 +8,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.AbstractRasterDataProvider;
+import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataLatLongBox;
 
 public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
@@ -172,5 +173,16 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 		dataReader.clearBuffer();
 	}
 	
-	
+	public RasterData copy() throws DataSourceException
+	{
+		if (isDisposed()) {
+			throw new DataSourceException("Cannot copy object: already disposed");
+		}
+		
+		GridFloatRasterDataProvider clone = new GridFloatRasterDataProvider();
+		clone.create(this.dataFile.getAbsolutePath());
+
+		
+		return clone;
+	}
 }

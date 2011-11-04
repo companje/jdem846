@@ -50,7 +50,7 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.ImageIcons;
 //import us.wthr.jdem846.input.DataPackage;
 //import us.wthr.jdem846.input.ElevationDataLoaderInstance;
-import us.wthr.jdem846.rasterdata.RasterDataProxy;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;

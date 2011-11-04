@@ -70,7 +70,7 @@ public class RasterDataTesting
 	
 	public void doModelRenderTest(List<String> inputDataList, String saveOutputTo) throws Exception
 	{
-		RasterDataProxy dataProxy = new RasterDataProxy();
+		RasterDataContext dataProxy = new RasterDataContext();
 		
 		for (String inputDataPath : inputDataList) {
 			log.info("Adding raster data @ '" + inputDataPath + "'");
@@ -87,6 +87,7 @@ public class RasterDataTesting
 		modelOptions.setTileSize(1000);
 		modelOptions.setWidth(dataProxy.getDataColumns());
 		modelOptions.setHeight(dataProxy.getDataRows());
+		modelOptions.setDoublePrecisionHillshading(true);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, modelOptions);
 		
@@ -100,7 +101,7 @@ public class RasterDataTesting
 	
 	public void doTest(List<String> inputDataList, boolean buffered) throws Exception
 	{
-		RasterDataProxy dataProxy = new RasterDataProxy();
+		RasterDataContext dataProxy = new RasterDataContext();
 		
 		for (String inputDataPath : inputDataList) {
 			log.info("Adding raster data @ '" + inputDataPath + "'");
@@ -123,7 +124,7 @@ public class RasterDataTesting
 	
 	public void rasterTest(ModelContext modelContext, boolean buffered) throws Exception
 	{
-		RasterDataProxy dataProxy = modelContext.getRasterDataProxy();
+		RasterDataContext dataProxy = modelContext.getRasterDataContext();
 		
 		double northLimit = dataProxy.getNorth();
 		double southLimit = dataProxy.getSouth();
@@ -183,12 +184,12 @@ public class RasterDataTesting
 	public void rasterTileTest(ModelContext modelContext, boolean buffered, double northLimit, double southLimit, double eastLimit, double westLimit) throws Exception
 	{
 
-		double latitudeResolution = modelContext.getRasterDataProxy().getLatitudeResolution();
-		double longitudeResolution = modelContext.getRasterDataProxy().getLongitudeResolution();
+		double latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
+		double longitudeResolution = modelContext.getRasterDataContext().getLongitudeResolution();
 		
 
 		
-		RasterDataProxy dataProxy = modelContext.getRasterDataProxy();//.getSubSet(northLimit, southLimit, eastLimit, westLimit);
+		RasterDataContext dataProxy = modelContext.getRasterDataContext();//.getSubSet(northLimit, southLimit, eastLimit, westLimit);
 
 		
 		if (buffered) {

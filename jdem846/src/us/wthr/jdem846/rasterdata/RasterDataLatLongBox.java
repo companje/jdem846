@@ -15,7 +15,7 @@ public class RasterDataLatLongBox
 	private double width;
 	private double height;
 	
-	private Rectangle2D.Double rectangle = null;
+	//private Rectangle2D.Double rectangle = null;
 	
 	public RasterDataLatLongBox(double north, double south, double east, double west)
 	{
@@ -29,7 +29,7 @@ public class RasterDataLatLongBox
 		height = (north - south);
 		
 		
-		rectangle = new Rectangle2D.Double(west, north, width, height);
+		//rectangle = new Rectangle2D.Double(west, north, width, height);
 		/*
 		box = new Path2D.Double();
 		box.moveTo(west, north);
@@ -117,7 +117,10 @@ public class RasterDataLatLongBox
 	}
 	
 	
-	
+	public RasterDataLatLongBox copy()
+	{
+		return new RasterDataLatLongBox(north, south, east, west);
+	}
 	
 	
 }

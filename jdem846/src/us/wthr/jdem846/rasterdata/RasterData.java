@@ -9,6 +9,8 @@ public interface RasterData {
 	public void dispose() throws DataSourceException;
 	public boolean isDisposed();
 	
+	public RasterData copy() throws DataSourceException;
+	
 	public String getFilePath();
 	
 	public double getLatitudeResolution();

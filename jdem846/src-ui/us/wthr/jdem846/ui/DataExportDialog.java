@@ -11,6 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
@@ -35,13 +36,14 @@ public class DataExportDialog extends Dialog
 	
 	private TextField txtExportLocation;
 	
-	private DataPackage dataPackage;
+	//private DataPackage dataPackage;
+	private ModelContext modelContext;
 	
-	public DataExportDialog(DataPackage dataPackage)
+	public DataExportDialog(ModelContext modelContext)
 	{
 		// Set Properties
 		setTitle(I18N.get("us.wthr.jdem846.ui.exportDialog.title"));
-		this.dataPackage = dataPackage;
+		this.modelContext = modelContext;
 		setModal(true);
 		this.setSize(400, 125);
 		this.setLocationRelativeTo(null);

@@ -24,10 +24,12 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataBounds;
 import us.wthr.jdem846.input.DataPackage;
+import us.wthr.jdem846.rasterdata.RasterDataRowColumnBox;
 import us.wthr.jdem846.ui.border.StandardBorder;
 
 @SuppressWarnings("serial")
@@ -36,11 +38,11 @@ public class DataInputLayoutPane extends TitledRoundedPanel
 
 	private LayoutGraphicPanel graphicPanel;
 
-	public DataInputLayoutPane(DataPackage dataPackage, ModelOptions modelOptions)
+	public DataInputLayoutPane(ModelContext modelContext)
 	{
 		super(I18N.get("us.wthr.jdem846.ui.dataInputLayoutPane.title"));
 
-		graphicPanel = new LayoutGraphicPanel(dataPackage, modelOptions);
+		graphicPanel = new LayoutGraphicPanel(modelContext);
 
 		setLayout(new BorderLayout());
 		add(graphicPanel, BorderLayout.CENTER);
@@ -60,59 +62,47 @@ public class DataInputLayoutPane extends TitledRoundedPanel
 
 	
 	
-	public DataPackage getDataPackage()
-	{
-		return graphicPanel.getDataPackage();
-	}
+	//public DataPackage getDataPackage()
+	//{
+	//	return graphicPanel.getDataPackage();
+	//}
 
 
-	public void setDataPackage(DataPackage dataPackage)
-	{
-		graphicPanel.setDataPackage(dataPackage);
-	}
+	//public void setDataPackage(DataPackage dataPackage)
+	//{
+	//	graphicPanel.setDataPackage(dataPackage);
+	//}
 
 
-	public ModelOptions getModelOptions() 
-	{
-		return graphicPanel.getModelOptions();
-	}
+	//public ModelOptions getModelOptions() 
+	//{
+//		return graphicPanel.getModelOptions();
+	//}
 
 
-	public void setModelOptions(ModelOptions modelOptions) 
-	{
-		graphicPanel.setModelOptions(modelOptions);
-	}
+	//public void setModelOptions(ModelOptions modelOptions) 
+	//{
+	//	graphicPanel.setModelOptions(modelOptions);
+	//}
 	
 	
 	class LayoutGraphicPanel extends JPanel
 	{
-		private DataPackage dataPackage;
-		private ModelOptions modelOptions;
+		private ModelContext modelContext;
 		
-		public LayoutGraphicPanel(DataPackage dataPackage, ModelOptions modelOptions)
+		public LayoutGraphicPanel(ModelContext modelContext)
 		{
-			this.dataPackage = dataPackage;
-			this.modelOptions = modelOptions;
+			this.modelContext = modelContext;
 		}
 
-		public DataPackage getDataPackage()
+		public void setModelContext(ModelContext modelContext)
 		{
-			return dataPackage;
+			this.modelContext = modelContext;
 		}
-
-		public void setDataPackage(DataPackage dataPackage)
+		
+		public ModelContext getModelContext()
 		{
-			this.dataPackage = dataPackage;
-		}
-
-		public ModelOptions getModelOptions()
-		{
-			return modelOptions;
-		}
-
-		public void setModelOptions(ModelOptions modelOptions)
-		{
-			this.modelOptions = modelOptions;
+			return modelContext;
 		}
 		
 		@Override
@@ -121,8 +111,9 @@ public class DataInputLayoutPane extends TitledRoundedPanel
 			Graphics2D g2d = (Graphics2D) g;
 			
 			// TODO: Don't skew the image. The following code will
-			double xRatio = (double)getWidth() / dataPackage.getColumns();
-			double yRatio = (double)getHeight() / dataPackage.getRows();
+			// TODO: Switch to using the modelContext dimensions, not just the raster data
+			double xRatio = (double)getWidth() / modelContext.getRasterDataContext().getDataColumns();
+			double yRatio = (double)getHeight() / modelContext.getRasterDataContext().getDataRows();
 			
 			g2d.setColor(getBackground());
 			g2d.fillRect(0, 0, getWidth(), getHeight());
@@ -133,12 +124,13 @@ public class DataInputLayoutPane extends TitledRoundedPanel
 			
 			//System.out.println("--------------------------------");
 			int i = 1;
-			for (DataBounds dataBounds : dataPackage.getDataBounds()) {
-				int x = (int) Math.floor((double)dataBounds.getLeftX() * xRatio);
-				int y = (int) Math.floor((double)dataBounds.getTopY() * yRatio);
+			//for (DataBounds dataBounds : dataPackage.getDataBounds()) {
+			for (RasterDataRowColumnBox rowColBox : modelContext.getRasterDataContext().getRasterDataRowColumnBoxes()) {
+				int x = (int) Math.floor((double)rowColBox.getLeftX() * xRatio);
+				int y = (int) Math.floor((double)rowColBox.getTopY() * yRatio);
 				
-				int w = (int) Math.floor((double)dataBounds.getWidth() * xRatio) - 1;
-				int h = (int) Math.floor((double)dataBounds.getHeight() * yRatio) - 1;
+				int w = (int) Math.floor((double)rowColBox.getWidth() * xRatio) - 1;
+				int h = (int) Math.floor((double)rowColBox.getHeight() * yRatio) - 1;
 				
 				//System.out.println("x/y: " + x + "/" + y + ", w/h: " + w + "/" + h + ", x/y ratios: " + xRatio + "/" + yRatio);
 				

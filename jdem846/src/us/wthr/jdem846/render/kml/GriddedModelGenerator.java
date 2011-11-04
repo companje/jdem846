@@ -34,6 +34,7 @@ import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
@@ -45,7 +46,8 @@ public class GriddedModelGenerator
 	private static Log log = Logging.getLog(GriddedModelGenerator.class);
 	
 	private ModelContext modelContext;
-	private DataPackage dataPackage;
+	//private DataPackage dataPackage;
+	private RasterDataContext rasterDataContext;
 	private ModelOptions modelOptions;
 	private String tempPath;
 	private ImageTypeEnum imageType;
@@ -55,7 +57,7 @@ public class GriddedModelGenerator
 	protected GriddedModelGenerator(ModelContext modelContext, String tempPath, ImageTypeEnum imageType, List<TileCompletionListener> tileCompletionListeners)
 	{
 		this.modelContext = modelContext;
-		this.dataPackage = modelContext.getDataPackage();
+		this.rasterDataContext = modelContext.getRasterDataContext();
 		this.modelOptions = modelContext.getModelOptions();
 		this.tempPath = tempPath;
 		this.imageType = imageType;
@@ -64,7 +66,7 @@ public class GriddedModelGenerator
 	
 	protected GriddedModel generate() throws RenderEngineException, DataSourceException
 	{
-		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(dataPackage, modelOptions);
+		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
 
 		int tileRow = 0;
 		int tileCol = 0;
@@ -78,18 +80,18 @@ public class GriddedModelGenerator
 		//double latResolution = tileSize * modelDimensions.getyDim();
 		//double lonResolution = tileSize * modelDimensions.getxDim();
 		
-		double latResolution = tileSize * dataPackage.getAvgYDim();
-		double lonResolution = tileSize * dataPackage.getAvgXDim();
+		double latResolution = tileSize * rasterDataContext.getLatitudeResolution();
+		double lonResolution = tileSize * rasterDataContext.getLongitudeResolution();
 		
 		GriddedModel model = new GriddedModel(latResolution, lonResolution);
-		model.setNorth(dataPackage.getMaxLatitude());
-		model.setSouth(dataPackage.getMinLatitude());
-		model.setWest(dataPackage.getMinLongitude());
-		model.setEast(dataPackage.getMaxLongitude());
+		model.setNorth(rasterDataContext.getNorth());
+		model.setSouth(rasterDataContext.getSouth());
+		model.setWest(rasterDataContext.getWest());
+		model.setEast(rasterDataContext.getEast());
 		
 		
 		
-		if (dataPackage.getDataSources().size() > 0) {
+		if (rasterDataContext.getRasterDataListSize() > 0) {
 			for (int fromRow = 0; fromRow < dataRows; fromRow+=tileSize) {
 				int toRow = fromRow + tileSize - 1;
 				if (toRow > dataRows)
@@ -121,11 +123,11 @@ public class GriddedModelGenerator
 						throw new RenderEngineException("Failed to save tile image to disk: " + ex.getMessage(), ex);
 					}
 					
-					double west = dataPackage.columnToLongitude(fromCol - 1);
-					double east = dataPackage.columnToLongitude(toCol);
+					double west = rasterDataContext.columnToLongitude(fromCol - 1);
+					double east = rasterDataContext.columnToLongitude(toCol);
 					
-					double north = dataPackage.rowToLatitude(fromRow - 1);
-					double south = dataPackage.rowToLatitude(toRow);
+					double north = rasterDataContext.rowToLatitude(fromRow - 1);
+					double south = rasterDataContext.rowToLatitude(toRow);
 					
 					Tile tile = new Tile(tileFile, fromRow, fromCol, toRow, toCol, north, south, east, west);
 					model.addTile(tile);

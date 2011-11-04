@@ -18,9 +18,11 @@ package us.wthr.jdem846;
 
 import java.util.UUID;
 
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.input.DataPackage;
-import us.wthr.jdem846.rasterdata.RasterDataProxy;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.scripting.ScriptProxy;
+import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.util.UniqueIdentifierUtil;
 
 /** Provides a unique context environment for each modeling task
@@ -30,43 +32,35 @@ import us.wthr.jdem846.util.UniqueIdentifierUtil;
  */
 public class ModelContext
 {
-	
-	
-	
-	@Deprecated
-	private DataPackage dataPackage;
-	
-	private RasterDataProxy rasterDataProxy;
+
+	private RasterDataContext rasterDataContext;
+	private ShapeDataContext shapeDataContext;
 	private ModelOptions modelOptions;
 	private ScriptProxy scriptProxy;
 	private String contextId;
 	
-	@Deprecated
-	protected ModelContext(DataPackage dataPackage, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
-	{
-		this.dataPackage = dataPackage;
-		this.modelOptions = modelOptions;
-		this.scriptProxy = scriptProxy;
-	}
 	
-	protected ModelContext(RasterDataProxy rasterDataProxy, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
+	
+	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
 	{
-		this.rasterDataProxy = rasterDataProxy;
+		this.rasterDataContext = rasterDataContext;
+		this.shapeDataContext = shapeDataContext;
 		this.modelOptions = modelOptions;
 		this.scriptProxy = scriptProxy;
 	}
 
-	public RasterDataProxy getRasterDataProxy()
+	public RasterDataContext getRasterDataContext()
 	{
-		return rasterDataProxy;
+		return rasterDataContext;
 	}
 	
-	@Deprecated
-	public DataPackage getDataPackage()
+
+
+	public ShapeDataContext getShapeDataContext()
 	{
-		return dataPackage;
+		return shapeDataContext;
 	}
-	
+
 	public ModelOptions getModelOptions()
 	{
 		return modelOptions;
@@ -82,33 +76,83 @@ public class ModelContext
 		return contextId;
 	}
 	
-	@Deprecated
-	public static ModelContext createInstance(DataPackage dataPackage, ModelOptions modelOptions)
+	public double getNorth()
 	{
-		return ModelContext.createInstance(dataPackage, modelOptions, null);
+		// TODO: Add shape data dimensions once supported
+		if (rasterDataContext != null) {
+			return rasterDataContext.getNorth();
+		} else {
+			return 90.0;
+		}
 	}
 	
-	@Deprecated
-	public static ModelContext createInstance(DataPackage dataPackage, ModelOptions modelOptions, ScriptProxy scriptProxy)
+	public double getSouth()
+	{
+		// TODO: Add shape data dimensions once supported
+		if (rasterDataContext != null) {
+			return rasterDataContext.getSouth();
+		} else {
+			return -90.0;
+		}	
+	}
+	
+	public double getEast()
+	{
+		// TODO: Add shape data dimensions once supported
+		if (rasterDataContext != null) {
+			return rasterDataContext.getEast();
+		} else {
+			return 180.0;
+		}
+	}
+	
+	public double getWest()
+	{
+		// TODO: Add shape data dimensions once supported
+		if (rasterDataContext != null) {
+			return rasterDataContext.getWest();
+		} else {
+			return -180.0;
+		}
+	}
+	
+	public ModelContext copy() throws DataSourceException
+	{
+		
+		RasterDataContext rasterDataCopy = (rasterDataContext == null) ? null : rasterDataContext.copy();
+		ShapeDataContext shapeDataCopy = (shapeDataContext == null) ? null : shapeDataContext.copy();
+		ModelOptions modelOptionsCopy = (modelOptions == null) ? null : modelOptions.copy();
+		
+		// TODO: Implement script proxy copy
+		ScriptProxy scriptProxyCopy = null;//(scriptProxy == null) ? null : scriptProxy.copy();
+		
+		ModelContext clone = ModelContext.createInstance(rasterDataCopy, shapeDataCopy, modelOptionsCopy, scriptProxyCopy);
+		return clone;
+
+	}
+	
+	
+
+	
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ModelOptions modelOptions)
+	{
+		return ModelContext.createInstance(rasterDataContext, null, modelOptions, null);
+	}
+	
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions)
+	{
+		return ModelContext.createInstance(rasterDataContext, shapeDataContext, modelOptions, null);
+	}
+	
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions, ScriptProxy scriptProxy)
 	{
 		String contextId = ModelContext.generateContextId();
-		ModelContext modelContext = new ModelContext(dataPackage, modelOptions, scriptProxy, contextId);
+		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, modelOptions, scriptProxy, contextId);
 		
 		return modelContext;
 	}
 	
-	public static ModelContext createInstance(RasterDataProxy rasterDataProxy, ModelOptions modelOptions)
-	{
-		return ModelContext.createInstance(rasterDataProxy, modelOptions, null);
-	}
-	
-	public static ModelContext createInstance(RasterDataProxy rasterDataProxy, ModelOptions modelOptions, ScriptProxy scriptProxy)
-	{
-		String contextId = ModelContext.generateContextId();
-		ModelContext modelContext = new ModelContext(rasterDataProxy, modelOptions, scriptProxy, contextId);
-		
-		return modelContext;
-	}
+
 	
 	
 	protected static String generateContextId()

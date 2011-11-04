@@ -32,8 +32,11 @@ import javax.swing.JPanel;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.OutputProduct;
@@ -45,10 +48,11 @@ import us.wthr.jdem846.ui.border.StandardBorder;
 @SuppressWarnings("serial")
 public class ModelPreviewPane extends TitledRoundedPanel
 {
+	private static Log log = Logging.getLog(ModelPreviewPane.class);
 	
-	private DataPackage dataPackage;
-	private ModelOptions modelOptions;
-	//private ModelContext modelContext;
+	//private DataPackage dataPackage;
+	//private ModelOptions modelOptions;
+	private ModelContext modelContext;
 	
 	private int previewWidth = 250;
 	private int previewHeight = 100;
@@ -58,17 +62,17 @@ public class ModelPreviewPane extends TitledRoundedPanel
 	private boolean needsUpdate = false;
 	private ImagePanel imagePanel;
 	
-	public ModelPreviewPane(DataPackage dataPackage, ModelOptions modelOptions)
+	public ModelPreviewPane(ModelContext modelContext)
 	{
 		super(I18N.get("us.wthr.jdem846.ui.modelPreviewPane.title"));
 		((StandardBorder) this.getBorder()).setPadding(1);
 		
 		imagePanel = new ImagePanel();
-		
+		this.modelContext = modelContext;
 		//modelContext = ModelContext.createInstance(dataPackage, modelOptions);
 		// Set properties
-		setDataPackage(dataPackage);
-		setModelOptions(modelOptions);
+		//setDataPackage(dataPackage);
+		//setModelOptions(modelOptions);
 		//setPreviewWidth(previewWidth);
 		//setPreviewHeight(previewHeight);
 
@@ -123,8 +127,15 @@ public class ModelPreviewPane extends TitledRoundedPanel
 			if (width == 0 || height == 0)
 				return;
 			
-			ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
-			
+			//ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+			ModelContext modelContext;
+			try {
+				modelContext = this.modelContext.copy();
+			} catch (DataSourceException ex) {
+				// TODO Display error dialog
+				log.error("Failed to copy model context: " + ex.getMessage(), ex);
+				return;
+			}
 			Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 			
 			dem2d.addTileCompletionListener(new TileCompletionListener() {
@@ -198,25 +209,25 @@ public class ModelPreviewPane extends TitledRoundedPanel
 
 	
 	
-	public DataPackage getDataPackage()
-	{
-		return dataPackage;
-	}
+	//public DataPackage getDataPackage()
+	//{
+	//	return dataPackage;
+	//}
 
-	public void setDataPackage(DataPackage dataPackage)
-	{
-		this.dataPackage = dataPackage;
-	}
+	//public void setDataPackage(DataPackage dataPackage)
+	//{
+	//	this.dataPackage = dataPackage;
+	//}
 
-	public ModelOptions getModelOptions()
-	{
-		return modelOptions;
-	}
+	//public ModelOptions getModelOptions()
+	//{
+	//	return modelOptions;
+	//}
 
-	public void setModelOptions(ModelOptions modelOptions)
-	{
-		this.modelOptions = modelOptions;
-	}
+	//public void setModelOptions(ModelOptions modelOptions)
+	//{
+	//	this.modelOptions = modelOptions;
+	//}
 
 	protected Rectangle getWindowLocation()
 	{

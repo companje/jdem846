@@ -574,7 +574,7 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		public PrecacheStrategyOptionsListModel()
 		{
 			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyOptions.tiled"), DemConstants.PRECACHE_STRATEGY_TILED);
-			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyOptions.default"), DemConstants.PRECACHE_STRATEGY_DEFAULT);
+			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyOptions.none"), DemConstants.PRECACHE_STRATEGY_NONE);
 			addItem(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyOptions.full"), DemConstants.PRECACHE_STRATEGY_FULL);
 			
 		}

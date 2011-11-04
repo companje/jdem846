@@ -30,31 +30,31 @@ public class TextField extends JTextField
 	public TextField()
 	{
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TextField(Document doc, String text, int columns)
 	{
 		super(doc, text, columns);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TextField(int columns)
 	{
 		super(columns);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TextField(String text, int columns)
 	{
 		super(text, columns);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TextField(String text)
 	{
 		super(text);
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	

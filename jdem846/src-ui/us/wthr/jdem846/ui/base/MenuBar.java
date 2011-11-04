@@ -29,7 +29,6 @@ public class MenuBar extends JMenuBar
 	public MenuBar()
 	{
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	

@@ -31,31 +31,31 @@ public class Button extends JButton
 	public Button()
 	{
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Button(Action a)
 	{
 		super(a);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Button(Icon icon)
 	{
 		super(icon);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Button(String text, Icon icon)
 	{
 		super(text, icon);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Button(String text)
 	{
 		super(text);
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	

@@ -36,7 +36,7 @@ public class SplitPane extends JSplitPane implements Disposable
 	public SplitPane()
 	{
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 
@@ -47,7 +47,7 @@ public class SplitPane extends JSplitPane implements Disposable
 			Component newLeftComponent, Component newRightComponent)
 	{
 		super(newOrientation, newContinuousLayout, newLeftComponent, newRightComponent);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 
@@ -57,7 +57,7 @@ public class SplitPane extends JSplitPane implements Disposable
 	public SplitPane(int newOrientation, boolean newContinuousLayout)
 	{
 		super(newOrientation, newContinuousLayout);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 
@@ -68,7 +68,7 @@ public class SplitPane extends JSplitPane implements Disposable
 			Component newRightComponent)
 	{
 		super(newOrientation, newLeftComponent, newRightComponent);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 
@@ -78,7 +78,7 @@ public class SplitPane extends JSplitPane implements Disposable
 	public SplitPane(int newOrientation)
 	{
 		super(newOrientation);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 

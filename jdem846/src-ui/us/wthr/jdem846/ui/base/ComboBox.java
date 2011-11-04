@@ -32,25 +32,25 @@ public class ComboBox extends JComboBox
 	public ComboBox()
 	{
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ComboBox(ComboBoxModel aModel)
 	{
 		super(aModel);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ComboBox(Object[] items)
 	{
 		super(items);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ComboBox(Vector<?> items)
 	{
 		super(items);
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	

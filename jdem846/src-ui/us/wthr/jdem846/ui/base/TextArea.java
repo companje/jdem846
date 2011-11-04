@@ -30,37 +30,37 @@ public class TextArea extends JTextArea
 	public TextArea()
 	{
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TextArea(Document doc, String text, int rows, int columns)
 	{
 		super(doc, text, rows, columns);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TextArea(Document doc)
 	{
 		super(doc);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TextArea(int rows, int columns)
 	{
 		super(rows, columns);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TextArea(String text, int rows, int columns)
 	{
 		super(text, rows, columns);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TextArea(String text)
 	{
 		super(text);
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	

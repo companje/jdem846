@@ -23,6 +23,7 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.OutputProduct;
@@ -34,7 +35,8 @@ public class ModelingWorkerThread extends Thread
 	private static Log log = Logging.getLog(ModelingWorkerThread.class);
 	
 	private RenderEngine engine;
-	private DataPackage dataPackage;
+	private RasterDataContext rasterDataContext;
+	//private DataPackage dataPackage;
 	//private ModelOptions modelOptions;
 	
 	private boolean previewModel = false;
@@ -46,7 +48,8 @@ public class ModelingWorkerThread extends Thread
 	public ModelingWorkerThread(RenderEngine engine)
 	{
 		this.engine = engine;
-		this.dataPackage = engine.getDataPackage();
+		this.rasterDataContext = engine.getRasterDataContext();
+		//this.dataPackage = engine.getDataPackage();
 		//this.modelOptions = engine.getModelOptions();
 	}
 	
@@ -67,7 +70,7 @@ public class ModelingWorkerThread extends Thread
 			start = System.currentTimeMillis();
 			
 			try {
-				dataPackage.calculateElevationMinMax(true);
+				rasterDataContext.calculateElevationMinMax();
 			} catch (Exception ex) {
 				fireModelFailedListeners(ex);
 				return;

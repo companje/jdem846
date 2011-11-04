@@ -23,49 +23,49 @@ public class NetCdfDataCache extends DataCache
 	@Override
 	public long getDataLength()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public double get(int position) throws DataSourceException
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public void load(long start) throws DataSourceException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void unload()
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public boolean isLoaded()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public void setLoaded(boolean isLoaded)
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void dispose() throws DataSourceException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 	

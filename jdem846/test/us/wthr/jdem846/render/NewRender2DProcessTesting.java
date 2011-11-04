@@ -18,6 +18,9 @@ import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.gridfloat.GridFloat;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterData;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.ui.SimpleImageViewFrame;
 
 public class NewRender2DProcessTesting
@@ -25,7 +28,7 @@ public class NewRender2DProcessTesting
 	
 	private static Log log = Logging.getLog(NewRender2DProcessTesting.class);
 	
-	public void doTesting()
+	public void doTesting() throws Exception
 	{
 		String outputLocation = "C:/srv/elevation/testing.png";
 		
@@ -45,14 +48,14 @@ public class NewRender2DProcessTesting
 		
 		
 		
-		DataPackage dataPackage = new DataPackage();
+		RasterDataContext rasterDataContext = new RasterDataContext();
 		
 		for (String inputDataPath : inputDataList) {
-			GridFloat previewData = new GridFloat(inputDataPath);
-			dataPackage.addDataSource(previewData);
+			RasterData rasterData = RasterDataProviderFactory.loadRasterData(inputDataPath);
+			rasterDataContext.addRasterData(rasterData);
 		}
 		
-		dataPackage.prepare();
+		rasterDataContext.prepare();
 
 		ModelOptions modelOptions = new ModelOptions();
 		//modelOptions.setColoringType("hypsometric-etopo1-tint");
@@ -70,14 +73,14 @@ public class NewRender2DProcessTesting
 		//modelOptions.setWidth((int)dataPackage.getColumns());
 		
 		try {
-			dataPackage.calculateElevationMinMax(true);
+			rasterDataContext.calculateElevationMinMax();
 		} catch (Exception ex) {
 			log.error("Failed to calculate elevation min/max: " + ex.getMessage(), ex);
 			return;
 		} 
 		
 		
-		ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+		ModelContext modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
 		
 		OutputProduct<DemCanvas> product = null;
 		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
@@ -121,6 +124,10 @@ public class NewRender2DProcessTesting
 	{
 		NewRender2DProcessTesting testing = new NewRender2DProcessTesting();
 		
-		testing.doTesting();
+		try {
+			testing.doTesting();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 }

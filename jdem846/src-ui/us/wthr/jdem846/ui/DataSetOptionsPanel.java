@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataSource;
+import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.ui.base.Panel;
@@ -37,7 +38,8 @@ import us.wthr.jdem846.ui.datasetoptions.ShapeDataSetOptions;
 @SuppressWarnings("serial")
 public class DataSetOptionsPanel extends Panel
 {
-	private DataSource dataSource;
+	//private DataSource dataSource;
+	private RasterData rasterData;
 	private ShapeFileRequest shapeFileRequest;
 	private Button btnUpdatePreview;
 	private Component currentConfigPanel = null;
@@ -78,9 +80,9 @@ public class DataSetOptionsPanel extends Panel
 		btnUpdatePreview.setVisible(false);
 	}
 	
-	public void setElevationDataSet(DataSource dataSource)
+	public void setElevationDataSet(RasterData rasterData)
 	{
-		ElevationDataSetOptions panel = new ElevationDataSetOptions(dataSource);
+		ElevationDataSetOptions panel = new ElevationDataSetOptions(rasterData);
 		if (currentConfigPanel != null) {
 			this.remove(currentConfigPanel);
 		}

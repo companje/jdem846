@@ -51,42 +51,42 @@ public class NetCdf extends DataSource
 	@Override
 	public long getDataLength()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public void loadRow(int row) throws DataSourceException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void initDataCache() throws DataSourceException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void unloadDataCache() throws DataSourceException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public double getElevation(int column) throws DataSourceException
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public double getElevation(int row, int column) throws DataSourceException
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
@@ -105,77 +105,77 @@ public class NetCdf extends DataSource
 	@Override
 	protected void setMaxCol(int maxCol)
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public int getMaxCol()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	protected void setMaxRow(int maxRow)
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public int getMaxRow()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	protected void setMaxElevation(double maxElevation)
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public double getMaxElevation()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	protected void setMinElevation(double minElevation)
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public double getMinElevation()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	protected void setResolution(double resolution)
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public double getResolution()
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public DataSource copy()
 	{
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

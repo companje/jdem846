@@ -46,9 +46,13 @@ import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.input.DataSourceFactory;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterData;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.OutputProduct;
+import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.modeling.FeatureTypeStroke;
 import us.wthr.jdem846.shapefile.Shape;
 import us.wthr.jdem846.shapefile.ShapeBase;
@@ -130,26 +134,29 @@ public class ShapefileTestService extends AbstractLockableService
 		this.setLocked(true);
 		
 
-		final DataPackage dataPackage = new DataPackage(null);
-		for (String inputPath : elevationPaths) {
-			log.info("Adding elevation data: " + inputPath);
-			DataSource input;
-			try {
-				input = DataSourceFactory.loadDataSource(inputPath);
-			} catch (InvalidFileFormatException e) {
-				e.printStackTrace();
-				continue;
+		final RasterDataContext rasterDataContext = new RasterDataContext();
+		final ShapeDataContext shapeDataContext = new ShapeDataContext();
+		
+		
+		try {
+			for (String inputPath : elevationPaths) {
+				log.info("Adding elevation data: " + inputPath);
+				RasterData rasterData = RasterDataProviderFactory.loadRasterData(inputPath);
+				rasterDataContext.addRasterData(rasterData);
 			}
 			
-			input.calculateDataStats();
-			dataPackage.addDataSource(input);
+			
+			
+			for (ShapeFileRequest shapeFilePath : shapeFilePaths) {
+				shapeDataContext.addShapeFile(shapeFilePath);
+			}
+			log.info("Preparing dataPackage");
+			rasterDataContext.prepare();
+			shapeDataContext.prepare();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return;
 		}
-		
-		for (ShapeFileRequest shapeFilePath : shapeFilePaths) {
-			dataPackage.addShapeFile(shapeFilePath);
-		}
-		log.info("Preparing dataPackage");
-		dataPackage.prepare();
 		
 		ModelOptions modelOptions = new ModelOptions();
 		//modelOptions.setWidth((int)dataPackage.getColumns());
@@ -159,15 +166,14 @@ public class ShapefileTestService extends AbstractLockableService
 		//modelOptions.setHillShadeType(DemConstants.HILLSHADING_DARKEN);
 		modelOptions.setBackgroundColor("Blue");
 		
-		ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+		ModelContext modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, modelOptions);
 		
 		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 		
 		log.info("Calculating elevation min/max");
 		try {
-			dataPackage.calculateElevationMinMax(true);
+			rasterDataContext.calculateElevationMinMax();
 		} catch (DataSourceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -184,11 +190,11 @@ public class ShapefileTestService extends AbstractLockableService
 		try {
 			canvas.save(saveToPath + "dem2d.png");
 		} catch (CanvasException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
-		for (ShapeFileRequest shapeFilePath : dataPackage.getShapeFiles()) {
+		for (ShapeFileRequest shapeFilePath : shapeDataContext.getShapeFiles()) {
 			try {
 				log.info("Loading shapefile from " + shapeFilePath.getPath());
 				ShapeBase shapeBase = new ShapeBase(shapeFilePath.getPath(), shapeFilePath.getShapeDataDefinitionId());
@@ -203,8 +209,8 @@ public class ShapefileTestService extends AbstractLockableService
 				shapeLayer.translate(new PointTranslateHandler() {
 					public void translatePoint(double[] coords)
 					{
-						double x = dataPackage.longitudeToColumn((float) coords[0]);
-						double y = dataPackage.latitudeToRow((float) coords[1]);
+						double x = rasterDataContext.longitudeToColumn((float) coords[0]);
+						double y = rasterDataContext.latitudeToRow((float) coords[1]);
 						coords[0] = x;
 						coords[1] = y;
 					}
@@ -212,7 +218,7 @@ public class ShapefileTestService extends AbstractLockableService
 				
 				shapeLayer = shapeLayer.getCombinedPathsByTypes();
 				
-				Image layerImage = renderLayer(dataPackage, shapeLayer);
+				Image layerImage = renderLayer(rasterDataContext, shapeLayer);
 				layerImage = layerImage.getScaledInstance(canvas.getWidth(), canvas.getHeight(), Image.SCALE_SMOOTH);
 				canvas.overlay(layerImage, 0, 0);
 	
@@ -226,7 +232,7 @@ public class ShapefileTestService extends AbstractLockableService
 		try {
 			canvas.save(saveToPath + "dem2d-filled-polygons.png");
 		} catch (CanvasException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		log.info("Complete");
@@ -234,10 +240,10 @@ public class ShapefileTestService extends AbstractLockableService
 		this.setLocked(false);
 	}
 	
-	public Image renderLayer(DataPackage dataPackage, ShapeLayer shapeLayer)
+	public Image renderLayer(RasterDataContext rasterDataContext, ShapeLayer shapeLayer)
 	{
 		//Image image = canvas.getImage();
-		BufferedImage image = new BufferedImage((int)dataPackage.getColumns(), (int)dataPackage.getRows(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(rasterDataContext.getDataColumns(), rasterDataContext.getDataRows(), BufferedImage.TYPE_INT_ARGB);
 		
 		Graphics2D g2d = (Graphics2D) image.getGraphics();
 		g2d.setColor(new Color(0, 0, 0, 0));

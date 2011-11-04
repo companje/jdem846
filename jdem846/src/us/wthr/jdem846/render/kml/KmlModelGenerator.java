@@ -139,11 +139,14 @@ public class KmlModelGenerator
 
 			multiple = multiple * layerMultiplier;
 			
-			if (lonRes > (modelContext.getDataPackage().getLongitudeWidth() * 2)) {
+			double longitudeWidth = modelContext.getRasterDataContext().getEast() - modelContext.getRasterDataContext().getEast();
+			double latitudeHeight = modelContext.getRasterDataContext().getNorth() - modelContext.getRasterDataContext().getSouth();
+			
+			if (lonRes > (longitudeWidth * 2)) {
 				break;
 			}
 			
-			if (latRes > (modelContext.getDataPackage().getLatitudeHeight() * 2)) {
+			if (latRes > (latitudeHeight * 2)) {
 				break;
 			}
 			

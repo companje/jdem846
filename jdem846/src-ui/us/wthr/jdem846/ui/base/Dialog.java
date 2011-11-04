@@ -33,13 +33,11 @@ public class Dialog extends JDialog
 	public Dialog()
 	{
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Dialog(Frame owner)
 	{
 		super(owner);
-		// TODO Auto-generated constructor stub
 	}
 	
 	

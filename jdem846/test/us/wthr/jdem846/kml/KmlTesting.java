@@ -38,6 +38,9 @@ import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.gridfloat.GridFloat;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterData;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.render.KmlDemGenerator;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.kml.GriddedModel;
@@ -55,7 +58,7 @@ public class KmlTesting
 	private static Log log = Logging.getLog(KmlTesting.class);
 	
 	private ModelContext modelContext;
-	private DataPackage dataPackage;
+	private RasterDataContext rasterDataContext;
 	private ModelOptions modelOptions;
 	private GriddedModel griddedModel;
 	private String outputPath = "C:/srv/kml/dist";
@@ -67,11 +70,15 @@ public class KmlTesting
 	public static void main(String[] args)
 	{
 		KmlTesting testing = new KmlTesting();
-		testing.doTesting();
+		try {
+			testing.doTesting();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		
 	}
 	
-	public void doTesting()
+	public void doTesting() throws Exception
 	{
 		List<String> inputDataList = new LinkedList<String>();
 		
@@ -114,23 +121,25 @@ public class KmlTesting
 		modelOptions.setTileSize(1000);
 		modelOptions.setDoublePrecisionHillshading(true);
 		
-		dataPackage = new DataPackage();
+		rasterDataContext = new RasterDataContext();
 		
 		for (String inputDataPath : inputDataList) {
-			GridFloat previewData = new GridFloat(inputDataPath);
-			dataPackage.addDataSource(previewData);
+			//GridFloat previewData = new GridFloat(inputDataPath);
+			//dataPackage.addDataSource(previewData);
+			RasterData rasterData = RasterDataProviderFactory.loadRasterData(inputDataPath);
+			rasterDataContext.addRasterData(rasterData);
 		}
 		
-		dataPackage.prepare();
+		rasterDataContext.prepare();
 
 		try {
-			dataPackage.calculateElevationMinMax(true);
+			rasterDataContext.calculateElevationMinMax();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return;
 		} 
 		
-		modelContext = ModelContext.createInstance(dataPackage, modelOptions);
+		modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
 		
 		try {
 			

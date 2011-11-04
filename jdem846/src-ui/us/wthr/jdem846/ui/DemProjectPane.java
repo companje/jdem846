@@ -50,7 +50,7 @@ import us.wthr.jdem846.i18n.I18N;
 //import us.wthr.jdem846.input.DataSourceFactory;
 //import us.wthr.jdem846.input.ElevationDataLoaderInstance;
 //import us.wthr.jdem846.input.ElevationDataLoaderRegistry;
-import us.wthr.jdem846.rasterdata.RasterDataProxy;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.rasterdata.RasterData;
 
@@ -62,6 +62,7 @@ import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.scripting.ScriptProxyFactory;
+import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 import us.wthr.jdem846.ui.DataSetTree.DatasetSelectionListener;
@@ -98,9 +99,11 @@ public class DemProjectPane extends JdemPanel
 	private StatusBar statusBar;
 	
 	private ProjectModel projectModel;
-	//private DataPackage dataPackage;
+	
+	private ModelContext modelContext;
 	private ModelOptions modelOptions;
-	private RasterDataProxy rasterDataProxy;
+	private RasterDataContext rasterDataContext;
+	private ShapeDataContext shapeDataContext;
 	
 	private List<CreateModelListener> createModelListeners = new LinkedList<CreateModelListener>();
 	
@@ -120,8 +123,12 @@ public class DemProjectPane extends JdemPanel
 	protected void initialize(ProjectModel projectModel)
 	{
 		//dataPackage = new DataPackage(null);
-		rasterDataProxy = new RasterDataProxy();
+		rasterDataContext = new RasterDataContext();
 		modelOptions = new ModelOptions();
+		shapeDataContext = new ShapeDataContext();
+		
+		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, modelOptions);
+		
 		this.projectModel = projectModel;
 		
 		// Apply model options
@@ -143,7 +150,7 @@ public class DemProjectPane extends JdemPanel
 		
 		
 		// Create Components
-		datasetTree = new DataSetTree(rasterDataProxy);
+		datasetTree = new DataSetTree(modelContext);
 		datasetOptionsPanel = new DataSetOptionsPanel();
 		orderingButtonBar = new OrderingButtonBar();
 		
@@ -159,8 +166,8 @@ public class DemProjectPane extends JdemPanel
 		
 		overviewPanel = new DataOverviewPanel();
 		
-		layoutPane = new DataInputLayoutPane(rasterDataProxy, modelOptions);
-		previewPane = new ModelPreviewPane(rasterDataProxy, modelOptions);
+		layoutPane = new DataInputLayoutPane(modelContext);
+		previewPane = new ModelPreviewPane(modelContext);
 		scriptPane = new ScriptEditorPanel();
 		
 		statusBar = new StatusBar();
@@ -261,12 +268,11 @@ public class DemProjectPane extends JdemPanel
 				if (type != DataSetTypes.UNSUPPORTED) {
 					switch(type) {
 					case DataSetTypes.ELEVATION:
-						datasetOptionsPanel.setElevationDataSet(rasterDataProxy.getRasterDataList().get(index));
+						datasetOptionsPanel.setElevationDataSet(rasterDataContext.getRasterDataList().get(index));
 						break;
 					case DataSetTypes.SHAPE_POLYGON:
 					case DataSetTypes.SHAPE_POLYLINE:
-						// TODO: Restore this functionality
-						//datasetOptionsPanel.setShapeDataSet(dataPackage.getShapeFiles().get(index));
+						datasetOptionsPanel.setShapeDataSet(shapeDataContext.getShapeFiles().get(index));
 						break;
 					}
 					
@@ -353,7 +359,7 @@ public class DemProjectPane extends JdemPanel
 			scriptTemplatePath = modelOptions.getOption(ModelOptionNamesEnum.USER_SCRIPT_JYTHON_TEMPLATE);
 		} else {
 			// fail silently for now
-			// TODO: Don't 
+			// TODO: Don't fail silently
 			log.warn("Script language '" + modelOptions.getScriptLanguage() + "' is null or invalid; Cannot load template");
 			return;
 		}
@@ -409,7 +415,7 @@ public class DemProjectPane extends JdemPanel
 		MainButtonBar.removeToolBar(projectButtonBar);
 		
 		try {
-			rasterDataProxy.dispose();
+			rasterDataContext.dispose();
 			//dataPackage.dispose();
 		} catch (DataSourceException ex) {
 			log.error("Failed to dispose of data proxy: " + ex.getMessage(), ex);
@@ -431,16 +437,14 @@ public class DemProjectPane extends JdemPanel
 		projectModel.setLoadedFrom(projectLoadedFrom);
 		modelOptions.syncToProjectModel(projectModel);
 
-		for (RasterData rasterData : rasterDataProxy.getRasterDataList()) {
+		for (RasterData rasterData : rasterDataContext.getRasterDataList()) {
 			projectModel.getInputFiles().add(rasterData.getFilePath());
 		}
 
-		
-		// TODO: Restore Functionality
-		//for (ShapeFileRequest shapeFile : dataPackage.getShapeFiles()) {
-		//	projectModel.getShapeFiles().add(shapeFile);
-		//}
-		
+		for (ShapeFileRequest shapeFile : shapeDataContext.getShapeFiles()) {
+			projectModel.getShapeFiles().add(shapeFile);
+		}
+
 		return projectModel;
 	}
 	
@@ -448,7 +452,7 @@ public class DemProjectPane extends JdemPanel
 	{
 		log.warn("Export not yet implemented");
 		
-		DataExportDialog export = new DataExportDialog(rasterDataProxy);
+		DataExportDialog export = new DataExportDialog(modelContext);
 		export.setModal(true);
 		export.setVisible(true);
 	}
@@ -458,7 +462,7 @@ public class DemProjectPane extends JdemPanel
 		final FileChooser chooser = new FileChooser();
 		FileFilter acceptAll = chooser.getAcceptAllFileFilter();
 		
-		// TODO: Restore functionality
+		// TODO: Restore File Filter functionality
 		//for (ElevationDataLoaderInstance instance : ElevationDataLoaderRegistry.getInstances()) {
 		//	FileNameExtensionFilter filter = new FileNameExtensionFilter(instance.getName(), instance.getExtension());
 			//chooser.addChoosableFileFilter(filter);
@@ -617,13 +621,21 @@ public class DemProjectPane extends JdemPanel
 	}
 	
 	
-	protected void removeInputData(int type, int index) throws Exception
+	protected void removeInputData(int type, int index)
 	{
-		if (type == DataSetTypes.ELEVATION) {
-			removeElevationData(index);
-		} else if (type == DataSetTypes.SHAPE_POLYGON ||
-					type == DataSetTypes.SHAPE_POLYLINE) {
-			removeShapeData(index);
+		try {
+			if (type == DataSetTypes.ELEVATION) {
+				removeElevationData(index);
+			} else if (type == DataSetTypes.SHAPE_POLYGON ||
+						type == DataSetTypes.SHAPE_POLYLINE) {
+				removeShapeData(index);
+			}
+		} catch (Exception ex) {
+			log.error("Failed to remove input data: " + ex.getMessage(), ex);
+			JOptionPane.showMessageDialog(getRootPane(),
+					I18N.get("us.wthr.jdem846.ui.projectPane.remove.removeError.message"),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.remove.removeError.title"),
+				    JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -638,12 +650,12 @@ public class DemProjectPane extends JdemPanel
 			return;
 		}
 		
-		rasterDataProxy.removeRasterData(index);
+		rasterDataContext.removeRasterData(index);
 		//dataPackage.removeDataSource(index);
 		onDataModelChanged();
 	}
 	
-	protected void removeShapeData(int index) 
+	protected void removeShapeData(int index) throws DataSourceException 
 	{
 		log.info("Removing shape data #" + index);
 		if (index < 0) {
@@ -654,8 +666,7 @@ public class DemProjectPane extends JdemPanel
 			return;
 		}
 		
-		// TODO: Restore functionality
-		//dataPackage.removeShapeFile(index);
+		shapeDataContext.removeShapeFile(index);
 		onDataModelChanged();
 	}
 	
@@ -663,13 +674,11 @@ public class DemProjectPane extends JdemPanel
 	protected void addShapeDataset(String filePath, String shapeDataDefinitionId, boolean triggerModelChanged)
 	{
 		try {
-			// TODO Restore Functionality
-			//dataPackage.addShapeFile(filePath, shapeDataDefinitionId);
+			shapeDataContext.addShapeFile(filePath, shapeDataDefinitionId);
 			if (triggerModelChanged)
 				onDataModelChanged();
 		//} catch (ShapeFileException ex) {
 		} catch (Exception ex) {
-			// TODO:
 			ex.printStackTrace();
 			
 			JOptionPane.showMessageDialog(getRootPane(),
@@ -702,10 +711,13 @@ public class DemProjectPane extends JdemPanel
 		
 		//rasterData.calculateDataStats();
 		try {
-			rasterDataProxy.addRasterData(rasterData);
+			rasterDataContext.addRasterData(rasterData);
 		} catch (DataSourceException ex) {
 			log.error("Failed to add raster data: " + ex.getMessage(), ex);
-			// TODO: Display message dialog
+			JOptionPane.showMessageDialog(this.getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.add.shapeData.loadFailed.invalidFormat.message") + ": " + "", //ex.getExtension(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.add.shapeData.loadFailed.invalidFormat.title"),
+				    JOptionPane.ERROR_MESSAGE);
 		}
 		
 		if (triggerModelChanged)
@@ -715,8 +727,7 @@ public class DemProjectPane extends JdemPanel
 	public void onDataModelChanged()
 	{
 		
-		// TODO: Make sure shapefiles get counted, too
-		if (rasterDataProxy.getRasterDataListSize() > 0) {
+		if (rasterDataContext.getRasterDataListSize() + shapeDataContext.getShapeFiles().size() > 0) {
 			//projectButtonBar.setButtonEnabled(ProjectButtonBar.BTN_CREATE, true);
 			overviewPanel.setValuesVisible(true);
 		} else {
@@ -736,13 +747,13 @@ public class DemProjectPane extends JdemPanel
 		*/
 		
 		try {
-			rasterDataProxy.prepare();
+			rasterDataContext.prepare();
 		} catch (DataSourceException ex) {
 			log.warn("Failed to prepare raster data proxy: " + ex.getMessage(), ex);
 		}
 		
 		try {
-			rasterDataProxy.calculateElevationMinMax();
+			rasterDataContext.calculateElevationMinMax();
 		} catch (DataSourceException ex) {
 			log.warn("Failed to calculate elevation min/max: " + ex.getMessage(), ex);
 		}
@@ -750,12 +761,12 @@ public class DemProjectPane extends JdemPanel
 		previewPane.update();
 		//previewPanel.update();
 		
-		overviewPanel.setRows(rasterDataProxy.getDataRows());
-		overviewPanel.setColumns(rasterDataProxy.getDataColumns());
-		overviewPanel.setMaxLatitude(rasterDataProxy.getNorth());
-		overviewPanel.setMinLatitude(rasterDataProxy.getSouth());
-		overviewPanel.setMaxLongitude(rasterDataProxy.getEast());
-		overviewPanel.setMinLongitude(rasterDataProxy.getWest());
+		overviewPanel.setRows(rasterDataContext.getDataRows());
+		overviewPanel.setColumns(rasterDataContext.getDataColumns());
+		overviewPanel.setMaxLatitude(rasterDataContext.getNorth());
+		overviewPanel.setMinLatitude(rasterDataContext.getSouth());
+		overviewPanel.setMaxLongitude(rasterDataContext.getEast());
+		overviewPanel.setMinLongitude(rasterDataContext.getWest());
 		//overviewPanel.setMaxElevation(dataPackage.getMaxElevation());
 		//overviewPanel.setMinElevation(dataPackage.getMinElevation());
 		
@@ -779,11 +790,10 @@ public class DemProjectPane extends JdemPanel
 			index = datasetTree.getSelectedDatasetIndex();
 		
 		if (type == DataSetTypes.ELEVATION)
-			dsCount = rasterDataProxy.getRasterDataListSize();
-		// TODO: Restore functionality
-		//else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE)
-		//	dsCount = dataPackage.getShapeFiles().size();
-		
+			dsCount = rasterDataContext.getRasterDataListSize();
+		else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE)
+			dsCount = shapeDataContext.getShapeFiles().size();
+
 		
 		orderingButtonBar.setButtonEnabled(OrderingButtonBar.BTN_MOVE_TOP, (index > 0));
 		orderingButtonBar.setButtonEnabled(OrderingButtonBar.BTN_MOVE_UP, (index > 0));
@@ -801,10 +811,9 @@ public class DemProjectPane extends JdemPanel
 			return;
 		
 		if (type == DataSetTypes.ELEVATION)
-			dsCount = rasterDataProxy.getRasterDataListSize();
-		// TODO: Restore functionality
-		//else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE)
-		//	dsCount = dataPackage.getShapeFiles().size();
+			dsCount = rasterDataContext.getRasterDataListSize();
+		else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE)
+			dsCount = shapeDataContext.getShapeFiles().size();
 		
 		// make sure index is valid (0 is already top, cannot move further)
 		if (fromIndex < 0 || fromIndex >= dsCount || toIndex < 0 ) 
@@ -815,17 +824,19 @@ public class DemProjectPane extends JdemPanel
 		
 		try {
 			if (type == DataSetTypes.ELEVATION) {
-				RasterData rasterData = rasterDataProxy.removeRasterData(fromIndex);
-				rasterDataProxy.getRasterDataList().add(toIndex, rasterData);
+				RasterData rasterData = rasterDataContext.removeRasterData(fromIndex);
+				rasterDataContext.getRasterDataList().add(toIndex, rasterData);
 	
 			} else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE) {
-				// TODO: Restore functionality
-				//ShapeFileRequest sfr = dataPackage.removeShapeFile(fromIndex);
-				//dataPackage.getShapeFiles().add(toIndex, sfr);
+				ShapeFileRequest sfr = shapeDataContext.removeShapeFile(fromIndex);
+				shapeDataContext.getShapeFiles().add(toIndex, sfr);
 			}
 		} catch (Exception ex) {
 			log.error("Failed to move data positions: " + ex.getMessage(), ex);
-			// TODO: Add dialog
+			JOptionPane.showMessageDialog(this.getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.moveDataSetToPosition.moveError.message") + ": " + ex.getMessage(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.moveDataSetToPosition.moveError.title"),
+				    JOptionPane.ERROR_MESSAGE);
 		}
 		onDataModelChanged();
 	}
@@ -846,14 +857,31 @@ public class DemProjectPane extends JdemPanel
 	public void onCreateModel()
 	{
 
-		RasterDataProxy rasterDataProxy;
+		RasterDataContext rasterDataContext;
 		try {
-			rasterDataProxy = this.rasterDataProxy.copy();
+			rasterDataContext = this.rasterDataContext.copy();
 		} catch (DataSourceException ex) {
-			log.error("Failed to copy raster data proxy: " + ex.getMessage(), ex);
-			// TODO: Display message dialog
+			log.error("Failed to copy raster data: " + ex.getMessage(), ex);
+			JOptionPane.showMessageDialog(this.getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.onCreateModel.copyDataRasterFailure.message") + ": " + ex.getMessage(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.onCreateModel.copyDataRasterFailure.title"),
+				    JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		
+		ShapeDataContext shapeDataContext;
+		try {
+			shapeDataContext = this.shapeDataContext.copy();
+		} catch (DataSourceException ex) {
+			log.error("Failed to copy shape data: " + ex.getMessage(), ex);
+			JOptionPane.showMessageDialog(this.getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.onCreateModel.copyShapeDataFailure.message") + ": " + ex.getMessage(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.onCreateModel.copyShapeDataFailure.title"),
+				    JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		
 		ModelOptions modelOptions = this.modelOptions.copy();
 		
 		String scriptContent = scriptPane.getScriptContent();
@@ -873,7 +901,7 @@ public class DemProjectPane extends JdemPanel
 			return;
 		}
 		
-		modelContext = ModelContext.createInstance(rasterDataProxy, modelOptions, scriptProxy);
+		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, modelOptions, scriptProxy);
 		fireCreateModelListeners(modelContext);
 	}
 	
