@@ -310,9 +310,9 @@ public class TileRenderer
 		double data = DemConstants.ELEV_NO_DATA;
 		
 		if (dataRasterContextSubset != null) {
-			data = dataRasterContextSubset.getData(latitude, longitude, false);
+			data = dataRasterContextSubset.getData(latitude, longitude, false, true);
 		} else {
-			data = getRasterDataContext().getData(latitude, longitude, false);
+			data = getRasterDataContext().getData(latitude, longitude, false, true);
 		}
 		
 		return data;

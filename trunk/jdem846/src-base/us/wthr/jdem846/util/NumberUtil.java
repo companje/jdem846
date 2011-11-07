@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.render.gfx;
+package us.wthr.jdem846.util;
+
+import us.wthr.jdem846.render.gfx.Vector;
 
 public class NumberUtil
 {
@@ -174,4 +176,24 @@ public class NumberUtil
 			return p0;
 	}
 	
+	
+	/** Normalized sinc function
+	 * 
+	 * @param x
+	 * @return
+	 */
+	public static double sinc(double x)
+	{
+		return (Math.sin(Math.PI * x) / (Math.PI * x));
+	}
+	
+	/** Unnormalized sinc function
+	 * 
+	 * @param x
+	 * @return
+	 */
+	public static double sincu(double x)
+	{
+		return (Math.sin(x) / x);
+	}
 }

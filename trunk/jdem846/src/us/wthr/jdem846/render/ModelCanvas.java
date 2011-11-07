@@ -18,12 +18,18 @@ import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.render.mapprojection.AitoffProjection;
+import us.wthr.jdem846.render.mapprojection.EquirectangularProjection;
+import us.wthr.jdem846.render.mapprojection.MapPoint;
+import us.wthr.jdem846.render.mapprojection.MapProjection;
+import us.wthr.jdem846.render.mapprojection.WinkelTripelProjection;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
 public class ModelCanvas
 {
 	private static Log log = Logging.getLog(ModelCanvas.class);
-
+	
+	private MapProjection mapProjection;
 	private ModelContext modelContext;
 	private Color backgroundColor;
 	private ModelDimensions2D modelDimensions;
@@ -34,6 +40,7 @@ public class ModelCanvas
 	private boolean isDisposed = false;
 	
 	private Path2D.Double pathBuffer = new Path2D.Double();
+	private MapPoint mapPoint = new MapPoint();
 	
 	public ModelCanvas(ModelContext modelContext)
 	{
@@ -48,10 +55,23 @@ public class ModelCanvas
 		if (modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED)) {
 			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		}
+		
+		mapProjection = new EquirectangularProjection(getNorth(), getSouth(), getEast(), getWest(), getWidth(), getHeight());
+		//mapProjection = new AitoffProjection(getNorth(), getSouth(), getEast(), getWest(), getWidth(), getHeight());
 		//graphics.setColor(backgroundColor);
 		//graphics.fillRect(0, 0, getWidth(), getHeight());
 	}
-	
+
+	protected MapProjection getMapProjection()
+	{
+		return mapProjection;
+	}
+
+	protected void setMapProjection(MapProjection mapProjection)
+	{
+		this.mapProjection = mapProjection;
+	}
+
 	public void fillTriangle(int[] color, 
 								double latitude0, double longitude0,
 								double latitude1, double longitude1,
@@ -60,16 +80,19 @@ public class ModelCanvas
 		pathBuffer.reset();
 		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
 		
-		double row0 = latitudeToRow(latitude0);
-		double column0 = longitudeToColumn(longitude0);
+		mapProjection.getPoint(latitude0, longitude0, 0, mapPoint);
+		double row0 = mapPoint.row;
+		double column0 = mapPoint.column;
 		
-		double row1 = latitudeToRow(latitude1);
-		double column1 = longitudeToColumn(longitude1);
+		mapProjection.getPoint(latitude1, longitude1, 0, mapPoint);
+		double row1 = mapPoint.row;
+		double column1 = mapPoint.column;
 		
-		double row2 = latitudeToRow(latitude2);
-		double column2 = longitudeToColumn(longitude2);
+		mapProjection.getPoint(latitude2, longitude2, 0, mapPoint);
+		double row2 = mapPoint.row;
+		double column2 = mapPoint.column;
 		
-		
+
 		pathBuffer.moveTo(column0, row0);
 		pathBuffer.lineTo(column1, row1);
 		pathBuffer.lineTo(column2, row2);
@@ -89,18 +112,22 @@ public class ModelCanvas
 		pathBuffer.reset();
 		Color fillColor = new Color(color[0], color[1], color[2], color[3]);
 		
-		double row0 = latitudeToRow(latitude0);
-		double column0 = longitudeToColumn(longitude0);
+		mapProjection.getPoint(latitude0, longitude0, 0, mapPoint);
+		double row0 = mapPoint.row;
+		double column0 = mapPoint.column;
 		
-		double row1 = latitudeToRow(latitude1);
-		double column1 = longitudeToColumn(longitude1);
+		mapProjection.getPoint(latitude1, longitude1, 0, mapPoint);
+		double row1 = mapPoint.row;
+		double column1 = mapPoint.column;
 		
-		double row2 = latitudeToRow(latitude2);
-		double column2 = longitudeToColumn(longitude2);
+		mapProjection.getPoint(latitude2, longitude2, 0, mapPoint);
+		double row2 = mapPoint.row;
+		double column2 = mapPoint.column;
 		
-		double row3 = latitudeToRow(latitude3);
-		double column3 = longitudeToColumn(longitude3);
-		
+		mapProjection.getPoint(latitude3, longitude3, 0, mapPoint);
+		double row3 = mapPoint.row;
+		double column3 = mapPoint.column;
+	
 		pathBuffer.moveTo(column0, row0);
 		pathBuffer.lineTo(column1, row1);
 		pathBuffer.lineTo(column2, row2);
@@ -130,22 +157,7 @@ public class ModelCanvas
 		
 		return image.getRGB(x, y);
 	}
-	
-	public double latitudeToRow(double latitude)
-	{
-		double range = getNorth() - getSouth();
-		double pos = range - (getNorth() - latitude);
-		double row = (1.0 - (pos / range)) * (double)getHeight();
-		return row;
-	}
-	
-	public double longitudeToColumn(double longitude)
-	{
-		double range = getEast() - getWest();
-		double pos = range - (longitude - getWest());
-		double row = (1.0 - (pos / range)) * (double) getWidth();
-		return row;
-	}
+
 	
 	public double getNorth()
 	{

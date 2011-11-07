@@ -34,6 +34,7 @@ public interface RasterData {
 	public void calculateMinAndMax() throws DataSourceException;
 	
 	public double getData(double latitude, double longitude) throws DataSourceException;
+	public double getData(double latitude, double longitude, boolean interpolate) throws DataSourceException;
 	public double getData(int row, int column) throws DataSourceException;
 	public boolean fillBuffer(double north, double south, double east, double west) throws DataSourceException;
 	public void clearBuffer() throws DataSourceException;
