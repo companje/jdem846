@@ -68,7 +68,7 @@ public class GridFloatDataReader
 		return value;
 	}
 	
-	public void get(int row, int startColumn, double[] buffer)  throws DataSourceException
+	public void get(int row, int startColumn, float[] buffer)  throws DataSourceException
 	{
 		RandomAccessFile dataReader = getFileReader(row, startColumn);
 		
@@ -94,7 +94,7 @@ public class GridFloatDataReader
 		
 	}
 	
-	public void get(int startColumn, int startRow, double[][] buffer)  throws DataSourceException
+	public void get(int startColumn, int startRow, float[][] buffer)  throws DataSourceException
 	{
 		for (int i = 0; i < buffer.length; i++) {
 			get(startRow+i, startColumn, buffer[i]);
