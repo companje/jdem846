@@ -77,13 +77,6 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		setDataMaximum(-50000);
 		setDataMinimum(50000);
 
-		double elevation = 0;
-		
-		int rows = getRows();
-		int columns = getColumns();
-
-		double max = getDataMaximum();
-		double min = getDataMinimum();
 		
 		double northLimit = getNorth();
 		double southLimit = getSouth();
@@ -93,10 +86,43 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		double latitudeResolution = this.getLatitudeResolution();
 		double longitudeResolution = this.getLongitudeResolution();
 		
-		for (double latitude = northLimit; latitude > southLimit; latitude-=latitudeResolution) {
+		int tileSize = 1000;
+		double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
+		double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
+		
+		for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
+			double tileSouth = tileNorth - tileLatitudeHeight;
+			if (tileSouth <= southLimit) {
+				tileSouth = southLimit + latitudeResolution;
+			}
 			
-			for (double longitude = westLimit; longitude < eastLimit; longitude+=longitudeResolution) {
-				elevation = getData(latitude, longitude);
+			for (double tileWest = westLimit; tileWest < eastLimit; tileWest += tileLongitudeWidth) {
+				double tileEast = tileWest + tileLongitudeWidth;
+				
+				if (tileEast >= eastLimit) {
+					tileEast = eastLimit - longitudeResolution;
+				}
+				
+				this.fillBuffer(tileNorth, tileSouth, tileEast, tileWest);
+				
+				calculateSubsetMinAndMax(tileNorth, tileSouth, tileEast, tileWest);
+				
+				this.clearBuffer();
+			}
+			
+		}
+
+	}
+	
+	protected void calculateSubsetMinAndMax(double northLimit, double southLimit, double eastLimit, double westLimit) throws DataSourceException
+	{
+		double max = getDataMaximum();
+		double min = getDataMinimum();
+		
+		for (double latitude = northLimit; latitude >= southLimit; latitude -= latitudeResolution) {
+
+			for (double longitude = westLimit; longitude <= eastLimit; longitude += longitudeResolution) {
+				double elevation = getData(latitude, longitude);
 				if (elevation == DemConstants.ELEV_NO_DATA)
 					continue;
 
@@ -107,14 +133,12 @@ public abstract class AbstractRasterDataProvider implements RasterData
 					min = elevation;
 				}
 			}
-			
 		}
-		
-		
 		
 		setDataMinimum(min);
 		setDataMaximum(max);
 	}
+	
 	
 	protected double latitudeToRow(double latitude)
 	{
@@ -136,8 +160,14 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		return west + ((double)column * this.getLongitudeResolution());
 	}
 	
-	@Override
+	
 	public double getData(double latitude, double longitude) throws DataSourceException
+	{
+		return getData(latitude, longitude, false);
+	}
+	
+	@Override
+	public double getData(double latitude, double longitude, boolean interpolate) throws DataSourceException
 	{
 		double fetchRow = this.latitudeToRow(latitude);
 		double fetchColumn = this.longitudeToColumn(longitude);
@@ -155,6 +185,10 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		double yFrac = fetchRow - row;
 		
 		s00 = getData(row, column);
+		
+		if (!interpolate) {
+			return s00;
+		}
 		
 		if ((column + 1 < columns && row + 1 < rows)) {
 			

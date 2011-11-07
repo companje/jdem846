@@ -195,17 +195,17 @@ public class RasterDataContext implements DataContext
 	
 	public double getData(double latitude, double longitude) throws DataSourceException
 	{
-		return getData(latitude, longitude, false);
+		return getData(latitude, longitude, false, false);
 	}
 	
-	public double getData(double latitude, double longitude, boolean avgOfAllRasterValues) throws DataSourceException
+	public double getData(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
 	{
 		double value = 0;
 		double dataMatches = 0;
 		
 		for (RasterData rasterData : rasterDataList) {
 			if (rasterData.contains(latitude, longitude)) {
-				double rasterValue = rasterData.getData(latitude, longitude);
+				double rasterValue = rasterData.getData(latitude, longitude, interpolate);
 				
 				if (!avgOfAllRasterValues) {
 					return rasterValue;

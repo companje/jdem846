@@ -23,6 +23,7 @@ import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.util.NumberUtil;
 
 /** Defines a four-sided polygon existing in three-dimensional space.
  * 

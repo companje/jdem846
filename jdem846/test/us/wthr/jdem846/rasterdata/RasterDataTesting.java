@@ -37,13 +37,16 @@ public class RasterDataTesting
 		List<String> inputDataList = new LinkedList<String>();
 		//inputDataList.add("C:/srv/elevation/Pawtuckaway/74339812.flt");
 		
-		//inputDataList.add("C:/srv/elevation/Maui/15749574.flt");
-		//inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
+		inputDataList.add("C:/srv/elevation/Maui/15749574.flt");
+		inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
 		
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
-		
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
 		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/test-output.png";
+		
+		
+		//inputDataList.add("C:/srv/elevation/etopo1_ice_g_f4/etopo1_ice_g_f4.flt");
+		//String saveOutputTo = "C:/srv/elevation/etopo1_ice_g_f4/test-output.png";
 		
 		RasterDataTesting testing = new RasterDataTesting();
 		
@@ -83,12 +86,13 @@ public class RasterDataTesting
 		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
 		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
 		
+		
 		ModelOptions modelOptions = new ModelOptions();
 		
 		modelOptions.setTileSize(1000);
 		modelOptions.setWidth(dataProxy.getDataColumns());
 		modelOptions.setHeight(dataProxy.getDataRows());
-		modelOptions.setDoublePrecisionHillshading(true);
+		modelOptions.setDoublePrecisionHillshading(false);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, modelOptions);
 		
