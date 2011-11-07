@@ -19,7 +19,7 @@ public class CachingGridFloatDataReader
 	private int bufferY = -1;
 	private int bufferRows = -1;
 	private int bufferColumns = -1;
-	private double[][] buffer = null;
+	private float[][] buffer = null;
 	
 	public CachingGridFloatDataReader(File dataFile, int rows, int columns, ByteOrder byteOrder)
 	{
@@ -65,7 +65,7 @@ public class CachingGridFloatDataReader
 		//}
 		
 		log.info("Filling buffer with " + rows + " rows and " + columns + " columns");
-		buffer = new double[rows][columns];
+		buffer = new float[rows][columns];
 		
 		dataReader.get(x, y, buffer);
 
