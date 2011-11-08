@@ -30,11 +30,9 @@ import us.wthr.jdem846.scripting.ScriptProxy;
 public class TileRenderer
 {
 	private static Log log = Logging.getLog(TileRenderer.class);
-	private static Color DEFAULT_BACKGROUND = new Color(0, 0, 0, 0);
-	
+
 	private ModelContext modelContext;
 	private ModelColoring modelColoring;
-	//private DemCanvas canvas;
 	private ModelCanvas modelCanvas;
 	private Perspectives perspectives;
 	
@@ -53,7 +51,10 @@ public class TileRenderer
 	private double solarElevation;
 	private double solarAzimuth;
 	private boolean tiledPrecaching;
-	private int tileSize;
+	private double latitudeResolution;
+	private double longitudeResolution;
+	private double latitudeGridSize;
+	private double longitudeGridSize; 
 	
 	private int[] triangleColorNW = {0, 0, 0, 0};
 	private int[] triangleColorSE = {0, 0, 0, 0};
@@ -93,22 +94,19 @@ public class TileRenderer
 		lightingMultiple = getModelOptions().getLightingMultiple();
 		elevationMax = getRasterDataContext().getDataMaximumValue();
 		elevationMin = getRasterDataContext().getDataMinimumValue();
-		//elevationMax = getDataPackage().getMaxElevation();
-		//elevationMin = getDataPackage().getMinElevation();
-		
+
 		solarElevation = getModelOptions().getLightingElevation();
 		solarAzimuth = getModelOptions().getLightingAzimuth();
-		tileSize = getModelOptions().getTileSize();
+
+		latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
+		longitudeResolution = modelContext.getRasterDataContext().getLongitudeResolution();
+		latitudeGridSize = gridSize * latitudeResolution;
+		longitudeGridSize = gridSize * longitudeResolution; 
 	}
 	
 	
 	public void renderTile(double northLimit, double southLimit, double eastLimit, double westLimit) throws RenderEngineException
 	{
-		
-		double latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
-		double longitudeResolution = modelContext.getRasterDataContext().getLongitudeResolution();
-		
-
 		
 		RasterDataContext dataProxy = modelContext.getRasterDataContext();//.getSubSet(northLimit, southLimit, eastLimit, westLimit);
 
@@ -125,20 +123,24 @@ public class TileRenderer
 		resetBuffers();
 		setUpLightSource();
 
-		int imageRow = 0;
-		int imageColumn = 0;
+		onTileBefore(modelCanvas);
 		
+
 		for (double latitude = northLimit; latitude >= southLimit; latitude -= latitudeResolution) {
-			imageColumn = 0;
 			
 			for (double longitude = westLimit; longitude <= eastLimit; longitude += longitudeResolution) {
 
-				renderCell(latitude, longitude, imageRow, imageColumn);
-
-				imageColumn++;
+				if (doublePrecisionHillshading) {
+					renderCellDoublePrecision(latitude, longitude);
+				} else {
+					renderCellStandardPrecision(latitude, longitude);
+				}
+				
 			}
-			imageRow++;
 		}
+		
+		
+		onTileAfter(modelCanvas);
 		
 		if (tiledPrecaching) {
 			try {
@@ -152,12 +154,39 @@ public class TileRenderer
 	}
 	
 	
+	protected void renderCellStandardPrecision(double latitude, double longitude) throws RenderEngineException
+	{
 
-	protected void renderCell(double latitude, double longitude, int imageRow, int imageColumn) throws RenderEngineException
+		try {
+			getPoint(latitude, longitude, gridSize, point);
+		} catch (DataSourceException ex) {
+			throw new RenderEngineException("Error loading elevation data: " + ex.getMessage(), ex);
+		}
+		
+		
+		if (point.condition == DemConstants.STAT_SUCCESSFUL) {
+			
+			backLeftPoints[1] = point.backLeftElevation * elevationMultiple;
+			backRightPoints[1] = point.backRightElevation * elevationMultiple;
+			frontLeftPoints[1] = point.frontLeftElevation * elevationMultiple;
+			frontRightPoints[1] = point.frontRightElevation * elevationMultiple;
+			
+			
+			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1] + frontRightPoints[1]) / 4.0;
+			renderTriangle(avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
+			
+			modelCanvas.fillRectangle(triangleColorNW, 
+					latitude, longitude, 
+					latitudeResolution, longitudeResolution,
+					avgElevationNW);
+			
+		}
+	}
+	
+	protected void renderCellDoublePrecision(double latitude, double longitude) throws RenderEngineException
 	{
 		
-		double latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
-		double longitudeResolution = modelContext.getRasterDataContext().getLongitudeResolution();
+		
 		
 		try {
 			getPoint(latitude, longitude, gridSize, point);
@@ -166,44 +195,31 @@ public class TileRenderer
 		}
 		
 		
-		if (point.getCondition() == DemConstants.STAT_SUCCESSFUL) {
+		if (point.condition == DemConstants.STAT_SUCCESSFUL) {
 			
-			backLeftPoints[1] = point.getBackLeftElevation() * elevationMultiple;
-			backRightPoints[1] = point.getBackRightElevation() * elevationMultiple;
-			frontLeftPoints[1] = point.getFrontLeftElevation() * elevationMultiple;
-			frontRightPoints[1] = point.getFrontRightElevation() * elevationMultiple;
+			backLeftPoints[1] = point.backLeftElevation * elevationMultiple;
+			backRightPoints[1] = point.backRightElevation * elevationMultiple;
+			frontLeftPoints[1] = point.frontLeftElevation * elevationMultiple;
+			frontRightPoints[1] = point.frontRightElevation * elevationMultiple;
 			
-			// North West
+			// North West Triangle
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
 			renderTriangle(avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
 			modelCanvas.fillTriangle(triangleColorNW, 
-									latitude, longitude, 
-									latitude-latitudeResolution, longitude, 
-									latitude, longitude+longitudeResolution);
+									latitude, longitude, backLeftPoints[1],
+									latitude-latitudeResolution, longitude, frontLeftPoints[1],
+									latitude, longitude+longitudeResolution, backRightPoints[1]);
 			
+			// South East Triangle
+			double avgElevationSE = (frontRightPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
+			renderTriangle(avgElevationSE, frontLeftPoints, frontRightPoints, backRightPoints, triangleColorSE);
 			
-			if (doublePrecisionHillshading) {
-				
-				// South East
-				double avgElevationSE = (frontRightPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
-				renderTriangle(avgElevationSE, frontLeftPoints, frontRightPoints, backRightPoints, triangleColorSE);
-	
-				ColorAdjustments.interpolateColor(triangleColorNW, triangleColorSE, color, 0.5);
-
-			} else {
-				color[0] = triangleColorNW[0];
-				color[1] = triangleColorNW[1];
-				color[2] = triangleColorNW[2];
-				color[3] = triangleColorNW[3];
-			}
+			modelCanvas.fillTriangle(triangleColorSE, 
+					latitude-latitudeResolution, longitude, frontLeftPoints[1],
+					latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
+					latitude, longitude+longitudeResolution, backRightPoints[1]);
 			
-			modelCanvas.fillTriangle(color, 
-					latitude-latitudeResolution, longitude, 
-					latitude-latitudeResolution, longitude+longitudeResolution, 
-					latitude, longitude+longitudeResolution);
-
-			//canvas.setColor(imageColumn, imageRow, color);
 			
 		}
 		
@@ -265,7 +281,6 @@ public class TileRenderer
 		}
 		
 
-		//canvas.setColor(imageColumn, imageRow, color);
 	}
 	
 	
@@ -372,16 +387,15 @@ public class TileRenderer
 	protected void getPoint(double latitude, double longitude, double gridSize, DemPoint point) throws DataSourceException, RenderEngineException
 	{
 		if (getRasterDataContext() == null) {
-			point.setCondition(DemConstants.STAT_NO_DATA_PACKAGE);
+			point.condition = DemConstants.STAT_NO_DATA_PACKAGE;
 			return;
 		}
 
-		double latitudeGridSize = gridSize * getRasterDataContext().getLatitudeResolution();
-		double longitudeGridSize = gridSize * getRasterDataContext().getLongitudeResolution(); 
+		
 		
 		double elevation_bl = getRasterData(latitude, longitude);
 		if (elevation_bl == DemConstants.ELEV_NO_DATA) {
-			point.setCondition(DemConstants.STAT_INVALID_ELEVATION);
+			point.condition = DemConstants.STAT_INVALID_ELEVATION;
 			return;
 		}
 		
@@ -390,24 +404,24 @@ public class TileRenderer
 		double elevation_fl = getRasterData(latitude - latitudeGridSize, longitude);
 		double elevation_fr = getRasterData(latitude - latitudeGridSize, longitude + longitudeGridSize);
 		
-		point.setBackLeftElevation(elevation_bl);
+		point.backLeftElevation = elevation_bl;
 
 		if (elevation_br != DemConstants.ELEV_NO_DATA) {
-			point.setBackRightElevation(elevation_br);
+			point.backRightElevation = elevation_br;
 		} else {
-			point.setBackRightElevation(point.getBackLeftElevation());
+			point.backRightElevation = elevation_bl;
 		}
 
 		if (elevation_fl != DemConstants.ELEV_NO_DATA) {
-			point.setFrontLeftElevation(elevation_fl);
+			point.frontLeftElevation = elevation_fl;
 		} else {
-			point.setFrontLeftElevation(point.getBackLeftElevation());
+			point.frontLeftElevation = elevation_bl;
 		}
 		
 		if (elevation_fr != DemConstants.ELEV_NO_DATA) {
-			point.setFrontRightElevation(elevation_fr);
+			point.frontRightElevation = elevation_fr;
 		} else {
-			point.setFrontRightElevation(point.getBackLeftElevation());
+			point.frontRightElevation = elevation_bl;
 		}
 		
 		
@@ -416,10 +430,10 @@ public class TileRenderer
 			&& point.getFrontLeftElevation() == 0
 			&& point.getFrontRightElevation() == 0) {
 			//point.setMiddleElevation(0);
-			point.setCondition(DemConstants.STAT_FLAT_SEA_LEVEL);
+			point.condition = DemConstants.STAT_FLAT_SEA_LEVEL;
 		} else {
 			//point.setMiddleElevation((point.getBackLeftElevation() + point.getBackRightElevation() + point.getFrontLeftElevation() + point.getFrontRightElevation()) / 4.0f);
-			point.setCondition(DemConstants.STAT_SUCCESSFUL);
+			point.condition = DemConstants.STAT_SUCCESSFUL;
 		}
 		
 
@@ -488,12 +502,12 @@ public class TileRenderer
 	}
 	
 	
-	protected void onTileBefore(DemCanvas tileCanvas) throws RenderEngineException
+	protected void onTileBefore(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onTileBefore(modelContext, tileCanvas);
+				scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -501,12 +515,12 @@ public class TileRenderer
 		
 	}
 	
-	protected void onTileAfter(DemCanvas tileCanvas) throws RenderEngineException
+	protected void onTileAfter(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onTileBefore(modelContext, tileCanvas);
+				scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

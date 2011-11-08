@@ -19,12 +19,12 @@ package us.wthr.jdem846;
 public class DemPoint 
 {
 	
-	private double backRightElevation;
-	private double backLeftElevation;
-	private double frontRightElevation;
-	private double frontLeftElevation;
-	private double middleElevation;
-	private int condition;
+	public double backRightElevation;
+	public double backLeftElevation;
+	public double frontRightElevation;
+	public double frontLeftElevation;
+	public double middleElevation;
+	public int condition;
 	
 	public DemPoint()
 	{

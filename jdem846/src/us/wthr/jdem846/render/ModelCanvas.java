@@ -1,13 +1,21 @@
 package us.wthr.jdem846.render;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfigTemplate;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Transparency;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.awt.image.VolatileImage;
 import java.awt.image.WritableRaster;
 
 import us.wthr.jdem846.ModelContext;
@@ -34,12 +42,14 @@ public class ModelCanvas
 	private Color backgroundColor;
 	private ModelDimensions2D modelDimensions;
 	
-	private BufferedImage image;
+	private VolatileImage image;
 	private Graphics2D graphics;
 	
 	private boolean isDisposed = false;
 	
 	private Path2D.Double pathBuffer = new Path2D.Double();
+	private Rectangle2D.Double rectangle = new Rectangle2D.Double();
+	
 	private MapPoint mapPoint = new MapPoint();
 	
 	public ModelCanvas(ModelContext modelContext)
@@ -48,7 +58,12 @@ public class ModelCanvas
 		backgroundColor = ColorSerializationUtil.stringToColor(modelContext.getModelOptions().getBackgroundColor());
 		modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
 		
-		image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+		GraphicsConfiguration gc = getGraphicsConfiguration();
+		
+		int transparencyType = (modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED)) ? Transparency.TRANSLUCENT : Transparency.BITMASK;
+		
+		image = gc.createCompatibleVolatileImage(getWidth(), getHeight(), transparencyType);
+		
 		graphics = (Graphics2D) image.createGraphics();
 		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		
@@ -57,38 +72,56 @@ public class ModelCanvas
 		}
 		
 		mapProjection = new EquirectangularProjection(getNorth(), getSouth(), getEast(), getWest(), getWidth(), getHeight());
-		//mapProjection = new AitoffProjection(getNorth(), getSouth(), getEast(), getWest(), getWidth(), getHeight());
-		//graphics.setColor(backgroundColor);
-		//graphics.fillRect(0, 0, getWidth(), getHeight());
+
 	}
 
-	protected MapProjection getMapProjection()
+	protected GraphicsConfiguration getGraphicsConfiguration()
+	{
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice gd = ge.getDefaultScreenDevice();
+		GraphicsConfiguration defaultConfiguration = gd.getDefaultConfiguration();
+		log.info("Default graphics configuration is accelerated: " + defaultConfiguration.getImageCapabilities().isAccelerated());
+		
+		
+		for (GraphicsDevice gfxdev : ge.getScreenDevices()) {
+			for (GraphicsConfiguration gc : gfxdev.getConfigurations()) {
+				if (gc.getImageCapabilities().isAccelerated()) {
+					log.info("Found accelerated graphics configuration");
+					return gc;
+				}
+			}
+		}
+		
+		return defaultConfiguration;
+	}
+	
+	public MapProjection getMapProjection()
 	{
 		return mapProjection;
 	}
 
-	protected void setMapProjection(MapProjection mapProjection)
+	public void setMapProjection(MapProjection mapProjection)
 	{
 		this.mapProjection = mapProjection;
 	}
 
 	public void fillTriangle(int[] color, 
-								double latitude0, double longitude0,
-								double latitude1, double longitude1,
-								double latitude2, double longitude2)
+								double latitude0, double longitude0, double elevation0,
+								double latitude1, double longitude1, double elevation1,
+								double latitude2, double longitude2, double elevation2)
 	{
 		pathBuffer.reset();
 		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
 		
-		mapProjection.getPoint(latitude0, longitude0, 0, mapPoint);
+		mapProjection.getPoint(latitude0, longitude0, elevation0, mapPoint);
 		double row0 = mapPoint.row;
 		double column0 = mapPoint.column;
 		
-		mapProjection.getPoint(latitude1, longitude1, 0, mapPoint);
+		mapProjection.getPoint(latitude1, longitude1, elevation1, mapPoint);
 		double row1 = mapPoint.row;
 		double column1 = mapPoint.column;
 		
-		mapProjection.getPoint(latitude2, longitude2, 0, mapPoint);
+		mapProjection.getPoint(latitude2, longitude2, elevation2, mapPoint);
 		double row2 = mapPoint.row;
 		double column2 = mapPoint.column;
 		
@@ -98,55 +131,65 @@ public class ModelCanvas
 		pathBuffer.lineTo(column2, row2);
 		pathBuffer.closePath();
 		
-		graphics.setColor(fillColor);
-		graphics.fill(pathBuffer);
+		fillShape(fillColor, pathBuffer);
+		//graphics.setColor(fillColor);
+		//graphics.fill(pathBuffer);
 		
 	}
 	
 	public void fillRectangle(int[] color, 
-			double latitude0, double longitude0,
-			double latitude1, double longitude1,
-			double latitude2, double longitude2,
-			double latitude3, double longitude3)
+			double latitude, double longitude, 
+			double width, double height,
+			double elevation)
 	{
-		pathBuffer.reset();
-		Color fillColor = new Color(color[0], color[1], color[2], color[3]);
+		//pathBuffer.reset();
 		
-		mapProjection.getPoint(latitude0, longitude0, 0, mapPoint);
+		
+		mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
 		double row0 = mapPoint.row;
 		double column0 = mapPoint.column;
 		
-		mapProjection.getPoint(latitude1, longitude1, 0, mapPoint);
+		//mapProjection.getPoint(latitude-height, longitude+width, elevation, mapPoint);
+		//double row1 = mapPoint.row;
+		//double column1 = mapPoint.column;
+		
+		mapProjection.getPoint(latitude-height, longitude+width, elevation, mapPoint);
 		double row1 = mapPoint.row;
 		double column1 = mapPoint.column;
 		
-		mapProjection.getPoint(latitude2, longitude2, 0, mapPoint);
-		double row2 = mapPoint.row;
-		double column2 = mapPoint.column;
-		
-		mapProjection.getPoint(latitude3, longitude3, 0, mapPoint);
-		double row3 = mapPoint.row;
-		double column3 = mapPoint.column;
+		//mapProjection.getPoint(latitude3, longitude3, elevation3, mapPoint);
+		//double row3 = mapPoint.row;
+		///double column3 = mapPoint.column;
 	
-		pathBuffer.moveTo(column0, row0);
-		pathBuffer.lineTo(column1, row1);
-		pathBuffer.lineTo(column2, row2);
-		pathBuffer.lineTo(column3, row3);
-		pathBuffer.closePath();
 		
-		fillShape(fillColor, pathBuffer);
-	
+		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
+
+		rectangle.x = column0;
+		rectangle.y = row0;
+		rectangle.width = column1 - column0;
+		rectangle.height = row1 - row0;
+		
+
+		//graphics.setClip(rectangle);
+		fillShape(fillColor, rectangle);
+		
 	}
 	
 	public void fillShape(Color color, Shape shape)
 	{
-		graphics.setColor(color);
+		if (color != null) {
+			graphics.setColor(color);
+		}
+		
 		graphics.fill(shape);
 	}
 	
 	public void drawShape(Color color, Shape shape)
 	{
-		graphics.setColor(color);
+		if (color != null) {
+			graphics.setColor(color);
+		}
+		
 		graphics.draw(shape);
 	}
 	
@@ -155,7 +198,9 @@ public class ModelCanvas
 		if (x < 0 || x >= image.getWidth() || y < 0 || y >= image.getHeight())
 			return 0;
 		
-		return image.getRGB(x, y);
+		// TODO: Restore pixel color fetch
+		return 0;
+		//return image.getRGB(x, y);
 	}
 
 	

@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import us.wthr.jdem846.project.ProjectModel;
+import us.wthr.jdem846.render.mapprojection.MapProjectionEnum;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 import us.wthr.jdem846.util.NumberFormattingUtil;
@@ -557,6 +558,29 @@ public class ModelOptions
 		ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.getLanguageFromString(scriptLanguageString);
 		this.setScriptLanguage(scriptLanguage);
 	}
+	
+	public MapProjectionEnum getMapProjection()
+	{
+		String identifier = getOption(ModelOptionNamesEnum.MAP_PROJECTION);
+		if (identifier == null) {
+			return null;
+		}
+		
+		return MapProjectionEnum.getMapProjectionEnumFromIdentifier(identifier);
+		
+	}
+	
+	public void setMapProjection(String identifier)
+	{
+		setOption(ModelOptionNamesEnum.MAP_PROJECTION, identifier);
+	}
+	
+	public void setMapProjection(MapProjectionEnum projectionEnum)
+	{
+		setMapProjection(projectionEnum.identifier());
+	}
+	
+	
 	
 	/** Creates a value-by-value copy of this object.
 	 * 

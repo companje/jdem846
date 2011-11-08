@@ -23,8 +23,17 @@ public class EquirectangularProjection implements MapProjection
 	private double width; // Should be 2x height for a global-sized raster
 	private double height;
 	
+	public EquirectangularProjection()
+	{
+		
+	}
 	
 	public EquirectangularProjection(double north, double south, double east, double west, double width, double height)
+	{
+		setUp(north, south, east, west, width, height);
+	}
+	
+	public void setUp(double north, double south, double east, double west, double width, double height)
 	{
 		this.north = north;
 		this.south = south;
@@ -33,8 +42,6 @@ public class EquirectangularProjection implements MapProjection
 		this.width = width;
 		this.height = height;
 	}
-	
-	
 	
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point)
 	{

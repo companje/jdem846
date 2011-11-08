@@ -19,14 +19,21 @@ public class WinkelTripelProjection implements MapProjection
 	MapPoint equirectangularPoint = new MapPoint();
 	MapPoint aitoffPoint = new MapPoint();
 
-	
+	public WinkelTripelProjection()
+	{
+		
+	}
 	
 	public WinkelTripelProjection(double north, double south, double east, double west, double width, double height)
+	{
+		setUp(north, south, east, west, width, height);
+	}
+	
+	public void setUp(double north, double south, double east, double west, double width, double height)
 	{
 		equirectangular = new EquirectangularProjection(north, south, east, west, width, height);
 		aitoff = new AitoffProjection(north, south, east, west, width, height);
 	}
-	
 	
 	@Override
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point)

@@ -17,7 +17,17 @@ public class AitoffProjection implements MapProjection
 	private double width; 
 	private double height;
 	
+	public AitoffProjection()
+	{
+		
+	}
+	
 	public AitoffProjection(double north, double south, double east, double west, double width, double height)
+	{
+		setUp(north, south, east, west, width, height);
+	}
+
+	public void setUp(double north, double south, double east, double west, double width, double height)
 	{
 		this.north = north;
 		this.south = south;
@@ -26,7 +36,9 @@ public class AitoffProjection implements MapProjection
 		this.width = width;
 		this.height = height;
 	}
-
+	
+	
+	
 	@Override
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point)
 	{

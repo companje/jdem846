@@ -2,16 +2,16 @@
 def initialize(modelContext):
     pass
 
-def on2DModelBefore(modelContext, tileCanvas):
+def on2DModelBefore(modelContext, modelCanvas):
     pass
  
-def onTileBefore(modelContext, tileCanvas):
+def onTileBefore(modelContext, modelCanvas):
     pass
 
-def onTileAfter(modelContext, tileCanvas):
+def onTileAfter(modelContext, modelCanvas):
     pass
 
-def on2DModelAfter(modelContext, tileCanvas):
+def on2DModelAfter(modelContext, modelCanvas):
     pass
 
 def onGetElevationBefore(modelContext, latitude, longitude):

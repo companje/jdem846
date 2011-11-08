@@ -589,7 +589,7 @@ public class DemProjectPane extends JdemPanel
 		ColoringInstance coloringInstance = ColoringRegistry.getInstance(coloringSelection);
 		
 		gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());
-		projectionConfigPanel.setVisible(engineInstance.usesProjection());
+		projectionConfigPanel.setVisible(engineInstance.uses3DProjection());
 		lightPositionConfigPanel.setVisible(engineInstance.usesLightDirection());
 				
 		if (engineInstance.usesLightDirection()) {

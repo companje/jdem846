@@ -53,6 +53,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
+import us.wthr.jdem846.render.mapprojection.MapProjectionEnum;
 import us.wthr.jdem846.ui.MonitoredSlider.MonitoredValueListener;
 import us.wthr.jdem846.ui.base.BoxContainer;
 import us.wthr.jdem846.ui.base.ComboBox;
@@ -74,6 +75,7 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 	private ComboBox cmbBackgroundColor;
 	private ComboBox cmbColoring;
 	private ComboBox cmbHillshading;
+	private ComboBox cmbMapProjection;
 	private MonitoredSlider jsldLightMultiple;
 	private MonitoredSlider jsldSpotExponent;
 	private MonitoredSlider jsldElevationMultiple;
@@ -81,9 +83,10 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 	private MonitoredSlider jsldRelativeDarkIntensity;
 	
 	private EngineListModel engineModel;
-	private BackgroundColorOptionsListModel backgroundModel;
+	//private BackgroundColorOptionsListModel backgroundModel;
 	private ColoringListModel coloringModel;
 	private HillShadingOptionsListModel hillShadingModel;
+	private MapProjectionListModel mapProjectionListModel;
 	
 	private ComboBox cmbAntialiasing;
 	private AntialiasingOptionsListModel antialiasingModel;
@@ -127,8 +130,11 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		engineModel = new EngineListModel();
 		cmbEngine = new ComboBox(engineModel);
 		
-		backgroundModel = new BackgroundColorOptionsListModel();
-		cmbBackgroundColor = new ComboBox(backgroundModel);
+		mapProjectionListModel = new MapProjectionListModel();
+		cmbMapProjection = new ComboBox(mapProjectionListModel);
+		
+		//backgroundModel = new BackgroundColorOptionsListModel();
+		//cmbBackgroundColor = new ComboBox(backgroundModel);
 		
 		coloringModel = new ColoringListModel();
 		cmbColoring = new ComboBox(coloringModel);
@@ -211,7 +217,7 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		jsldRelativeDarkIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeDarkIntensity.tooltip"));
 		cmbAntialiasing.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.antialiasingCombo.tooltip"));
 		cmbPrecacheStrategy.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.tooltip"));
-		
+		cmbMapProjection.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.mapProjection.tooltip"));
 		
 		
 		// Add listeners
@@ -244,9 +250,10 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		};
 		
 		cmbEngine.addItemListener(comboBoxItemListener);
-		cmbBackgroundColor.addItemListener(comboBoxItemListener);
+		//cmbBackgroundColor.addItemListener(comboBoxItemListener);
 		cmbColoring.addItemListener(comboBoxItemListener);
 		cmbHillshading.addItemListener(comboBoxItemListener);
+		cmbMapProjection.addItemListener(comboBoxItemListener);
 		
 		ChangeListener sliderChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -322,6 +329,9 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.label") + ":"));
 		controlGrid.add(cmbPrecacheStrategy);
 		
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.mapProjection.label")));
+		controlGrid.add(cmbMapProjection);
+		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.label") + ":"));
 		controlGrid.add(jsldLightMultiple);
 		
@@ -341,31 +351,7 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		setLayout(layout);
 		add(controlGrid, BorderLayout.CENTER);
 
-		//BoxLayout boxLayout = new BoxLayout(this, BoxLayout.X_AXIS);
-		//setLayout(boxLayout);
-		
-		//add(optionsGrid);
-		
-		//lightPositionConfigPanel.setMinimumSize(new Dimension(150, 150));
-		//projectionConfigPanel.setMinimumSize(new Dimension(150, 150));
-		//lightPositionConfigPanel.setPreferredSize(new Dimension(150, 150));
-		//projectionConfigPanel.setPreferredSize(new Dimension(150, 150));
-		
-		//Panel lightAndProjectionPanel = new Panel();
-		//BoxLayout lightAndProjectionBoxLayout = new BoxLayout(lightAndProjectionPanel, BoxLayout.PAGE_AXIS);
-		//lightAndProjectionPanel.setLayout(lightAndProjectionBoxLayout);
-		//Box lightAndProjectionBox = Box.createVerticalBox();
-		//BoxContainer lightAndProjectionBox = new BoxContainer(BoxLayout.Y_AXIS);
-		//lightAndProjectionBox.add(lightPositionConfigPanel);
-		//lightAndProjectionBox.add(projectionConfigPanel);
-		//lightAndProjectionPanel.add(lightAndProjectionBox);
-		//add(lightAndProjectionPanel);
-		
-		
-		
-		//add(gradientConfigPanel);
 
-		
 		// Set initial values
 		resetDefaultOptions();
 		onEngineSelectionChanged();
@@ -398,6 +384,7 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		
 		antialiasingModel.setSelectedItemByValue(modelOptions.isAntialiased());
 		precacheStrategyModel.setSelectedItemByValue(modelOptions.getPrecacheStrategy());
+		mapProjectionListModel.setSelectedItemByValue(modelOptions.getMapProjection().identifier());
 		
 		txtTileSize.setText(""+modelOptions.getTileSize());
 		jsldLightMultiple.setValue((int)Math.round(modelOptions.getLightingMultiple() * 100));
@@ -445,7 +432,7 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		modelOptions.setAntialiased(antialiasingModel.getSelectedItemValue());
 		modelOptions.setPrecacheStrategy(precacheStrategyModel.getSelectedItemValue());
 		
-		
+		modelOptions.setMapProjection(mapProjectionListModel.getSelectedItemValue());
 		
 		
 		//modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
@@ -469,11 +456,12 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		
 		txtWidth.setEnabled(engineInstance.usesWidth());
 		txtHeight.setEnabled(engineInstance.usesHeight());
-		cmbBackgroundColor.setEnabled(engineInstance.usesBackgroundColor());
+		//cmbBackgroundColor.setEnabled(engineInstance.usesBackgroundColor());
 		cmbColoring.setEnabled(engineInstance.usesColoring());
 		cmbHillshading.setEnabled(engineInstance.usesHillshading());
 		cmbAntialiasing.setEnabled(engineInstance.usesAntialiasing());
 		cmbPrecacheStrategy.setEnabled(engineInstance.usesPrecacheStrategy());
+		cmbMapProjection.setEnabled(engineInstance.usesMapProjection());
 		jsldLightMultiple.setEnabled(engineInstance.usesLightMultiple());
 		jsldSpotExponent.setEnabled(engineInstance.usesSpotExponent());
 		txtTileSize.setEnabled(engineInstance.usesTileSize());
@@ -534,6 +522,7 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		
 	}
 	
+	/*
 	class BackgroundColorOptionsListModel extends JComboBoxModel<String>
 	{
 		
@@ -543,6 +532,19 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 				addItem(colorInstance.getName(), colorInstance.getIdentifier());
 			}
 		}
+	}
+	*/
+	
+	class MapProjectionListModel extends JComboBoxModel<String>
+	{
+		
+		public MapProjectionListModel()
+		{
+			for (MapProjectionEnum projectionEnum : MapProjectionEnum.values()) {
+				addItem(projectionEnum.projectionName(), projectionEnum.identifier());
+			}
+		}
+		
 	}
 	
 	class HillShadingOptionsListModel extends JComboBoxModel<Integer>
