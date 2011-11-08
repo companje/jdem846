@@ -37,11 +37,11 @@ public class RasterDataTesting
 		List<String> inputDataList = new LinkedList<String>();
 		//inputDataList.add("C:/srv/elevation/Pawtuckaway/74339812.flt");
 		
-		inputDataList.add("C:/srv/elevation/Maui/15749574.flt");
-		inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
+		//inputDataList.add("C:/srv/elevation/Maui/15749574.flt");
+		//inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
 		
-		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
 		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/test-output.png";
 		
 		
@@ -93,6 +93,7 @@ public class RasterDataTesting
 		modelOptions.setWidth(dataProxy.getDataColumns());
 		modelOptions.setHeight(dataProxy.getDataRows());
 		modelOptions.setDoublePrecisionHillshading(false);
+		modelOptions.setAntialiased(false);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, modelOptions);
 		

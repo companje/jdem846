@@ -17,7 +17,9 @@
 package us.wthr.jdem846.render;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.dbase.ClassLoadException;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -29,35 +31,19 @@ public class EngineInstance {
 	private String clazzName;
 	private String name;
 	private String identifier;
-	//private RenderEngine engineImpl = null;
-	private boolean enabled;
-	private boolean usesWidth;
-	private boolean usesHeight;
-	private boolean usesBackgroundColor;
-	private boolean usesColoring;
-	private boolean usesHillshading;
-	private boolean usesLightMultiple;
-	private boolean usesSpotExponent;
-	private boolean usesTileSize;
-	private boolean usesElevationMultiple;
-	private boolean usesLightDirection;
-	private boolean usesProjection;
-	private boolean generatesImage;
-	private boolean usesAntialiasing;
-	private boolean usesPrecacheStrategy;
-	private boolean usesRelativeLightMultiple;
-	private boolean usesRelativeDarkMultiple;
 	
-	@SuppressWarnings("unchecked")
-	private Class needsOutputFileOfType;
+	private DemEngine annotation;
 	
-	public EngineInstance(String clazzName, String name, String identifier)
+
+	public EngineInstance(Class<?> clazz)
 	{
-		this.clazzName = clazzName;
-		this.name = name;
-		this.identifier = identifier;
-		
-	
+
+		annotation = (DemEngine) clazz.getAnnotation(DemEngine.class);
+
+		String name = annotation.name();
+		this.name = I18N.get(name, name);
+		this.clazzName = clazz.getName();
+		this.identifier = annotation.identifier();
 		
 	}
 
@@ -96,225 +82,119 @@ public class EngineInstance {
 
 	public boolean isEnabled()
 	{
-		return enabled;
-	}
-
-
-	public void setEnabled(boolean enabled)
-	{
-		this.enabled = enabled;
+		return annotation.enabled();
 	}
 
 
 	public boolean getGeneratesImage() 
 	{
-		return generatesImage;
-	}
-
-
-	public void setGeneratesImage(boolean generatesImage) 
-	{
-		this.generatesImage = generatesImage;
+		return annotation.generatesImage();
 	}
 
 
 	public boolean usesWidth()
 	{
-		return usesWidth;
-	}
-
-
-	public void setUsesWidth(boolean usesWidth)
-	{
-		this.usesWidth = usesWidth;
+		return annotation.usesWidth();
 	}
 
 
 	public boolean usesHeight() 
 	{
-		return usesHeight;
+		return annotation.usesHeight();
 	}
-
-
-	public void setUsesHeight(boolean usesHeight) 
-	{
-		this.usesHeight = usesHeight;
-	}
-
 
 	public boolean usesBackgroundColor() 
 	{
-		return usesBackgroundColor;
-	}
-
-
-	public void setUsesBackgroundColor(boolean usesBackgroundColor) 
-	{
-		this.usesBackgroundColor = usesBackgroundColor;
+		return annotation.usesBackgroundColor();
 	}
 
 
 	public boolean usesColoring() 
 	{
-		return usesColoring;
+		return annotation.usesColoring();
 	}
-
-
-	public void setUsesColoring(boolean usesColoring)
-	{
-		this.usesColoring = usesColoring;
-	}
-
 
 	public boolean usesHillshading() 
 	{
-		return usesHillshading;
+		return annotation.usesHillshading();
 	}
 
 
-	public void setUsesHillshading(boolean usesHillshading)
-	{
-		this.usesHillshading = usesHillshading;
-	}
-
-	
 	
 	public boolean usesLightDirection()
 	{
-		return usesLightDirection;
+		return annotation.usesLightDirection();
 	}
-
-
-	public void setUsesLightDirection(boolean usesLightDirection)
-	{
-		this.usesLightDirection = usesLightDirection;
-	}
-
 
 	public boolean usesSpotExponent()
 	{
-		return usesSpotExponent;
-	}
-
-
-	public void setUsesSpotExponent(boolean usesSpotExponent)
-	{
-		this.usesSpotExponent = usesSpotExponent;
+		return annotation.usesSpotExponent();
 	}
 
 
 	public boolean usesLightMultiple() 
 	{
-		return usesLightMultiple;
-	}
-
-
-	public void setUsesLightMultiple(boolean usesLightMultiple)
-	{
-		this.usesLightMultiple = usesLightMultiple;
+		return annotation.usesLightMultiple();
 	}
 
 	public boolean usesRelativeLightMultiple()
 	{
-		return usesRelativeLightMultiple;
-	}
-
-
-	public void setUsesRelativeLightMultiple(boolean usesRelativeLightMultiple)
-	{
-		this.usesRelativeLightMultiple = usesRelativeLightMultiple;
+		return annotation.usesRelativeLightMultiple();
 	}
 
 
 	public boolean usesRelativeDarkMultiple()
 	{
-		return usesRelativeDarkMultiple;
-	}
-
-
-	public void setUsesRelativeDarkMultiple(boolean usesRelativeDarkMultiple)
-	{
-		this.usesRelativeDarkMultiple = usesRelativeDarkMultiple;
+		return annotation.usesRelativeDarkMultiple();
 	}
 
 
 	public boolean usesTileSize() 
 	{
-		return usesTileSize;
+		return annotation.usesTileSize();
 	}
-
-
-	public void setUsesTileSize(boolean usesTileSize) 
-	{
-		this.usesTileSize = usesTileSize;
-	}
-
 
 	
 	
 	public boolean usesElevationMultiple()
 	{
-		return usesElevationMultiple;
+		return annotation.usesElevationMultiple();
 	}
 
 
-	public void setUsesElevationMultiple(boolean usesElevationMultiple)
+	public boolean uses3DProjection()
 	{
-		this.usesElevationMultiple = usesElevationMultiple;
+		return annotation.usesProjection();
 	}
 
-
-	public boolean usesProjection()
-	{
-		return usesProjection;
-	}
-
-
-	public void setUsesProjection(boolean usesProjection)
-	{
-		this.usesProjection = usesProjection;
-	}
-
-	
 	
 
 	public boolean usesAntialiasing()
 	{
-		return usesAntialiasing;
+		return annotation.usesAntialiasing();
 	}
 
-
-	public void setUsesAntialiasing(boolean usesAntialiasing)
-	{
-		this.usesAntialiasing = usesAntialiasing;
-	}
 
 
 	public boolean usesPrecacheStrategy()
 	{
-		return usesPrecacheStrategy;
+		return annotation.usesPrecacheStrategy();
 	}
 
 
-	public void setUsesPrecacheStrategy(boolean usesPrecacheStrategy)
+	public boolean usesMapProjection()
 	{
-		this.usesPrecacheStrategy = usesPrecacheStrategy;
+		return annotation.usesMapProjection();
 	}
 
 
 	@SuppressWarnings("unchecked")
 	public Class getNeedsOutputFileOfType()
 	{
-		return needsOutputFileOfType;
+		return annotation.needsOutputFileOfType();
 	}
 
 
-	@SuppressWarnings("unchecked")
-	public void setNeedsOutputFileOfType(Class needsOutputFileOfType)
-	{
-		this.needsOutputFileOfType = needsOutputFileOfType;
-	}
-	
 	
 	
 	

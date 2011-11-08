@@ -11,6 +11,17 @@ import us.wthr.jdem846.logging.Logging;
 public interface MapProjection
 {
 	
+	/** Initializes the map projection class
+	 * 
+	 * @param north
+	 * @param south
+	 * @param east
+	 * @param west
+	 * @param width
+	 * @param height
+	 */
+	public void setUp(double north, double south, double east, double west, double width, double height);
+	
 	/** Requests a canvas row & column from the specified latitude, longitude, and, optionally, elevation.
 	 * The MapPoint parameter is to allow object reuse.
 	 * 

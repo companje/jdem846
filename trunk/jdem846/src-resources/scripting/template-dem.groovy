@@ -12,22 +12,22 @@ class JDemScript {
 		
 	}
 	
-	def on2DModelBefore(modelContext, outputCanvas) {
+	def on2DModelBefore(modelContext, modelCanvas) {
 		
 		
 	}
 	
-	def onTileBefore(modelContext, tileCanvas) {
+	def onTileBefore(modelContext, modelCanvas) {
 		
 		
 	}
 	
-	def onTileAfter(modelContext, tileCanvas) {
+	def onTileAfter(modelContext, modelCanvas) {
 	
 	
 	}
 	
-	def on2DModelAfter(modelContext, outputCanvas) {
+	def on2DModelAfter(modelContext, modelCanvas) {
 	
 	
 	}

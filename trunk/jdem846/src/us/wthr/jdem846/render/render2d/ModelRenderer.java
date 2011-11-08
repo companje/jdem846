@@ -11,6 +11,7 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ImageException;
+import us.wthr.jdem846.exception.MapProjectionException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.input.DataPackage;
@@ -21,6 +22,8 @@ import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
+import us.wthr.jdem846.render.mapprojection.MapProjection;
+import us.wthr.jdem846.render.mapprojection.MapProjectionProviderFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
@@ -55,7 +58,8 @@ public class ModelRenderer
 		int tileSizeAdjusted = (int)Math.round((double)modelDimensions.getTileSize() / (double) gridSize);
 		//DemCanvas tileCanvas = new DemCanvas(backgroundColor, tileSizeAdjusted, tileSizeAdjusted);
 		//DemCanvas outputCanvas = new DemCanvas(backgroundColor, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
-		ModelCanvas modelCanvas = new ModelCanvas(modelContext);
+		
+		
 		
 		
 		//int tileRow = 0;
@@ -70,21 +74,11 @@ public class ModelRenderer
 		long tileCount = modelDimensions.getTileCount();
 		
 		
-		int tileOutputWidth = (int) modelDimensions.getTileOutputWidth();
-		int tileOutputHeight = (int) modelDimensions.getTileOutputHeight();
+		//int tileOutputWidth = (int) modelDimensions.getTileOutputWidth();
+		//int tileOutputHeight = (int) modelDimensions.getTileOutputHeight();
 		
 		//double scaledWidthPercent = (double) modelDimensions.getOutputWidth() / (double) dataCols;
 		//double scaledHeightPercent = (double) modelDimensions.getOutputHeight() / (double) dataRows;
-		
-		
-		ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
-		
-		// TODO: Restore on2DModelBefore
-		//on2DModelBefore(outputCanvas);
-		
-		
-		TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas);
-		
 		double northLimit = getRasterDataContext().getNorth();
 		double southLimit = getRasterDataContext().getSouth();
 		double eastLimit = getRasterDataContext().getEast();
@@ -101,6 +95,37 @@ public class ModelRenderer
 		log.info("Tile Size: " + tileSize);
 		log.info("Tile Latitude Height: " + tileLatitudeHeight);
 		log.info("Tile Longitude Width: " + tileLongitudeWidth);
+		
+		ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
+		
+		
+		
+		ModelCanvas modelCanvas = new ModelCanvas(modelContext);
+		MapProjection mapProjection = null;
+		try {
+			
+			mapProjection = MapProjectionProviderFactory.getMapProjection(
+									getModelOptions().getMapProjection(),
+									northLimit, 
+									southLimit, 
+									eastLimit, 
+									westLimit, 
+									modelDimensions.getOutputWidth(), 
+									modelDimensions.getOutputHeight());
+			
+		} catch (MapProjectionException ex) {
+			throw new RenderEngineException("Error loading map projection algorithm: " + ex.getMessage(), ex);
+		}
+		modelCanvas.setMapProjection(mapProjection);
+		
+		
+		
+		on2DModelBefore(modelCanvas);
+		
+		
+		TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas);
+		
+		
 		
 		
 		if (fullCaching) {
@@ -130,12 +155,7 @@ public class ModelRenderer
 					if (tileEast >= eastLimit) {
 						tileEast = eastLimit - longitudeResolution;
 					}
-					
-					
-					
-					//tileCanvas.reset();
-					
-					
+
 					log.info("Tile #" + (tileNumber + 1) + ", Row #" + (tileRow + 1) + ", Column #" + (tileColumn + 1));
 					log.info("    North: " + tileNorth);
 					log.info("    South: " + tileSouth);
@@ -145,16 +165,6 @@ public class ModelRenderer
 					tileRenderer.renderTile(tileNorth, tileSouth, tileEast, tileWest);
 					
 
-					/*
-					DemCanvas scaled = tileCanvas.getScaled(tileOutputWidth, tileOutputHeight);
-					int overlayX = (int)Math.floor(tileColumn * modelDimensions.getTileOutputWidth());
-					int overlayY = (int)Math.floor(tileRow * modelDimensions.getTileOutputHeight());
-					int scaledWidth = scaled.getWidth();
-					int scaledHeight = scaled.getHeight();
-					
-					outputCanvas.overlay(scaled.getImage(), overlayX, overlayY, scaledWidth, scaledHeight);
-					*/
-					
 					tileColumn++;
 					tileNumber++;
 
@@ -188,8 +198,8 @@ public class ModelRenderer
 			}
 		}
 		
-		// TODO: Restore on2DModelAfter
-		//on2DModelAfter(outputCanvas);
+		
+		on2DModelAfter(modelCanvas);
 		
 		
 		
@@ -235,12 +245,12 @@ public class ModelRenderer
 		return cancel;
 	}
 	
-	protected void on2DModelBefore(DemCanvas outputCanvas) throws RenderEngineException
+	protected void on2DModelBefore(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.on2DModelBefore(modelContext, outputCanvas);
+				scriptProxy.on2DModelBefore(modelContext, modelCanvas);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -248,12 +258,12 @@ public class ModelRenderer
 		
 	}
 	
-	protected void on2DModelAfter(DemCanvas outputCanvas) throws RenderEngineException
+	protected void on2DModelAfter(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.on2DModelAfter(modelContext, outputCanvas);
+				scriptProxy.on2DModelAfter(modelContext, modelCanvas);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

@@ -165,7 +165,11 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 		}
 		return status;
 	}
-
+	
+	public boolean isBufferFilled()
+	{
+		return dataReader.isBufferFilled();
+	}
 
 	@Override
 	public void clearBuffer() throws DataSourceException

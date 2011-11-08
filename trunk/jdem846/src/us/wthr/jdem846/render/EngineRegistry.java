@@ -56,25 +56,8 @@ public class EngineRegistry  implements AppRegistry
 		String name = annotation.name();
 		name = I18N.get(name, name);
 		
-		EngineInstance engineInstance = new EngineInstance(clazz.getName(), name, annotation.identifier());
-		engineInstance.setEnabled(annotation.enabled());
-		engineInstance.setUsesWidth(annotation.usesWidth());
-		engineInstance.setUsesHeight(annotation.usesHeight());
-		engineInstance.setUsesBackgroundColor(annotation.usesBackgroundColor());
-		engineInstance.setUsesColoring(annotation.usesColoring());
-		engineInstance.setUsesHillshading(annotation.usesHillshading());
-		engineInstance.setUsesLightMultiple(annotation.usesLightMultiple());
-		engineInstance.setUsesRelativeLightMultiple(annotation.usesRelativeLightMultiple());
-		engineInstance.setUsesRelativeDarkMultiple(annotation.usesRelativeDarkMultiple());
-		engineInstance.setUsesSpotExponent(annotation.usesSpotExponent());
-		engineInstance.setUsesTileSize(annotation.usesTileSize());
-		engineInstance.setGeneratesImage(annotation.generatesImage());
-		engineInstance.setNeedsOutputFileOfType(annotation.needsOutputFileOfType());
-		engineInstance.setUsesProjection(annotation.usesProjection());
-		engineInstance.setUsesElevationMultiple(annotation.usesElevationMultiple());
-		engineInstance.setUsesLightDirection(annotation.usesLightDirection());
-		engineInstance.setUsesAntialiasing(annotation.usesAntialiasing());
-		engineInstance.setUsesPrecacheStrategy(annotation.usesPrecacheStrategy());
+		EngineInstance engineInstance = new EngineInstance(clazz);
+		
 		
 		if (annotation.enabled()) {
 			EngineRegistry.engineMap.put(annotation.identifier(), engineInstance);

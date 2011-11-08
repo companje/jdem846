@@ -43,7 +43,17 @@ public class RobinsonProjection implements MapProjection
 	private double width;
 	private double height;
 	
+	public RobinsonProjection()
+	{
+		
+	}
+	
 	public RobinsonProjection(double north, double south, double east, double west, double width, double height)
+	{
+		setUp(north, south, east, west, width, height);
+	}
+	
+	public void setUp(double north, double south, double east, double west, double width, double height)
 	{
 		this.north = north;
 		this.south = south;
@@ -52,6 +62,7 @@ public class RobinsonProjection implements MapProjection
 		this.width = width;
 		this.height = height;
 	}
+	
 	
 	@Override
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point)

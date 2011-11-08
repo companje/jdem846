@@ -135,6 +135,12 @@ public @interface DemEngine {
 	 */
 	boolean usesPrecacheStrategy() default true;
 	
+	/** Specifies whether the engine uses a map projection algorithm to place points on an output image.
+	 * 
+	 * @return
+	 */
+	boolean usesMapProjection() default true;
+	
 	/** Specifies which output file type is required to be asked of the user before running. 
 	 * 
 	 * @return

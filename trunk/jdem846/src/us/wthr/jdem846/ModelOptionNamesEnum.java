@@ -36,7 +36,9 @@ public enum ModelOptionNamesEnum
 	
 	USER_SCRIPT_LANGUAGE("us.wthr.jdem846.modelOptions.userScript.language"),
 	USER_SCRIPT_GROOVY_TEMPLATE("us.wthr.jdem846.modelOptions.userScript.groovy.template"),
-	USER_SCRIPT_JYTHON_TEMPLATE("us.wthr.jdem846.modelOptions.userScript.jython.template");
+	USER_SCRIPT_JYTHON_TEMPLATE("us.wthr.jdem846.modelOptions.userScript.jython.template"),
+	
+	MAP_PROJECTION("us.wthr.jdem846.modelOptions.mapProjection");
 	
 	private final String optionName;
 	

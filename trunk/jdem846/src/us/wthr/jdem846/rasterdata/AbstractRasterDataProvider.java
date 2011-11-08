@@ -90,6 +90,8 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
 		double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
 		
+		boolean bufferAlreadyFilled = this.isBufferFilled();
+		
 		for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
 			double tileSouth = tileNorth - tileLatitudeHeight;
 			if (tileSouth <= southLimit) {
@@ -103,11 +105,15 @@ public abstract class AbstractRasterDataProvider implements RasterData
 					tileEast = eastLimit - longitudeResolution;
 				}
 				
-				this.fillBuffer(tileNorth, tileSouth, tileEast, tileWest);
+				if (!bufferAlreadyFilled) {
+					this.fillBuffer(tileNorth, tileSouth, tileEast, tileWest);
+				}
 				
 				calculateSubsetMinAndMax(tileNorth, tileSouth, tileEast, tileWest);
 				
-				this.clearBuffer();
+				if (!bufferAlreadyFilled) {
+					this.clearBuffer();
+				}
 			}
 			
 		}

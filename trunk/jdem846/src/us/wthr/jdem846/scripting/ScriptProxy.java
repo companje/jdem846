@@ -20,6 +20,7 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.ModelCanvas;
 
 /** Describes a proxy interface for modeling engines to call user-provided scripts
  * 
@@ -32,11 +33,11 @@ public interface ScriptProxy
 	public void initialize(ModelContext modelContext);
 	public void destroy(ModelContext modelContext);
 	
-	public void on2DModelBefore(ModelContext modelContext, DemCanvas tileCanvas);
-	public void on2DModelAfter(ModelContext modelContext, DemCanvas tileCanvas);
+	public void on2DModelBefore(ModelContext modelContext, ModelCanvas modelCanvas);
+	public void on2DModelAfter(ModelContext modelContext, ModelCanvas modelCanvas);
 	
-	public void onTileBefore(ModelContext modelContext, DemCanvas tileCanvas);
-	public void onTileAfter(ModelContext modelContext, DemCanvas tileCanvas);
+	public void onTileBefore(ModelContext modelContext, ModelCanvas modelCanvas);
+	public void onTileAfter(ModelContext modelContext, ModelCanvas modelCanvas);
 
 	public Object onGetElevationBefore(ModelContext modelContext, double latitude, double longitude);
 	public Object onGetElevationAfter(ModelContext modelContext, double latitude, double longitude, double elevation);
