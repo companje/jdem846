@@ -243,7 +243,11 @@ public class ModelCanvas
 	
 	public Image getImage()
 	{
-		return image;
+		BufferedImage newImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = (Graphics2D) newImage.createGraphics();
+		g2d.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+		g2d.dispose();
+		return newImage;
 	}
 	
 	public Image getFinalizedImage()
