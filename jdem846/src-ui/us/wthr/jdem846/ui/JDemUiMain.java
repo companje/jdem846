@@ -81,6 +81,10 @@ public class JDemUiMain
 	 */
 	public static void main(String[] args)
 	{
+		
+		
+		
+		
 		try {
 			checkCommandLineOptions(args);
 		} catch (ArgumentException ex) {
@@ -88,6 +92,8 @@ public class JDemUiMain
 			return;
 		}
 		
+		System.setProperty("us.wthr.jdem846.distPath", System.getProperty("user.dir"));
+		System.setProperty("us.wthr.jdem846.resourcesPath", System.getProperty("user.dir")+"/resources");
 		
 		String instanceId = InstanceIdentifier.getInstanceId();
 		log.info("Instance ID: " + instanceId);
@@ -120,6 +126,7 @@ public class JDemUiMain
 			SplashScreen.addIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.48x48") + "/applications-system.png", I18N.get("us.wthr.jdem846.ui.system"));
 		}
 
+		
 		
 		try {
 			SplashScreen.addIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.48x48") + "/applications-utilities.png", I18N.get("us.wthr.jdem846.ui.configuration"));
