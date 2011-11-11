@@ -10,6 +10,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.Transparency;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
@@ -131,7 +132,7 @@ public class ModelCanvas
 		pathBuffer.lineTo(column2, row2);
 		pathBuffer.closePath();
 		
-		fillShape(fillColor, pathBuffer);
+		fillShape(fillColor, null, pathBuffer);
 		//graphics.setColor(fillColor);
 		//graphics.fill(pathBuffer);
 		
@@ -171,26 +172,40 @@ public class ModelCanvas
 		
 
 		//graphics.setClip(rectangle);
-		fillShape(fillColor, rectangle);
+		fillShape(fillColor, null, rectangle);
 		
 	}
 	
-	public void fillShape(Color color, Shape shape)
+	public void fillShape(Color color, Stroke stroke, Shape shape)
 	{
 		if (color != null) {
 			graphics.setColor(color);
+		}
+		
+		Stroke origStroke = graphics.getStroke();
+		
+		if (stroke != null) {
+			graphics.setStroke(stroke);
 		}
 		
 		graphics.fill(shape);
+		graphics.setStroke(origStroke);
 	}
 	
-	public void drawShape(Color color, Shape shape)
+	public void drawShape(Color color, Stroke stroke, Shape shape)
 	{
 		if (color != null) {
 			graphics.setColor(color);
 		}
 		
+		Stroke origStroke = graphics.getStroke();
+		
+		if (stroke != null) {
+			graphics.setStroke(stroke);
+		}
+		
 		graphics.draw(shape);
+		graphics.setStroke(origStroke);
 	}
 	
 	public int getColor(int x, int y)

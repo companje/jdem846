@@ -66,8 +66,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 			ModelCanvas canvas = ModelRenderer.render(getModelContext(), skipElevation, this.tileCompletionListeners);
 			
 			if (getModelContext().getShapeDataContext() != null) {
-				// TODO: Restore shape render method call
-				//ShapeLayerRenderer.render(getModelContext(), canvas, this.tileCompletionListeners);
+				ShapeLayerRenderer.render(getModelContext(), canvas, this.tileCompletionListeners);
 			} else {
 				log.info("Shape data context is null, skipping render stage");
 			}

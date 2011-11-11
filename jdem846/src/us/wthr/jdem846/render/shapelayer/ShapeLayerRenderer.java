@@ -17,6 +17,7 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
+import us.wthr.jdem846.render.mapprojection.MapPoint;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.PointTranslateHandler;
 import us.wthr.jdem846.shapefile.Shape;
@@ -34,14 +35,15 @@ public class ShapeLayerRenderer
 	
 	private ModelContext modelContext;
 	private List<TileCompletionListener> tileCompletionListeners;
-	private DemCanvas canvas;
+	//private DemCanvas canvas;
+	private ModelCanvas modelCanvas;
 	private boolean cancel = false;
 	
 	
-	public ShapeLayerRenderer(ModelContext modelContext, DemCanvas canvas, List<TileCompletionListener> tileCompletionListeners)
+	public ShapeLayerRenderer(ModelContext modelContext, ModelCanvas modelCanvas, List<TileCompletionListener> tileCompletionListeners)
 	{
 		this.modelContext = modelContext;
-		this.canvas = canvas;
+		this.modelCanvas = modelCanvas;
 		this.tileCompletionListeners = tileCompletionListeners;
 	}
 	
@@ -70,25 +72,29 @@ public class ShapeLayerRenderer
 					shapeLayer.addShape(shape);
 				}
 				
+				final MapPoint mapPoint = new MapPoint();
 				shapeLayer.translate(new PointTranslateHandler() {
 					public void translatePoint(double[] coords)
 					{
-						double x = getRasterDataContext().longitudeToColumn((float) coords[0]);
-						double y = getRasterDataContext().latitudeToRow((float) coords[1]);
-						coords[0] = x;
-						coords[1] = y;
+						modelCanvas.getMapProjection().getPoint(coords[1], coords[0], 0, mapPoint);
+						coords[0] = mapPoint.column;
+						coords[1] = mapPoint.row;
+						//double x = getRasterDataContext().longitudeToColumn((float) coords[0]);
+						//double y = getRasterDataContext().latitudeToRow((float) coords[1]);
+						//coords[0] = x;
+						//coords[1] = y;
 					}
 				}, false);
 				
 				shapeLayer = shapeLayer.getCombinedPathsByTypes();
-				
-				Image layerImage = renderLayer(shapeLayer);
-				layerImage = layerImage.getScaledInstance(canvas.getWidth(), canvas.getHeight(), Image.SCALE_SMOOTH);
-				canvas.overlay(layerImage, 0, 0);
+				renderLayer(shapeLayer);
+				//Image layerImage = renderLayer(shapeLayer);
+				//layerImage = layerImage.getScaledInstance(canvas.getWidth(), canvas.getHeight(), Image.SCALE_SMOOTH);
+				//canvas.overlay(layerImage, 0, 0);
 				
 				shapeBase.close();
 				// TODO: Restore proper canvas type
-				//fireTileCompletionListeners(canvas, ((double)layerNumber) / ((double)numLayers));
+				fireTileCompletionListeners(modelCanvas, ((double)layerNumber) / ((double)numLayers));
 				
 			} catch (OutOfMemoryError err) {
 				throw err;
@@ -107,25 +113,25 @@ public class ShapeLayerRenderer
 		
 	}
 
-	public Image renderLayer(ShapeLayer shapeLayer) throws RenderEngineException
+	public void renderLayer(ShapeLayer shapeLayer) throws RenderEngineException
 	{
-		BufferedImage image = new BufferedImage((int)getRasterDataContext().getDataColumns(), (int)getRasterDataContext().getDataRows(), BufferedImage.TYPE_INT_ARGB);
+		//BufferedImage image = new BufferedImage((int)getRasterDataContext().getDataColumns(), (int)getRasterDataContext().getDataRows(), BufferedImage.TYPE_INT_ARGB);
 		
-		Graphics2D g2d = (Graphics2D) image.getGraphics();
-		g2d.setColor(new Color(0, 0, 0, 0));
-		g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		//Graphics2D g2d = (Graphics2D) image.getGraphics();
+		//g2d.setColor(new Color(0, 0, 0, 0));
+		//g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
+		//g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		int shapeType = shapeLayer.getType();
 		log.info("Shape Type: " + shapeType);
-		fillShapes(shapeLayer, g2d);
+		fillShapes(shapeLayer);
 
-		g2d.dispose();
-		return image;
+		//g2d.dispose();
+		//return image;
 
 	}
 
-	protected void fillShapes(ShapeLayer shapeLayer, Graphics2D g2d) throws RenderEngineException
+	protected void fillShapes(ShapeLayer shapeLayer) throws RenderEngineException
 	{
 		log.info("Creating shape paths");
 
@@ -148,20 +154,21 @@ public class ShapeLayerRenderer
 
 			for (LineStroke lineStroke : lineStrokes) {
 			
-				g2d.setStroke(lineStroke);
-				g2d.setColor(lineStroke.getColor());
+				//g2d.setStroke(lineStroke);
+				//g2d.setColor(lineStroke.getColor());
 				
 				if (shapeType == ShapeConstants.TYPE_POLYGON ||
 						shapeType == ShapeConstants.TYPE_POLYGONM ||
 						shapeType == ShapeConstants.TYPE_POLYGONZ) {
 					
-					g2d.fill(path);
+					modelCanvas.fillShape(lineStroke.getColor(), lineStroke, path);
+					//g2d.fill(path);
 					
 				} else if (shapeType == ShapeConstants.TYPE_POLYLINE ||
 							shapeType == ShapeConstants.TYPE_POLYLINEM ||
 							shapeType == ShapeConstants.TYPE_POLYLINEZ) {
-					
-					g2d.draw(path);
+					modelCanvas.drawShape(lineStroke.getColor(), lineStroke, path);
+					//g2d.draw(path);
 
 				}					
 			}	
@@ -218,14 +225,14 @@ public class ShapeLayerRenderer
 	}
 	
 	
-	public static void render(ModelContext modelContext, DemCanvas canvas) throws RenderEngineException
+	public static void render(ModelContext modelContext, ModelCanvas modelCanvas) throws RenderEngineException
 	{
-		ShapeLayerRenderer.render(modelContext, canvas, null);
+		ShapeLayerRenderer.render(modelContext, modelCanvas, null);
 	}
 	
-	public static void render(ModelContext modelContext, DemCanvas canvas, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException
+	public static void render(ModelContext modelContext, ModelCanvas modelCanvas, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException
 	{
-		ShapeLayerRenderer renderer = new ShapeLayerRenderer(modelContext, canvas, tileCompletionListeners);
+		ShapeLayerRenderer renderer = new ShapeLayerRenderer(modelContext, modelCanvas, tileCompletionListeners);
 		renderer.renderShapeLayer();
 	}
 }
