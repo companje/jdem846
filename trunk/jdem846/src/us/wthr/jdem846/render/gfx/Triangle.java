@@ -21,7 +21,6 @@ import java.awt.geom.Path2D;
 
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
-import us.wthr.jdem846.util.NumberUtil;
 
 public class Triangle implements Renderable
 {

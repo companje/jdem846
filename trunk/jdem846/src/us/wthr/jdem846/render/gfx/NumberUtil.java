@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846.util;
+package us.wthr.jdem846.render.gfx;
 
-import us.wthr.jdem846.render.gfx.Vector;
 
 public class NumberUtil
 {

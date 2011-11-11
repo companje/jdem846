@@ -18,7 +18,6 @@ package us.wthr.jdem846.render.gfx;
 
 import java.awt.Color;
 
-import us.wthr.jdem846.util.NumberUtil;
 
 
 /** Defines a line existing in three-dimensional space

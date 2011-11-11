@@ -8,6 +8,7 @@
 	<property name="stage.dir" value="${build.dir}/stage" />
 	<property name="dist.dir" value="${build.dir}/dist" />
 	
+	<property name="jar.file" value="${stage.dir}/jdem846.jar" />
 	
 	<property name="base.src.dir" value="src-base" />
 	<property name="base.build.dir" value="${build.dir}/base" />
@@ -67,6 +68,9 @@
 		<include name="**/?*.txt" />
 		<include name="**/?*.flt" />
 		<include name="**/?*.hdr" />
+		<include name="**/?*.py" />
+		<include name="**/?*.groovy" />
+		<include name="**/?*.json" />
 	</patternset>
 	
 	<patternset id="lib.resources">
@@ -278,16 +282,7 @@
 		</copy>
 	</target>
 	
-	<target name="resources.compile" depends="init,core.compile" description="">
-		<copy todir="${resources.build.dir}">
-			<fileset dir="${resources.src.dir}">
-				<patternset refid="compiler.resources" />
-				<type type="file" />
-			</fileset>
-		</copy>
-	</target>
-	
-	<target name="compile" depends="init,base.compile,dbase.compile,shapefile.compile,kml.compile,core.compile,ui.compile,resources.compile" description="">
+	<target name="compile" depends="init,base.compile,dbase.compile,shapefile.compile,kml.compile,core.compile,ui.compile" description="">
 
 	</target>
 	
@@ -296,54 +291,38 @@
 	<!-- Jar Targets                    -->
 	<!-- ============================== -->
 	
-	<target name="base.jar" depends="compile">
-		<jar destfile="${base.jar.file}" duplicate="add">
+
+	
+	<target name="jar" depends="compile">
+		
+		<pathconvert property="libs.classpath" pathsep=" ">  
+			<mapper>  
+				<chainedmapper>  
+					<flattenmapper />  
+					<globmapper from="*" to="lib/*" />  
+				</chainedmapper>  
+			</mapper>  
+			<path>   
+				<fileset dir="${lib.dir}">  
+					<include name="**/*.jar" />  
+				</fileset>  
+        
+			</path>  
+		</pathconvert> 
+		
+		<jar destfile="${jar.file}" duplicate="add">
 			<zipfileset dir="${base.build.dir}" />
-		</jar>
-	</target>
-	
-	<target name="dbase.jar" depends="compile">
-		<jar destfile="${dbase.jar.file}" duplicate="add">
 			<zipfileset dir="${dbase.build.dir}" />
-		</jar>
-	</target>
-	
-	<target name="shapefile.jar" depends="compile">
-		<jar destfile="${shapefile.jar.file}" duplicate="add">
 			<zipfileset dir="${shapefile.build.dir}" />
-		</jar>
-	</target>
-	
-	<target name="kml.jar" depends="compile">
-		<jar destfile="${kml.jar.file}" duplicate="add">
 			<zipfileset dir="${kml.build.dir}" />
-		</jar>
-	</target>
-	
-	<target name="core.jar" depends="compile">
-		<jar destfile="${core.jar.file}" duplicate="add">
 			<zipfileset dir="${core.build.dir}" />
-		</jar>
-	</target>
-	
-	
-	<target name="ui.jar" depends="compile">
-		<jar destfile="${ui.jar.file}" duplicate="add">
 			<zipfileset dir="${ui.build.dir}" />
+			<zipfileset dir="${resources.build.dir}" />
 			<manifest>
+				<attribute name="Class-Path" value="${libs.classpath} resources" />
 				<attribute name="Main-Class" value="${ui.main.class}"/>
 			</manifest>
 		</jar>
-	</target>
-	
-	<target name="resources.jar" depends="compile">
-		<jar destfile="${resources.jar.file}" duplicate="add">
-			<zipfileset dir="${resources.build.dir}" />
-		</jar>
-	</target>
-	
-	<target name="jar" depends="compile,base.jar,dbase.jar,shapefile.jar,kml.jar,core.jar,ui.jar,resources.jar">
-		
 	</target>
 	
 	
@@ -361,98 +340,30 @@
 	<!-- Javadoc Targets                -->
 	<!-- ============================== -->
 	
-	<target name="base.javadoc">
-		<javadoc
-			destdir="${base.javadoc.dir}"
-			sourcepath="${dbase.src.dir}"
-			author="true"
-			version="true"
-			use="true"
-			windowtitle="jDem846 Base API">
 
-
-			<doctitle><![CDATA[<h1>jDem846 Base</h1>]]></doctitle>
-		    <bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
-		</javadoc>
+	<target name="javadoc.init" description="">
+		<mkdir dir="${javadoc.dir}" />
 	</target>
 	
-	<target name="dbase.javadoc">
+	<target name="javadoc" depends="compile,javadoc.init">
 		<javadoc
-			destdir="${dbase.javadoc.dir}"
-			sourcepath="${dbase.src.dir}"
-			author="true"
-			version="true"
-			use="true"
-			windowtitle="jDem846 dBase API">
-
-
-			<doctitle><![CDATA[<h1>jDem846 dBase</h1>]]></doctitle>
-		    <bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
-		</javadoc>
-	</target>
-	
-	<target name="shapefile.javadoc">
-		<javadoc
-			destdir="${shapefile.javadoc.dir}"
-			sourcepath="${shapefile.src.dir}"
-			author="true"
-			version="true"
-			use="true"
-			windowtitle="jDem846 ESRI ShapeFile API">
-
-
-			<doctitle><![CDATA[<h1>jDem846 ESRI ShapeFile</h1>]]></doctitle>
-		    <bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
-		</javadoc>
-	</target>
-	
-	<target name="kml.javadoc">
-		<javadoc
-			destdir="${kml.javadoc.dir}"
-			sourcepath="${kml.src.dir}"
-			author="true"
-			version="true"
-			use="true"
-			windowtitle="jDem846 KML API">
-
-
-			<doctitle><![CDATA[<h1>jDem846 KML</h1>]]></doctitle>
-		    <bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
-		</javadoc>
-	</target>
-	
-	<target name="core.javadoc">
-		<javadoc
-			destdir="${core.javadoc.dir}"
-			sourcepath="${core.src.dir}"
+			destdir="${javadoc.dir}"
 			author="true"
 			version="true"
 			use="true"
 			windowtitle="jDem846 API">
+			
+			<sourcepath refid="base.build.sourcepath" />
+			<sourcepath refid="dbase.build.sourcepath" />
+			<sourcepath refid="shapefile.build.sourcepath" />
+			<sourcepath refid="kml.build.sourcepath" />
+			<sourcepath refid="core.build.sourcepath" />
+			<sourcepath refid="ui.build.sourcepath" />
+			
 
-
-			<doctitle><![CDATA[<h1>jDem846</h1>]]></doctitle>
-		    <bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
-		</javadoc>
-	</target>
-	
-	<target name="ui.javadoc">
-		<javadoc
-			destdir="${ui.javadoc.dir}"
-			sourcepath="${ui.src.dir}"
-			author="true"
-			version="true"
-			use="true"
-			windowtitle="jDem846 UI API">
-
-
-			<doctitle><![CDATA[<h1>jDem846 UI</h1>]]></doctitle>
+			<doctitle><![CDATA[<h1>jDem846 API</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; 2011 Kevin M. Gill. All Rights Reserved.</i>]]></bottom>
 		</javadoc>
-	</target>
-	
-	<target name="javadoc" depends="compile,base.javadoc,dbase.javadoc,shapefile.javadoc,kml.javadoc,core.javadoc,ui.javadoc">
-				
 	</target>
 	
 	<!-- ============================== -->
@@ -461,24 +372,14 @@
 	
 	<target name="dist-init" depends="">
 		<mkdir dir="${dist.stage.dir}/lib" />
-		<mkdir dir="${dist.stage.dir}/docs/api/base" />
-		<mkdir dir="${dist.stage.dir}/docs/api/dbase" />
-		<mkdir dir="${dist.stage.dir}/docs/api/shapefile" />
-		<mkdir dir="${dist.stage.dir}/docs/api/kml" />
-		<mkdir dir="${dist.stage.dir}/docs/api/core" />
-		<mkdir dir="${dist.stage.dir}/docs/api/ui" />
+		<mkdir dir="${dist.stage.dir}/resources" />
+		<mkdir dir="${dist.stage.dir}/docs/api" />
 	</target>
-		
+	
+
 	<target name="dist" depends="jar,javadoc,dist-init">
-		
-		<copy file="${base.jar.file}" todir="${dist.stage.dir}/lib" />
-		<copy file="${dbase.jar.file}" todir="${dist.stage.dir}/lib" />
-		<copy file="${shapefile.jar.file}" todir="${dist.stage.dir}/lib" />
-		<copy file="${kml.jar.file}" todir="${dist.stage.dir}/lib" />
-		
-		<copy file="${ui.jar.file}" todir="${dist.stage.dir}/lib" />
-		<copy file="${core.jar.file}" todir="${dist.stage.dir}/lib" />
-		<copy file="${resources.jar.file}" todir="${dist.stage.dir}/lib" />
+
+		<copy file="${jar.file}" todir="${dist.stage.dir}" />
 		
 		<copy file="LICENSE" todir="${dist.stage.dir}" />
 		<copy file="NOTICE" todir="${dist.stage.dir}" />
@@ -492,32 +393,26 @@
 			</fileset>
 		</copy>
 		
-		<copy todir="${dist.stage.dir}/docs/api/base">
-			<fileset dir="${base.javadoc.dir}" />
-		</copy>
-		<copy todir="${dist.stage.dir}/docs/api/dbase">
-			<fileset dir="${dbase.javadoc.dir}" />
-		</copy>
-		<copy todir="${dist.stage.dir}/docs/api/shapefile">
-			<fileset dir="${shapefile.javadoc.dir}" />
-		</copy>
-		<copy todir="${dist.stage.dir}/docs/api/kml">
-			<fileset dir="${kml.javadoc.dir}" />
+		<copy todir="${dist.stage.dir}/resources">
+			<fileset dir="${resources.src.dir}">
+				<patternset refid="compiler.resources" />
+				<type type="file" />
+			</fileset>
 		</copy>
 		
-		<copy todir="${dist.stage.dir}/docs/api/core">
-			<fileset dir="${core.javadoc.dir}" />
+		
+		<copy todir="${dist.stage.dir}/docs/api">
+			<fileset dir="${javadoc.dir}" />
 		</copy>
-		<copy todir="${dist.stage.dir}/docs/api/ui">
-			<fileset dir="${ui.javadoc.dir}" />
-		</copy>
+		 
 		
 		<copy file="${resources.src.dir}/jdem846-icon.png" todir="${dist.stage.dir}" />
 		
 		<zip destfile="${dist.file}" duplicate="add">
 			<zipfileset dir="${dist.stage.dir}" />
 		</zip>
-		
+		 
 		<delete dir="${dist.stage.dir}" />
+		
 	</target>
 </project>
