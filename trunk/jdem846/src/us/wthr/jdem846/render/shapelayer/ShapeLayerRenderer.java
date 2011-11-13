@@ -72,6 +72,7 @@ public class ShapeLayerRenderer
 					shapeLayer.addShape(shape);
 				}
 				
+				log.info("Translating coordinates...");
 				final MapPoint mapPoint = new MapPoint();
 				shapeLayer.translate(new PointTranslateHandler() {
 					public void translatePoint(double[] coords)
@@ -85,6 +86,8 @@ public class ShapeLayerRenderer
 						//coords[1] = y;
 					}
 				}, false);
+				
+				log.info("Combining shapes...");
 				
 				shapeLayer = shapeLayer.getCombinedPathsByTypes();
 				renderLayer(shapeLayer);

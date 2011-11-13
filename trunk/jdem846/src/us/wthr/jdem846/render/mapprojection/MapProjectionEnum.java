@@ -5,6 +5,7 @@ import us.wthr.jdem846.i18n.I18N;
 public enum MapProjectionEnum
 {
 	EQUIRECTANGULAR("us.wthr.jdem846.render.mapProjection.equirectangularProjection.name", EquirectangularProjection.class),
+	EQUIRECTANGULAR3D("us.wthr.jdem846.render.mapProjection.equirectangular3dProjection.name", Equirectangular3dProjection.class),
 	AITOFF("us.wthr.jdem846.render.mapProjection.aitoffProjection.name", AitoffProjection.class),
 	ROBINSON("us.wthr.jdem846.render.mapProjection.robinsonProjection.name", RobinsonProjection.class),
 	WINKELTRIPEL("us.wthr.jdem846.render.mapProjection.winkelTripelProjection.name", WinkelTripelProjection.class);
