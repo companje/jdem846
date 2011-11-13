@@ -14,6 +14,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.render.mapprojection.MapProjectionEnum;
 import us.wthr.jdem846.render.render2d.ModelRenderer;
 
 public class RasterDataTesting
@@ -94,7 +95,7 @@ public class RasterDataTesting
 		modelOptions.setHeight(dataProxy.getDataRows());
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setAntialiased(false);
-		
+		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR3D);
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, modelOptions);
 		
 		
