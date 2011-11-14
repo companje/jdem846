@@ -40,6 +40,7 @@ public class RasterDataTesting
 		
 		//inputDataList.add("C:/srv/elevation/Maui/15749574.flt");
 		//inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
+		//String saveOutputTo = "C:/srv/elevation/Maui/test-output.png";
 		
 		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
 		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
@@ -93,8 +94,8 @@ public class RasterDataTesting
 		modelOptions.setTileSize(1000);
 		modelOptions.setWidth(dataProxy.getDataColumns());
 		modelOptions.setHeight(dataProxy.getDataRows());
-		modelOptions.setDoublePrecisionHillshading(false);
-		modelOptions.setAntialiased(false);
+		modelOptions.setDoublePrecisionHillshading(true);
+		modelOptions.setAntialiased(true);
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR3D);
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, modelOptions);
 		

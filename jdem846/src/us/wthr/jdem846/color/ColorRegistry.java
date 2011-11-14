@@ -55,6 +55,7 @@ public class ColorRegistry implements AppRegistry
 	
 	protected static void addColor(String fromFile)
 	{
+		/*
 		fromFile = fromFile.replaceAll("[ ]+", " ");
 		String[] parts = fromFile.split(" ");
 		if (parts.length == 5) {
@@ -73,14 +74,14 @@ public class ColorRegistry implements AppRegistry
 			log.warn("Invalid color: " + fromFile);
 			//System.out.println("Invalid color: " + fromFile);
 		}
-		
+		*/
 	}
 	
 	@Initialize
 	public static void init()
 	{
 		//System.out.println("Static initialization of ColorRegistry");
-		
+		/*
 		log.info("Static initialization of ColorRegistry");
 		
 		try {
@@ -98,16 +99,17 @@ public class ColorRegistry implements AppRegistry
 			log.error("IO Exception attempting to read colors file: " + ex.getMessage(), ex);
 			//ex.printStackTrace();
 		}
-		
+		*/
 	}
 
 	public static ColorInstance getInstance(String identifier)
 	{
-		return instances.get(identifier);
+		return null;//instances.get(identifier);
 	}
 	
 	public static List<ColorInstance> getInstances()
 	{
+		/*
 		List<ColorInstance> instanceList = new LinkedList<ColorInstance>();
 		
 		for (String identifier : instances.keySet()) {
@@ -115,5 +117,7 @@ public class ColorRegistry implements AppRegistry
 		}
 		
 		return instanceList;
+		*/
+		return null;
 	}
 }

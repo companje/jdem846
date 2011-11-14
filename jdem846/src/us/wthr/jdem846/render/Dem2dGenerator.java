@@ -63,10 +63,22 @@ public class Dem2dGenerator extends BasicRenderEngine
 		
 		
 		try {
-			ModelCanvas canvas = ModelRenderer.render(getModelContext(), skipElevation, this.tileCompletionListeners);
 			
-			if (getModelContext().getShapeDataContext() != null) {
-				ShapeLayerRenderer.render(getModelContext(), canvas, this.tileCompletionListeners);
+			final ModelRenderer rasterRenderer = new ModelRenderer(getModelContext(), tileCompletionListeners);
+			final ShapeLayerRenderer shapeRenderer = new ShapeLayerRenderer(getModelContext(), tileCompletionListeners);
+			
+			this.setProcessCancelListener(new ProcessCancelListener() {
+				public void onProcessCancelled()
+				{
+					rasterRenderer.cancel();
+					shapeRenderer.cancel();
+				}
+			});
+			
+			ModelCanvas canvas = rasterRenderer.renderModel(skipElevation);
+
+			if (getModelContext().getShapeDataContext() != null && getModelContext().getShapeDataContext().getShapeDataListSize() > 0) {
+				shapeRenderer.renderShapeLayer();
 			} else {
 				log.info("Shape data context is null, skipping render stage");
 			}

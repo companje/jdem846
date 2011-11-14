@@ -72,7 +72,6 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 	private NumberTextField txtHeight;
 	private NumberTextField txtTileSize;
 	private ComboBox cmbEngine;
-	private ComboBox cmbBackgroundColor;
 	private ComboBox cmbColoring;
 	private ComboBox cmbHillshading;
 	private ComboBox cmbMapProjection;

@@ -32,12 +32,18 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 	public void setUp(ModelContext modelContext)
 	{
 		this.modelContext = modelContext;
+
 		setUp(modelContext.getNorth(), 
 				modelContext.getSouth(),
 				modelContext.getEast(),
 				modelContext.getWest(),
 				modelContext.getModelDimensions().getOutputWidth(),
 				modelContext.getModelDimensions().getOutputHeight());
+		
+		
+		rotateX = modelContext.getModelOptions().getProjection().getRotateX();
+		rotateY = modelContext.getModelOptions().getProjection().getRotateY();
+
 	}
 	
 	public void setUp(double north, double south, double east, double west, double width, double height)
@@ -65,14 +71,10 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		if (this.modelContext != null) {
 			min = modelContext.getRasterDataContext().getDataMinimumValue();
 			max = modelContext.getRasterDataContext().getDataMaximumValue();
-			//resolution = (modelContext.getRasterDataContext().getLatitudeResolution() + modelContext.getRasterDataContext().getLongitudeResolution()) / 2.0;
 			resolution = modelContext.getRasterDataContext().getMetersResolution();
-			elev = elevation;
-			elev = ((elev - max) / resolution) + Math.abs(min) + 2.0;
+			elev = ((elevation - max) / resolution) + Math.abs(min);
 		}
-		
-		//elev = -1.00000;
-		
+
 		pointVector[0] = point.column - (getWidth() / 2.0);
 		pointVector[1] = elev;
 		pointVector[2] = point.row - (getHeight() / 2.0);

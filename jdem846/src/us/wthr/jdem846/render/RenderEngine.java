@@ -34,7 +34,7 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 
-public abstract class RenderEngine  implements ImageObserver
+public abstract class RenderEngine extends CancellableProcess implements ImageObserver
 {
 	private static Log log = Logging.getLog(RenderEngine.class);
 	
@@ -42,9 +42,7 @@ public abstract class RenderEngine  implements ImageObserver
 	private String needsOutputFileOfTypeIdentifier = null;
 	
 	protected List<TileCompletionListener> tileCompletionListeners = new LinkedList<TileCompletionListener>();
-	
-	private boolean cancel = false;
-	
+
 	private ModelContext modelContext;
 	
 	public RenderEngine()
@@ -163,24 +161,6 @@ public abstract class RenderEngine  implements ImageObserver
 		public void onTileCompleted(ModelCanvas modelCanvas, double pctComplete);
 	}
 	
-	/** Requests that a rendering process is stopped.
-	 * 
-	 */
-	public void cancel()
-	{
-		this.cancel = true;
-	}
-	
-	/** Determines whether the rendering process has been requested to stop. This does not necessarily mean
-	 * that the process <i>has</i> stopped as engine implementations need not check this value that often or
-	 * at all.
-	 * 
-	 * @return Whether the rendering process has been requested to stop.
-	 */
-	public boolean isCancelled()
-	{
-		return cancel;
-	}
 	
 	
 	@Override
