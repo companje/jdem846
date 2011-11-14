@@ -47,12 +47,21 @@ public class ShapeLayerRenderer
 		this.tileCompletionListeners = tileCompletionListeners;
 	}
 	
+	public ShapeLayerRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
+	{
+		this.modelContext = modelContext;
+		this.tileCompletionListeners = tileCompletionListeners;
+	}
+	
 	public void renderShapeLayer() throws RenderEngineException
 	{
 		if (isCancelled()) {
 			log.warn("Render process cancelled, model not complete.");
 			return;
 		}
+		
+		
+		this.modelCanvas = modelContext.getModelCanvas();
 		
 		//int numLayers = getDataPackage().getShapeFiles().size();
 		int numLayers = getShapeDataContext().getShapeDataListSize();
@@ -226,7 +235,11 @@ public class ShapeLayerRenderer
 			}
 		}
 	}
-	
+
+	public static void render(ModelContext modelContext) throws RenderEngineException
+	{
+		ShapeLayerRenderer.render(modelContext, modelContext.getModelCanvas(), null);
+	}
 	
 	public static void render(ModelContext modelContext, ModelCanvas modelCanvas) throws RenderEngineException
 	{
@@ -238,4 +251,9 @@ public class ShapeLayerRenderer
 		ShapeLayerRenderer renderer = new ShapeLayerRenderer(modelContext, modelCanvas, tileCompletionListeners);
 		renderer.renderShapeLayer();
 	}
+	
+	
+
+	
+
 }

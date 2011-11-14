@@ -18,23 +18,24 @@ import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.render.CancellableProcess;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
+import us.wthr.jdem846.render.ProcessCancelListener;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.mapprojection.MapProjection;
 import us.wthr.jdem846.render.mapprojection.MapProjectionProviderFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
-public class ModelRenderer
+public class ModelRenderer extends CancellableProcess
 {
 	private static Log log = Logging.getLog(ModelRenderer.class);
 	private static Color DEFAULT_BACKGROUND = new Color(0, 0, 0, 0);
 	
 	private ModelContext modelContext;
 	private List<TileCompletionListener> tileCompletionListeners;
-	private boolean cancel = false;
 	
 	
 	public ModelRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
@@ -123,9 +124,14 @@ public class ModelRenderer
 		on2DModelBefore(modelCanvas);
 		
 		
-		TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas);
+		final TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas);
 		
-		
+		this.setProcessCancelListener(new ProcessCancelListener() {
+			public void onProcessCancelled()
+			{
+				tileRenderer.cancel();
+			}
+		});
 		
 		
 		if (fullCaching) {
@@ -156,7 +162,7 @@ public class ModelRenderer
 						tileEast = eastLimit - longitudeResolution;
 					}
 
-					log.info("Tile #" + (tileNumber + 1) + ", Row #" + (tileRow + 1) + ", Column #" + (tileColumn + 1));
+					log.info("Tile #" + (tileNumber + 1) + " of " + tileCount + ", Row #" + (tileRow + 1) + ", Column #" + (tileColumn + 1));
 					log.info("    North: " + tileNorth);
 					log.info("    South: " + tileSouth);
 					log.info("    East: " + tileEast);
@@ -175,14 +181,13 @@ public class ModelRenderer
 					fireTileCompletionListeners(modelCanvas, pctComplete);
 					
 					if (isCancelled()) {
-						log.warn("Render process cancelled, model not complete.");
 						break;
 					}	
 				}
 				
 				tileRow++;
+				
 				if (isCancelled()) {
-					log.warn("Render process cancelled, model not complete.");
 					break;
 				}
 				
@@ -226,24 +231,6 @@ public class ModelRenderer
 		return modelContext.getModelOptions();
 	}
 	
-	/** Requests that a rendering process is stopped.
-	 * 
-	 */
-	public void cancel()
-	{
-		this.cancel = true;
-	}
-	
-	/** Determines whether the rendering process has been requested to stop. This does not necessarily mean
-	 * that the process <i>has</i> stopped as engine implementations need not check this value that often or
-	 * at all.
-	 * 
-	 * @return Whether the rendering process has been requested to stop.
-	 */
-	public boolean isCancelled()
-	{
-		return cancel;
-	}
 	
 	protected void on2DModelBefore(ModelCanvas modelCanvas) throws RenderEngineException
 	{

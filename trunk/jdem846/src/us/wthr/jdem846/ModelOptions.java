@@ -62,6 +62,13 @@ public class ModelOptions
 		String scriptLanguageString = JDem846Properties.getProperty(ModelOptionNamesEnum.USER_SCRIPT_LANGUAGE.optionName());
 		setScriptLanguage(scriptLanguageString);
 		
+		this.projection.setRotateX(getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_X));
+		this.projection.setRotateY(getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Y));
+		this.projection.setRotateZ(getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Z));
+		
+		this.projection.setShiftX(getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_X));
+		this.projection.setShiftY(getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Y));
+		this.projection.setShiftZ(getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Z));
 		
 	}
 	

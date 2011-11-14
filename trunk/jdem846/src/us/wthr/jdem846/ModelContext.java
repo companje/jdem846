@@ -50,6 +50,7 @@ public class ModelContext
 	
 	private MapProjection mapProjection;
 	private ModelDimensions2D modelDimensions;
+	private ModelCanvas modelCanvas = null;
 	
 	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
 	{
@@ -86,8 +87,13 @@ public class ModelContext
 	
 	public ModelCanvas createModelCanvas()
 	{
-		ModelCanvas modelCanvas = new ModelCanvas(this);
+		modelCanvas = new ModelCanvas(this);
 		return modelCanvas;
+	}
+	
+	public ModelCanvas getModelCanvas()
+	{
+		return this.modelCanvas;
 	}
 	
 	public RasterDataContext getRasterDataContext()

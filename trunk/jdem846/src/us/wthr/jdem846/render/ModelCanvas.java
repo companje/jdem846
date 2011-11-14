@@ -43,7 +43,7 @@ public class ModelCanvas
 	private Color backgroundColor;
 	private ModelDimensions2D modelDimensions;
 	
-	private VolatileImage image;
+	private Image image;
 	private Graphics2D graphics;
 	
 	private boolean isDisposed = false;
@@ -51,26 +51,39 @@ public class ModelCanvas
 	private Path2D.Double pathBuffer = new Path2D.Double();
 	private Rectangle2D.Double rectangle = new Rectangle2D.Double();
 	
+	private boolean isAntiAliased = false;
+	
 	private MapPoint mapPoint = new MapPoint();
 	
 	public ModelCanvas(ModelContext modelContext)
 	{
 		this.modelContext = modelContext;
 		backgroundColor = ColorSerializationUtil.stringToColor(modelContext.getModelOptions().getBackgroundColor());
-		modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
+		modelDimensions = modelContext.getModelDimensions();
+		//modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
+		
+		isAntiAliased = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED);
 		
 		GraphicsConfiguration gc = getGraphicsConfiguration();
 		
-		int transparencyType = (modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED)) ? Transparency.TRANSLUCENT : Transparency.BITMASK;
+		
+		
+		int transparencyType = (isAntiAliased) ? Transparency.TRANSLUCENT : Transparency.BITMASK;
 		
 		image = gc.createCompatibleVolatileImage(getWidth(), getHeight(), transparencyType);
 		
-		graphics = (Graphics2D) image.createGraphics();
+		
+		graphics = (Graphics2D) image.getGraphics();
+		graphics.setComposite(AlphaComposite.Src);
 		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		
-		if (modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED)) {
+		if (isAntiAliased) {
 			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		}
+		
+		graphics.setColor(new Color(0, 0, 0, 0));
+		graphics.fillRect(0, 0, getWidth(), getHeight());
+		
 		
 		if (modelContext.getMapProjection() != null) {
 			mapProjection = modelContext.getMapProjection();
@@ -143,42 +156,70 @@ public class ModelCanvas
 	}
 	
 	public void fillRectangle(int[] color, 
-			double latitude, double longitude, 
+			double lat0, double lon0, double elev0,
+			double lat1, double lon1, double elev1,
+			double lat2, double lon2, double elev2,
+			double lat3, double lon3, double elev3
+			/*double latitude, double longitude, 
 			double width, double height,
-			double elevation)
+			double elevation*/)
 	{
-		//pathBuffer.reset();
+		pathBuffer.reset();
 		
-		
-		mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
+		mapProjection.getPoint(lat0, lon0, elev0, mapPoint);
 		double row0 = mapPoint.row;
 		double column0 = mapPoint.column;
 		
-		//mapProjection.getPoint(latitude-height, longitude+width, elevation, mapPoint);
-		//double row1 = mapPoint.row;
-		//double column1 = mapPoint.column;
+		mapProjection.getPoint(lat1, lon1, elev1, mapPoint);
+		double row1 = mapPoint.row;
+		double column1 = mapPoint.column;
+		
+		mapProjection.getPoint(lat2, lon2, elev2, mapPoint);
+		double row2 = mapPoint.row;
+		double column2 = mapPoint.column;
+		
+		mapProjection.getPoint(lat3, lon3, elev3, mapPoint);
+		double row3 = mapPoint.row;
+		double column3 = mapPoint.column;
+		
+		
+		if (row1 < row0 || row2 < row3)
+			return;
+		
+		pathBuffer.moveTo(column0, row0);
+		pathBuffer.lineTo(column1, row1);
+		pathBuffer.lineTo(column2, row2);
+		pathBuffer.lineTo(column3, row3);
+		pathBuffer.closePath();
+		
+		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
+		
+		fillShape(fillColor, null, pathBuffer);
+		
+		/*
+		mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
+		double row0 = mapPoint.row;
+		double column0 = mapPoint.column;
+
 		
 		mapProjection.getPoint(latitude-height, longitude+width, elevation, mapPoint);
 		double row1 = mapPoint.row;
 		double column1 = mapPoint.column;
-		
-		//mapProjection.getPoint(latitude3, longitude3, elevation3, mapPoint);
-		//double row3 = mapPoint.row;
-		///double column3 = mapPoint.column;
-	
+
 		
 		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
 
-		column0 = Math.floor(column0);
-		column1 = Math.ceil(column1);
-		if (column1 <= column0)
-			column1 = column0 + 1;
-		
-		row0 = Math.floor(row0);
-		row1 = Math.ceil(row1);
-		if (row1 <= row0)
-			row1 = row0 + 1;
-		
+		if (!isAntiAliased) {
+			column0 = Math.floor(column0);
+			column1 = Math.ceil(column1);
+			if (column1 <= column0)
+				column1 = column0 + 1;
+			
+			row0 = Math.floor(row0);
+			row1 = Math.ceil(row1);
+			if (row1 <= row0)
+				row1 = row0 + 1;
+		}
 		
 		rectangle.x = column0;
 		rectangle.y = row0;
@@ -188,6 +229,7 @@ public class ModelCanvas
 
 		//graphics.setClip(rectangle);
 		fillShape(fillColor, null, rectangle);
+		*/
 		
 	}
 	
@@ -225,7 +267,7 @@ public class ModelCanvas
 	
 	public int getColor(int x, int y)
 	{
-		if (x < 0 || x >= image.getWidth() || y < 0 || y >= image.getHeight())
+		if (x < 0 || x >= image.getWidth(null) || y < 0 || y >= image.getHeight(null))
 			return 0;
 		
 		// TODO: Restore pixel color fetch
@@ -289,7 +331,9 @@ public class ModelCanvas
 			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		}
 		graphics.drawImage(image, 0, 0, null);
-		stripAlphaChannel(finalImage);
+		if (isAntiAliased) {
+			stripAlphaChannel(finalImage);
+		}
 		applyBackgroundColor(finalImage);
 		graphics.dispose();
 		return finalImage;

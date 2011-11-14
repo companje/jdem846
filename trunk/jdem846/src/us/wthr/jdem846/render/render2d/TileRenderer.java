@@ -22,12 +22,13 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.BasicRenderEngine;
+import us.wthr.jdem846.render.CancellableProcess;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
-public class TileRenderer
+public class TileRenderer extends CancellableProcess
 {
 	private static Log log = Logging.getLog(TileRenderer.class);
 
@@ -71,9 +72,7 @@ public class TileRenderer
 	private double frontLeftPoints[] = {-1.0, 0.0f, 1.0};
 	private double frontRightPoints[] = {1.0, 0.0f, 1.0};
 	private DemPoint point = new DemPoint();
-	
-	
-	private boolean cancel = false;
+
 	
 	public TileRenderer(ModelContext modelContext, ModelColoring modelColoring, ModelCanvas modelCanvas)
 	{
@@ -136,6 +135,14 @@ public class TileRenderer
 					renderCellStandardPrecision(latitude, longitude);
 				}
 				
+				
+				if (isCancelled()) {
+					break;
+				}
+			}
+			
+			if (isCancelled()) {
+				break;
 			}
 		}
 		
@@ -175,10 +182,18 @@ public class TileRenderer
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1] + frontRightPoints[1]) / 4.0;
 			renderTriangle(avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
+			modelCanvas.fillRectangle(triangleColorNW,
+					latitude, longitude, backLeftPoints[1],
+					latitude-latitudeResolution, longitude, frontLeftPoints[1],
+					latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
+					latitude, longitude+longitudeResolution, backRightPoints[1]);
+			
+			/*
 			modelCanvas.fillRectangle(triangleColorNW, 
 					latitude, longitude, 
 					latitudeResolution, longitudeResolution,
 					avgElevationNW);
+					*/
 			
 		}
 	}
@@ -480,25 +495,6 @@ public class TileRenderer
 		frontRightPoints[1] = 0.0;
 		frontRightPoints[2] = 1.0;
 		
-	}
-	
-	/** Requests that a rendering process is stopped.
-	 * 
-	 */
-	public void cancel()
-	{
-		this.cancel = true;
-	}
-	
-	/** Determines whether the rendering process has been requested to stop. This does not necessarily mean
-	 * that the process <i>has</i> stopped as engine implementations need not check this value that often or
-	 * at all.
-	 * 
-	 * @return Whether the rendering process has been requested to stop.
-	 */
-	public boolean isCancelled()
-	{
-		return cancel;
 	}
 	
 	
