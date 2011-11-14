@@ -27,6 +27,8 @@ public class RasterDataContext implements DataContext
 	private double dataMinimumValue = 0;
 	private double dataMaximumValue = 0;
 	
+	private double metersResolution;
+	
 	private boolean isDisposed = false;
 	
 	public RasterDataContext()
@@ -71,7 +73,8 @@ public class RasterDataContext implements DataContext
 			rasterDataRowColumnBoxes.add(rowColBox);
 		}
 		
-
+		metersResolution = getMetersResolution(DemConstants.EARTH_MEAN_RADIUS);
+		
 		log.info("Prepared RasterDataProxy to region N/S/E/W: " + north + "/" + south + "/" + east + "/" + west);
 		log.info("Prepared RasterDataProxy to lat/long resolutions: " + latitudeResolution + "/" + longitudeResolution);
 		
@@ -120,6 +123,30 @@ public class RasterDataContext implements DataContext
 		}
 		
 	}
+	
+
+	public double  getMetersResolution()
+	{
+		return metersResolution;
+	}
+	
+	public double getMetersResolution(double meanRadius)
+	{
+		double lat1 = getSouth();
+		double lon1 = getWest();
+		double lat2 = lat1 + getLatitudeResolution();
+		double lon2 = lon1 + getLongitudeResolution();
+		double R = meanRadius;
+		double dLat = Math.toRadians(lat2 - lat1);
+		double dLon = Math.toRadians(lon2 - lon1);
+		
+
+		double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+		double d = R * c * 1000;
+		return d;
+	}
+	
 	
 	public void addRasterData(RasterData rasterData) throws DataSourceException
 	{

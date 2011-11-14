@@ -19,8 +19,16 @@ package us.wthr.jdem846;
 import java.util.UUID;
 
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.MapProjectionException;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.render.ModelDimensions2D;
+import us.wthr.jdem846.render.mapprojection.MapProjection;
+import us.wthr.jdem846.render.mapprojection.MapProjectionProviderFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.util.UniqueIdentifierUtil;
@@ -32,14 +40,16 @@ import us.wthr.jdem846.util.UniqueIdentifierUtil;
  */
 public class ModelContext
 {
-
+	private static Log log = Logging.getLog(ModelContext.class);
+	
 	private RasterDataContext rasterDataContext;
 	private ShapeDataContext shapeDataContext;
 	private ModelOptions modelOptions;
 	private ScriptProxy scriptProxy;
 	private String contextId;
 	
-	
+	private MapProjection mapProjection;
+	private ModelDimensions2D modelDimensions;
 	
 	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
 	{
@@ -49,6 +59,37 @@ public class ModelContext
 		this.scriptProxy = scriptProxy;
 	}
 
+	
+	public void updateContext()
+	{
+		modelDimensions = ModelDimensions2D.getModelDimensions(this);
+		try {
+			
+			mapProjection = MapProjectionProviderFactory.getMapProjection(this);
+			
+		} catch (MapProjectionException ex) {
+			log.error("Failed to create map projection: " + ex.getMessage(), ex);
+		}
+		
+		
+	}
+	
+	public MapProjection getMapProjection()
+	{
+		return mapProjection;
+	}
+	
+	public ModelDimensions2D getModelDimensions()
+	{
+		return modelDimensions;
+	}
+	
+	public ModelCanvas createModelCanvas()
+	{
+		ModelCanvas modelCanvas = new ModelCanvas(this);
+		return modelCanvas;
+	}
+	
 	public RasterDataContext getRasterDataContext()
 	{
 		return rasterDataContext;
@@ -148,7 +189,7 @@ public class ModelContext
 	{
 		String contextId = ModelContext.generateContextId();
 		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, modelOptions, scriptProxy, contextId);
-		
+		modelContext.updateContext();
 		return modelContext;
 	}
 	

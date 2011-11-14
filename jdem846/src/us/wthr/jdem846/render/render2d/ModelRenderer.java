@@ -99,7 +99,7 @@ public class ModelRenderer
 		ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
 		
 		
-		
+		/*
 		ModelCanvas modelCanvas = new ModelCanvas(modelContext);
 		MapProjection mapProjection = null;
 		try {
@@ -117,8 +117,8 @@ public class ModelRenderer
 			throw new RenderEngineException("Error loading map projection algorithm: " + ex.getMessage(), ex);
 		}
 		modelCanvas.setMapProjection(mapProjection);
-		
-		
+		*/
+		ModelCanvas modelCanvas = modelContext.createModelCanvas();
 		
 		on2DModelBefore(modelCanvas);
 		

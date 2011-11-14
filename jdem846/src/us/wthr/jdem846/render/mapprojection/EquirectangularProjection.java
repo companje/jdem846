@@ -1,5 +1,6 @@
 package us.wthr.jdem846.render.mapprojection;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -31,6 +32,16 @@ public class EquirectangularProjection implements MapProjection
 	public EquirectangularProjection(double north, double south, double east, double west, double width, double height)
 	{
 		setUp(north, south, east, west, width, height);
+	}
+	
+	public void setUp(ModelContext modelContext)
+	{
+		setUp(modelContext.getNorth(), 
+				modelContext.getSouth(),
+				modelContext.getEast(),
+				modelContext.getWest(),
+				modelContext.getModelDimensions().getOutputWidth(),
+				modelContext.getModelDimensions().getOutputHeight());
 	}
 	
 	public void setUp(double north, double south, double east, double west, double width, double height)

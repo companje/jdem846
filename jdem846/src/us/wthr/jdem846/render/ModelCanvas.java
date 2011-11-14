@@ -72,8 +72,12 @@ public class ModelCanvas
 			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		}
 		
-		mapProjection = new EquirectangularProjection(getNorth(), getSouth(), getEast(), getWest(), getWidth(), getHeight());
-
+		if (modelContext.getMapProjection() != null) {
+			mapProjection = modelContext.getMapProjection();
+		} else {
+			mapProjection = new EquirectangularProjection();
+			mapProjection.setUp(modelContext);
+		}
 	}
 
 	protected GraphicsConfiguration getGraphicsConfiguration()
@@ -165,6 +169,17 @@ public class ModelCanvas
 		
 		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
 
+		column0 = Math.floor(column0);
+		column1 = Math.ceil(column1);
+		if (column1 <= column0)
+			column1 = column0 + 1;
+		
+		row0 = Math.floor(row0);
+		row1 = Math.ceil(row1);
+		if (row1 <= row0)
+			row1 = row0 + 1;
+		
+		
 		rectangle.x = column0;
 		rectangle.y = row0;
 		rectangle.width = column1 - column0;
