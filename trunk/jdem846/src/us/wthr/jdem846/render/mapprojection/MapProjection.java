@@ -1,5 +1,6 @@
 package us.wthr.jdem846.render.mapprojection;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -21,6 +22,8 @@ public interface MapProjection
 	 * @param height
 	 */
 	public void setUp(double north, double south, double east, double west, double width, double height);
+	
+	public void setUp(ModelContext modelContext);
 	
 	/** Requests a canvas row & column from the specified latitude, longitude, and, optionally, elevation.
 	 * The MapPoint parameter is to allow object reuse.

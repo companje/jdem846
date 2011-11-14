@@ -1,5 +1,6 @@
 package us.wthr.jdem846.render.mapprojection;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.gfx.Vector;
@@ -16,6 +17,8 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 	
 	double[] pointVector = new double[3];
 	
+	private ModelContext modelContext;
+	
 	public Equirectangular3dProjection()
 	{
 		
@@ -24,6 +27,17 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 	public Equirectangular3dProjection(double north, double south, double east, double west, double width, double height)
 	{
 		setUp(north, south, east, west, width, height);
+	}
+	
+	public void setUp(ModelContext modelContext)
+	{
+		this.modelContext = modelContext;
+		setUp(modelContext.getNorth(), 
+				modelContext.getSouth(),
+				modelContext.getEast(),
+				modelContext.getWest(),
+				modelContext.getModelDimensions().getOutputWidth(),
+				modelContext.getModelDimensions().getOutputHeight());
 	}
 	
 	public void setUp(double north, double south, double east, double west, double width, double height)
@@ -43,8 +57,24 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 	{
 		super.getPoint(latitude, longitude, elevation, point);
 		
+		double min = 0;
+		double max = 0;
+		double elev = 0;
+		double resolution = 0;
+		
+		if (this.modelContext != null) {
+			min = modelContext.getRasterDataContext().getDataMinimumValue();
+			max = modelContext.getRasterDataContext().getDataMaximumValue();
+			//resolution = (modelContext.getRasterDataContext().getLatitudeResolution() + modelContext.getRasterDataContext().getLongitudeResolution()) / 2.0;
+			resolution = modelContext.getRasterDataContext().getMetersResolution();
+			elev = elevation;
+			elev = ((elev - max) / resolution) + Math.abs(min) + 2.0;
+		}
+		
+		//elev = -1.00000;
+		
 		pointVector[0] = point.column - (getWidth() / 2.0);
-		pointVector[1] = 0;
+		pointVector[1] = elev;
 		pointVector[2] = point.row - (getHeight() / 2.0);
 		
 		Vector.rotate(0, rotateY, 0, pointVector);
@@ -52,8 +82,8 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		
 		projectTo(pointVector, eyeVector, nearVector);
 		
-		point.column = pointVector[0];
-		point.row = pointVector[1];
+		point.column = -pointVector[0] + (getWidth()/2.0);
+		point.row = pointVector[1] + (getHeight()/2.0);
 		
 	}
 	
