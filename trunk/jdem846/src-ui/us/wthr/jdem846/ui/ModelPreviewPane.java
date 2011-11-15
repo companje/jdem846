@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.input.DataPackage;
@@ -44,6 +45,11 @@ import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
+import us.wthr.jdem846.tasks.RunnableTask;
+import us.wthr.jdem846.tasks.TaskControllerService;
+import us.wthr.jdem846.tasks.TaskStatusAdapter;
+import us.wthr.jdem846.tasks.TaskStatusListener;
+import us.wthr.jdem846.ui.ModelPreviewPane.ImagePanel;
 import us.wthr.jdem846.ui.ModelingWorkerThread.ModelCompletionListener;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.border.StandardBorder;
@@ -61,6 +67,8 @@ public class ModelPreviewPane extends TitledRoundedPanel
 	private int previewHeight = 100;
 	
 	//private WorkingGlassPane glassPane;
+	
+	
 	
 	private boolean needsUpdate = false;
 	private ImagePanel imagePanel;
@@ -139,18 +147,55 @@ public class ModelPreviewPane extends TitledRoundedPanel
 				log.error("Failed to copy model context: " + ex.getMessage(), ex);
 				return;
 			}
-			Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 			
-			dem2d.addTileCompletionListener(new TileCompletionListener() {
-				public void onTileCompleted(ModelCanvas modelCanvas, double pctComplete)
+			final Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
+
+			
+			RunnableTask renderTask = new RunnableTask("Model Render Task") {
+				
+				public void run() throws RenderEngineException
 				{
-					imagePanel.setCanvas(modelCanvas);
-					//canvas = outputCanvas;
-					repaint();
+					log.info("Model rendering task starting");
+					this.setStoppable(true);
+					
+					OutputProduct<ModelCanvas> product = dem2d.generate(true);
+					ModelCanvas modelCanvas = product.getProduct();
+					if (modelCanvas != null) {
+						imagePanel.setCanvas(modelCanvas);
+						repaint();
+					}
+					
 				}
 				
-			});
+				@Override
+				public void cancel()
+				{
+					dem2d.cancel();
+				}
+			};
+			TaskStatusListener taskStatusListener = new TaskStatusAdapter() {
+				public void taskCompleted(RunnableTask task) 
+				{ 
+					JdemFrame.getInstance().setGlassVisible(false);
+				}
+				public void taskFailed(RunnableTask task, Throwable thrown) 
+				{ 
+					JdemFrame.getInstance().setGlassVisible(false);
+					
+					JOptionPane.showMessageDialog(getRootPane(),
+						    I18N.get("us.wthr.jdem846.ui.modelPreviewPane.modelFailed.message") + ": " + thrown.getMessage(),
+						    I18N.get("us.wthr.jdem846.ui.modelPreviewPane.modelFailed.title"),
+						    JOptionPane.ERROR_MESSAGE);
+				}
+			};
 			
+			TaskControllerService.addTask(renderTask, taskStatusListener);
+			
+			
+			
+			
+			
+			/*
 			final String background = modelContext.getModelOptions().getBackgroundColor();
 			modelContext.getModelOptions().setBackgroundColor("White");
 			ModelingWorkerThread workerThread = new ModelingWorkerThread(dem2d);
@@ -177,6 +222,7 @@ public class ModelPreviewPane extends TitledRoundedPanel
 			//OutputProduct<DemCanvas> canvasProduct = dem2d.generate(true);
 			//modelOptions.setBackgroundColor(background);
 			//canvas = canvasProduct.getProduct();
+			*/
 			
 			//this.repaint();
 		//} else {

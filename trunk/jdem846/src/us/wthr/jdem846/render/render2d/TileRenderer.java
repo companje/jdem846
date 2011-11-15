@@ -56,6 +56,7 @@ public class TileRenderer extends CancellableProcess
 	private double longitudeResolution;
 	private double latitudeGridSize;
 	private double longitudeGridSize; 
+	private boolean useSimpleCanvasFill;
 	
 	private int[] triangleColorNW = {0, 0, 0, 0};
 	private int[] triangleColorSE = {0, 0, 0, 0};
@@ -93,7 +94,8 @@ public class TileRenderer extends CancellableProcess
 		lightingMultiple = getModelOptions().getLightingMultiple();
 		elevationMax = getRasterDataContext().getDataMaximumValue();
 		elevationMin = getRasterDataContext().getDataMinimumValue();
-
+		useSimpleCanvasFill = getModelOptions().getUseSimpleCanvasFill();
+		
 		solarElevation = getModelOptions().getLightingElevation();
 		solarAzimuth = getModelOptions().getLightingAzimuth();
 
@@ -182,18 +184,19 @@ public class TileRenderer extends CancellableProcess
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1] + frontRightPoints[1]) / 4.0;
 			renderTriangle(avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
-			modelCanvas.fillRectangle(triangleColorNW,
-					latitude, longitude, backLeftPoints[1],
-					latitude-latitudeResolution, longitude, frontLeftPoints[1],
-					latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
-					latitude, longitude+longitudeResolution, backRightPoints[1]);
-			
-			/*
-			modelCanvas.fillRectangle(triangleColorNW, 
-					latitude, longitude, 
-					latitudeResolution, longitudeResolution,
-					avgElevationNW);
-					*/
+			if (useSimpleCanvasFill) {
+				modelCanvas.fillRectangle(triangleColorNW, 
+						latitude, longitude, 
+						latitudeResolution, longitudeResolution,
+						avgElevationNW);
+			} else {
+				modelCanvas.fillRectangle(triangleColorNW,
+						latitude, longitude, backLeftPoints[1],
+						latitude-latitudeResolution, longitude, frontLeftPoints[1],
+						latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
+						latitude, longitude+longitudeResolution, backRightPoints[1]);
+			}
+
 			
 		}
 	}

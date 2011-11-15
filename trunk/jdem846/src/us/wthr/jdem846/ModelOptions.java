@@ -516,6 +516,16 @@ public class ModelOptions
 		setOption(ModelOptionNamesEnum.ANTIALIASED, antialiased);
 	}
 
+	public boolean getUseSimpleCanvasFill()
+	{
+		return getBooleanOption(ModelOptionNamesEnum.USE_SIMPLE_CANVAS_FILL);
+	}
+	
+	public void setUseSimpleCanvasFill(boolean useSimpleCanvasFill)
+	{
+		setOption(ModelOptionNamesEnum.USE_SIMPLE_CANVAS_FILL, useSimpleCanvasFill);
+	}
+	
 
 	public String getWriteTo()
 	{
