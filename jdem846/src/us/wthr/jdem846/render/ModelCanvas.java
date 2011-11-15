@@ -155,6 +155,54 @@ public class ModelCanvas
 		
 	}
 	
+	/** Simplified rectangle fill.
+	 * 
+	 * @param color
+	 * @param latitude
+	 * @param longitude
+	 * @param width
+	 * @param height
+	 * @param elevation
+	 */
+	public void fillRectangle(int[] color,
+			double latitude, double longitude, 
+			double width, double height,
+			double elevation)
+	{
+		mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
+		double row0 = mapPoint.row;
+		double column0 = mapPoint.column;
+
+		
+		mapProjection.getPoint(latitude-height, longitude+width, elevation, mapPoint);
+		double row1 = mapPoint.row;
+		double column1 = mapPoint.column;
+
+		
+		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
+
+		if (!isAntiAliased) {
+			column0 = Math.floor(column0);
+			column1 = Math.ceil(column1);
+			if (column1 <= column0)
+				column1 = column0 + 1;
+			
+			row0 = Math.floor(row0);
+			row1 = Math.ceil(row1);
+			if (row1 <= row0)
+				row1 = row0 + 1;
+		}
+		
+		rectangle.x = column0;
+		rectangle.y = row0;
+		rectangle.width = column1 - column0;
+		rectangle.height = row1 - row0;
+		
+
+		//graphics.setClip(rectangle);
+		fillShape(fillColor, null, rectangle);
+	}
+	
 	public void fillRectangle(int[] color, 
 			double lat0, double lon0, double elev0,
 			double lat1, double lon1, double elev1,
@@ -197,38 +245,7 @@ public class ModelCanvas
 		fillShape(fillColor, null, pathBuffer);
 		
 		/*
-		mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
-		double row0 = mapPoint.row;
-		double column0 = mapPoint.column;
-
 		
-		mapProjection.getPoint(latitude-height, longitude+width, elevation, mapPoint);
-		double row1 = mapPoint.row;
-		double column1 = mapPoint.column;
-
-		
-		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
-
-		if (!isAntiAliased) {
-			column0 = Math.floor(column0);
-			column1 = Math.ceil(column1);
-			if (column1 <= column0)
-				column1 = column0 + 1;
-			
-			row0 = Math.floor(row0);
-			row1 = Math.ceil(row1);
-			if (row1 <= row0)
-				row1 = row0 + 1;
-		}
-		
-		rectangle.x = column0;
-		rectangle.y = row0;
-		rectangle.width = column1 - column0;
-		rectangle.height = row1 - row0;
-		
-
-		//graphics.setClip(rectangle);
-		fillShape(fillColor, null, rectangle);
 		*/
 		
 	}

@@ -174,6 +174,7 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 	@Override
 	public void clearBuffer() throws DataSourceException
 	{
+		log.info("Clearing Buffer!");
 		dataReader.clearBuffer();
 	}
 	

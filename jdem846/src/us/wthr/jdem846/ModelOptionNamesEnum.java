@@ -20,6 +20,7 @@ public enum ModelOptionNamesEnum
 	LIGHTING_MULTIPLE("us.wthr.jdem846.modelOptions.lightingMultiple"),
 	SPOT_EXPONENT("us.wthr.jdem846.modelOptions.spotExponent"),
 	ELEVATION_MULTIPLE("us.wthr.jdem846.modelOptions.elevationMultiple"),
+	USE_SIMPLE_CANVAS_FILL("us.wthr.jdem846.modelOptions.useSimpleCanvasFill"),
 	
 	RELATIVE_LIGHT_INTENSITY("us.wthr.jdem846.modelOptions.relativeLightIntensity"),
 	RELATIVE_DARK_INTENSITY("us.wthr.jdem846.modelOptions.relativeDarkIntensity"),

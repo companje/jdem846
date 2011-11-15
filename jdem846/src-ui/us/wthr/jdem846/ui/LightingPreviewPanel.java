@@ -139,9 +139,12 @@ public class LightingPreviewPanel extends Panel
 			modelOptions.setBackgroundColor(I18N.get("us.wthr.jdem846.color.transparent"));
 			modelOptions.setWidth(rasterData.getColumns());
 			modelOptions.setHeight(rasterData.getRows());
-			modelOptions.setRelativeLightIntensity(1.0);
+			modelOptions.setRelativeLightIntensity(0.75);
 			modelOptions.setRelativeDarkIntensity(1.0);
 			modelOptions.setDoublePrecisionHillshading(false);
+			modelOptions.setTileSize(1000);
+			modelOptions.setGridSize(2);
+			modelOptions.setUseSimpleCanvasFill(true);
 			modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
 			
 			rasterDataContext = new RasterDataContext();
