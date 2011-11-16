@@ -54,7 +54,7 @@ public class GradientLoader
 	private String units;
 	
 	protected GradientLoader(String configString) throws GradientLoadException
-	{
+	{ 
 		loadJSON(configString);
 	}
 	

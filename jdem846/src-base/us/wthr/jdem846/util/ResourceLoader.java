@@ -29,6 +29,7 @@ import java.net.URL;
 
 import us.wthr.jdem846.exception.ResourceLoaderException;
 
+@Deprecated
 public class ResourceLoader
 {
 	

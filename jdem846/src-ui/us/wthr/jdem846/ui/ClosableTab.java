@@ -19,6 +19,7 @@ package us.wthr.jdem846.ui;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import javax.swing.JPanel;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Button;
@@ -62,7 +64,14 @@ public class ClosableTab extends Panel
 		lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 		
 		btnClose = new Button();
-		btnClose.setIcon(new ImageIcon(getClass().getResource(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/window-close.png")));
+		
+		String iconUrl = JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/window-close.png";
+		try {
+			btnClose.setIcon(ImageIcons.loadImageIcon(iconUrl));
+		} catch (IOException ex) {
+			log.warn("Failed to load icon at " + iconUrl, ex);
+		}
+		
 		btnClose.setOpaque(false);
 		btnClose.setContentAreaFilled(false);
 		btnClose.setFocusable(false);

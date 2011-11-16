@@ -19,6 +19,7 @@ package us.wthr.jdem846.color;
 import java.io.File;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.annotations.DemColoring;
 import us.wthr.jdem846.exception.GradientLoadException;
 
@@ -32,9 +33,10 @@ public class StandardModelColoring implements ModelColoring
 	
 	public StandardModelColoring() throws GradientLoadException
 	{
-		File rootPathFile = new File(ColoringRegistry.class.getResource(JDem846Properties.getProperty("us.wthr.jdem846.gradients")).getPath());
-		hypsometric = new GradientColoring(rootPathFile + "/hypsometric-global.json");
-		bathymetric = new GradientColoring(rootPathFile + "/bathymetric.json");
+		File hypsometricFile = JDemResourceLoader.getAsFile(JDem846Properties.getProperty("us.wthr.jdem846.gradients") + "/hypsometric-global.json");
+		File bathymetricFile = JDemResourceLoader.getAsFile(JDem846Properties.getProperty("us.wthr.jdem846.gradients") + "/bathymetric.json");
+		hypsometric = new GradientColoring(hypsometricFile.getAbsolutePath());
+		bathymetric = new GradientColoring(bathymetricFile.getAbsolutePath());
 		
 	}
 

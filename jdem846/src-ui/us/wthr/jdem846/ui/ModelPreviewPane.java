@@ -148,6 +148,8 @@ public class ModelPreviewPane extends TitledRoundedPanel
 				return;
 			}
 			
+			modelContext.getModelOptions().setBackgroundColor("255;255;255;255");
+			
 			final Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 
 			
@@ -157,6 +159,9 @@ public class ModelPreviewPane extends TitledRoundedPanel
 				{
 					log.info("Model rendering task starting");
 					this.setStoppable(true);
+					
+					
+					
 					
 					OutputProduct<ModelCanvas> product = dem2d.generate(true);
 					ModelCanvas modelCanvas = product.getProduct();

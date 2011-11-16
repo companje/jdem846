@@ -22,6 +22,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 
+import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -51,7 +52,8 @@ public class TempFiles
 	{
 		File tempFile = getTemporaryFile(prefix, suffix);
 		
-		InputStream in = ResourceLoader.getResourceAsStream(copyFrom);
+		
+		InputStream in = JDemResourceLoader.getAsInputStream(copyFrom);
 		FileOutputStream out = new FileOutputStream(tempFile);
 		
 		byte[] buffer = new byte[1024];
