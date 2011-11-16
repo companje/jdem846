@@ -122,9 +122,9 @@ public class LightingPreviewPanel extends Panel
 		modelOptions.setColoringType(JDem846Properties.getProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewColoring"));
 		
 		try {
-			File tmpGridFloatData = TempFiles.getTemporaryFile("lghtprv", ".flt", "jar://" + JDem846Properties.getProperty("us.wthr.jdem846.previewData") + "/raster-data.flt");
+			File tmpGridFloatData = TempFiles.getTemporaryFile("lghtprv", ".flt", JDem846Properties.getProperty("us.wthr.jdem846.previewData") + "/raster-data.flt");
 			
-			File tmpTempGridFloatHeader = TempFiles.getTemporaryFile("lghtprv", ".hdr", "jar://" + JDem846Properties.getProperty("us.wthr.jdem846.previewData") + "/raster-data.hdr");
+			File tmpTempGridFloatHeader = TempFiles.getTemporaryFile("lghtprv", ".hdr", JDem846Properties.getProperty("us.wthr.jdem846.previewData") + "/raster-data.hdr");
 			
 			String tmpHdrPath = tmpGridFloatData.getAbsolutePath();
 			tmpHdrPath = tmpHdrPath.replaceAll("\\.flt", ".hdr");

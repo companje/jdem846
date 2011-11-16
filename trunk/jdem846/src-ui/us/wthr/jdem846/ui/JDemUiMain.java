@@ -40,13 +40,33 @@ import us.wthr.jdem846.util.InstanceIdentifier;
 public class JDemUiMain 
 {
 	
-	private static Log log = Logging.getLog(JDemUiMain.class);
+	
+	
+	
+	/** Sets base system property values
+	 * 
+	 */
+	protected static void bootstrapSystemProperties()
+	{
+		
+		if (System.getProperty("us.wthr.jdem846.installPath") == null) {
+			System.setProperty("us.wthr.jdem846.installPath", System.getProperty("user.dir"));
+		}
+		if (System.getProperty("us.wthr.jdem846.resourcesPath") == null) {
+			System.setProperty("us.wthr.jdem846.resourcesPath", System.getProperty("us.wthr.jdem846.installPath"));
+		}
+		
+		if (System.getProperty("us.wthr.jdem846.userSettingsPath") == null) {
+			System.setProperty("us.wthr.jdem846.userSettingsPath", System.getProperty("user.home") + "/.jdem846");
+		}
+		
+	}
 	
 	/** Scans command line options and places appropriate values into system properties map.
 	 * 
 	 * @param args Command line options array.
 	 */
-	public static void checkCommandLineOptions(String[] args) throws ArgumentException
+	protected static void checkCommandLineOptions(String[] args) throws ArgumentException
 	{
 		//for (String arg : args) {
 		for (int i = 0; i < args.length; i++) {
@@ -75,6 +95,9 @@ public class JDemUiMain
 		}
 	}
 	
+
+	
+	
 	/** Application entry point.
 	 * 
 	 * @param args
@@ -82,8 +105,7 @@ public class JDemUiMain
 	public static void main(String[] args)
 	{
 		
-		
-		
+		bootstrapSystemProperties();
 		
 		try {
 			checkCommandLineOptions(args);
@@ -92,8 +114,7 @@ public class JDemUiMain
 			return;
 		}
 		
-		System.setProperty("us.wthr.jdem846.distPath", System.getProperty("user.dir"));
-		System.setProperty("us.wthr.jdem846.resourcesPath", System.getProperty("user.dir")+"/resources");
+		final Log log = Logging.getLog(JDemUiMain.class);
 		
 		String instanceId = InstanceIdentifier.getInstanceId();
 		log.info("Instance ID: " + instanceId);

@@ -18,10 +18,15 @@ package us.wthr.jdem846.image;
 
 import java.awt.Image;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+
+import us.wthr.jdem846.JDemResourceLoader;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 
 /** Controller for loading image resources.
  * 
@@ -30,6 +35,7 @@ import javax.swing.ImageIcon;
  */
 public class ImageIcons
 {
+	private static Log log = Logging.getLog(ImageIcons.class);
 	
 	private ImageIcons()
 	{
@@ -38,7 +44,7 @@ public class ImageIcons
 	
 	public static Image loadImage(String path) throws IOException
 	{
-		URL url = ImageIcons.class.getResource(path);
+		URL url = JDemResourceLoader.getAsURL(path);
 		Image image = ImageIO.read(url);
 		return image;
 		
@@ -46,7 +52,7 @@ public class ImageIcons
 	
 	public static ImageIcon loadImageIcon(String path) throws IOException
 	{
-		URL url = ImageIcons.class.getResource(path);
+		URL url = JDemResourceLoader.getAsURL(path);
 		Image image = ImageIO.read(url);
 		return new ImageIcon(image);
 		

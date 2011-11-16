@@ -33,6 +33,7 @@ import org.scannotation.ClasspathUrlFinder;
 import us.wthr.jdem846.AppRegistry;
 import us.wthr.jdem846.DiscoverableAnnotationIndexer;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.annotations.DemColoring;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
@@ -133,7 +134,8 @@ public class ColoringRegistry implements AppRegistry
 		String rootPath = JDem846Properties.getProperty("us.wthr.jdem846.gradients");
 		
 
-		File rootPathFile = new File(ColoringRegistry.class.getResource(rootPath).getPath());
+		//File rootPathFile = new File(ColoringRegistry.class.getResource(rootPath).getPath());
+		File rootPathFile = JDemResourceLoader.getAsFile(rootPath);
 		log.info("Searching " + rootPathFile.getAbsolutePath() + " for gradient files");
 		
 		if (!rootPathFile.exists()) {

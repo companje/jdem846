@@ -16,11 +16,13 @@
 
 package us.wthr.jdem846.i18n;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -77,8 +79,9 @@ public class I18N
 	{
 		Properties props = new Properties();
 		try {
-
-			props.load(I18N.class.getResourceAsStream(i18nPropertiesFile));
+			InputStream in = JDemResourceLoader.getAsInputStream(i18nPropertiesFile);
+			//InputStream in = I18N.class.getResourceAsStream(i18nPropertiesFile);
+			props.load(in);
 			
 			for (Object key : props.keySet()) {
 				String sKey = (String) key;

@@ -5,56 +5,70 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import us.wthr.jdem846.exception.ResourceLoaderException;
 
 public class JDemResourceLoader
 {
+	
+	private static Throwable lastException;
 	
 	protected JDemResourceLoader()
 	{
 		
 	}
 	
+
 	
 	public static InputStream getAsInputStream(String url) throws FileNotFoundException
 	{
-		String schema = url.substring(0, url.indexOf("://"));
-		String path = url.substring(url.indexOf("://") + 3);
-		
-		if (schema.equalsIgnoreCase("resources")) {
-			return getResourceAsInputStream(path);
+		try {
+			Resource resource = new Resource(url);
+			return resource.getAsInputStream();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			setLastException(ex);
+			return null;
 		}
-		
-		return null;
 	}
-	
-	protected static InputStream getResourceAsInputStream(String url) throws FileNotFoundException
-	{
-		File file = getResourceAsFile(url);
-		InputStream in = new BufferedInputStream(new FileInputStream(file));
-		return in;
-	}
-	
 	
 	
 	public static File getAsFile(String url)
 	{
-		String schema = url.substring(0, url.indexOf("://"));
-		String path = url.substring(url.indexOf("://") + 3);
-		
-		if (schema.equalsIgnoreCase("resources")) {
-			return getResourceAsFile(path);
+		try {
+			Resource resource = new Resource(url);
+			return resource.getAsFile();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			setLastException(ex);
+			return null;
 		}
-		
-		return null;
-		
 	}
 	
-	protected static File getResourceAsFile(String url)
+	
+	public static URL getAsURL(String url)
 	{
-		String resourcesPath = JDem846Properties.getProperty("us.wthr.jdem846.resourcesPath");
-		String searchPath = resourcesPath + "/" + url;
-		
-		return new File(searchPath);
+		try {
+			Resource resource = new Resource(url);
+			return resource.getAsURL();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			setLastException(ex);
+			return null;
+		}	
+	}
+	
+	
+	protected static void setLastException(Throwable thrown)
+	{
+		JDemResourceLoader.lastException = thrown;
+	}
+	
+	public static Throwable getLastException()
+	{
+		return JDemResourceLoader.lastException;
 	}
 	
 }
