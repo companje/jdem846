@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.dom4j.io.SAXReader;
 
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -150,10 +152,11 @@ public class FeatureTypesDefinitionLoader
 	
 	
 	
-	protected static Document loadDocument(String path) throws DocumentException 
+	protected static Document loadDocument(String path) throws DocumentException, FileNotFoundException 
 	{
 		SAXReader reader = new SAXReader();
-        Document document = reader.read(FeatureTypeStrokeLoader.class.getResourceAsStream(path));
+		InputStream in = JDemResourceLoader.getAsInputStream(path);
+        Document document = reader.read(in);
         return document;
 	}
 	
