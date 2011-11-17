@@ -72,7 +72,7 @@ public class ModelCanvas
 		
 		int transparencyType = (isAntiAliased) ? Transparency.TRANSLUCENT : Transparency.BITMASK;
 		
-		image = gc.createCompatibleImage(getWidth(), getHeight(), transparencyType);
+		image = gc.createCompatibleImage(getWidth()-1, getHeight()-1, transparencyType);
 		raster = image.getRaster();
 		
 		graphics = (Graphics2D) image.getGraphics();
