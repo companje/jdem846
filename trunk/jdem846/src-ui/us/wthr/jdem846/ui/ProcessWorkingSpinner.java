@@ -22,12 +22,14 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.ui.base.Label;
 
 @SuppressWarnings("serial")
@@ -97,7 +99,15 @@ public class ProcessWorkingSpinner extends Label
 	
 	protected BufferedImage loadImage(String imagePath)
 	{
-		ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+		//ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+		ImageIcon icon = null;
+		try {
+			icon = ImageIcons.loadImageIcon(imagePath);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		
 		Image raw = icon.getImage();
 		
 		BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);

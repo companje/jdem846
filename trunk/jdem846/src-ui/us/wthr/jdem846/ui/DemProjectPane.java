@@ -180,14 +180,14 @@ public class DemProjectPane extends JdemPanel
 		MainMenuBar.insertMenu(projectMenu);
 		
 		// Add listeners
-		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.add"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/list-add.png", KeyEvent.VK_A, new ActionListener() {
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.add"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.addData"), KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				openInputData();
 			}
 		}));
 		
-		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.remove"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/list-remove.png", KeyEvent.VK_R, new ActionListener() {
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.remove"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.removeData"), KeyEvent.VK_R, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				int selectedType = datasetTree.getSelectedDatasetType();
@@ -196,14 +196,14 @@ public class DemProjectPane extends JdemPanel
 			}
 		}));
 
-		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.create"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/stock_update-data.png", KeyEvent.VK_C, new ActionListener() {
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.create"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.createModel"), KeyEvent.VK_C, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onCreateModel();
 			}
 		}));
 		
-		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.export"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/data_export.png", KeyEvent.VK_E, new ActionListener() {
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.export"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.exportData"), KeyEvent.VK_E, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onExportData();

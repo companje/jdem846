@@ -22,9 +22,29 @@ public class RasterDataTesting
 	private static Log log = Logging.getLog(RasterDataTesting.class);
 	
 	
+	/** Sets base system property values
+	 * 
+	 */
+	protected static void bootstrapSystemProperties()
+	{
+		
+		if (System.getProperty("us.wthr.jdem846.installPath") == null) {
+			System.setProperty("us.wthr.jdem846.installPath", System.getProperty("user.dir"));
+		}
+		if (System.getProperty("us.wthr.jdem846.resourcesPath") == null) {
+			System.setProperty("us.wthr.jdem846.resourcesPath", System.getProperty("us.wthr.jdem846.installPath"));
+		}
+		
+		if (System.getProperty("us.wthr.jdem846.userSettingsPath") == null) {
+			System.setProperty("us.wthr.jdem846.userSettingsPath", System.getProperty("user.home") + "/.jdem846");
+		}
+		
+	}
 	
 	public static void main(String[] args)
 	{
+		
+		bootstrapSystemProperties();
 		
 		try {
 			RegistryKernel regKernel = new RegistryKernel();
@@ -42,13 +62,18 @@ public class RasterDataTesting
 		//inputDataList.add("C:/srv/elevation/Maui/58273983.flt");
 		//String saveOutputTo = "C:/srv/elevation/Maui/test-output.png";
 		
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
-		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/test-output.png";
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		//String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/test-output.png";
 		
 		
 		//inputDataList.add("C:/srv/elevation/etopo1_ice_g_f4/etopo1_ice_g_f4.flt");
 		//String saveOutputTo = "C:/srv/elevation/etopo1_ice_g_f4/test-output.png";
+		
+		
+		inputDataList.add("/elev/DataRaster-Testing/PresRange_1-3as.flt");
+		inputDataList.add("/elev/DataRaster-Testing/PresRange_1as.flt");
+		String saveOutputTo = "/elev/DataRaster-Testing/test-output.png";
 		
 		RasterDataTesting testing = new RasterDataTesting();
 		
@@ -94,9 +119,10 @@ public class RasterDataTesting
 		modelOptions.setTileSize(1000);
 		modelOptions.setWidth(dataProxy.getDataColumns());
 		modelOptions.setHeight(dataProxy.getDataRows());
-		modelOptions.setDoublePrecisionHillshading(true);
-		modelOptions.setAntialiased(true);
-		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR3D);
+		modelOptions.setDoublePrecisionHillshading(false);
+		modelOptions.setUseSimpleCanvasFill(true);
+		modelOptions.setAntialiased(false);
+		//modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR3D);
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, modelOptions);
 		
 		

@@ -145,6 +145,7 @@ public class LightingPreviewPanel extends Panel
 			modelOptions.setTileSize(1000);
 			modelOptions.setGridSize(2);
 			modelOptions.setUseSimpleCanvasFill(true);
+			modelOptions.setAntialiased(false);
 			modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
 			
 			rasterDataContext = new RasterDataContext();

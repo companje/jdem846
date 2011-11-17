@@ -51,25 +51,25 @@ public class OrderingButtonBar extends ToolBar
 		this.setFloatable(false);
 		
 		// Create buttons
-		jbtnMoveTop = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveTop.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/go-top.png", new ActionListener() {
+		jbtnMoveTop = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveTop.label"), JDem846Properties.getProperty("us.wthr.jdem846.ui.orderingButtonBar.moveTop"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_TOP);
 			}
 		});
 		
-		jbtnMoveUp = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveUp.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/go-up.png", new ActionListener() {
+		jbtnMoveUp = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveUp.label"), JDem846Properties.getProperty("us.wthr.jdem846.ui.orderingButtonBar.moveUp"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_UP);
 			}
 		});
 		
-		jbtnMoveDown = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveDown.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/go-down.png", new ActionListener() {
+		jbtnMoveDown = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveDown.label"), JDem846Properties.getProperty("us.wthr.jdem846.ui.orderingButtonBar.moveDown"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_DOWN);
 			}
 		});
 		
-		jbtnMoveBottom = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveBottom.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/go-bottom.png", new ActionListener() {
+		jbtnMoveBottom = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveBottom.label"), JDem846Properties.getProperty("us.wthr.jdem846.ui.orderingButtonBar.moveBottom") , new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireOrderingButtonClickedListeners(BTN_MOVE_BOTTOM);
 			}

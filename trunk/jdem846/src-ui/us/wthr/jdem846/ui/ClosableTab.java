@@ -65,7 +65,7 @@ public class ClosableTab extends Panel
 		
 		btnClose = new Button();
 		
-		String iconUrl = JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/window-close.png";
+		String iconUrl = JDem846Properties.getProperty("us.wthr.jdem846.ui.closableTab.tabClose");
 		try {
 			btnClose.setIcon(ImageIcons.loadImageIcon(iconUrl));
 		} catch (IOException ex) {

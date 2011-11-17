@@ -53,25 +53,25 @@ public class ProjectButtonBar extends ComponentButtonBar
 		// Create components
 		
 		
-		jbtnAdd = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.addButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/list-add.png", new ActionListener() {
+		jbtnAdd = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.addButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.addData") , new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_ADD);
 			}
 		});
 		
-		jbtnRemove = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.removeButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/list-remove.png", new ActionListener() {
+		jbtnRemove = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.removeButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.removeData"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_REMOVE);
 			}
 		});
 		
-		jbtnCreate = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.createButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/stock_update-data.png", new ActionListener() {
+		jbtnCreate = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.createButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.createModel"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_CREATE);
 			}
 		});
 		
-		jbtnExport = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.exportButton"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/data_export.png", new ActionListener() {
+		jbtnExport = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.projectButtonBar.exportButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.exportData"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_EXPORT);
 			}

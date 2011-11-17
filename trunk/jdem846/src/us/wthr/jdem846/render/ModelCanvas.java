@@ -43,7 +43,9 @@ public class ModelCanvas
 	private Color backgroundColor;
 	private ModelDimensions2D modelDimensions;
 	
-	private Image image;
+	private BufferedImage image;
+	private WritableRaster raster;
+	
 	private Graphics2D graphics;
 	
 	private boolean isDisposed = false;
@@ -70,8 +72,8 @@ public class ModelCanvas
 		
 		int transparencyType = (isAntiAliased) ? Transparency.TRANSLUCENT : Transparency.BITMASK;
 		
-		image = gc.createCompatibleVolatileImage(getWidth(), getHeight(), transparencyType);
-		
+		image = gc.createCompatibleImage(getWidth(), getHeight(), transparencyType);
+		raster = image.getRaster();
 		
 		graphics = (Graphics2D) image.getGraphics();
 		graphics.setComposite(AlphaComposite.Src);
@@ -178,29 +180,54 @@ public class ModelCanvas
 		double row1 = mapPoint.row;
 		double column1 = mapPoint.column;
 
-		
-		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
+		if (isAntiAliased) {
+			fillRectangleSimpleAntialiased(color, row0, column0, row1, column1);
+		} else {
+			fillRectangleSimpleStandard(color, row0, column0, row1, column1);
+		}
 
-		if (!isAntiAliased) {
-			column0 = Math.floor(column0);
-			column1 = Math.ceil(column1);
-			if (column1 <= column0)
-				column1 = column0 + 1;
-			
-			row0 = Math.floor(row0);
-			row1 = Math.ceil(row1);
-			if (row1 <= row0)
-				row1 = row0 + 1;
+		
+	}
+	
+	protected void fillRectangleSimpleStandard(int[] color, 
+												double row0, double column0,
+												double row1, double column1)
+	{
+		color[3] = 0xFF;
+		int _column0 = (int) column0;
+		int _column1 = (int) Math.ceil(column1);
+		//if (_column1 <= _column0)
+		//	_column1 = _column0 + 1;
+		
+		int _row0 = (int) row0;
+		int _row1 = (int) Math.ceil(row1);
+		//if (_row1 <= _row0)
+		//	_row1 = _row0 + 1;
+		
+		
+		int maxRow = raster.getHeight() - 1;
+		int maxCol = raster.getWidth() - 1;
+		
+		for (int row = _row0; row <= _row1 && row < maxRow; row++) {
+			for (int col = _column0; col <= _column1 && col < maxCol; col++) {
+				raster.setPixel(col, row, color);
+			}
 		}
 		
+	}
+	
+	protected void fillRectangleSimpleAntialiased(int[] color, 
+												double row0, double column0,
+												double row1, double column1)
+	{
+		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
 		rectangle.x = column0;
 		rectangle.y = row0;
 		rectangle.width = column1 - column0;
 		rectangle.height = row1 - row0;
-		
 
-		//graphics.setClip(rectangle);
 		fillShape(fillColor, null, rectangle);
+		
 	}
 	
 	public void fillRectangle(int[] color, 

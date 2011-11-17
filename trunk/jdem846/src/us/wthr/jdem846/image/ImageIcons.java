@@ -44,16 +44,16 @@ public class ImageIcons
 	
 	public static Image loadImage(String path) throws IOException
 	{
-		URL url = JDemResourceLoader.getAsURL(path);
-		Image image = ImageIO.read(url);
+		InputStream in = JDemResourceLoader.getAsInputStream(path);
+		Image image = ImageIO.read(in);
 		return image;
 		
 	}
 	
 	public static ImageIcon loadImageIcon(String path) throws IOException
 	{
-		URL url = JDemResourceLoader.getAsURL(path);
-		Image image = ImageIO.read(url);
+		InputStream in = JDemResourceLoader.getAsInputStream(path);
+		Image image = ImageIO.read(in);
 		return new ImageIcon(image);
 		
 	}

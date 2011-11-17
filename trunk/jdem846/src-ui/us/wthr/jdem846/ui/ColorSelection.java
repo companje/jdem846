@@ -15,6 +15,7 @@ import javax.swing.event.ChangeListener;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.base.ColorChooser;
 import us.wthr.jdem846.ui.base.Dialog;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.util.ColorSerializationUtil;
@@ -138,12 +139,13 @@ public class ColorSelection extends Panel
 	class ColorPickerDialog extends Dialog
 	{
 		
-		private JColorChooser colorChooser;
+		private ColorChooser colorChooser;
 		
 		public ColorPickerDialog(Color selection)
 		{
 			
-			colorChooser = new JColorChooser(selection);
+			colorChooser = new ColorChooser(selection);
+			colorChooser.setPreviewPanel(new Panel());
 			
 			BorderLayout layout = new BorderLayout();
 			setLayout(layout);
