@@ -40,6 +40,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import us.wthr.jdem846.image.ImageUtilities;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
@@ -47,12 +49,10 @@ import us.wthr.jdem846.ui.base.ScrollPane;
 @SuppressWarnings("serial")
 public class ImageDisplayPanel extends Panel
 {
-	
-	
-	private Label displayLabel;
-	private ScrollPane scrollPane;
+	private static Log log = Logging.getLog(ImageDisplayPanel.class);
 	
 	private Image trueImage;
+	private Image scaled;
 	private int imageTrueWidth = -1;
 	private int imageTrueHeight = -1;
 	private double scalePercent = 1.0;
@@ -61,6 +61,9 @@ public class ImageDisplayPanel extends Panel
 	
 	private int lastDragMouseX = -1;
 	private int lastDragMouseY = -1;
+	
+	private int translateX = 0;
+	private int translateY = 0;
 	
 	private List<MousePositionListener> mousePositionListeners = new LinkedList<MousePositionListener>();
 	
@@ -72,12 +75,6 @@ public class ImageDisplayPanel extends Panel
 		setLayout(new BorderLayout());
 		
 		// Create components
-		displayLabel = new Label();
-		displayLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		displayLabel.setAlignmentY(JLabel.CENTER_ALIGNMENT);
-		displayLabel.setHorizontalAlignment(JLabel.CENTER);
-		displayLabel.setVerticalAlignment(JLabel.CENTER);
-		scrollPane = new ScrollPane(displayLabel);
 		
 		setAlignmentX(CENTER_ALIGNMENT);
 		setAlignmentY(CENTER_ALIGNMENT);
@@ -90,7 +87,7 @@ public class ImageDisplayPanel extends Panel
 				}
 			}
 		});
-		displayLabel.addMouseMotionListener(new MouseMotionListener() {
+		this.addMouseMotionListener(new MouseMotionListener() {
 			public void mouseDragged(MouseEvent e) {
 				onMouseDragged(e.getX(), e.getY());
 			}
@@ -99,7 +96,7 @@ public class ImageDisplayPanel extends Panel
 			}
 		});
 		
-		displayLabel.addMouseListener(new MouseListener() {
+		this.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent e) {
 				
 			}
@@ -119,15 +116,12 @@ public class ImageDisplayPanel extends Panel
 			}
 		});
 		
-		displayLabel.addMouseWheelListener(new MouseWheelListener() {
+		this.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				onMouseWheelMoved(e.getUnitsToScroll(), e.getScrollAmount(), e.getScrollType(), e.getX(), e.getY());
 			}
 		});
-		
-		
-		// Set Layout
-		add(scrollPane, BorderLayout.CENTER);
+
 	}
 	
 	
@@ -142,6 +136,7 @@ public class ImageDisplayPanel extends Panel
 	public void setScaleQuality(int scaleQuality) 
 	{
 		this.scaleQuality = scaleQuality;
+		createScaledImage();
 	}
 
 
@@ -166,57 +161,34 @@ public class ImageDisplayPanel extends Panel
 		imageTrueWidth = image.getWidth(this);
 		imageTrueHeight = image.getHeight(this);
 		zoomFit();
-		//scalePercent = this.getZoomToFitScalePercentage();
-		//if (scalePercent > 1.0)
-		//	scalePercent = 1.0;
 	}
 	
 	protected void onMouseWheelMoved(int units, int amount, int type, int x, int y)
 	{
 		zoom(units);
-		/*
-		scalePercent += (((double)units / 100.0) * -1);
-		if (scalePercent > 1.0)
-			scalePercent = 1.0;
-		if (scalePercent < 0)
-			scalePercent = 0;
-		
-		repaint();
-		*/
+
 	}
 	
 	protected void onMouseDragged(int x, int y)
 	{
-		int horizMin = scrollPane.getHorizontalScrollBar().getMinimum();
-		int horizMax = scrollPane.getHorizontalScrollBar().getMaximum();
-		
-		int vertMin = scrollPane.getVerticalScrollBar().getMinimum();
-		int vertMax = scrollPane.getVerticalScrollBar().getMaximum();
 		
 		int horizStep = -1 * (x - lastDragMouseX);
 		int vertStep = -1 * (y - lastDragMouseY);
 		
-		int horizPos = scrollPane.getHorizontalScrollBar().getValue();
-		int vertPos = scrollPane.getVerticalScrollBar().getValue();
-		
-		horizPos += horizStep;
-		if (horizPos < horizMin)
-			horizPos = horizMin;
-		if (horizPos > horizMax)
-			horizPos = horizMax;
-		
-		vertPos += vertStep;
-		if (vertPos < vertMin)
-			vertPos = vertMin;
-		if (vertPos > vertMax)
-			vertPos = vertMax;
 
-		scrollPane.getHorizontalScrollBar().setValue(horizPos);
-		scrollPane.getVerticalScrollBar().setValue(vertPos);
-
-		lastDragMouseX = x + horizStep;
-		lastDragMouseY = y + vertStep;
+		lastDragMouseX = x;// + horizStep;
+		lastDragMouseY = y;// + vertStep;
+		
+		
+		
+		translateX -= horizStep;
+		translateY -= vertStep;
+		
+		validateImagePosition();
+		repaint();
+		
 	}
+	
 	
 	protected void onMouseMoved(int x, int y)
 	{
@@ -226,48 +198,83 @@ public class ImageDisplayPanel extends Panel
 	@Override
 	public void paint(Graphics g)
 	{
-		if (trueImage != null) {
+		super.paint(g);
 		
-			
-			// Not perfect
-			Dimension viewSize = scrollPane.getViewport().getExtentSize();
-
-			//double minimumScalePercent = this.getZoomToFitScalePercentage();
-			
-			//if (scalePercent < minimumScalePercent)
-			//scalePercent = minimumScalePercent;
-			
-			//if (scalePercent > 1.0)
-			//	scalePercent = 1.0;
-			if (scalePercent <= 0)
-				scalePercent = 0.01;
+		Image displayImage = getDisplayImage();
+		if (displayImage != null) {
+			int viewWidth = getWidth();
+			int viewHeight = getHeight();
 			
 			int scaleToWidth = (int) Math.floor((double)imageTrueWidth * (double) scalePercent);
 			int scaleToHeight = (int) Math.floor((double)imageTrueHeight * (double) scalePercent);
 			
-			// Kinda silly to zoom out this far, but whatever...
-			if (scaleToWidth == 0)
-				scaleToWidth = 1;
-			if (scaleToHeight == 0)
-				scaleToHeight = 1;
+			int drawX = (int) Math.round((viewWidth / 2.0) - (scaleToWidth / 2.0)) + translateX;
+			int drawY = (int) Math.round((viewHeight / 2.0) - (scaleToHeight / 2.0)) + translateY;
 			
-			//Image scaled = trueImage.getScaledInstance(scaleToWidth, scaleToHeight, scaleQuality);
 			
-			Object hint = (scaleQuality == Image.SCALE_FAST) ? RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR : RenderingHints.VALUE_INTERPOLATION_BILINEAR;
-			boolean higherQuality = (scaleQuality == Image.SCALE_SMOOTH);
-			BufferedImage scaled = ImageUtilities.getScaledInstance((BufferedImage)trueImage, scaleToWidth, scaleToHeight, hint, higherQuality);
-			
-			displayLabel.setIcon(new ImageIcon(scaled));
-			displayLabel.setSize(scaleToWidth, scaleToHeight);
-			
-			super.paint(g);
-		} else {
-			g.setColor(Color.black);
-			g.fillRect(0, 0, getWidth(), getHeight());
+			g.drawImage(displayImage, drawX, drawY, null);
 			
 		}
 		
+
 		
+		
+	}
+	
+	protected void validateImagePosition()
+	{
+		Image displayImage = getDisplayImage();
+		if (displayImage == null)
+			return;
+		
+		int imageWidth = displayImage.getWidth(null);
+		int imageHeight = displayImage.getHeight(null);
+		
+		int viewWidth = getWidth();
+		int viewHeight = getHeight();
+		
+		if (translateX < ((viewWidth - imageWidth) - ((viewWidth - imageWidth) / 2.0))) {
+			translateX = (int) (viewWidth - imageWidth - ((viewWidth - imageWidth) / 2.0));
+		}
+		
+		if (translateX > ((imageWidth - viewWidth) + ((viewWidth - imageWidth) / 2.0))) {
+			translateX = (int) (imageWidth - viewWidth + ((viewWidth - imageWidth) / 2.0));
+		}
+		
+		if (translateY < ((viewHeight - imageHeight) - ((viewHeight - imageHeight) / 2.0))) {
+			translateY = (int) (viewHeight - imageHeight - ((viewHeight - imageHeight) / 2.0));
+		}
+		
+		if (translateY > ((imageHeight - viewHeight) + ((viewHeight - imageHeight) / 2.0))) {
+			translateY = (int) (imageHeight - viewHeight + ((viewHeight - imageHeight) / 2.0));
+		}
+		
+	}
+	
+	protected Image getDisplayImage()
+	{
+		if (scaled != null)
+			return scaled;
+		else
+			return trueImage;
+	}
+	
+	protected void createScaledImage()
+	{
+		if (trueImage != null) {
+			int scaleToWidth = (int) Math.floor((double)imageTrueWidth * (double) scalePercent);
+			int scaleToHeight = (int) Math.floor((double)imageTrueHeight * (double) scalePercent);
+			
+			Object hint = (scaleQuality == Image.SCALE_FAST) ? RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR : RenderingHints.VALUE_INTERPOLATION_BILINEAR;
+			boolean higherQuality = (scaleQuality == Image.SCALE_SMOOTH);
+			
+			scaled = ImageUtilities.getScaledInstance((BufferedImage)trueImage,
+					scaleToWidth,
+					scaleToHeight,
+					hint,
+					higherQuality);
+			
+		}
 	}
 	
 	protected double getZoomToFitScalePercentage()
@@ -304,11 +311,9 @@ public class ImageDisplayPanel extends Panel
 	public void zoom(double units)
 	{
 		scalePercent += ((units / 100.0) * -1);
-		//if (scalePercent > 1.0)
-		//	scalePercent = 1.0;
-		//if (scalePercent < 0)
-		//	scalePercent = 0;
 		isBestFit = false;
+		createScaledImage();
+		validateImagePosition();
 		repaint();
 	}
 	
@@ -328,16 +333,17 @@ public class ImageDisplayPanel extends Panel
 		if (scalePercent > 1.0)
 			scalePercent = 1.0;
 		isBestFit = true;
+		createScaledImage();
+		validateImagePosition();
 		repaint();
-		//zoom(100);
-		//scalePercent = getZoomToFitScalePercentage();
-		//repaint();
+
 	}
 	
 	public void zoomActual()
 	{
 		scalePercent = 1.0;
-		//zoom(-100);
+		createScaledImage();
+		repaint();
 	}
 	
 	public void addMousePositionListener(MousePositionListener listener)

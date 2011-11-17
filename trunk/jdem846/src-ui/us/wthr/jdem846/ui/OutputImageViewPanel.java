@@ -489,6 +489,7 @@ public class OutputImageViewPanel extends JdemPanel
 			return;
 		}
 		
+		/*
 		double mouseLatitude = modelContext.getRasterDataContext().rowToLatitude(trueY);
 		double mouseLongitude = modelContext.getRasterDataContext().columnToLongitude(trueX);
 		
@@ -507,7 +508,7 @@ public class OutputImageViewPanel extends JdemPanel
 			elevation = 0;
 		
 		statusBar.setStatus("X/Y: " + trueX + " / " + trueY + ", " + I18N.get("us.wthr.jdem846.ui.latitude") + "/" + I18N.get("us.wthr.jdem846.ui.longitude") + ": " + strMouseLatitude + " / " + strMouseLongitude + ", " + I18N.get("us.wthr.jdem846.ui.elevation") + ": " + elevation);
-		
+		*/
 		
 	}
 
