@@ -36,6 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -59,6 +60,7 @@ import us.wthr.jdem846.ui.base.BoxContainer;
 import us.wthr.jdem846.ui.base.ComboBox;
 import us.wthr.jdem846.ui.base.JComboBoxModel;
 import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.Spinner;
 import us.wthr.jdem846.ui.border.StandardTitledBorder;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
 import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
@@ -75,11 +77,16 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 	private ComboBox cmbColoring;
 	private ComboBox cmbHillshading;
 	private ComboBox cmbMapProjection;
-	private MonitoredSlider jsldLightMultiple;
-	private MonitoredSlider jsldSpotExponent;
-	private MonitoredSlider jsldElevationMultiple;
-	private MonitoredSlider jsldRelativeLightIntensity;
-	private MonitoredSlider jsldRelativeDarkIntensity;
+	//private MonitoredSlider jsldLightMultiple;
+	//private MonitoredSlider jsldSpotExponent;
+	//private MonitoredSlider jsldElevationMultiple;
+	//private MonitoredSlider jsldRelativeLightIntensity;
+	//private MonitoredSlider jsldRelativeDarkIntensity;
+	private Spinner spnLightMultiple;
+	private Spinner spnSpotExponent;
+	private Spinner spnElevationMultiple;
+	private Spinner spnRelativeLightIntensity;
+	private Spinner spnRelativeDarkIntensity;
 	
 	private EngineListModel engineModel;
 	//private BackgroundColorOptionsListModel backgroundModel;
@@ -148,7 +155,7 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		cmbPrecacheStrategy = new ComboBox(precacheStrategyModel);
 
 		colorSelection = new ColorSelection();
-		
+		/*
 		jsldLightMultiple = new MonitoredSlider(0, 100, 50, new MonitoredValueListener() {
 			NumberFormat format = NumberFormat.getInstance();
 			public String getValueString()
@@ -159,7 +166,10 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 				return format.format(value);
 			}
 		});
+		*/
+		spnLightMultiple = new Spinner(new SpinnerNumberModel(50, 0, 100, 1));
 		
+		/*
 		jsldSpotExponent = new MonitoredSlider(ModelOptions.SPOT_EXPONENT_MINIMUM, ModelOptions.SPOT_EXPONENT_MAXIMUM, 5, new MonitoredValueListener() {
 			NumberFormat format = NumberFormat.getIntegerInstance();
 			public String getValueString()
@@ -168,7 +178,11 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 			}
 		}); 
 		jsldSpotExponent.setSnapToTicks(true);
+		*/
 		
+		spnSpotExponent = new Spinner(new SpinnerNumberModel(1, 1, 5, 1));
+		
+		/*
 		jsldElevationMultiple = new MonitoredSlider(0, 100, 0, new MonitoredValueListener() {
 			NumberFormat format = NumberFormat.getIntegerInstance();
 			public String getValueString()
@@ -176,7 +190,10 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 				return format.format(jsldElevationMultiple.getValue());
 			}
 		});
+		*/
+		spnElevationMultiple = new Spinner(new SpinnerNumberModel(0, 0, 100, 1));
 		
+		/*
 		jsldRelativeLightIntensity =  new MonitoredSlider(0, 100, 0, new MonitoredValueListener() {
 			NumberFormat format = NumberFormat.getIntegerInstance();
 			public String getValueString()
@@ -184,7 +201,10 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 				return format.format(jsldRelativeLightIntensity.getValue());
 			}
 		});
+		*/
+		spnRelativeLightIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
 		
+		/*
 		jsldRelativeDarkIntensity =  new MonitoredSlider(0, 100, 0, new MonitoredValueListener() {
 			NumberFormat format = NumberFormat.getIntegerInstance();
 			public String getValueString()
@@ -192,6 +212,8 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 				return format.format(jsldRelativeDarkIntensity.getValue());
 			}
 		});
+		*/
+		spnRelativeDarkIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
 		
 		//gradientConfigPanel = new GradientConfigPanel();
 		//projectionConfigPanel = new ProjectionConfigPanel();
@@ -209,11 +231,12 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		cmbColoring.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.coloringCombo.tooltip"));
 		cmbHillshading.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.tooltip"));
 		txtTileSize.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.tooltip"));
-		jsldLightMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.tooltip"));
-		jsldSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
-		jsldElevationMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.tooltip"));
-		jsldRelativeLightIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeLightIntensity.tooltip"));
-		jsldRelativeDarkIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeDarkIntensity.tooltip"));
+		spnLightMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.tooltip"));
+		//jsldSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
+		spnSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
+		spnElevationMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.tooltip"));
+		spnRelativeLightIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeLightIntensity.tooltip"));
+		spnRelativeDarkIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeDarkIntensity.tooltip"));
 		cmbAntialiasing.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.antialiasingCombo.tooltip"));
 		cmbPrecacheStrategy.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.tooltip"));
 		cmbMapProjection.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.mapProjection.tooltip"));
@@ -265,13 +288,20 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 				}
 			}
 		};
+		ChangeListener spinnerChangeListener = new ChangeListener() {
+			public void stateChanged(ChangeEvent e)
+			{
+				fireOptionsChangedListeners();
+			}
+		};
 		
 		
-		jsldSpotExponent.addChangeListener(sliderChangeListener);
-		jsldLightMultiple.addChangeListener(sliderChangeListener);
-		jsldElevationMultiple.addChangeListener(sliderChangeListener);
-		jsldRelativeLightIntensity.addChangeListener(sliderChangeListener);
-		jsldRelativeDarkIntensity.addChangeListener(sliderChangeListener);
+		//jsldSpotExponent.addChangeListener(sliderChangeListener);
+		spnSpotExponent.addChangeListener(spinnerChangeListener);
+		spnLightMultiple.addChangeListener(spinnerChangeListener);
+		spnElevationMultiple.addChangeListener(spinnerChangeListener);
+		spnRelativeLightIntensity.addChangeListener(spinnerChangeListener);
+		spnRelativeDarkIntensity.addChangeListener(spinnerChangeListener);
 		
 		ChangeListener basicChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
@@ -302,6 +332,10 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		*/
 		
 		// Set Layout
+		
+		//controlGrid.add(new JLabel("Test Spinner:"));
+		//controlGrid.add(new Spinner());
+		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.engineCombo.label") + ":"));
 		controlGrid.add(cmbEngine);
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.widthText.label") + ":"));
@@ -332,19 +366,20 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		controlGrid.add(cmbMapProjection);
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.label") + ":"));
-		controlGrid.add(jsldLightMultiple);
+		controlGrid.add(spnLightMultiple);
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeLightIntensity.label") + ":"));
-		controlGrid.add(jsldRelativeLightIntensity);
+		controlGrid.add(spnRelativeLightIntensity);
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeDarkIntensity.label") + ":"));
-		controlGrid.add(jsldRelativeDarkIntensity);
+		controlGrid.add(spnRelativeDarkIntensity);
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.label") + ":"));
-		controlGrid.add(jsldSpotExponent);
+		controlGrid.add(spnSpotExponent);
+		//controlGrid.add(jsldSpotExponent);
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.label") + ":"));
-		controlGrid.add(jsldElevationMultiple);
+		controlGrid.add(spnElevationMultiple);
 		
 		BorderLayout layout = new BorderLayout();
 		setLayout(layout);
@@ -386,13 +421,15 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		mapProjectionListModel.setSelectedItemByValue(modelOptions.getMapProjection().identifier());
 		
 		txtTileSize.setText(""+modelOptions.getTileSize());
-		jsldLightMultiple.setValue((int)Math.round(modelOptions.getLightingMultiple() * 100));
-		jsldSpotExponent.setValue(modelOptions.getSpotExponent());
+		spnLightMultiple.setValue((int)Math.round(modelOptions.getLightingMultiple() * 100));
+		//jsldSpotExponent.setValue(modelOptions.getSpotExponent());
+		spnSpotExponent.setValue(modelOptions.getSpotExponent());
 		
-		jsldRelativeLightIntensity.setValue((int)Math.round(modelOptions.getRelativeLightIntensity() * 100));
-		jsldRelativeDarkIntensity.setValue((int)Math.round(modelOptions.getRelativeDarkIntensity() * 100));
 		
-		jsldElevationMultiple.setValue((int)Math.round(modelOptions.getElevationMultiple()));
+		spnRelativeLightIntensity.setValue((int)Math.round(modelOptions.getRelativeLightIntensity() * 100));
+		spnRelativeDarkIntensity.setValue((int)Math.round(modelOptions.getRelativeDarkIntensity() * 100));
+		
+		spnElevationMultiple.setValue((int)Math.round(modelOptions.getElevationMultiple()));
 		
 		//gradientConfigPanel.setGradientIdentifier(modelOptions.getColoringType());
 		//gradientConfigPanel.setConfigString(modelOptions.getGradientLevels());
@@ -419,11 +456,11 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		
 		modelOptions.setColoringType(coloringModel.getSelectedItemValue());
 		modelOptions.setHillShadeType(hillShadingModel.getSelectedItemValue());
-		modelOptions.setLightingMultiple((double)jsldLightMultiple.getValue() / 100.0);
-		modelOptions.setElevationMultiple((double)jsldElevationMultiple.getValue());
+		modelOptions.setLightingMultiple((double)((Integer)spnLightMultiple.getValue()) / 100.0);
+		modelOptions.setElevationMultiple((double)((Integer)spnElevationMultiple.getValue()));
 		
-		modelOptions.setRelativeLightIntensity((double)jsldRelativeLightIntensity.getValue() / 100.0);
-		modelOptions.setRelativeDarkIntensity((double)jsldRelativeDarkIntensity.getValue() / 100.0);
+		modelOptions.setRelativeLightIntensity((double)((Integer)spnRelativeLightIntensity.getValue()) / 100.0);
+		modelOptions.setRelativeDarkIntensity((double)((Integer)spnRelativeDarkIntensity.getValue()) / 100.0);
 		
 		modelOptions.setTileSize(txtTileSize.getInteger());
 		//modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
@@ -437,8 +474,8 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		//modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
 		//modelOptions.setLightingElevation(lightPositionConfigPanel.getSolarElevation());
 
-		modelOptions.setSpotExponent(jsldSpotExponent.getValue());
-		
+		//modelOptions.setSpotExponent(jsldSpotExponent.getValue());
+		modelOptions.setSpotExponent((Integer)spnSpotExponent.getValue());
 		
 		
 		//modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
@@ -461,13 +498,14 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		cmbAntialiasing.setEnabled(engineInstance.usesAntialiasing());
 		cmbPrecacheStrategy.setEnabled(engineInstance.usesPrecacheStrategy());
 		cmbMapProjection.setEnabled(engineInstance.usesMapProjection());
-		jsldLightMultiple.setEnabled(engineInstance.usesLightMultiple());
-		jsldSpotExponent.setEnabled(engineInstance.usesSpotExponent());
+		spnLightMultiple.setEnabled(engineInstance.usesLightMultiple());
+		//jsldSpotExponent.setEnabled(engineInstance.usesSpotExponent());
+		spnSpotExponent.setEnabled(engineInstance.usesSpotExponent());
 		txtTileSize.setEnabled(engineInstance.usesTileSize());
 		//gradientConfigPanel.setEnabled(engineInstance.usesColoring());
 		
-		jsldRelativeLightIntensity.setEnabled(engineInstance.usesRelativeLightMultiple());
-		jsldRelativeDarkIntensity.setEnabled(engineInstance.usesRelativeDarkMultiple());
+		spnRelativeLightIntensity.setEnabled(engineInstance.usesRelativeLightMultiple());
+		spnRelativeDarkIntensity.setEnabled(engineInstance.usesRelativeDarkMultiple());
 		
 		//gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());
 		//projectionConfigPanel.setVisible(engineInstance.usesProjection());
@@ -477,8 +515,8 @@ public class ModelOptionsPanel extends TitledRoundedPanel
 		//	lightPositionConfigPanel.updatePreview(true);
 		//}	
 		
-		jsldLightMultiple.setEnabled(engineInstance.usesLightMultiple());
-		jsldElevationMultiple.setEnabled(engineInstance.usesElevationMultiple());
+		spnLightMultiple.setEnabled(engineInstance.usesLightMultiple());
+		spnElevationMultiple.setEnabled(engineInstance.usesElevationMultiple());
 	}
 	
 	

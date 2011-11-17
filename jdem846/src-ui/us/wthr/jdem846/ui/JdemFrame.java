@@ -192,14 +192,14 @@ public class JdemFrame extends Frame
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(
         //KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		
-		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.new"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-new.png", KeyEvent.VK_N, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.new"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.new"), KeyEvent.VK_N, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				createNewProject(null);
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK)));
 		
-		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.open"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-open.png", KeyEvent.VK_O, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.open"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.open"), KeyEvent.VK_O, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				openProject();
@@ -208,7 +208,7 @@ public class JdemFrame extends Frame
 		
 		fileMenu.addSeparator();
 		
-		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.save"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/document-save.png", KeyEvent.VK_S, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.save"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.save"), KeyEvent.VK_S, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				saveProject();
@@ -217,7 +217,7 @@ public class JdemFrame extends Frame
 		
 		fileMenu.addSeparator();
 		
-		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.exit"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/application-exit.png", KeyEvent.VK_X, new ActionListener() {
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.exit"), JDem846Properties.getProperty("us.wthr.jdem846.ui.exit"), KeyEvent.VK_X, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				exitApplication();
@@ -228,7 +228,7 @@ public class JdemFrame extends Frame
 		menuBar.add(Box.createHorizontalGlue());
 		ComponentMenu helpMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.menu.help"), KeyEvent.VK_H);
 		menuBar.add(helpMenu);
-		helpMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.help.about"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/help-about.png", KeyEvent.VK_A, new ActionListener() {
+		helpMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.help.about"), JDem846Properties.getProperty("us.wthr.jdem846.ui.help"), KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				onAbout();
