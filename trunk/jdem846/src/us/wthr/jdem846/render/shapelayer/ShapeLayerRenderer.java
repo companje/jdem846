@@ -15,6 +15,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.mapprojection.MapPoint;
@@ -30,7 +31,7 @@ import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 import us.wthr.jdem846.shapefile.modeling.FeatureTypeStroke;
 import us.wthr.jdem846.shapefile.modeling.LineStroke;
 
-public class ShapeLayerRenderer
+public class ShapeLayerRenderer extends InterruptibleProcess
 {
 	private static Log log = Logging.getLog(ShapeLayerRenderer.class);
 	
@@ -38,7 +39,6 @@ public class ShapeLayerRenderer
 	private List<TileCompletionListener> tileCompletionListeners;
 	//private DemCanvas canvas;
 	private ModelCanvas modelCanvas;
-	private boolean cancel = false;
 	
 	
 	public ShapeLayerRenderer(ModelContext modelContext, ModelCanvas modelCanvas, List<TileCompletionListener> tileCompletionListeners)
@@ -89,6 +89,7 @@ public class ShapeLayerRenderer
 				throw new RenderEngineException("Error occured rendering shape files", ex);
 			}
 			
+			checkPause();
 			if (isCancelled()) {
 				log.warn("Render process cancelled, model not complete.");
 				break;
@@ -133,6 +134,8 @@ public class ShapeLayerRenderer
 
 		for (ShapePath path : shapeLayer.getShapePaths()) {		
 			renderPath(shapeType, path);
+			
+			checkPause();
 			if (isCancelled()) {
 				log.warn("Render process cancelled, model not complete.");
 				break;
@@ -194,24 +197,6 @@ public class ShapeLayerRenderer
 	}
 	
 	
-	/** Requests that a rendering process is stopped.
-	 * 
-	 */
-	public void cancel()
-	{
-		this.cancel = true;
-	}
-	
-	/** Determines whether the rendering process has been requested to stop. This does not necessarily mean
-	 * that the process <i>has</i> stopped as engine implementations need not check this value that often or
-	 * at all.
-	 * 
-	 * @return Whether the rendering process has been requested to stop.
-	 */
-	public boolean isCancelled()
-	{
-		return cancel;
-	}
 	
 	protected void fireTileCompletionListeners(ModelCanvas modelCanvas, double pctComplete)
 	{

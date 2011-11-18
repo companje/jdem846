@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -72,6 +73,8 @@ import us.wthr.jdem846.ui.ProjectButtonBar.ButtonClickedListener;
 import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
+import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.panels.EmbeddedTabbedPane;
 import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 import us.wthr.jdem846.ui.scripting.ScriptEditorPanel;
 
@@ -313,12 +316,23 @@ public class DemProjectPane extends JdemPanel
 			}
 		});
 		
+		Panel dataPanel = new Panel();
+		dataPanel.setLayout(new BorderLayout());
+		dataPanel.add(orderingButtonBar, BorderLayout.NORTH);
+		dataPanel.add(datasetTree, BorderLayout.CENTER);
+		dataPanel.add(datasetOptionsPanel, BorderLayout.SOUTH);
 		
+		EmbeddedTabbedPane leftTabPane = new EmbeddedTabbedPane();
+		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.data"), dataPanel);
+		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.setup"), modelOptionsPanel);
 		
+		addLeft(leftTabPane, false);
+		/*
 		this.addLeft(orderingButtonBar, false);
 		this.addLeft(datasetTree, false);
 		this.addLeft(datasetOptionsPanel, false);
 		this.addLeft(modelOptionsPanel, false);
+		*/
 		
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layout"), layoutPane);
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"), previewPane);
@@ -753,7 +767,7 @@ public class DemProjectPane extends JdemPanel
 		}
 		
 		try {
-			rasterDataContext.calculateElevationMinMax();
+			rasterDataContext.calculateElevationMinMax(false);
 		} catch (DataSourceException ex) {
 			log.warn("Failed to calculate elevation min/max: " + ex.getMessage(), ex);
 		}

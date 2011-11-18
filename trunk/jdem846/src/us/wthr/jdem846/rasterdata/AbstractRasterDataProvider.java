@@ -14,8 +14,8 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	private double longitudeResolution;
 	
 
-	private double dataMinimum;
-	private double dataMaximum;
+	private double dataMinimum = DemConstants.ELEV_NO_DATA;
+	private double dataMaximum = DemConstants.ELEV_NO_DATA;
 	
 	private double north;
 	private double south;

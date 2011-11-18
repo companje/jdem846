@@ -18,18 +18,18 @@ import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.CancellableProcess;
+import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
-import us.wthr.jdem846.render.ProcessCancelListener;
+import us.wthr.jdem846.render.ProcessInterruptListener;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.mapprojection.MapProjection;
 import us.wthr.jdem846.render.mapprojection.MapProjectionProviderFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
-public class ModelRenderer extends CancellableProcess
+public class ModelRenderer extends InterruptibleProcess
 {
 	private static Log log = Logging.getLog(ModelRenderer.class);
 	private static Color DEFAULT_BACKGROUND = new Color(0, 0, 0, 0);
@@ -126,10 +126,18 @@ public class ModelRenderer extends CancellableProcess
 		
 		final TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas);
 		
-		this.setProcessCancelListener(new ProcessCancelListener() {
+		this.setProcessInterruptListener(new ProcessInterruptListener() {
 			public void onProcessCancelled()
 			{
 				tileRenderer.cancel();
+			}
+			public void onProcessPaused()
+			{
+				tileRenderer.pause();
+			}
+			public void onProcessResumed()
+			{
+				tileRenderer.resume();
 			}
 		});
 		

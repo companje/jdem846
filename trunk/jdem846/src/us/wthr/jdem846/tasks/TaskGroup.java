@@ -186,6 +186,16 @@ public class TaskGroup extends Thread
 		return cancelTask(activeTask);
 	}
 	
+	public boolean pauseActiveTask()
+	{
+		return pauseTask(activeTask);
+	}
+	
+	public boolean resumeActiveTask()
+	{
+		return resumeTask(activeTask);
+	}
+	
 	/** Requests the specified task be canceled mid-execution. It is up to the task whether it will/can 
 	 * stop.
 	 * @param task
@@ -194,6 +204,16 @@ public class TaskGroup extends Thread
 	public boolean cancelTask(String id)
 	{
 		return cancelTask(getTaskContainer(id));
+	}
+	
+	public boolean pauseTask(String id)
+	{
+		return pauseTask(getTaskContainer(id));
+	}
+	
+	public boolean resumeTask(String id)
+	{
+		return resumeTask(getTaskContainer(id));
 	}
 	
 	/** Requests the specified task be canceled mid-execution. It is up to the task whether it will/can 
@@ -206,6 +226,16 @@ public class TaskGroup extends Thread
 		return cancelTask(getTaskContainer(task));
 	}
 	
+	public boolean pauseTask(RunnableTask task)
+	{
+		return pauseTask(getTaskContainer(task));
+	}
+	
+	public boolean resumeTask(RunnableTask task)
+	{
+		return resumeTask(getTaskContainer(task));
+	}
+	
 	/** Requests the specified task be canceled mid-execution. It is up to the task whether it will/can 
 	 * stop.
 	 * @param task
@@ -216,6 +246,28 @@ public class TaskGroup extends Thread
 		if (taskContainer != null) {
 			taskContainer.cancel();
 			this.fireTaskCancelledListeners(taskContainer.getRunnableTask());
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	protected boolean pauseTask(TaskContainer taskContainer)
+	{
+		if (taskContainer != null) {
+			taskContainer.pause();
+			this.fireTaskPausedListeners(taskContainer.getRunnableTask());
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	protected boolean resumeTask(TaskContainer taskContainer)
+	{
+		if (taskContainer != null) {
+			taskContainer.resume();
+			this.fireTaskResumedListeners(taskContainer.getRunnableTask());
 			return true;
 		} else {
 			return false;
@@ -344,6 +396,19 @@ public class TaskGroup extends Thread
 		}
 	}
 	
+	protected void fireTaskPausedListeners(RunnableTask task)
+	{
+		for (TaskGroupListener listener : taskGroupListeners) {
+			listener.taskPaused(this, task);
+		}
+	}
+	
+	protected void fireTaskResumedListeners(RunnableTask task)
+	{
+		for (TaskGroupListener listener : taskGroupListeners) {
+			listener.taskResumed(this, task);
+		}
+	}
 	
 	protected void fireAllRemainingTasksCancelledListeners()
 	{

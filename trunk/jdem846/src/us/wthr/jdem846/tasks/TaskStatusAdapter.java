@@ -30,5 +30,10 @@ public class TaskStatusAdapter implements TaskStatusListener
 
 	@Override
 	public void taskStarting(RunnableTask task) { }
+	
+	@Override
+	public void taskPaused(RunnableTask task) { }
 
+	@Override
+	public void taskResumed(RunnableTask task) { }
 }

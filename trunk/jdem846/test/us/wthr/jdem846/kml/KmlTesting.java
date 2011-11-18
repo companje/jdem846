@@ -133,7 +133,7 @@ public class KmlTesting
 		rasterDataContext.prepare();
 
 		try {
-			rasterDataContext.calculateElevationMinMax();
+			rasterDataContext.calculateElevationMinMax(true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return;

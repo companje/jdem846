@@ -132,7 +132,11 @@ public class MemoryMonitor extends Label
 		int width = this.getWidth();
 		int height = this.getHeight();
 
-		g.setColor(Color.GRAY);
+		g.setColor(getBackground());
+		g.fillRect(0, 0, width, height);
+		
+		g.setColor(getForeground());
+		//g.setColor(Color.GRAY);
 		
 		long max = getMaxInList();
 		for (int i = 0; i < usageList.size(); i++) {

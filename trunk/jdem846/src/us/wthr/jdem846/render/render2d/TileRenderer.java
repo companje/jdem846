@@ -22,13 +22,13 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.BasicRenderEngine;
-import us.wthr.jdem846.render.CancellableProcess;
+import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
-public class TileRenderer extends CancellableProcess
+public class TileRenderer extends InterruptibleProcess
 {
 	private static Log log = Logging.getLog(TileRenderer.class);
 
@@ -137,15 +137,18 @@ public class TileRenderer extends CancellableProcess
 					renderCellStandardPrecision(latitude, longitude);
 				}
 				
-				
+				this.checkPause();
 				if (isCancelled()) {
 					break;
 				}
+				
 			}
 			
+			this.checkPause();
 			if (isCancelled()) {
 				break;
 			}
+			
 		}
 		
 		

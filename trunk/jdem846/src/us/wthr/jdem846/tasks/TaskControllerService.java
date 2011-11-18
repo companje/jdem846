@@ -238,6 +238,34 @@ public class TaskControllerService extends AbstractLockableService
 		}
 	}
 	
+	public static boolean pauseTask(RunnableTask task)
+	{
+		TaskGroup group = TaskControllerService.getTaskGroupContainingTask(task);
+		if (group != null) {
+			boolean result = group.pauseTask(task);
+			if (result) {
+				TaskControllerService.instance.fireTaskPausedListeners(task);
+			}
+			return result;
+		} else {
+			return false;
+		}
+	}
+	
+	public static boolean resumeTask(RunnableTask task)
+	{
+		TaskGroup group = TaskControllerService.getTaskGroupContainingTask(task);
+		if (group != null) {
+			boolean result = group.resumeTask(task);
+			if (result) {
+				TaskControllerService.instance.fireTaskResumedListeners(task);
+			}
+			return result;
+		} else {
+			return false;
+		}
+	}
+	
 	/** Retrieves the task group containing the specified task. 
 	 * 
 	 * @param task
@@ -286,6 +314,20 @@ public class TaskControllerService extends AbstractLockableService
 	{
 		for (TaskControllerListener listener : taskControllerListeners) {
 			listener.taskCancelled(task);
+		}
+	}
+	
+	protected void fireTaskPausedListeners(RunnableTask task)
+	{
+		for (TaskControllerListener listener : taskControllerListeners) {
+			listener.taskPaused(task);
+		}
+	}
+	
+	protected void fireTaskResumedListeners(RunnableTask task)
+	{
+		for (TaskControllerListener listener : taskControllerListeners) {
+			listener.taskResumed(task);
 		}
 	}
 	

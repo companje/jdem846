@@ -21,7 +21,7 @@ public interface TaskControllerListener
 	public void taskAdded(RunnableTask task);
 	public void taskGroupAdded(TaskGroup taskGroup);
 	public void taskCancelled(RunnableTask task);
-	
-	
+	public void taskPaused(RunnableTask task);
+	public void taskResumed(RunnableTask task);
 	
 }

@@ -22,4 +22,6 @@ public interface TaskStatusListener
 	public void taskFailed(RunnableTask task, Throwable thrown);
 	public void taskCompleted(RunnableTask task);
 	public void taskCancelled(RunnableTask task);
+	public void taskPaused(RunnableTask task);
+	public void taskResumed(RunnableTask task);
 }

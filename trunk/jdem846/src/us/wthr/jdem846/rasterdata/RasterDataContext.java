@@ -104,7 +104,7 @@ public class RasterDataContext implements DataContext
 		return isDisposed;
 	}
 	
-	public void calculateElevationMinMax() throws DataSourceException
+	public void calculateElevationMinMax(boolean full) throws DataSourceException
 	{
 		log.info("Calculating elevation minimums & Maximums");
 		
@@ -112,7 +112,20 @@ public class RasterDataContext implements DataContext
 		dataMaximumValue = Double.MIN_VALUE;
 		
 		for (RasterData rasterData : rasterDataList) {
-			rasterData.calculateMinAndMax();
+			double minValue = rasterData.getDataMinimum();
+			double maxValue = rasterData.getDataMaximum();
+			
+			if (minValue == DemConstants.ELEV_NO_DATA || maxValue == DemConstants.ELEV_NO_DATA) {
+				if (full) {
+					rasterData.calculateMinAndMax();
+				} else {
+					continue;
+				}
+			}
+			
+			
+			
+			
 			
 			if (rasterData.getDataMinimum() < dataMinimumValue)
 				dataMinimumValue = rasterData.getDataMinimum();
@@ -122,6 +135,13 @@ public class RasterDataContext implements DataContext
 			
 		}
 		
+		if (dataMinimumValue == Double.MAX_VALUE) {
+			dataMinimumValue = DemConstants.ELEV_NO_DATA;
+		}
+		
+		if (dataMaximumValue == Double.MIN_VALUE) {
+			dataMaximumValue = DemConstants.ELEV_NO_DATA;
+		}
 	}
 	
 

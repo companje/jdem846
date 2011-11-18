@@ -21,6 +21,8 @@ public interface TaskGroupListener
 	public void taskGroupStarted(TaskGroup taskGroup);
 	public void taskAdded(TaskGroup taskGroup, RunnableTask task);
 	public void taskCancelled(TaskGroup taskGroup, RunnableTask task);
+	public void taskPaused(TaskGroup taskGroup, RunnableTask task);
+	public void taskResumed(TaskGroup taskGroup, RunnableTask task);
 	public void taskStarting(TaskGroup taskGroup, RunnableTask task);
 	public void allRemainingTasksCancelled(TaskGroup taskGroup);
 	public void taskGroupCompleted(TaskGroup taskGroup);

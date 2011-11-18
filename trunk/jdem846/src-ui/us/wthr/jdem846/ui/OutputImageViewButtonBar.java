@@ -48,6 +48,8 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 	public static final int BTN_ZOOM_FIT = 4;
 	public static final int OPTION_QUALITY = 5;
 	public static final int BTN_STOP = 6;
+	public static final int BTN_PAUSE = 7;
+	public static final int BTN_RESUME = 8;
 	
 	private ToolbarButton jbtnSave;
 	private ToolbarButton jbtnZoomIn;
@@ -55,6 +57,8 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 	private ToolbarButton jbtnZoomActual;
 	private ToolbarButton jbtnZoomFit;
 	private ToolbarButton jbtnStop;
+	private ToolbarButton jbtnPause;
+	private ToolbarButton jbtnResume;
 	
 	private ComboBox cmbQuality;
 	private ImageQualityListModel qualityModel;
@@ -100,6 +104,18 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 				fireButtonClickedListeners(BTN_STOP);
 			}
 		});
+		
+		jbtnPause = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.pauseButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.outputImageView.pause"), new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fireButtonClickedListeners(BTN_PAUSE);
+			}
+		});
+		
+		jbtnResume = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.resumeButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.outputImageView.resume"), new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fireButtonClickedListeners(BTN_RESUME);
+			}
+		});
 
 		qualityModel = new ImageQualityListModel();
 		cmbQuality = new ComboBox(qualityModel);
@@ -113,7 +129,8 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 		jbtnZoomFit.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomFitTooltip"));
 		cmbQuality.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.qualityTooltip"));
 		jbtnStop.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.stopTooltip"));
-		
+		jbtnPause.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.pauseTooltip"));
+		jbtnResume.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.resumeTooltip"));
 		
 		boolean displayText = JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.outputImageButtonBar.displayText");
 		jbtnSave.setTextDisplayed(displayText);
@@ -122,6 +139,8 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 		jbtnZoomActual.setTextDisplayed(displayText);
 		jbtnZoomFit.setTextDisplayed(displayText);
 		jbtnStop.setTextDisplayed(displayText);
+		jbtnPause.setTextDisplayed(displayText);
+		jbtnResume.setTextDisplayed(displayText);
 		lblQuality.setVisible(displayText);
 		
 		
@@ -146,6 +165,8 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 		add(jbtnZoomFit);
 		addSeparator();
 		add(jbtnStop);
+		add(jbtnPause);
+		add(jbtnResume);
 		addSeparator();
 		add(lblQuality);
 		add(cmbQuality);
@@ -176,6 +197,12 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 			break;
 		case BTN_STOP:
 			jbtnStop.setEnabled(enabled);
+			break;
+		case BTN_PAUSE:
+			jbtnPause.setEnabled(enabled);
+			break;
+		case BTN_RESUME:
+			jbtnResume.setEnabled(enabled);
 			break;
 		}
 	}
@@ -212,6 +239,12 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 			case BTN_STOP:
 				listener.onStopClicked();
 				break;
+			case BTN_PAUSE:
+				listener.onPauseClicked();
+				break;
+			case BTN_RESUME:
+				listener.onResumeClicked();
+				break;
 			}
 		}
 	}
@@ -224,6 +257,8 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 		public void onZoomActualClicked();
 		public void onZoomFitClicked();
 		public void onStopClicked();
+		public void onPauseClicked();
+		public void onResumeClicked();
 	}
 	
 	
