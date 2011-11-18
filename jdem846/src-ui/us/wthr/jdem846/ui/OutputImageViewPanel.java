@@ -110,6 +110,9 @@ public class OutputImageViewPanel extends JdemPanel
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, true);
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, true);
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
 		
 		statusBar = new StatusBar();
 		statusBar.setProgressVisible(true);
@@ -202,6 +205,12 @@ public class OutputImageViewPanel extends JdemPanel
 			public void onStopClicked() {
 				onStop();
 			}
+			public void onPauseClicked() {
+				onPause();
+			}
+			public void onResumeClicked() {
+				onResume();
+			}
 		});
 		buttonBar.addOptionChangeListener(new OptionChangeListener() {
 			public void onImageQualityChanged(int quality) {
@@ -253,7 +262,7 @@ public class OutputImageViewPanel extends JdemPanel
 				boolean requiresMinMaxElevation = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).requiresMinMaxElevation();
 				try {
 					if (requiresMinMaxElevation) {
-						modelContext.getRasterDataContext().calculateElevationMinMax();
+						modelContext.getRasterDataContext().calculateElevationMinMax(true);
 					}
 				} catch (Exception ex) {
 					throw new RenderEngineException("Error calculating elevation min/max: " + ex.getMessage(), ex);
@@ -284,6 +293,17 @@ public class OutputImageViewPanel extends JdemPanel
 				engine.cancel();
 			}
 			
+			@Override
+			public void pause()
+			{
+				engine.pause();
+			}
+			
+			@Override
+			public void resume()
+			{
+				engine.resume();
+			}
 		};
 		
 		taskStatusListener = new TaskStatusListener() {
@@ -304,6 +324,8 @@ public class OutputImageViewPanel extends JdemPanel
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, true);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, true);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, true);
 				setWorking(false);
 				statusBar.setProgressVisible(false);
@@ -325,6 +347,8 @@ public class OutputImageViewPanel extends JdemPanel
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
 				setWorking(false);
 				statusBar.setProgressVisible(false);
@@ -343,6 +367,18 @@ public class OutputImageViewPanel extends JdemPanel
 			public void taskStarting(RunnableTask task)
 			{
 				
+			}
+			
+			public void taskPaused(RunnableTask task)
+			{
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, true);
+			}
+			
+			public void taskResumed(RunnableTask task)
+			{
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, true);
+				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
 			}
 		};
 			
@@ -456,6 +492,18 @@ public class OutputImageViewPanel extends JdemPanel
 	{
 		log.info("Render process requested to stop");
 		TaskControllerService.cancelTask(renderTask);
+	}
+	
+	public void onPause()
+	{
+		log.info("Render process requested to pause");
+		TaskControllerService.pauseTask(renderTask);
+	}
+	
+	public void onResume()
+	{
+		log.info("Render process requested to resume");
+		TaskControllerService.resumeTask(renderTask);
 	}
 	
 	public void onZoomActual() 

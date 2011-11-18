@@ -152,7 +152,7 @@ public class LightingPreviewPanel extends Panel
 			rasterDataContext.addRasterData(rasterData);
 			rasterDataContext.prepare();
 			rasterDataContext.fillBuffers();
-			rasterDataContext.calculateElevationMinMax();
+			rasterDataContext.calculateElevationMinMax(true);
 			
 			modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
 			

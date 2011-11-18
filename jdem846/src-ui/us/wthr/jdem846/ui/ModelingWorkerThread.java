@@ -71,7 +71,7 @@ public class ModelingWorkerThread extends Thread
 			start = System.currentTimeMillis();
 			
 			try {
-				rasterDataContext.calculateElevationMinMax();
+				rasterDataContext.calculateElevationMinMax(true);
 			} catch (Exception ex) {
 				fireModelFailedListeners(ex);
 				return;

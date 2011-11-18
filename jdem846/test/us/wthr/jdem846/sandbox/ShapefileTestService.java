@@ -173,7 +173,7 @@ public class ShapefileTestService extends AbstractLockableService
 		
 		log.info("Calculating elevation min/max");
 		try {
-			rasterDataContext.calculateElevationMinMax();
+			rasterDataContext.calculateElevationMinMax(true);
 		} catch (DataSourceException e) {
 			e.printStackTrace();
 		}

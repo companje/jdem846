@@ -34,7 +34,7 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 
-public abstract class RenderEngine extends CancellableProcess implements ImageObserver
+public abstract class RenderEngine extends InterruptibleProcess implements ImageObserver
 {
 	private static Log log = Logging.getLog(RenderEngine.class);
 	

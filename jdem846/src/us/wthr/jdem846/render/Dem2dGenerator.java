@@ -67,11 +67,21 @@ public class Dem2dGenerator extends BasicRenderEngine
 			final ModelRenderer rasterRenderer = new ModelRenderer(getModelContext(), tileCompletionListeners);
 			final ShapeLayerRenderer shapeRenderer = new ShapeLayerRenderer(getModelContext(), tileCompletionListeners);
 			
-			this.setProcessCancelListener(new ProcessCancelListener() {
+			this.setProcessInterruptListener(new ProcessInterruptListener() {
 				public void onProcessCancelled()
 				{
 					rasterRenderer.cancel();
 					shapeRenderer.cancel();
+				}
+				public void onProcessPaused()
+				{
+					rasterRenderer.pause();
+					shapeRenderer.pause();
+				}
+				public void onProcessResumed()
+				{
+					rasterRenderer.resume();
+					shapeRenderer.resume();
 				}
 			});
 			

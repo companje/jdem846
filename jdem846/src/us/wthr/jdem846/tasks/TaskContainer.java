@@ -80,6 +80,18 @@ public class TaskContainer
 		
 	}
 	
+	public void pause()
+	{
+		task.pause();
+		fireTaskPausedListeners();
+	}
+	
+	public void resume()
+	{
+		task.resume();
+		fireTaskResumedListeners();
+	}
+	
 	public void cancel()
 	{
 		this.setCancelled(true);
@@ -139,6 +151,20 @@ public class TaskContainer
 	{
 		for (TaskStatusListener listener : taskStatusListeners) {
 			listener.taskCancelled(task);
+		}
+	}
+	
+	protected void fireTaskPausedListeners()
+	{
+		for (TaskStatusListener listener : taskStatusListeners) {
+			listener.taskPaused(task);
+		}
+	}
+	
+	protected void fireTaskResumedListeners()
+	{
+		for (TaskStatusListener listener : taskStatusListeners) {
+			listener.taskResumed(task);
 		}
 	}
 	

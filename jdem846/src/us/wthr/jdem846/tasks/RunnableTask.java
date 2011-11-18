@@ -59,7 +59,15 @@ public abstract class RunnableTask
 		log.info("Default cancel signal caught within Runnable Task");
 	}
 	
+	public void pause()
+	{
+		log.info("Default pause signal caught within Runnable Task");
+	}
 	
+	public void resume()
+	{
+		log.info("Default resume signal caught within Runnable Task");
+	}
 	
 	public String getName()
 	{
