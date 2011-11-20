@@ -156,9 +156,9 @@ public class ModelRenderer extends InterruptibleProcess
 			// Latitude
 			for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
 				double tileSouth = tileNorth - tileLatitudeHeight;
-				//if (tileSouth <= southLimit) {
-				//	tileSouth = southLimit + latitudeResolution;
-				//}
+				if (tileSouth <= southLimit) {
+					tileSouth = southLimit + latitudeResolution;
+				}
 				
 				tileColumn = 0;
 				
@@ -166,9 +166,9 @@ public class ModelRenderer extends InterruptibleProcess
 				for (double tileWest = westLimit; tileWest < eastLimit; tileWest += tileLongitudeWidth) {
 					double tileEast = tileWest + tileLongitudeWidth;
 					
-					//if (tileEast >= eastLimit) {
-					//	tileEast = eastLimit - longitudeResolution;
-					//}
+					if (tileEast >= eastLimit) {
+						tileEast = eastLimit - longitudeResolution;
+					}
 
 					log.info("Tile #" + (tileNumber + 1) + " of " + tileCount + ", Row #" + (tileRow + 1) + ", Column #" + (tileColumn + 1));
 					log.info("    North: " + tileNorth);
