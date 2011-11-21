@@ -8,9 +8,10 @@ public enum MapProjectionEnum
 	EQUIRECTANGULAR3D("us.wthr.jdem846.render.mapProjection.equirectangular3dProjection.name", Equirectangular3dProjection.class),
 	AITOFF("us.wthr.jdem846.render.mapProjection.aitoffProjection.name", AitoffProjection.class),
 	ROBINSON("us.wthr.jdem846.render.mapProjection.robinsonProjection.name", RobinsonProjection.class),
-	WINKELTRIPEL("us.wthr.jdem846.render.mapProjection.winkelTripelProjection.name", WinkelTripelProjection.class);
-	
-
+	WINKELTRIPEL("us.wthr.jdem846.render.mapProjection.winkelTripelProjection.name", WinkelTripelProjection.class),
+	HAMMER("us.wthr.jdem846.render.mapProjection.hammerProjection.name", HammerProjection.class),
+	MOLLWEIDE("us.wthr.jdem846.render.mapProjection.mollweideProjection.name", MollweideProjection.class),
+	WAGNERVI("us.wthr.jdem846.render.mapProjection.WagnerViProjection.name", WagnerVIProjection.class);
 	
 	private final String projectionName;
 	private final Class<MapProjection> provider;
