@@ -13,7 +13,7 @@ public class WinkelTripelProjectionTest extends BaseMapProjectionTest
 	protected void setUp() throws Exception
 	{
 		String saveImagesTo = "C:/srv/elevation/DataRaster-Testing/test-image-WinkelTripelProjectionTest-{test}.png";
-		setUp(90, -90, 180, -180, 640, 392, saveImagesTo);
+		setUp(90, -90, 180, -180, 800, 491, saveImagesTo);
 	}
 	
 	
@@ -21,7 +21,7 @@ public class WinkelTripelProjectionTest extends BaseMapProjectionTest
 	public void testProjection1()
 	{
 		MapProjection projection = new WinkelTripelProjection(90, -90, 180, -180, width, height);
-		this.__testProjection(projection, 0.0, 0.0, 320.0, 196.0);
+		this.__testProjection(projection, 0.0, 0.0, width, height);
 
 		// Boston, MA, USA
 		//double latitude = 42.357778;

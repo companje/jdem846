@@ -2,6 +2,8 @@ package us.wthr.jdem846.render.mapprojection;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
 import us.wthr.jdem846.exception.ImageException;
@@ -24,7 +26,25 @@ public class BaseMapProjectionTest extends TestCase
 	
 	String saveImagesTo;
 	
-	
+	protected static void bootstrapSystemProperties()
+	{
+		
+		if (System.getProperty("us.wthr.jdem846.installPath") == null) {
+			System.setProperty("us.wthr.jdem846.installPath", System.getProperty("user.dir"));
+		}
+		if (System.getProperty("us.wthr.jdem846.resourcesPath") == null) {
+			System.setProperty("us.wthr.jdem846.resourcesPath", System.getProperty("us.wthr.jdem846.installPath"));
+		}
+		
+		if (System.getProperty("us.wthr.jdem846.userSettingsPath") == null) {
+			System.setProperty("us.wthr.jdem846.userSettingsPath", System.getProperty("user.home") + "/.jdem846");
+		}
+		
+		
+		System.out.println("us.wthr.jdem846.installPath: " + System.getProperty("us.wthr.jdem846.installPath"));
+		System.out.println("us.wthr.jdem846.resourcesPath: " + System.getProperty("us.wthr.jdem846.resourcesPath"));
+		System.out.println("us.wthr.jdem846.userSettingsPath: " + System.getProperty("us.wthr.jdem846.userSettingsPath"));
+	}
 	
 	
 	protected void setUp(double north, double south, double east, double west, double width, double height, String saveImagesTo) throws Exception
@@ -71,14 +91,18 @@ public class BaseMapProjectionTest extends TestCase
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, (int)width, (int)height);
 		
+		//g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+		//g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		int pixelWidth = (int) Math.ceil((double)width / (Math.abs(east) + Math.abs(west)));
 		int pixelHeight = (int) Math.ceil((double)height / (Math.abs(north) + Math.abs(south)));
 		
+		Path2D.Double shape = new Path2D.Double();
 		g2d.setColor(Color.BLACK);
 		for (double latitude = north; latitude > south; latitude--) {
 			//log.info("Writing pixels for latitude: " + latitude);
-			mapProjection.getPoint(latitude, 0.0, 0.0, point);
-			log.info("Coordinate: " + latitude + "/" + 0.0 + ", " + point.row + ", " + point.column);
+			//mapProjection.getPoint(latitude, 0.0, 0.0, point);
+			//log.info("Coordinate: " + latitude + "/" + 0.0 + ", " + point.row + ", " + point.column);
 			
 			for (double longitude = west; longitude < east; longitude++) {
 				
@@ -88,17 +112,77 @@ public class BaseMapProjectionTest extends TestCase
 				assertTrue("Column " + point.column + " exceeds image width at " + latitude + "/" + longitude, point.column < width);
 				assertTrue("Row " + point.row + " is less than zero at " + latitude + "/" + longitude, point.row >= 0);
 				assertTrue("Row " + point.row + " exceeds image height at " + latitude + "/" + longitude, point.row < height);
+	
+
+				int c1 = (int) Math.round(point.column);
+				int r1 = (int) Math.round(point.row); 
 				
-				int column = (int) Math.round(point.column);
-				int row = (int) Math.round(point.row);
-
-
-				g2d.fillRect(column, row, pixelWidth, pixelHeight);
+				mapProjection.getPoint(latitude-1.0, longitude, 0.0, point);
+				int c2 = (int) Math.round(point.column);
+				int r2 = (int) Math.round(point.row); 
+				
+				mapProjection.getPoint(latitude-1.0, longitude+1.0, 0.0, point);
+				int c3 = (int) Math.round(point.column);
+				int r3 = (int) Math.round(point.row); 
+				
+				mapProjection.getPoint(latitude, longitude+1.0, 0.0, point);
+				int c4 = (int) Math.round(point.column);
+				int r4 = (int) Math.round(point.row); 
+				
+				shape.reset();
+				shape.moveTo(c1, r1);
+				shape.lineTo(c2, r2);
+				shape.lineTo(c3, r3);
+				shape.lineTo(c4, r4);
+				shape.closePath();
+				g2d.fill(shape);
 			}
 			
 		}
 		
 		g2d.setColor(Color.RED);
+		
+		double coordWidth = 15.0;
+		
+		for (double latitude = north; latitude >= south; latitude-=coordWidth) {
+			for (double longitude = west; longitude <= east; longitude+=coordWidth) {
+				
+				int c1, r1, c2, r2;
+				
+				if (latitude > south) {
+					mapProjection.getPoint(latitude, longitude, 0.0, point);
+					
+					c1 = (int) Math.floor(point.column);
+					r1 = (int) Math.floor(point.row); 
+					
+					mapProjection.getPoint(latitude-coordWidth, longitude, 0.0, point);
+					c2 = (int) Math.floor(point.column);
+					 r2 = (int) Math.floor(point.row); 
+					
+					g2d.drawLine(c1, r1, c2, r2);
+				}
+				
+				if (longitude < east) {
+					mapProjection.getPoint(latitude, longitude, 0.0, point);
+					
+					c1 = (int) Math.floor(point.column);
+					r1 = (int) Math.floor(point.row); 
+					
+					mapProjection.getPoint(latitude, longitude+coordWidth, 0.0, point);
+					c2 = (int) Math.floor(point.column);
+					r2 = (int) Math.floor(point.row); 
+					
+					g2d.drawLine(c1, r1, c2, r2);
+				}
+				
+				
+				
+				
+			}
+			
+		}
+		
+		
 		g2d.drawLine(0, (int)(height / 2), (int)width, (int)(height / 2));
 		
 		try {

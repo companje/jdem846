@@ -9,7 +9,7 @@ import us.wthr.jdem846.logging.Logging;
  * @author Kevin M. Gill
  * @see http://en.wikipedia.org/wiki/Robinson_projection
  */
-public class RobinsonProjection implements MapProjection
+public class RobinsonProjection extends AbstractBaseProjection
 {
 	private static Log log = Logging.getLog(RobinsonProjection.class);
 	
@@ -36,13 +36,7 @@ public class RobinsonProjection implements MapProjection
 			{90.0,			0.5322,		1.0000}
 	};
 	
-	private double north;
-	private double south;
-	private double east;
-	private double west;
-	
-	private double width;
-	private double height;
+
 	
 	public RobinsonProjection()
 	{
@@ -51,29 +45,10 @@ public class RobinsonProjection implements MapProjection
 	
 	public RobinsonProjection(double north, double south, double east, double west, double width, double height)
 	{
-		setUp(north, south, east, west, width, height);
+		super(north, south, east, west, width, height);
 	}
 	
-	public void setUp(ModelContext modelContext)
-	{
-		setUp(modelContext.getNorth(), 
-				modelContext.getSouth(),
-				modelContext.getEast(),
-				modelContext.getWest(),
-				modelContext.getModelDimensions().getOutputWidth(),
-				modelContext.getModelDimensions().getOutputHeight());
-	}
-	
-	public void setUp(double north, double south, double east, double west, double width, double height)
-	{
-		this.north = north;
-		this.south = south;
-		this.east = east;
-		this.west = west;
-		this.width = width;
-		this.height = height;
-	}
-	
+
 	
 	@Override
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point)
@@ -152,49 +127,4 @@ public class RobinsonProjection implements MapProjection
 		return (projectionTable.length - 1); 
 	}
 	
-	public double longitudeToColumn(double longitude)
-	{
-		double range = getEast() - getWest();
-		double pos = range - (longitude - getWest());
-		double col = (1.0 - (pos / range)) * getWidth();
-		return col;
-	}
-	
-	public double latitudeToRow(double latitude)
-	{
-		double range = getNorth() - getSouth();
-		double pos = range - (getNorth() - latitude);
-		double row = (1.0 - (pos / range)) * getHeight();
-		return row;
-	}
-	
-	protected double getNorth()
-	{
-		return north;
-	}
-
-	protected double getSouth()
-	{
-		return south;
-	}
-
-	protected double getEast()
-	{
-		return east;
-	}
-
-	protected double getWest()
-	{
-		return west;
-	}
-
-	protected double getWidth()
-	{
-		return width;
-	}
-
-	protected double getHeight()
-	{
-		return height;
-	}
 }
