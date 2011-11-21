@@ -10,16 +10,12 @@ import us.wthr.jdem846.render.gfx.NumberUtil;
  * @author Kevin M. Gill
  * @see http://en.wikipedia.org/wiki/Winkel_Tripel_projection
  */
-public class WinkelTripelProjection implements MapProjection
+public class WinkelTripelProjection extends AbstractBaseProjection
 {
 	private static Log log = Logging.getLog(WinkelTripelProjection.class);
 
-	private EquirectangularProjection equirectangular;
-	private AitoffProjection aitoff;
-	
-	MapPoint equirectangularPoint = new MapPoint();
-	MapPoint aitoffPoint = new MapPoint();
 
+	
 	public WinkelTripelProjection()
 	{
 		
@@ -27,39 +23,41 @@ public class WinkelTripelProjection implements MapProjection
 	
 	public WinkelTripelProjection(double north, double south, double east, double west, double width, double height)
 	{
-		setUp(north, south, east, west, width, height);
+		super(north, south, east, west, width, height);
 	}
 	
-	public void setUp(ModelContext modelContext)
-	{
-		setUp(modelContext.getNorth(), 
-				modelContext.getSouth(),
-				modelContext.getEast(),
-				modelContext.getWest(),
-				modelContext.getModelDimensions().getOutputWidth(),
-				modelContext.getModelDimensions().getOutputHeight());
-	}
-	
-	public void setUp(double north, double south, double east, double west, double width, double height)
-	{
-		equirectangular = new EquirectangularProjection(north, south, east, west, width, height);
-		aitoff = new AitoffProjection(north, south, east, west, width, height);
-	}
-	
+
 	@Override
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point)
 	{
-		equirectangular.getPoint(latitude, longitude, elevation, equirectangularPoint);
-		aitoff.getPoint(latitude, longitude, elevation, aitoffPoint);
+
+
+		double lpphi = Math.toRadians(latitude);
+		double lplam = Math.toRadians(longitude);
+
+		double c = 0.5 * lplam;
+		double cosO1 = 0.99993827224000145098735895662767;
+		double d = Math.acos(Math.cos(lpphi) * Math.cos(c));
 		
-		point.column = (equirectangularPoint.column + aitoffPoint.column) / 2.0;
-		point.row = (equirectangularPoint.row + aitoffPoint.row) / 2.0;
+		double sinca = (d == 0) ? 0 : (Math.sin(d) / d);
 		
-		//point.row = equirectangularPoint.row;
-		//point.column = equirectangularPoint.column;
+		double x = 0;
+		double y = 0;
 		
+		if (d != 0) {
+			x = (2.0 * Math.cos(lpphi) * Math.sin(c)) / sinca;
+			y = Math.sin(lpphi) / sinca;
+		}
+		
+		x = (x + lplam * cosO1) / 2.0;
+		y = (y + lpphi) / 2.0;
+		
+
+		point.column = longitudeToColumn(Math.toDegrees(x));
+		point.row = latitudeToRow(Math.toDegrees(y));
+
 	}
-	
+
 	
 	
 }
