@@ -309,6 +309,11 @@ public class ModelCanvas
 		graphics.setStroke(origStroke);
 	}
 	
+	public void drawImage(Image image, int x, int y, int width, int height)
+	{
+		graphics.drawImage(image, x, y, width, height, null);
+	}
+	
 	public int getColor(int x, int y)
 	{
 		if (x < 0 || x >= image.getWidth(null) || y < 0 || y >= image.getHeight(null))
