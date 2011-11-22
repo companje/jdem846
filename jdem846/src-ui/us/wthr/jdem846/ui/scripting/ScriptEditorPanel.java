@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -39,13 +40,18 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.AttributeSet;
 
+import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
+import us.wthr.jdem846.ui.MainButtonBar;
+import us.wthr.jdem846.ui.MainMenuBar;
 import us.wthr.jdem846.ui.TitledRoundedPanel;
 import us.wthr.jdem846.ui.base.EditorPane;
 import us.wthr.jdem846.ui.base.ScrollPane;
+import us.wthr.jdem846.ui.scripting.ScriptEditorButtonBar.ScriptEditButtons;
+import us.wthr.jdem846.ui.scripting.ScriptEditorButtonBar.ScriptEditorButtonClickedListener;
 
 @SuppressWarnings("serial")
 public class ScriptEditorPanel extends TitledRoundedPanel
@@ -55,6 +61,8 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 	
 	private JEditorPane editorPane;
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
+	
+	private ScriptEditorButtonBar buttonBar;
 	
 	private ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.GROOVY;
 	
@@ -70,8 +78,21 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 		
 		
 		// Create Components
-		final JEditorPane editorPane = new JEditorPane();
+		buttonBar = new ScriptEditorButtonBar(this);
+		buttonBar.addScriptEditorButtonClickedListener(new ScriptEditorButtonClickedListener() {
+			public void onButtonClicked(ScriptEditButtons button)
+			{
+				log.info("Button clicked: " + button);
+				JOptionPane.showMessageDialog(getRootPane(),
+						I18N.get("us.wthr.jdem846.ui.notYetImplemented.message"),
+					    I18N.get("us.wthr.jdem846.ui.notYetImplemented.title"),
+					    JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		MainButtonBar.addToolBar(buttonBar);
 		
+		
+		final JEditorPane editorPane = new JEditorPane();
 		this.editorPane = editorPane;
 		
 		log.info("Document: " + editorPane.getDocument());
@@ -119,6 +140,13 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 	}
 	
 	
+	@Override
+	public void dispose() throws ComponentException
+	{
+		log.info("Closing output image pane.");
+		//MainMenuBar.removeMenu(modelMenu);
+		MainButtonBar.removeToolBar(buttonBar);
+	}
 	
 	public void fireChangeListeners()
 	{

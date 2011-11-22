@@ -42,7 +42,7 @@ public interface ScriptProxy
 	public Object onGetElevationBefore(ModelContext modelContext, double latitude, double longitude);
 	public Object onGetElevationAfter(ModelContext modelContext, double latitude, double longitude, double elevation);
 
-	
+	public void onGetPointColor(ModelContext modelContext, double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color);
 	// TODO: Add copy()
 	
 	// getGradientColor

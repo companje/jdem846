@@ -281,12 +281,56 @@ public class JdemFrame extends Frame
 		DemProjectPane projectPane = (DemProjectPane) tabObj;
 		ProjectModel projectModel = projectPane.getProjectModel();
 		
+		String saveTo = projectPane.getSavedPath();
 		
 		
-		FileChooser chooser = new FileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormatName"), "xdem");
-		chooser.setFileFilter(filter);
+		if (saveTo == null) {
+			FileChooser chooser = new FileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormatName"), "xdem");
+			chooser.setFileFilter(filter);
+			
+
+			chooser.setMultiSelectionEnabled(false);
+			
+		    int returnVal =  chooser.showSaveDialog(this);
+		    if(returnVal == JFileChooser.APPROVE_OPTION) {
+		    	File selectedFile = chooser.getSelectedFile();
+		    	
+		    	String path = selectedFile.getAbsolutePath();
+		    	if (!path.toLowerCase().endsWith(".xdem")) {
+		    		path = path + ".xdem";
+		    	}
+		    		
+		    	saveTo = path;
+
+		    } else {
+		    	return;
+		    }
+			
+			
+		}
 		
+		try {
+			ProjectFileWriter.writeProject(projectModel, saveTo);
+			
+			projectPane.setSavedPath(saveTo);
+			
+			File file = new File(saveTo);
+			setComponentTabTitle(tabPane.getSelectedIndex(), file.getName());
+		} catch (IOException ex) {
+			//ex.printStackTrace();
+			log.warn("Error trying to write project to disk: " + ex.getMessage(), ex);
+			JOptionPane.showMessageDialog(getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.message"),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.title"),
+				    JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		
+	
+		
+		/*
 		if (projectModel.getLoadedFrom() != null) {
 			String loadedFrom = projectModel.getLoadedFrom();
 			File loadedFromFile = new File(loadedFrom);
@@ -294,34 +338,8 @@ public class JdemFrame extends Frame
 			chooser.setCurrentDirectory(loadedFromFile);
 			chooser.setSelectedFile(loadedFromFile);
 		}
+		*/
 		
-		
-		chooser.setMultiSelectionEnabled(false);
-		
-	    int returnVal =  chooser.showSaveDialog(this);
-	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	    	File selectedFile = chooser.getSelectedFile();
-	    	
-	    	try {
-	    		String path = selectedFile.getAbsolutePath();
-	    		if (!path.toLowerCase().endsWith(".xdem")) {
-	    			path = path + ".xdem";
-	    		}
-	    		
-				ProjectFileWriter.writeProject(projectModel, path);
-				
-				
-				setComponentTabTitle(tabPane.getSelectedIndex(), selectedFile.getName());
-			} catch (IOException ex) {
-				//ex.printStackTrace();
-				log.warn("Error trying to write project to disk: " + ex.getMessage(), ex);
-				JOptionPane.showMessageDialog(getRootPane(),
-					    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.message"),
-					    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.title"),
-					    JOptionPane.ERROR_MESSAGE);
-			}
-	    	
-	    }
 		
 		
 	}
@@ -373,6 +391,7 @@ public class JdemFrame extends Frame
 			tabPane.addTab(title, projectPane, true);
 			tabPane.setSelectedComponent(projectPane);
 			projectPane.setTitle(title);
+			projectPane.setSavedPath(filePath);
 			
 		} catch (FileNotFoundException ex) {
 			log.warn("Project file not found: " + ex.getMessage(), ex);
