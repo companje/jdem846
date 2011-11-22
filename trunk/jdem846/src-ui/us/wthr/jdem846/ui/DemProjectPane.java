@@ -927,6 +927,14 @@ public class DemProjectPane extends JdemPanel
 		}
 	}
 
+	public void setSavedPath(String savedPath)
+	{
+		modelOptions.setWriteTo(savedPath);
+	}
 	
+	public String getSavedPath()
+	{
+		return modelOptions.getWriteTo();
+	}
 	
 }

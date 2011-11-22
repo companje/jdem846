@@ -185,7 +185,7 @@ public class TileRenderer extends InterruptibleProcess
 			
 			
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1] + frontRightPoints[1]) / 4.0;
-			renderTriangle(avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
+			renderTriangle(latitude, longitude, avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
 			if (useSimpleCanvasFill) {
 				modelCanvas.fillRectangle(triangleColorNW, 
@@ -225,7 +225,7 @@ public class TileRenderer extends InterruptibleProcess
 			
 			// North West Triangle
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
-			renderTriangle(avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
+			renderTriangle(latitude, longitude, avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
 			modelCanvas.fillTriangle(triangleColorNW, 
 									latitude, longitude, backLeftPoints[1],
@@ -234,7 +234,7 @@ public class TileRenderer extends InterruptibleProcess
 			
 			// South East Triangle
 			double avgElevationSE = (frontRightPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
-			renderTriangle(avgElevationSE, frontLeftPoints, frontRightPoints, backRightPoints, triangleColorSE);
+			renderTriangle(latitude, longitude, avgElevationSE, frontLeftPoints, frontRightPoints, backRightPoints, triangleColorSE);
 			
 			modelCanvas.fillTriangle(triangleColorSE, 
 					latitude-latitudeResolution, longitude, frontLeftPoints[1],
@@ -253,13 +253,13 @@ public class TileRenderer extends InterruptibleProcess
 	
 	
 	
-	protected void renderTriangle(double pointElevation, double[] p0, double[] p1, double[] p2, int[] triangeColor) throws RenderEngineException
+	protected void renderTriangle(double latitude, double longitude, double pointElevation, double[] p0, double[] p1, double[] p2, int[] triangeColor) throws RenderEngineException
 	{
 		
 		
 		perspectives.calcNormal(p0, p1, p2, normal);
 		modelColoring.getGradientColor(pointElevation, elevationMin, elevationMax, reliefColor);
-		
+		onGetPointColor(latitude, longitude, pointElevation, elevationMin, elevationMax, reliefColor);
 		
 		if (hillShadeType != DemConstants.HILLSHADING_NONE) {
 			hillshadeColor[0] = reliefColor[0];
@@ -559,6 +559,21 @@ public class TileRenderer extends InterruptibleProcess
 		}
 		
 		return result;
+	}
+	
+	
+	//scriptColorBuffer
+	protected void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color) throws RenderEngineException
+	{
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.onGetPointColor(modelContext, latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+
 	}
 	
 	

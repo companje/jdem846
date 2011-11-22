@@ -66,6 +66,12 @@ public class GroovyScriptProxy implements ScriptProxy
 		return result;
 	}
 	
+	@Override
+	public void onGetPointColor(ModelContext modelContext, double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color)
+	{
+		invokeMethod("onGetPointColor", modelContext, latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
+	}
+	
 	
 	protected Object invokeMethod(String method, Object...args)
 	{
