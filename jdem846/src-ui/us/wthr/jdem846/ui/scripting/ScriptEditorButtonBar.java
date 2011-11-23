@@ -84,7 +84,7 @@ public class ScriptEditorButtonBar extends ComponentButtonBar
 		jbtnCopy.setTextDisplayed(displayText);
 		jbtnPaste.setTextDisplayed(displayText);
 		
-
+		
 		add(jbtnCut);
 		add(jbtnCopy);
 		add(jbtnPaste);

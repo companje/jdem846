@@ -154,7 +154,6 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 		});
 		
 		
-		this.setMargin(new Insets(3, 3, 3, 3));
 		
 		// Set layout
 		add(jbtnSave);
