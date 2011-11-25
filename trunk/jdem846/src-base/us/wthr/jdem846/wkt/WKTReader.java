@@ -21,6 +21,9 @@ public class WKTReader
 	public static final String L_BRACKET = "[";
 	public static final String R_BRACKET = "]";
 	
+	public static final int VALUE = 0;
+	public static final int TAG = 1;
+	
 	private static Log log = Logging.getLog(WKTReader.class);
 	
 	private String url = null;
@@ -55,20 +58,20 @@ public class WKTReader
 	{
 		// TODO: Check file is open first
 		
-		Tag top = new Tag("TOP");
+		WKTElement top = new WKTElement("TOP", TAG);
 		parseTag(top);
 		
 		
 	}
 	
 	
-	protected void parseTag(Tag parent) throws Exception
+	protected void parseTag(WKTElement parent) throws Exception
 	{
 		while (!isEOF() && !peekNextWord().equals(WKTReader.R_BRACKET)) {
 			String word = nextWord();
 				
 			if (isKeyword(word)) {
-				Tag tag = new Tag(word);
+				WKTElement tag = new WKTElement(word, TAG);
 				if (!nextWord().equals(WKTReader.L_BRACKET)) {
 					// TODO: throw!!!
 				}
@@ -78,6 +81,8 @@ public class WKTReader
 				parent.values.add(tag);
 			} else if (!word.equals(WKTReader.COMMA)){
 				log.info("Value: " + word);
+				WKTElement value = new WKTElement(word, VALUE);
+				parent.values.add(value);
 			}
 
 		}
@@ -193,19 +198,22 @@ public class WKTReader
 			"COMPD_CS"
 		};
 	
-	private class Tag
+	private class WKTElement
 	{
-		public String keyword;
-		public List<Tag> values = new LinkedList<Tag>();
 		
-		public Tag()
+		
+		public int type;
+		public String word;
+		public List<WKTElement> values = new LinkedList<WKTElement>();
+		
+		public WKTElement()
 		{
 			
 		}
 		
-		public Tag(String keyword)
+		public WKTElement(String word, int type)
 		{
-			this.keyword = keyword;
+			this.word = word;
 		}
 	}
 }
