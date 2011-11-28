@@ -36,23 +36,38 @@ public class Units
 	{
 		Unit unit = null;
 		
-		/*
-		METER.getName().equalsIgnoreCase(name)
-		FOOT_INTERNATIONAL.getName().equalsIgnoreCase(name)
-		FOOT_US.getName().equalsIgnoreCase(name)
-		FOOT_MODIFIED_AMERICAN
-		FOOT_CLARKS
-		FOOT_INDIAN
-		FOOT_LINK
-		FATHOM
-		NAUTICAL_MILE
-		RADIAN
-		DECIMAL_DEGREE
-		DECIMAL_MINUTE
-		DECIMAL_SECOND
-		GON
-		GRAD
-		*/
+		
+		if (METER.getName().equalsIgnoreCase(name)) {
+			unit = METER;
+		} else if (FOOT_INTERNATIONAL.getName().equalsIgnoreCase(name)) {
+			unit = FOOT_INTERNATIONAL;
+		} else if (FOOT_US.getName().equalsIgnoreCase(name)) {
+			unit = FOOT_US;
+		} else if (FOOT_MODIFIED_AMERICAN.getName().equalsIgnoreCase(name)) {
+			unit = FOOT_MODIFIED_AMERICAN;
+		} else if (FOOT_CLARKS.getName().equalsIgnoreCase(name)) {
+			unit = FOOT_CLARKS;
+		} else if (FOOT_INDIAN.getName().equalsIgnoreCase(name)) {
+			unit = FOOT_INDIAN;
+		} else if (FOOT_LINK.getName().equalsIgnoreCase(name)) {
+			unit = FOOT_LINK;
+		} else if (FATHOM.getName().equalsIgnoreCase(name)) {
+			unit = FATHOM;
+		} else if (NAUTICAL_MILE.getName().equalsIgnoreCase(name)) {
+			unit = NAUTICAL_MILE;
+		} else if (RADIAN.getName().equalsIgnoreCase(name)) {
+			unit = RADIAN;
+		} else if (DECIMAL_DEGREE.getName().equalsIgnoreCase(name)) {
+			unit = DECIMAL_DEGREE;
+		} else if (DECIMAL_MINUTE.getName().equalsIgnoreCase(name)) {
+			unit = DECIMAL_MINUTE;
+		} else if (DECIMAL_SECOND.getName().equalsIgnoreCase(name)) {
+			unit = DECIMAL_SECOND;
+		} else if (GON.getName().equalsIgnoreCase(name)) {
+			unit = GON;
+		} else if (GRAD.getName().equalsIgnoreCase(name)) {
+			unit = GRAD;
+		}
 		
 		return unit;
 	}
