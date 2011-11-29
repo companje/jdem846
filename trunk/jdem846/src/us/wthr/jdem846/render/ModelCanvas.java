@@ -27,11 +27,9 @@ import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.mapprojection.AitoffProjection;
-import us.wthr.jdem846.render.mapprojection.EquirectangularProjection;
-import us.wthr.jdem846.render.mapprojection.MapPoint;
-import us.wthr.jdem846.render.mapprojection.MapProjection;
-import us.wthr.jdem846.render.mapprojection.WinkelTripelProjection;
+import us.wthr.jdem846.gis.projections.EquirectangularProjection;
+import us.wthr.jdem846.gis.projections.MapPoint;
+import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
 public class ModelCanvas
