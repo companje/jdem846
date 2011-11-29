@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src-base"/>
+	<classpathentry kind="src" path="src-gis"/>
 	<classpathentry kind="src" path="src-dbase"/>
 	<classpathentry kind="src" path="src-shapefile"/>
 	<classpathentry kind="src" path="src-kml"/>
