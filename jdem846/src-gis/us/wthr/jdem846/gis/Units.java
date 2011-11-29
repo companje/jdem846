@@ -1,4 +1,4 @@
-package us.wthr.jdem846.geo;
+package us.wthr.jdem846.gis;
 
 import static java.lang.Math.PI;
 
