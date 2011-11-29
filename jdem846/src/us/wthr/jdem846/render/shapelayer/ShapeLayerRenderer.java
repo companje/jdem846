@@ -18,7 +18,7 @@ import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
-import us.wthr.jdem846.render.mapprojection.MapPoint;
+import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.PointTranslateHandler;
 import us.wthr.jdem846.shapefile.Shape;
