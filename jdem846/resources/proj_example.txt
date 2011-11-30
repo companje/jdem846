@@ -1,3 +1,4 @@
+.jpw
 0.9999198070
 0.0000000000
 0.0000000000
@@ -6,7 +7,7 @@
 4778143.4400105691
 
 
-
+.prj
 PROJCS["NAD_1983_UTM_Zone_19N",
 	GEOGCS["GCS_North_American_1983",
 		DATUM["D_North_American_1983",
