@@ -1,6 +1,7 @@
 package us.wthr.jdem846.wkt;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -9,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.JDemResourceLoader;
+import us.wthr.jdem846.exception.WKTParseException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -35,7 +37,7 @@ public class WKTReader
 		this.url = url;
 	}
 	
-	public void open() throws Exception
+	public void open() throws IOException
 	{
 		in = JDemResourceLoader.getAsInputStream(url);
 		Reader r = new BufferedReader(new InputStreamReader(in));
@@ -54,18 +56,22 @@ public class WKTReader
 		tokenizer.commentChar('#');
 	}
 	
-	public void parse() throws Exception
+	public void parse() throws WKTParseException
 	{
 		// TODO: Check file is open first
 		
 		WKTElement top = new WKTElement("TOP", TAG);
-		parseTag(top);
 		
+		try {
+			parseTag(top);
+		} catch (IOException ex) {
+			throw new WKTParseException("IO Error loading WKT file: " + ex.getMessage(), ex);
+		} // Let WKTParseException fly!
 		
 	}
 	
 	
-	protected void parseTag(WKTElement parent) throws Exception
+	protected void parseTag(WKTElement parent) throws IOException, WKTParseException
 	{
 		while (!isEOF() && !peekNextWord().equals(WKTReader.R_BRACKET)) {
 			String word = nextWord();
@@ -91,7 +97,7 @@ public class WKTReader
 			nextWord();
 	}
 	
-	protected boolean isEOF() throws Exception
+	protected boolean isEOF() throws IOException
 	{
 		int type = tokenizer.nextToken();
 		tokenizer.pushBack();
@@ -102,7 +108,7 @@ public class WKTReader
 		}
 	}
 	
-	protected double nextDouble() throws Exception 
+	protected double nextDouble() throws IOException, WKTParseException 
 	{
 		String word = nextWord();
 		if (word == null) {
@@ -112,18 +118,18 @@ public class WKTReader
 			double value = Double.parseDouble(word);
 			return value;
 		} catch (Exception ex) {
-			return 0; // Throw!!
+			throw new WKTParseException("Invalid text '" + word + "', expected double; " + ex.getMessage(), ex);
 		}
 	}
 	
-	protected String peekNextWord() throws Exception
+	protected String peekNextWord() throws IOException, WKTParseException
 	{
 		String word = nextWord();
 		tokenizer.pushBack();
 		return word;
 	}
 	
-	protected String nextWord() throws Exception
+	protected String nextWord() throws IOException, WKTParseException
 	{
 		int type = tokenizer.nextToken();
 		
@@ -146,8 +152,7 @@ public class WKTReader
 			case ']':
 				return WKTReader.R_BRACKET;
 			default:
-				log.info("Type: Unknown: " + type);
-				return null;
+				throw new WKTParseException("Unknown WKT field type: " + type);
 		}
 	}
 	
@@ -161,7 +166,7 @@ public class WKTReader
 	}
 	
 	
-	public void close() throws Exception
+	public void close() throws IOException
 	{
 		if (in != null) {
 			in.close();
@@ -170,12 +175,23 @@ public class WKTReader
 	}
 	
 	
-	public static WKTReader load(String url) throws Exception
+	public static WKTReader load(String url) throws WKTParseException
 	{
 		WKTReader reader = new WKTReader(url);
-		reader.open();
+		try {
+			reader.open();
+		} catch (Exception ex) {
+			throw new WKTParseException("Failed to open WKT file: " + ex.getMessage(), ex);
+		}
+			
 		reader.parse();
-		reader.close();
+		
+		try {
+			reader.close();
+		} catch (Exception ex) {
+			throw new WKTParseException("Failed to close WKT file: " + ex.getMessage(), ex);
+		}
+		
 		return reader;
 	}
 	

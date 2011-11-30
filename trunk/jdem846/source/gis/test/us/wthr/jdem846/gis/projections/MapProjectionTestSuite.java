@@ -21,9 +21,9 @@ public class MapProjectionTestSuite extends TestSuite
 		}
 		
 		
-		System.out.println("us.wthr.jdem846.installPath: " + System.getProperty("us.wthr.jdem846.installPath"));
-		System.out.println("us.wthr.jdem846.resourcesPath: " + System.getProperty("us.wthr.jdem846.resourcesPath"));
-		System.out.println("us.wthr.jdem846.userSettingsPath: " + System.getProperty("us.wthr.jdem846.userSettingsPath"));
+		//System.out.println("us.wthr.jdem846.installPath: " + System.getProperty("us.wthr.jdem846.installPath"));
+		//System.out.println("us.wthr.jdem846.resourcesPath: " + System.getProperty("us.wthr.jdem846.resourcesPath"));
+		//System.out.println("us.wthr.jdem846.userSettingsPath: " + System.getProperty("us.wthr.jdem846.userSettingsPath"));
 	}
 	
 	public static Test suite()
@@ -34,6 +34,7 @@ public class MapProjectionTestSuite extends TestSuite
 		TestSuite suite = new TestSuite("Test suite for utility classes in us.wthr.jdem846.render.mapprojection");
 		//$JUnit-BEGIN$
 		
+		/*
 		suite.addTestSuite(AitoffProjectionTest.class);
 		suite.addTestSuite(EquirectangularProjectionTest.class);
 		suite.addTestSuite(RobinsonProjectionTest.class);
@@ -41,7 +42,9 @@ public class MapProjectionTestSuite extends TestSuite
 		suite.addTestSuite(MollweideProjectionTest.class);
 		suite.addTestSuite(HammerProjectionTest.class);
 		suite.addTestSuite(WagnerVIProjectionTest.class);
-		
+		*/
+		//suite.addTestSuite(MercatorProjectionTest.class);
+		suite.addTestSuite(TransverseMercatorProjectionTest.class);
 		//$JUnit-END$
 		return suite;
 	}
