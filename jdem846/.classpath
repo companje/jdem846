@@ -1,29 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="source/base/src"/>
-	<classpathentry kind="src" path="source/base/test"/>
 	<classpathentry kind="src" path="source/gis/src"/>
-	<classpathentry kind="src" path="source/gis/test"/>
 	<classpathentry kind="src" path="source/dbase/src"/>
-	<classpathentry kind="src" path="source/dbase/test"/>
 	<classpathentry kind="src" path="source/shapefile/src"/>
-	<classpathentry kind="src" path="source/shapefile/test"/>
 	<classpathentry kind="src" path="source/kml/src"/>
-	<classpathentry kind="src" path="source/kml/test"/>
 	<classpathentry kind="src" path="source/main/src"/>
-	<classpathentry kind="src" path="source/main/test"/>
 	<classpathentry kind="src" path="source/ui/src"/>
-	<classpathentry kind="src" path="source/ui/test"/>
 	<classpathentry kind="src" path="source/resources/src"/>
+	<classpathentry kind="src" path="source/base/test"/>
+	<classpathentry kind="src" path="source/gis/test"/>
+	<classpathentry kind="src" path="source/dbase/test"/>
+	<classpathentry kind="src" path="source/shapefile/test"/>
+	<classpathentry kind="src" path="source/kml/test"/>
+	<classpathentry kind="src" path="source/main/test"/>
+	<classpathentry kind="src" path="source/ui/test"/>
 	<classpathentry kind="src" path="source/resources/test"/>
-	<classpathentry kind="src" path="src-base"/>
-	<classpathentry kind="src" path="src-gis"/>
-	<classpathentry kind="src" path="src-dbase"/>
-	<classpathentry kind="src" path="src-shapefile"/>
-	<classpathentry kind="src" path="src-kml"/>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="src-ui"/>
-	<classpathentry kind="src" path="src-resources"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>

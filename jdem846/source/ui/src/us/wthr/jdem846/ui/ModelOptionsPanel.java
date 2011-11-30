@@ -44,8 +44,6 @@ import javax.swing.event.ChangeListener;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.color.ColorInstance;
-import us.wthr.jdem846.color.ColorRegistry;
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.exception.ComponentException;
@@ -54,7 +52,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
-import us.wthr.jdem846.render.mapprojection.MapProjectionEnum;
+import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.ui.MonitoredSlider.MonitoredValueListener;
 import us.wthr.jdem846.ui.base.BoxContainer;
 import us.wthr.jdem846.ui.base.ComboBox;

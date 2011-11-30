@@ -27,13 +27,11 @@ import javax.swing.JPanel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.input.DataBounds;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataRowColumnBox;
-import us.wthr.jdem846.render.mapprojection.EquirectangularProjection;
-import us.wthr.jdem846.render.mapprojection.MapPoint;
-import us.wthr.jdem846.render.mapprojection.MapProjection;
+import us.wthr.jdem846.gis.projections.EquirectangularProjection;
+import us.wthr.jdem846.gis.projections.MapPoint;
+import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.ui.border.StandardBorder;
 
 @SuppressWarnings("serial")
