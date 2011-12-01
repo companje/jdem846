@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package us.wthr.jdem846;
+package us.wthr.jdem846.gis;
 
 /** Projection and georeferencing constants. Based on values from GeoTIFF Rev. 0.2
  * 

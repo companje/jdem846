@@ -1,6 +1,8 @@
 package us.wthr.jdem846.gis;
 
-public class Unit
+import java.io.Serializable;
+
+public class Unit implements Cloneable, Serializable
 {
 	
 	private String name;
@@ -14,27 +16,30 @@ public class Unit
 	private double longitudeRangeMinimum = 0;
 	private double longitudeRangeMaximum = 0;
 	
-	public Unit(String name, double conversionFactor)
+
+	
+	public Unit(String name, double conversionFactor, String type, double[] latitudeRange, double[] longitudeRange)
 	{
 		this.name = name;
 		this.conversionFactor = conversionFactor;
-		isLinear = true;
-		isAngular = false;
+		
+		if (type.equalsIgnoreCase("linear")) {
+			isLinear = true;
+		} else if (type.equalsIgnoreCase("angular")) {
+			isAngular = true;
+		}
+		
+		if (latitudeRange != null && latitudeRange.length == 2) {
+			latitudeRangeMinimum = latitudeRange[0];
+			latitudeRangeMaximum = latitudeRange[1];
+		}
+		
+		if (longitudeRange != null && longitudeRange.length == 2) {
+			longitudeRangeMinimum = longitudeRange[0];
+			longitudeRangeMaximum = longitudeRange[1];
+		}
 	}
-	
-	public Unit(String name, double latitudeRangeMinimum, double latitudeRangeMaximum, double longitudeRangeMinimum, double longitudeRangeMaximum, double conversionFactor)
-	{
-		this.name = name;
-		this.latitudeRangeMinimum = latitudeRangeMinimum;
-		this.latitudeRangeMaximum = latitudeRangeMaximum;
-		this.longitudeRangeMinimum = longitudeRangeMinimum;
-		this.longitudeRangeMaximum = longitudeRangeMaximum;
-		this.conversionFactor = conversionFactor;
-		isLinear = false;
-		isAngular = true;
-	}
-	
-	
+
 	
 	
 	public String getName()
@@ -106,7 +111,15 @@ public class Unit
 	}
 	
 	
-	
+	public Object clone() 
+	{
+		try {
+			Unit e = (Unit) super.clone();
+			return e;
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError();
+		}
+	}
 	
 	
 }
