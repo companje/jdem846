@@ -11,7 +11,9 @@ public enum MapProjectionEnum
 	WINKELTRIPEL("us.wthr.jdem846.render.mapProjection.winkelTripelProjection.name", WinkelTripelProjection.class),
 	HAMMER("us.wthr.jdem846.render.mapProjection.hammerProjection.name", HammerProjection.class),
 	MOLLWEIDE("us.wthr.jdem846.render.mapProjection.mollweideProjection.name", MollweideProjection.class),
-	WAGNERVI("us.wthr.jdem846.render.mapProjection.WagnerViProjection.name", WagnerVIProjection.class);
+	WAGNERVI("us.wthr.jdem846.render.mapProjection.wagnerViProjection.name", WagnerVIProjection.class),
+	MERCATOR("us.wthr.jdem846.render.mapProjection.mercatorProjection.name", MercatorProjection.class),
+	TRANSVERSEMERCATOR("us.wthr.jdem846.render.mapProjection.transverseMercatorProjection.name", TransverseMercatorProjection.class);
 	
 	private final String projectionName;
 	private final Class<MapProjection> provider;

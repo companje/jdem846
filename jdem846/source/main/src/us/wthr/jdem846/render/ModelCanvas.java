@@ -27,6 +27,7 @@ import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
@@ -126,23 +127,29 @@ public class ModelCanvas
 	public void fillTriangle(int[] color, 
 								double latitude0, double longitude0, double elevation0,
 								double latitude1, double longitude1, double elevation1,
-								double latitude2, double longitude2, double elevation2)
+								double latitude2, double longitude2, double elevation2) throws CanvasException
 	{
 		pathBuffer.reset();
 		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
 		
-		mapProjection.getPoint(latitude0, longitude0, elevation0, mapPoint);
-		double row0 = mapPoint.row;
-		double column0 = mapPoint.column;
+		double row0, row1, row2;
+		double column0, column1, column2;
 		
-		mapProjection.getPoint(latitude1, longitude1, elevation1, mapPoint);
-		double row1 = mapPoint.row;
-		double column1 = mapPoint.column;
-		
-		mapProjection.getPoint(latitude2, longitude2, elevation2, mapPoint);
-		double row2 = mapPoint.row;
-		double column2 = mapPoint.column;
-		
+		try {
+			mapProjection.getPoint(latitude0, longitude0, elevation0, mapPoint);
+			row0 = mapPoint.row;
+			column0 = mapPoint.column;
+			
+			mapProjection.getPoint(latitude1, longitude1, elevation1, mapPoint);
+			row1 = mapPoint.row;
+			column1 = mapPoint.column;
+			
+			mapProjection.getPoint(latitude2, longitude2, elevation2, mapPoint);
+			row2 = mapPoint.row;
+			column2 = mapPoint.column;
+		} catch (MapProjectionException ex) {
+			throw new CanvasException("Failed to project coordinates to canvas: " + ex.getMessage(), ex);
+		}
 
 		pathBuffer.moveTo(column0, row0);
 		pathBuffer.lineTo(column1, row1);
@@ -167,17 +174,24 @@ public class ModelCanvas
 	public void fillRectangle(int[] color,
 			double latitude, double longitude, 
 			double width, double height,
-			double elevation)
+			double elevation) throws CanvasException
 	{
-		mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
-		double row0 = mapPoint.row;
-		double column0 = mapPoint.column;
-
+		double row0, row1;
+		double column0, column1;
 		
-		mapProjection.getPoint(latitude-height, longitude+width, elevation, mapPoint);
-		double row1 = mapPoint.row;
-		double column1 = mapPoint.column;
-
+		try {
+			mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
+			row0 = mapPoint.row;
+			column0 = mapPoint.column;
+	
+			
+			mapProjection.getPoint(latitude-height, longitude+width, elevation, mapPoint);
+			row1 = mapPoint.row;
+			column1 = mapPoint.column;
+		} catch (MapProjectionException ex) {
+			throw new CanvasException("Failed to project coordinates to canvas: " + ex.getMessage(), ex);
+		}
+		
 		if (isAntiAliased) {
 			fillRectangleSimpleAntialiased(color, row0, column0, row1, column1);
 		} else {
@@ -232,29 +246,32 @@ public class ModelCanvas
 			double lat0, double lon0, double elev0,
 			double lat1, double lon1, double elev1,
 			double lat2, double lon2, double elev2,
-			double lat3, double lon3, double elev3
-			/*double latitude, double longitude, 
-			double width, double height,
-			double elevation*/)
+			double lat3, double lon3, double elev3) throws CanvasException
 	{
 		pathBuffer.reset();
 		
-		mapProjection.getPoint(lat0, lon0, elev0, mapPoint);
-		double row0 = mapPoint.row;
-		double column0 = mapPoint.column;
+		double row0, row1, row2, row3;
+		double column0, column1, column2, column3;
 		
-		mapProjection.getPoint(lat1, lon1, elev1, mapPoint);
-		double row1 = mapPoint.row;
-		double column1 = mapPoint.column;
-		
-		mapProjection.getPoint(lat2, lon2, elev2, mapPoint);
-		double row2 = mapPoint.row;
-		double column2 = mapPoint.column;
-		
-		mapProjection.getPoint(lat3, lon3, elev3, mapPoint);
-		double row3 = mapPoint.row;
-		double column3 = mapPoint.column;
-		
+		try {
+			mapProjection.getPoint(lat0, lon0, elev0, mapPoint);
+			row0 = mapPoint.row;
+			column0 = mapPoint.column;
+			
+			mapProjection.getPoint(lat1, lon1, elev1, mapPoint);
+			row1 = mapPoint.row;
+			column1 = mapPoint.column;
+			
+			mapProjection.getPoint(lat2, lon2, elev2, mapPoint);
+			row2 = mapPoint.row;
+			column2 = mapPoint.column;
+			
+			mapProjection.getPoint(lat3, lon3, elev3, mapPoint);
+			row3 = mapPoint.row;
+			column3 = mapPoint.column;
+		} catch (MapProjectionException ex) {
+			throw new CanvasException("Failed to project coordates to canvas: " + ex.getMessage(), ex);
+		}
 		
 		if (row1 < row0 || row2 < row3)
 			return;

@@ -18,6 +18,7 @@ import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.PointTranslateHandler;
@@ -115,9 +116,13 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 		shapeLayer.translate(new PointTranslateHandler() {
 			public void translatePoint(double[] coords)
 			{
-				modelCanvas.getMapProjection().getPoint(coords[1], coords[0], 0, mapPoint);
-				coords[0] = mapPoint.column;
-				coords[1] = mapPoint.row;
+				try {
+					modelCanvas.getMapProjection().getPoint(coords[1], coords[0], 0, mapPoint);
+					coords[0] = mapPoint.column;
+					coords[1] = mapPoint.row;
+				} catch (MapProjectionException ex) {
+					log.warn("Error projecting coordinates to map: " + ex.getMessage(), ex);
+				}
 			}
 		}, false);
 		

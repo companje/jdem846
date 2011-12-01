@@ -1,6 +1,7 @@
 package us.wthr.jdem846.gis.projections;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -23,6 +24,10 @@ public interface MapProjection
 	 */
 	public void setUp(double north, double south, double east, double west, double width, double height);
 	
+	/** Initializes the map projection class with the properties in the model context object.
+	 * 
+	 * @param modelContext
+	 */
 	public void setUp(ModelContext modelContext);
 	
 	/** Requests a canvas row & column from the specified latitude, longitude, and, optionally, elevation.
@@ -33,7 +38,7 @@ public interface MapProjection
 	 * @param elevation Elevation at these coordinates. Only used by projection algorithms that support it.
 	 * @param point Reusable map point object that will be populated with the canvas row & column.
 	 */
-	public void getPoint(double latitude, double longitude, double elevation, MapPoint point);
+	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException;
 
 
 }

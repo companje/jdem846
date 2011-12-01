@@ -7,6 +7,7 @@ import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
 import us.wthr.jdem846.exception.ImageException;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -69,8 +70,11 @@ public class BaseMapProjectionTest extends TestCase
 		//double latitude = 42.357778;
 		//double longitude = -71.061667;
 
-		
-		mapProjection.getPoint(latitude, longitude, 0.0, point);
+		try {
+			mapProjection.getPoint(latitude, longitude, 0.0, point);
+		} catch (MapProjectionException ex) {
+			fail("Failed to project coordinates: " + ex.getMessage());
+		}
 		
 		assertEquals(rowShouldBe, point.row);
 		assertEquals(columnShouldBe, point.column);
@@ -106,26 +110,44 @@ public class BaseMapProjectionTest extends TestCase
 			
 			for (double longitude = west; longitude < east; longitude++) {
 				
-				mapProjection.getPoint(latitude, longitude, 0.0, point);
-				
-				//assertTrue("Column " + point.column + " is less than zero at " + latitude + "/" + longitude, point.column >= 0);
-				//assertTrue("Column " + point.column + " exceeds image width at " + latitude + "/" + longitude, point.column < width);
-				//assertTrue("Row " + point.row + " is less than zero at " + latitude + "/" + longitude, point.row >= 0);
-				//assertTrue("Row " + point.row + " exceeds image height at " + latitude + "/" + longitude, point.row < height);
-	
-
+				try {
+					mapProjection.getPoint(latitude, longitude, 0.0, point);
+				} catch (MapProjectionException ex) {
+					fail("Failed to project coordinates: " + ex.getMessage());
+				}
 				int c1 = (int) Math.round(point.column);
 				int r1 = (int) Math.round(point.row); 
 				
-				mapProjection.getPoint(latitude-1.0, longitude, 0.0, point);
+				
+				assertTrue("Column " + point.column + " is less than zero at " + latitude + "/" + longitude, point.column >= 0);
+				assertTrue("Column " + point.column + " exceeds image width at " + latitude + "/" + longitude, point.column < width);
+				assertTrue("Row " + point.row + " is less than zero at " + latitude + "/" + longitude, point.row >= 0);
+				assertTrue("Row " + point.row + " exceeds image height at " + latitude + "/" + longitude, point.row < height);
+	
+
+				
+				
+				try {
+					mapProjection.getPoint(latitude-1.0, longitude, 0.0, point);
+				} catch (MapProjectionException ex) {
+					fail("Failed to project coordinates: " + ex.getMessage());
+				}
 				int c2 = (int) Math.round(point.column);
 				int r2 = (int) Math.round(point.row); 
 				
-				mapProjection.getPoint(latitude-1.0, longitude+1.0, 0.0, point);
+				try {
+					mapProjection.getPoint(latitude-1.0, longitude+1.0, 0.0, point);
+				} catch (MapProjectionException ex) {
+					fail("Failed to project coordinates: " + ex.getMessage());
+				}
 				int c3 = (int) Math.round(point.column);
 				int r3 = (int) Math.round(point.row); 
 				
-				mapProjection.getPoint(latitude, longitude+1.0, 0.0, point);
+				try {
+					mapProjection.getPoint(latitude, longitude+1.0, 0.0, point);
+				} catch (MapProjectionException ex) {
+					fail("Failed to project coordinates: " + ex.getMessage());
+				}
 				int c4 = (int) Math.round(point.column);
 				int r4 = (int) Math.round(point.row); 
 				
@@ -151,25 +173,43 @@ public class BaseMapProjectionTest extends TestCase
 				int c1, r1, c2, r2;
 				
 				if (latitude > south) {
-					mapProjection.getPoint(latitude, longitude, 0.0, point);
+					try {
+						mapProjection.getPoint(latitude, longitude, 0.0, point);
+					} catch (MapProjectionException ex) {
+						fail("Failed to project coordinates: " + ex.getMessage());
+					}
 					
 					c1 = (int) Math.floor(point.column);
 					r1 = (int) Math.floor(point.row); 
 					
-					mapProjection.getPoint(latitude-coordWidthLat, longitude, 0.0, point);
+					try {
+						mapProjection.getPoint(latitude-coordWidthLat, longitude, 0.0, point);
+					} catch (MapProjectionException ex) {
+						fail("Failed to project coordinates: " + ex.getMessage());
+					}
+					
 					c2 = (int) Math.floor(point.column);
-					 r2 = (int) Math.floor(point.row); 
+					r2 = (int) Math.floor(point.row); 
 					
 					g2d.drawLine(c1, r1, c2, r2);
 				}
 				
 				if (longitude < east) {
-					mapProjection.getPoint(latitude, longitude, 0.0, point);
+					
+					try {
+						mapProjection.getPoint(latitude, longitude, 0.0, point);
+					} catch (MapProjectionException ex) {
+						fail("Failed to project coordinates: " + ex.getMessage());
+					}
 					
 					c1 = (int) Math.floor(point.column);
 					r1 = (int) Math.floor(point.row); 
 					
-					mapProjection.getPoint(latitude, longitude+coordWidthLon, 0.0, point);
+					try {
+						mapProjection.getPoint(latitude, longitude+coordWidthLon, 0.0, point);
+					} catch (MapProjectionException ex) {
+						fail("Failed to project coordinates: " + ex.getMessage());
+					}
 					c2 = (int) Math.floor(point.column);
 					r2 = (int) Math.floor(point.row); 
 					
