@@ -13,6 +13,7 @@ import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
+import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataBounds;
@@ -187,19 +188,22 @@ public class TileRenderer extends InterruptibleProcess
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1] + frontRightPoints[1]) / 4.0;
 			renderTriangle(latitude, longitude, avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
-			if (useSimpleCanvasFill) {
-				modelCanvas.fillRectangle(triangleColorNW, 
-						latitude, longitude, 
-						latitudeResolution, longitudeResolution,
-						avgElevationNW);
-			} else {
-				modelCanvas.fillRectangle(triangleColorNW,
-						latitude, longitude, backLeftPoints[1],
-						latitude-latitudeResolution, longitude, frontLeftPoints[1],
-						latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
-						latitude, longitude+longitudeResolution, backRightPoints[1]);
+			try {
+				if (useSimpleCanvasFill) {
+					modelCanvas.fillRectangle(triangleColorNW, 
+							latitude, longitude, 
+							latitudeResolution, longitudeResolution,
+							avgElevationNW);
+				} else {
+					modelCanvas.fillRectangle(triangleColorNW,
+							latitude, longitude, backLeftPoints[1],
+							latitude-latitudeResolution, longitude, frontLeftPoints[1],
+							latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
+							latitude, longitude+longitudeResolution, backRightPoints[1]);
+				}
+			} catch (CanvasException ex) {
+				throw new RenderEngineException("Failed to fill points on canvas: " + ex.getMessage(), ex);
 			}
-
 			
 		}
 	}
@@ -227,20 +231,27 @@ public class TileRenderer extends InterruptibleProcess
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
 			renderTriangle(latitude, longitude, avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
-			modelCanvas.fillTriangle(triangleColorNW, 
+			try {
+				modelCanvas.fillTriangle(triangleColorNW, 
 									latitude, longitude, backLeftPoints[1],
 									latitude-latitudeResolution, longitude, frontLeftPoints[1],
 									latitude, longitude+longitudeResolution, backRightPoints[1]);
+			} catch (CanvasException ex) {
+				throw new RenderEngineException("Failed to fill point on canvas: " + ex.getMessage(), ex);
+			}
 			
 			// South East Triangle
 			double avgElevationSE = (frontRightPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
 			renderTriangle(latitude, longitude, avgElevationSE, frontLeftPoints, frontRightPoints, backRightPoints, triangleColorSE);
 			
-			modelCanvas.fillTriangle(triangleColorSE, 
-					latitude-latitudeResolution, longitude, frontLeftPoints[1],
-					latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
-					latitude, longitude+longitudeResolution, backRightPoints[1]);
-			
+			try {
+				modelCanvas.fillTriangle(triangleColorSE, 
+									latitude-latitudeResolution, longitude, frontLeftPoints[1],
+									latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
+									latitude, longitude+longitudeResolution, backRightPoints[1]);
+			} catch (CanvasException ex) {
+				throw new RenderEngineException("Failed to fill point on canvas: " + ex.getMessage(), ex);
+			}
 			
 		}
 		

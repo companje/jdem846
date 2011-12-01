@@ -1,6 +1,7 @@
 package us.wthr.jdem846.gis.projections;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.gfx.NumberUtil;
@@ -24,7 +25,7 @@ public class AitoffProjection extends AbstractBaseProjection
 	
 	
 	@Override
-	public void getPoint(double latitude, double longitude, double elevation, MapPoint point)
+	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
 		if (latitude == 0.0 && longitude == 0.0) {
 			point.column = getWidth() / 2.0;

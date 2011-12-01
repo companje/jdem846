@@ -24,11 +24,15 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import sun.util.logging.resources.logging;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataRowColumnBox;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
@@ -37,7 +41,8 @@ import us.wthr.jdem846.ui.border.StandardBorder;
 @SuppressWarnings("serial")
 public class DataInputLayoutPane extends TitledRoundedPanel
 {
-
+	private static Log log = Logging.getLog(DataInputLayoutPane.class);
+	
 	private LayoutGraphicPanel graphicPanel;
 
 	public DataInputLayoutPane(ModelContext modelContext)
@@ -134,14 +139,20 @@ public class DataInputLayoutPane extends TitledRoundedPanel
 			for (int i = modelContext.getRasterDataContext().getRasterDataListSize() - 1; i >= 0; i--) {
 				RasterData rasterData = modelContext.getRasterDataContext().getRasterDataList().get(i);
 				
-				projection.getPoint(rasterData.getNorth(), rasterData.getWest(), 0, point);
-				int x = (int) point.column;
-				int y = (int) point.row;
+				int x, y, w, h;
 				
-				projection.getPoint(rasterData.getSouth(), rasterData.getEast(), 0, point);
-				int w = (int) point.column - x;
-				int h = (int) point.row - y;
-				
+				try {
+					projection.getPoint(rasterData.getNorth(), rasterData.getWest(), 0, point);
+					x = (int) point.column;
+					y = (int) point.row;
+					
+					projection.getPoint(rasterData.getSouth(), rasterData.getEast(), 0, point);
+					w = (int) point.column - x;
+					h = (int) point.row - y;
+				} catch (MapProjectionException ex) {
+					log.warn("Error projecting coordinates to map: " + ex.getMessage(), ex);
+					continue;
+				}
 				
 				g2d.setColor(stroke);
 				g2d.drawRect(x, y, w, h);

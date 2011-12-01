@@ -1,5 +1,6 @@
 package us.wthr.jdem846.gis.projections;
 
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -27,7 +28,7 @@ public class MollweideProjection extends AbstractBaseProjection
 	
 	
 	@Override
-	public void getPoint(double latitude, double longitude, double elevation, MapPoint point)
+	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
 		latitude = Math.toRadians(latitude);
 		longitude = Math.toRadians(longitude);

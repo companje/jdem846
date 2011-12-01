@@ -1,5 +1,6 @@
 package us.wthr.jdem846.gis.projections;
 
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -55,7 +56,7 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 	}
 
 	
-	public void getPoint(double latitude, double longitude, double elevation, MapPoint point)
+	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
 		double phi = Math.toRadians(latitude);
 		double lam = Math.toRadians(longitude);
@@ -75,7 +76,7 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 		
 	}
 	
-	public void getPointEllipse(double phi, double lam, double elevation, MapPoint point)
+	public void getPointEllipse(double phi, double lam, double elevation, MapPoint point) throws MapProjectionException
 	{
 		double sinphi = Math.sin(phi); 
 		double cosphi = Math.cos(phi);
@@ -112,7 +113,7 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 		point.row = y;
 	}
 
-	public void getPointSpherical(double phi, double lam, double elevation, MapPoint point)
+	public void getPointSpherical(double phi, double lam, double elevation, MapPoint point) throws MapProjectionException
 	{
 	 
 		double cosphi = Math.cos(phi);

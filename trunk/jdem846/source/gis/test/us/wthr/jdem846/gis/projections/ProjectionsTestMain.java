@@ -1,6 +1,7 @@
 package us.wthr.jdem846.gis.projections;
 
 import us.wthr.jdem846.AbstractTestMain;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -29,7 +30,12 @@ private static Log log = null;
 		
 		for (double lat = north; lat >= south; lat-=1.0) {
 			for (double lon = west; lon <= east; lon+=1.0) {
-				projection.getPoint(lat, lon, 0, point);
+				try {
+					projection.getPoint(lat, lon, 0, point);
+				} catch (MapProjectionException ex) {
+					log.error("Failed to project coordinates " + lat + "/" + lon + ": " + ex.getMessage(), ex);
+					return;
+				}
 				log.info("TEST** Lat/Lon: " + lat + "/" + lon + ", x/y: " + point.column + "/" + point.row);
 			}
 		}
