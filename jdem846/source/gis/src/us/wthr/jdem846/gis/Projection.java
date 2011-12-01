@@ -1,6 +1,8 @@
 package us.wthr.jdem846.gis;
 
-public class Projection
+import java.io.Serializable;
+
+public class Projection implements Cloneable, Serializable
 {
 
 }

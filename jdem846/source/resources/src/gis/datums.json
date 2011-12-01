@@ -1,0 +1,633 @@
+{
+	primeMeridians : [
+		{
+			name : "greenwich",
+			definition : "0dE",
+			offset : 0.0
+		},
+		{
+			name : "lisbon",
+			definition : "9d07'54.862\"W",
+			offset : -9.131906111111
+		},
+		{
+			name : "paris",
+			definition : "2d20'14.025\"E",
+			offset : 2.337229166667
+		},
+		{
+			name : "bogota",
+			definition : "74d04'51.3\"W",
+			offset : -74.080916666667
+		},
+		{
+			name : "madrid",
+			definition : "3d41'16.58\"W",
+			offset : -3.687938888889
+		},
+		{
+			name : "rome",
+			definition : "12d27'8.4\"E",
+			offset : 12.452333333333
+		},
+		{
+			name : "bern",
+			definition : "7d26'22.5\"E",
+			offset : 7.439583333333
+		},
+		{
+			name : "jakarta",
+			definition : "106d48'27.79\"E",
+			offset : 106.807719444444
+		},
+		{
+			name : "ferro",
+			definition : "17d40'W",
+			offset : -17.666666666667
+		},
+		{
+			name : "brussels",
+			definition : "4d22'4.71\"E",
+			offset : 4.367975
+		},
+		{
+			name : "stockholm",
+			definition : "18d3'29.8\"E",
+			offset : 18.058277777778
+		},
+		{
+			name : "athens",
+			definition : "23d42'58.815\"E",
+			offset : 23.7163375
+		},
+		{
+			name : "oslo",
+			definition : "10d43'22.5\"E",
+			offset : 10.722916666667
+		}
+	],
+	datums : [
+		{
+			id : "WGS84",
+			toWGS84 : [0, 0, 0],
+			definition : "0,0,0",
+			ellipse : "WGS84",
+			datumName : "WGS84"
+		},
+		{
+			id : "GGRS87",
+			toWGS84 : [199.87, 74.79, 246.62],
+			definition : "towgs84=-199.87,74.79,246.62",
+			ellipse : "GRS80",
+			datumName : "Greek_Geodetic_Reference_System_1987"
+		},
+		{
+			id : "NAD83",
+			toWGS84 : [0, 0, 0],
+			definition : "towgs84=0,0,0",
+			ellipse : "GRS80",
+			datumName : "North_American_Datum_1983"
+		},
+		{
+			id : "NAD27",
+			toWGS84 : [0, 0, 0],
+			definition : "nadgrids=@conus,@alaska,@ntv2_0.gsb,@ntv1_can.dat",
+			ellipse : "clrk66",
+			datumName : "North_American_Datum_1927"
+		},
+		{
+			id : "potsdam",
+			toWGS84 : [598.1, 73.7, 418.2, 0.202, 0.045, -2.455, 6.7],
+			definition : "towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7",
+			ellipse : "bessel",
+			datumName : "Potsdam Rauenberg 1950 DHDN"
+		},
+		{
+			id : "carthage",
+			toWGS84 : [-263.0, 6.0, 431.0],
+			definition : "towgs84=-263.0,6.0,431.0",
+			ellipse : "clark80",
+			datumName : "Carthage 1934 Tunisia"
+		},
+		{
+			id : "hermannskogel",
+			toWGS84 : [653.0, -212.0, 449.0],
+			definition : "towgs84=653.0,-212.0,449.0",
+			ellipse : "bessel",
+			datumName : "Hermannskogel"
+		},
+		{
+			id : "ire65",
+			toWGS84 : [482.530, -130.596, 564.557, -1.042, -0.214, -0.631, 8.15],
+			definition : "towgs84=482.530,-130.596,564.557,-1.042,-0.214,-0.631,8.15",
+			ellipse : "mod_airy",
+			datumName : "Ireland 1965"
+		},
+		{
+			id : "nzgd49",
+			toWGS84 : [59.47, -5.04, 187.44, 0.47, -0.1, 1.024, -4.5993],
+			definition : "towgs84=59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993",
+			ellipse : "intl",
+			datumName : "New Zealand Geodetic Datum 1949"
+		},
+		{
+			id : "OSGB36",
+			toWGS84 : [446.448, -125.157, 542.060, 0.1502, 0.2470, 0.8421, -20.4894],
+			definition : "towgs84=446.448,-125.157,542.060,0.1502,0.2470,0.8421,-20.4894",
+			ellipse : "airy",
+			datumName : "Airy 1830"
+		}
+
+		
+	],
+	ellipsoids : [
+		{
+			"name": "MERIT 1983",
+			"shortName": "MERIT",
+			"equatorRadius": "6378137.0",
+			"poleRadius": "6356752.298215968",
+			"reciprocalFlattening": "298.257",
+			"eccentricity": "0.08181922145552321",
+			"eccentricity2": "0.006694384999587949"
+		},
+		{
+			"name": "Soviet Geodetic System 85",
+			"shortName": "SGS85",
+			"equatorRadius": "6378136.0",
+			"poleRadius": "6356751.301568781",
+			"reciprocalFlattening": "298.257",
+			"eccentricity": "0.08181922145552321",
+			"eccentricity2": "0.006694384999587949"
+		},
+		{
+			"name": "GRS 1980(IUGG, 1980)",
+			"shortName": "GRS80",
+			"equatorRadius": "6378137.0",
+			"poleRadius": "6356752.314140356",
+			"reciprocalFlattening": "298.257222101",
+			"eccentricity": "0.08181919104281579",
+			"eccentricity2": "0.006694380022900787"
+		},
+		{
+			"name": "IAU 1976",
+			"shortName": "IAU76",
+			"equatorRadius": "6378140.0",
+			"poleRadius": "6356755.288157528",
+			"reciprocalFlattening": "298.257",
+			"eccentricity": "0.08181922145552321",
+			"eccentricity2": "0.006694384999587949"
+		},
+		{
+			"name": "Airy 1830",
+			"shortName": "airy",
+			"equatorRadius": "6377563.396",
+			"poleRadius": "6356256.910",
+			"reciprocalFlattening": "299.3249753150345",
+			"eccentricity": "0.08167337241474341",
+			"eccentricity2": "0.006670539761597372"
+		},
+		{
+			"name": "Appl. Physics. 1965",
+			"shortName": "APL4.9",
+			"equatorRadius": "6378137.0",
+			"poleRadius": "6356751.796311819",
+			"reciprocalFlattening": "298.25",
+			"eccentricity": "0.08182017999605988",
+			"eccentricity2": "0.006694541854587637"
+		},
+		{
+			"name": "Naval Weapons Lab., 1965",
+			"shortName": "NWL9D",
+			"equatorRadius": "6378145.0",
+			"poleRadius": "6356759.769488684",
+			"reciprocalFlattening": "298.25",
+			"eccentricity": "0.08182017999605988",
+			"eccentricity2": "0.006694541854587637"
+		},
+		{
+			"name": "Modified Airy",
+			"shortName": "mod_airy",
+			"equatorRadius": "6377340.189",
+			"poleRadius": "6356034.446",
+			"reciprocalFlattening": "299.3249373654824",
+			"eccentricity": "0.08167337758351113",
+			"eccentricity2": "0.006670540605898778"
+		},
+		{
+			"name": "Andrae 1876 (Den., Iclnd.)",
+			"shortName": "andrae",
+			"equatorRadius": "6377104.43",
+			"poleRadius": "6355847.415233334",
+			"reciprocalFlattening": "300.0",
+			"eccentricity": "0.08158158833680279",
+			"eccentricity2": "0.006655555555555556"
+		},
+		{
+			"name": "Australian Natl & S. Amer. 1969",
+			"shortName": "aust_SA",
+			"equatorRadius": "6378160.0",
+			"poleRadius": "6356774.719195305",
+			"reciprocalFlattening": "298.25",
+			"eccentricity": "0.08182017999605988",
+			"eccentricity2": "0.006694541854587637"
+		},
+		{
+			"name": "GRS 67(IUGG 1967)",
+			"shortName": "GRS67",
+			"equatorRadius": "6378160.0",
+			"poleRadius": "6356774.516090714",
+			"reciprocalFlattening": "298.2471674270",
+			"eccentricity": "0.08182056788221195",
+			"eccentricity2": "0.006694605328567654"
+		},
+		{
+			"name": "Bessel 1841",
+			"shortName": "bessel",
+			"equatorRadius": "6377397.155",
+			"poleRadius": "6356078.962818189",
+			"reciprocalFlattening": "299.1528128",
+			"eccentricity": "0.08169683122252751",
+			"eccentricity2": "0.006674372231802145"
+		},
+		{
+			"name": "Bessel 1841 (Namibia)",
+			"shortName": "bess_nam",
+			"equatorRadius": "6377483.865",
+			"poleRadius": "6356165.382966326",
+			"reciprocalFlattening": "299.1528128",
+			"eccentricity": "0.08169683122252751",
+			"eccentricity2": "0.006674372231802145"
+		},
+		{
+			"name": "Clarke 1866",
+			"shortName": "clrk66",
+			"equatorRadius": "6378206.4",
+			"poleRadius": "6356583.8",
+			"reciprocalFlattening": "294.9786982138982",
+			"eccentricity": "0.0822718542230039",
+			"eccentricity2": "0.006768657997291205"
+		},
+		{
+			"name": "Clarke 1880 mod.",
+			"shortName": "clrk80",
+			"equatorRadius": "6378249.145",
+			"poleRadius": "6356514.9658284895",
+			"reciprocalFlattening": "293.4663",
+			"eccentricity": "0.08248321766287976",
+			"eccentricity2": "0.006803481196021999"
+		},
+		{
+			"name": "Comm. des Poids et Mesures 1799",
+			"shortName": "CPM",
+			"equatorRadius": "6375738.7",
+			"poleRadius": "6356666.221912113",
+			"reciprocalFlattening": "334.29",
+			"eccentricity": "0.07729088379892023",
+			"eccentricity2": "0.0059738807184181895"
+		},
+		{
+			"name": "Delambre 1810 (Belgium)",
+			"shortName": "delmbr",
+			"equatorRadius": "6376428.0",
+			"poleRadius": "6355957.926163724",
+			"reciprocalFlattening": "311.5",
+			"eccentricity": "0.08006397376141204",
+			"eccentricity2": "0.006410239894468076"
+		},
+		{
+			"name": "Engelis 1985",
+			"shortName": "engelis",
+			"equatorRadius": "6378136.05",
+			"poleRadius": "6356751.322721543",
+			"reciprocalFlattening": "298.2566",
+			"eccentricity": "0.08181927622836065",
+			"eccentricity2": "0.006694393962532781"
+		},
+		{
+			"name": "Everest 1830",
+			"shortName": "evrst30",
+			"equatorRadius": "6377276.345",
+			"poleRadius": "6356075.41314024",
+			"reciprocalFlattening": "300.8017",
+			"eccentricity": "0.0814729809826527",
+			"eccentricity2": "0.006637846630199688"
+		},
+		{
+			"name": "Everest 1948",
+			"shortName": "evrst48",
+			"equatorRadius": "6377304.063",
+			"poleRadius": "6356103.038993155",
+			"reciprocalFlattening": "300.8017",
+			"eccentricity": "0.0814729809826527",
+			"eccentricity2": "0.006637846630199688"
+		},
+		{
+			"name": "Everest 1956",
+			"shortName": "evrst56",
+			"equatorRadius": "6377301.243",
+			"poleRadius": "6356100.228368102",
+			"reciprocalFlattening": "300.8017",
+			"eccentricity": "0.0814729809826527",
+			"eccentricity2": "0.006637846630199688"
+		},
+		{
+			"name": "Everest 1969",
+			"shortName": "evrst69",
+			"equatorRadius": "6377295.664",
+			"poleRadius": "6356094.667915204",
+			"reciprocalFlattening": "300.8017",
+			"eccentricity": "0.0814729809826527",
+			"eccentricity2": "0.006637846630199688"
+		},
+		{
+			"name": "Everest (Sabah & Sarawak)",
+			"shortName": "evrstSS",
+			"equatorRadius": "6377298.556",
+			"poleRadius": "6356097.550300896",
+			"reciprocalFlattening": "300.8017",
+			"eccentricity": "0.0814729809826527",
+			"eccentricity2": "0.006637846630199688"
+		},
+		{
+			"name": "Fischer (Mercury Datum) 1960",
+			"shortName": "fschr60",
+			"equatorRadius": "6378166.0",
+			"poleRadius": "6356784.283607107",
+			"reciprocalFlattening": "298.3",
+			"eccentricity": "0.08181333401693115",
+			"eccentricity2": "0.006693421622965943"
+		},
+		{
+			"name": "Modified Fischer 1960",
+			"shortName": "fschr60m",
+			"equatorRadius": "6378155.0",
+			"poleRadius": "6356773.3204827355",
+			"reciprocalFlattening": "298.3",
+			"eccentricity": "0.08181333401693115",
+			"eccentricity2": "0.006693421622965943"
+		},
+		{
+			"name": "Fischer 1968",
+			"shortName": "fschr68",
+			"equatorRadius": "6378150.0",
+			"poleRadius": "6356768.337244385",
+			"reciprocalFlattening": "298.3",
+			"eccentricity": "0.08181333401693115",
+			"eccentricity2": "0.006693421622965943"
+		},
+		{
+			"name": "Helmert 1906",
+			"shortName": "helmert",
+			"equatorRadius": "6378200.0",
+			"poleRadius": "6356818.169627891",
+			"reciprocalFlattening": "298.3",
+			"eccentricity": "0.08181333401693115",
+			"eccentricity2": "0.006693421622965943"
+		},
+		{
+			"name": "Hough",
+			"shortName": "hough",
+			"equatorRadius": "6378270.0",
+			"poleRadius": "6356794.343434343",
+			"reciprocalFlattening": "297.0",
+			"eccentricity": "0.08199188997902977",
+			"eccentricity2": "0.006722670022333322"
+		},
+		{
+			"name": "International 1909 (Hayford)",
+			"shortName": "intl",
+			"equatorRadius": "6378388.0",
+			"poleRadius": "6356911.9461279465",
+			"reciprocalFlattening": "297.0",
+			"eccentricity": "0.08199188997902977",
+			"eccentricity2": "0.006722670022333322"
+		},
+		{
+			"name": "Krassovsky, 1942",
+			"shortName": "krass",
+			"equatorRadius": "6378245.0",
+			"poleRadius": "6356863.018773047",
+			"reciprocalFlattening": "298.3",
+			"eccentricity": "0.08181333401693115",
+			"eccentricity2": "0.006693421622965943"
+		},
+		{
+			"name": "Kaula 1961",
+			"shortName": "kaula",
+			"equatorRadius": "6378163.0",
+			"poleRadius": "6356776.99208691",
+			"reciprocalFlattening": "298.24",
+			"eccentricity": "0.08182154939812526",
+			"eccentricity2": "0.006694765945909853"
+		},
+		{
+			"name": "Lerch 1979",
+			"shortName": "lerch",
+			"equatorRadius": "6378139.0",
+			"poleRadius": "6356754.291510342",
+			"reciprocalFlattening": "298.257",
+			"eccentricity": "0.08181922145552321",
+			"eccentricity2": "0.006694384999587949"
+		},
+		{
+			"name": "Maupertius 1738",
+			"shortName": "mprts",
+			"equatorRadius": "6397300.0",
+			"poleRadius": "6363806.282722512",
+			"reciprocalFlattening": "191.0",
+			"eccentricity": "0.10219487589499024",
+			"eccentricity2": "0.010443792659192456"
+		},
+		{
+			"name": "New International 1967",
+			"shortName": "new_intl",
+			"equatorRadius": "6378157.5",
+			"poleRadius": "6356772.2",
+			"reciprocalFlattening": "298.2496153900135",
+			"eccentricity": "0.08182023266335903",
+			"eccentricity2": "0.006694550473086203"
+		},
+		{
+			"name": "Plessis 1817 (France)",
+			"shortName": "plessis",
+			"equatorRadius": "6376523.0",
+			"poleRadius": "6355863.0",
+			"reciprocalFlattening": "308.64099709583735",
+			"eccentricity": "0.08043334427521881",
+			"eccentricity2": "0.006469522871295874"
+		},
+		{
+			"name": "Southeast Asia",
+			"shortName": "SEasia",
+			"equatorRadius": "6378155.0",
+			"poleRadius": "6356773.3205",
+			"reciprocalFlattening": "298.3000002408657",
+			"eccentricity": "0.0818133339839562",
+			"eccentricity2": "0.006693421617570361"
+		},
+		{
+			"name": "Walbeck",
+			"shortName": "walbeck",
+			"equatorRadius": "6376896.0",
+			"poleRadius": "6355834.8467",
+			"reciprocalFlattening": "302.78000018165636",
+			"eccentricity": "0.08120682292886269",
+			"eccentricity2": "0.006594548090199659"
+		},
+		{
+			"name": "WGS 60",
+			"shortName": "WGS60",
+			"equatorRadius": "6378165.0",
+			"poleRadius": "6356783.286959437",
+			"reciprocalFlattening": "298.3",
+			"eccentricity": "0.08181333401693115",
+			"eccentricity2": "0.006693421622965943"
+		},
+		{
+			"name": "WGS 66",
+			"shortName": "WGS66",
+			"equatorRadius": "6378145.0",
+			"poleRadius": "6356759.769488684",
+			"reciprocalFlattening": "298.25",
+			"eccentricity": "0.08182017999605988",
+			"eccentricity2": "0.006694541854587637"
+		},
+		{
+			"name": "WGS 72",
+			"shortName": "WGS72",
+			"equatorRadius": "6378135.0",
+			"poleRadius": "6356750.520016094",
+			"reciprocalFlattening": "298.26",
+			"eccentricity": "0.08181881066274871",
+			"eccentricity2": "0.006694317778266722"
+		},
+		{
+			"name": "WGS 84",
+			"shortName": "WGS84",
+			"equatorRadius": "6378137.0",
+			"poleRadius": "6356752.314245179",
+			"reciprocalFlattening": "298.257223563",
+			"eccentricity": "0.08181919084262149",
+			"eccentricity2": "0.0066943799901413165"
+		},
+		{
+			"name": "Normal Sphere (r=6370997)",
+			"shortName": "sphere",
+			"equatorRadius": "6370997.0",
+			"poleRadius": "6370997.0",
+			"reciprocalFlattening": "0.0",
+			"eccentricity": "0.0",
+			"eccentricity2": "0.0"
+		}
+	],
+	units : [
+		{
+			"name" : "Meter",
+			"conversionFactor" : "1.0",
+			"type" : "linear",
+			"latitudeRange" : null,
+			"longitudeRange" : null
+		},
+		{
+			"name" : "Foot (International)",
+			"conversionFactor" : "0.3048",
+			"type" : "linear",
+			"latitudeRange" : null,
+			"longitudeRange" : null
+		},
+		{
+			"name" : "U.S. Foot",
+			"conversionFactor" : "0.30480060960121920243840487680975",
+			"type" : "linear",
+			"latitudeRange" : null,
+			"longitudeRange" : null
+		},
+		{
+			"name" : "Modified American Foot",
+			"conversionFactor" : "0.30481225298450596901193802387605",
+			"type" : "linear",
+			"latitudeRange" : null,
+			"longitudeRange" : null
+		},
+		{
+			"name" : "Clarke's Foot",
+			"conversionFactor" : "0.30479726511509957523453133559723",
+			"type" : "linear",
+			"latitudeRange" : null,
+			"longitudeRange" : null
+		},
+		{
+			"name" : "Indian Foot",
+			"conversionFactor" : "0.30479951799004225054718498468167",
+			"type" : "linear",
+			"latitudeRange" : null,
+			"longitudeRange" : null
+		},
+		{
+			"name" : "Link",
+			"conversionFactor" : "0.20116619497596571965479068149417",
+			"type" : "linear",
+			"latitudeRange" : null,
+			"longitudeRange" : null
+		},
+		{
+			"name" : "Fathom",
+			"conversionFactor" : "1.8288",
+			"type" : "linear",
+			"latitudeRange" : null,
+			"longitudeRange" : null
+		}
+	
+		,
+		{
+			"name" : "Nautical Mile",
+			"conversionFactor" : "1852.0",
+			"type" : "linear",
+			"latitudeRange" : null,
+			"longitudeRange" : null
+		},
+		{
+			"name" : "Radian",
+			"conversionFactor" : "1.0",
+			"type" : "angular",
+			"latitudeRange" : [-1.5707963267948966192313216916398, 1.5707963267948966192313216916398],
+			"longitudeRange" : [3.1415926535897932384626433832795, 3.1415926535897932384626433832795]
+		},
+		{
+			"name" : "Decimal Degree",
+			"conversionFactor" : "0.017453292519943295769236907684886",
+			"type" : "angular",
+			"latitudeRange" : [-90, 90],
+			"longitudeRange" : [-180, 180]
+		},
+		{
+			"name" : "Decimal Minute",
+			"conversionFactor" : "0.000029088820866572159615394846141477",
+			"type" : "angular",
+			"latitudeRange" : [-5400, 5400],
+			"longitudeRange" : [-10800, 10800]
+		},
+		{
+			"name" : "Decimal Second",
+			"conversionFactor" : "62.83185307179586476925286766559",
+			"type" : "angular",
+			"latitudeRange" : [-324000, 324000],
+			"longitudeRange" : [-648000, 648000]
+		},
+		{
+			"name" : "Gon",
+			"conversionFactor" : "0.015707963267948966192313216916398",
+			"type" : "angular",
+			"latitudeRange" : [-100, 100],
+			"longitudeRange" : [-200, 200]
+		}
+		,
+		{
+			"name" : "Grad",
+			"conversionFactor" : "0.015707963267948966192313216916398",
+			"type" : "angular",
+			"latitudeRange" : [-100, 100],
+			"longitudeRange" : [-200, 200]
+		}
+	]
+}

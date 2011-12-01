@@ -18,7 +18,7 @@ package us.wthr.jdem846.input.edef;
 
 import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.Projections;
+import us.wthr.jdem846.gis.Projections;
 import us.wthr.jdem846.input.DataSourceHeader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
