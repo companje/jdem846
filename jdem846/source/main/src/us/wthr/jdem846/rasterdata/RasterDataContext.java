@@ -358,9 +358,19 @@ public class RasterDataContext implements DataContext
 		return dataMinimumValue;
 	}
 
+	public void setDataMinimumValue(double dataMinimumValue)
+	{
+		this.dataMinimumValue = dataMinimumValue;
+	}
+	
 	public double getDataMaximumValue()
 	{
 		return dataMaximumValue;
+	}
+	
+	public void setDataMaximumValue(double dataMaximumValue)
+	{
+		this.dataMaximumValue = dataMaximumValue;
 	}
 	
 	public RasterDataContext copy() throws DataSourceException
