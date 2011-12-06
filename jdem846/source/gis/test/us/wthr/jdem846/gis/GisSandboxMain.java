@@ -74,57 +74,79 @@ public class GisSandboxMain extends AbstractTestMain
 		
 		for (int i = 0; i < parts.length; i++) {
 			String part = parts[i];
-			if (part.startsWith("+proj=")) {
-				spec.projCode = part.substring(6);
-			} else if (part.startsWith("+zone=")) {
-				spec.zone = Integer.parseInt(part.substring(6));
-			} else if (part.equals("+south")) {
-				spec.isSouth = true;
+			
+			
+			if (part.startsWith("+a=")) {
+				spec.a = Double.parseDouble(part.substring(3));
+			} else if (part.startsWith("+alpha=")) {
+				spec.alpha = Double.parseDouble(part.substring(7));
+			} else if (part.startsWith("+axis=")) { //+axis=wsu
+				spec.axis = part.substring(6);
+				//spec.axis = AxisOrientationEnum.getByValue(part.substring(6));
+			} else if (part.startsWith("+b=")) {
+				spec.b = Double.parseDouble(part.substring(3));
 			} else if (part.startsWith("+datum=")) {
 				String datumCode = part.substring(7);
-				spec.datumCode = datumCode;
-				spec.datum = DatumsListRegistry.getDatum(datumCode);
+				spec.datum = datumCode;
+				//spec.datum = DatumsListRegistry.getDatum(datumCode);
+			} else if (part.startsWith("+ellps=")) {
+				spec.ellps = part.substring(7);
+				//spec.ellipse = DatumsListRegistry.getEllipsoid(spec.ellipseCode);
+			} else if (part.startsWith("+k=")) {
+				spec.k = Double.parseDouble(part.substring(3));
+			} else if (part.startsWith("+k_0=")) {
+				spec.k_0 = Double.parseDouble(part.substring(5));
+			} else if (part.startsWith("+lat_0=")) {
+				spec.lat_0 = Double.parseDouble(part.substring(7));
+			} else if (part.startsWith("+lat_1=")) {
+				spec.lat_1 = Double.parseDouble(part.substring(7));
+			} else if (part.startsWith("+lat_2=")) {
+				spec.lat_2 = Double.parseDouble(part.substring(7));
+			} else if (part.startsWith("+lat_ts=")) {
+				spec.lat_ts = Double.parseDouble(part.substring(8));
+			} else if (part.startsWith("+lon_0=")) {
+				spec.lon_0 = Double.parseDouble(part.substring(7));
+			} else if (part.startsWith("+lonc=")) {
+				spec.lonc = Double.parseDouble(part.substring(6));
+			} else if (part.startsWith("+lon_wrap=")) {
+				spec.lon_wrap = Double.parseDouble(part.substring(10));
+			} else if (part.startsWith("+nadgrids=")) {
+				spec.nadgrids = part.substring(10);
+			} else if (part.startsWith("+no_defs")) {
+				spec.no_defs = true;
+			} else if (part.startsWith("+over")) {
+				spec.over = true;
+			} else if (part.startsWith("+pm=")) {
+				spec.pm = part.substring(4);
+			} else if (part.startsWith("+proj=")) {
+				spec.proj = part.substring(6);
+			} else if (part.equals("+south")) {
+				spec.south = true;
+			} else if (part.startsWith("+to_meter=")) {
+				spec.to_meter = Double.parseDouble(part.substring(10));
 			} else if (part.startsWith("+towgs84=")) {
 				String[] s_toWGS84 = part.substring(9).split(",");
 				spec.toWGS84 = new double[s_toWGS84.length];
 				for (int j = 0; j < s_toWGS84.length; j++) {
 					spec.toWGS84[j] = Double.parseDouble(s_toWGS84[j]);
 				}
-			} else if (part.startsWith("+ellps=")) {
-				spec.ellipseCode = part.substring(7);
-				spec.ellipse = DatumsListRegistry.getEllipsoid(spec.ellipseCode);
-			} else if (part.startsWith("+lat_")) {
-				
-			} else if (part.startsWith("+lon_")) {
-				
-			} else if (part.startsWith("+x_")) {
-				
-			} else if (part.startsWith("+y_")) {
-				
-			} else if (part.startsWith("+k=")) {
-				
 			} else if (part.startsWith("+units=")) {
-				
-			} else if (part.startsWith("+no_defs")) {
-				
-			} else if (part.startsWith("+lat_ts=")) {
-				
-			}
-			
-			/*
-			 * public int id;
-		public String projCode;
-		public int zone;
-		public boolean isSouth = false;
-		public String datumCode;
-		public String ellipseCode;
-		public Ellipsoid ellipse;
-		public String unitsCode;
-		public String toWGS84;
-			 */
+				spec.units = part.substring(7);
+			} else if (part.startsWith("+vto_meter=")) {
+				spec.vto_meter = Double.parseDouble(part.substring(11));
+			} else if (part.startsWith("+vunits=")) {
+				spec.vunits = part.substring(8);
+			} else if (part.startsWith("+x_0=")) {
+				spec.x_0 = Double.parseDouble(part.substring(5));
+			} else if (part.startsWith("+y_0=")) {
+				spec.y_0 = Double.parseDouble(part.substring(5));
+			} else if (part.startsWith("+zone=")) {
+				spec.zone = Integer.parseInt(part.substring(6));
+			} 
+
 		}
 		
-		System.out.printf(" %d proj: %s, zone: %d, datum: %s, towgs84: %s, ellps: %s\n", spec.id, spec.projCode, spec.zone, spec.datumCode, spec.toWGS84, spec.ellipseCode);
+		System.out.printf(" %d proj: %s, zone: %d, datum: %s, towgs84: %s, ellps: %s, k: %f\n", spec.id, spec.proj, spec.zone, spec.datum, spec.toWGS84, spec.ellps, spec.k);
 		
 		return spec;
 	}
@@ -140,19 +162,45 @@ public class GisSandboxMain extends AbstractTestMain
 			return false;
 	}
 	
+	
+	/** http://trac.osgeo.org/proj/wiki/GenParms
+	 * 
+	 * @author Kevin M. Gill
+	 *
+	 */
 	class GridSpecification
 	{
 		public int id;
-		public String projCode;
-		public int zone;
-		public boolean isSouth = false;
-		public String datumCode;
-		public Datum datum;
-		public String ellipseCode;
-		public Ellipsoid ellipse;
-		public String unitsCode;
-		public double[] toWGS84;
-		
+		public double a; 					// Semimajor radius of the ellipsoid axis
+		public double alpha; 				// ? Used with Oblique Mercator and possibly a few others
+		public String axis; 				// Axis orientation (e,w,n,s,u,d)
+		public double b; 					// Semiminor radius of the ellipsoid axis
+		public String datum; 				// Datum name
+		public String ellps; 				// Ellipsoid name
+		public double k;					// Scaling factor (old name)
+		public double k_0;					// Scaling factor (new name)
+		public double lat_0;				// Latitude of origin
+		public double lat_1;				// Latitude of first standard parallel
+		public double lat_2;				// Latitude of second standard parallel
+		public double lat_ts;				// Latitude of true scale
+		public double lon_0;				// Central meridian
+		public double lonc;					// ? Longitude used with Oblique Mercator and possibly a few others
+		public double lon_wrap;				// Center longitude to use for wrapping
+		public String nadgrids;				// Filename of NTv2 grid file to use for datum transforms
+		public boolean no_defs = false;		// Don't use the /usr/share/proj/proj_def.dat defaults file
+		public boolean over = false;		// Allow longitude output outside -180 to 180 range, disables wrapping
+		public String pm;					// Alternate prime meridian (typically city name)
+		public String proj;					// Projection name
+		public boolean south = false;		// Denotes southern hemisphere UTM zone
+		public double to_meter;				// Multiplier to convert map units to 1.0m
+		public double[] toWGS84;			// 3 or 7 term datum transform parameters
+		public String units;				// meters, US survey feet, etc.
+		public double vto_meter;			// Vertical conversion to meters
+		public String vunits;				// Vertical units
+		public double x_0;					// False easting
+		public double y_0;					// False northing
+		public int zone;					// UTM zone 
+
 		
 		
 	}
