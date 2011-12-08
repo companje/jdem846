@@ -37,6 +37,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
@@ -407,7 +408,8 @@ public class DemProjectPane extends JdemPanel
 		log.info("Loading script template file from path '" + path + "'");
 		StringBuffer templateBuffer = new StringBuffer();
 
-		BufferedInputStream in = new BufferedInputStream(DemProjectPane.class.getResourceAsStream(path));
+		
+		BufferedInputStream in = new BufferedInputStream(JDemResourceLoader.getAsInputStream(path));
 		
 		int length = 0;
 		byte[] buffer = new byte[1024];

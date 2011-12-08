@@ -118,6 +118,8 @@ public class JDemUiMain
 			return;
 		}
 		
+		JDem846Properties.initializeApplicationProperties();
+		
 		final Log log = Logging.getLog(JDemUiMain.class);
 		
 		String instanceId = InstanceIdentifier.getInstanceId();

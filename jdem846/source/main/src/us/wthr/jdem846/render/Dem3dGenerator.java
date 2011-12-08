@@ -61,7 +61,13 @@ public class Dem3dGenerator extends BasicRenderEngine
 	private static final int COUNTERCLOCKWISE = -1;
 	private static final int UNDEFINED = 0;
 	private static final int CLOCKWISE = 1;
-
+	
+	public Dem3dGenerator()
+	{
+		super();
+	}
+	
+	
 	public Dem3dGenerator(ModelContext modelContext)
 	{
 		super(modelContext);
