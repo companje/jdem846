@@ -29,6 +29,7 @@ public class AbstractTestMain
 	{
 		bootstrapSystemProperties();
 		
+		JDem846Properties.initializeApplicationProperties();
 		
 		Log log = Logging.getLog(AbstractTestMain.class);
 

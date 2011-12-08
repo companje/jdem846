@@ -34,10 +34,10 @@ public class JDem846Properties
 	private static Log log = Logging.getLog(JDem846Properties.class);
 	
 	private static boolean loaded = false;
-	private static Properties properties = null;
+	private static Properties properties = new Properties();
 	
 	static {
-		load("/jdem846.properties");
+		overrideWithSystemProperties();
 	}
 	
 	
@@ -68,8 +68,8 @@ public class JDem846Properties
 	protected static void load(String path)
 	{
 		try {
-			properties = new Properties();
-			properties.load(JDem846Properties.class.getResourceAsStream(path));
+			//properties;
+			properties.load(JDemResourceLoader.getAsInputStream(path));
 			loaded = true;
 		} catch (IOException e) {
 			log.error("IO error loading properties file from '" + path + "': " + e.getMessage(), e);
@@ -90,5 +90,10 @@ public class JDem846Properties
 		}
 	}
 	
+	
+	public static void initializeApplicationProperties()
+	{
+		load("resources://jdem846.properties");
+	}
 	
 }
