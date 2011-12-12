@@ -36,7 +36,7 @@ public class StandardBorder implements Border
 	private int cornerRadius;
 	
 	private int padding = 5;
-	private int margin = 5;
+	private int margin = 2;
 	
 	public StandardBorder()
 	{

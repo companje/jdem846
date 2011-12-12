@@ -89,7 +89,7 @@ public abstract class RenderEngine extends InterruptibleProcess implements Image
 	public abstract OutputProduct generate() throws RenderEngineException;
 	
 	@SuppressWarnings("unchecked")
-	public abstract OutputProduct generate(boolean previewModel) throws RenderEngineException;
+	public abstract OutputProduct generate(boolean skipRasterData, boolean skipShapes) throws RenderEngineException;
 	
 	public RasterDataContext getRasterDataContext()
 	{

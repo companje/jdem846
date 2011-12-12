@@ -82,7 +82,7 @@ public class ModelingWorkerThread extends Thread
 			
 			try {
 				start = System.currentTimeMillis();
-				OutputProduct<ModelCanvas> product = engine.generate(this.isPreviewModel());
+				OutputProduct<ModelCanvas> product = engine.generate(this.isPreviewModel(), false);
 				elapsed = (System.currentTimeMillis() - start) / 1000;
 				log.info("Completed render task in " + elapsed + " seconds");
 				

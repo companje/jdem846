@@ -83,11 +83,11 @@ public class ElevationDsFormatGenerator extends RenderEngine
 	@SuppressWarnings("unchecked")
 	public OutputProduct generate() throws RenderEngineException
 	{
-		return generate(false);
+		return generate(false, false);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public OutputProduct generate(boolean skipElevation) throws RenderEngineException
+	public OutputProduct generate(boolean skipElevation, boolean skipShapes) throws RenderEngineException
 	{
 		ModelOptions modelOptions = getModelOptions();
 		RasterDataContext rasterDataContext = getRasterDataContext();

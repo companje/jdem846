@@ -42,7 +42,7 @@ public class ModelRenderer extends InterruptibleProcess
 		this.tileCompletionListeners = tileCompletionListeners;
 	}
 	
-	public ModelCanvas renderModel(boolean skipElevation) throws RenderEngineException
+	public ModelCanvas renderModel() throws RenderEngineException
 	{
 		//ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(getDataPackage(), getModelOptions());
 		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
@@ -53,8 +53,8 @@ public class ModelRenderer extends InterruptibleProcess
 		
 		boolean fullCaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
 		
-		int gridSize = getModelOptions().getGridSize();
-		int tileSizeAdjusted = (int)Math.round((double)modelDimensions.getTileSize() / (double) gridSize);
+		//int gridSize = getModelOptions().getGridSize();
+		//int tileSizeAdjusted = (int)Math.round((double)modelDimensions.getTileSize() / (double) gridSize);
 		//DemCanvas tileCanvas = new DemCanvas(backgroundColor, tileSizeAdjusted, tileSizeAdjusted);
 		//DemCanvas outputCanvas = new DemCanvas(backgroundColor, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
 		
@@ -117,7 +117,8 @@ public class ModelRenderer extends InterruptibleProcess
 		}
 		modelCanvas.setMapProjection(mapProjection);
 		*/
-		ModelCanvas modelCanvas = modelContext.createModelCanvas();
+		//ModelCanvas modelCanvas = modelContext.createModelCanvas();
+		ModelCanvas modelCanvas = modelContext.getModelCanvas();
 		
 		on2DModelBefore(modelCanvas);
 		
@@ -149,7 +150,7 @@ public class ModelRenderer extends InterruptibleProcess
 		}
 		
 		
-		if ((!skipElevation) && getRasterDataContext().getRasterDataListSize() > 0) {
+		if ( getRasterDataContext().getRasterDataListSize() > 0) {
 			
 			// Latitude
 			for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
@@ -266,27 +267,18 @@ public class ModelRenderer extends InterruptibleProcess
 	
 	
 	
+	
 	public static ModelCanvas render(ModelContext modelContext) throws RenderEngineException
 	{
-		return ModelRenderer.render(modelContext, false, null);
+		ModelRenderer renderer = new ModelRenderer(modelContext, null);
+		ModelCanvas canvas = renderer.renderModel();
+		return canvas;
 	}
 	
 	public static ModelCanvas render(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException
 	{
-		return ModelRenderer.render(modelContext, false, tileCompletionListeners);
-	}
-	
-	public static ModelCanvas render(ModelContext modelContext, boolean skipElevation) throws RenderEngineException
-	{
-		ModelRenderer renderer = new ModelRenderer(modelContext, null);
-		ModelCanvas canvas = renderer.renderModel(skipElevation);
-		return canvas;
-	}
-	
-	public static ModelCanvas render(ModelContext modelContext, boolean skipElevation, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException
-	{
 		ModelRenderer renderer = new ModelRenderer(modelContext, tileCompletionListeners);
-		ModelCanvas canvas = renderer.renderModel(skipElevation);
+		ModelCanvas canvas = renderer.renderModel();
 		return canvas;
 	}
 }

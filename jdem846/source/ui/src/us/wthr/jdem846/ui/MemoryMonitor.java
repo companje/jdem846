@@ -16,8 +16,11 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -110,12 +113,22 @@ public class MemoryMonitor extends Label
 		}
 	}
 	
-	protected long getMaxInList()
+	protected long getMaxCommittedInList()
 	{
 		long max = 0;
 		for (MemorySnapshot usage : usageList) {
 			if (usage.getCommitted() > max)
 				max = usage.getCommitted();
+		}
+		return max;
+	}
+	
+	protected long getMaxUsedInList()
+	{
+		long max = 0;
+		for (MemorySnapshot usage : usageList) {
+			if (usage.getUsed() > max)
+				max = usage.getUsed();
 		}
 		return max;
 	}
@@ -138,10 +151,11 @@ public class MemoryMonitor extends Label
 		g.setColor(getForeground());
 		//g.setColor(Color.GRAY);
 		
-		long max = getMaxInList();
+		long maxCommitted = getMaxCommittedInList();
+		long maxUsed = getMaxUsedInList();
 		for (int i = 0; i < usageList.size(); i++) {
 			MemorySnapshot usage = usageList.get(usageList.size()-i-1);
-			double pct = (double)usage.getUsed() / (double)max;
+			double pct = (double)usage.getUsed() / (double)maxCommitted;
 			int y = (int) Math.round(((double)height * pct));
 			if (y == 0)
 				y = 1;
@@ -149,6 +163,17 @@ public class MemoryMonitor extends Label
 			g.drawLine(width-i, height - y - 2, width-i, height);
 		}
 		
+		g.setColor(Color.GRAY);
+		
+		Stroke origStroke = ((Graphics2D)g).getStroke(); 
+		
+		BasicStroke stroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1, new float[] {1.0f, 2.0f}, 0.0f);
+		((Graphics2D)g).setStroke(stroke);
+		int y = (int) Math.round(((double)height * (double)maxUsed / (double)maxCommitted));
+		if (y == 0)
+			y = 1;
+		g.drawLine(0, height - y - 2, width, height - y - 2);
+		((Graphics2D)g).setStroke(origStroke);
 		
 		super.paint(g);
 	}

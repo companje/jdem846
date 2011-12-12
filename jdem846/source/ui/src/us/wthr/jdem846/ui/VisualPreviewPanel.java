@@ -138,7 +138,7 @@ public class VisualPreviewPanel extends Panel
 	public void update()
 	{
 		layoutPane.update();
-		previewPane.update();
+		previewPane.update(false, true);
 	}
 	
 }

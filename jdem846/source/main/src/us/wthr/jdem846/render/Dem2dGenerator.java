@@ -45,10 +45,11 @@ public class Dem2dGenerator extends BasicRenderEngine
 	
 	public OutputProduct<ModelCanvas> generate() throws RenderEngineException
 	{
-		return generate(false);
+		return generate(false, false);
 	}
 	
-	public OutputProduct<ModelCanvas> generate(boolean skipElevation) throws RenderEngineException
+	
+	public OutputProduct<ModelCanvas> generate(boolean skipElevation, boolean skipShapes) throws RenderEngineException
 	{
 		OutputProduct<ModelCanvas> product = null;
 		
@@ -85,15 +86,21 @@ public class Dem2dGenerator extends BasicRenderEngine
 				}
 			});
 			
-			ModelCanvas canvas = rasterRenderer.renderModel(skipElevation);
-
-			if (!isCancelled() && getModelContext().getShapeDataContext() != null && getModelContext().getShapeDataContext().getShapeDataListSize() > 0) {
+			//ModelCanvas canvas = null;
+			ModelCanvas canvas = getModelContext().getModelCanvas(true);
+			
+			
+			if (!skipElevation) {
+				rasterRenderer.renderModel();
+			}
+			
+			if (!skipShapes && !isCancelled() && getModelContext().getShapeDataContext() != null && getModelContext().getShapeDataContext().getShapeDataListSize() > 0) {
 				shapeRenderer.render();
 			} else {
 				log.info("Shape data context is null, skipping render stage");
 			}
 			
-			product = new OutputProduct<ModelCanvas>(OutputProduct.IMAGE, canvas);
+			product = new OutputProduct<ModelCanvas>(OutputProduct.IMAGE, getModelContext().getModelCanvas());
 		} catch (OutOfMemoryError err) {
 			log.error("Out of memory error when generating model", err);
 			throw new RenderEngineException("Out of memory error when generating model", err);

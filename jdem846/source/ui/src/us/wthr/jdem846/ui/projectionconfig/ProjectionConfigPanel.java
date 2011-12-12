@@ -36,9 +36,10 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.TitledRoundedPanel;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Slider;
+import us.wthr.jdem846.ui.panels.RoundedPanel;
 
 @SuppressWarnings("serial")
-public class ProjectionConfigPanel extends TitledRoundedPanel
+public class ProjectionConfigPanel extends RoundedPanel
 {
 	private static Log log = Logging.getLog(ProjectionConfigPanel.class);
 	
@@ -57,7 +58,7 @@ public class ProjectionConfigPanel extends TitledRoundedPanel
 	
 	public ProjectionConfigPanel()
 	{
-		super(I18N.get("us.wthr.jdem846.ui.projectionConfigPanel.title"));
+		//super(I18N.get("us.wthr.jdem846.ui.projectionConfigPanel.title"));
 		jlblRotateAngles = new Label("");
 		projectionPreview = new ProjectionPreview(new Dimension(250, 250));
 		

@@ -58,7 +58,7 @@ public class KmlDemGenerator extends BasicRenderEngine
 	public OutputProduct<KmlDocument> generate() throws RenderEngineException
 	{
 		try {
-			return generate(false);
+			return generate(false, false);
 		} catch (OutOfMemoryError err) {
 			log.error("Out of memory error when generating model", err);
 			throw new RenderEngineException("Out of memory error when generating model", err);
@@ -69,7 +69,7 @@ public class KmlDemGenerator extends BasicRenderEngine
 	}
 	
 	@Override
-	public OutputProduct<KmlDocument> generate(boolean skipElevation) throws RenderEngineException
+	public OutputProduct<KmlDocument> generate(boolean skipElevation, boolean skipShapes) throws RenderEngineException
 	{
 		
 		// TODO: tile completion listeners

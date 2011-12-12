@@ -191,12 +191,21 @@ public class GradientLevelsControl extends Panel
 		
 		updatePolyList();
 		
-		if (this.isEnabled())
-			g2d.setColor(Color.BLACK);
-		else 
-			g2d.setColor(Color.GRAY);
+		Color fillColor = (isEnabled()) ? Color.WHITE : Color.GRAY;
+		Color borderColor = (isEnabled()) ? Color.BLACK : Color.DARK_GRAY;
+		
+		
+
+		
+		//if (this.isEnabled())
+		//	g2d.setColor(Color.BLACK);
+		//else 
+		//	g2d.setColor(Color.GRAY);
 		
 		for (PolyStop polyStop : polyList) {
+			g2d.setColor(fillColor);
+			g2d.fillPolygon(polyStop.getPolygon());
+			g2d.setColor(borderColor);
 			g2d.drawPolygon(polyStop.getPolygon());
 		}
 		

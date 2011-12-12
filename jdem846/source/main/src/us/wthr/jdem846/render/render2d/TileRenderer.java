@@ -487,11 +487,11 @@ public class TileRenderer extends InterruptibleProcess
 	
 	protected void resetBuffers()
 	{
-		color[0] = color[1] = color[2] = color[3] = 0;
-		triangleColorNW[0] = triangleColorNW[1] = triangleColorNW[2] = triangleColorNW[3] = 0;
-		triangleColorSE[0] = triangleColorSE[1] = triangleColorSE[2] = triangleColorSE[3] = 0;
-		reliefColor[0] = reliefColor[1] = reliefColor[2] = reliefColor[3] = 0;
-		hillshadeColor[0] = hillshadeColor[1] = hillshadeColor[2] = hillshadeColor[3] = 0;
+		color[0] = color[1] = color[2] = 0; color[3] = 0xFF;
+		triangleColorNW[0] = triangleColorNW[1] = triangleColorNW[2]; triangleColorNW[3] = 0xFF;
+		triangleColorSE[0] = triangleColorSE[1] = triangleColorSE[2]; triangleColorSE[3] = 0xFF;
+		reliefColor[0] = reliefColor[1] = reliefColor[2]; reliefColor[3] = 0xFF;
+		hillshadeColor[0] = hillshadeColor[1] = hillshadeColor[2]; hillshadeColor[3] = 0xFF;
 
 		sunsource[0] = sunsource[1] = sunsource[2] = 0.0;
 		normal[0] = normal[1] = normal[2] = 0.0;
