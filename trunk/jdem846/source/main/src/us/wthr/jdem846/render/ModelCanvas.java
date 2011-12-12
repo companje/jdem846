@@ -94,6 +94,24 @@ public class ModelCanvas
 		}
 	}
 
+	
+	public ModelCanvas getCopy(boolean overlayImage) throws CanvasException
+	{
+		ModelCanvas copy = null;
+		
+		try {
+			copy = new ModelCanvas(modelContext.copy());
+			if (overlayImage) {
+				copy.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
+			}
+		} catch (Exception ex) {
+			throw new CanvasException("Error creating canvas copy: " + ex.getMessage(), ex);
+		}
+		
+		return copy;
+		
+	}
+	
 	protected GraphicsConfiguration getGraphicsConfiguration()
 	{
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -130,7 +148,13 @@ public class ModelCanvas
 								double latitude2, double longitude2, double elevation2) throws CanvasException
 	{
 		pathBuffer.reset();
-		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
+		
+		int alpha = 0xFF;
+		if (color.length >= 4) {
+			alpha = color[3];
+		}
+		
+		Color fillColor = new Color(color[0], color[1], color[2], alpha);
 		
 		double row0, row1, row2;
 		double column0, column1, column2;
@@ -176,6 +200,33 @@ public class ModelCanvas
 			double width, double height,
 			double elevation) throws CanvasException
 	{
+		__drawRectangle(color, latitude, longitude, width, height, elevation, true);
+	}
+	
+	
+	/** Simplified rectangle fill.
+	 * 
+	 * @param color
+	 * @param latitude
+	 * @param longitude
+	 * @param width
+	 * @param height
+	 * @param elevation
+	 */
+	public void drawRectangle(int[] color,
+			double latitude, double longitude, 
+			double width, double height,
+			double elevation) throws CanvasException
+	{
+		__drawRectangle(color, latitude, longitude, width, height, elevation, false);
+	}
+
+	private void __drawRectangle(int[] color,
+			double latitude, double longitude, 
+			double width, double height,
+			double elevation, 
+			boolean fill) throws CanvasException
+	{
 		double row0, row1;
 		double column0, column1;
 		
@@ -192,20 +243,23 @@ public class ModelCanvas
 			throw new CanvasException("Failed to project coordinates to canvas: " + ex.getMessage(), ex);
 		}
 		
-		if (isAntiAliased) {
-			fillRectangleSimpleAntialiased(color, row0, column0, row1, column1);
+
+		if (isAntiAliased || fill) {
+			drawRectangleSimpleAntialiased(color, row0, column0, row1, column1, fill);
 		} else {
-			fillRectangleSimpleStandard(color, row0, column0, row1, column1);
+			drawRectangleSimpleStandard(color, row0, column0, row1, column1, fill);
 		}
 
 		
 	}
 	
-	protected void fillRectangleSimpleStandard(int[] color, 
+	
+	protected void drawRectangleSimpleStandard(int[] color, 
 												double row0, double column0,
-												double row1, double column1)
+												double row1, double column1,
+												boolean fill)
 	{
-		color[3] = 0xFF;
+		//color[3] = 0xFF;
 		int _column0 = (int) column0;
 		int _column1 = (int) Math.ceil(column1);
 		//if (_column1 <= _column0)
@@ -228,18 +282,28 @@ public class ModelCanvas
 		
 	}
 	
-	protected void fillRectangleSimpleAntialiased(int[] color, 
+	protected void drawRectangleSimpleAntialiased(int[] color, 
 												double row0, double column0,
-												double row1, double column1)
+												double row1, double column1,
+												boolean filled)
 	{
-		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
+		int alpha = 255;
+		if (color.length >= 4) {
+			alpha = color[3];
+		}
+		
+		
+		Color fillColor = new Color(color[0], color[1], color[2], alpha);
 		rectangle.x = column0;
 		rectangle.y = row0;
 		rectangle.width = column1 - column0;
 		rectangle.height = row1 - row0;
 
-		fillShape(fillColor, null, rectangle);
-		
+		if (filled) {
+			fillShape(fillColor, null, rectangle);
+		} else {
+			drawShape(fillColor, null, rectangle);
+		}
 	}
 	
 	public void fillRectangle(int[] color, 
@@ -282,7 +346,13 @@ public class ModelCanvas
 		pathBuffer.lineTo(column3, row3);
 		pathBuffer.closePath();
 		
-		Color fillColor = new Color(color[0], color[1], color[2], 0xFF);
+		int alpha = 255;
+		if (color.length >= 4) {
+			alpha = color[3];
+		}
+		
+		
+		Color fillColor = new Color(color[0], color[1], color[2], alpha);
 		
 		fillShape(fillColor, null, pathBuffer);
 		
@@ -322,6 +392,30 @@ public class ModelCanvas
 		
 		graphics.draw(shape);
 		graphics.setStroke(origStroke);
+	}
+	
+	public void drawText(String text, int[] color, double latitude, double longitude, boolean centered) throws CanvasException
+	{
+		int alpha = 255;
+		if (color.length >= 4) {
+			alpha = color[3];
+		}
+
+		Color textColor = new Color(color[0], color[1], color[2], alpha);
+		
+		int x = 0;
+		int y = 0;
+		
+		try {
+			mapProjection.getPoint(latitude, longitude, 0, mapPoint);
+			y = (int) Math.round(mapPoint.row);
+			x = (int) Math.round(mapPoint.column);
+		} catch (Exception ex) {
+			throw new CanvasException("Failed to project coordinates: " + ex.getMessage(), ex);
+		}
+		
+		graphics.setColor(textColor);
+		graphics.drawString(text, x, y);
 	}
 	
 	public void drawImage(Image image, int x, int y, int width, int height)
@@ -381,6 +475,8 @@ public class ModelCanvas
 	{
 		BufferedImage newImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = (Graphics2D) newImage.createGraphics();
+		//g2d.setColor(new Color(0, 0, 0, 0));
+		///g2d.fillRect(0, 0, getWidth(), getHeight());
 		g2d.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		g2d.dispose();
 		return newImage;

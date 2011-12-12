@@ -45,6 +45,7 @@ public class DataSetOptionsPanel extends Panel
 	private Component currentConfigPanel = null;
 	
 	private List<ActionListener> updateListeners = new LinkedList<ActionListener>();
+	private List<ModelPreviewUpdateListener> updatePreviewListeners = new LinkedList<ModelPreviewUpdateListener>();
 	
 	public DataSetOptionsPanel()
 	{
@@ -56,7 +57,15 @@ public class DataSetOptionsPanel extends Panel
 		btnUpdatePreview.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				fireActionListeners();
+				if (currentConfigPanel == null) {
+					return;
+				} else if (currentConfigPanel instanceof ElevationDataSetOptions) {
+					fireModelPreviewUpdateListeners(true, false);
+				} else if (currentConfigPanel instanceof ShapeDataSetOptions) {
+					fireModelPreviewUpdateListeners(false, true);
+				}
+				
+				//fireActionListeners();
 			}
 		});
 		
@@ -103,6 +112,24 @@ public class DataSetOptionsPanel extends Panel
 	}
 	
 	
+	public void addModelPreviewUpdateListener(ModelPreviewUpdateListener listener)
+	{
+		updatePreviewListeners.add(listener);
+	}
+	
+	public boolean removeModelPreviewUpdateListener(ModelPreviewUpdateListener listener)
+	{
+		return updatePreviewListeners.remove(listener);
+	}
+	
+	
+	protected void fireModelPreviewUpdateListeners(boolean updateRasterLayer, boolean updateShapeLayer)
+	{
+		for (ModelPreviewUpdateListener listener : updatePreviewListeners) {
+			listener.updateModelPreview(updateRasterLayer, updateShapeLayer);
+		}
+	}
+	
 	public void addActionListener(ActionListener listener)
 	{
 		updateListeners.add(listener);
@@ -113,11 +140,12 @@ public class DataSetOptionsPanel extends Panel
 		return updateListeners.remove(listener);
 	}
 	
-	public void fireActionListeners()
+	protected void fireActionListeners()
 	{
 		ActionEvent event = new ActionEvent(this, 0, "update");
 		for (ActionListener listener : updateListeners) {
 			listener.actionPerformed(event);
 		}
 	}
+	
 }

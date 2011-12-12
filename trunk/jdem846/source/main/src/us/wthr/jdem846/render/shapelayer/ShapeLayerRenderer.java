@@ -62,8 +62,9 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 			return;
 		}
 		
-		
-		this.modelCanvas = modelContext.getModelCanvas();
+		if (this.modelCanvas == null) {
+			this.modelCanvas = modelContext.getModelCanvas();
+		}
 		
 		int numLayers = getShapeDataContext().getShapeDataListSize();
 		int layerNumber = 0;

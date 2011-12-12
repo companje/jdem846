@@ -89,13 +89,13 @@ public class DemProjectPane extends JdemPanel
 	private DataSetOptionsPanel datasetOptionsPanel;
 	private OrderingButtonBar orderingButtonBar;
 	private ModelOptionsPanel modelOptionsPanel;
-	private ProjectionConfigPanel projectionConfigPanel;
-	private GradientConfigPanel gradientConfigPanel;
-	private LightPositionConfigPanel lightPositionConfigPanel;
+	//private ProjectionConfigPanel projectionConfigPanel;
+	//private GradientConfigPanel gradientConfigPanel;
+	//private LightPositionConfigPanel lightPositionConfigPanel;
 	
 	private DataOverviewPanel overviewPanel;
 	private ModelPreviewPane previewPane;
-	private DataInputLayoutPane layoutPane;
+	//private DataInputLayoutPane layoutPane;
 	private ScriptEditorPanel scriptPane;
 	
 	private ProjectButtonBar projectButtonBar;
@@ -113,6 +113,9 @@ public class DemProjectPane extends JdemPanel
 	
 	private String projectLoadedFrom = null;
 	private boolean ignoreValueChanges = false;
+	
+	private int lastRasterDataCount = 0;
+	private int lastShapeDataCount = 0;
 	
 	public DemProjectPane()
 	{
@@ -161,16 +164,16 @@ public class DemProjectPane extends JdemPanel
 		modelOptionsPanel = new ModelOptionsPanel();
 		modelOptionsPanel.setModelOptions(modelOptions);
 		
-		gradientConfigPanel = new GradientConfigPanel();
-		projectionConfigPanel = new ProjectionConfigPanel();
+		//gradientConfigPanel = new GradientConfigPanel();
+		//projectionConfigPanel = new ProjectionConfigPanel();
 
-		lightPositionConfigPanel = new LightPositionConfigPanel();
-		lightPositionConfigPanel.setPreferredSize(new Dimension(200, 200));
-		lightPositionConfigPanel.setSize(new Dimension(200, 200));
+		//lightPositionConfigPanel = new LightPositionConfigPanel();
+		//lightPositionConfigPanel.setPreferredSize(new Dimension(200, 200));
+		//lightPositionConfigPanel.setSize(new Dimension(200, 200));
 		
 		overviewPanel = new DataOverviewPanel();
 		
-		layoutPane = new DataInputLayoutPane(modelContext);
+		//layoutPane = new DataInputLayoutPane(modelContext);
 		previewPane = new ModelPreviewPane(modelContext);
 		scriptPane = new ScriptEditorPanel();
 		
@@ -259,12 +262,20 @@ public class DemProjectPane extends JdemPanel
 			}
 		});
 		
+		
 		datasetOptionsPanel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				onDataModelChanged();
+				onDataModelChanged(false, false);
 			}
 		});
+		datasetOptionsPanel.addModelPreviewUpdateListener(new ModelPreviewUpdateListener() {
+			public void updateModelPreview(boolean updateRasterLayer, boolean updateShapeLayer)
+			{
+				onDataModelChanged(updateRasterLayer, updateShapeLayer);
+			}
+		});
+		
 		datasetTree.addDatasetSelectionListener(new DatasetSelectionListener() {
 			public void onDatasetSelected(Object dataObject, int type, int index)
 			{
@@ -306,16 +317,17 @@ public class DemProjectPane extends JdemPanel
 			}
 		};
 		
-		projectionConfigPanel.addChangeListener(basicChangeListener);
-		gradientConfigPanel.addChangeListener(basicChangeListener);
+		//projectionConfigPanel.addChangeListener(basicChangeListener);
+		//gradientConfigPanel.addChangeListener(basicChangeListener);
 		
-		
+		/*
 		lightPositionConfigPanel.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
 			{
 				onConfigurationChanged();
 			}
 		});
+		*/
 		
 		Panel dataPanel = new Panel();
 		dataPanel.setLayout(new BorderLayout());
@@ -323,9 +335,11 @@ public class DemProjectPane extends JdemPanel
 		dataPanel.add(datasetTree, BorderLayout.CENTER);
 		dataPanel.add(datasetOptionsPanel, BorderLayout.SOUTH);
 		
+		
 		EmbeddedTabbedPane leftTabPane = new EmbeddedTabbedPane();
 		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.data"), dataPanel);
 		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.setup"), modelOptionsPanel);
+		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.attributes"), overviewPanel);
 		
 		addLeft(leftTabPane, false);
 		/*
@@ -335,14 +349,16 @@ public class DemProjectPane extends JdemPanel
 		this.addLeft(modelOptionsPanel, false);
 		*/
 		
-		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layout"), layoutPane);
+		//this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layout"), layoutPane);
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"), previewPane);
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.script"), scriptPane);
 		
-		this.addRight(gradientConfigPanel, false);
-		this.addRight(lightPositionConfigPanel, false);
-		this.addRight(projectionConfigPanel, false);
-		this.addRight(overviewPanel, false);
+		setLeftWidth(350);
+		this.setRightVisible(false);
+		//this.addRight(gradientConfigPanel, false);
+		//this.addRight(lightPositionConfigPanel, false);
+		//this.addRight(projectionConfigPanel, false);
+		//this.addRight(overviewPanel, false);
 		
 		this.setSouth(statusBar);
 		
@@ -352,7 +368,7 @@ public class DemProjectPane extends JdemPanel
 		//onConfigurationChanged();
 		applyOptionsToUI();
 		applyEngineSelectionConfiguration();
-		onDataModelChanged();
+		onDataModelChanged(true, true);
 	}
 	
 	
@@ -554,12 +570,12 @@ public class DemProjectPane extends JdemPanel
 		}
 		this.modelOptions = modelOptions;
 		
-		modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
-		modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
-		modelOptions.setLightingElevation(lightPositionConfigPanel.getSolarElevation());
-		modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
-		modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
-		modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
+		//modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
+		////modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
+		//modelOptions.setLightingElevation(lightPositionConfigPanel.getSolarElevation());
+		//modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
+		//modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
+		//modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
 		modelOptions.setUserScript(scriptPane.getScriptContent());
 		modelOptions.setScriptLanguage(scriptPane.getScriptLanguage());
 		
@@ -575,14 +591,14 @@ public class DemProjectPane extends JdemPanel
 		
 		ignoreValueChanges = true;
 		
-		gradientConfigPanel.setGradientIdentifier(modelOptions.getColoringType());
-		gradientConfigPanel.setConfigString(modelOptions.getGradientLevels());
-		lightPositionConfigPanel.setSolarAzimuth(modelOptions.getLightingAzimuth());
-		lightPositionConfigPanel.setSolarElevation(modelOptions.getLightingElevation());
+		//gradientConfigPanel.setGradientIdentifier(modelOptions.getColoringType());
+		//gradientConfigPanel.setConfigString(modelOptions.getGradientLevels());
+		//lightPositionConfigPanel.setSolarAzimuth(modelOptions.getLightingAzimuth());
+		//lightPositionConfigPanel.setSolarElevation(modelOptions.getLightingElevation());
 
-		projectionConfigPanel.setRotation(modelOptions.getProjection().getRotateX(),
-								modelOptions.getProjection().getRotateY(),
-								modelOptions.getProjection().getRotateZ());
+		//projectionConfigPanel.setRotation(modelOptions.getProjection().getRotateX(),
+		//						modelOptions.getProjection().getRotateY(),
+		//						modelOptions.getProjection().getRotateZ());
 		
 		scriptPane.setScriptLanguage(modelOptions.getScriptLanguage());
 		if (modelOptions.getUserScript() != null && modelOptions.getUserScript().length() > 0) {
@@ -599,18 +615,18 @@ public class DemProjectPane extends JdemPanel
 	{
 		
 		String engineSelection = modelOptions.getEngine();
-		String coloringSelection = modelOptions.getColoringType();
+		//String coloringSelection = modelOptions.getColoringType();
 		
 		EngineInstance engineInstance = EngineRegistry.getInstance(engineSelection);
-		ColoringInstance coloringInstance = ColoringRegistry.getInstance(coloringSelection);
+		//ColoringInstance coloringInstance = ColoringRegistry.getInstance(coloringSelection);
 		
-		gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());
-		projectionConfigPanel.setVisible(engineInstance.uses3DProjection());
-		lightPositionConfigPanel.setVisible(engineInstance.usesLightDirection());
+		//gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());
+		//projectionConfigPanel.setVisible(engineInstance.uses3DProjection());
+		//lightPositionConfigPanel.setVisible(engineInstance.usesLightDirection());
 				
-		if (engineInstance.usesLightDirection()) {
-				lightPositionConfigPanel.updatePreview(true);
-		}	
+		//if (engineInstance.usesLightDirection()) {
+		//		lightPositionConfigPanel.updatePreview(true);
+		//}	
 		
 		
 		
@@ -622,14 +638,16 @@ public class DemProjectPane extends JdemPanel
 			modelOptions = this.modelOptions;
 		}
 		
-		modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
+		//modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
+		
+		
+		
+		//modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
+		//modelOptions.setLightingElevation(lightPositionConfigPanel.getSolarElevation());
 
-		modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
-		modelOptions.setLightingElevation(lightPositionConfigPanel.getSolarElevation());
-
-		modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
-		modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
-		modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
+		//modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
+		//modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
+		//modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
 		
 		
 		modelOptions.setUserScript(scriptPane.getScriptContent());
@@ -742,6 +760,11 @@ public class DemProjectPane extends JdemPanel
 	
 	public void onDataModelChanged()
 	{
+		onDataModelChanged(false, false);
+	}
+	
+	public void onDataModelChanged(boolean forceRasterUpdate, boolean forceShapeUpdate)
+	{
 		
 		if (rasterDataContext.getRasterDataListSize() + shapeDataContext.getShapeFiles().size() > 0) {
 			//projectButtonBar.setButtonEnabled(ProjectButtonBar.BTN_CREATE, true);
@@ -773,8 +796,12 @@ public class DemProjectPane extends JdemPanel
 		} catch (DataSourceException ex) {
 			log.warn("Failed to calculate elevation min/max: " + ex.getMessage(), ex);
 		}
-		layoutPane.update();
-		previewPane.update();
+		//layoutPane.update();
+		
+		boolean updateRaster = forceRasterUpdate || lastRasterDataCount != rasterDataContext.getRasterDataListSize();
+		boolean updateShape = forceShapeUpdate || lastShapeDataCount != shapeDataContext.getShapeFiles().size();
+		
+		updatePreviewPane(updateRaster, updateShape);
 		//previewPanel.update();
 		
 		overviewPanel.setRows(rasterDataContext.getDataRows());
@@ -788,6 +815,16 @@ public class DemProjectPane extends JdemPanel
 		
 		datasetTree.updateTreeNodes();
 		onDataSetSelected();
+		
+		lastRasterDataCount = rasterDataContext.getRasterDataListSize();
+		lastShapeDataCount = shapeDataContext.getShapeFiles().size();
+		
+	}
+	
+	
+	protected void updatePreviewPane(boolean updateRaster, boolean updateShape)
+	{
+		previewPane.update(updateRaster, updateShape);
 	}
 	
 	

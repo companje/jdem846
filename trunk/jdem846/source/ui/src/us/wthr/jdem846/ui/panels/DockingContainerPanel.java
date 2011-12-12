@@ -72,10 +72,12 @@ public class DockingContainerPanel extends Panel
 		outterSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 		outterSplit.setBorder(BorderFactory.createEmptyBorder());
 		outterSplit.setResizeWeight(0);
+		outterSplit.setDividerSize(5);
 		
 		innerSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 		innerSplit.setBorder(BorderFactory.createEmptyBorder());
 		innerSplit.setResizeWeight(1);
+		innerSplit.setDividerSize(5);
 		
 		innerSplit.add(centerTabPanel);
 		innerSplit.add(rightPanel);
@@ -136,7 +138,31 @@ public class DockingContainerPanel extends Panel
 		this.add(component, BorderLayout.SOUTH);
 	}
 	
-
+	public void setLeftWidth(int width)
+	{
+		outterSplit.setDividerLocation(width);
+	}
+	
+	public void setLeftVisible(boolean v)
+	{
+		leftPanel.setVisible(v);
+		if (!v) {
+			outterSplit.setDividerSize(0);
+		} else {
+			outterSplit.setDividerSize(5);
+		}
+	}
+	
+	public void setRightVisible(boolean v)
+	{
+		rightPanel.setVisible(v);
+		if (!v) {
+			innerSplit.setDividerSize(0);
+		} else {
+			innerSplit.setDividerSize(5);
+		}
+		
+	}
 	
 	@Override
 	public void dispose() throws ComponentException

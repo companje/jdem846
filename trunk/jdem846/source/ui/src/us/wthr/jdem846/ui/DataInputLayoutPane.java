@@ -135,7 +135,7 @@ public class DataInputLayoutPane extends TitledRoundedPanel
 			Color fill = new Color(stroke.getRed(), stroke.getGreen(), stroke.getBlue(), 0x7F);
 			Color text = Color.WHITE;
 	
-			//for (RasterData rasterData : modelContext.getRasterDataContext().getRasterDataList()) {
+			
 			for (int i = modelContext.getRasterDataContext().getRasterDataListSize() - 1; i >= 0; i--) {
 				RasterData rasterData = modelContext.getRasterDataContext().getRasterDataList().get(i);
 				
@@ -169,60 +169,11 @@ public class DataInputLayoutPane extends TitledRoundedPanel
 				
 				int textMidX = (int) ((double)x + ((double)w / 2.0) - ((double)textWidth / 2.0));
 				int textMidY = (int) ((double)y + ((double)h / 2.0));
-				
-				
-				
+
 				g2d.drawString(label, textMidX, textMidY);
-				
 
-				
 			}
-			
-			/*
-			// TODO: Don't skew the image. The following code will
-			// TODO: Switch to using the modelContext dimensions, not just the raster data
-			double xRatio = (double)getWidth() / modelContext.getRasterDataContext().getDataColumns();
-			double yRatio = (double)getHeight() / modelContext.getRasterDataContext().getDataRows();
-			
-			g2d.setColor(getBackground());
-			g2d.fillRect(0, 0, getWidth(), getHeight());
-			
-			Color stroke = Color.GRAY;
-			Color fill = new Color(stroke.getRed(), stroke.getGreen(), stroke.getBlue(), 0x7F);
-			Color text = Color.WHITE;
-			int i = 1;
 
-			for (RasterDataRowColumnBox rowColBox : modelContext.getRasterDataContext().getRasterDataRowColumnBoxes()) {
-				int x = (int) Math.floor((double)rowColBox.getLeftX() * xRatio);
-				int y = (int) Math.floor((double)rowColBox.getTopY() * yRatio);
-				
-				int w = (int) Math.floor((double)rowColBox.getWidth() * xRatio) - 1;
-				int h = (int) Math.floor((double)rowColBox.getHeight() * yRatio) - 1;
-				
-
-				g2d.setColor(stroke);
-				g2d.drawRect(x, y, w, h);
-				
-				g2d.setColor(fill);
-				g2d.fillRect(x, y, w, h);
-				
-				g2d.setColor(text);
-				
-				String label = ""+(i);
-				
-				FontMetrics fonts = g2d.getFontMetrics();
-				int textWidth = fonts.stringWidth(label);
-				
-				int textMidX = (int) ((double)x + ((double)w / 2.0) - ((double)textWidth / 2.0));
-				int textMidY = (int) ((double)y + ((double)h / 2.0));
-				
-				
-				
-				g2d.drawString(label, textMidX, textMidY);
-				
-				i++;
-			}
-			*/
 		}
 		
 	}

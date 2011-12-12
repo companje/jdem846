@@ -272,7 +272,7 @@ public class OutputImageViewPanel extends JdemPanel
 				
 
 				start = System.currentTimeMillis();
-				OutputProduct<ModelCanvas> product = engine.generate(false);
+				OutputProduct<ModelCanvas> product = engine.generate(false, false);
 				elapsed = (System.currentTimeMillis() - start) / 1000;
 				ModelCanvas demCanvas = product.getProduct();
 				synchronized(imageDisplay) {

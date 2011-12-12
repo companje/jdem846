@@ -458,12 +458,12 @@ public class ModelOptions
 	}
 
 
-	public int getGridSize()
+	public double getGridSize()
 	{
-		return getIntegerOption(ModelOptionNamesEnum.GRID_SIZE);
+		return getDoubleOption(ModelOptionNamesEnum.GRID_SIZE);
 	}
 
-	public void setGridSize(int gridSize)
+	public void setGridSize(double gridSize)
 	{
 		setOption(ModelOptionNamesEnum.GRID_SIZE, gridSize);
 	}

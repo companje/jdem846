@@ -82,7 +82,7 @@ public class Dem3dGenerator extends BasicRenderEngine
 	public OutputProduct<ModelCanvas> generate() throws RenderEngineException
 	{
 		try {
-			return generate(false);
+			return generate(false, false);
 		} catch (OutOfMemoryError err) {
 			log.error("Out of memory error when generating model", err);
 			throw new RenderEngineException("Out of memory error when generating model", err);
@@ -93,11 +93,11 @@ public class Dem3dGenerator extends BasicRenderEngine
 	}
 	
 	@Override
-	public OutputProduct<ModelCanvas> generate(boolean skipElevation) throws RenderEngineException
+	public OutputProduct<ModelCanvas> generate(boolean skipElevation, boolean skipShapes) throws RenderEngineException
 	{
 		Dem2dGenerator dem2d = new Dem2dGenerator(getModelContext());
 		
-		OutputProduct<ModelCanvas> product2d = dem2d.generate(skipElevation);
+		OutputProduct<ModelCanvas> product2d = dem2d.generate(skipElevation, skipShapes);
 		ModelCanvas canvas2d = product2d.getProduct();
 		
 		RasterDataContext rasterDataContext = getRasterDataContext();

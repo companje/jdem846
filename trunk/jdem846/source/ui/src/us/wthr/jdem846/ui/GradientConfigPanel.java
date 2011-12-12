@@ -39,9 +39,10 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.GradientLevelsControl.GradientChangedListener;
 import us.wthr.jdem846.ui.base.Button;
+import us.wthr.jdem846.ui.panels.RoundedPanel;
 
 @SuppressWarnings("serial")
-public class GradientConfigPanel extends TitledRoundedPanel
+public class GradientConfigPanel extends RoundedPanel
 {
 	private static Log log = Logging.getLog(GradientConfigPanel.class);
 	
@@ -56,7 +57,7 @@ public class GradientConfigPanel extends TitledRoundedPanel
 	
 	public GradientConfigPanel()
 	{
-		super(I18N.get("us.wthr.jdem846.ui.gradientConfigPanel.title"));
+		//super(I18N.get("us.wthr.jdem846.ui.gradientConfigPanel.title"));
 		
 		// Create components
 		//this.setBorder(BorderFactory.createEtchedBorder());

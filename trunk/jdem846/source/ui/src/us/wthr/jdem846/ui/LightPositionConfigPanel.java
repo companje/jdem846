@@ -37,9 +37,10 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Slider;
+import us.wthr.jdem846.ui.panels.RoundedPanel;
 
 @SuppressWarnings("serial")
-public class LightPositionConfigPanel extends TitledRoundedPanel
+public class LightPositionConfigPanel extends RoundedPanel
 {
 	private static Log log = Logging.getLog(LightPositionConfigPanel.class);
 	
@@ -53,7 +54,7 @@ public class LightPositionConfigPanel extends TitledRoundedPanel
 	
 	public LightPositionConfigPanel()
 	{
-		super(I18N.get("us.wthr.jdem846.ui.lightDirectionPanel.title"));
+		//super(I18N.get("us.wthr.jdem846.ui.lightDirectionPanel.title"));
 		//this.setBorder(BorderFactory.createEtchedBorder());
 		
 		// Create components

@@ -87,12 +87,19 @@ public class ModelContext
 	
 	public ModelCanvas createModelCanvas()
 	{
-		modelCanvas = new ModelCanvas(this);
-		return modelCanvas;
+		return new ModelCanvas(this);
 	}
 	
 	public ModelCanvas getModelCanvas()
 	{
+		return getModelCanvas(true);
+	}
+	
+	public ModelCanvas getModelCanvas(boolean create)
+	{
+		if (this.modelCanvas == null && create) {
+			this.modelCanvas = createModelCanvas();
+		}
 		return this.modelCanvas;
 	}
 	

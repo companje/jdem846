@@ -67,11 +67,11 @@ public class StandardTitledBorder extends StandardBorder
 		int origHeight = height;
 		int origWidth = width;
 		
-		x += 5;
-		y += 5;
+		x += 2;
+		y += 2;
 		
-		height -= 5;
-		width -= 6;
+		height -= 2;
+		width -= 3;
 		
 		int titleHeight = getTitleHeight(c);
 		

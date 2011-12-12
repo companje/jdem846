@@ -33,7 +33,7 @@ public class Dem2dTiledKmlGenerator extends BasicRenderEngine
 	public OutputProduct<DemCanvas> generate() throws RenderEngineException
 	{
 		try {
-			return generate(false);
+			return generate(false, false);
 		} catch (OutOfMemoryError err) {
 			log.error("Out of memory error when generating model", err);
 			throw new RenderEngineException("Out of memory error when generating model", err);
@@ -45,7 +45,7 @@ public class Dem2dTiledKmlGenerator extends BasicRenderEngine
 	
 	
 	@Override
-	public OutputProduct<DemCanvas> generate(boolean skipElevation) throws RenderEngineException
+	public OutputProduct<DemCanvas> generate(boolean skipElevation, boolean skipShapes) throws RenderEngineException
 	{
 		Dem2dGenerator dem2d = new Dem2dGenerator(getModelContext());
 		
