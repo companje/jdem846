@@ -6,11 +6,16 @@ import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
+import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.render.ModelCanvas;
 import junit.framework.TestCase;
 
 public class BaseMapProjectionTest extends TestCase
@@ -85,9 +90,49 @@ public class BaseMapProjectionTest extends TestCase
 	}
 	
 	
+	public void __testGenerateMap(MapProjectionEnum mapProjectionDef)
+	{
+		ModelOptions modelOptions = new ModelOptions();
+		modelOptions.setWidth((int)width);
+		modelOptions.setHeight((int)height);
+		modelOptions.setMapProjection(mapProjectionDef);
+		modelOptions.setBackgroundColor("255;255;255;255");
+		modelOptions.setAntialiased(false);
+		modelOptions.setUseSimpleCanvasFill(false);
+		RasterDataContext rasterDataContext = new RasterDataContext();
+		ModelContext modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
+		
+		ModelCanvas modelCanvas = modelContext.getModelCanvas(true);
+		
+		int[] pointColor = {0, 0, 0, 0xFF};
+		
+		for (double latitude = north; latitude > south; latitude-=0.25) {
+			for (double longitude = west; longitude < east; longitude+=0.25) {
+				
+				try {
+					modelCanvas.fillRectangle(pointColor, 
+							latitude, longitude, 
+							0.25, 0.25, 0.0);
+				} catch (CanvasException ex) {
+					ex.printStackTrace();
+					return;
+				}
+				
+			}
+		}
+		
+		try {
+			modelCanvas.save(saveImagesTo.replace("{test}", "testGenerateMap"));
+		} catch (CanvasException ex) {
+			ex.printStackTrace();
+		}
+		
+		
+	}
+	
 	public void __testGenerateMap(MapProjection mapProjection)
 	{
-		
+
 		MapPoint point = new MapPoint();
 
 		BufferedImage image = new BufferedImage((int)width+1, (int)height+1, BufferedImage.TYPE_INT_RGB);
@@ -231,6 +276,7 @@ public class BaseMapProjectionTest extends TestCase
 		} catch (ImageException ex) {
 			log.error("Failed to save image: " + ex.getMessage(), ex);
 		}
+		
 		
 	}
 	

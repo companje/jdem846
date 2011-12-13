@@ -30,8 +30,8 @@ public class WinkelTripelProjectionTest extends BaseMapProjectionTest
 	
 	public void testGenerateMap()
 	{
-		MapProjection projection = new WinkelTripelProjection(90, -90, 180, -180, width, height);
-		this.__testGenerateMap(projection);
+		//MapProjection projection = new WinkelTripelProjection(90, -90, 180, -180, width, height);
+		this.__testGenerateMap(MapProjectionEnum.WINKELTRIPEL);
 	}
 	
 	

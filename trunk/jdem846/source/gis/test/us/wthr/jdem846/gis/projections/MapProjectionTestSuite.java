@@ -38,13 +38,16 @@ public class MapProjectionTestSuite extends TestSuite
 		suite.addTestSuite(AitoffProjectionTest.class);
 		suite.addTestSuite(EquirectangularProjectionTest.class);
 		suite.addTestSuite(RobinsonProjectionTest.class);
+		*/
 		suite.addTestSuite(WinkelTripelProjectionTest.class);
+		/*
 		suite.addTestSuite(MollweideProjectionTest.class);
 		suite.addTestSuite(HammerProjectionTest.class);
 		suite.addTestSuite(WagnerVIProjectionTest.class);
-		*/
-		//suite.addTestSuite(MercatorProjectionTest.class);
+		
+		suite.addTestSuite(MercatorProjectionTest.class);
 		suite.addTestSuite(TransverseMercatorProjectionTest.class);
+		*/
 		//$JUnit-END$
 		return suite;
 	}

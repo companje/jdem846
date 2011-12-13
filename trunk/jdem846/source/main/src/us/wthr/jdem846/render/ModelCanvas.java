@@ -271,6 +271,8 @@ public class ModelCanvas
 		//	_row1 = _row0 + 1;
 		
 		
+		
+		
 		int maxRow = raster.getHeight() - 1;
 		int maxCol = raster.getWidth() - 1;
 		
