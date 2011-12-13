@@ -1,0 +1,43 @@
+{
+	settings : [
+		{ key : "us.wthr.jdem846.modelOptions.doublePrecisionHillshading", value : "false" },
+		{ key : "us.wthr.jdem846.modelOptions.relativeLightIntensity", value : "0.75000"},
+		{ key : "us.wthr.jdem846.modelOptions.lightingMultiple", value : "0.75000"},
+		
+		
+		{ key : "us.wthr.jdem846.modelOptions.userScript.language", value : "groovy"},
+		{ key : "us.wthr.jdem846.modelOptions.relativeDarkIntensity", value : "1.00000"},
+		{ key : "us.wthr.jdem846.modelOptions.width", value : "3000"},
+		{ key : "us.wthr.jdem846.modelOptions.height", value : "3000"},
+		{ key : "us.wthr.jdem846.modelOptions.projection.shiftX", value : "0.0"},
+		{ key : "us.wthr.jdem846.modelOptions.projection.shiftY", value : "0.0"},
+		{ key : "us.wthr.jdem846.modelOptions.projection.shiftZ", value : "0.0"},
+		{ key : "us.wthr.jdem846.modelOptions.projection.rotateX", value : "30.0"},
+		{ key : "us.wthr.jdem846.modelOptions.projection.rotateY", value : "0.0"},
+		{ key : "us.wthr.jdem846.modelOptions.projection.rotateZ", value : "0.0"}
+	],
+	layers : [
+		{
+			type : "raster",
+			path : "C:\srv\elevation\Shapefiles\Nashua NH\Elevation 1-3 Arc Second\Elevation 1-3 Arc Second.flt"
+		},
+		{
+			type : "shapefile",
+			path : "C:\srv\elevation\Shapefiles\Nashua NH\hydrography\NHDArea.shp",
+			defId : "usgs-hydrography"
+		},
+		{
+			type : "shapefile",
+			path : "C:\srv\elevation\Shapefiles\Nashua NH\hydrography\NHDFlowline.shp",
+			defId : "usgs-hydrography"
+		},
+		{
+			type : "shapefile",
+			path : "C:\srv\elevation\Shapefiles\Nashua NH\hydrography\NHDWaterbody.shp",
+			defId : "usgs-hydrography"
+		}
+	]
+
+
+}
+

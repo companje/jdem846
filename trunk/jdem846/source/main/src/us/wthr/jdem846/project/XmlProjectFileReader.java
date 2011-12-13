@@ -34,11 +34,11 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 
-public class ProjectFileReader 
+public class XmlProjectFileReader 
 {
-	private static Log log = Logging.getLog(ProjectFileReader.class);
+	private static Log log = Logging.getLog(XmlProjectFileReader.class);
 	
-	protected ProjectFileReader()
+	protected XmlProjectFileReader()
 	{
 		
 	}
@@ -132,16 +132,16 @@ public class ProjectFileReader
 	{
 		log.info("Opening project file: " + path);
 		
-		ProjectFileReader.fileExists(path);
+		XmlProjectFileReader.fileExists(path);
 		
 		Document doc = null;
 		try {
-			doc = ProjectFileReader.loadProject(path);
+			doc = XmlProjectFileReader.loadProject(path);
 		} catch (DocumentException ex) {
 			throw new ProjectParseException("Failed to load project from " + path, ex);
 		}
 
-		ProjectModel projectModel = ProjectFileReader.parseProject(doc);
+		ProjectModel projectModel = XmlProjectFileReader.parseProject(doc);
 		
 		projectModel.setLoadedFrom(path);
 		

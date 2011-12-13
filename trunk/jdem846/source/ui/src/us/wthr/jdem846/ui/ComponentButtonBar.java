@@ -29,16 +29,18 @@ public class ComponentButtonBar extends ToolBar
 	
 	public ComponentButtonBar(Component owner)
 	{
-		owner.addComponentListener(new ComponentAdapter() {
-			public void componentHidden(ComponentEvent e)
-			{
-				onOwnerHidden();
-			}
-			public void componentShown(ComponentEvent e)
-			{
-				onOwnerShown();
-			}
-		});
+		if (owner != null) {
+			owner.addComponentListener(new ComponentAdapter() {
+				public void componentHidden(ComponentEvent e)
+				{
+					onOwnerHidden();
+				}
+				public void componentShown(ComponentEvent e)
+				{
+					onOwnerShown();
+				}
+			});
+		}
 		this.setMargin(new Insets(3, 3, 3, 3));
 		
 	}

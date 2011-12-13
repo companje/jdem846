@@ -2,16 +2,23 @@ package us.wthr.jdem846.ui.scripting;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.ui.ComponentButtonBar;
 import us.wthr.jdem846.ui.ToolbarButton;
+import us.wthr.jdem846.ui.base.ComboBox;
+import us.wthr.jdem846.ui.base.JComboBoxModel;
+import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
@@ -23,7 +30,8 @@ public class ScriptEditorButtonBar extends ComponentButtonBar
 		PASTE,
 		CUT,
 		UNDO,
-		REDO
+		REDO,
+		LANGUAGE
 	};
 	
 	
@@ -33,12 +41,15 @@ public class ScriptEditorButtonBar extends ComponentButtonBar
 	private ToolbarButton jbtnUndo;
 	private ToolbarButton jbtnRedo;
 	
+	private ComboBox cmbLanguage;
+	private ScriptLanguageListModel languageModel;
+	
 	private List<ScriptEditorButtonClickedListener> scriptEditorButtonClickedListeners = new LinkedList<ScriptEditorButtonClickedListener>();
 	
 	public ScriptEditorButtonBar(Component owner)
 	{
 		// Set Properties
-		super(owner);
+		super(null);
 
 		jbtnUndo = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.scriptEditorPane.menu.undo.label"), JDem846Properties.getProperty("us.wthr.jdem846.ui.scriptEditorPane.menu.undo.icon"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -71,11 +82,17 @@ public class ScriptEditorButtonBar extends ComponentButtonBar
 		});
 		
 		
+		languageModel = new ScriptLanguageListModel();
+		Label lblLanguage = new Label(I18N.get("us.wthr.jdem846.ui.scriptEditorPane.language.label") + ":");
+		cmbLanguage = new ComboBox(languageModel);
+		
+		
 		jbtnUndo.setToolTipText(I18N.get("us.wthr.jdem846.ui.scriptEditorPane.menu.undo.tooltip"));
 		jbtnRedo.setToolTipText(I18N.get("us.wthr.jdem846.ui.scriptEditorPane.menu.redo.tooltip"));
 		jbtnCut.setToolTipText(I18N.get("us.wthr.jdem846.ui.scriptEditorPane.menu.cut.tooltip"));
 		jbtnCopy.setToolTipText(I18N.get("us.wthr.jdem846.ui.scriptEditorPane.menu.copy.tooltip"));
 		jbtnPaste.setToolTipText(I18N.get("us.wthr.jdem846.ui.scriptEditorPane.menu.paste.tooltip"));
+		cmbLanguage.setToolTipText(I18N.get("us.wthr.jdem846.ui.scriptEditorPane.language.tooltip"));
 		
 		boolean displayText = JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.outputImageButtonBar.displayText");
 		jbtnUndo.setTextDisplayed(displayText);
@@ -83,15 +100,29 @@ public class ScriptEditorButtonBar extends ComponentButtonBar
 		jbtnCut.setTextDisplayed(displayText);
 		jbtnCopy.setTextDisplayed(displayText);
 		jbtnPaste.setTextDisplayed(displayText);
+		lblLanguage.setVisible(displayText);
 		
 		
+		// Add listeners
+		
+		cmbLanguage.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					fireButtonClickedListeners(ScriptEditButtons.LANGUAGE);
+				}	
+			}
+		});
+		
+		// Set Layout
 		add(jbtnCut);
 		add(jbtnCopy);
 		add(jbtnPaste);
 		addSeparator();
 		add(jbtnUndo);
 		add(jbtnRedo);
-		
+		addSeparator();
+		add(lblLanguage);
+		add(cmbLanguage);
 		
 	}
 	
@@ -117,5 +148,28 @@ public class ScriptEditorButtonBar extends ComponentButtonBar
 	public interface ScriptEditorButtonClickedListener
 	{
 		public void onButtonClicked(ScriptEditButtons button);
+	}
+	
+	
+	class ScriptLanguageListModel extends JComboBoxModel<String>
+	{
+		
+		public ScriptLanguageListModel()
+		{
+			ScriptLanguageEnum defaultSelected = null;
+			if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.scripting.groovy.enabled")) {
+				addItem(I18N.get("us.wthr.jdem846.programmingLanguage.groovy"), ScriptLanguageEnum.GROOVY.text());
+				defaultSelected = ScriptLanguageEnum.GROOVY;
+			}
+			if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.scripting.jython.enabled")) {
+				addItem(I18N.get("us.wthr.jdem846.programmingLanguage.jython"), ScriptLanguageEnum.JYTHON.text());
+				if (defaultSelected == null) 
+					defaultSelected = ScriptLanguageEnum.JYTHON;
+			}
+			
+			if (defaultSelected != null) {
+				setSelectedItemByValue(ScriptLanguageEnum.GROOVY.text());
+			}
+		}
 	}
 }

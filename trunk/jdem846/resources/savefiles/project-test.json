@@ -1,0 +1,153 @@
+{
+   "settings":    [
+            {
+         "key": "us.wthr.jdem846.modelOptions.doublePrecisionHillshading",
+         "value": "false"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.relativeLightIntensity",
+         "value": "0.75"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.lightingMultiple",
+         "value": "0.75"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.projection.shiftX",
+         "value": "0.0"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.projection.shiftY",
+         "value": "0.0"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.userScript.language",
+         "value": "groovy"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.projection.shiftZ",
+         "value": "0.0"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.relativeDarkIntensity",
+         "value": "1.0"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.width",
+         "value": "3000"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.elevationMultiple",
+         "value": "1.0"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.lightingAzimuth",
+         "value": "320"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.userScript.groovy.template",
+         "value": "resources://scripting/template-dem.groovy"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.useSimpleCanvasFill",
+         "value": "true"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.lightingElevation",
+         "value": "25"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.coloringType",
+         "value": "standard-coloring"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.hillShadeType",
+         "value": "1002"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.userScript.jython.template",
+         "value": "resources://scripting/template-dem.py"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.antialiased",
+         "value": "false"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.engine",
+         "value": "dem2d-gen"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.projection.rotateZ",
+         "value": "0.0"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.writeTo",
+         "value": ""
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.gradientLevels",
+         "value": ""
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.spotExponent",
+         "value": "1"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.projection.rotateX",
+         "value": "30.0"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.hillShading",
+         "value": "true"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.backgroundColor",
+         "value": "0;0;0;255"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.projection.rotateY",
+         "value": "0.0"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.precacheStrategy",
+         "value": "tiled"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.height",
+         "value": "3000"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.tileSize",
+         "value": "1000"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.gridSize",
+         "value": "1"
+      },
+            {
+         "key": "us.wthr.jdem846.modelOptions.mapProjection",
+         "value": "us.wthr.jdem846.render.mapProjection.equirectangularProjection.name"
+      }
+   ],
+   "layers":    [
+            {
+         "type": "raster",
+         "path": "C:\\srv\\elevation\\Shapefiles\\Nashua NH\\Elevation 1-3 Arc Second\\Elevation 1-3 Arc Second.flt"
+      },
+            {
+         "type": "shapefile",
+         "path": "C:\\srv\\elevation\\Shapefiles\\Nashua NH\\hydrography\\NHDArea.shp",
+         "defId": "usgs-hydrography"
+      },
+            {
+         "type": "shapefile",
+         "path": "C:\\srv\\elevation\\Shapefiles\\Nashua NH\\hydrography\\NHDFlowline.shp",
+         "defId": "usgs-hydrography"
+      },
+            {
+         "type": "shapefile",
+         "path": "C:\\srv\\elevation\\Shapefiles\\Nashua NH\\hydrography\\NHDWaterbody.shp",
+         "defId": "usgs-hydrography"
+      }
+   ]
+}

@@ -28,6 +28,7 @@ import java.awt.event.MouseListener;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
+import java.text.NumberFormat;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
@@ -46,6 +47,9 @@ import us.wthr.jdem846.ui.border.ButtonBorder;
 @SuppressWarnings("serial")
 public class MemoryMonitor extends Label
 {
+	
+	private static NumberFormat nf = NumberFormat.getNumberInstance();
+	
 	private LinkedList<MemorySnapshot> usageList = new LinkedList<MemorySnapshot>();
 	private MemoryMXBean memoryBean;
 	private Timer timer;
@@ -56,8 +60,9 @@ public class MemoryMonitor extends Label
 		setText("                       ");
 		this.setOpaque(false);
 		//this.setBorder(BorderFactory.createEtchedBorder());
-		this.setBorder(new ButtonBorder());
+		//this.setBorder(new ButtonBorder());
 		///this.setPreferredSize(new Dimension(100, 25));
+		nf.setMaximumFractionDigits(1);
 		
 		this.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent e)
@@ -99,9 +104,9 @@ public class MemoryMonitor extends Label
 	protected void getNextProfile()
 	{
 		MemoryUsage usage = memoryBean.getHeapMemoryUsage();
-		usageList.add(new MemorySnapshot(usage.getUsed(), usage.getCommitted(), usage.getMax()));
-		
-		
+		MemorySnapshot snapshot = new MemorySnapshot(usage.getUsed(), usage.getCommitted(), usage.getMax());
+		usageList.add(snapshot);
+		this.setToolTipText(snapshot.toString());
 		trimProfiles();
 		repaint();
 	}
@@ -180,9 +185,13 @@ public class MemoryMonitor extends Label
 	
 	class MemorySnapshot
 	{
+		
+		
 		private long used;
 		private long committed;
 		private long max;
+		
+		
 		
 		public MemorySnapshot(long used, long committed, long max)
 		{
@@ -204,6 +213,20 @@ public class MemoryMonitor extends Label
 		public long getMax()
 		{
 			return max;
+		}
+		
+		public String toString()
+		{
+
+			double usedMB = (double)used  / 1048576.0;
+			double committedMB = (double)committed  / 1048576.0;
+			double maxMB = (double)max  / 1048576.0;
+			
+			String strUsed = nf.format(usedMB);
+			String strCommitted = nf.format(committedMB);
+			String strMax = nf.format(maxMB);
+			
+			return "Used: " + strUsed + "MB, Committed: " + strCommitted + "MB, Max: " + strMax + "MB";
 		}
 	}
 }

@@ -62,6 +62,7 @@ import us.wthr.jdem846.ui.OutputImageViewButtonBar.OptionChangeListener;
 import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
+import us.wthr.jdem846.ui.base.ProgressBar;
 
 @SuppressWarnings("serial")
 public class OutputImageViewPanel extends JdemPanel
@@ -72,7 +73,7 @@ public class OutputImageViewPanel extends JdemPanel
 	
 	private OutputImageViewButtonBar buttonBar;
 	private ImageDisplayPanel imageDisplay;
-	private StatusBar statusBar;
+	//private StatusBar statusBar;
 	private ProcessWorkingSpinner spinner;
 	
 	//private DataPackage dataPackage;
@@ -81,6 +82,7 @@ public class OutputImageViewPanel extends JdemPanel
 	private ModelContext modelContext;
 	
 	private boolean isWorking = false;
+	private ProgressBar prgProgress;
 	
 	private RunnableTask renderTask;
 	private TaskStatusListener taskStatusListener;
@@ -114,8 +116,11 @@ public class OutputImageViewPanel extends JdemPanel
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, true);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
 		
-		statusBar = new StatusBar();
-		statusBar.setProgressVisible(true);
+		prgProgress = new ProgressBar(0, 100);
+		SharedStatusBar.addControl(prgProgress, this);
+		
+		//statusBar = new StatusBar();
+		//statusBar.setProgressVisible(true);
 		//bottomStatusLabel = new JLabel(" ");
 		//bottomStatusLabel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
@@ -231,13 +236,14 @@ public class OutputImageViewPanel extends JdemPanel
 		MainButtonBar.addToolBar(buttonBar);
 		//this.add(buttonBar, BorderLayout.NORTH);
 		this.add(imageDisplay, BorderLayout.CENTER);
-		this.add(statusBar, BorderLayout.SOUTH);
+		//this.add(statusBar, BorderLayout.SOUTH);
 		
 		// Set up worker thread
 		
 		tileCompletionListener = new TileCompletionListener() {
 			public void onTileCompleted(ModelCanvas modelCanvas, double pctComplete) {
-				statusBar.setProgress((int)(pctComplete * 100));
+				//statusBar.setProgress((int)(pctComplete * 100));
+				prgProgress.setValue((int)(pctComplete * 100));
 				imageDisplay.setImage(modelCanvas.getFinalizedImage());
 				//imageDisplay.zoomFit();
 				canvas = modelCanvas;
@@ -328,7 +334,8 @@ public class OutputImageViewPanel extends JdemPanel
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, true);
 				setWorking(false);
-				statusBar.setProgressVisible(false);
+				//statusBar.setProgressVisible(false);
+				SharedStatusBar.removeControl(prgProgress);
 				spinner.stop();
 				detachModelListeners(true);
 				repaint();
@@ -351,7 +358,8 @@ public class OutputImageViewPanel extends JdemPanel
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
 				setWorking(false);
-				statusBar.setProgressVisible(false);
+				//statusBar.setProgressVisible(false);
+				SharedStatusBar.removeControl(prgProgress);
 				spinner.stop();
 				detachModelListeners(true);
 				
@@ -533,7 +541,8 @@ public class OutputImageViewPanel extends JdemPanel
 		int trueY = (int) Math.round((double)y / scaledPercent);
 		
 		if (trueX == -1 || trueY == -1) {
-			statusBar.setStatus(" ");
+			//statusBar.setStatus(" ");
+			SharedStatusBar.setStatus("");
 			return;
 		}
 		

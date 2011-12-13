@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jdem846 spec-version="0.1" generated="Mon Dec 12 12:51:49 EST 2011">
+  <project>
+    <options>
+      <option key="us.wthr.jdem846.modelOptions.doublePrecisionHillshading"><![CDATA[false]]></option>
+      <option key="us.wthr.jdem846.modelOptions.relativeLightIntensity"><![CDATA[0.75000]]></option>
+      <option key="us.wthr.jdem846.modelOptions.lightingMultiple"><![CDATA[0.75000]]></option>
+      <option key="us.wthr.jdem846.modelOptions.projection.shiftX"><![CDATA[0.0]]></option>
+      <option key="us.wthr.jdem846.modelOptions.projection.shiftY"><![CDATA[0.0]]></option>
+      <option key="us.wthr.jdem846.modelOptions.userScript.language"><![CDATA[groovy]]></option>
+      <option key="us.wthr.jdem846.modelOptions.projection.shiftZ"><![CDATA[0.0]]></option>
+      <option key="us.wthr.jdem846.modelOptions.relativeDarkIntensity"><![CDATA[1.00000]]></option>
+      <option key="us.wthr.jdem846.modelOptions.width"><![CDATA[3000]]></option>
+      <option key="us.wthr.jdem846.modelOptions.elevationMultiple"><![CDATA[1.00000]]></option>
+      <option key="us.wthr.jdem846.modelOptions.lightingAzimuth"><![CDATA[320.00000]]></option>
+      <option key="us.wthr.jdem846.modelOptions.userScript.groovy.template"><![CDATA[resources://scripting/template-dem.groovy]]></option>
+      <option key="us.wthr.jdem846.modelOptions.useSimpleCanvasFill"><![CDATA[true]]></option>
+      <option key="us.wthr.jdem846.modelOptions.lightingElevation"><![CDATA[25.00000]]></option>
+      <option key="us.wthr.jdem846.modelOptions.coloringType"><![CDATA[standard-coloring]]></option>
+      <option key="us.wthr.jdem846.modelOptions.hillShadeType"><![CDATA[1002]]></option>
+      <option key="us.wthr.jdem846.modelOptions.userScript.jython.template"><![CDATA[resources://scripting/template-dem.py]]></option>
+      <option key="us.wthr.jdem846.modelOptions.antialiased"><![CDATA[false]]></option>
+      <option key="us.wthr.jdem846.modelOptions.engine"><![CDATA[dem2d-gen]]></option>
+      <option key="us.wthr.jdem846.modelOptions.projection.rotateZ"><![CDATA[0.0]]></option>
+      <option key="us.wthr.jdem846.modelOptions.writeTo"><![CDATA[]]></option>
+      <option key="us.wthr.jdem846.modelOptions.gradientLevels"><![CDATA[]]></option>
+      <option key="us.wthr.jdem846.modelOptions.spotExponent"><![CDATA[1]]></option>
+      <option key="us.wthr.jdem846.modelOptions.projection.rotateX"><![CDATA[30.0]]></option>
+      <option key="us.wthr.jdem846.modelOptions.hillShading"><![CDATA[true]]></option>
+      <option key="us.wthr.jdem846.modelOptions.backgroundColor"><![CDATA[0;0;0;255]]></option>
+      <option key="us.wthr.jdem846.modelOptions.projection.rotateY"><![CDATA[0.0]]></option>
+      <option key="us.wthr.jdem846.modelOptions.precacheStrategy"><![CDATA[tiled]]></option>
+      <option key="us.wthr.jdem846.modelOptions.height"><![CDATA[3000]]></option>
+      <option key="us.wthr.jdem846.modelOptions.tileSize"><![CDATA[1000]]></option>
+      <option key="us.wthr.jdem846.modelOptions.gridSize"><![CDATA[1]]></option>
+      <option key="us.wthr.jdem846.modelOptions.mapProjection"><![CDATA[us.wthr.jdem846.render.mapProjection.equirectangularProjection.name]]></option>
+    </options>
+    <scripting>
+      <language>groovy</language>
+      <script><![CDATA[
+import us.wthr.jdem846.*
+import us.wthr.jdem846.logging.*
+import us.wthr.jdem846.image.*
+import us.wthr.jdem846.input.*
+import java.io.*
+import javax.imageio.ImageIO
+import java.awt.image.*
+
+
+class JDemScript {
+	
+	def log = Logging.getLog(JDemScript.class)
+	
+	def initialize(modelContext) {
+		
+	}
+	
+	def on2DModelBefore(modelContext, modelCanvas) {
+		
+		
+	}
+	
+	def onTileBefore(modelContext, modelCanvas) {
+		
+		
+	}
+	
+	def onTileAfter(modelContext, modelCanvas) {
+	
+	
+	}
+	
+	def on2DModelAfter(modelContext, modelCanvas) {
+	
+	
+	}
+	
+	def onGetElevationBefore(modelContext, latitude, longitude) {
+		
+		return null
+	}
+	
+	def onGetElevationAfter(modelContext, latitude, longitude, elevation) {
+		
+		return null
+	}
+	
+	
+	def onGetPointColor(modelContext, latitude, longitude, elevation, elevationMinimum, elevationMaximum, int[] color)
+	{
+		
+	}
+	
+	def destroy(modelContext) {
+	
+	}
+}
+// And so on....]]></script>
+    </scripting>
+    <input-files>
+      <input>C:\srv\elevation\Shapefiles\Nashua NH\Elevation 1-3 Arc Second\Elevation 1-3 Arc Second.flt</input>
+      <shapefile>
+        <path>C:\srv\elevation\Shapefiles\Nashua NH\hydrography\NHDArea.shp</path>
+        <data-definition-id>usgs-hydrography</data-definition-id>
+      </shapefile>
+      <shapefile>
+        <path>C:\srv\elevation\Shapefiles\Nashua NH\hydrography\NHDFlowline.shp</path>
+        <data-definition-id>usgs-hydrography</data-definition-id>
+      </shapefile>
+      <shapefile>
+        <path>C:\srv\elevation\Shapefiles\Nashua NH\hydrography\NHDWaterbody.shp</path>
+        <data-definition-id>usgs-hydrography</data-definition-id>
+      </shapefile>
+    </input-files>
+  </project>
+</jdem846>

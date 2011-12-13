@@ -54,8 +54,9 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.project.ProjectFileReader;
-import us.wthr.jdem846.project.ProjectFileWriter;
+import us.wthr.jdem846.project.ProjectFiles;
+import us.wthr.jdem846.project.XmlProjectFileReader;
+import us.wthr.jdem846.project.XmlProjectFileWriter;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
@@ -79,6 +80,7 @@ public class JdemFrame extends Frame
 	private TopButtonBar topButtonBar;
 	private MainMenuBar menuBar;
 	private MainButtonBar mainButtonBar;
+	private SharedStatusBar statusBar;
 	
 	private static JdemFrame instance = null;
 	
@@ -102,6 +104,8 @@ public class JdemFrame extends Frame
 		}
 		
 		// Create components
+		statusBar = new SharedStatusBar();
+		
 		buildJMenuBar();
 		
 		mainButtonBar = MainButtonBar.getInstance();
@@ -115,11 +119,16 @@ public class JdemFrame extends Frame
 		topButtonBar.add(Box.createHorizontalGlue());
 		
 		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.jdemFrame.displayMemoryMonitor")) {
+			MemoryMonitor memory = new MemoryMonitor(1000);
+			memory.start();
+			SharedStatusBar.addControl(memory);
+			/*
 			ToolBar memoryMonitorToolbar = new ToolBar();
 			MemoryMonitor memory = new MemoryMonitor(1000);
 			memory.start();
 			memoryMonitorToolbar.add(memory);
 			MainButtonBar.addToolBar(memoryMonitorToolbar);
+			*/
 		}
 		
 		// Add listeners
@@ -161,20 +170,25 @@ public class JdemFrame extends Frame
 		
 		this.setJMenuBar(menuBar);
 		
+		
+		
+		
 		this.setLayout(new BorderLayout());
 		this.add(mainButtonBar, BorderLayout.NORTH);
 		//this.add(topButtonBar, BorderLayout.NORTH);
 		this.add(tabPane, BorderLayout.CENTER);
-
+		this.add(statusBar, BorderLayout.SOUTH);
+		
 		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.displayLogViewPanel")) {
 			log.info("Log viewer panel is enabled");
-			LogViewer logViewer = new LogViewer();
-			logViewer.setPreferredSize(new Dimension(1000, 150));
-			this.add(logViewer, BorderLayout.SOUTH);
-			MainMenuBar.setInsertIndex(2);
+			LogViewerDialog logViewer = new LogViewerDialog();
+			logViewer.setVisible(true);
 		}
 		
 		this.setGlassPane(new WorkingGlassPane());
+		
+		
+		SharedStatusBar.setStatus("Ready");
 	}
 	
 	protected void buildJMenuBar()
@@ -286,10 +300,15 @@ public class JdemFrame extends Frame
 		
 		if (saveTo == null) {
 			FileChooser chooser = new FileChooser();
-			FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormatName"), "xdem");
-			chooser.setFileFilter(filter);
+			//FileNameExtensionFilter filter = 
+			//chooser.setFileFilter(filter);
 			
-
+			FileNameExtensionFilter xdemFilter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.xdem.name"), "xdem");
+			FileNameExtensionFilter zdemFilter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.zdem.name"), "zdem");
+			
+			chooser.addChoosableFileFilter(xdemFilter);
+			chooser.addChoosableFileFilter(zdemFilter);
+			chooser.setFileFilter(zdemFilter);
 			chooser.setMultiSelectionEnabled(false);
 			
 		    int returnVal =  chooser.showSaveDialog(this);
@@ -297,8 +316,8 @@ public class JdemFrame extends Frame
 		    	File selectedFile = chooser.getSelectedFile();
 		    	
 		    	String path = selectedFile.getAbsolutePath();
-		    	if (!path.toLowerCase().endsWith(".xdem")) {
-		    		path = path + ".xdem";
+		    	if (!path.toLowerCase().endsWith(".zdem")) {
+		    		path = path + ".zdem";
 		    	}
 		    		
 		    	saveTo = path;
@@ -311,13 +330,13 @@ public class JdemFrame extends Frame
 		}
 		
 		try {
-			ProjectFileWriter.writeProject(projectModel, saveTo);
+			ProjectFiles.write(projectModel, saveTo);
 			
 			projectPane.setSavedPath(saveTo);
 			
 			File file = new File(saveTo);
 			setComponentTabTitle(tabPane.getSelectedIndex(), file.getName());
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			//ex.printStackTrace();
 			log.warn("Error trying to write project to disk: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(getRootPane(),
@@ -355,7 +374,7 @@ public class JdemFrame extends Frame
 	{
 		log.info("Displaying open project dialog");
 		FileChooser chooser = new FileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormatName"), "xdem");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.generic.name"), "zdem", "xdem");
 		chooser.setFileFilter(filter);
 		chooser.setMultiSelectionEnabled(false);
 	    int returnVal = chooser.showOpenDialog(this);
@@ -371,7 +390,7 @@ public class JdemFrame extends Frame
 		try {
 			ProjectModel projectModel = null;
 			if (filePath != null) {
-				projectModel = ProjectFileReader.readProject(filePath);
+				projectModel = ProjectFiles.read(filePath);
 			}
 			
 			DemProjectPane projectPane = new DemProjectPane(projectModel);
