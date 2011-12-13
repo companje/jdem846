@@ -34,12 +34,12 @@ import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
 
 
-public class ProjectFileWriter
+public class XmlProjectFileWriter
 {
 	
-	private static Log log = Logging.getLog(ProjectFileWriter.class);
+	private static Log log = Logging.getLog(XmlProjectFileWriter.class);
 	
-	protected ProjectFileWriter()
+	protected XmlProjectFileWriter()
 	{
 		
 	}
@@ -107,7 +107,7 @@ public class ProjectFileWriter
 	{
 		log.info("Writing project file to " + path);
 		
-		Document doc = ProjectFileWriter.createDocument(projectModel);
+		Document doc = XmlProjectFileWriter.createDocument(projectModel);
 		
 		// lets write to a file
 		OutputFormat format = OutputFormat.createPrettyPrint();

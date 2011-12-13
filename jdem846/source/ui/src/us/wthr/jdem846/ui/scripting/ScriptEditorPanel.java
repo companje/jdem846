@@ -49,12 +49,14 @@ import us.wthr.jdem846.ui.MainButtonBar;
 import us.wthr.jdem846.ui.MainMenuBar;
 import us.wthr.jdem846.ui.TitledRoundedPanel;
 import us.wthr.jdem846.ui.base.EditorPane;
+import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
+import us.wthr.jdem846.ui.panels.RoundedPanel;
 import us.wthr.jdem846.ui.scripting.ScriptEditorButtonBar.ScriptEditButtons;
 import us.wthr.jdem846.ui.scripting.ScriptEditorButtonBar.ScriptEditorButtonClickedListener;
 
 @SuppressWarnings("serial")
-public class ScriptEditorPanel extends TitledRoundedPanel
+public class ScriptEditorPanel extends Panel
 {
 	
 	private static Log log = Logging.getLog(ScriptEditorPanel.class);
@@ -72,7 +74,7 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 	
 	public ScriptEditorPanel()
 	{
-		super(I18N.get("us.wthr.jdem846.ui.scriptEditorPane.title"));
+		//super(I18N.get("us.wthr.jdem846.ui.scriptEditorPane.title"));
 		
 		jsyntaxpane.DefaultSyntaxKit.initKit();
 		
@@ -89,7 +91,7 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 					    JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
-		MainButtonBar.addToolBar(buttonBar);
+		//MainButtonBar.addToolBar(buttonBar);
 		
 		
 		final JEditorPane editorPane = new JEditorPane();
@@ -109,6 +111,7 @@ public class ScriptEditorPanel extends TitledRoundedPanel
 		BorderLayout layout = new BorderLayout();
 		setLayout(layout);
 		add(scrollPane, BorderLayout.CENTER);
+		add(buttonBar, BorderLayout.NORTH);
 		
 		this.doLayout();
 		

@@ -30,36 +30,23 @@ import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.gis.exceptions.MapProjectionException;
-import us.wthr.jdem846.gis.projections.MapPoint;
-import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.image.ImageUtilities;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.render.Dem2dGenerator;
-import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
-import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.tasks.RunnableTask;
 import us.wthr.jdem846.tasks.TaskControllerService;
 import us.wthr.jdem846.tasks.TaskStatusAdapter;
 import us.wthr.jdem846.tasks.TaskStatusListener;
-import us.wthr.jdem846.ui.ModelPreviewPane.ImagePanel;
-import us.wthr.jdem846.ui.ModelingWorkerThread.ModelCompletionListener;
-import us.wthr.jdem846.ui.base.Panel;
-import us.wthr.jdem846.ui.border.StandardBorder;
 import us.wthr.jdem846.ui.panels.RoundedPanel;
 
 @SuppressWarnings("serial")
@@ -81,7 +68,7 @@ public class ModelPreviewPane extends RoundedPanel
 	
 	private boolean shapeLayerNeedsUpdate = false;
 	private boolean rasterLayerNeedsUpdate = false;
-	private ImagePanel imagePanel;
+	private SimpleImagePanel imagePanel;
 	
 	private boolean shapePreviewEnabled = true;
 	private boolean rasterPreviewEnabled = true;
@@ -89,18 +76,19 @@ public class ModelPreviewPane extends RoundedPanel
 	
 	public ModelPreviewPane(ModelContext modelContext)
 	{
+		super();
 		//super(I18N.get("us.wthr.jdem846.ui.modelPreviewPane.title"));
 		//((StandardBorder) this.getBorder()).setPadding(1);
 		
-		this.setBackground(Color.WHITE);
-
+		setBackground(Color.WHITE);
+		
 		rasterPreviewEnabled = JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.preview.rasterData");
 		shapePreviewEnabled = JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.preview.shapeData");
 		useSimpleRasterPreview = JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.preview.useSimplifiedRasterPreview");
 
 		
 		
-		imagePanel = new ImagePanel();
+		imagePanel = new SimpleImagePanel();
 		this.modelContext = modelContext;
 		
 		
@@ -433,75 +421,5 @@ public class ModelPreviewPane extends RoundedPanel
 	}
 	
 	
-	class ImagePanel extends Panel
-	{
-		//private ModelCanvas canvas = null;
-		private BufferedImage image;
-		
-		public ImagePanel()
-		{
-			
-		}
-		
-		public void setImage(BufferedImage image)
-		{
-			this.image = image;
-		}
-		
-		public BufferedImage getImage()
-		{
-			return this.image;
-		}
-		
 
-		@Override
-		public void paint(Graphics g)
-		{
-			Graphics2D g2d = (Graphics2D) g;
-			//g2d.setColor(Color.WHITE);
-			//g2d.fillRect(0, 0, getWidth(), getHeight());
-			
-			if (image == null) {
-				super.paint(g2d);
-				return;
-			}
-			
-			double canvasWidth = image.getWidth();
-			double canvasHeight = image.getHeight();
-			
-			double panelWidth = getWidth();
-			double panelHeight = getHeight();
-			
-			double scaleWidth = 0;
-			double scaleHeight = 0;
-			
-			Image toPaint = null;
-			
-			double scale = Math.max(panelHeight/canvasHeight, panelWidth/canvasWidth);
-			scaleHeight = canvasHeight * scale;
-			scaleWidth = canvasWidth * scale;
-			
-			
-			if (scaleHeight > panelHeight) {
-				scale = panelHeight/scaleHeight;
-			    scaleHeight = scaleHeight * scale;
-				scaleWidth = scaleWidth * scale;
-			}
-			if (scaleWidth > panelWidth) {
-			    scale = panelWidth/scaleWidth;
-			    scaleHeight = scaleHeight * scale;
-				scaleWidth = scaleWidth * scale;
-			}
-			
-			int topLeftX = (int)Math.round((panelWidth / 2) - (scaleWidth / 2));
-			int topLeftY = (int)Math.round((panelHeight / 2) - (scaleHeight / 2));
-			
-			toPaint = ImageUtilities.getScaledInstance(image, (int)scaleWidth, (int)scaleHeight, RenderingHints.VALUE_INTERPOLATION_BILINEAR, true);
-			
-			g2d.drawImage(toPaint, topLeftX, topLeftY, (int)scaleWidth, (int)scaleHeight, this);
-
-			
-
-		}
-	}
 }

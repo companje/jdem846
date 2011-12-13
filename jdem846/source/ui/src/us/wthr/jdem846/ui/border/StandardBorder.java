@@ -38,6 +38,8 @@ public class StandardBorder implements Border
 	private int padding = 5;
 	private int margin = 2;
 	
+	private Color background = null;
+	
 	public StandardBorder()
 	{
 		this.cornerRadius = 5;
@@ -59,12 +61,20 @@ public class StandardBorder implements Border
 	{
 		Graphics2D g2 = (Graphics2D)g.create();      
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 
-      
+		
+		
+		
+		
 		x += getMargin();
 		y += getMargin();
 		
 		height -= (getMargin()*2);
 		width -= (getMargin()*2);
+		
+		if (background != null) {
+			g2.setColor(background);
+			g2.fillRect(x, y, width-1, height-1);
+		}
 		
 		Color color = getBorderColor(c);
 		
@@ -77,12 +87,22 @@ public class StandardBorder implements Border
 		g2.setColor(deriveColorAlpha(color, 255));         
 		g2.drawRoundRect(x, y, width - 1, height - 1, cornerRadius, cornerRadius); 
       
+		
+		
 		g2.dispose();  
 		
 	}
 	
 
+	public void setBackground(Color background)
+	{
+		this.background = background;
+	}
 	
+	public Color getBackground()
+	{
+		return background;
+	}
 	
 	@Override
 	public Insets getBorderInsets(Component c)
