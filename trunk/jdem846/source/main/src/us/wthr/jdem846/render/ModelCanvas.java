@@ -308,6 +308,39 @@ public class ModelCanvas
 		}
 	}
 	
+	public void drawLine(int[] color, 
+			double lat0, double lon0, double elev0,
+			double lat1, double lon1, double elev1) throws CanvasException
+	{
+		double row0, row1;
+		double column0, column1;
+		
+		try {
+			mapProjection.getPoint(lat0, lon0, elev0, mapPoint);
+			row0 = mapPoint.row;
+			column0 = mapPoint.column;
+			
+			mapProjection.getPoint(lat1, lon1, elev1, mapPoint);
+			row1 = mapPoint.row;
+			column1 = mapPoint.column;
+		} catch (MapProjectionException ex) {
+			throw new CanvasException("Failed to project coordates to canvas: " + ex.getMessage(), ex);
+		}
+		
+		
+		int alpha = 255;
+		if (color.length >= 4) {
+			alpha = color[3];
+		}
+		
+		
+		Color fillColor = new Color(color[0], color[1], color[2], alpha);
+		
+		graphics.setColor(fillColor);
+		graphics.drawLine((int)Math.round(column0), (int)Math.round(row0), (int)Math.round(column1), (int)Math.round(row1));
+		
+	}
+	
 	public void fillRectangle(int[] color, 
 			double lat0, double lon0, double elev0,
 			double lat1, double lon1, double elev1,

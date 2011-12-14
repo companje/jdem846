@@ -9,7 +9,7 @@ public class TransverseMercatorProjectionTest extends BaseMapProjectionTest
 	@Override
 	protected void setUp() throws Exception
 	{
-		String saveImagesTo = "C:/srv/elevation/DataRaster-Testing/test-image-TransverseMercatorProjection-{test}.png";
+		String saveImagesTo = "test-image-TransverseMercatorProjection-{test}.png";
 		setUp(north, south, 180, -180, 597, 600, saveImagesTo);
 	}
 	

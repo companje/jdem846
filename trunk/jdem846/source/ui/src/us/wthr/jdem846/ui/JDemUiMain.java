@@ -18,10 +18,12 @@ package us.wthr.jdem846.ui;
 
 
 
+import java.io.File;
 import java.util.Random;
 import java.util.UUID;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.ServiceKernel;
 import us.wthr.jdem846.ServiceKernel.ServiceThreadListener;
@@ -66,6 +68,32 @@ public class JDemUiMain
 		System.out.println("us.wthr.jdem846.userSettingsPath: " + System.getProperty("us.wthr.jdem846.userSettingsPath"));
 	}
 	
+	
+	/** Determines if a path is a project file, exists, and can be read.
+	 * 
+	 * @param path Path to a (hopefully) project file
+	 * @return True if the target file exists, is a jDem project file, and can be read
+	 */
+	protected static boolean fileExistsAndIsProject(String path)
+	{
+		if (path == null)
+			return false;
+		
+		String pathLower = path.toLowerCase();
+		if (!(pathLower.endsWith(".zdem") || pathLower.endsWith(".jdem") || pathLower.endsWith(".xdem"))) {
+			return false;
+		}
+		
+		File file = JDemResourceLoader.getAsFile(path);
+		if (file.exists() && file.canRead()) {
+			return true;
+		} else {
+			return false;
+		}
+		
+		
+	}
+	
 	/** Scans command line options and places appropriate values into system properties map.
 	 * 
 	 * @param args Command line options array.
@@ -73,8 +101,15 @@ public class JDemUiMain
 	protected static void checkCommandLineOptions(String[] args) throws ArgumentException
 	{
 		//for (String arg : args) {
+		
+		String openFiles = "";
+		
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
+			
+			if (fileExistsAndIsProject(arg)) {
+				openFiles += arg + ";";
+			}
 			
 			if (arg.equals("-no-splash-screen"))
 				System.setProperty("us.wthr.jdem846.ui.displaySplash", "false");
@@ -97,6 +132,11 @@ public class JDemUiMain
 				throw new ArgumentException("Missing parameter for '-language'");
 			}
 		}
+		
+		if (openFiles.length() > 0) {
+			System.setProperty("us.wthr.jdem846.ui.openFiles", openFiles);
+		}
+		
 	}
 	
 

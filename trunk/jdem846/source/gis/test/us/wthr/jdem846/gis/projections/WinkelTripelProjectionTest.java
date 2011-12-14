@@ -12,7 +12,7 @@ public class WinkelTripelProjectionTest extends BaseMapProjectionTest
 	@Override
 	protected void setUp() throws Exception
 	{
-		String saveImagesTo = "C:/srv/elevation/DataRaster-Testing/test-image-WinkelTripelProjectionTest-{test}.png";
+		String saveImagesTo = "test-image-WinkelTripelProjectionTest-{test}.png";
 		setUp(90, -90, 180, -180, 800, 491, saveImagesTo);
 	}
 	

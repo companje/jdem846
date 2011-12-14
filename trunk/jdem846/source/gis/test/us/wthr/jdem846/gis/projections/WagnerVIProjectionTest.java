@@ -12,7 +12,7 @@ public class WagnerVIProjectionTest extends BaseMapProjectionTest
 	@Override
 	protected void setUp() throws Exception
 	{
-		String saveImagesTo = "C:/srv/elevation/DataRaster-Testing/test-image-WagnerVIProjection-{test}.png";
+		String saveImagesTo = "test-image-WagnerVIProjection-{test}.png";
 		setUp(90, -90, 180, -180, 800, 400, saveImagesTo);
 	}
 	
@@ -30,7 +30,7 @@ public class WagnerVIProjectionTest extends BaseMapProjectionTest
 	
 	public void testGenerateMap()
 	{
-		MapProjection projection = new WagnerVIProjection(90, -90, 180, -180, width, height);
-		this.__testGenerateMap(projection);
+		//MapProjection projection = new WagnerVIProjection(90, -90, 180, -180, width, height);
+		this.__testGenerateMap(MapProjectionEnum.WAGNERVI);
 	}
 }

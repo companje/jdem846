@@ -22,7 +22,7 @@ public class RobinsonProjectionTest extends BaseMapProjectionTest
 	@Override
 	protected void setUp() throws Exception
 	{
-		String saveImagesTo = "C:/srv/elevation/DataRaster-Testing/test-image-RobinsonProjectionTest-{test}.png";
+		String saveImagesTo = "test-image-RobinsonProjectionTest-{test}.png";
 		setUp(90, -90, 180, -180, 800, 408, saveImagesTo);
 	}
 	
@@ -40,8 +40,8 @@ public class RobinsonProjectionTest extends BaseMapProjectionTest
 	
 	public void testGenerateMap()
 	{
-		MapProjection projection = new RobinsonProjection(90, -90, 180, -180, width, height);
-		this.__testGenerateMap(projection);
+		//MapProjection projection = new RobinsonProjection(90, -90, 180, -180, width, height);
+		this.__testGenerateMap(MapProjectionEnum.ROBINSON);
 	}
 	
 	
