@@ -95,7 +95,7 @@ public class TileRenderer extends InterruptibleProcess
 		lightingMultiple = getModelOptions().getLightingMultiple();
 		elevationMax = getRasterDataContext().getDataMaximumValue();
 		elevationMin = getRasterDataContext().getDataMinimumValue();
-		useSimpleCanvasFill = getModelOptions().getUseSimpleCanvasFill();
+		useSimpleCanvasFill = false;//getModelOptions().getUseSimpleCanvasFill();
 		
 		solarElevation = getModelOptions().getLightingElevation();
 		solarAzimuth = getModelOptions().getLightingAzimuth();

@@ -375,8 +375,8 @@ public class ModelCanvas
 			throw new CanvasException("Failed to project coordates to canvas: " + ex.getMessage(), ex);
 		}
 		
-		if (row1 < row0 || row2 < row3)
-			return;
+		//if (row1 < row0 || row2 < row3)
+		//	return;
 		
 		pathBuffer.moveTo(column0, row0);
 		pathBuffer.lineTo(column1, row1);
