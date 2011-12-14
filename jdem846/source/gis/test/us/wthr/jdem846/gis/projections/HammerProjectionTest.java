@@ -12,7 +12,7 @@ public class HammerProjectionTest extends BaseMapProjectionTest
 	@Override
 	protected void setUp() throws Exception
 	{
-		String saveImagesTo = "C:/srv/elevation/DataRaster-Testing/test-image-HammerProjection-{test}.png";
+		String saveImagesTo = "test-image-HammerProjection-{test}.png";
 		setUp(90, -90, 180, -180, 800, 403, saveImagesTo);
 	}
 	
@@ -30,7 +30,7 @@ public class HammerProjectionTest extends BaseMapProjectionTest
 	
 	public void testGenerateMap()
 	{
-		HammerProjection projection = new HammerProjection(90, -90, 180, -180, width, height);
-		this.__testGenerateMap(projection);
+		//HammerProjection projection = new HammerProjection(90, -90, 180, -180, width, height);
+		this.__testGenerateMap(MapProjectionEnum.HAMMER);
 	}
 }

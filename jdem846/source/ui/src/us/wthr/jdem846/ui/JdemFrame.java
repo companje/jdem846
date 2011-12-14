@@ -29,6 +29,8 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -188,7 +190,31 @@ public class JdemFrame extends Frame
 		this.setGlassPane(new WorkingGlassPane());
 		
 		
-		SharedStatusBar.setStatus("Ready");
+		
+		TimerTask task = new TimerTask() {
+			public void run()
+			{
+				String openFiles = System.getProperty("us.wthr.jdem846.ui.openFiles");
+				if (openFiles != null) {
+					String[] paths = openFiles.split(";");
+					openFileList(paths);
+				}
+			}
+		};
+		Timer timer = new Timer();
+		timer.schedule(task, 500);
+		
+		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.ready"));
+	}
+	
+	protected void openFileList(String[] paths)
+	{
+		for (String path : paths) {
+			if (path != null && path.length() > 0) {
+				
+				createNewProject(path);
+			}
+		}
 	}
 	
 	protected void buildJMenuBar()
@@ -387,6 +413,15 @@ public class JdemFrame extends Frame
 	public void createNewProject(String filePath)
 	{
 		log.info("Creating new project");
+		
+		if (filePath != null) {
+			SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.loadingPath") + " " + filePath);
+		} else {
+			SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.loadingNew"));
+		}
+		
+		
+		
 		try {
 			ProjectModel projectModel = null;
 			if (filePath != null) {
@@ -434,7 +469,7 @@ public class JdemFrame extends Frame
 				    JOptionPane.ERROR_MESSAGE);
 		}
 		
-		
+		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.ready"));
 		
 		
 	}

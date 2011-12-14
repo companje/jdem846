@@ -32,26 +32,7 @@ public class BaseMapProjectionTest extends TestCase
 	
 	String saveImagesTo;
 	
-	protected static void bootstrapSystemProperties()
-	{
-		
-		if (System.getProperty("us.wthr.jdem846.installPath") == null) {
-			System.setProperty("us.wthr.jdem846.installPath", System.getProperty("user.dir"));
-		}
-		if (System.getProperty("us.wthr.jdem846.resourcesPath") == null) {
-			System.setProperty("us.wthr.jdem846.resourcesPath", System.getProperty("us.wthr.jdem846.installPath"));
-		}
-		
-		if (System.getProperty("us.wthr.jdem846.userSettingsPath") == null) {
-			System.setProperty("us.wthr.jdem846.userSettingsPath", System.getProperty("user.home") + "/.jdem846");
-		}
-		
-		
-		System.out.println("us.wthr.jdem846.installPath: " + System.getProperty("us.wthr.jdem846.installPath"));
-		System.out.println("us.wthr.jdem846.resourcesPath: " + System.getProperty("us.wthr.jdem846.resourcesPath"));
-		System.out.println("us.wthr.jdem846.userSettingsPath: " + System.getProperty("us.wthr.jdem846.userSettingsPath"));
-	}
-	
+
 	
 	protected void setUp(double north, double south, double east, double west, double width, double height, String saveImagesTo) throws Exception
 	{
@@ -62,7 +43,7 @@ public class BaseMapProjectionTest extends TestCase
 		this.west = west;
 		this.width = width;
 		this.height = height;
-		this.saveImagesTo = saveImagesTo;
+		this.saveImagesTo = System.getProperty("us.wthr.jdem846.testOutputPath") + "/" + saveImagesTo;
 	}
 	
 	protected void __testProjection(MapProjection mapProjection, double latitude, double longitude, double columnShouldBe, double rowShouldBe)
@@ -105,14 +86,21 @@ public class BaseMapProjectionTest extends TestCase
 		ModelCanvas modelCanvas = modelContext.getModelCanvas(true);
 		
 		int[] pointColor = {0, 0, 0, 0xFF};
+		int[] lineColor = {255, 0, 0, 0xFF};
 		
-		for (double latitude = north; latitude > south; latitude-=0.25) {
-			for (double longitude = west; longitude < east; longitude+=0.25) {
+		double latStep = 0.25;
+		double lonStep = 0.25;
+		
+		for (double latitude = north; latitude > south; latitude-=latStep) {
+			for (double longitude = west; longitude < east; longitude+=lonStep) {
 				
 				try {
 					modelCanvas.fillRectangle(pointColor, 
-							latitude, longitude, 
-							0.25, 0.25, 0.0);
+							latitude, longitude, 0.0,
+							latitude-latStep, longitude, 0.0,
+							latitude-latStep, longitude+lonStep, 0.0,
+							latitude, longitude+lonStep, 0.0);
+					
 				} catch (CanvasException ex) {
 					ex.printStackTrace();
 					return;
@@ -120,6 +108,41 @@ public class BaseMapProjectionTest extends TestCase
 				
 			}
 		}
+		
+		
+		double coordWidthLat = (Math.abs(north) + Math.abs(south)) / 12;
+		double coordWidthLon = (Math.abs(west) + Math.abs(east)) / 24;
+		
+		for (double latitude = north; latitude >= south; latitude-=coordWidthLat) {
+			for (double longitude = west; longitude <= east; longitude+=coordWidthLon) {
+				
+				if (latitude > south) {
+					
+					try {
+						modelCanvas.drawLine(lineColor, 
+								latitude, longitude, 0.0, 
+								latitude-coordWidthLat, longitude, 0.0);
+					} catch (CanvasException ex) {
+						fail("Failed to project coordinates: " + ex.getMessage());
+					}
+				}
+				
+				if (longitude < east) {
+					
+					try {
+						modelCanvas.drawLine(lineColor, 
+								latitude, longitude, 0.0, 
+								latitude, longitude+coordWidthLon, 0.0);
+					} catch (CanvasException ex) {
+						fail("Failed to project coordinates: " + ex.getMessage());
+					}
+					
+				}
+				
+			}
+			
+		}
+		
 		
 		try {
 			modelCanvas.save(saveImagesTo.replace("{test}", "testGenerateMap"));

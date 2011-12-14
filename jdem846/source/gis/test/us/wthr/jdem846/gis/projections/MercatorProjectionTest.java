@@ -9,7 +9,7 @@ public class MercatorProjectionTest extends BaseMapProjectionTest
 	@Override
 	protected void setUp() throws Exception
 	{
-		String saveImagesTo = "C:/srv/elevation/DataRaster-Testing/test-image-MercatorProjection-{test}.png";
+		String saveImagesTo = "test-image-MercatorProjection-{test}.png";
 		setUp(north, south, 180, -180, 707, 600, saveImagesTo);
 	}
 	
