@@ -75,7 +75,7 @@ public class ModelCanvas
 		raster = image.getRaster();
 		
 		graphics = (Graphics2D) image.getGraphics();
-		graphics.setComposite(AlphaComposite.Src);
+		graphics.setComposite(AlphaComposite.SrcOver);
 		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		
 		if (isAntiAliased) {

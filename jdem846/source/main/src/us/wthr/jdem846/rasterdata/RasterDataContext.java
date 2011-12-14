@@ -75,11 +75,34 @@ public class RasterDataContext implements DataContext
 		
 		metersResolution = getMetersResolution(DemConstants.EARTH_MEAN_RADIUS);
 		
+		
+		north = validateLatitude(north);
+		south = validateLatitude(south);
+		west = validateLongitude(west);
+		east = validateLongitude(east);
+		
 		log.info("Prepared RasterDataProxy to region N/S/E/W: " + north + "/" + south + "/" + east + "/" + west);
 		log.info("Prepared RasterDataProxy to lat/long resolutions: " + latitudeResolution + "/" + longitudeResolution);
 		
 	}
 	
+	protected double validateLongitude(double longitude)
+	{
+		if (longitude <= -180.0)
+			longitude = -180.0;
+		if (longitude >= 180.0)
+			longitude = 180.0;
+		return longitude;
+	}
+	
+	protected double validateLatitude(double latitude)
+	{
+		if (latitude <= -90.0)
+			latitude = -90.0;
+		if (latitude >= 90.0)
+			latitude = 90.0;
+		return latitude;
+	}
 	
 	public void dispose() throws DataSourceException
 	{
@@ -315,22 +338,22 @@ public class RasterDataContext implements DataContext
 	
 	public double getNorth()
 	{
-		return north; 
+		return validateLatitude(north); 
 	}
 	
 	public double getSouth()
 	{
-		return south;
+		return validateLatitude(south);
 	}
 	
 	public double getEast()
 	{
-		return east;
+		return validateLongitude(east);
 	}
 	
 	public double getWest()
 	{
-		return west;
+		return validateLongitude(west);
 	}
 	
 	public int getDataRows()

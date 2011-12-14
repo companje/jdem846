@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JOptionPane;
@@ -36,6 +37,9 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
+import us.wthr.jdem846.gis.projections.MapPoint;
+import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -347,47 +351,104 @@ public class ModelPreviewPane extends RoundedPanel
 	protected void applySimpleRasterPreview(ModelCanvas canvas) throws CanvasException
 	{
 		log.info("Drawing simple raster preview...");
-		
-		//MapPoint point = new MapPoint();
-		
-		//MapProjection projection = canvas.getMapProjection();
-		
-		
-		//g2d.setColor(getBackground());
-		//g2d.fillRect(0, 0, getWidth(), getHeight());
-		
-		//Color stroke = Color.GRAY;
-		//Color fill = new Color(stroke.getRed(), stroke.getGreen(), stroke.getBlue(), 0x7F);
-		int[] strokeColor = {Color.GRAY.getRed(), Color.GRAY.getGreen(), Color.GRAY.getBlue(), 255};
-		int[] fillColor = {Color.GRAY.getRed(), Color.GRAY.getGreen(), Color.GRAY.getBlue(), 0x7F};
-		int[] textColor = {0x0, 0x0, 0x0, 0xFF};
-		//Color text = Color.WHITE;
 
+		int[] i_strokeColor = {Color.GRAY.getRed(), Color.GRAY.getGreen(), Color.GRAY.getBlue(), 255};
+		Color strokeColor = Color.DARK_GRAY;
+		Color fillColor = Color.LIGHT_GRAY;
+		int[] textColor = {0x0, 0x0, 0x0, 0xFF};
+
+		MapProjection projection = canvas.getMapProjection();
+		MapPoint point = new MapPoint();
 		
 		for (int i = modelContext.getRasterDataContext().getRasterDataListSize() - 1; i >= 0; i--) {
 			RasterData rasterData = modelContext.getRasterDataContext().getRasterDataList().get(i);
 			
-			double latitude = rasterData.getNorth();
-			double longitude = rasterData.getWest();
 			
-			double height = latitude - rasterData.getSouth() - rasterData.getLatitudeResolution();
-			double width = rasterData.getEast() - (longitude + rasterData.getLongitudeResolution());
-			
-			canvas.fillRectangle(fillColor,
-					latitude, longitude, 
-					width, height,
-					0);
-			
-			
-			canvas.drawRectangle(strokeColor,
-					latitude, longitude, 
-					width, height,
-					0);
+			double north = rasterData.getNorth();
+			double south = rasterData.getSouth();
+			double east = rasterData.getEast();
+			double west = rasterData.getWest();
 			
 
-			String label = "#"+(i+1);
-			canvas.drawText(label, textColor, latitude-(height/2.0), longitude+(width/2.0), true);
+			Path2D.Double path = new Path2D.Double();
+			int pointCount = 0;
 			
+			try {
+				for (double latitude = north; latitude >= south; latitude -= 1) {
+					double longitude = west;
+					projection.getPoint(latitude, longitude, 0.0, point);
+					
+					if (pointCount == 0) {
+						path.moveTo(point.column, point.row);
+					} else {
+						path.lineTo(point.column, point.row);
+					}
+					
+					pointCount++;
+				}
+				
+				for (double longitude = west; longitude <= east; longitude+=1) {
+					double latitude = south;
+					projection.getPoint(latitude, longitude, 0.0, point);
+					path.lineTo(point.column, point.row);
+				}
+				
+				for (double latitude = south; latitude <= north; latitude+=1) {
+					double longitude = east;
+					projection.getPoint(latitude, longitude, 0.0, point);
+					path.lineTo(point.column, point.row);
+				}
+				
+				for (double longitude = east; longitude >= west; longitude-=1) {
+					double latitude = north;
+					projection.getPoint(latitude, longitude, 0.0, point);
+					path.lineTo(point.column, point.row);
+				}
+				
+				path.closePath();
+				
+				canvas.fillShape(fillColor, null, path);
+				canvas.drawShape(strokeColor, null, path);
+				
+				
+				
+				
+			} catch (MapProjectionException ex) {
+				log.error("Failed to project point: " + ex.getMessage(), ex);
+				return;
+			}
+			
+			
+			double coordWidthLat = (Math.abs(north) + Math.abs(south)) / 12;
+			double coordWidthLon = (Math.abs(west) + Math.abs(east)) / 24;
+			
+			for (double latitude = north; latitude >= south; latitude-=coordWidthLat) {
+				for (double longitude = west; longitude <= east; longitude+=coordWidthLon) {
+					
+					if (latitude > south) {
+
+						canvas.drawLine(i_strokeColor, 
+								latitude, longitude, 0.0, 
+								latitude-coordWidthLat, longitude, 0.0);
+
+					}
+					
+					if (longitude < east) {
+						canvas.drawLine(i_strokeColor, 
+								latitude, longitude, 0.0, 
+								latitude, longitude+coordWidthLon, 0.0);
+						
+					}
+					
+				}
+				
+			}
+			
+			
+			
+			String label = "#"+(i+1);
+			canvas.drawText(label, textColor, (east + west) / 2.0 , (north+south) / 2.0, true);
+
 		}
 	}
 	
