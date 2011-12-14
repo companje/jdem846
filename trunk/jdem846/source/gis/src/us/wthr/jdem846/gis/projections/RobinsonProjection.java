@@ -63,8 +63,16 @@ public class RobinsonProjection extends AbstractBaseProjection
 		int lowerIndex = getLowerIndex(latitude);
 		int higherIndex = getHigherIndex(latitude);
 		
-		double[] lower = projectionTable[lowerIndex];
-		double[] higher = projectionTable[higherIndex];
+		double[] lower = null;
+		double[] higher = null; 
+		
+		try {
+			lower = projectionTable[lowerIndex];
+			higher = projectionTable[higherIndex];
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			throw new MapProjectionException("Coordinates out of bounds: " + latitudeOrig + "/" + longitude, ex);
+		} 
+		
 		
 		double frac = getYFrac(latitude, lowerIndex, higherIndex);
 		

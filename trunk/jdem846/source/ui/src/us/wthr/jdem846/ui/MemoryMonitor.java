@@ -145,16 +145,39 @@ public class MemoryMonitor extends Label
 			super.paint(g);
 			return;
 		}
+		Graphics2D g2d = (Graphics2D) g;
+		
+		
+		Stroke origStroke = g2d.getStroke(); 
+		BasicStroke dottedStroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1, new float[] {1.0f, 2.0f}, 0.0f);
+		
 		
 		
 		int width = this.getWidth();
 		int height = this.getHeight();
 
-		g.setColor(getBackground());
-		g.fillRect(0, 0, width, height);
+		g2d.setColor(Color.WHITE);
+		g2d.fillRect(0, 0, width, height);
 		
-		g.setColor(getForeground());
-		//g.setColor(Color.GRAY);
+		{ // Current State
+			MemoryUsage usageBean = memoryBean.getHeapMemoryUsage();
+			double usedMB = (double)usageBean.getUsed()  / 1048576.0;
+			double committedMB = (double)usageBean.getCommitted()  / 1048576.0;
+			double maxMB = (double)usageBean.getMax()  / 1048576.0;
+			
+			int usedX = (int) Math.round(width * (usedMB / maxMB));
+			int committedX = (int) Math.round(width * (committedMB / maxMB));
+			
+			g2d.setColor(Color.LIGHT_GRAY);
+			g2d.fillRect(0, 0, usedX, height);
+			
+			g2d.setStroke(dottedStroke);
+			g2d.drawLine(committedX, 0, committedX, height);
+			g2d.setStroke(origStroke);
+		}
+		
+		
+		g2d.setColor(Color.BLACK);
 		
 		long maxCommitted = getMaxCommittedInList();
 		long maxUsed = getMaxUsedInList();
@@ -165,20 +188,20 @@ public class MemoryMonitor extends Label
 			if (y == 0)
 				y = 1;
 
-			g.drawLine(width-i, height - y - 2, width-i, height);
+			g2d.drawLine(width-i, height - y - 2, width-i, height);
 		}
 		
-		g.setColor(Color.GRAY);
+		g2d.setColor(Color.GRAY);
 		
-		Stroke origStroke = ((Graphics2D)g).getStroke(); 
 		
-		BasicStroke stroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1, new float[] {1.0f, 2.0f}, 0.0f);
-		((Graphics2D)g).setStroke(stroke);
+		
+		
+		g2d.setStroke(dottedStroke);
 		int y = (int) Math.round(((double)height * (double)maxUsed / (double)maxCommitted));
 		if (y == 0)
 			y = 1;
-		g.drawLine(0, height - y - 2, width, height - y - 2);
-		((Graphics2D)g).setStroke(origStroke);
+		g2d.drawLine(0, height - y - 2, width, height - y - 2);
+		g2d.setStroke(origStroke);
 		
 		super.paint(g);
 	}

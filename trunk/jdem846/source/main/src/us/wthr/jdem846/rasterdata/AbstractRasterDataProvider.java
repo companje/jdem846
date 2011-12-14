@@ -246,7 +246,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	
 	public double getNorth()
 	{
-		return north;
+		return validateLatitude(north);
 	}
 	
 	protected void setNorth(double north) 
@@ -257,7 +257,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	
 	public double getSouth()
 	{
-		return south;
+		return validateLatitude(south);
 	}
 	
 	protected void setSouth(double south) 
@@ -268,7 +268,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	
 	public double getEast()
 	{
-		return east;
+		return validateLongitude(east);
 	}
 	
 	protected void setEast(double east)
@@ -279,7 +279,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	
 	public double getWest()
 	{
-		return west;
+		return validateLongitude(west);
 	}
 	
 	protected void setWest(double west)
@@ -329,6 +329,24 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		this.dataMaximum = dataMaximum;
 	}
 		
+	
+	protected double validateLongitude(double longitude)
+	{
+		if (longitude <= -180.0)
+			longitude = -180.0;
+		if (longitude >= 180.0)
+			longitude = 180.0;
+		return longitude;
+	}
+	
+	protected double validateLatitude(double latitude)
+	{
+		if (latitude <= -90.0)
+			latitude = -90.0;
+		if (latitude >= 90.0)
+			latitude = 90.0;
+		return latitude;
+	}
 	
 	protected void copyFields(AbstractRasterDataProvider clone) throws DataSourceException
 	{

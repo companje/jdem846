@@ -581,6 +581,8 @@ public class DemProjectPane extends JdemPanel
 		
 		applyOptionsToUI();
 		applyEngineSelectionConfiguration();
+		
+		onDataModelChanged(true, true);
 	}
 
 	
