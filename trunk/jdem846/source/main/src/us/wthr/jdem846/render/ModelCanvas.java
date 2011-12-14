@@ -244,7 +244,7 @@ public class ModelCanvas
 		}
 		
 
-		if (isAntiAliased || fill) {
+		if (isAntiAliased) {
 			drawRectangleSimpleAntialiased(color, row0, column0, row1, column1, fill);
 		} else {
 			drawRectangleSimpleStandard(color, row0, column0, row1, column1, fill);
@@ -262,14 +262,17 @@ public class ModelCanvas
 		//color[3] = 0xFF;
 		int _column0 = (int) column0;
 		int _column1 = (int) Math.ceil(column1);
-		//if (_column1 <= _column0)
-		//	_column1 = _column0 + 1;
+		if (_column1 <= _column0)
+			_column1 = _column0 + 1;
 		
 		int _row0 = (int) row0;
 		int _row1 = (int) Math.ceil(row1);
-		//if (_row1 <= _row0)
-		//	_row1 = _row0 + 1;
+		if (_row1 <= _row0)
+			_row1 = _row0 + 1;
 		
+		if (_row1 - _row0 <= 0 || _column1 - _column0 <= 0) {
+			int i = 0;
+		}
 		
 		
 		
