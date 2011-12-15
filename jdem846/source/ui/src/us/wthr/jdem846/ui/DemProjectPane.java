@@ -72,9 +72,12 @@ import us.wthr.jdem846.ui.MonitoredThread.ProgressListener;
 import us.wthr.jdem846.ui.OrderingButtonBar.OrderingButtonClickedListener;
 import us.wthr.jdem846.ui.ProjectButtonBar.ButtonClickedListener;
 import us.wthr.jdem846.ui.base.FileChooser;
+import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.ScrollPane;
+import us.wthr.jdem846.ui.base.SplitPane;
 import us.wthr.jdem846.ui.panels.EmbeddedTabbedPane;
 import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 import us.wthr.jdem846.ui.scripting.ScriptEditorPanel;
@@ -93,7 +96,8 @@ public class DemProjectPane extends JdemPanel
 	//private GradientConfigPanel gradientConfigPanel;
 	//private LightPositionConfigPanel lightPositionConfigPanel;
 	
-	private DataOverviewPanel overviewPanel;
+	private DataOverviewPanel regionOverviewPanel;
+	private DataOverviewPanel layerOverviewPanel;
 	private ModelPreviewPane previewPane;
 	//private DataInputLayoutPane layoutPane;
 	private ScriptEditorPanel scriptPane;
@@ -171,7 +175,8 @@ public class DemProjectPane extends JdemPanel
 		//lightPositionConfigPanel.setPreferredSize(new Dimension(200, 200));
 		//lightPositionConfigPanel.setSize(new Dimension(200, 200));
 		
-		overviewPanel = new DataOverviewPanel();
+		regionOverviewPanel = new DataOverviewPanel();
+		layerOverviewPanel = new DataOverviewPanel();
 		
 		//layoutPane = new DataInputLayoutPane(modelContext);
 		previewPane = new ModelPreviewPane(modelContext);
@@ -317,31 +322,33 @@ public class DemProjectPane extends JdemPanel
 			}
 		};
 		
-		//projectionConfigPanel.addChangeListener(basicChangeListener);
-		//gradientConfigPanel.addChangeListener(basicChangeListener);
-		
-		/*
-		lightPositionConfigPanel.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e)
-			{
-				onConfigurationChanged();
-			}
-		});
-		*/
+
 		
 		Panel dataPanel = new Panel();
 		dataPanel.setLayout(new BorderLayout());
 		dataPanel.add(orderingButtonBar, BorderLayout.NORTH);
 		dataPanel.add(datasetTree, BorderLayout.CENTER);
 		dataPanel.add(datasetOptionsPanel, BorderLayout.SOUTH);
-		
+
+		ScrollPane optionsScroll = new ScrollPane(modelOptionsPanel);
 		
 		EmbeddedTabbedPane leftTabPane = new EmbeddedTabbedPane();
 		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.data"), dataPanel);
-		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.setup"), modelOptionsPanel);
-		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.attributes"), overviewPanel);
+		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.setup"), optionsScroll);
+
+		EmbeddedTabbedPane leftLowerTabPane = new EmbeddedTabbedPane();
+		leftLowerTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.modelOverview"), regionOverviewPanel);
+		leftLowerTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layerOverview"), layerOverviewPanel);
 		
-		addLeft(leftTabPane, false);
+		SplitPane leftSplit = new SplitPane(SplitPane.VERTICAL_SPLIT);
+		leftSplit.add(leftTabPane);
+		leftSplit.add(leftLowerTabPane);
+		leftSplit.setResizeWeight(0);
+		leftSplit.setDividerSize(5);
+		leftSplit.setDividerLocation(320);
+		addLeft(leftSplit, false);
+		//addLeft(leftTabPane, false);
+		//addLeft(overviewPanel, false);
 		/*
 		this.addLeft(orderingButtonBar, false);
 		this.addLeft(datasetTree, false);
@@ -770,10 +777,10 @@ public class DemProjectPane extends JdemPanel
 		
 		if (rasterDataContext.getRasterDataListSize() + shapeDataContext.getShapeFiles().size() > 0) {
 			//projectButtonBar.setButtonEnabled(ProjectButtonBar.BTN_CREATE, true);
-			overviewPanel.setValuesVisible(true);
+			regionOverviewPanel.setValuesVisible(true);
 		} else {
 			//projectButtonBar.setButtonEnabled(ProjectButtonBar.BTN_CREATE, false);
-			overviewPanel.setValuesVisible(false);
+			regionOverviewPanel.setValuesVisible(false);
 		}
 		
 		projectButtonBar.setButtonEnabled(ProjectButtonBar.BTN_REMOVE, (datasetTree.getSelectedDatasetType() != DataSetTypes.UNSUPPORTED));
@@ -806,12 +813,14 @@ public class DemProjectPane extends JdemPanel
 		updatePreviewPane(updateRaster, updateShape);
 		//previewPanel.update();
 		
-		overviewPanel.setRows(rasterDataContext.getDataRows());
-		overviewPanel.setColumns(rasterDataContext.getDataColumns());
-		overviewPanel.setMaxLatitude(rasterDataContext.getNorth());
-		overviewPanel.setMinLatitude(rasterDataContext.getSouth());
-		overviewPanel.setMaxLongitude(rasterDataContext.getEast());
-		overviewPanel.setMinLongitude(rasterDataContext.getWest());
+		regionOverviewPanel.setRows(rasterDataContext.getDataRows());
+		regionOverviewPanel.setColumns(rasterDataContext.getDataColumns());
+		regionOverviewPanel.setNorth(rasterDataContext.getNorth());
+		regionOverviewPanel.setSouth(rasterDataContext.getSouth());
+		regionOverviewPanel.setEast(rasterDataContext.getEast());
+		regionOverviewPanel.setWest(rasterDataContext.getWest());
+		regionOverviewPanel.setLatitudeResolution(rasterDataContext.getLatitudeResolution());
+		regionOverviewPanel.setLongitudeResolution(rasterDataContext.getLongitudeResolution());
 		//overviewPanel.setMaxElevation(dataPackage.getMaxElevation());
 		//overviewPanel.setMinElevation(dataPackage.getMinElevation());
 		
@@ -856,6 +865,68 @@ public class DemProjectPane extends JdemPanel
 		orderingButtonBar.setButtonEnabled(OrderingButtonBar.BTN_MOVE_DOWN, (index < dsCount - 1));
 		orderingButtonBar.setButtonEnabled(OrderingButtonBar.BTN_MOVE_BOTTOM, (index < dsCount - 1));
 		
+		if (index >= 0) {
+			updateLayerOverview(type, index);
+		} else {
+			resetLayerOverview();
+		}
+	}
+	
+	public void updateLayerOverview(int type, int index)
+	{
+		if (type == DataSetTypes.ELEVATION)
+			updateRasterLayerOverview(index);
+		else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE)
+			updateShapeLayerOverview(index);
+		
+		//
+	}
+	
+	protected void resetLayerOverview()
+	{
+		layerOverviewPanel.setNorth(0);
+		layerOverviewPanel.setSouth(0);
+		layerOverviewPanel.setEast(0);
+		layerOverviewPanel.setWest(0);
+		layerOverviewPanel.setRows(0);
+		layerOverviewPanel.setColumns(0);
+		layerOverviewPanel.repaint();
+	}
+	
+	public void updateRasterLayerOverview(int index)
+	{
+		if (index < 0) {
+			return;
+		}
+		
+		RasterData rasterData = rasterDataContext.getRasterDataList().get(index);
+		layerOverviewPanel.setNorth(rasterData.getNorth());
+		layerOverviewPanel.setSouth(rasterData.getSouth());
+		layerOverviewPanel.setEast(rasterData.getEast());
+		layerOverviewPanel.setWest(rasterData.getWest());
+		layerOverviewPanel.setRows(rasterData.getRows());
+		layerOverviewPanel.setColumns(rasterData.getColumns());
+		layerOverviewPanel.setLatitudeResolution(rasterData.getLatitudeResolution());
+		layerOverviewPanel.setLongitudeResolution(rasterData.getLongitudeResolution());
+		layerOverviewPanel.repaint();
+	}
+	
+	public void updateShapeLayerOverview(int index)
+	{
+		if (index < 0) {
+			return;
+		}
+		
+		ShapeFileRequest shapeData = shapeDataContext.getShapeFiles().get(index);
+		layerOverviewPanel.setNorth(0);
+		layerOverviewPanel.setSouth(0);
+		layerOverviewPanel.setEast(0);
+		layerOverviewPanel.setWest(0);
+		layerOverviewPanel.setRows(0);
+		layerOverviewPanel.setColumns(0);
+		layerOverviewPanel.setLatitudeResolution(0);
+		layerOverviewPanel.setLongitudeResolution(0);
+		layerOverviewPanel.repaint();
 	}
 	
 	public void moveDataSetToPosition(int type, int fromIndex, int toIndex)

@@ -55,6 +55,7 @@ import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.ui.MonitoredSlider.MonitoredValueListener;
 import us.wthr.jdem846.ui.base.BoxContainer;
+import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.ComboBox;
 import us.wthr.jdem846.ui.base.JComboBoxModel;
 import us.wthr.jdem846.ui.base.Panel;
@@ -91,6 +92,9 @@ public class ModelOptionsPanel extends RoundedPanel
 	private Spinner spnElevationMultiple;
 	private Spinner spnRelativeLightIntensity;
 	private Spinner spnRelativeDarkIntensity;
+	
+	private CheckBox chkDoubleSampling;
+	private CheckBox chkUseFastRender;
 	
 	private PerspectiveValueControl perspectiveControl;
 	
@@ -164,73 +168,16 @@ public class ModelOptionsPanel extends RoundedPanel
 		
 		perspectiveControl = new PerspectiveValueControl();
 		
+		chkDoubleSampling = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.doubleSampling.label"));
+		chkUseFastRender = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.useFastRender.label"));
+		
 		colorSelection = new ColorSelection();
-		/*
-		jsldLightMultiple = new MonitoredSlider(0, 100, 50, new MonitoredValueListener() {
-			NumberFormat format = NumberFormat.getInstance();
-			public String getValueString()
-			{
-				format.setMaximumFractionDigits(3);
-				format.setMinimumFractionDigits(3);
-				double value = (double)jsldLightMultiple.getValue() / 100.0;
-				return format.format(value);
-			}
-		});
-		*/
-		spnLightMultiple = new Spinner(new SpinnerNumberModel(50, 0, 100, 1));
-		
-		/*
-		jsldSpotExponent = new MonitoredSlider(ModelOptions.SPOT_EXPONENT_MINIMUM, ModelOptions.SPOT_EXPONENT_MAXIMUM, 5, new MonitoredValueListener() {
-			NumberFormat format = NumberFormat.getIntegerInstance();
-			public String getValueString()
-			{
-				return format.format(jsldSpotExponent.getValue());
-			}
-		}); 
-		jsldSpotExponent.setSnapToTicks(true);
-		*/
-		
-		spnSpotExponent = new Spinner(new SpinnerNumberModel(1, 1, 5, 1));
-		
-		/*
-		jsldElevationMultiple = new MonitoredSlider(0, 100, 0, new MonitoredValueListener() {
-			NumberFormat format = NumberFormat.getIntegerInstance();
-			public String getValueString()
-			{
-				return format.format(jsldElevationMultiple.getValue());
-			}
-		});
-		*/
-		spnElevationMultiple = new Spinner(new SpinnerNumberModel(0, 0, 100, 1));
-		
-		/*
-		jsldRelativeLightIntensity =  new MonitoredSlider(0, 100, 0, new MonitoredValueListener() {
-			NumberFormat format = NumberFormat.getIntegerInstance();
-			public String getValueString()
-			{
-				return format.format(jsldRelativeLightIntensity.getValue());
-			}
-		});
-		*/
-		spnRelativeLightIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
-		
-		/*
-		jsldRelativeDarkIntensity =  new MonitoredSlider(0, 100, 0, new MonitoredValueListener() {
-			NumberFormat format = NumberFormat.getIntegerInstance();
-			public String getValueString()
-			{
-				return format.format(jsldRelativeDarkIntensity.getValue());
-			}
-		});
-		*/
-		spnRelativeDarkIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
-		
-		//gradientConfigPanel = new GradientConfigPanel();
-		//projectionConfigPanel = new ProjectionConfigPanel();
 
-		//lightPositionConfigPanel = new LightPositionConfigPanel();
-		//lightPositionConfigPanel.setPreferredSize(new Dimension(200, 200));
-		//lightPositionConfigPanel.setSize(new Dimension(200, 200));
+		spnLightMultiple = new Spinner(new SpinnerNumberModel(50, 0, 100, 1));
+		spnSpotExponent = new Spinner(new SpinnerNumberModel(1, 1, 5, 1));
+		spnElevationMultiple = new Spinner(new SpinnerNumberModel(0, 0, 100, 1));
+		spnRelativeLightIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
+		spnRelativeDarkIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
 
 		// Set tool tips
 		
@@ -251,6 +198,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		cmbPrecacheStrategy.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.tooltip"));
 		cmbMapProjection.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.mapProjection.tooltip"));
 		perspectiveControl.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.perspectiveValueControl.tooltip"));
+		chkDoubleSampling.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.doubleSampling.tooltip"));
+		chkUseFastRender.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.useFastRender.tooltip"));
 		
 		// Add listeners
 		ActionListener textFieldActionListener = new ActionListener() {
@@ -320,30 +269,13 @@ public class ModelOptionsPanel extends RoundedPanel
 				fireOptionsChangedListeners();
 			}
 		};
-		
+		chkDoubleSampling.addChangeListener(basicChangeListener);
+		chkUseFastRender.addChangeListener(basicChangeListener);
 		coloringControl.addChangeListener(basicChangeListener);
 		colorSelection.addChangeListener(basicChangeListener);
 		perspectiveControl.addChangeListener(basicChangeListener);
 		lightSourceControl.addChangeListener(basicChangeListener);
-		/*
-		projectionConfigPanel.addChangeListener(basicChangeListener);
-		gradientConfigPanel.addChangeListener(basicChangeListener);
-		
-		this.addOptionsChangedListener(new OptionsChangedListener() {
-			public void onOptionsChanged(ModelOptions options)
-			{
-				gradientConfigPanel.setGradientIdentifier(options.getColoringType());
-			}
-		});
-		
-		lightPositionConfigPanel.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e)
-			{
-				fireOptionsChangedListeners();
-			}
-		});
-		*/
-		
+
 		// Set Layout
 		
 		//controlGrid.add(new JLabel("Test Spinner:"));
@@ -400,6 +332,13 @@ public class ModelOptionsPanel extends RoundedPanel
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.perspectiveValueControl.label") + ":"));
 		controlGrid.add(perspectiveControl);
+		
+		controlGrid.add(new JLabel());
+		controlGrid.add(chkDoubleSampling);
+		
+		controlGrid.add(new JLabel());
+		controlGrid.add(chkUseFastRender);
+		
 		
 		BorderLayout layout = new BorderLayout();
 		setLayout(layout);
@@ -459,6 +398,9 @@ public class ModelOptionsPanel extends RoundedPanel
 		perspectiveControl.setRotateX(modelOptions.getProjection().getRotateX());
 		perspectiveControl.setRotateY(modelOptions.getProjection().getRotateY());
 		
+		chkDoubleSampling.setSelected(modelOptions.getDoublePrecisionHillshading());
+		chkUseFastRender.setSelected(modelOptions.getUseSimpleCanvasFill());
+		
 		//gradientConfigPanel.setGradientIdentifier(modelOptions.getColoringType());
 		//gradientConfigPanel.setConfigString(modelOptions.getGradientLevels());
 		//lightPositionConfigPanel.setSolarAzimuth(modelOptions.getLightingAzimuth());
@@ -513,6 +455,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		//modelOptions.setSpotExponent(jsldSpotExponent.getValue());
 		modelOptions.setSpotExponent((Integer)spnSpotExponent.getValue());
 		
+		modelOptions.setDoublePrecisionHillshading(chkDoubleSampling.getModel().isSelected());
+		modelOptions.setUseSimpleCanvasFill(chkUseFastRender.getModel().isSelected());
 		
 		//modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
 		//modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
@@ -557,6 +501,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		
 		spnLightMultiple.setEnabled(engineInstance.usesLightMultiple());
 		spnElevationMultiple.setEnabled(engineInstance.usesElevationMultiple());
+		
+		chkDoubleSampling.setEnabled(engineInstance.usesHillshading());
 	}
 	
 	

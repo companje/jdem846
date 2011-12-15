@@ -83,7 +83,7 @@ public class RasterDataContext implements DataContext
 		
 		log.info("Prepared RasterDataProxy to region N/S/E/W: " + north + "/" + south + "/" + east + "/" + west);
 		log.info("Prepared RasterDataProxy to lat/long resolutions: " + latitudeResolution + "/" + longitudeResolution);
-		
+		log.info("Prepared Meters Resolution: " + metersResolution);
 	}
 	
 	protected double validateLongitude(double longitude)
@@ -412,6 +412,7 @@ public class RasterDataContext implements DataContext
 		clone.dataMaximumValue = getDataMaximumValue();
 		clone.dataMinimumValue = getDataMinimumValue();
 		clone.isDisposed = isDisposed(); // Should be false at this point...		
+		clone.metersResolution = getMetersResolution();
 		
 		for (RasterData rasterData : rasterDataList) {
 			clone.rasterDataList.add(rasterData.copy());

@@ -27,7 +27,8 @@ import us.wthr.jdem846.scripting.ScriptProxy;
 
 @DemEngine(name="us.wthr.jdem846.render.demEngine2D.name", 
 	identifier="dem2d-gen",
-	usesElevationMultiple=false)
+	usesElevationMultiple=true,
+	usesProjection=true)
 public class Dem2dGenerator extends BasicRenderEngine
 {
 	private static Log log = Logging.getLog(Dem2dGenerator.class);

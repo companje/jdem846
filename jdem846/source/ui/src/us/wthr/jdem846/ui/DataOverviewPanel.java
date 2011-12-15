@@ -28,9 +28,10 @@ import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.Table;
+import us.wthr.jdem846.ui.panels.RoundedPanel;
 
 @SuppressWarnings("serial")
-public class DataOverviewPanel extends Panel
+public class DataOverviewPanel extends RoundedPanel
 {
 	
 
@@ -66,24 +67,34 @@ public class DataOverviewPanel extends Panel
 		tableModel.columns = columns;
 	}
 	
-	public void setMaxLatitude(double maxLatitude)
+	public void setNorth(double north)
 	{
-		tableModel.north = maxLatitude;
+		tableModel.north = north;
 	}
 	
-	public void setMinLatitude(double minLatitude)
+	public void setSouth(double south)
 	{
-		tableModel.south = minLatitude;
+		tableModel.south = south;
 	}
 	
-	public void setMaxLongitude(double maxLongitude)
+	public void setEast(double east)
 	{
-		tableModel.east = maxLongitude;
+		tableModel.east = east;
 	}
 	
-	public void setMinLongitude(double minLongitude)
+	public void setWest(double west)
 	{
-		tableModel.west = minLongitude;
+		tableModel.west = west;
+	}
+	
+	public void setLatitudeResolution(double latitudeResolution)
+	{
+		tableModel.latitudeResolution = latitudeResolution;
+	}
+
+	public void setLongitudeResolution(double longitudeResolution)
+	{
+		tableModel.longitudeResolution = longitudeResolution;
 	}
 	
 
@@ -98,11 +109,13 @@ public class DataOverviewPanel extends Panel
 		public double east;
 		public double west;
 		
+		public double latitudeResolution;
+		public double longitudeResolution;
 		
 		@Override
 		public int getRowCount()
 		{
-			return 6;
+			return 8;
 		}
 
 		@Override
@@ -145,6 +158,10 @@ public class DataOverviewPanel extends Panel
 				return ""+east;
 			case 5:
 				return ""+west;
+			case 6:
+				return ""+latitudeResolution;
+			case 7:
+				return ""+longitudeResolution;
 			default:
 				return "";
 			}
@@ -165,6 +182,10 @@ public class DataOverviewPanel extends Panel
 				return I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.eastLongitude") + ":";
 			case 5:
 				return I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.westLongitude") + ":";
+			case 6:
+				return I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.latitudeResolution") + ":";
+			case 7:
+				return I18N.get("us.wthr.jdem846.ui.dataOverviewPanel.longitudeResolution") + ":";
 			default:
 				return "";
 			}

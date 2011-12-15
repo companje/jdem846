@@ -7,8 +7,10 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
@@ -118,11 +120,14 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 			public void translatePoint(double[] coords)
 			{
 				try {
-					modelCanvas.getMapProjection().getPoint(coords[1], coords[0], 0, mapPoint);
+					double elevation = getElevationAtPoint(coords[1], coords[0]);
+					modelCanvas.getMapProjection().getPoint(coords[1], coords[0], elevation, mapPoint);
 					coords[0] = mapPoint.column;
 					coords[1] = mapPoint.row;
 				} catch (MapProjectionException ex) {
 					log.warn("Error projecting coordinates to map: " + ex.getMessage(), ex);
+				} catch (DataSourceException ex) {
+					log.warn("Error retrieving elevation for point: " + ex.getMessage(), ex);
 				}
 			}
 		}, false);
@@ -131,6 +136,16 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 		
 		shapeLayer = shapeLayer.getCombinedPathsByTypes();
 		return shapeLayer;
+	}
+	
+	
+	protected double getElevationAtPoint(double latitude, double longitude) throws DataSourceException
+	{
+		double data = 0.0;
+		if (getRasterDataContext() != null) {
+			data = getRasterDataContext().getData(latitude, longitude, false, true);
+		}
+		return data;
 	}
 	
 	public void renderLayer(ShapeLayer shapeLayer) throws RenderEngineException

@@ -36,6 +36,8 @@ import javax.swing.JLabel;
 import javax.swing.Timer;
 
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.border.ButtonBorder;
 
@@ -47,6 +49,8 @@ import us.wthr.jdem846.ui.border.ButtonBorder;
 @SuppressWarnings("serial")
 public class MemoryMonitor extends Label
 {
+	private static Log log = Logging.getLog(MemoryMonitor.class);
+	
 	
 	private static NumberFormat nf = NumberFormat.getNumberInstance();
 	
@@ -54,14 +58,32 @@ public class MemoryMonitor extends Label
 	private MemoryMXBean memoryBean;
 	private Timer timer;
 	
+	private Color committedColor = Color.LIGHT_GRAY;
+	private Color usedColor = Color.GRAY;
+	private Color lineColor = Color.DARK_GRAY;
+	private BasicStroke dottedStroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1, new float[] {1.0f, 2.0f}, 0.0f);
+	
+	private boolean paintCurrentState = true;
+	private boolean paintTrend = true;
+	
+	public MemoryMonitor()
+	{
+		this(1000, true, true);
+	}
+	
 	public MemoryMonitor(int pollDelay)
 	{
+		this(pollDelay, true, true);
+	}
+	
+	public MemoryMonitor(int pollDelay, boolean paintCurrentState, boolean paintTrend)
+	{
+		this.paintCurrentState = paintCurrentState;
+		this.paintTrend = paintTrend;
+		
 		setToolTipText(I18N.get("us.wthr.jdem846.ui.memoryMonitor.tooltip"));
 		setText("                       ");
 		this.setOpaque(false);
-		//this.setBorder(BorderFactory.createEtchedBorder());
-		//this.setBorder(new ButtonBorder());
-		///this.setPreferredSize(new Dimension(100, 25));
 		nf.setMaximumFractionDigits(1);
 		
 		this.addMouseListener(new MouseListener() {
@@ -145,67 +167,123 @@ public class MemoryMonitor extends Label
 			super.paint(g);
 			return;
 		}
+		
+
 		Graphics2D g2d = (Graphics2D) g;
 		
 		
 		Stroke origStroke = g2d.getStroke(); 
-		BasicStroke dottedStroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1, new float[] {1.0f, 2.0f}, 0.0f);
-		
-		
-		
+
 		int width = this.getWidth();
 		int height = this.getHeight();
 
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, width, height);
 		
-		{ // Current State
-			MemoryUsage usageBean = memoryBean.getHeapMemoryUsage();
-			double usedMB = (double)usageBean.getUsed()  / 1048576.0;
-			double committedMB = (double)usageBean.getCommitted()  / 1048576.0;
-			double maxMB = (double)usageBean.getMax()  / 1048576.0;
-			
-			int usedX = (int) Math.round(width * (usedMB / maxMB));
-			int committedX = (int) Math.round(width * (committedMB / maxMB));
-			
-			g2d.setColor(Color.LIGHT_GRAY);
-			g2d.fillRect(0, 0, usedX, height);
-			
-			g2d.setStroke(dottedStroke);
-			g2d.drawLine(committedX, 0, committedX, height);
-			g2d.setStroke(origStroke);
+		
+		if (paintCurrentState) {
+			paintCurrentState(g2d);
 		}
 		
+		if (paintTrend) {
+			paintTrend(g2d);
+		}
 		
-		g2d.setColor(Color.BLACK);
+		g2d.setColor(lineColor);
+		g2d.drawRect(0, 0, width, height);
+
+	}
+	
+	protected void paintCurrentState(Graphics2D g2d)
+	{
+		Stroke origStroke = g2d.getStroke(); 
+
+		int width = this.getWidth();
+		int height = this.getHeight();
+		
+		
+		MemoryUsage usageBean = memoryBean.getHeapMemoryUsage();
+		double usedMB = (double)usageBean.getUsed()  / 1048576.0;
+		double committedMB = (double)usageBean.getCommitted()  / 1048576.0;
+		double maxMB = (double)usageBean.getMax()  / 1048576.0;
+		double maxUsedMB = (double)getMaxUsedInList()  / 1048576.0;
+		
+		int usedX = (int) Math.round(width * (usedMB / maxMB));
+		int committedX = (int) Math.round(width * (committedMB / maxMB));
+		int maxUsedX = (int) Math.round(width * (maxUsedMB / maxMB));
+		
+		g2d.setColor(committedColor);
+		g2d.fillRect(0, 0, committedX, height);
+		
+		g2d.setColor(usedColor);
+		g2d.fillRect(0, 0, usedX, height);
+		
+		
+		g2d.setColor(lineColor);
+		g2d.setStroke(dottedStroke);
+		g2d.drawLine(maxUsedX, 0, maxUsedX, height);
+		g2d.setStroke(origStroke);
+		
+		//g2d.setStroke(dottedStroke);
+		//g2d.drawLine(committedX, 0, committedX, height);
+		//g2d.setStroke(origStroke);
+		
+	}
+	
+	protected void paintTrend(Graphics2D g2d)
+	{
+		Stroke origStroke = g2d.getStroke(); 
+
+		int width = this.getWidth();
+		int height = this.getHeight();
 		
 		long maxCommitted = getMaxCommittedInList();
 		long maxUsed = getMaxUsedInList();
 		for (int i = 0; i < usageList.size(); i++) {
 			MemorySnapshot usage = usageList.get(usageList.size()-i-1);
-			double pct = (double)usage.getUsed() / (double)maxCommitted;
-			int y = (int) Math.round(((double)height * pct));
-			if (y == 0)
-				y = 1;
-
-			g2d.drawLine(width-i, height - y - 2, width-i, height);
+			int usedY = (int) Math.round(((double)height * ((double)usage.getUsed() / (double)usage.getMax())));
+			int committedY = (int) Math.round(((double)height * ((double)usage.getCommitted() / (double)usage.getMax())));
+			
+			g2d.setColor(committedColor);
+			g2d.drawLine(width-i, height - committedY - 2, width-i, height);
+			
+			g2d.setColor(usedColor);
+			g2d.drawLine(width-i, height - usedY - 2, width-i, height);
 		}
 		
-		g2d.setColor(Color.GRAY);
-		
-		
-		
-		
+		g2d.setColor(lineColor);
 		g2d.setStroke(dottedStroke);
 		int y = (int) Math.round(((double)height * (double)maxUsed / (double)maxCommitted));
-		if (y == 0)
-			y = 1;
 		g2d.drawLine(0, height - y - 2, width, height - y - 2);
 		g2d.setStroke(origStroke);
 		
-		super.paint(g);
+		
 	}
 	
+	
+	
+	public boolean getPaintCurrentState() 
+	{
+		return paintCurrentState;
+	}
+
+	public void setPaintCurrentState(boolean paintCurrentState) 
+	{
+		this.paintCurrentState = paintCurrentState;
+	}
+
+	public boolean getPaintTrend() 
+	{
+		return paintTrend;
+	}
+
+	public void setPaintTrend(boolean paintTrend) 
+	{
+		this.paintTrend = paintTrend;
+	}
+
+
+
 	class MemorySnapshot
 	{
 		
