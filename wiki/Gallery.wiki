@@ -27,7 +27,7 @@
 </tr>
 <tr>
 <td valign="top">
-<a href="http://www.flickr.com/photos/kevinmgill/6197766421/" title="jDem846 Screenshot: 3D Rendering by Kevin M. Gill, on Flickr"><img src="http://farm7.static.flickr.com/6152/6197766421_fc2fa664e5.jpg" width="350" alt="jDem846 Screenshot: 3D Rendering" /></a>
+<a href="http://www.flickr.com/photos/kevinmgill/6517495555/" title="jDem846 Screenshot: 3D Rendering by Kevin M. Gill, on Flickr"><img src="http://farm8.staticflickr.com/7003/6517495555_6795702ea8.jpg" width="350" alt="jDem846 Screenshot: 3D Rendering" /></a>
 </td>
 <td valign="top">
 <a href="http://www.flickr.com/photos/kevinmgill/6198284598/" title="jDem846 Example: Maui, HI by Kevin M. Gill, on Flickr"><img src="http://farm7.static.flickr.com/6158/6198284598_4fc0d422cd.jpg" width="350"  alt="jDem846 Example: Maui, HI" /></a>
