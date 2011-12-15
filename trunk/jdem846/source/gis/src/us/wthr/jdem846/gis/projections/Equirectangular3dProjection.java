@@ -18,6 +18,8 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 	
 	double[] pointVector = new double[3];
 	
+	private double elevationMultiple = 1.0;
+	
 	private ModelContext modelContext;
 	
 	public Equirectangular3dProjection()
@@ -41,7 +43,7 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 				modelContext.getModelDimensions().getOutputWidth(),
 				modelContext.getModelDimensions().getOutputHeight());
 		
-		
+		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		rotateX = modelContext.getModelOptions().getProjection().getRotateX();
 		rotateY = modelContext.getModelOptions().getProjection().getRotateY();
 
@@ -73,7 +75,7 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 			min = modelContext.getRasterDataContext().getDataMinimumValue();
 			max = modelContext.getRasterDataContext().getDataMaximumValue();
 			resolution = modelContext.getRasterDataContext().getMetersResolution();
-			elev = ((elevation - max) / resolution) + Math.abs(min);
+			elev = (((elevation - max) / resolution) + Math.abs(min)) * elevationMultiple;
 		}
 
 		pointVector[0] = point.column - (getWidth() / 2.0);
@@ -87,6 +89,8 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		
 		point.column = -pointVector[0] + (getWidth()/2.0);
 		point.row = pointVector[1] + (getHeight()/2.0);
+		
+		//log.info("row/col: " + point.row + "/" + point.column);
 		
 	}
 	

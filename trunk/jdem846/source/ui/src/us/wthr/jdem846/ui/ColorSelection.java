@@ -3,6 +3,10 @@ package us.wthr.jdem846.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
@@ -13,8 +17,10 @@ import javax.swing.JColorChooser;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.ui.base.ColorChooser;
 import us.wthr.jdem846.ui.base.Dialog;
 import us.wthr.jdem846.ui.base.Panel;
@@ -28,14 +34,20 @@ public class ColorSelection extends Panel
 	private Color value = Color.BLUE;
 	private ColorPickerDialog picker = null;
 	
+	private ColorSamplePane colorSamplePane;
+	private Button btnChange;
+	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
 	public ColorSelection()
 	{
 		
 		
-		setBorder(BorderFactory.createEtchedBorder());
-		this.setOpaque(false);
+		
+		
+		colorSamplePane = new ColorSamplePane();
+		btnChange = new Button(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.edit.label"));
+		btnChange.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.edit.tooltip"));
 		
 		picker = new ColorPickerDialog(value);
 		picker.addChangeListener(new ChangeListener() {
@@ -45,13 +57,34 @@ public class ColorSelection extends Panel
 			}
 		});
 		
-		this.addMouseListener(new MouseAdapter() {
+		colorSamplePane.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e)
 			{
 				onColorClicked();
 			}
 		});
+		btnChange.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				onColorClicked();
+			}
+		});
 		
+		
+		GridBagLayout gridbag = new GridBagLayout();
+		this.setLayout(gridbag);
+		
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.weightx = 0.75;
+
+		gridbag.setConstraints(colorSamplePane, constraints);
+		add(colorSamplePane);
+		
+		constraints.weightx = 0.25;
+		constraints.gridwidth  = GridBagConstraints.REMAINDER;
+		gridbag.setConstraints(btnChange, constraints);
+		add(btnChange);
+
 	}
 
 	protected void onColorClicked()
@@ -81,7 +114,8 @@ public class ColorSelection extends Panel
 	public void setValue(Color value)
 	{
 		this.value = value;
-		repaint();
+		colorSamplePane.setColor(value);
+		colorSamplePane.repaint();
 	}
 	
 	public void setValueString(String valueString)
@@ -94,7 +128,7 @@ public class ColorSelection extends Panel
 		
 	}
 	
-	
+	/*
 	@Override
 	public void paint(Graphics g)
 	{
@@ -103,6 +137,7 @@ public class ColorSelection extends Panel
 		
 		super.paint(g);
 	}
+	*/
 	
 	public void fireChangeListeners()
 	{
@@ -125,7 +160,36 @@ public class ColorSelection extends Panel
 	}
 	
 	
-	
+	class ColorSamplePane extends Panel
+	{
+		private Color color = Color.BLUE;
+		
+		
+		public ColorSamplePane()
+		{
+			setBorder(BorderFactory.createEtchedBorder());
+			this.setOpaque(false);
+		}
+		
+		public void setColor(Color color)
+		{
+			this.color = color;
+		}
+		
+		public Color getColor()
+		{
+			return color;
+		}
+		
+		@Override
+		public void paint(Graphics g)
+		{
+			g.setColor(color);
+			g.fillRect(0, 0, getWidth(), getHeight());
+			
+			super.paint(g);
+		}
+	}
 	
 	
 	

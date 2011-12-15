@@ -121,15 +121,14 @@ public class JdemFrame extends Frame
 		topButtonBar.add(Box.createHorizontalGlue());
 		
 		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.jdemFrame.displayMemoryMonitor")) {
-			MemoryMonitor memory = new MemoryMonitor(1000);
-			memory.start();
-			SharedStatusBar.addControl(memory);
+			MemoryMonitor memoryCurrentState = new MemoryMonitor(1000, true, true);
+			memoryCurrentState.start();
+			SharedStatusBar.addControl(memoryCurrentState);
+			
 			/*
-			ToolBar memoryMonitorToolbar = new ToolBar();
-			MemoryMonitor memory = new MemoryMonitor(1000);
-			memory.start();
-			memoryMonitorToolbar.add(memory);
-			MainButtonBar.addToolBar(memoryMonitorToolbar);
+			MemoryMonitor memoryTrend = new MemoryMonitor(1000, false, true);
+			memoryTrend.start();
+			SharedStatusBar.addControl(memoryTrend);
 			*/
 		}
 		
@@ -426,6 +425,7 @@ public class JdemFrame extends Frame
 			ProjectModel projectModel = null;
 			if (filePath != null) {
 				projectModel = ProjectFiles.read(filePath);
+				projectModel.setLoadedFrom(filePath);
 			}
 			
 			DemProjectPane projectPane = new DemProjectPane(projectModel);

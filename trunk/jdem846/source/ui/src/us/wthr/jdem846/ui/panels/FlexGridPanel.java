@@ -17,8 +17,10 @@
 package us.wthr.jdem846.ui.panels;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.JPanel;
 
@@ -33,6 +35,7 @@ public class FlexGridPanel extends Panel
 	private static Log log = Logging.getLog(FlexGridPanel.class);
 	
 	private int columns = 1;
+	private int row = 0;
 	private int addColumn = 0;
 	private GridBagLayout gridbag;
 	
@@ -54,15 +57,19 @@ public class FlexGridPanel extends Panel
 	@Override
 	public Component add(Component component)
 	{
+		//component.setMinimumSize(new Dimension(50, 50));
+		component.setPreferredSize(new Dimension(20, 28));
+		
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 1.0;
-		constraints.weighty = 1.0;
+		constraints.insets = new Insets(2, 0, 2, 0);
 		addColumn++;
 		
 		if (addColumn >= columns) {
 			constraints.gridwidth  = GridBagConstraints.REMAINDER;
 			addColumn = 0;	
+			row++;
 		} else {
 			constraints.gridwidth  = 1;
 		}

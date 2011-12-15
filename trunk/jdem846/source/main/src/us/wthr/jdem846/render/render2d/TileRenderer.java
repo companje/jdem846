@@ -179,10 +179,10 @@ public class TileRenderer extends InterruptibleProcess
 		
 		if (point.condition == DemConstants.STAT_SUCCESSFUL) {
 			
-			backLeftPoints[1] = point.backLeftElevation * elevationMultiple;
-			backRightPoints[1] = point.backRightElevation * elevationMultiple;
-			frontLeftPoints[1] = point.frontLeftElevation * elevationMultiple;
-			frontRightPoints[1] = point.frontRightElevation * elevationMultiple;
+			backLeftPoints[1] = point.backLeftElevation;
+			backRightPoints[1] = point.backRightElevation;
+			frontLeftPoints[1] = point.frontLeftElevation;
+			frontRightPoints[1] = point.frontRightElevation;
 			
 			
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1] + frontRightPoints[1]) / 4.0;
@@ -222,10 +222,10 @@ public class TileRenderer extends InterruptibleProcess
 		
 		if (point.condition == DemConstants.STAT_SUCCESSFUL) {
 			
-			backLeftPoints[1] = point.backLeftElevation * elevationMultiple;
-			backRightPoints[1] = point.backRightElevation * elevationMultiple;
-			frontLeftPoints[1] = point.frontLeftElevation * elevationMultiple;
-			frontRightPoints[1] = point.frontRightElevation * elevationMultiple;
+			backLeftPoints[1] = point.backLeftElevation;
+			backRightPoints[1] = point.backRightElevation;
+			frontLeftPoints[1] = point.frontLeftElevation;
+			frontRightPoints[1] = point.frontRightElevation;
 			
 			// North West Triangle
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
