@@ -21,6 +21,11 @@ public class SolarCalculator
     private Coordinate latitude;
     private Coordinate longitude;
 
+    public SolarCalculator()
+    {
+    	
+    }
+    
     public SolarCalculator(EarthDateTime _dt, Location location)
     {
     	datetime = _dt;
@@ -257,7 +262,37 @@ public class SolarCalculator
     public double solarZenithAngle(double decl, double ha)
     {
     	double latitude = this.latitude.toDecimal();
-    	return  degrees(acos(sin(radians(latitude))*sin(radians(decl))+cos(radians(latitude))*cos(radians(decl))*cos(radians(ha))));
+    	double csz = sin(radians(latitude)) * Math.sin(radians(decl)) + cos(radians(latitude)) * cos(radians(decl)) * cos(radians(ha));
+    	if (csz > 1.0) {
+    		csz = 1.0;
+    	} else if (csz < -1.0) { 
+    		csz = -1.0;
+    	}
+    	double zenith = degrees(acos(csz));
+    	
+    	
+    	double exoatmElevation = 90.0 - zenith;
+    	double refractionCorrection = 0.0;
+    	
+    	if (exoatmElevation > 85.0) {
+    		refractionCorrection = 0.0;
+    	} else {
+    		double te = Math.tan (radians(exoatmElevation));
+    		if (exoatmElevation > 5.0) {
+    			refractionCorrection = 58.1 / te - 0.07 / (te*te*te) + 0.000086 / (te*te*te*te*te);
+    		} else if (exoatmElevation > -0.575) {
+    			refractionCorrection = 1735.0 + exoatmElevation * (-518.2 + exoatmElevation * (103.4 + exoatmElevation * (-12.79 + exoatmElevation * 0.711) ) );
+    		} else {
+    			refractionCorrection = -20.774 / te;
+    		}
+    		refractionCorrection = refractionCorrection / 3600.0;
+    	}
+
+    	double solarZen = zenith - refractionCorrection;
+    	
+    	return solarZen;
+    	
+    	
     }
     
     public double solarElevationAngle()
@@ -311,7 +346,36 @@ public class SolarCalculator
     
     public double solarAzimuthAngle(double decl, double ha, double zenith)
     {
-
+    	double latitude = this.latitude.toDecimal();
+    	double azimuth;
+    	double azDenom = ( Math.cos(radians(latitude)) * Math.sin(radians(zenith)) );
+    	
+    	if (Math.abs(azDenom) > 0.001) {
+    		double azRad = (( Math.sin(radians(latitude)) * Math.cos(radians(zenith)) ) - Math.sin(radians(decl))) / azDenom;
+    		if (Math.abs(azRad) > 1.0) {
+    			if (azRad < 0) {
+    				azRad = -1.0;
+    			} else {
+    				azRad = 1.0;
+    			}
+    		}
+    		azimuth = 180.0 - degrees(Math.acos(azRad));
+    		if (ha > 0.0) {
+    			azimuth = -azimuth;
+    		}
+    	} else {
+    		if (latitude > 0.0) {
+    			azimuth = 180.0;
+    		} else { 
+    			azimuth = 0.0;
+    		}
+    	}
+    	if (azimuth < 0.0) {
+    		azimuth += 360.0;
+    	}
+    	
+    	return azimuth;
+    	/*
     	double latitude = this.latitude.toDecimal();
     	double a = 0;
     	if (ha > 0)
@@ -319,17 +383,12 @@ public class SolarCalculator
     	else
             a = 540-degrees(acos(((sin(radians(latitude))*cos(radians(zenith)))-sin(radians(decl)))/(cos(radians(latitude))*sin(radians(zenith)))));
    
-	    /*****************************************************
-	    Likely BUG
-	
-	    Verify integer cast
-	    *****************************************************/
-	    //int res = (int)a % 360;
 	    while (a > 360) {
             a -= 360.0;
 	    }
 	    
 	    return a; 
+	    */
     }
     
     public static double todToMinutes(int hours, int minutes, int seconds)
@@ -349,8 +408,10 @@ public class SolarCalculator
         int minute = (int)floor(minutes - (hour * 60.0));
         int second = (int) floor(60.0 * (minutes - (hour * 60.0) - minute));
 
-        EarthDateTime tod = new EarthDateTime(0,0,0, hour, minute, second, 0, datetime.isDst());
-        tod.setTimezone(datetime.getTimezone());
+        EarthDateTime tod = datetime.clone();
+        tod.setHour(hour);
+        tod.setMinute(minute);
+        tod.setSecond(second);
         return tod;
     }
     
@@ -372,9 +433,15 @@ public class SolarCalculator
 	    return minutesToTod(solNoonLocal);
     }
     
-    public EarthDateTime sunriseSetUTC()
+
+    public EarthDateTime sunriseUTC()
     {
-    	return sunriseSetUTC(julianCentury);
+    	return sunriseSetUTC(julianCentury, true);
+    }
+    
+    public EarthDateTime sunsetUTC()
+    {
+    	return sunriseSetUTC(julianCentury, false);
     }
     
     public EarthDateTime sunriseSetUTC(double t)
@@ -400,9 +467,14 @@ public class SolarCalculator
     	return minutesToTod(timeUTC);
     }
     
-    public EarthDateTime sunriseSet()
+    public EarthDateTime sunrise()
     {
     	return sunriseSet(true);
+    }
+    
+    public EarthDateTime sunset()
+    {
+    	return sunriseSet(false);
     }
     
     public EarthDateTime sunriseSet(boolean rise)

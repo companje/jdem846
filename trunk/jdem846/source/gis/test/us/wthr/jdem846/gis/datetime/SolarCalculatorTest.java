@@ -1,12 +1,18 @@
 package us.wthr.jdem846.gis.datetime;
 
+import us.wthr.jdem846.AbstractTestCase;
+import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.gis.CardinalDirectionEnum;
 import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
 import us.wthr.jdem846.gis.Location;
+import us.wthr.jdem846.gis.projections.MapProjectionEnum;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.render.ModelCanvas;
 import junit.framework.TestCase;
 
-public class SolarCalculatorTest extends TestCase
+public class SolarCalculatorTest extends AbstractTestCase
 {
 	SolarCalculator solCalc = null;
 	EarthDateTime datetime = null;
@@ -22,11 +28,28 @@ public class SolarCalculatorTest extends TestCase
 		location = new Location("Boire Field, Nashua NH", latitude, longitude, -5, false);
 		
 		
-		datetime = new EarthDateTime(2011, 12, 16, 12, 30, 0, -5, false);
+		datetime = new EarthDateTime(2011, 12, 19, 12, 30, 0, -5, false);
 		solCalc = new SolarCalculator(datetime, location);
 	
 	}
 
+	public void testMinutesConversion()
+	{
+		double minutes = solCalc.todToMinutes(datetime);
+		EarthDateTime tod = solCalc.minutesToTod(minutes);
+		assertEquals(datetime.getYear(), tod.getYear());
+		assertEquals(datetime.getMonth(), tod.getMonth());
+		assertEquals(datetime.getDay(), tod.getDay());
+		
+		assertEquals(datetime.getHour(), tod.getHour());
+		assertEquals(datetime.getMinute(), tod.getMinute());
+		assertEquals(datetime.getSecond(), tod.getSecond());
+		
+		assertEquals(datetime.getTimezone(), tod.getTimezone());
+		assertEquals(datetime.isDst(), tod.isDst());
+		
+	}
+	
 	public void testJulianCentury()
 	{
 		assertEquals(0.11956251426, solCalc.getJulianCentury(), 0.0001);
@@ -78,5 +101,8 @@ public class SolarCalculatorTest extends TestCase
 		// Solar Elevation: 23.02
 		assertEquals(23.02, solCalc.solarElevationAngle(), 0.001);
 	}
+	
+	
+	
 	
 }

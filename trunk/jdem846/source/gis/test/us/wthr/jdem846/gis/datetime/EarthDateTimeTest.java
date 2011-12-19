@@ -13,6 +13,8 @@ public class EarthDateTimeTest extends TestCase
 		datetime = new EarthDateTime(2011, 12, 16, 12, 30, 0, -5, false);
 	}
 	
+
+	
 	public void testTimeLocal()
 	{
 		assertEquals(750.0, datetime.timeLocal());

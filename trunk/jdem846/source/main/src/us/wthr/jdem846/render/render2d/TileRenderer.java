@@ -319,6 +319,7 @@ public class TileRenderer extends InterruptibleProcess
 	
 	protected void setUpLightSource()
 	{
+		
 		Vector sun = new Vector(0.0, 0.0, -1.0);
 		Vector angles = new Vector(solarElevation, -solarAzimuth, 0.0);
 		sun.rotate(angles);
@@ -326,7 +327,52 @@ public class TileRenderer extends InterruptibleProcess
 		sunsource[0] = sun.getX();
 		sunsource[1] = sun.getY();
 		sunsource[2] = sun.getZ();
+		
+		// TODO: TEST THIS!
+		/*
+		sunsource[0] = 0.0;
+		sunsource[1] = 0.0;
+		sunsource[2] = 0.0;
+		getSpherePoint(solarAzimuth, solarElevation, 1.0, sunsource);
+		*/
+		
+	}
+	
+	protected void getSpherePoint(double theta, double phi, double radius, double[] points)
+	{
+		double _y = sqrt(pow(radius, 2) - pow(radius * cos(phi), 2));
+		double r0 = sqrt(pow(radius, 2) - pow(_y, 2));
 
+		double _b = r0 * cos(theta );
+        double _z = sqrt(pow(r0, 2) - pow(_b, 2));
+        double _x = sqrt(pow(r0, 2) - pow(_z, 2));
+        if (theta <= 90.0) {
+                _z *= -1.0;
+        } else if (theta  <= 180.0) {
+                _x *= -1.0;
+                _z *= -1.0;
+        } else if (theta  <= 270.0) {
+                _x *= -1.0;
+        }
+
+        if (phi >= 0) { 
+                _y = abs(_y);
+        } else {
+                _y = abs(_y) * -1;
+        }
+
+
+        points[0] = _x;
+        points[1] = _y;
+        points[2] = _z;
+
+       // double mag = sqrt(sqr(_x)+sqr(_y)+sqr(_z));   
+       // _x /= mag;   
+        //_y /= mag;   
+       // _z /= mag; 
+        
+        //points[3] = (atan2(_x, _z)/(Math.PI*2)) + 0.5f;   
+       // points[4] =  (asin(_y) / Math.PI) + 0.5f;
 	}
 	
 
@@ -621,5 +667,43 @@ public class TileRenderer extends InterruptibleProcess
 		return canvas;
 	}
 
+	protected double asin(double a)
+	{
+		return Math.asin(a);
+	}
 	
+	protected double atan2(double a, double b)
+	{
+		return Math.atan2(a, b);
+	}
+	
+	protected double sqr(double a)
+	{
+		return (a*a);
+	}
+	
+	protected double abs(double a)
+	{
+		return Math.abs(a);
+	}
+	
+	protected double pow(double a, double b)
+	{
+		return Math.pow(a, b);
+	}
+	
+	protected double sqrt(double d)
+	{
+		return Math.sqrt(d);
+	}
+	
+	protected double cos(double d)
+	{
+		return Math.cos(Math.toRadians(d));
+	}
+	
+	protected double sin(double d)
+	{
+		return Math.sin(Math.toRadians(d));
+	}
 }
