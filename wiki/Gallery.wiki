@@ -11,7 +11,7 @@
 <table style="margin-left:auto;margin-right:auto;">
 <tr>
 <td valign="top">
-<a href="http://www.flickr.com/photos/kevinmgill/6477607119/" title="jDem846 Screenshot: Model Options Setup by Kevin M. Gill, on Flickr"><img src="http://farm8.staticflickr.com/7028/6477607119_452bf69608.jpg" width="350"  alt="jDem846 Screenshot: Model Options Setup" /></a>
+<a href="http://www.flickr.com/photos/kevinmgill/6537669071/" title="jDem846 Screenshot: User Interface by Kevin M. Gill, on Flickr"><img src="http://farm8.staticflickr.com/7168/6537669071_c2fdb82a0b.jpg" width="350" alt="jDem846 Screenshot: User Interface"/></a>
 </td>
 <td valign="top">
 <a href="http://www.flickr.com/photos/kevinmgill/6477575665/" title="jDem846 Screenshot: Vector Shape Preview by Kevin M. Gill, on Flickr"><img src="http://farm8.staticflickr.com/7002/6477575665_4c97dd9951.jpg" width="350"  alt="jDem846 Screenshot: Vector Shape Preview" /></a>
