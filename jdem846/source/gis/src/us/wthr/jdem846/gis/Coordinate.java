@@ -34,6 +34,11 @@ public class Coordinate {
         return _d;
     }
     
+    public void fromDecimal(double decimal)
+    {
+    	fromDecimal(decimal, this.getCoordinateType());
+    }
+    
     public void fromDecimal(double decimal, CoordinateTypeEnum coordinateType)
     {
     	this.coordinateType = coordinateType;

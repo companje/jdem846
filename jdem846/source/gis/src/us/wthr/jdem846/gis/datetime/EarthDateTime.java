@@ -1,18 +1,31 @@
 package us.wthr.jdem846.gis.datetime;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
-public class EarthDateTime
+
+public class EarthDateTime implements Cloneable
 {
 	
-	private Calendar calendar;
+	//private Calendar calendar;
+	private int year = 0;
+	private int month = 0;
+	private int day = 0;
+	private int hour = 0;
+	private int minute = 0;
+	private int second = 0;
+	private int millisecond = 0;
+	private double timezone = 0;
+	private boolean dst = false;
+	
 	
     public EarthDateTime(int jc)
     {
     	this.fromJulianCentury(jc);
     }
     
-    public EarthDateTime(int hour, int minute, int second, int timezone, boolean dst)
+    public EarthDateTime(int hour, int minute, int second, double timezone, boolean dst)
     {
     	setHour(hour);
     	setMinute(minute);
@@ -21,7 +34,7 @@ public class EarthDateTime
     	setDst(dst);
     }
     
-    public EarthDateTime(int year, int month, int day, int hour, int minute, int second, int timezone, boolean dst)
+    public EarthDateTime(int year, int month, int day, int hour, int minute, int second, double timezone, boolean dst)
     {
     	setYear(year);
     	setMonth(month);
@@ -29,10 +42,11 @@ public class EarthDateTime
     	setHour(hour);
     	setMinute(minute);
     	setSecond(second);
+    	setTimezone(timezone);
     	setDst(dst);
     }
     
-    public EarthDateTime(int year, int month, int day, double dayMinutes, int timezone, boolean dst)
+    public EarthDateTime(int year, int month, int day, double dayMinutes, double timezone, boolean dst)
     {
     	setYear(year);
     	setMonth(month);
@@ -42,23 +56,31 @@ public class EarthDateTime
     	fromMinutes(dayMinutes);
     }
     
-    public EarthDateTime(long milliseconds, int timezone, boolean dst)
+
+    
+    public EarthDateTime(Date date)
     {
-    	setTimezone(timezone);
-    	setDst(dst);
-    	fromMilliseconds(milliseconds);
+    	Calendar calendar = Calendar.getInstance();
+    	setYear(calendar.get(Calendar.YEAR));
+    	setMonth(calendar.get(Calendar.MONTH) + 1);
+    	setDay(calendar.get(Calendar.DAY_OF_MONTH));
+    	setHour(calendar.get(Calendar.HOUR_OF_DAY));
+    	setMinute(calendar.get(Calendar.MINUTE));
+    	setSecond(calendar.get(Calendar.SECOND));
+    	setMillisecond(calendar.get(Calendar.MILLISECOND));
+    	//this.calendar.setTime(date);
     }
     
-    public EarthDateTime(long milliseconds)
-    {
-    	fromMilliseconds(milliseconds);
-    }
+
+    
+    
     
     public EarthDateTime()
     {
-    	calendar = getCalendar();
+    	
     }
     
+    /*
     protected Calendar getCalendar()
     {
     	if (calendar == null) {
@@ -66,6 +88,7 @@ public class EarthDateTime
     	}
     	return calendar;
     }
+    */
     
     public static EarthDateTime today()
     {
@@ -74,19 +97,25 @@ public class EarthDateTime
 
     public double toMinutes()
     {
-    	return ((double)getCalendar().getTimeInMillis() / 1000.0) / 60.0;
+    	double hour = getHour();
+    	double minute = getMinute();
+    	double second = getSecond();
+    	
+    	return hour * 60.0 + minute + (second / 60.0);
     }
     
     public void fromMinutes(double dayMinutes)
     {
-    	fromMilliseconds(Math.round(dayMinutes * 1000.0));
+    	double hour = Math.floor(dayMinutes / 60.0);
+    	double minute = Math.floor(dayMinutes - (hour * 60.0));
+    	double second = Math.floor(60.0 * (dayMinutes - (hour * 60.0) -minute));
+    	
+    	setHour((int) hour);
+        setMinute((int) minute);
+        setSecond((int) second);
+        setMillisecond(0);
     }
-    
-    public void fromMilliseconds(long milliseconds)
-    {
-    	getCalendar().setTimeInMillis(milliseconds);
-    }
-    
+
     public double julianDay()
     {
     	
@@ -98,7 +127,7 @@ public class EarthDateTime
     
     public double timeLocal()
     {
-    	return (getHour() * 60.0) + getMinute() + (getSecond() / 60.0);
+    	return toMinutes();
     }
     
     public double julianCentury()
@@ -138,17 +167,22 @@ public class EarthDateTime
 
         double tl = Math.floor((jd - julianDay()) * 1440.0);
         fromMinutes(tl);
-        setTimezone(0);
+        //setTimezone(0);
     }
     
     public int dayOfYear()
     {
-    	return getCalendar().get(Calendar.DAY_OF_YEAR);
+    	//return getCalendar().get(Calendar.DAY_OF_YEAR);
+    	double k = (isLeapYear()) ? 1 : 2;
+        return (int) (Math.floor((275.0 * getMonth()) / 9.0) - k * Math.floor((getMonth() + 9.0) / 12.0) + getDay() - 30.0);
     }
     
     public String toString()
     {
-    	return null;
+    	String s = ""+getYear()+"."+getMonth()+"."+getDay()+" "+getHour()+":"+getMinute()+":"+getSecond();
+    	return s;
+    	//SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
+    	//return sdf.format(calendar.getTime());
     }
 
 
@@ -164,97 +198,103 @@ public class EarthDateTime
 
 	public int getYear()
 	{
-		return getCalendar().get(Calendar.YEAR);
+		return year;
 	}
 
 	public void setYear(int year)
 	{
-		getCalendar().set(Calendar.YEAR, year);
+		this.year = year;
 	}
 
 	public int getMonth()
 	{
-		return getCalendar().get(Calendar.MONTH) + 1;
+		return month;
 	}
 
 	public void setMonth(int month)
 	{
-		getCalendar().set(Calendar.MONTH, month - 1);
+		this.month = month;
 	}
 
 	public int getDay()
 	{
-		return getCalendar().get(Calendar.DAY_OF_MONTH);
+		return day;
 	}
 
 	public void setDay(int day)
 	{
-		getCalendar().set(Calendar.DAY_OF_MONTH, day);
+		this.day = day;
 	}
 
 	public int getHour()
 	{
-		return getCalendar().get(Calendar.HOUR_OF_DAY);
+		return hour;
 	}
 
 	public void setHour(int hour)
 	{
-		getCalendar().set(Calendar.HOUR_OF_DAY, hour);
+		this.hour = hour;
 	}
 
 	public int getMinute()
 	{
-		return getCalendar().get(Calendar.MINUTE);
+		return minute;
 	}
 
 	public void setMinute(int minute)
 	{
-		getCalendar().set(Calendar.MINUTE, minute);
+		this.minute = minute;
 	}
 
 	public int getSecond()
 	{
-		return getCalendar().get(Calendar.SECOND);
+		return second;
 	}
 
 	public void setSecond(int second)
 	{
-		getCalendar().set(Calendar.SECOND, second);
+		this.second = second;
 	}
 
 	public int getMillisecond()
 	{
-		return getCalendar().get(Calendar.MILLISECOND);
+		return millisecond;
 	}
 	
 	public void setMillisecond(int millisecond)
 	{
-		getCalendar().set(Calendar.MILLISECOND, millisecond);
+		this.millisecond = millisecond;
 	}
 	
-	public int getTimezone()
+
+	
+	public double getTimezone()
 	{
-		return (int) (((double)getCalendar().get(Calendar.ZONE_OFFSET) / 1000.0) / 3600.0);
+		return timezone;
 	}
 
-	public void setTimezone(int timezone)
+	public void setTimezone(double timezone)
 	{
-		getCalendar().set(Calendar.ZONE_OFFSET, (timezone * 3600) * 1000);
+		this.timezone = timezone;
 	}
 
 	public boolean isDst()
 	{
-		return getCalendar().get(Calendar.DST_OFFSET) != 0;
+		return dst;
 	}
 
 	public void setDst(boolean dst)
 	{
-		if (dst) {
-			getCalendar().set(Calendar.DST_OFFSET, 3600000);
-		} else {
-			getCalendar().set(Calendar.DST_OFFSET, 0);
-		}
+		this.dst = dst;
 	}
     
-    
+	public EarthDateTime clone() 
+	{
+		try {
+			EarthDateTime e = (EarthDateTime) super.clone();
+			return e;
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError();
+		}
+	}
 }

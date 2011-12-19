@@ -37,6 +37,9 @@ public class ModelCanvas
 {
 	private static Log log = Logging.getLog(ModelCanvas.class);
 	
+	private int width;
+	private int height;
+	
 	private MapProjection mapProjection;
 	private ModelContext modelContext;
 	private Color backgroundColor;
@@ -61,6 +64,12 @@ public class ModelCanvas
 		this.modelContext = modelContext;
 		backgroundColor = ColorSerializationUtil.stringToColor(modelContext.getModelOptions().getBackgroundColor());
 		modelDimensions = modelContext.getModelDimensions();
+		
+		width = modelContext.getModelDimensions().getOutputWidth();
+		height = modelContext.getModelDimensions().getOutputHeight();
+		//width = modelContext.getModelOptions().getWidth();
+		//height = modelContext.getModelOptions().getHeight();
+		
 		//modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
 		
 		isAntiAliased = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED);
@@ -495,12 +504,14 @@ public class ModelCanvas
 	
 	public int getWidth()
 	{
-		return modelDimensions.getOutputWidth();
+		return width;
+		//return modelDimensions.getOutputWidth();
 	}
 	
 	public int getHeight()
 	{
-		return modelDimensions.getOutputHeight();
+		return height;
+		//return modelDimensions.getOutputHeight();
 	}
 	
 	public boolean isDisposed()
@@ -522,19 +533,24 @@ public class ModelCanvas
 	
 	public Image getFinalizedImage()
 	{
+		
 		BufferedImage finalImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D graphics = (Graphics2D) finalImage.createGraphics();
 		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		if (modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED)) {
 			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		}
-		graphics.drawImage(image, 0, 0, null);
+		graphics.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+		
+		
+		//BufferedImage finalImage = ImageUtilities.getScaledInstance(image, getWidth(), getHeight(), RenderingHints.VALUE_INTERPOLATION_BILINEAR, false);
 		if (isAntiAliased) {
 			stripAlphaChannel(finalImage);
 		}
 		applyBackgroundColor(finalImage);
 		graphics.dispose();
 		return finalImage;
+		
 	}
 	
 	protected void applyBackgroundColor(BufferedImage image)

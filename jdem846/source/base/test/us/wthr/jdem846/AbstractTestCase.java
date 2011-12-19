@@ -1,10 +1,13 @@
 package us.wthr.jdem846;
 
+import junit.framework.TestCase;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
-public class AbstractTestMain
+public class AbstractTestCase extends TestCase
 {
+	protected static Log log;
+	
 	protected static void bootstrapSystemProperties()
 	{
 		
@@ -19,6 +22,9 @@ public class AbstractTestMain
 			System.setProperty("us.wthr.jdem846.userSettingsPath", System.getProperty("user.home") + "/.jdem846");
 		}
 		
+		if (System.getProperty("us.wthr.jdem846.testOutputPath") == null) {
+			System.setProperty("us.wthr.jdem846.testOutputPath", System.getProperty("user.dir") + "/test-output");
+		}
 	}
 	
 	
@@ -28,7 +34,7 @@ public class AbstractTestMain
 		
 		JDem846Properties.initializeApplicationProperties();
 		
-		Log log = Logging.getLog(AbstractTestMain.class);
+		log = Logging.getLog(AbstractTestMain.class);
 
 		if (initRegistry) {
 			RegistryKernel regKernel = new RegistryKernel();
@@ -36,5 +42,16 @@ public class AbstractTestMain
 		}
 
 	}
+
+
+	@Override
+	protected void setUp() throws Exception
+	{
+		super.setUp();
+		initialize(false);
+	}
+	
+	
+	
 	
 }
