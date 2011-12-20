@@ -47,6 +47,7 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.gridfloat.GridFloat;
+import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
@@ -82,6 +83,7 @@ public class LightingPreviewPanel extends Panel
 	
 	
 	private ModelOptions modelOptions;
+	private LightingContext lightingContext;
 	private RasterDataContext rasterDataContext;
 	private ModelContext modelContext;
 	private Dem2dGenerator dem2d;
@@ -117,7 +119,7 @@ public class LightingPreviewPanel extends Panel
 		this.addMouseMotionListener(mouseAdapter);
 		
 		
-		
+		lightingContext = new LightingContext();
 		modelOptions = new ModelOptions();
 		modelOptions.setColoringType(JDem846Properties.getProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewColoring"));
 		
@@ -139,8 +141,8 @@ public class LightingPreviewPanel extends Panel
 			modelOptions.setBackgroundColor(I18N.get("us.wthr.jdem846.color.transparent"));
 			modelOptions.setWidth(rasterData.getColumns());
 			modelOptions.setHeight(rasterData.getRows());
-			modelOptions.setRelativeLightIntensity(0.75);
-			modelOptions.setRelativeDarkIntensity(1.0);
+			lightingContext.setRelativeLightIntensity(0.75);
+			lightingContext.setRelativeDarkIntensity(1.0);
 			modelOptions.setDoublePrecisionHillshading(false);
 			modelOptions.setTileSize(1000);
 			modelOptions.setGridSize(2);
@@ -154,7 +156,7 @@ public class LightingPreviewPanel extends Panel
 			rasterDataContext.fillBuffers();
 			rasterDataContext.calculateElevationMinMax(true);
 			
-			modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
+			modelContext = ModelContext.createInstance(rasterDataContext, lightingContext, modelOptions);
 			
 			dem2d = new Dem2dGenerator(modelContext);
 		} catch (Exception e1) {
@@ -408,7 +410,7 @@ public class LightingPreviewPanel extends Panel
 	public void setSolarAzimuth(double solarAzimuth)
 	{
 		this.solarAzimuth = solarAzimuth;
-		modelOptions.setLightingAzimuth(solarAzimuth);
+		lightingContext.setLightingAzimuth(solarAzimuth);
 	}
 
 
@@ -421,7 +423,7 @@ public class LightingPreviewPanel extends Panel
 	public void setSolarElevation(double solarElevation)
 	{
 		this.solarElevation = solarElevation;
-		modelOptions.setLightingElevation(solarElevation);
+		lightingContext.setLightingElevation(solarElevation);
 	}
 
 	

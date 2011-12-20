@@ -17,6 +17,8 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -44,7 +46,7 @@ public class ClosableTab extends Panel
 {
 	private static Log log = Logging.getLog(ClosableTab.class);
 	
-	private Label lblTitle;
+	private TabLabel lblTitle;
 	private Button btnClose;
 	private boolean closable;
 	
@@ -55,13 +57,13 @@ public class ClosableTab extends Panel
 		// Set Properties
 		this.closable = closable;
 		setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+		setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		this.setOpaque(false);
-
+		
 		// Create components
-		lblTitle = new Label(title);
-		lblTitle.setOpaque(false);
-		lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+		lblTitle = new TabLabel(title);
+		//lblTitle.setOpaque(true);
+		//lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 		
 		btnClose = new Button();
 		
@@ -75,8 +77,9 @@ public class ClosableTab extends Panel
 		btnClose.setOpaque(false);
 		btnClose.setContentAreaFilled(false);
 		btnClose.setFocusable(false);
-		btnClose.setBorder(BorderFactory.createEtchedBorder());
-		btnClose.setBorderPainted(false);
+		//btnClose.setBorder(BorderFactory.createEtchedBorder());
+		btnClose.setBorder(BorderFactory.createEmptyBorder(3, 6, 0, 0));
+		//btnClose.setBorderPainted(false);
 		
 		// Set Tooltips
 		btnClose.setToolTipText(I18N.get("us.wthr.jdem846.ui.closableTab.closeButton.tooltip"));
@@ -101,6 +104,9 @@ public class ClosableTab extends Panel
 		
 		
 	}
+	
+	
+	
 
 	@Override
 	public void dispose() throws ComponentException
@@ -150,5 +156,25 @@ public class ClosableTab extends Panel
 	public void setTitle(String title)
 	{
 		lblTitle.setText(title);
+	}
+	
+	class TabLabel extends Label {
+		
+		public TabLabel(String text)
+		{
+			super(text);
+			setOpaque(false);
+			setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+			setFont(new Font("arial unicode MS", Font.PLAIN, 12));
+		}
+		
+		@Override
+		public void paint(Graphics g)
+		{
+			if (!JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.usingJGoodies")) {
+				super.paint(g);
+			}
+		}
+		
 	}
 }

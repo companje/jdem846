@@ -19,6 +19,7 @@ package us.wthr.jdem846.ui;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ui.base.MenuBar;
 
 @SuppressWarnings("serial")
@@ -30,7 +31,9 @@ public class MainMenuBar extends MenuBar
 	
 	protected MainMenuBar()
 	{
-		
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.usingJGoodies")) {
+			putClientProperty("jgoodies.headerStyle", "Both");
+		}
 	}
 	
 	

@@ -90,6 +90,9 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		point.column = -pointVector[0] + (getWidth()/2.0);
 		point.row = pointVector[1] + (getHeight()/2.0);
 		
+		
+		//log.info("Lat/Lon " + latitude + "/" + longitude + " projected to X/Y " + point.column + "/" + point.row + " - Width/Height: " + getWidth() + "/" + getHeight() + ", N/S: " + getNorth() + "/" + getSouth());
+		
 		//log.info("row/col: " + point.row + "/" + point.column);
 		
 	}

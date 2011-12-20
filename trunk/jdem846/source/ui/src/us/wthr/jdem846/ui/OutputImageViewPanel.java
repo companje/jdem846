@@ -24,6 +24,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -125,6 +126,7 @@ public class OutputImageViewPanel extends JdemPanel
 		//bottomStatusLabel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		
 		spinner = new ProcessWorkingSpinner();
+		spinner.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
 		spinner.step();
 		buttonBar.add( Box.createHorizontalGlue() );
 		buttonBar.add(spinner);

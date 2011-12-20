@@ -72,12 +72,12 @@ public class DockingContainerPanel extends Panel
 		outterSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 		outterSplit.setBorder(BorderFactory.createEmptyBorder());
 		outterSplit.setResizeWeight(0);
-		outterSplit.setDividerSize(5);
+		//outterSplit.setDividerSize(5);
 		
 		innerSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 		innerSplit.setBorder(BorderFactory.createEmptyBorder());
 		innerSplit.setResizeWeight(1);
-		innerSplit.setDividerSize(5);
+		//innerSplit.setDividerSize(5);
 		
 		innerSplit.add(centerTabPanel);
 		innerSplit.add(rightPanel);

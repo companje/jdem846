@@ -43,7 +43,10 @@ public class JDem846Properties
 	
 	
 	
-
+	public static void setProperty(String name, String value)
+	{
+		properties.setProperty(name, value);
+	}
 	
 	public static String getProperty(String name)
 	{

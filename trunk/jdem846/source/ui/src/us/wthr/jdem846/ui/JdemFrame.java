@@ -204,6 +204,7 @@ public class JdemFrame extends Frame
 		timer.schedule(task, 500);
 		
 		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.ready"));
+		
 	}
 	
 	protected void openFileList(String[] paths)

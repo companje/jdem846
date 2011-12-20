@@ -57,13 +57,14 @@ public class ToolbarButton extends Button
 		this.addActionListener(actionListener);
 
 		// Only use this border on Windows with the native look & feel
-		if (UIManager.getSystemLookAndFeelClassName().contains("Windows")) {
-			this.setBorder(new ButtonBorder());
-		}
+		//if (UIManager.getSystemLookAndFeelClassName().contains("Windows")) {
+		//	this.setBorder(new ButtonBorder());
+		//}
 		
 		//this.setMargin(new Insets(3, 3, 3, 3));
 		textIsDisplayed = true;
-		addMouseHandlers();
+		setFocusPainted(false);
+		//addMouseHandlers();
 	}
 	
 	
@@ -78,8 +79,8 @@ public class ToolbarButton extends Button
 		this.addActionListener(actionListener);
 		
 		textIsDisplayed = false;
-		addMouseHandlers();
-		setMouseOutStyle();
+		//addMouseHandlers();
+		//setMouseOutStyle();
 	}
 
 	protected void setMouseOverStyle()
@@ -110,6 +111,7 @@ public class ToolbarButton extends Button
 		});
 	}
 	
+	/*
 	@Override
 	public void paint(Graphics g)
 	{
@@ -120,7 +122,7 @@ public class ToolbarButton extends Button
 		}
 		super.paint(g);
 	}
-	
+	*/
 	
 	public boolean isTextDisplayed()
 	{

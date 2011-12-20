@@ -18,6 +18,8 @@ package us.wthr.jdem846.ui;
 
 import java.awt.FlowLayout;
 
+import javax.swing.BorderFactory;
+
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ToolBar;
 
@@ -31,6 +33,8 @@ public class MainButtonBar extends Panel
 	{
 		FlowLayout layout = new FlowLayout();
 		layout.setAlignment(FlowLayout.LEFT);
+		layout.setHgap(0);
+		layout.setVgap(0);
 		setLayout(layout);
 	}
 	

@@ -18,9 +18,20 @@ package us.wthr.jdem846.ui;
 
 
 
+import java.awt.Font;
 import java.io.File;
 import java.util.Random;
 import java.util.UUID;
+
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+
+import com.jgoodies.looks.FontPolicies;
+import com.jgoodies.looks.FontPolicy;
+import com.jgoodies.looks.FontSet;
+import com.jgoodies.looks.FontSets;
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
@@ -42,7 +53,7 @@ import us.wthr.jdem846.util.InstanceIdentifier;
 public class JDemUiMain 
 {
 	
-	
+	private static Log log = null;
 	
 	
 	/** Sets base system property values
@@ -160,11 +171,19 @@ public class JDemUiMain
 		
 		JDem846Properties.initializeApplicationProperties();
 		
-		final Log log = Logging.getLog(JDemUiMain.class);
+		log = Logging.getLog(JDemUiMain.class);
 		
 		String instanceId = InstanceIdentifier.getInstanceId();
 		log.info("Instance ID: " + instanceId);
 		
+		/*
+		UIManager.installLookAndFeel("JGoodies Plastic 3D", "com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
+		for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
+			log.info("LaF: " + laf.getName());
+		}
+		*/
+		
+		applyLookAndFeel(false);
 		
 		log.info("Starting...");
 		
@@ -233,5 +252,112 @@ public class JDemUiMain
 			splash.setVisible(false);
 		
 	}
+	
+	
 
+	protected static void applyLookAndFeel(boolean forceConfiguredDefault)
+	{
+		String lafWindows = JDem846Properties.getProperty("us.wthr.jdem846.ui.swingLaf.windows");
+		String lafLinux = JDem846Properties.getProperty("us.wthr.jdem846.ui.swingLaf.windows");
+		String lafDefault = JDem846Properties.getProperty("us.wthr.jdem846.ui.swingLaf.windows");
+		
+		if (lafDefault == null) {
+			lafDefault = "Metal";
+		}
+		
+		if (lafWindows == null) {
+			lafWindows = lafDefault;
+		}
+		
+		if (lafLinux == null) {
+			lafLinux = lafDefault;
+		}
+		
+		String os = JDem846Properties.getProperty("os.name");
+		
+		String laf = lafDefault;
+		if (os.toUpperCase().contains("WINDOWS") && !forceConfiguredDefault) {
+			laf = lafWindows;
+		} else if (os.toUpperCase().contains("LINUX") && !forceConfiguredDefault) {
+			laf = lafLinux;
+		}
+		
+		if (laf != null && laf.startsWith("com.jgoodies.looks")) {
+			JDem846Properties.setProperty("us.wthr.jdem846.ui.usingJGoodies", "true");
+			setJGoodiesSettings();
+		} else {
+			JDem846Properties.setProperty("us.wthr.jdem846.ui.usingJGoodies", "false");
+		}
+		
+		// check if laf is "default", if so leave the Look & Feel to whatever
+		// the JVM default is and exit.
+		if (laf.equalsIgnoreCase("default")) {
+			return;
+		}
+		
+		try {
+			log.info("Applying Look & Feel: '" + laf + "'");
+			if (laf != null) {
+				UIManager.setLookAndFeel(laf);
+				log.info("Applied Look & Feel: '" + laf + "'");
+			    //for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+			    //    if (laf.equalsIgnoreCase(info.getName())) {
+			   //        UIManager.setLookAndFeel(info.getClassName());
+			            log.info("Applied Look & Feel: '" + laf + "'");
+			   //         break;
+			   //     }
+			   // }
+			}
+		} catch (Exception ex) {
+		    // We really don't care if the specified look & feel is not available, but if that's
+			// the case, we recall this function and force the configured default. If we're
+			// already in the forced config'd default call, then fail and fall back to the
+			// JVM default Look & Feel.
+			
+			if (!forceConfiguredDefault) {
+				log.warn("Failed to apply configured look and feel '" + laf + "', reverting to application default.", ex);
+				applyLookAndFeel(true);
+			} else {
+				log.warn("Failed to apply application default look & feel, falling back to JVM default.", ex);
+			}
+		}
+	}
+
+	public static void setJGoodiesSettings()
+	{
+		log.info("Applying JGoodies Settings");
+		
+		
+		
+		LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
+		boolean found = false;
+		for (int i = 0; i < lnfs.length; i++) {
+			if (lnfs[i].getName().equals("JGoodies Plastic 3D")) {
+				found = true;
+			}
+		}
+		if (!found) {
+			UIManager.installLookAndFeel("JGoodies Plastic 3D",
+					"com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
+		}
+		
+		String os = System.getProperty("os.name");
+		FontSet fontSet = null;
+		if (os.startsWith("Windows")) {
+			fontSet = FontSets.createDefaultFontSet(new Font(
+					"arial unicode MS", Font.PLAIN, 12));
+		} else {
+			fontSet = FontSets.createDefaultFontSet(new Font(
+					"arial unicode", Font.PLAIN, 12));				
+		}
+		FontPolicy fixedPolicy = FontPolicies.createFixedPolicy(fontSet);
+		PlasticLookAndFeel.setFontPolicy(fixedPolicy);
+
+		
+		//PlasticLookAndFeel.setTabStyle(PlasticLookAndFeel.TAB_STYLE_METAL_VALUE);
+
+		//UIManager
+		//		.setLookAndFeel("com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
+	}
+	
 }
