@@ -62,6 +62,7 @@ public class FlexGridPanel extends Panel
 		
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = GridBagConstraints.BOTH;
+		
 		constraints.weightx = 1.0;
 		constraints.insets = new Insets(2, 0, 2, 0);
 		addColumn++;

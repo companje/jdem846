@@ -31,7 +31,7 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
-public class TopButtonBar extends ToolBar
+public class TopButtonBar extends ComponentButtonBar
 {
 
 	public static final int BTN_NEW_PROJECT = 0;
@@ -49,6 +49,7 @@ public class TopButtonBar extends ToolBar
 	
 	public TopButtonBar()
 	{
+		super(null);
 		// Create components
 		
 		jbtnNewProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.new"), new ActionListener() {
@@ -86,7 +87,7 @@ public class TopButtonBar extends ToolBar
 		jbtnSaveProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectTooltip"));
 		jbtnExit.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.exitTooltip"));
 		
-		this.setMargin(new Insets(3, 3, 3, 3));
+		//this.setMargin(new Insets(3, 3, 3, 3));
 		
 		// Set layout
 		add(jbtnNewProject);

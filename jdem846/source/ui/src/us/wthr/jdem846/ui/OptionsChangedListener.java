@@ -16,9 +16,10 @@
 
 package us.wthr.jdem846.ui;
 
+import us.wthr.jdem846.MappedOptions;
 import us.wthr.jdem846.ModelOptions;
 
 public interface OptionsChangedListener
 {
-	public void onOptionsChanged(ModelOptions options);
+	public void onOptionsChanged(MappedOptions options);
 }

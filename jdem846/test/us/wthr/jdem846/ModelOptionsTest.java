@@ -42,9 +42,9 @@ public class ModelOptionsTest extends TestCase
 		assert modelOptions.getWriteTo().equals(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.writeTo"));
 		assert modelOptions.getWidth() == Integer.parseInt(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.width"));
 		assert modelOptions.getHeight() == Integer.parseInt(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.height"));
-		assert modelOptions.getHillShadeType() == Integer.parseInt(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.hillShadeType"));
+		//assert modelOptions.getHillShadeType() == Integer.parseInt(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.hillShadeType"));
 		assert modelOptions.getTileSize() == Integer.parseInt(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.tileSize"));
-		assert modelOptions.getLightingMultiple() == Double.parseDouble(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.lightingMultiple"));
+		//assert modelOptions.getLightingMultiple() == Double.parseDouble(JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.lightingMultiple"));
 		
 		/*
 		 * 

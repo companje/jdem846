@@ -22,6 +22,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
+import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
@@ -46,18 +47,20 @@ public class ModelContext
 	private ShapeDataContext shapeDataContext;
 	private ModelOptions modelOptions;
 	private ScriptProxy scriptProxy;
+	private LightingContext lightingContext;
 	private String contextId;
 	
 	private MapProjection mapProjection;
 	private ModelDimensions2D modelDimensions;
 	private ModelCanvas modelCanvas = null;
 	
-	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
+	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
 	{
 		this.rasterDataContext = rasterDataContext;
 		this.shapeDataContext = shapeDataContext;
 		this.modelOptions = modelOptions;
 		this.scriptProxy = scriptProxy;
+		this.lightingContext = lightingContext;
 	}
 
 	
@@ -125,6 +128,13 @@ public class ModelContext
 		return scriptProxy;
 	}
 
+	
+	public LightingContext getLightingContext()
+	{
+		return lightingContext;
+	}
+
+
 	public String getContextId()
 	{
 		return contextId;
@@ -176,11 +186,12 @@ public class ModelContext
 		RasterDataContext rasterDataCopy = (rasterDataContext == null) ? null : rasterDataContext.copy();
 		ShapeDataContext shapeDataCopy = (shapeDataContext == null) ? null : shapeDataContext.copy();
 		ModelOptions modelOptionsCopy = (modelOptions == null) ? null : modelOptions.copy();
+		LightingContext lightingContextCopy = (lightingContext == null) ? null : lightingContext.copy();
 		
 		// TODO: Implement script proxy copy
 		ScriptProxy scriptProxyCopy = null;//(scriptProxy == null) ? null : scriptProxy.copy();
 		
-		ModelContext clone = ModelContext.createInstance(rasterDataCopy, shapeDataCopy, modelOptionsCopy, scriptProxyCopy);
+		ModelContext clone = ModelContext.createInstance(rasterDataCopy, shapeDataCopy, lightingContextCopy, modelOptionsCopy, scriptProxyCopy);
 		return clone;
 
 	}
@@ -190,18 +201,28 @@ public class ModelContext
 	
 	public static ModelContext createInstance(RasterDataContext rasterDataContext, ModelOptions modelOptions)
 	{
-		return ModelContext.createInstance(rasterDataContext, null, modelOptions, null);
+		return ModelContext.createInstance(rasterDataContext, null, null, modelOptions, null);
+	}
+	
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions)
+	{
+		return ModelContext.createInstance(rasterDataContext, null, lightingContext, modelOptions, null);
 	}
 	
 	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions)
 	{
-		return ModelContext.createInstance(rasterDataContext, shapeDataContext, modelOptions, null);
+		return ModelContext.createInstance(rasterDataContext, shapeDataContext, null, modelOptions, null);
 	}
 	
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions, ScriptProxy scriptProxy)
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, LightingContext lightingContext, ModelOptions modelOptions)
+	{
+		return ModelContext.createInstance(rasterDataContext, shapeDataContext, lightingContext, modelOptions, null);
+	}
+	
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy)
 	{
 		String contextId = ModelContext.generateContextId();
-		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, modelOptions, scriptProxy, contextId);
+		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, lightingContext, modelOptions, scriptProxy, contextId);
 		modelContext.updateContext();
 		return modelContext;
 	}

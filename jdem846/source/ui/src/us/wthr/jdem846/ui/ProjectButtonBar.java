@@ -92,7 +92,7 @@ public class ProjectButtonBar extends ComponentButtonBar
 		
 		
 		
-		this.setMargin(new Insets(3, 3, 3, 3));
+		//this.setMargin(new Insets(3, 3, 3, 3));
 		
 		// Create layout
 		add(jbtnAdd);

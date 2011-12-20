@@ -21,10 +21,14 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
 
+import javax.swing.JTabbedPane;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
+import com.jgoodies.looks.Options;
+
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ui.base.TabPane;
 
 @SuppressWarnings("serial")
@@ -34,7 +38,17 @@ public class EmbeddedTabbedPane extends TabPane
 	
 	public EmbeddedTabbedPane()
 	{	
-		setUI(new EmbeddedTabbedPaneUI());
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.usingJGoodies")) {
+			putClientProperty("jgoodies.noContentBorder", Boolean.TRUE);
+			putClientProperty("jgoodies.embeddedTabs", Boolean.TRUE);
+		} else {
+			setUI(new EmbeddedTabbedPaneUI());
+		}
+		
+		
+		
+		
+
 	}
 	
 	
@@ -45,42 +59,7 @@ public class EmbeddedTabbedPane extends TabPane
 		{
 
 		}
-		
-		/*
-		@Override
-		protected void paintTabBorder(Graphics g, int tabPlacement,
-				int tabIndex, int x, int y, int w, int h, boolean isSelected)
-		{
-			Rectangle bounds = getTabBounds(this.tabPane, tabIndex);
-			
-			int left = bounds.x;
-			int top = bounds.y;
-			
-			g.setColor(Color.GRAY);
-			g.drawRoundRect(left, top, w, maxTabHeight + 2, 4, 4);
 
-			if (isSelected) {
-				g.setColor(Color.WHITE);
-				g.drawRoundRect(left+1, top+1, w-2, maxTabHeight + 2, 4, 4);
-			}
-			
-			g.setColor(tabPane.getBackground());
-			g.fillRect(left + 1, h, w - 2, h + 2);
-		}
-
-		@Override
-		protected void paintTabBackground(Graphics g, int tabPlacement,
-				int tabIndex, int x, int y, int w, int h, boolean isSelected)
-		{
-
-			Rectangle bounds = getTabBounds(this.tabPane, tabIndex);
-			int left = bounds.x;
-			int top = bounds.y;
-			
-			g.setColor(tabPane.getBackground());
-			g.fillRect(left, top, w, h);
-		}
-		*/
 		
 		@Override
 		protected void paintContentBorderTopEdge(Graphics g, int tabPlacement,

@@ -36,8 +36,8 @@ public class LightingValueControl extends Panel
 		// create controls
 		txtValue = new TextField("");
 		txtValue.setEditable(false);
-		btnChange = new Button(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightingConfig.change.label"));
-		btnChange.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightingConfig.change.tooltip"));
+		btnChange = new Button(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.lightingConfig.change.label"));
+		btnChange.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.lightingConfig.change.tooltip"));
 		
 		
 		// Add Listeners

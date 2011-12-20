@@ -21,6 +21,7 @@ import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
@@ -29,6 +30,13 @@ public class ComponentButtonBar extends ToolBar
 	
 	public ComponentButtonBar(Component owner)
 	{
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.usingJGoodies")) {
+			putClientProperty("jgoodies.headerStyle", "Both");
+			setRollover(true);
+			setFloatable(false);
+		}
+		
+		
 		if (owner != null) {
 			owner.addComponentListener(new ComponentAdapter() {
 				public void componentHidden(ComponentEvent e)
@@ -41,7 +49,7 @@ public class ComponentButtonBar extends ToolBar
 				}
 			});
 		}
-		this.setMargin(new Insets(3, 3, 3, 3));
+		//this.setMargin(new Insets(3, 3, 3, 3));
 		
 	}
 	

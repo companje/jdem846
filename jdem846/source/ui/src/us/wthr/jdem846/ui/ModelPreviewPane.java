@@ -358,7 +358,17 @@ public class ModelPreviewPane extends RoundedPanel
 		int[] textColor = {0x0, 0x0, 0x0, 0xFF};
 
 		MapProjection projection = canvas.getMapProjection();
+		
 		MapPoint point = new MapPoint();
+		
+		
+		
+		double latStep = (canvas.getNorth() - canvas.getSouth()) / canvas.getHeight();
+		double lonStep = (canvas.getEast() - canvas.getWest()) / canvas.getWidth();
+		
+		// TODO: Broken for Equirectangular 3D
+		log.info("*** Canvas Width/Height: " + canvas.getWidth() + "/" + canvas.getHeight());
+		log.info("Lat/Lon Steps: " + latStep + "/" + lonStep);
 		
 		for (int i = modelContext.getRasterDataContext().getRasterDataListSize() - 1; i >= 0; i--) {
 			RasterData rasterData = modelContext.getRasterDataContext().getRasterDataList().get(i);
@@ -371,10 +381,34 @@ public class ModelPreviewPane extends RoundedPanel
 			
 
 			Path2D.Double path = new Path2D.Double();
-			int pointCount = 0;
+			
+			/*
+			try {
+				projection.getPoint(north, west, 0.0, point);
+				path.moveTo(point.column, point.row);
+				
+				projection.getPoint(south, west, 0.0, point);
+				path.moveTo(point.column, point.row);
+				
+				projection.getPoint(south, east, 0.0, point);
+				path.moveTo(point.column, point.row);
+				
+				projection.getPoint(north, east, 0.0, point);
+				path.moveTo(point.column, point.row);
+				
+				path.closePath();
+				canvas.fillShape(fillColor, null, path);
+			} catch (Exception ex) {
+				log.error("Aw, crap! " + ex.getMessage(), ex);
+			}
+			
+			path.reset();
+			*/
+			
 			
 			try {
-				for (double latitude = north; latitude >= south; latitude -= 1) {
+				int pointCount = 0;
+				for (double latitude = north; latitude >= south; latitude -= latStep) {
 					double longitude = west;
 					projection.getPoint(latitude, longitude, 0.0, point);
 					
@@ -384,22 +418,22 @@ public class ModelPreviewPane extends RoundedPanel
 						path.lineTo(point.column, point.row);
 					}
 					
-					pointCount++;
+					pointCount = 1;
 				}
 				
-				for (double longitude = west; longitude <= east; longitude+=1) {
+				for (double longitude = west; longitude <= east; longitude+=lonStep) {
 					double latitude = south;
 					projection.getPoint(latitude, longitude, 0.0, point);
 					path.lineTo(point.column, point.row);
 				}
 				
-				for (double latitude = south; latitude <= north; latitude+=1) {
+				for (double latitude = south; latitude <= north; latitude+=latStep) {
 					double longitude = east;
 					projection.getPoint(latitude, longitude, 0.0, point);
 					path.lineTo(point.column, point.row);
 				}
 				
-				for (double longitude = east; longitude >= west; longitude-=1) {
+				for (double longitude = east; longitude >= west; longitude-=lonStep) {
 					double latitude = north;
 					projection.getPoint(latitude, longitude, 0.0, point);
 					path.lineTo(point.column, point.row);
@@ -417,7 +451,6 @@ public class ModelPreviewPane extends RoundedPanel
 				log.error("Failed to project point: " + ex.getMessage(), ex);
 				return;
 			}
-			
 			
 			double coordWidthLat = (Math.abs(north) + Math.abs(south)) / 12;
 			double coordWidthLon = (Math.abs(west) + Math.abs(east)) / 24;

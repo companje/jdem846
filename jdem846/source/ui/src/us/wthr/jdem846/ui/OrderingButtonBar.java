@@ -29,7 +29,7 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
-public class OrderingButtonBar extends ToolBar
+public class OrderingButtonBar extends ComponentButtonBar
 {
 	public static final int BTN_MOVE_TOP = 0;
 	public static final int BTN_MOVE_UP = 1;
@@ -47,8 +47,8 @@ public class OrderingButtonBar extends ToolBar
 	public OrderingButtonBar()
 	{
 		// Set Properties
-		
-		this.setFloatable(false);
+		super(null);
+		//this.setFloatable(false);
 		
 		// Create buttons
 		jbtnMoveTop = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.orderingButtonBar.moveTop.label"), JDem846Properties.getProperty("us.wthr.jdem846.ui.orderingButtonBar.moveTop"), new ActionListener() {
@@ -88,9 +88,9 @@ public class OrderingButtonBar extends ToolBar
 		
 		// Set layout
 		
-		FlowLayout layout = new FlowLayout();
-		layout.setAlignment(FlowLayout.LEFT);
-		this.setLayout(layout);
+		//FlowLayout layout = new FlowLayout();
+		//layout.setAlignment(FlowLayout.LEFT);
+		//this.setLayout(layout);
 		
 		add(jbtnMoveTop);
 		add(jbtnMoveUp);

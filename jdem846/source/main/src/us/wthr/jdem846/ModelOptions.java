@@ -33,15 +33,10 @@ import us.wthr.jdem846.util.NumberFormattingUtil;
  * @author Kevin M. Gill
  *
  */
-public class ModelOptions
+public class ModelOptions extends MappedOptions
 {
 	public static final int SPOT_EXPONENT_MINIMUM = 1;
 	public static final int SPOT_EXPONENT_MAXIMUM = 5;
-	
-
-	
-	private Map<String, String> optionsMap = new HashMap<String, String>();
-
 	
 	private String userScript = null;
 	private ScriptLanguageEnum scriptLanguage = null;
@@ -51,7 +46,9 @@ public class ModelOptions
 	
 	public ModelOptions()
 	{
-
+		
+		addOptionPrefix("us.wthr.jdem846.modelOptions");
+		
 		for (ModelOptionNamesEnum optionName : ModelOptionNamesEnum.values()) {
 			String property = JDem846Properties.getProperty(optionName.optionName());
 			if (property != null) {
@@ -72,34 +69,7 @@ public class ModelOptions
 		
 	}
 	
-	public Set<String> getOptionNames()
-	{
-		return optionsMap.keySet();
-	}
-	
-	public void setOption(String name, Object value)
-	{
-		String sValue = null;
-		
-		if (value == null) {
-			return;
-		}
-		
-		if (value instanceof String) {
-			sValue = (String) value;
-		} else if (value instanceof Integer ||
-					value instanceof Double ||
-					value instanceof Long ||
-					value instanceof Float) {
-			sValue = NumberFormattingUtil.format(value);
-		} else if (value instanceof Boolean){
-			sValue = Boolean.toString((Boolean)value);
-		} else {
-			throw new InvalidParameterException("Invalid parameter type: " + value.getClass().getName());
-		}
-		
-		optionsMap.put(name, sValue);
-	}
+
 	
 	public void setOption(ModelOptionNamesEnum name, Object value)
 	{
@@ -108,95 +78,48 @@ public class ModelOptions
 	
 
 	
-	public String getOption(String name)
-	{
-		return optionsMap.get(name);
-	}
-	
 	public String getOption(ModelOptionNamesEnum name)
 	{
 		return getOption(name.optionName());
 	}
-	
-	public boolean hasOption(String name)
-	{
-		return (optionsMap.containsKey(name));
-	}
+
 	
 	public boolean hasOption(ModelOptionNamesEnum name)
 	{
 		return hasOption(name.optionName());
 	}
-	
-	public String removeOption(String name)
-	{
-		return optionsMap.remove(name);
-	}
+
 	
 	public String removeOption(ModelOptionNamesEnum name)
 	{
 		return removeOption(name.optionName());
 	}
-	
-	public boolean getBooleanOption(String name)
-	{
-		if (hasOption(name))
-			return Boolean.parseBoolean(getOption(name));
-		else
-			return false;
-	}
+
 	
 	public boolean getBooleanOption(ModelOptionNamesEnum name)
 	{
 		return getBooleanOption(name.optionName());
 	}
 	
-	public int getIntegerOption(String name)
-	{
-		if (hasOption(name))
-			return Integer.parseInt(getOption(name));
-		else
-			return 0;
-	}
+
 	
 	public int getIntegerOption(ModelOptionNamesEnum name)
 	{
 		return getIntegerOption(name.optionName());
 	}
-	
-	public double getDoubleOption(String name)
-	{
-		if (hasOption(name))
-			return Double.parseDouble(getOption(name));
-		else
-			return 0.0;
-	}
+
 	
 	public double getDoubleOption(ModelOptionNamesEnum name)
 	{
 		return getDoubleOption(name.optionName());
 	}
-	
-	public float getFloatOption(String name)
-	{
-		if (hasOption(name))
-			return Float.parseFloat(getOption(name));
-		else
-			return 0.0f;
-	}
+
 	
 	public float getFloatOption(ModelOptionNamesEnum name)
 	{
 		return getFloatOption(name.optionName());
 	}
-	
-	public long getLongOption(String name)
-	{
-		if (hasOption(name))
-			return Long.parseLong(getOption(name));
-		else
-			return 0;
-	}
+
 	
 	public long getLongOption(ModelOptionNamesEnum name)
 	{
@@ -210,10 +133,8 @@ public class ModelOptions
 	 */
 	public void syncToProjectModel(ProjectModel projectModel)
 	{
-		for (String optionName : getOptionNames()) {
-			projectModel.setOption(optionName, optionsMap.get(optionName).toString());
-		}
-
+		super.syncToProjectModel(projectModel);
+		
 		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_ROTATE_X, projection.getRotateX());
 		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Y, projection.getRotateY());
 		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Z, projection.getRotateZ());
@@ -233,13 +154,7 @@ public class ModelOptions
 	 */
 	public void syncFromProjectModel(ProjectModel projectModel)
 	{
-		
-		for (String optionName : projectModel.getOptionKeys()) {
-			String optionValue = projectModel.getOption(optionName);
-			if (optionValue != null) {
-				this.setOption(optionName, optionValue);
-			}
-		}
+		super.syncFromProjectModel(projectModel);
 		
 		if (projectModel.getUserScript() != null) {
 			this.setUserScript(projectModel.getUserScript());
@@ -271,7 +186,7 @@ public class ModelOptions
 		setOption(ModelOptionNamesEnum.ENGINE, engine);
 	}
 
-
+	/*
 	public double getLightingMultiple() 
 	{
 		return getDoubleOption(ModelOptionNamesEnum.LIGHTING_MULTIPLE);
@@ -313,10 +228,7 @@ public class ModelOptions
 		return getIntegerOption(ModelOptionNamesEnum.SPOT_EXPONENT);
 	}
 	
-	/** Sets the spot exponent for the intensity distribution of the lighting. 
-	 * 
-	 * @param spotExponent A value between 1.0 and 10.0 (default: 1.0)
-	 */
+	
 	public void setSpotExponent(int spotExponent)
 	{
 		setOption(ModelOptionNamesEnum.SPOT_EXPONENT, spotExponent);
@@ -345,7 +257,7 @@ public class ModelOptions
 	{
 		setOption(ModelOptionNamesEnum.LIGHTING_ELEVATION, lightingElevation);
 	}
-
+	*/
 
 
 
@@ -400,7 +312,7 @@ public class ModelOptions
 		setOption(ModelOptionNamesEnum.HILLSHADING, hillShading);
 	}
 
-
+	/*
 	public int getHillShadeType()
 	{
 		return getIntegerOption(ModelOptionNamesEnum.HILLSHADE_TYPE);
@@ -411,6 +323,7 @@ public class ModelOptions
 	{
 		setOption(ModelOptionNamesEnum.HILLSHADE_TYPE, hillShadeType);
 	}
+	*/
 
 	public boolean getDoublePrecisionHillshading()
 	{
@@ -608,7 +521,7 @@ public class ModelOptions
 		ModelOptions clone = new ModelOptions();
 		
 		for (String optionName : getOptionNames()) {
-			clone.setOption(optionName, optionsMap.get(optionName).toString());
+			clone.setOption(optionName, getOption(optionName).toString());
 		}
 		
 		

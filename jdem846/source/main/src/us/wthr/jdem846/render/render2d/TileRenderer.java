@@ -19,6 +19,7 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataBounds;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.SubsetDataPackage;
+import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
@@ -43,9 +44,10 @@ public class TileRenderer extends InterruptibleProcess
 	private double gridSize;
 	private double elevationMultiple;
 	private boolean doublePrecisionHillshading;
+	private boolean lightingEnabled;
 	private double relativeLightIntensity;
 	private double relativeDarkIntensity;
-	private int hillShadeType;
+	//private int hillShadeType;
 	private int spotExponent;
 	private double lightingMultiple;
 	private double elevationMax;
@@ -85,20 +87,22 @@ public class TileRenderer extends InterruptibleProcess
 		
 		gridSize = getModelOptions().getGridSize();
 		
+		
+		lightingEnabled = getLightingContext().isLightingEnabled();
 		tiledPrecaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		elevationMultiple = getModelOptions().getElevationMultiple();
 		doublePrecisionHillshading = getModelOptions().getDoublePrecisionHillshading();
-		relativeLightIntensity = getModelOptions().getRelativeLightIntensity();
-		relativeDarkIntensity = getModelOptions().getRelativeDarkIntensity();
-		hillShadeType = getModelOptions().getHillShadeType();
-		spotExponent = getModelOptions().getSpotExponent();
-		lightingMultiple = getModelOptions().getLightingMultiple();
+		relativeLightIntensity = getLightingContext().getRelativeLightIntensity();
+		relativeDarkIntensity = getLightingContext().getRelativeDarkIntensity();
+		//hillShadeType = getModelOptions().getHillShadeType();
+		spotExponent = getLightingContext().getSpotExponent();
+		lightingMultiple = getLightingContext().getLightingMultiple();
 		elevationMax = getRasterDataContext().getDataMaximumValue();
 		elevationMin = getRasterDataContext().getDataMinimumValue();
 		useSimpleCanvasFill = false;//getModelOptions().getUseSimpleCanvasFill();
 		
-		solarElevation = getModelOptions().getLightingElevation();
-		solarAzimuth = getModelOptions().getLightingAzimuth();
+		solarElevation = getLightingContext().getLightingElevation();
+		solarAzimuth = getLightingContext().getLightingAzimuth();
 
 		latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
 		longitudeResolution = modelContext.getRasterDataContext().getLongitudeResolution();
@@ -272,7 +276,8 @@ public class TileRenderer extends InterruptibleProcess
 		modelColoring.getGradientColor(pointElevation, elevationMin, elevationMax, reliefColor);
 		onGetPointColor(latitude, longitude, pointElevation, elevationMin, elevationMax, reliefColor);
 		
-		if (hillShadeType != DemConstants.HILLSHADING_NONE) {
+		//if (hillShadeType != DemConstants.HILLSHADING_NONE) {
+		if (lightingEnabled) {
 			hillshadeColor[0] = reliefColor[0];
 			hillshadeColor[1] = reliefColor[1];
 			hillshadeColor[2] = reliefColor[2];
@@ -280,29 +285,13 @@ public class TileRenderer extends InterruptibleProcess
 			double dot = perspectives.dotProduct(normal, sunsource);
 			dot = Math.pow(dot, spotExponent);
 			
-			switch (hillShadeType) {
-			case DemConstants.HILLSHADING_LIGHTEN:
-				dot = (dot + 1.0) / 2.0;
-				ColorAdjustments.adjustBrightness(hillshadeColor, 1.0 - dot);
-				break;
-			case DemConstants.HILLSHADING_DARKEN:
-				dot = Math.abs((dot + 1.0) / 2.0) * -1.0;
-				ColorAdjustments.adjustBrightness(hillshadeColor, dot);
-				break;
-			
-			case DemConstants.HILLSHADING_COMBINED:
-				
-				if (dot > 0) {
-					dot *= relativeLightIntensity;
-				} else if (dot < 0) {
-					dot *= relativeDarkIntensity;
-				}
-				
-				ColorAdjustments.adjustBrightness(hillshadeColor, dot);
-				break;
+			if (dot > 0) {
+				dot *= relativeLightIntensity;
+			} else if (dot < 0) {
+				dot *= relativeDarkIntensity;
 			}
 			
-			
+			ColorAdjustments.adjustBrightness(hillshadeColor, dot);
 			ColorAdjustments.interpolateColor(reliefColor, hillshadeColor, triangeColor, lightingMultiple);
 			
 			
@@ -529,6 +518,11 @@ public class TileRenderer extends InterruptibleProcess
 	protected ModelOptions getModelOptions()
 	{
 		return modelContext.getModelOptions();
+	}
+	
+	protected LightingContext getLightingContext()
+	{
+		return modelContext.getLightingContext();
 	}
 	
 	protected void resetBuffers()

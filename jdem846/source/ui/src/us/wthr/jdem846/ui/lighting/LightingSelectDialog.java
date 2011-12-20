@@ -27,7 +27,7 @@ public class LightingSelectDialog extends Dialog
 	
 	public LightingSelectDialog()
 	{
-		this.setTitle(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightingConfig.positionDialog.title"));
+		this.setTitle(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.lightingConfig.positionDialog.title"));
 		this.setModal(true);
 		this.setSize(500, 600);
 		this.setLocationRelativeTo(null);

@@ -38,9 +38,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
+import us.wthr.jdem846.MappedOptions;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.OptionChangeListener;
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.exception.ComponentException;
@@ -56,6 +58,7 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.rasterdata.RasterData;
 
+import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectModel;
@@ -78,6 +81,7 @@ import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.SplitPane;
+import us.wthr.jdem846.ui.lighting.LightingOptionsPanel;
 import us.wthr.jdem846.ui.panels.EmbeddedTabbedPane;
 import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 import us.wthr.jdem846.ui.scripting.ScriptEditorPanel;
@@ -92,6 +96,7 @@ public class DemProjectPane extends JdemPanel
 	private DataSetOptionsPanel datasetOptionsPanel;
 	private OrderingButtonBar orderingButtonBar;
 	private ModelOptionsPanel modelOptionsPanel;
+	private LightingOptionsPanel lightingOptionsPanel;
 	//private ProjectionConfigPanel projectionConfigPanel;
 	//private GradientConfigPanel gradientConfigPanel;
 	//private LightPositionConfigPanel lightPositionConfigPanel;
@@ -104,7 +109,7 @@ public class DemProjectPane extends JdemPanel
 	
 	private ProjectButtonBar projectButtonBar;
 	private Menu projectMenu;
-	private StatusBar statusBar;
+	//private StatusBar statusBar;
 	
 	private ProjectModel projectModel;
 	
@@ -112,6 +117,7 @@ public class DemProjectPane extends JdemPanel
 	private ModelOptions modelOptions;
 	private RasterDataContext rasterDataContext;
 	private ShapeDataContext shapeDataContext;
+	private LightingContext lightingContext;
 	
 	private List<CreateModelListener> createModelListeners = new LinkedList<CreateModelListener>();
 	
@@ -137,6 +143,10 @@ public class DemProjectPane extends JdemPanel
 		rasterDataContext = new RasterDataContext();
 		modelOptions = new ModelOptions();
 		shapeDataContext = new ShapeDataContext();
+		lightingContext = new LightingContext();
+		
+		
+		
 		
 		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, modelOptions);
 		
@@ -168,6 +178,9 @@ public class DemProjectPane extends JdemPanel
 		modelOptionsPanel = new ModelOptionsPanel();
 		modelOptionsPanel.setModelOptions(modelOptions);
 		
+		lightingOptionsPanel = new LightingOptionsPanel();
+		lightingOptionsPanel.setLightingContext(lightingContext);
+		
 		//gradientConfigPanel = new GradientConfigPanel();
 		//projectionConfigPanel = new ProjectionConfigPanel();
 
@@ -182,8 +195,8 @@ public class DemProjectPane extends JdemPanel
 		previewPane = new ModelPreviewPane(modelContext);
 		scriptPane = new ScriptEditorPanel();
 		
-		statusBar = new StatusBar();
-		statusBar.setProgressVisible(false);
+		//statusBar = new StatusBar();
+		//statusBar.setProgressVisible(false);
 		
 		projectButtonBar = new ProjectButtonBar(this);
 		MainButtonBar.addToolBar(projectButtonBar);
@@ -309,9 +322,30 @@ public class DemProjectPane extends JdemPanel
 		
 		// Add change listeners
 		modelOptionsPanel.addOptionsChangedListener(new OptionsChangedListener() {
-			public void onOptionsChanged(ModelOptions options)
+			public void onOptionsChanged(MappedOptions options)
 			{
-				onConfigurationChanged(options);
+				onConfigurationChanged((ModelOptions)options);
+			}
+		});
+		
+		lightingOptionsPanel.addOptionsChangedListener(new OptionsChangedListener() {
+			public void onOptionsChanged(MappedOptions options) {
+				onConfigurationChanged(); // TODO: Do something with the lightingOptions
+			}
+		});
+		
+		modelOptions.addOptionChangeListener(new OptionChangeListener() {
+			public void onOptionChanged(String key, Object oldValue, Object newValue)
+			{
+				
+			}
+		});
+		
+		
+		lightingContext.addOptionChangeListener(new OptionChangeListener() {
+			public void onOptionChanged(String key, Object oldValue, Object newValue)
+			{
+				
 			}
 		});
 		
@@ -331,20 +365,27 @@ public class DemProjectPane extends JdemPanel
 		dataPanel.add(datasetOptionsPanel, BorderLayout.SOUTH);
 
 		ScrollPane optionsScroll = new ScrollPane(modelOptionsPanel);
+		ScrollPane lightingScroll = new ScrollPane(lightingOptionsPanel);
+		
+		optionsScroll.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		lightingScroll.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
 		EmbeddedTabbedPane leftTabPane = new EmbeddedTabbedPane();
 		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.data"), dataPanel);
 		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.setup"), optionsScroll);
-
+		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.lighting"), lightingScroll);
+		
 		EmbeddedTabbedPane leftLowerTabPane = new EmbeddedTabbedPane();
 		leftLowerTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.modelOverview"), regionOverviewPanel);
 		leftLowerTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layerOverview"), layerOverviewPanel);
 		
 		SplitPane leftSplit = new SplitPane(SplitPane.VERTICAL_SPLIT);
+		leftSplit.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		
 		leftSplit.add(leftTabPane);
 		leftSplit.add(leftLowerTabPane);
 		leftSplit.setResizeWeight(0);
-		leftSplit.setDividerSize(5);
+		//leftSplit.setDividerSize(5);
 		leftSplit.setDividerLocation(320);
 		addLeft(leftSplit, false);
 		//addLeft(leftTabPane, false);
@@ -367,7 +408,7 @@ public class DemProjectPane extends JdemPanel
 		//this.addRight(projectionConfigPanel, false);
 		//this.addRight(overviewPanel, false);
 		
-		this.setSouth(statusBar);
+		//this.setSouth(statusBar);
 		
 		
 		loadDefaultScripting();
@@ -538,21 +579,21 @@ public class DemProjectPane extends JdemPanel
 	    	loader.addProgressListener(new ProgressListener() {
 				public void onProgress(double progress)
 				{
-					statusBar.setProgress((int)(progress*100));
+					//statusBar.setProgress((int)(progress*100));
 
 				}
 				public void onStart()
 				{
-					statusBar.setProgressVisible(true);
-			    	statusBar.setProgress(0);
-			    	statusBar.setStatus(I18N.get("us.wthr.jdem846.ui.projectPane.status.loading"));
+					//statusBar.setProgressVisible(true);
+			    	//statusBar.setProgress(0);
+			    	//statusBar.setStatus(I18N.get("us.wthr.jdem846.ui.projectPane.status.loading"));
 				}
 				public void onComplete()
 				{
-					statusBar.setProgress(100);
+					//statusBar.setProgress(100);
 			    	onDataModelChanged();
-			    	statusBar.setStatus(I18N.get("us.wthr.jdem846.ui.projectPane.status.done"));
-			    	statusBar.setProgressVisible(false);
+			    	//statusBar.setStatus(I18N.get("us.wthr.jdem846.ui.projectPane.status.done"));
+			    	//statusBar.setProgressVisible(false);
 				}
 	    	});
 	    	loader.start();
@@ -1007,6 +1048,7 @@ public class DemProjectPane extends JdemPanel
 			return;
 		}
 
+		LightingContext lightingContext = this.lightingContext.copy();
 		
 		ModelOptions modelOptions = this.modelOptions.copy();
 		
@@ -1027,7 +1069,7 @@ public class DemProjectPane extends JdemPanel
 			return;
 		}
 		
-		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, modelOptions, scriptProxy);
+		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, lightingContext, modelOptions, scriptProxy);
 		fireCreateModelListeners(modelContext);
 	}
 	

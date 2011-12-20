@@ -53,7 +53,7 @@ public class JDemUiService extends AbstractLockableService
 		//System.out.println("JDemUiService.initialize()");
 		log.info("JDemUIService.initialize()");
 		
-		applyLookAndFeel(false);
+		
 		
 		frame = JdemFrame.getInstance();
 	}
@@ -110,67 +110,6 @@ public class JDemUiService extends AbstractLockableService
 	
 	
 	
-	protected void applyLookAndFeel(boolean forceConfiguredDefault)
-	{
-		String lafWindows = JDem846Properties.getProperty("us.wthr.jdem846.ui.swingLaf.windows");
-		String lafLinux = JDem846Properties.getProperty("us.wthr.jdem846.ui.swingLaf.windows");
-		String lafDefault = JDem846Properties.getProperty("us.wthr.jdem846.ui.swingLaf.windows");
-		
-		if (lafDefault == null) {
-			lafDefault = "Metal";
-		}
-		
-		if (lafWindows == null) {
-			lafWindows = lafDefault;
-		}
-		
-		if (lafLinux == null) {
-			lafLinux = lafDefault;
-		}
-		
-		String os = JDem846Properties.getProperty("os.name");
-		
-		String laf = lafDefault;
-		if (os.toUpperCase().contains("WINDOWS") && !forceConfiguredDefault) {
-			laf = lafWindows;
-		} else if (os.toUpperCase().contains("LINUX") && !forceConfiguredDefault) {
-			laf = lafLinux;
-		}
-		
-		// check if laf is "default", if so leave the Look & Feel to whatever
-		// the JVM default is and exit.
-		if (laf.equalsIgnoreCase("default")) {
-			return;
-		}
-		
-		
-		try {
-			log.info("Applying Look & Feel: '" + laf + "'");
-			if (laf != null) {
-				UIManager.setLookAndFeel(laf);
-				log.info("Applied Look & Feel: '" + laf + "'");
-			    //for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-			    //    if (laf.equalsIgnoreCase(info.getName())) {
-			   //        UIManager.setLookAndFeel(info.getClassName());
-			            log.info("Applied Look & Feel: '" + laf + "'");
-			   //         break;
-			   //     }
-			   // }
-			}
-		} catch (Exception ex) {
-		    // We really don't care if the specified look & feel is not available, but if that's
-			// the case, we recall this function and force the configured default. If we're
-			// already in the forced config'd default call, then fail and fall back to the
-			// JVM default Look & Feel.
-			
-			if (!forceConfiguredDefault) {
-				log.warn("Failed to apply configured look and feel '" + laf + "', reverting to application default.", ex);
-				applyLookAndFeel(true);
-			} else {
-				log.warn("Failed to apply application default look & feel, falling back to JVM default.", ex);
-			}
-		}
-	}
 	
 	@Destroy
 	public void destroy()
