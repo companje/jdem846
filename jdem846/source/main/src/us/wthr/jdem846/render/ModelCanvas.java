@@ -441,6 +441,43 @@ public class ModelCanvas
 		graphics.setStroke(origStroke);
 	}
 	
+	public void fillCircle(int[] color, double latitude, double longitude, double elevation, double radiusPixels) throws CanvasException
+	{
+		int alpha = 255;
+		if (color.length >= 4) {
+			alpha = color[3];
+		}
+		
+		Color fillColor = new Color(color[0], color[1], color[2], alpha);
+		fillCircle(fillColor, latitude, longitude, elevation, radiusPixels);
+	}
+	
+	public void fillCircle(Color color, double latitude, double longitude, double elevation, double radiusPixels) throws CanvasException
+	{
+		if (color != null) {
+			graphics.setColor(color);
+		}
+		
+		double row, column = 0;
+		
+		try {
+			mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
+			row = mapPoint.row;
+			column = mapPoint.column;
+		} catch (MapProjectionException ex) {
+			throw new CanvasException("Failed to project coordinates to canvas: " + ex.getMessage(), ex);
+		}
+		
+		int y = (int) Math.round(row - (radiusPixels / 2.0));
+		int x = (int) Math.round(column - (radiusPixels / 2.0));
+		
+		int radius = (int) Math.round(radiusPixels);
+		
+		graphics.fillOval(x, y, radius, radius);
+		
+		
+	}
+	
 	public void drawText(String text, int[] color, double latitude, double longitude, boolean centered) throws CanvasException
 	{
 		int alpha = 255;

@@ -155,7 +155,8 @@ public class DemProjectPane extends JdemPanel
 		// Apply model options
 		if (projectModel != null) {
 			modelOptions.syncFromProjectModel(projectModel);
-					
+			lightingContext.syncFromProjectModel(projectModel);
+			
 			for (String filePath : projectModel.getInputFiles()) {
 				addElevationDataset(filePath, false);
 			}
@@ -516,7 +517,8 @@ public class DemProjectPane extends JdemPanel
 		
 		projectModel.setLoadedFrom(projectLoadedFrom);
 		modelOptions.syncToProjectModel(projectModel);
-
+		lightingContext.syncToProjectModel(projectModel);
+		
 		for (RasterData rasterData : rasterDataContext.getRasterDataList()) {
 			projectModel.getInputFiles().add(rasterData.getFilePath());
 		}

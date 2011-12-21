@@ -9,7 +9,9 @@ public enum LightingOptionNamesEnum
 	LIGHTING_MULTIPLE("us.wthr.jdem846.lightingContext.lightingMultiple"),
 	RELATIVE_LIGHT_INTENSITY("us.wthr.jdem846.lightingContext.relativeLightIntensity"),
 	RELATIVE_DARK_INTENSITY("us.wthr.jdem846.lightingContext.relativeDarkIntensity"),
-	SPOT_EXPONENT("us.wthr.jdem846.lightingContext.spotExponent");
+	SPOT_EXPONENT("us.wthr.jdem846.lightingContext.spotExponent"),
+	RAY_TRACE_SHADOWS("us.wthr.jdem846.lightingContext.rayTraceShadows"),
+	SHADOW_INTENSITY("us.wthr.jdem846.lightingContext.shadowIntensity");
 	
 	private final String optionName;
 	

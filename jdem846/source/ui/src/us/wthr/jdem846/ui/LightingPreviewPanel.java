@@ -118,6 +118,7 @@ public class LightingPreviewPanel extends Panel
 		this.addMouseListener(mouseAdapter);
 		this.addMouseMotionListener(mouseAdapter);
 		
+
 		
 		lightingContext = new LightingContext();
 		modelOptions = new ModelOptions();
@@ -143,6 +144,7 @@ public class LightingPreviewPanel extends Panel
 			modelOptions.setHeight(rasterData.getRows());
 			lightingContext.setRelativeLightIntensity(0.75);
 			lightingContext.setRelativeDarkIntensity(1.0);
+			lightingContext.setRayTraceShadows(false);
 			modelOptions.setDoublePrecisionHillshading(false);
 			modelOptions.setTileSize(1000);
 			modelOptions.setGridSize(2);

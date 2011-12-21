@@ -47,6 +47,7 @@ public class TileRenderer extends InterruptibleProcess
 	private boolean lightingEnabled;
 	private double relativeLightIntensity;
 	private double relativeDarkIntensity;
+	private double metersResolution;
 	//private int hillShadeType;
 	private int spotExponent;
 	private double lightingMultiple;
@@ -60,6 +61,9 @@ public class TileRenderer extends InterruptibleProcess
 	private double latitudeGridSize;
 	private double longitudeGridSize; 
 	private boolean useSimpleCanvasFill;
+	
+	private boolean rayTraceShadows;
+	private double shadowIntensity;
 	
 	private int[] triangleColorNW = {0, 0, 0, 0};
 	private int[] triangleColorSE = {0, 0, 0, 0};
@@ -87,7 +91,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		gridSize = getModelOptions().getGridSize();
 		
-		
+		metersResolution = getRasterDataContext().getMetersResolution();
 		lightingEnabled = getLightingContext().isLightingEnabled();
 		tiledPrecaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		elevationMultiple = getModelOptions().getElevationMultiple();
@@ -103,7 +107,9 @@ public class TileRenderer extends InterruptibleProcess
 		
 		solarElevation = getLightingContext().getLightingElevation();
 		solarAzimuth = getLightingContext().getLightingAzimuth();
-
+		rayTraceShadows = getLightingContext().getRayTraceShadows();
+		shadowIntensity = getLightingContext().getShadowIntensity();
+		
 		latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
 		longitudeResolution = modelContext.getRasterDataContext().getLongitudeResolution();
 		latitudeGridSize = gridSize * latitudeResolution;
@@ -142,6 +148,8 @@ public class TileRenderer extends InterruptibleProcess
 					renderCellStandardPrecision(latitude, longitude);
 				}
 				
+				
+				
 				this.checkPause();
 				if (isCancelled()) {
 					break;
@@ -156,7 +164,7 @@ public class TileRenderer extends InterruptibleProcess
 			
 		}
 		
-		
+
 		onTileAfter(modelCanvas);
 		
 		if (tiledPrecaching) {
@@ -170,6 +178,104 @@ public class TileRenderer extends InterruptibleProcess
 
 	}
 	
+	/** Ray trace from coordinate to the source of light. If there is another
+	 * higher elevation that blocks the way, then return true. Return false if
+	 * the trace either not blocked or it exceeds the maximum data elevation and 
+	 * it can then be assumed to not be blocked. Points with no data are skipped
+	 * and the loop continues on. Note: This initial implementation
+	 * assumes a flat Earth and is therefore not technically accurate.
+	 * 
+	 * @param centerLatitude
+	 * @param centerLongitude
+	 * @param centerElevation
+	 * @return
+	 * @throws RenderEngineException
+	 */
+	protected boolean isRayBlocked(double centerLatitude, double centerLongitude, double centerElevation) throws RenderEngineException
+	{
+		double[] points = {0.0, 0.0, 0.0};
+		
+		
+		for (double radius = longitudeResolution; radius < (longitudeResolution * 100.0); radius += longitudeResolution) {
+			
+			getSpherePoint(solarAzimuth, solarElevation, radius, points);
+			
+			double latitude = centerLatitude + points[0];
+			double longitude = centerLongitude - points[2];
+			double resolution = (points[1] / longitudeResolution);
+			double rayElevation = centerElevation + (resolution * metersResolution);
+			double pointElevation = 0;
+			//log.info("Radius: " + radius + ", X/Y/Z: " + points[0] + "/" + points[1] + "/" + points[2] + ", Center Elevation: " + centerElevation + ", Ray Elevation: " + rayElevation);;
+			try {
+				pointElevation = getRasterData(latitude, longitude);
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Failed to get elevation for point: " + ex.getMessage(), ex);
+			}
+			
+			if (pointElevation == DemConstants.ELEV_NO_DATA) {
+				continue;
+			}
+			
+			if (pointElevation > rayElevation) {
+				return true;
+			}
+			
+			if (rayElevation > this.elevationMax) {
+				return false;
+			}
+			
+			/*
+			try {
+				modelCanvas.fillCircle(Color.RED, latitude, longitude, rayElevation, 3);
+			} catch (CanvasException ex) {
+				throw new RenderEngineException("Failed to render circle on canvas: " + ex.getMessage(), ex);
+			}
+			*/
+			
+		}
+		
+		return false;
+	}
+	
+	
+	protected void drawRayTrace(double centerLatitude, double centerLongitude, double centerElevation) throws RenderEngineException
+	{
+		double[] points = {0.0, 0.0, 0.0};
+		int[] color = {255, 0, 0, 0};
+		double maxRadius = 100;
+		int alphaStep = (int) Math.round(255.0 / maxRadius);
+		
+		for (double radius = longitudeResolution; radius < (longitudeResolution * maxRadius); radius += longitudeResolution) {
+			color[3] = color[3] + alphaStep;
+			if (color[3] > 255) {
+				color[3] = 255;
+			}
+			getSpherePoint(solarAzimuth, solarElevation, radius, points);
+			
+			double latitude = centerLatitude + points[0];
+			double longitude = centerLongitude - points[2];
+			double resolution = (points[1] / longitudeResolution);
+			double rayElevation = centerElevation + (resolution * metersResolution);
+			//resolution = modelContext.getRasterDataContext().getMetersResolution();
+			//elev = (((elevation - max) / resolution) + Math.abs(min)) * elevationMultiple;
+			double pointElevation = 0;
+			//log.info("Radius: " + radius + ", X/Y/Z: " + points[0] + "/" + points[1] + "/" + points[2] + ", Center Elevation: " + centerElevation + ", Ray Elevation: " + rayElevation);;
+			try {
+				pointElevation = getRasterData(latitude, longitude);
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Failed to get elevation for point: " + ex.getMessage(), ex);
+			}
+
+			try {
+				modelCanvas.fillCircle(color, latitude, longitude, rayElevation, 1);
+			} catch (CanvasException ex) {
+				throw new RenderEngineException("Failed to render circle on canvas: " + ex.getMessage(), ex);
+			}
+			
+			
+		}
+
+	}
 	
 	protected void renderCellStandardPrecision(double latitude, double longitude) throws RenderEngineException
 	{
@@ -284,6 +390,18 @@ public class TileRenderer extends InterruptibleProcess
 			
 			double dot = perspectives.dotProduct(normal, sunsource);
 			dot = Math.pow(dot, spotExponent);
+			
+			if (rayTraceShadows) {
+				if (isRayBlocked(latitude, longitude, pointElevation)) {
+					
+					// I'm not 100% happy with this method...
+					dot = dot - (2 * shadowIntensity);
+					if (dot < -1.0) {
+						dot = -1.0;
+					}
+				}
+			}
+			
 			
 			if (dot > 0) {
 				dot *= relativeLightIntensity;
