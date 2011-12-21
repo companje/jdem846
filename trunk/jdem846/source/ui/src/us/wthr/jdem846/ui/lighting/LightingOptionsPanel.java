@@ -44,6 +44,8 @@ public class LightingOptionsPanel extends RoundedPanel
 	private static Log log = Logging.getLog(LightingOptionsPanel.class);
 	
 	private CheckBox chkLightingEnabled;
+	private CheckBox chkRayTraceShadows;
+	private Spinner spnShadowIntensity;
 	private Spinner spnLightMultiple;
 	private Spinner spnSpotExponent;
 	private Spinner spnRelativeLightIntensity;
@@ -79,6 +81,9 @@ public class LightingOptionsPanel extends RoundedPanel
 		spnRelativeLightIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
 		spnRelativeDarkIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
 		chkLightingEnabled = new CheckBox(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.lightingEnabled.label"));
+		chkRayTraceShadows = new CheckBox(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.rayTraceShadows.label"));
+		spnShadowIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
+		
 		jdtLightOnDate = new JDateChooser(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.dateChooser.datePattern"),
 											I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.dateChooser.maskPattern"),
 											I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.dateChooser.placeHolder").charAt(0));
@@ -106,10 +111,13 @@ public class LightingOptionsPanel extends RoundedPanel
 		cmbLightSourceSpecifyType.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.sourceSelect.tooltip"));
 		jdtLightOnDate.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.dateChooser.tooltip"));
 		spnLightOnTime.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.timeSpinner.tooltip"));
+		chkRayTraceShadows.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.rayTraceShadows.tooltip"));
+		spnShadowIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.shadowIntensity.tooltip"));
 		
 		// Add listeners
 		ActionListener textFieldActionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				checkControlState();
 				fireOptionsChangedListeners();
 				
 			}
@@ -125,18 +133,21 @@ public class LightingOptionsPanel extends RoundedPanel
 		ItemListener comboBoxItemListener = new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
+					checkControlState();
 					fireOptionsChangedListeners();
 				}
 			}
 		};
 		ChangeListener spinnerChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
+				checkControlState();
 				fireOptionsChangedListeners();
 			}
 		};
 		ChangeListener basicChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
 			{
+				checkControlState();
 				fireOptionsChangedListeners();
 			}
 		};
@@ -150,6 +161,7 @@ public class LightingOptionsPanel extends RoundedPanel
 		PropertyChangeListener datePropertyChangeListener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt)
 			{
+				checkControlState();
 				fireOptionsChangedListeners();
 			}
 		};
@@ -162,6 +174,8 @@ public class LightingOptionsPanel extends RoundedPanel
 		spnRelativeDarkIntensity.addChangeListener(spinnerChangeListener);
 		lightSourceControl.addChangeListener(basicChangeListener);
 		spnLightOnTime.addChangeListener(spinnerChangeListener);
+		chkRayTraceShadows.addChangeListener(basicChangeListener);
+		spnShadowIntensity.addChangeListener(spinnerChangeListener);
 		//jdtLightOnDate.get
 		//jdtLightOnDate.
 		jdtLightOnDate.addPropertyChangeListener("date", datePropertyChangeListener);
@@ -189,6 +203,12 @@ public class LightingOptionsPanel extends RoundedPanel
 		controlGrid.add(spnRelativeDarkIntensity);
 		controlGrid.add(new Label(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.spotExponentSlider.label") + ":"));
 		controlGrid.add(spnSpotExponent);
+		
+		controlGrid.add(new Label());
+		controlGrid.add(chkRayTraceShadows);
+		controlGrid.add(new Label(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.shadowIntensity.label") + ":"));
+		controlGrid.add(spnShadowIntensity);
+		
 		
 		
 		
@@ -226,6 +246,8 @@ public class LightingOptionsPanel extends RoundedPanel
 		spnRelativeLightIntensity.setValue((int)Math.round(lightingContext.getRelativeLightIntensity() * 100));
 		spnRelativeDarkIntensity.setValue((int)Math.round(lightingContext.getRelativeDarkIntensity() * 100));
 		
+		chkRayTraceShadows.setSelected(lightingContext.getRayTraceShadows());
+		spnShadowIntensity.setValue((int)Math.round(lightingContext.getShadowIntensity() * 100));
 		
 		ignoreValueChanges = false;	
 	}
@@ -242,14 +264,15 @@ public class LightingOptionsPanel extends RoundedPanel
 		lightingContext.setRelativeDarkIntensity((double)((Integer)spnRelativeDarkIntensity.getValue()) / 100.0);
 		lightingContext.setLightingAzimuth(lightSourceControl.getSolarAzimuth());
 		lightingContext.setLightingElevation(lightSourceControl.getSolarElevation());
-		
+		lightingContext.setRayTraceShadows(chkRayTraceShadows.getModel().isSelected());
+		lightingContext.setShadowIntensity((double)((Integer)spnShadowIntensity.getValue()) / 100.0);
 	}
 	
 	protected void checkControlState()
 	{
 		boolean enabled = chkLightingEnabled.getModel().isSelected();
 		LightSourceSpecifyTypeEnum specType = lightSourceSpecifyTypeModel.getSelectedItemValue();
-		
+		boolean rayTraceShadowsEnabled = chkRayTraceShadows.getModel().isSelected();
 		
 		
 		cmbLightSourceSpecifyType.setEnabled(enabled);
@@ -257,6 +280,8 @@ public class LightingOptionsPanel extends RoundedPanel
 		spnSpotExponent.setEnabled(enabled);
 		spnRelativeLightIntensity.setEnabled(enabled);
 		spnRelativeDarkIntensity.setEnabled(enabled);
+		chkRayTraceShadows.setEnabled(enabled);
+		spnShadowIntensity.setEnabled(enabled && rayTraceShadowsEnabled);
 		//lightSourceControl.setEnabled(enabled);
 		
 		lightSourceControl.setEnabled(enabled && specType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION);

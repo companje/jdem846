@@ -29,6 +29,8 @@ public class LightingValueControl extends Panel
 	private double solarAzimuth = 183.0;
 	private double solarElevation = 71.0;
 	
+	private LightingSelectDialog sourceSelectDialog = new LightingSelectDialog();
+	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
 	public LightingValueControl()
@@ -82,10 +84,11 @@ public class LightingValueControl extends Panel
 	
 	protected void onShowLightSourceDialog()
 	{
-		LightingSelectDialog dialog = new LightingSelectDialog();
-		dialog.setSolarAzimuth(solarAzimuth);
-		dialog.setSolarElevation(solarElevation);
-		dialog.showDialog(new LightPositionSelectionListener() {
+		
+		sourceSelectDialog.setSolarAzimuth(solarAzimuth);
+		sourceSelectDialog.setSolarElevation(solarElevation);
+		
+		sourceSelectDialog.showDialog(new LightPositionSelectionListener() {
 			public void onLightPositionSelected(double solarAzimuth, double solarElevation) {
 				setSolarAzimuth(solarAzimuth);
 				setSolarElevation(solarElevation);

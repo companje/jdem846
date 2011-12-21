@@ -111,6 +111,7 @@ public class LightingSelectDialog extends Dialog
 	
 	public void showDialog(LightPositionSelectionListener listener)
 	{
+		lightPositionConfigPanel.updatePreview(true);
 		this.setVisible(true);
 		if (okClicked) {
 			listener.onLightPositionSelected(lightPositionConfigPanel.getSolarAzimuth(), lightPositionConfigPanel.getSolarElevation());

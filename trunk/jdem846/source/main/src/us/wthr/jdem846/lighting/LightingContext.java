@@ -177,7 +177,25 @@ public class LightingContext extends MappedOptions
 		setOption(LightingOptionNamesEnum.LIGHTING_ELEVATION, lightingElevation);
 	}
 
+	public boolean getRayTraceShadows()
+	{
+		return getBooleanOption(LightingOptionNamesEnum.RAY_TRACE_SHADOWS);
+	}
 	
+	public void setRayTraceShadows(boolean rayTraceShadows)
+	{
+		setOption(LightingOptionNamesEnum.RAY_TRACE_SHADOWS, rayTraceShadows);
+	}
+	
+	public double getShadowIntensity()
+	{
+		return getDoubleOption(LightingOptionNamesEnum.SHADOW_INTENSITY);
+	}
+	
+	public void setShadowIntensity(double shadowIntensity)
+	{
+		setOption(LightingOptionNamesEnum.SHADOW_INTENSITY, shadowIntensity);
+	}
 	
 	
 	
