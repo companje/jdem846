@@ -22,6 +22,7 @@ import us.wthr.jdem846.input.SubsetDataPackage;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.BasicRenderEngine;
 import us.wthr.jdem846.render.InterruptibleProcess;
@@ -137,7 +138,7 @@ public class TileRenderer extends InterruptibleProcess
 
 		onTileBefore(modelCanvas);
 		
-
+		
 		for (double latitude = northLimit; latitude >= southLimit; latitude -= latitudeResolution) {
 			
 			for (double longitude = westLimit; longitude <= eastLimit; longitude += longitudeResolution) {
@@ -178,6 +179,48 @@ public class TileRenderer extends InterruptibleProcess
 
 	}
 	
+	
+	protected void drawRayTrace(double centerLatitude, double centerLongitude, double centerElevation, int[] color) throws RenderEngineException
+	{
+		double[] points = {0.0, 0.0, 0.0};
+		//int[] color = {255, 0, 0, 0};
+		double maxRadius = 100;
+		int alphaStep = (int) Math.round(255.0 / maxRadius);
+		color[3] = 0;
+		
+		for (double radius = longitudeResolution; radius < (longitudeResolution * maxRadius); radius += longitudeResolution) {
+			color[3] = color[3] + alphaStep;
+			if (color[3] > 255) {
+				color[3] = 255;
+			}
+			Spheres.getPoint3D(solarAzimuth, solarElevation, radius, points);
+			// 0, 2
+			double latitude = centerLatitude + points[0];
+			double longitude = centerLongitude - points[2];
+			double resolution = (points[1] / longitudeResolution);
+			double rayElevation = centerElevation + (resolution * metersResolution);
+			//resolution = modelContext.getRasterDataContext().getMetersResolution();
+			//elev = (((elevation - max) / resolution) + Math.abs(min)) * elevationMultiple;
+			double pointElevation = 0;
+			//log.info("Radius: " + radius + ", X/Y/Z: " + points[0] + "/" + points[1] + "/" + points[2] + ", Center Elevation: " + centerElevation + ", Ray Elevation: " + rayElevation);;
+			/*
+			try {
+				pointElevation = getRasterData(latitude, longitude);
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Failed to get elevation for point: " + ex.getMessage(), ex);
+			}
+			*/
+			try {
+				modelCanvas.fillCircle(color, latitude, longitude, rayElevation, 1);
+			} catch (CanvasException ex) {
+				throw new RenderEngineException("Failed to render circle on canvas: " + ex.getMessage(), ex);
+			}
+			
+			
+		}
+
+	}
+	
 	/** Ray trace from coordinate to the source of light. If there is another
 	 * higher elevation that blocks the way, then return true. Return false if
 	 * the trace either not blocked or it exceeds the maximum data elevation and 
@@ -199,7 +242,7 @@ public class TileRenderer extends InterruptibleProcess
 		//for (double radius = longitudeResolution; radius < (longitudeResolution * 100.0); radius += longitudeResolution) {
 		double radius = longitudeResolution;
 		while (true) {
-			getSpherePoint(solarAzimuth, solarElevation, radius, points);
+			Spheres.getPoint3D(solarAzimuth, solarElevation, radius, points);
 			
 			double latitude = centerLatitude + points[0];
 			double longitude = centerLongitude - points[2];
@@ -248,44 +291,7 @@ public class TileRenderer extends InterruptibleProcess
 	}
 	
 	
-	protected void drawRayTrace(double centerLatitude, double centerLongitude, double centerElevation) throws RenderEngineException
-	{
-		double[] points = {0.0, 0.0, 0.0};
-		int[] color = {255, 0, 0, 0};
-		double maxRadius = 100;
-		int alphaStep = (int) Math.round(255.0 / maxRadius);
-		
-		for (double radius = longitudeResolution; radius < (longitudeResolution * maxRadius); radius += longitudeResolution) {
-			color[3] = color[3] + alphaStep;
-			if (color[3] > 255) {
-				color[3] = 255;
-			}
-			getSpherePoint(solarAzimuth, solarElevation, radius, points);
-			
-			double latitude = centerLatitude + points[0];
-			double longitude = centerLongitude - points[2];
-			double resolution = (points[1] / longitudeResolution);
-			double rayElevation = centerElevation + (resolution * metersResolution);
-			//resolution = modelContext.getRasterDataContext().getMetersResolution();
-			//elev = (((elevation - max) / resolution) + Math.abs(min)) * elevationMultiple;
-			double pointElevation = 0;
-			//log.info("Radius: " + radius + ", X/Y/Z: " + points[0] + "/" + points[1] + "/" + points[2] + ", Center Elevation: " + centerElevation + ", Ray Elevation: " + rayElevation);;
-			try {
-				pointElevation = getRasterData(latitude, longitude);
-			} catch (DataSourceException ex) {
-				throw new RenderEngineException("Failed to get elevation for point: " + ex.getMessage(), ex);
-			}
-
-			try {
-				modelCanvas.fillCircle(color, latitude, longitude, rayElevation, 1);
-			} catch (CanvasException ex) {
-				throw new RenderEngineException("Failed to render circle on canvas: " + ex.getMessage(), ex);
-			}
-			
-			
-		}
-
-	}
+	
 	
 	protected void renderCellStandardPrecision(double latitude, double longitude) throws RenderEngineException
 	{
@@ -453,43 +459,6 @@ public class TileRenderer extends InterruptibleProcess
 		getSpherePoint(solarAzimuth, solarElevation, 1.0, sunsource);
 		*/
 		
-	}
-	
-	protected void getSpherePoint(double theta, double phi, double radius, double[] points)
-	{
-		double _y = sqrt(pow(radius, 2) - pow(radius * cos(phi), 2));
-		double r0 = sqrt(pow(radius, 2) - pow(_y, 2));
-
-		double _b = r0 * cos(theta );
-        double _z = sqrt(pow(r0, 2) - pow(_b, 2));
-        double _x = sqrt(pow(r0, 2) - pow(_z, 2));
-        if (theta <= 90.0) {
-                _z *= -1.0;
-        } else if (theta  <= 180.0) {
-                _x *= -1.0;
-                _z *= -1.0;
-        } else if (theta  <= 270.0) {
-                _x *= -1.0;
-        }
-
-        if (phi >= 0) { 
-                _y = abs(_y);
-        } else {
-                _y = abs(_y) * -1;
-        }
-
-
-        points[0] = _x;
-        points[1] = _y;
-        points[2] = _z;
-
-       // double mag = sqrt(sqr(_x)+sqr(_y)+sqr(_z));   
-       // _x /= mag;   
-        //_y /= mag;   
-       // _z /= mag; 
-        
-        //points[3] = (atan2(_x, _z)/(Math.PI*2)) + 0.5f;   
-       // points[4] =  (asin(_y) / Math.PI) + 0.5f;
 	}
 	
 

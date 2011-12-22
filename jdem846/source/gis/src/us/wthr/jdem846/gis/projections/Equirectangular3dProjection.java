@@ -75,7 +75,9 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 			min = modelContext.getRasterDataContext().getDataMinimumValue();
 			max = modelContext.getRasterDataContext().getDataMaximumValue();
 			resolution = modelContext.getRasterDataContext().getMetersResolution();
-			elev = (((elevation - max) / resolution) + Math.abs(min)) * elevationMultiple;
+			elevation -= ((max + min) / 2.0);
+			elev = (elevation / resolution) * elevationMultiple;
+			//elev = (((elevation - max) / resolution) + Math.abs(min)) * elevationMultiple;
 		}
 
 		pointVector[0] = point.column - (getWidth() / 2.0);
