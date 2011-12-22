@@ -107,6 +107,39 @@ public class RayTracedShadowTestMain extends AbstractTestMain
 		ModelCanvas canvas = ModelRenderer.render(modelContext);
 		String outputFileName = saveOutputTo.replace("{iter}", ""+((int)0));
 		canvas.save(outputFileName);
+		
+		/*
+		Coordinate latitude = new Coordinate((dataProxy.getNorth() + dataProxy.getSouth()) / 2.0, CoordinateTypeEnum.LATITUDE);
+		Coordinate longitude = new Coordinate((dataProxy.getWest() + dataProxy.getEast()) / 2.0, CoordinateTypeEnum.LONGITUDE);
+		SolarPosition position = new SolarPosition();
+		EarthDateTime datetime = new EarthDateTime(2011, 12, 22, 12, 0, 0, -5, false);
+		
+		
+		SolarUtil.getSolarPosition(datetime, latitude, longitude, position);
+		double sunrise = position.getApparentSunrise().toMinutes();
+		double sunset = position.getApprentSunset().toMinutes();
+		
+		int frame = 1;
+		for (double dayMinutes = sunrise; dayMinutes <= sunset; dayMinutes+=1.0) {
+			String outputFileName = saveOutputTo.replace("{iter}", ""+(1000000 + frame));
+			
+			datetime.fromMinutes(dayMinutes);
+			
+			SolarUtil.getSolarPosition(datetime, latitude, longitude, position);
+			
+			log.info("Frame #" + frame + " - " + datetime.toString() + " - " + position.getAzimuth() + " - " + position.getElevation() + " - " + outputFileName);
+			
+			lightingContext.setLightingAzimuth(position.getAzimuth());
+			lightingContext.setLightingElevation(position.getElevation());
+			
+			ModelCanvas canvas = ModelRenderer.render(modelContext);
+			canvas.save(outputFileName);
+			
+			frame++;
+		}
+		
+		 */
+		
 		/*
 		for (double elevation = 0; elevation <= 20; elevation+=1.0) {
 			
