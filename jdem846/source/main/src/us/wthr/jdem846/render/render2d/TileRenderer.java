@@ -196,12 +196,22 @@ public class TileRenderer extends InterruptibleProcess
 		double[] points = {0.0, 0.0, 0.0};
 		
 		
-		for (double radius = longitudeResolution; radius < (longitudeResolution * 100.0); radius += longitudeResolution) {
-			
+		//for (double radius = longitudeResolution; radius < (longitudeResolution * 100.0); radius += longitudeResolution) {
+		double radius = longitudeResolution;
+		while (true) {
 			getSpherePoint(solarAzimuth, solarElevation, radius, points);
 			
 			double latitude = centerLatitude + points[0];
 			double longitude = centerLongitude - points[2];
+			
+			
+			if (latitude > getRasterDataContext().getNorth() ||
+					latitude < getRasterDataContext().getSouth() ||
+					longitude > getRasterDataContext().getEast() ||
+					longitude < getRasterDataContext().getWest()) {
+				return false;
+			}
+			
 			double resolution = (points[1] / longitudeResolution);
 			double rayElevation = centerElevation + (resolution * metersResolution);
 			double pointElevation = 0;
@@ -232,9 +242,9 @@ public class TileRenderer extends InterruptibleProcess
 			}
 			*/
 			
+			radius += longitudeResolution;
 		}
 		
-		return false;
 	}
 	
 	
