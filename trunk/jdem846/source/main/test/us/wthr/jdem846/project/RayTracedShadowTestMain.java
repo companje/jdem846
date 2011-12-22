@@ -44,8 +44,12 @@ public class RayTracedShadowTestMain extends AbstractTestMain
 	{
 		List<String> inputDataList = new LinkedList<String>();
 		
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
-		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/output/{iter}-test-output.jpg";
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		//String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/output/{iter}-test-output.png";
+		
+		inputDataList.add("C:/srv/elevation/Monument Valley/69484853.flt");
+		String saveOutputTo = "C:/srv/elevation/Monument Valley/output-frame-{iter}.png";
 		
 		
 		RasterDataContext dataProxy = new RasterDataContext();
@@ -75,8 +79,10 @@ public class RayTracedShadowTestMain extends AbstractTestMain
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(true);
-		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
+		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR3D);
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
+		modelOptions.setBackgroundColor("255;255;255;255");
+		modelOptions.getProjection().setRotateX(30);
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions);
 		
 		/*
@@ -95,7 +101,9 @@ public class RayTracedShadowTestMain extends AbstractTestMain
 		}
 		*/
 		
-		lightingContext.setLightingElevation(0);
+		lightingContext.setLightingAzimuth(180.0);
+		lightingContext.setLightingElevation(5.0);
+		
 		ModelCanvas canvas = ModelRenderer.render(modelContext);
 		String outputFileName = saveOutputTo.replace("{iter}", ""+((int)0));
 		canvas.save(outputFileName);
