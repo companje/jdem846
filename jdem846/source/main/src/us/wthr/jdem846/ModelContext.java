@@ -19,6 +19,8 @@ package us.wthr.jdem846;
 import java.util.UUID;
 
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ScriptCompilationFailedException;
+import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
@@ -30,7 +32,9 @@ import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
+import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.scripting.ScriptProxy;
+import us.wthr.jdem846.scripting.ScriptProxyFactory;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.util.UniqueIdentifierUtil;
 
@@ -194,7 +198,15 @@ public class ModelContext
 		LightingContext lightingContextCopy = (lightingContext == null) ? null : lightingContext.copy();
 		
 		// TODO: Implement script proxy copy
-		ScriptProxy scriptProxyCopy = null;//(scriptProxy == null) ? null : scriptProxy.copy();
+		//ScriptProxy scriptProxyCopy = null;//(scriptProxy == null) ? null : scriptProxy.copy();
+		ScriptProxy scriptProxyCopy;
+		try {
+			scriptProxyCopy = ScriptProxyFactory.createScriptProxy(modelOptions.getScriptLanguage(), modelOptions.getUserScript());
+		} catch (Exception ex) {
+			throw new DataSourceException("Failed to recompile script: " + ex.getMessage(), ex);
+		} 
+		
+		
 		
 		ModelContext clone = ModelContext.createInstance(rasterDataCopy, shapeDataCopy, lightingContextCopy, modelOptionsCopy, scriptProxyCopy);
 		return clone;
@@ -212,6 +224,11 @@ public class ModelContext
 	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions)
 	{
 		return ModelContext.createInstance(rasterDataContext, null, lightingContext, modelOptions, null);
+	}
+	
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy)
+	{
+		return ModelContext.createInstance(rasterDataContext, null, lightingContext, modelOptions, scriptProxy);
 	}
 	
 	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions)
