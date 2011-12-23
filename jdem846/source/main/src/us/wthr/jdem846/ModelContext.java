@@ -106,6 +106,11 @@ public class ModelContext
 		return this.modelCanvas;
 	}
 	
+	public void resetModelCanvas()
+	{
+		this.modelCanvas = null;
+	}
+	
 	public RasterDataContext getRasterDataContext()
 	{
 		return rasterDataContext;
