@@ -66,7 +66,7 @@ import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.ProgressBar;
 
 @SuppressWarnings("serial")
-public class OutputImageViewPanel extends JdemPanel
+public class OutputImageViewPanel extends JdemPanel implements Savable
 {
 	private static Log log = Logging.getLog(OutputImageViewPanel.class);
 	
@@ -141,7 +141,7 @@ public class OutputImageViewPanel extends JdemPanel
 		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.save"), JDem846Properties.getProperty("us.wthr.jdem846.ui.outputImageView.save"), KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				onSave();
+				save();
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.SHIFT_MASK | ActionEvent.CTRL_MASK)));
 
@@ -195,7 +195,7 @@ public class OutputImageViewPanel extends JdemPanel
 		
 		buttonBar.addButtonClickedListener(new ButtonClickedListener() {
 			public void onSaveClicked() {
-				onSave();
+				save();
 			}
 			public void onZoomActualClicked() {
 				onZoomActual();
@@ -445,58 +445,7 @@ public class OutputImageViewPanel extends JdemPanel
 		//}
 	}
 	
-	public void onSave()
-	{
-		log.info("Save");
-		
-		FileChooser chooser = new FileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.png"), "png");
-		chooser.setFileFilter(filter);
-		
-		filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.jpeg"), "jpg", "jpeg");
-		chooser.setFileFilter(filter);
-		
-		filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.supportedTypes"), "png", "jpg", "jpeg");
-		chooser.setFileFilter(filter);
-		
-		
-	   // int returnVal = chooser.showOpenDialog(this);
-	    int returnVal = chooser.showSaveDialog(this);
-	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	    	String filePath = chooser.getSelectedFile().getAbsolutePath();
-	    	
-	    	//if (!filePath.toLowerCase().endsWith(".png")) {
-	    	//	filePath = filePath + ".png";
-    		//}
-	    	
-	    	log.info("Saving to: " + filePath);
-	    	doSave(filePath);
-	    	//canvas.save(filePath);
-	    	log.info("Done Save");
-	    }
-	}
 	
-	protected void doSave(String path) 
-	{
-		FileSaveThread saveThread = new FileSaveThread(canvas.getFinalizedImage(), path);
-		saveThread.addSaveCompletedListener(new SaveCompletedListener() {
-			public void onSaveSuccessful()
-			{
-				JOptionPane.showMessageDialog(getRootPane(),
-					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveSuccess.message"),
-					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveSuccess.title"),
-					    JOptionPane.INFORMATION_MESSAGE);
-			}
-			public void onSaveFailed(Exception ex)
-			{
-				JOptionPane.showMessageDialog(getRootPane(),
-					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveFailed.message") + ": " + ex.getMessage(),
-					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveFailed.title"),
-					    JOptionPane.ERROR_MESSAGE);
-			}
-		});
-		saveThread.start();
-	}
 	
 	public void onStop()
 	{
@@ -582,7 +531,69 @@ public class OutputImageViewPanel extends JdemPanel
 	{
 		this.isWorking = isWorking;
 	}
+
+	@Override
+	public void save()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void saveAs()
+	{
+		log.info("Save");
+		
+		FileChooser chooser = new FileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.png"), "png");
+		chooser.setFileFilter(filter);
+		
+		filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.jpeg"), "jpg", "jpeg");
+		chooser.setFileFilter(filter);
+		
+		filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.supportedTypes"), "png", "jpg", "jpeg");
+		chooser.setFileFilter(filter);
+		
+		
+	   // int returnVal = chooser.showOpenDialog(this);
+	    int returnVal = chooser.showSaveDialog(this);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	    	String filePath = chooser.getSelectedFile().getAbsolutePath();
+	    	
+	    	//if (!filePath.toLowerCase().endsWith(".png")) {
+	    	//	filePath = filePath + ".png";
+    		//}
+	    	
+	    	log.info("Saving to: " + filePath);
+	    	saveTo(filePath);
+	    	//canvas.save(filePath);
+	    	log.info("Done Save");
+	    }
+	}
 	
+
+	
+	protected void saveTo(String path) 
+	{
+		FileSaveThread saveThread = new FileSaveThread(canvas.getFinalizedImage(), path);
+		saveThread.addSaveCompletedListener(new SaveCompletedListener() {
+			public void onSaveSuccessful()
+			{
+				JOptionPane.showMessageDialog(getRootPane(),
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveSuccess.message"),
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveSuccess.title"),
+					    JOptionPane.INFORMATION_MESSAGE);
+			}
+			public void onSaveFailed(Exception ex)
+			{
+				JOptionPane.showMessageDialog(getRootPane(),
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveFailed.message") + ": " + ex.getMessage(),
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveFailed.title"),
+					    JOptionPane.ERROR_MESSAGE);
+			}
+		});
+		saveThread.start();
+	}
 
 	
 }

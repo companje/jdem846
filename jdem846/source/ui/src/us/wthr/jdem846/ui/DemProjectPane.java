@@ -61,6 +61,7 @@ import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
@@ -87,7 +88,7 @@ import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 import us.wthr.jdem846.ui.scripting.ScriptEditorPanel;
 
 @SuppressWarnings("serial")
-public class DemProjectPane extends JdemPanel
+public class DemProjectPane extends JdemPanel implements Savable
 {
 	private static Log log = Logging.getLog(DemProjectPane.class);
 	
@@ -1091,6 +1092,70 @@ public class DemProjectPane extends JdemPanel
 	public String getSavedPath()
 	{
 		return modelOptions.getWriteTo();
+	}
+
+	@Override
+	public void save()
+	{
+		String saveTo = getSavedPath();
+		if (saveTo == null) {
+			saveAs();
+		} else { 
+			saveTo(saveTo);
+		}
+	}
+
+	@Override
+	public void saveAs()
+	{
+		FileChooser chooser = new FileChooser();
+		//FileNameExtensionFilter filter = 
+		//chooser.setFileFilter(filter);
+		
+		FileNameExtensionFilter xdemFilter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.xdem.name"), "xdem");
+		FileNameExtensionFilter zdemFilter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.zdem.name"), "zdem");
+		
+		chooser.addChoosableFileFilter(xdemFilter);
+		chooser.addChoosableFileFilter(zdemFilter);
+		chooser.setFileFilter(zdemFilter);
+		chooser.setMultiSelectionEnabled(false);
+		
+	    int returnVal =  chooser.showSaveDialog(this);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	    	File selectedFile = chooser.getSelectedFile();
+	    	
+	    	String path = selectedFile.getAbsolutePath();
+	    	if (!path.toLowerCase().endsWith(".zdem")) {
+	    		path = path + ".zdem";
+	    	}
+	    		
+	    	saveTo(path);
+
+	    } 
+	}
+	
+	
+	protected void saveTo(String saveTo)
+	{
+		try {
+			
+			ProjectModel projectModel = getProjectModel();
+			
+			ProjectFiles.write(projectModel, saveTo);
+			
+			setSavedPath(saveTo);
+			log.info("Project file saved to " + saveTo);
+			//File file = new File(saveTo);
+			//setComponentTabTitle(tabPane.getSelectedIndex(), file.getName());
+		} catch (Exception ex) {
+			//ex.printStackTrace();
+			log.warn("Error trying to write project to disk: " + ex.getMessage(), ex);
+			JOptionPane.showMessageDialog(getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.message"),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.title"),
+				    JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 	}
 	
 }

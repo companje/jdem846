@@ -37,7 +37,8 @@ public class TopButtonBar extends ComponentButtonBar
 	public static final int BTN_NEW_PROJECT = 0;
 	public static final int BTN_OPEN_PROJECT = 1;
 	public static final int BTN_SAVE_PROJECT = 2;
-	public static final int BTN_EXIT = 3;
+	public static final int BTN_SAVE_PROJECT_AS = 3;
+	public static final int BTN_EXIT = 4;
 	
 	private List<ButtonClickedListener> buttonClickedListeners = new LinkedList<ButtonClickedListener>();
 	
@@ -45,6 +46,7 @@ public class TopButtonBar extends ComponentButtonBar
 	private ToolbarButton jbtnNewProject;
 	private ToolbarButton jbtnOpenProject;
 	private ToolbarButton jbtnSaveProject;
+	private ToolbarButton jbtnSaveProjectAs;
 	private ToolbarButton jbtnExit;
 	
 	public TopButtonBar()
@@ -69,6 +71,13 @@ public class TopButtonBar extends ComponentButtonBar
 				fireButtonClickedListeners(BTN_SAVE_PROJECT);
 			}
 		});
+		
+		jbtnSaveProjectAs = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectAsButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.saveAs"), new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fireButtonClickedListeners(BTN_SAVE_PROJECT_AS);
+			}
+		});
+		
 		jbtnExit = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.exitButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.exit"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_EXIT);
@@ -79,12 +88,14 @@ public class TopButtonBar extends ComponentButtonBar
 			jbtnNewProject.setTextDisplayed(false);
 			jbtnOpenProject.setTextDisplayed(false);
 			jbtnSaveProject.setTextDisplayed(false);
+			jbtnSaveProjectAs.setTextDisplayed(false);
 			jbtnExit.setTextDisplayed(false);
 		}
 		
 		jbtnNewProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectTooltip"));
 		jbtnOpenProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectTooltip"));
 		jbtnSaveProject.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectTooltip"));
+		jbtnSaveProjectAs.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectAsTooltip"));
 		jbtnExit.setToolTipText(I18N.get("us.wthr.jdem846.ui.topToolbar.exitTooltip"));
 		
 		//this.setMargin(new Insets(3, 3, 3, 3));
@@ -93,6 +104,7 @@ public class TopButtonBar extends ComponentButtonBar
 		add(jbtnNewProject);
 		add(jbtnOpenProject);
 		add(jbtnSaveProject);
+		add(jbtnSaveProjectAs);
 		addSeparator();
 		add(jbtnExit);
 		addSeparator();
@@ -111,6 +123,9 @@ public class TopButtonBar extends ComponentButtonBar
 			break;
 		case BTN_SAVE_PROJECT:
 			jbtnSaveProject.setEnabled(enabled);
+			break;
+		case BTN_SAVE_PROJECT_AS:
+			jbtnSaveProjectAs.setEnabled(enabled);
 			break;
 		case BTN_EXIT:
 			jbtnExit.setEnabled(enabled);
@@ -137,6 +152,9 @@ public class TopButtonBar extends ComponentButtonBar
 			case BTN_SAVE_PROJECT:
 				listener.onSaveProjectClicked();
 				break;
+			case BTN_SAVE_PROJECT_AS:
+				listener.onSaveProjectAsClicked();
+				break;
 			case BTN_EXIT:
 				listener.onExitClicked();
 				break;
@@ -149,6 +167,7 @@ public class TopButtonBar extends ComponentButtonBar
 		public void onNewProjectClicked();
 		public void onOpenProjectClicked();
 		public void onSaveProjectClicked();
+		public void onSaveProjectAsClicked();
 		public void onExitClicked();
 	}
 }
