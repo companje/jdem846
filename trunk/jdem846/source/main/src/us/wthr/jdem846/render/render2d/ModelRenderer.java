@@ -118,11 +118,11 @@ public class ModelRenderer extends InterruptibleProcess
 		modelCanvas.setMapProjection(mapProjection);
 		*/
 		//ModelCanvas modelCanvas = modelContext.createModelCanvas();
-		ModelCanvas modelCanvas = modelContext.getModelCanvas();
+		final ModelCanvas modelCanvas = modelContext.getModelCanvas();
 		
 		on2DModelBefore(modelCanvas);
 		
-		
+		double pctComplete = 0;
 		final TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas);
 		
 		this.setProcessInterruptListener(new ProcessInterruptListener() {
@@ -132,6 +132,7 @@ public class ModelRenderer extends InterruptibleProcess
 			}
 			public void onProcessPaused()
 			{
+				fireTileCompletionListeners(modelCanvas, 0);
 				tileRenderer.pause();
 			}
 			public void onProcessResumed()
@@ -183,7 +184,7 @@ public class ModelRenderer extends InterruptibleProcess
 
 					
 					
-					double pctComplete = (double)tileNumber / (double)tileCount;
+					pctComplete = (double)tileNumber / (double)tileCount;
 					
 					fireTileCompletionListeners(modelCanvas, pctComplete);
 					

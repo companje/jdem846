@@ -45,6 +45,18 @@ public class MenuItem extends JMenuItem
 		setPreferredSize();
 	}
 	
+	public MenuItem(String text, String iconPath, ActionListener actionListener)
+	{
+		super(text);
+		try {
+			setIcon(ImageIcons.loadImageIcon(iconPath));
+		} catch (IOException ex) {
+			log.warn("Failed to load icon: " + ex.getMessage(), ex);
+		}
+		this.addActionListener(actionListener);
+		setPreferredSize();
+	}
+	
 	public MenuItem(String text, String iconPath, int mnemonic, ActionListener actionListener, KeyStroke keyStroke)
 	{
 		super(text, mnemonic);

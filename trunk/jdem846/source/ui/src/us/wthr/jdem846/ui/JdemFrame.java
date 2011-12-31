@@ -141,7 +141,10 @@ public class JdemFrame extends Frame
 				createNewProject(null);
 			}
 			public void onSaveProjectClicked() {
-				saveProject();
+				saveTab();
+			}
+			public void onSaveProjectAsClicked() {
+				saveTabAs();
 			}
 			public void onOpenProjectClicked() {
 				openProject();
@@ -251,9 +254,16 @@ public class JdemFrame extends Frame
 		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.save"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.save"), KeyEvent.VK_S, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				saveProject();
+				saveTab();
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK)));
+		
+		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.saveAs"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.saveAs"), new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				saveTabAs();
+			}
+		}));
 		
 		fileMenu.addSeparator();
 		
@@ -307,85 +317,35 @@ public class JdemFrame extends Frame
 		}
 	}
 	
-	public void saveProject()
+	public void saveTab()
 	{
 		Object tabObj = tabPane.getSelectedComponent();
-		if (tabObj == null || !(tabObj instanceof DemProjectPane)) {
+		
+		if (tabObj != null && tabObj instanceof Savable) {
+			Savable savable = (Savable) tabObj;
+			savable.save();
+		} else {
 			JOptionPane.showMessageDialog(getRootPane(),
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.invalidTab.message"),
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.invalidTab.title"),
 				    JOptionPane.WARNING_MESSAGE);
-			return;
 		}
 		
-		DemProjectPane projectPane = (DemProjectPane) tabObj;
-		ProjectModel projectModel = projectPane.getProjectModel();
-		
-		String saveTo = projectPane.getSavedPath();
-		
-		
-		if (saveTo == null) {
-			FileChooser chooser = new FileChooser();
-			//FileNameExtensionFilter filter = 
-			//chooser.setFileFilter(filter);
-			
-			FileNameExtensionFilter xdemFilter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.xdem.name"), "xdem");
-			FileNameExtensionFilter zdemFilter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.zdem.name"), "zdem");
-			
-			chooser.addChoosableFileFilter(xdemFilter);
-			chooser.addChoosableFileFilter(zdemFilter);
-			chooser.setFileFilter(zdemFilter);
-			chooser.setMultiSelectionEnabled(false);
-			
-		    int returnVal =  chooser.showSaveDialog(this);
-		    if(returnVal == JFileChooser.APPROVE_OPTION) {
-		    	File selectedFile = chooser.getSelectedFile();
-		    	
-		    	String path = selectedFile.getAbsolutePath();
-		    	if (!path.toLowerCase().endsWith(".zdem")) {
-		    		path = path + ".zdem";
-		    	}
-		    		
-		    	saveTo = path;
-
-		    } else {
-		    	return;
-		    }
-			
-			
-		}
-		
-		try {
-			ProjectFiles.write(projectModel, saveTo);
-			
-			projectPane.setSavedPath(saveTo);
-			
-			File file = new File(saveTo);
-			setComponentTabTitle(tabPane.getSelectedIndex(), file.getName());
-		} catch (Exception ex) {
-			//ex.printStackTrace();
-			log.warn("Error trying to write project to disk: " + ex.getMessage(), ex);
-			JOptionPane.showMessageDialog(getRootPane(),
-				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.message"),
-				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.title"),
-				    JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		
-		
+	}
 	
+	public void saveTabAs()
+	{
+		Object tabObj = tabPane.getSelectedComponent();
 		
-		/*
-		if (projectModel.getLoadedFrom() != null) {
-			String loadedFrom = projectModel.getLoadedFrom();
-			File loadedFromFile = new File(loadedFrom);
-			
-			chooser.setCurrentDirectory(loadedFromFile);
-			chooser.setSelectedFile(loadedFromFile);
+		if (tabObj != null && tabObj instanceof Savable) {
+			Savable savable = (Savable) tabObj;
+			savable.saveAs();
+		} else {
+			JOptionPane.showMessageDialog(getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.invalidTab.message"),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.invalidTab.title"),
+				    JOptionPane.WARNING_MESSAGE);
 		}
-		*/
-		
-		
 		
 	}
 	
