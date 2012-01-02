@@ -28,6 +28,7 @@ import us.wthr.jdem846.render.BasicRenderEngine;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.render.RayTracing;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
@@ -63,6 +64,7 @@ public class TileRenderer extends InterruptibleProcess
 	private double longitudeGridSize; 
 	private boolean useSimpleCanvasFill;
 	
+	private RayTracing lightSourceRayTracer;
 	private boolean rayTraceShadows;
 	private double shadowIntensity;
 	
@@ -115,6 +117,12 @@ public class TileRenderer extends InterruptibleProcess
 		longitudeResolution = modelContext.getRasterDataContext().getLongitudeResolution();
 		latitudeGridSize = gridSize * latitudeResolution;
 		longitudeGridSize = gridSize * longitudeResolution; 
+		
+		if (rayTraceShadows) {
+			//lightSourceRayTracer = new RayTracing();
+		} else {
+			lightSourceRayTracer = null;
+		}
 	}
 	
 	
