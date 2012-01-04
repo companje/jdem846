@@ -1,13 +1,6 @@
 package us.wthr.jdem846.render.render2d;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Path2D;
 import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
@@ -15,33 +8,27 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
-import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.input.DataBounds;
-import us.wthr.jdem846.input.DataPackage;
-import us.wthr.jdem846.input.SubsetDataPackage;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.BasicRenderEngine;
 import us.wthr.jdem846.render.InterruptibleProcess;
-import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RayTracing;
 import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
-public class TileRenderer extends InterruptibleProcess
+public class RowRenderer extends InterruptibleProcess
 {
-	private static Log log = Logging.getLog(TileRenderer.class);
-
+	private static Log log = Logging.getLog(RowRenderer.class);
+	
+	
 	private ModelContext modelContext;
 	private ModelColoring modelColoring;
 	private ModelCanvas modelCanvas;
@@ -55,7 +42,6 @@ public class TileRenderer extends InterruptibleProcess
 	private double relativeLightIntensity;
 	private double relativeDarkIntensity;
 	private double metersResolution;
-	//private int hillShadeType;
 	private int spotExponent;
 	private double lightingMultiple;
 	private double elevationMax;
@@ -90,15 +76,15 @@ public class TileRenderer extends InterruptibleProcess
 	private DemPoint point = new DemPoint();
 
 	
-	public TileRenderer(ModelContext modelContext, ModelColoring modelColoring, ModelCanvas modelCanvas)
+	public RowRenderer(ModelContext modelContext, ModelColoring modelColoring, ModelCanvas modelCanvas, RasterDataContext dataRasterContextSubset)
 	{
 		this.modelContext = modelContext;
 		this.modelColoring = modelColoring;
 		this.modelCanvas = modelCanvas;
+		this.dataRasterContextSubset = dataRasterContextSubset;
 		this.perspectives = new Perspectives();
 		
 		gridSize = getModelOptions().getGridSize();
-		
 		metersResolution = getRasterDataContext().getMetersResolution();
 		lightingEnabled = getLightingContext().isLightingEnabled();
 		tiledPrecaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
@@ -123,12 +109,6 @@ public class TileRenderer extends InterruptibleProcess
 		longitudeGridSize = gridSize * longitudeResolution; 
 		
 		if (rayTraceShadows) {
-			/*
-			 * RayTracing(double remoteAzimuth, 
-			double remoteElevationAngle, 
-			ModelContext modelContext,
-			RasterDataFetchHandler rasterDataFetchHandler)
-			 */
 			lightSourceRayTracer = new RayTracing(getLightingContext().getLightingAzimuth(),
 					getLightingContext().getLightingElevation(),
 					modelContext,
@@ -140,58 +120,24 @@ public class TileRenderer extends InterruptibleProcess
 		} else {
 			lightSourceRayTracer = null;
 		}
+		
 	}
 	
 	
-	public void renderTile(double northLimit, double southLimit, double eastLimit, double westLimit) throws RenderEngineException
+	public void renderRow(double latitude, double eastLimit, double westLimit) throws RenderEngineException
 	{
-		
-		RasterDataContext dataProxy = modelContext.getRasterDataContext();//.getSubSet(northLimit, southLimit, eastLimit, westLimit);
-
-		// TODO: If Buffered
-		if (tiledPrecaching) {
-			try {
-				dataProxy.fillBuffers(northLimit, southLimit, eastLimit, westLimit);
-			} catch (Exception ex) {
-				throw new RenderEngineException("Failed to buffer data: " + ex.getMessage(), ex);
-			}
-		}
-
-		
 		resetBuffers();
 		setUpLightSource();
-
-		onTileBefore(modelCanvas);
 		
-		LinkedList<RowRenderRunnable> renderQueue = new LinkedList<RowRenderRunnable>();
-		for (double latitude = northLimit; latitude >= southLimit; latitude -= latitudeResolution) {
-			
-			/*
-			for (double longitude = westLimit; longitude <= eastLimit; longitude += longitudeResolution) {
+		for (double longitude = westLimit; longitude <= eastLimit; longitude += longitudeResolution) {
 
-				if (doublePrecisionHillshading) {
-					renderCellDoublePrecision(latitude, longitude);
-				} else {
-					renderCellStandardPrecision(latitude, longitude);
-				}
-				
-				
-				
-				this.checkPause();
-				if (isCancelled()) {
-					break;
-				}
-				
+			if (doublePrecisionHillshading) {
+				renderCellDoublePrecision(latitude, longitude);
+			} else {
+				renderCellStandardPrecision(latitude, longitude);
 			}
-			*/
 			
 			
-			
-			
-			// (ModelContext modelContext, ModelColoring modelColoring, ModelCanvas modelCanvas, RasterDataContext dataRasterContextSubset)
-			RowRenderer rowRenderer = new RowRenderer(modelContext, modelColoring, modelCanvas, dataRasterContextSubset);
-			rowRenderer.renderRow(latitude, eastLimit, westLimit);
-			//renderQueue.add(new RowRenderRunnable(rowRenderer, latitude, eastLimit, westLimit));
 			
 			this.checkPause();
 			if (isCancelled()) {
@@ -199,78 +145,12 @@ public class TileRenderer extends InterruptibleProcess
 			}
 			
 		}
-		
-		
-		/*
-		try {
-			ExecutorService exec = Executors.newFixedThreadPool(1);
-			exec.invokeAll(renderQueue);
-			log.info("All Done.");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		*/
-		
-		//for (RowRenderRunnable renderer : renderQueue) {
-		//	renderer.run();
-		//}
-		
-		onTileAfter(modelCanvas);
-		
-		if (tiledPrecaching) {
-			try {
-				dataProxy.clearBuffers();
-			} catch (DataSourceException ex) {
-				throw new RenderEngineException("Failed to clear buffer data: " + ex.getMessage(), ex);
-			}
-		}
-		
-
 	}
 	
 	
-	protected void drawRayTrace(double centerLatitude, double centerLongitude, double centerElevation, int[] color) throws RenderEngineException
-	{
-		double[] points = {0.0, 0.0, 0.0};
-		//int[] color = {255, 0, 0, 0};
-		double maxRadius = 100;
-		int alphaStep = (int) Math.round(255.0 / maxRadius);
-		color[3] = 0;
-		
-		for (double radius = longitudeResolution; radius < (longitudeResolution * maxRadius); radius += longitudeResolution) {
-			color[3] = color[3] + alphaStep;
-			if (color[3] > 255) {
-				color[3] = 255;
-			}
-			Spheres.getPoint3D(solarAzimuth, solarElevation, radius, points);
-			// 0, 2
-			double latitude = centerLatitude + points[0];
-			double longitude = centerLongitude - points[2];
-			double resolution = (points[1] / longitudeResolution);
-			double rayElevation = centerElevation + (resolution * metersResolution);
-			//resolution = modelContext.getRasterDataContext().getMetersResolution();
-			//elev = (((elevation - max) / resolution) + Math.abs(min)) * elevationMultiple;
-			double pointElevation = 0;
-			//log.info("Radius: " + radius + ", X/Y/Z: " + points[0] + "/" + points[1] + "/" + points[2] + ", Center Elevation: " + centerElevation + ", Ray Elevation: " + rayElevation);;
-			/*
-			try {
-				pointElevation = getRasterData(latitude, longitude);
-			} catch (DataSourceException ex) {
-				throw new RenderEngineException("Failed to get elevation for point: " + ex.getMessage(), ex);
-			}
-			*/
-			try {
-				modelCanvas.fillCircle(color, latitude, longitude, rayElevation, 1);
-			} catch (CanvasException ex) {
-				throw new RenderEngineException("Failed to render circle on canvas: " + ex.getMessage(), ex);
-			}
-			
-			
-		}
-
-	}
-
 	
+	
+
 	
 	protected void renderCellStandardPrecision(double latitude, double longitude) throws RenderEngineException
 	{
@@ -294,18 +174,20 @@ public class TileRenderer extends InterruptibleProcess
 			renderTriangle(latitude, longitude, avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
 			try {
+
 				if (useSimpleCanvasFill) {
 					modelCanvas.fillRectangle(triangleColorNW, 
-							latitude, longitude, 
-							latitudeResolution, longitudeResolution,
-							avgElevationNW);
+								latitude, longitude, 
+								latitudeResolution, longitudeResolution,
+								avgElevationNW);
 				} else {
 					modelCanvas.fillRectangle(triangleColorNW,
-							latitude, longitude, backLeftPoints[1],
-							latitude-latitudeResolution, longitude, frontLeftPoints[1],
-							latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
-							latitude, longitude+longitudeResolution, backRightPoints[1]);
+								latitude, longitude, backLeftPoints[1],
+								latitude-latitudeResolution, longitude, frontLeftPoints[1],
+								latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
+								latitude, longitude+longitudeResolution, backRightPoints[1]);
 				}
+
 			} catch (CanvasException ex) {
 				throw new RenderEngineException("Failed to fill points on canvas: " + ex.getMessage(), ex);
 			}
@@ -336,24 +218,27 @@ public class TileRenderer extends InterruptibleProcess
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
 			renderTriangle(latitude, longitude, avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
+
 			try {
 				modelCanvas.fillTriangle(triangleColorNW, 
-									latitude, longitude, backLeftPoints[1],
-									latitude-latitudeResolution, longitude, frontLeftPoints[1],
-									latitude, longitude+longitudeResolution, backRightPoints[1]);
+										latitude, longitude, backLeftPoints[1],
+										latitude-latitudeResolution, longitude, frontLeftPoints[1],
+										latitude, longitude+longitudeResolution, backRightPoints[1]);
 			} catch (CanvasException ex) {
 				throw new RenderEngineException("Failed to fill point on canvas: " + ex.getMessage(), ex);
 			}
+			
 			
 			// South East Triangle
 			double avgElevationSE = (frontRightPoints[1] + frontLeftPoints[1] + backRightPoints[1]) / 3.0;
 			renderTriangle(latitude, longitude, avgElevationSE, frontLeftPoints, frontRightPoints, backRightPoints, triangleColorSE);
 			
+
 			try {
 				modelCanvas.fillTriangle(triangleColorSE, 
-									latitude-latitudeResolution, longitude, frontLeftPoints[1],
-									latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
-									latitude, longitude+longitudeResolution, backRightPoints[1]);
+										latitude-latitudeResolution, longitude, frontLeftPoints[1],
+										latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
+										latitude, longitude+longitudeResolution, backRightPoints[1]);
 			} catch (CanvasException ex) {
 				throw new RenderEngineException("Failed to fill point on canvas: " + ex.getMessage(), ex);
 			}
@@ -445,26 +330,10 @@ public class TileRenderer extends InterruptibleProcess
 		
 	}
 	
-
-	public void precacheData() throws DataSourceException
-	{
-		if (dataRasterContextSubset != null) {
-			dataRasterContextSubset.fillBuffers();
-		}
-	}
-	
-	public void unloadData() throws DataSourceException
-	{
-		if (dataRasterContextSubset != null) {
-			dataRasterContextSubset.clearBuffers();
-		}
-	}
 	
 	
-	public void loadDataSubset(double north, double south, double east, double west) throws DataSourceException
-	{
-		dataRasterContextSubset = getRasterDataContext().getSubSet(north, south, east, west);
-	}
+	
+	
 	
 	
 
@@ -593,6 +462,7 @@ public class TileRenderer extends InterruptibleProcess
 	}
 	
 	
+	
 	protected RasterDataContext getRasterDataContext()
 	{
 		return modelContext.getRasterDataContext();
@@ -710,79 +580,5 @@ public class TileRenderer extends InterruptibleProcess
 			throw new RenderEngineException("Exception thrown in user script", ex);
 		}
 
-	}
-	
-	
-	public static ModelCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext) throws RenderEngineException
-	{
-		ModelColoring modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
-		return TileRenderer.render(fromRow, toRow, fromColumn, toColumn, modelContext, modelColoring, null);
-	}
-	
-	public static ModelCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext, ModelCanvas canvas) throws RenderEngineException
-	{
-		ModelColoring modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
-		return TileRenderer.render(fromRow, toRow, fromColumn, toColumn, modelContext, modelColoring, canvas);
-	}
-	
-	public static ModelCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext, ModelColoring modelColoring) throws RenderEngineException
-	{
-		return TileRenderer.render(fromRow, toRow, fromColumn, toColumn, modelContext, modelColoring, null);
-	}
-	
-	public static ModelCanvas render(int fromRow, int toRow, int fromColumn, int toColumn, ModelContext modelContext, ModelColoring modelColoring, ModelCanvas canvas) throws RenderEngineException
-	{
-		if (canvas == null) {
-            int width = (int)(toColumn - fromColumn) + 1;
-            int height = (int)(toRow - fromRow) + 1;
-            log.info("Creating default canvas of width/height: " + width + "/" + height);
-            canvas = new ModelCanvas(modelContext);
-            //canvas = new DemCanvas(DEFAULT_BACKGROUND, width, height);
-		}
-		
-		TileRenderer renderer = new TileRenderer(modelContext, modelColoring, canvas);
-		renderer.renderTile(fromRow, toRow, fromColumn, toColumn);
-		
-		return canvas;
-	}
-
-	protected double asin(double a)
-	{
-		return Math.asin(a);
-	}
-	
-	protected double atan2(double a, double b)
-	{
-		return Math.atan2(a, b);
-	}
-	
-	protected double sqr(double a)
-	{
-		return (a*a);
-	}
-	
-	protected double abs(double a)
-	{
-		return Math.abs(a);
-	}
-	
-	protected double pow(double a, double b)
-	{
-		return Math.pow(a, b);
-	}
-	
-	protected double sqrt(double d)
-	{
-		return Math.sqrt(d);
-	}
-	
-	protected double cos(double d)
-	{
-		return Math.cos(Math.toRadians(d));
-	}
-	
-	protected double sin(double d)
-	{
-		return Math.sin(Math.toRadians(d));
 	}
 }

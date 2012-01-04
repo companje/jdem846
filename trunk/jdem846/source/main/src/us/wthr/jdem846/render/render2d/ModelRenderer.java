@@ -1,8 +1,13 @@
 package us.wthr.jdem846.render.render2d;
 
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
@@ -153,6 +158,7 @@ public class ModelRenderer extends InterruptibleProcess
 		
 		if ( getRasterDataContext().getRasterDataListSize() > 0) {
 			
+			LinkedList<TileRenderRunnable> renderQueue = new LinkedList<TileRenderRunnable>();
 			// Latitude
 			for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
 				double tileSouth = tileNorth - tileLatitudeHeight;
@@ -169,16 +175,32 @@ public class ModelRenderer extends InterruptibleProcess
 					if (tileEast >= eastLimit) {
 						tileEast = eastLimit - longitudeResolution;
 					}
-
+					
+					
 					log.info("Tile #" + (tileNumber + 1) + " of " + tileCount + ", Row #" + (tileRow + 1) + ", Column #" + (tileColumn + 1));
 					log.info("    North: " + tileNorth);
 					log.info("    South: " + tileSouth);
 					log.info("    East: " + tileEast);
 					log.info("    West: " + tileWest);	
 					
-					tileRenderer.renderTile(tileNorth, tileSouth, tileEast, tileWest);
+					//tileRenderer.renderTile(tileNorth, tileSouth, tileEast, tileWest);
 					
-
+					
+					TileRenderRunnable tileRenderRunnable = null;
+					try {
+						ModelContext tileContext = modelContext.copy();
+						tileContext.setNorthLimit(tileNorth);
+						tileContext.setSouthLimit(tileSouth);
+						tileContext.setEastLimit(tileEast);
+						tileContext.setWestLimit(tileWest);
+						tileRenderRunnable = new TileRenderRunnable(tileContext, tileNorth, tileSouth, tileEast, tileWest );
+					} catch (DataSourceException ex) {
+						throw new RenderEngineException("Failed to create tile render runnable: " + ex.getMessage(), ex);
+					}
+					
+					renderQueue.add(tileRenderRunnable);
+					//tileRenderRunnable.run();
+					
 					tileColumn++;
 					tileNumber++;
 
@@ -199,6 +221,26 @@ public class ModelRenderer extends InterruptibleProcess
 					break;
 				}
 				
+			}
+			
+			try {
+				ExecutorService exec = Executors.newFixedThreadPool(10);
+				List<Future<RenderedTile>> futureRenderedTiles = exec.invokeAll(renderQueue);
+				
+				for (Future<RenderedTile> futureRenderedTile : futureRenderedTiles) {
+					RenderedTile renderedTile = futureRenderedTile.get();
+					modelCanvas.drawImage(renderedTile.getModelCanvas().getImage(), 
+							renderedTile.getNorthLimit(), 
+							renderedTile.getSouthLimit(), 
+							renderedTile.getEastLimit(), 
+							renderedTile.getWestLimit());
+				}
+				
+				exec.shutdown();
+				
+				log.info("All Done.");
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 
 		}

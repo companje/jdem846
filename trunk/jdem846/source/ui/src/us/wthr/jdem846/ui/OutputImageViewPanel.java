@@ -94,6 +94,8 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 	
 	private Menu modelMenu;
 	
+	private String lastSavePath = null;
+	
 	public OutputImageViewPanel(final RenderEngine engine)
 	{
 		// Set Properties
@@ -535,7 +537,11 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 	@Override
 	public void save()
 	{
-		// TODO Auto-generated method stub
+		if (lastSavePath == null) {
+			saveAs();
+		} else {
+			saveTo(lastSavePath);
+		}
 		
 	}
 
@@ -593,6 +599,7 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 			}
 		});
 		saveThread.start();
+		lastSavePath = path;
 	}
 
 	

@@ -45,6 +45,7 @@ import us.wthr.jdem846.util.UniqueIdentifierUtil;
  */
 public class ModelContext
 {
+	private static final double NOT_SET = DemConstants.ELEV_NO_DATA;
 	private static Log log = Logging.getLog(ModelContext.class);
 	
 	private RasterDataContext rasterDataContext;
@@ -57,6 +58,11 @@ public class ModelContext
 	private MapProjection mapProjection;
 	private ModelDimensions2D modelDimensions;
 	private ModelCanvas modelCanvas = null;
+	
+	private double northLimit = NOT_SET;
+	private double southLimit = NOT_SET;
+	private double eastLimit = NOT_SET;
+	private double westLimit = NOT_SET;
 	
 	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
 	{
@@ -149,43 +155,79 @@ public class ModelContext
 		return contextId;
 	}
 	
+	public void setNorthLimit(double northLimit)
+	{
+		this.northLimit = northLimit;
+	}
+	
 	public double getNorth()
 	{
-		// TODO: Add shape data dimensions once supported
-		if (rasterDataContext != null) {
-			return rasterDataContext.getNorth();
+		if (northLimit == NOT_SET) {
+			// TODO: Add shape data dimensions once supported
+			if (rasterDataContext != null) {
+				return rasterDataContext.getNorth();
+			} else {
+				return 90.0;
+			}
 		} else {
-			return 90.0;
+			return northLimit;
 		}
+	}
+	
+	public void setSouthLimit(double southLimit)
+	{
+		this.southLimit = southLimit;
 	}
 	
 	public double getSouth()
 	{
-		// TODO: Add shape data dimensions once supported
-		if (rasterDataContext != null) {
-			return rasterDataContext.getSouth();
+		if (southLimit == NOT_SET) {
+			// TODO: Add shape data dimensions once supported
+			if (rasterDataContext != null) {
+				return rasterDataContext.getSouth();
+			} else {
+				return -90.0;
+			}	
 		} else {
-			return -90.0;
-		}	
+			return southLimit;
+		}
+	}
+	
+	public void setEastLimit(double eastLimit)
+	{
+		this.eastLimit = eastLimit;
 	}
 	
 	public double getEast()
 	{
-		// TODO: Add shape data dimensions once supported
-		if (rasterDataContext != null) {
-			return rasterDataContext.getEast();
+		if (eastLimit == NOT_SET) {
+			// TODO: Add shape data dimensions once supported
+			if (rasterDataContext != null) {
+				return rasterDataContext.getEast();
+			} else {
+				return 180.0;
+			}
 		} else {
-			return 180.0;
+			return eastLimit;
 		}
+	}
+	
+	public void setWestLimit(double westLimit)
+	{
+		this.westLimit = westLimit;
 	}
 	
 	public double getWest()
 	{
-		// TODO: Add shape data dimensions once supported
-		if (rasterDataContext != null) {
-			return rasterDataContext.getWest();
+		if (westLimit == NOT_SET) {
+			// TODO: Add shape data dimensions once supported
+			if (rasterDataContext != null) {
+				return rasterDataContext.getWest();
+			} else {
+				return -180.0;
+			}
 		} else {
-			return -180.0;
+			return westLimit;
 		}
 	}
 	
@@ -199,16 +241,22 @@ public class ModelContext
 		
 		// TODO: Implement script proxy copy
 		//ScriptProxy scriptProxyCopy = null;//(scriptProxy == null) ? null : scriptProxy.copy();
-		ScriptProxy scriptProxyCopy;
-		try {
-			scriptProxyCopy = ScriptProxyFactory.createScriptProxy(modelOptions.getScriptLanguage(), modelOptions.getUserScript());
-		} catch (Exception ex) {
-			throw new DataSourceException("Failed to recompile script: " + ex.getMessage(), ex);
-		} 
+		ScriptProxy scriptProxyCopy = null;
 		
+		if (modelOptions.getUserScript() != null && modelOptions.getUserScript().length() > 0) {
+			try {
+				scriptProxyCopy = ScriptProxyFactory.createScriptProxy(modelOptions.getScriptLanguage(), modelOptions.getUserScript());
+			} catch (Exception ex) {
+				throw new DataSourceException("Failed to recompile script: " + ex.getMessage(), ex);
+			} 
+		}
 		
 		
 		ModelContext clone = ModelContext.createInstance(rasterDataCopy, shapeDataCopy, lightingContextCopy, modelOptionsCopy, scriptProxyCopy);
+		clone.northLimit = this.northLimit;
+		clone.southLimit = this.southLimit;
+		clone.eastLimit = this.eastLimit;
+		clone.westLimit = this.westLimit;
 		return clone;
 
 	}

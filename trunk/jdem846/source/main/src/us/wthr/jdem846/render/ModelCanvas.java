@@ -162,7 +162,7 @@ public class ModelCanvas
 		if (color.length >= 4) {
 			alpha = color[3];
 		}
-		
+
 		Color fillColor = new Color(color[0], color[1], color[2], alpha);
 		
 		double row0, row1, row2;
@@ -238,7 +238,7 @@ public class ModelCanvas
 	{
 		double row0, row1;
 		double column0, column1;
-		
+
 		try {
 			mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
 			row0 = mapPoint.row;
@@ -305,8 +305,7 @@ public class ModelCanvas
 		if (color.length >= 4) {
 			alpha = color[3];
 		}
-		
-		
+
 		Color fillColor = new Color(color[0], color[1], color[2], alpha);
 		rectangle.x = column0;
 		rectangle.y = row0;
@@ -327,6 +326,7 @@ public class ModelCanvas
 		double row0, row1;
 		double column0, column1;
 		
+
 		try {
 			mapProjection.getPoint(lat0, lon0, elev0, mapPoint);
 			row0 = mapPoint.row;
@@ -347,10 +347,10 @@ public class ModelCanvas
 		
 		
 		Color fillColor = new Color(color[0], color[1], color[2], alpha);
-		
-		graphics.setColor(fillColor);
-		graphics.drawLine((int)Math.round(column0), (int)Math.round(row0), (int)Math.round(column1), (int)Math.round(row1));
-		
+		synchronized (graphics) {
+			graphics.setColor(fillColor);
+			graphics.drawLine((int)Math.round(column0), (int)Math.round(row0), (int)Math.round(column1), (int)Math.round(row1));
+		}
 	}
 	
 	public void fillRectangle(int[] color, 
@@ -361,6 +361,7 @@ public class ModelCanvas
 	{
 		pathBuffer.reset();
 		
+
 		double row0, row1, row2, row3;
 		double column0, column1, column2, column3;
 		
@@ -411,34 +412,40 @@ public class ModelCanvas
 	
 	public void fillShape(Color color, Stroke stroke, Shape shape)
 	{
-		if (color != null) {
-			graphics.setColor(color);
+		
+		synchronized (graphics) {
+			if (color != null) {
+				graphics.setColor(color);
+			}
+			
+			Stroke origStroke = graphics.getStroke();
+			
+			if (stroke != null) {
+				graphics.setStroke(stroke);
+			}
+			
+			graphics.fill(shape);
+			graphics.setStroke(origStroke);
 		}
 		
-		Stroke origStroke = graphics.getStroke();
-		
-		if (stroke != null) {
-			graphics.setStroke(stroke);
-		}
-		
-		graphics.fill(shape);
-		graphics.setStroke(origStroke);
 	}
 	
 	public void drawShape(Color color, Stroke stroke, Shape shape)
 	{
-		if (color != null) {
-			graphics.setColor(color);
+		synchronized (graphics) {
+			if (color != null) {
+				graphics.setColor(color);
+			}
+			
+			Stroke origStroke = graphics.getStroke();
+			
+			if (stroke != null) {
+				graphics.setStroke(stroke);
+			}
+			
+			graphics.draw(shape);
+			graphics.setStroke(origStroke);
 		}
-		
-		Stroke origStroke = graphics.getStroke();
-		
-		if (stroke != null) {
-			graphics.setStroke(stroke);
-		}
-		
-		graphics.draw(shape);
-		graphics.setStroke(origStroke);
 	}
 	
 	public void fillCircle(int[] color, double latitude, double longitude, double elevation, double radiusPixels) throws CanvasException
@@ -454,9 +461,7 @@ public class ModelCanvas
 	
 	public void fillCircle(Color color, double latitude, double longitude, double elevation, double radiusPixels) throws CanvasException
 	{
-		if (color != null) {
-			graphics.setColor(color);
-		}
+		
 		
 		double row, column = 0;
 		
@@ -473,9 +478,13 @@ public class ModelCanvas
 		
 		int radius = (int) Math.round(radiusPixels);
 		
-		graphics.fillOval(x, y, radius, radius);
+		synchronized (graphics) {
+			if (color != null) {
+				graphics.setColor(color);
+			}
+			graphics.fillOval(x, y, radius, radius);
 		
-		
+		}
 	}
 	
 	public void drawText(String text, int[] color, double latitude, double longitude, boolean centered) throws CanvasException
@@ -498,13 +507,41 @@ public class ModelCanvas
 			throw new CanvasException("Failed to project coordinates: " + ex.getMessage(), ex);
 		}
 		
-		graphics.setColor(textColor);
-		graphics.drawString(text, x, y);
+		synchronized (graphics) {
+			graphics.setColor(textColor);
+			graphics.drawString(text, x, y);
+		}
+	}
+	
+	public void drawImage(Image image, double north, double south, double east, double west) throws CanvasException
+	{
+		int x = 0;
+		int y = 0;
+		int width = 0;
+		int height = 0;
+		
+		try {
+			mapProjection.getPoint(north, west, 0, mapPoint);
+			y = (int) Math.round(mapPoint.row);
+			x = (int) Math.round(mapPoint.column);
+			
+			mapProjection.getPoint(south, east, 0, mapPoint);
+			height = (int) Math.round(mapPoint.row - y);
+			width = (int) Math.round(mapPoint.column - x);
+			
+		} catch (Exception ex) {
+			throw new CanvasException("Failed to project coordinates: " + ex.getMessage(), ex);
+		}
+		
+		drawImage(image, x, y, width, height);
+		
 	}
 	
 	public void drawImage(Image image, int x, int y, int width, int height)
 	{
-		graphics.drawImage(image, x, y, width, height, null);
+		synchronized (graphics) {
+			graphics.drawImage(image, x, y, width, height, null);
+		}
 	}
 	
 	public int getColor(int x, int y)
