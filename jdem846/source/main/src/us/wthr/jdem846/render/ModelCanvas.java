@@ -69,6 +69,8 @@ public class ModelCanvas
 		height = modelContext.getModelDimensions().getOutputHeight();
 		//width = modelContext.getModelOptions().getWidth();
 		//height = modelContext.getModelOptions().getHeight();
+		//width = (int) modelContext.getModelDimensions().getTileOutputWidth();
+		//height = (int) modelContext.getModelDimensions().getTileOutputHeight();
 		
 		//modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
 		
