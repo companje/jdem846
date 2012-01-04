@@ -535,7 +535,8 @@ public class ModelCanvas
 			throw new CanvasException("Failed to project coordinates: " + ex.getMessage(), ex);
 		}
 		
-		drawImage(image, x, y, width, height);
+		//BufferedImage scaled = ImageUtilities.getScaledInstance((BufferedImage)image, width, height, RenderingHints.VALUE_INTERPOLATION_BILINEAR, true);
+		drawImage(image, x, y, image.getWidth(null), image.getHeight(null));
 		
 	}
 	
