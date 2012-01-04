@@ -24,14 +24,16 @@ package us.wthr.jdem846;
  */
 public class Perspectives 
 {
-	private double buffer0[] = {0.0, 0.0, 0.0};
-	private double buffer1[] = {0.0, 0.0, 0.0};
-	private double buffer2[] = {0.0, 0.0, 0.0};
+	private double buffer0[];
+	private double buffer1[];
+	private double buffer2[];
 
 	
 	public Perspectives()
 	{
-		
+		buffer0 = new double[3];
+		buffer1 = new double[3];
+		buffer2 = new double[3];
 	}
 	
 	public  void subtract(double[] pt0, double[] pt1, double[] usr)

@@ -349,10 +349,10 @@ public class ModelCanvas
 		
 		
 		Color fillColor = new Color(color[0], color[1], color[2], alpha);
-		synchronized (graphics) {
-			graphics.setColor(fillColor);
-			graphics.drawLine((int)Math.round(column0), (int)Math.round(row0), (int)Math.round(column1), (int)Math.round(row1));
-		}
+
+		graphics.setColor(fillColor);
+		graphics.drawLine((int)Math.round(column0), (int)Math.round(row0), (int)Math.round(column1), (int)Math.round(row1));
+		
 	}
 	
 	public void fillRectangle(int[] color, 
@@ -414,40 +414,34 @@ public class ModelCanvas
 	
 	public void fillShape(Color color, Stroke stroke, Shape shape)
 	{
-		
-		synchronized (graphics) {
-			if (color != null) {
-				graphics.setColor(color);
-			}
-			
-			Stroke origStroke = graphics.getStroke();
-			
-			if (stroke != null) {
-				graphics.setStroke(stroke);
-			}
-			
-			graphics.fill(shape);
-			graphics.setStroke(origStroke);
+		if (color != null) {
+			graphics.setColor(color);
 		}
-		
+			
+		Stroke origStroke = graphics.getStroke();
+			
+		if (stroke != null) {
+			graphics.setStroke(stroke);
+		}
+			
+		graphics.fill(shape);
+		graphics.setStroke(origStroke);
 	}
 	
 	public void drawShape(Color color, Stroke stroke, Shape shape)
 	{
-		synchronized (graphics) {
-			if (color != null) {
-				graphics.setColor(color);
-			}
-			
-			Stroke origStroke = graphics.getStroke();
-			
-			if (stroke != null) {
-				graphics.setStroke(stroke);
-			}
-			
-			graphics.draw(shape);
-			graphics.setStroke(origStroke);
+		if (color != null) {
+			graphics.setColor(color);
 		}
+			
+		Stroke origStroke = graphics.getStroke();
+			
+		if (stroke != null) {
+			graphics.setStroke(stroke);
+		}
+			
+		graphics.draw(shape);
+		graphics.setStroke(origStroke);
 	}
 	
 	public void fillCircle(int[] color, double latitude, double longitude, double elevation, double radiusPixels) throws CanvasException
@@ -480,13 +474,13 @@ public class ModelCanvas
 		
 		int radius = (int) Math.round(radiusPixels);
 		
-		synchronized (graphics) {
-			if (color != null) {
-				graphics.setColor(color);
-			}
-			graphics.fillOval(x, y, radius, radius);
 		
+		if (color != null) {
+			graphics.setColor(color);
 		}
+		graphics.fillOval(x, y, radius, radius);
+		
+		
 	}
 	
 	public void drawText(String text, int[] color, double latitude, double longitude, boolean centered) throws CanvasException
@@ -509,10 +503,10 @@ public class ModelCanvas
 			throw new CanvasException("Failed to project coordinates: " + ex.getMessage(), ex);
 		}
 		
-		synchronized (graphics) {
-			graphics.setColor(textColor);
-			graphics.drawString(text, x, y);
-		}
+
+		graphics.setColor(textColor);
+		graphics.drawString(text, x, y);
+		
 	}
 	
 	public void drawImage(Image image, double north, double south, double east, double west) throws CanvasException
@@ -524,27 +518,34 @@ public class ModelCanvas
 		
 		try {
 			mapProjection.getPoint(north, west, 0, mapPoint);
-			y = (int) Math.round(mapPoint.row);
-			x = (int) Math.round(mapPoint.column);
+			y = (int) Math.floor(mapPoint.row);
+			x = (int) Math.floor(mapPoint.column);
+			
+			width = image.getWidth(null);
+			height = image.getHeight(null);
 			
 			mapProjection.getPoint(south, east, 0, mapPoint);
-			height = (int) Math.round(mapPoint.row - y);
-			width = (int) Math.round(mapPoint.column - x);
+			//height = (int) Math.ceil(mapPoint.row - y);
+			//width = (int) Math.ceil(mapPoint.column - x);
+			
+			//int y2 = (int) Math.ceil(mapPoint.row);
+			//int x2 = (int) Math.ceil(mapPoint.column);
+			
+			//width = x2 - x;
+			//height = y2 - y;
 			
 		} catch (Exception ex) {
 			throw new CanvasException("Failed to project coordinates: " + ex.getMessage(), ex);
 		}
 		
 		//BufferedImage scaled = ImageUtilities.getScaledInstance((BufferedImage)image, width, height, RenderingHints.VALUE_INTERPOLATION_BILINEAR, true);
-		drawImage(image, x, y, image.getWidth(null), image.getHeight(null));
+		drawImage(image, x, y, width, height);
 		
 	}
 	
 	public void drawImage(Image image, int x, int y, int width, int height)
 	{
-		synchronized (graphics) {
-			graphics.drawImage(image, x, y, width, height, null);
-		}
+		graphics.drawImage(image, x, y, width, height, null);
 	}
 	
 	public int getColor(int x, int y)
@@ -601,16 +602,69 @@ public class ModelCanvas
 	{
 		BufferedImage newImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = (Graphics2D) newImage.createGraphics();
-		//g2d.setColor(new Color(0, 0, 0, 0));
-		///g2d.fillRect(0, 0, getWidth(), getHeight());
 		g2d.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		g2d.dispose();
 		return newImage;
 	}
 	
-	public Image getFinalizedImage()
+	public Image getSubImage(double north, double south, double east, double west) throws CanvasException
 	{
 		
+		int srcX = 0;
+		int srcY = 0;
+		int width = 0;
+		int height = 0;
+		
+		try {
+			mapProjection.getPoint(north, west, 0, mapPoint);
+			srcY = (int) Math.floor(mapPoint.row);
+			srcX = (int) Math.floor(mapPoint.column);
+			
+			mapProjection.getPoint(south, east, 0, mapPoint);
+			int srcY2 = (int) Math.ceil(mapPoint.row);
+			int srcX2 = (int) Math.ceil(mapPoint.column);
+			
+			width = srcX2 - srcX;
+			height = srcY2 - srcY;
+			
+		} catch (Exception ex) {
+			throw new CanvasException("Failed to project coordinates: " + ex.getMessage(), ex);
+		}
+		
+		
+		BufferedImage subImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D graphics = (Graphics2D) subImage.createGraphics();
+		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+		if (modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED)) {
+			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
+		graphics.drawImage(image,
+                0, //int dx1,
+                0, //int dy1,
+                width, //int dx2,
+                height, //int dy2,
+                srcX, //int sx1,
+                srcY, //int sy1,
+                srcX + width, //int sx2,
+                srcY + height, //int sy2,
+                null);
+		
+		if (isAntiAliased) {
+			stripAlphaChannel(subImage);
+		}
+		
+		graphics.dispose();
+		
+		return subImage;
+	}
+	
+	public Image getFinalizedImage()
+	{
+		return getFinalizedImage(true);
+	}
+	
+	public Image getFinalizedImage(boolean applyBackground)
+	{
 		BufferedImage finalImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D graphics = (Graphics2D) finalImage.createGraphics();
 		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
@@ -624,7 +678,10 @@ public class ModelCanvas
 		if (isAntiAliased) {
 			stripAlphaChannel(finalImage);
 		}
-		applyBackgroundColor(finalImage);
+		
+		if (applyBackground) {
+			applyBackgroundColor(finalImage);
+		}
 		graphics.dispose();
 		return finalImage;
 		

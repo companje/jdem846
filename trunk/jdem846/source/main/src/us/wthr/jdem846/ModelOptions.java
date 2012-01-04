@@ -439,6 +439,16 @@ public class ModelOptions extends MappedOptions
 		setOption(ModelOptionNamesEnum.USE_SIMPLE_CANVAS_FILL, useSimpleCanvasFill);
 	}
 	
+	public int getConcurrentRenderPoolSize()
+	{
+		return getIntegerOption(ModelOptionNamesEnum.CONCURRENT_RENDER_POOL_SIZE);
+	}
+	
+	public void setConcurrentRenderPoolSize(int concurrentRenderPoolSize)
+	{
+		setOption(ModelOptionNamesEnum.CONCURRENT_RENDER_POOL_SIZE, concurrentRenderPoolSize);
+	}
+	
 
 	public String getWriteTo()
 	{

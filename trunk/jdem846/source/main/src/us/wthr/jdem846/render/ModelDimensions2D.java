@@ -43,8 +43,8 @@ public class ModelDimensions2D
 		modelDimensions.tileSize = modelOptions.getTileSize();
 		
 		
-		modelDimensions.dataRows = dataContext.getDataRows();
-		modelDimensions.dataColumns = dataContext.getDataColumns();
+		modelDimensions.dataRows = dataContext.getDataRows(modelContext.getNorth(), modelContext.getSouth());
+		modelDimensions.dataColumns = dataContext.getDataColumns(modelContext.getEast(), modelContext.getWest());
 		
 		if (modelDimensions.tileSize > modelDimensions.dataRows && modelDimensions.dataRows > modelDimensions.dataColumns)
 			modelDimensions.tileSize = modelDimensions.dataRows;

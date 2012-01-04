@@ -29,7 +29,10 @@ public interface RasterData {
 	public boolean intersects(RasterDataLatLongBox otherBox);
 	
 	public int getRows();
+	public int getRows(double north, double south);
+	
 	public int getColumns();
+	public int getColumns(double east, double west);
 	
 	public void calculateMinAndMax() throws DataSourceException;
 	

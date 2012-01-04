@@ -22,6 +22,8 @@ public enum ModelOptionNamesEnum
 	ELEVATION_MULTIPLE("us.wthr.jdem846.modelOptions.elevationMultiple"),
 	USE_SIMPLE_CANVAS_FILL("us.wthr.jdem846.modelOptions.useSimpleCanvasFill"),
 	
+	CONCURRENT_RENDER_POOL_SIZE("us.wthr.jdem846.modelOptions.concurrentRenderPoolSize"),
+	
 	//RELATIVE_LIGHT_INTENSITY("us.wthr.jdem846.modelOptions.relativeLightIntensity"),
 	//RELATIVE_DARK_INTENSITY("us.wthr.jdem846.modelOptions.relativeDarkIntensity"),
 	

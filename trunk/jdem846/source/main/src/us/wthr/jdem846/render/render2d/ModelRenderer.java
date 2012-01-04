@@ -1,6 +1,7 @@
 package us.wthr.jdem846.render.render2d;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
@@ -193,7 +194,7 @@ public class ModelRenderer extends InterruptibleProcess
 						tileContext.setSouthLimit(tileSouth);
 						tileContext.setEastLimit(tileEast);
 						tileContext.setWestLimit(tileWest);
-						tileRenderRunnable = new TileRenderRunnable(tileContext, tileNorth, tileSouth, tileEast, tileWest );
+						tileRenderRunnable = new TileRenderRunnable(tileContext, tileNorth, tileSouth, tileEast, tileWest, (tileColumn + 1), (tileRow + 1));
 					} catch (DataSourceException ex) {
 						throw new RenderEngineException("Failed to create tile render runnable: " + ex.getMessage(), ex);
 					}
@@ -223,17 +224,52 @@ public class ModelRenderer extends InterruptibleProcess
 				
 			}
 			
+			
 			try {
-				ExecutorService exec = Executors.newFixedThreadPool(10);
+				ExecutorService exec = Executors.newFixedThreadPool(getModelOptions().getConcurrentRenderPoolSize());
 				List<Future<RenderedTile>> futureRenderedTiles = exec.invokeAll(renderQueue);
 				
-				for (Future<RenderedTile> futureRenderedTile : futureRenderedTiles) {
-					RenderedTile renderedTile = futureRenderedTile.get();
-					modelCanvas.drawImage(renderedTile.getModelCanvas().getImage(), 
-							renderedTile.getNorthLimit(), 
-							renderedTile.getSouthLimit(), 
-							renderedTile.getEastLimit(), 
-							renderedTile.getWestLimit());
+				List<Future<RenderedTile>> processedTiles = new LinkedList<Future<RenderedTile>>();
+				
+				boolean allComplete = false;
+				while(!allComplete && futureRenderedTiles.size() > 0) {
+					
+					allComplete = true;
+					processedTiles.clear();
+					
+					for (Future<RenderedTile> futureRenderedTile : futureRenderedTiles) {
+						if (!futureRenderedTile.isDone()) {
+							allComplete = false;
+							continue;
+						}
+						
+						
+						RenderedTile renderedTile = futureRenderedTile.get();
+						
+						//ImageWriter.saveImage((BufferedImage)renderedTile.getModelCanvas().getFinalizedImage(), "C:/srv/elevation/DataRaster-Testing/output/tile-" + renderedTile.getTileRow() + "-" + renderedTile.getTileColumn() + ".png");
+						ModelCanvas tileCanvas = renderedTile.getModelCanvas();
+						BufferedImage subImage = (BufferedImage) tileCanvas.getSubImage(renderedTile.getNorthLimit(),
+								renderedTile.getSouthLimit(), 
+								renderedTile.getEastLimit(), 
+								renderedTile.getWestLimit());
+						
+
+						modelCanvas.drawImage(subImage, 
+								renderedTile.getNorthLimit(), 
+								renderedTile.getSouthLimit(), 
+								renderedTile.getEastLimit(), 
+								renderedTile.getWestLimit());
+						
+						tileCanvas.dispose();
+						subImage = null;
+						
+						
+						processedTiles.add(futureRenderedTile);
+						Thread.yield();
+					}
+					
+					futureRenderedTiles.removeAll(processedTiles);
+					Thread.yield();
 				}
 				
 				exec.shutdown();
@@ -242,7 +278,7 @@ public class ModelRenderer extends InterruptibleProcess
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-
+		
 		}
 		
 		if (fullCaching) {
