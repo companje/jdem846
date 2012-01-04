@@ -90,7 +90,7 @@ public class RayTracing
 	 * @return
 	 * @throws RayTracingException
 	 */
-	protected boolean isRayBlocked(double centerLatitude, double centerLongitude, double centerElevation) throws RayTracingException
+	public boolean isRayBlocked(double centerLatitude, double centerLongitude, double centerElevation) throws RayTracingException
 	{
 		double[] points = {0.0, 0.0, 0.0};
 		
