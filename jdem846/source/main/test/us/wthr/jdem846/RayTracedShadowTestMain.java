@@ -1,4 +1,4 @@
-package us.wthr.jdem846.project;
+package us.wthr.jdem846;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

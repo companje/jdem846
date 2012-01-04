@@ -28,6 +28,8 @@ public class RayTracing
 	
 	private double maxDataValue;
 	
+	private double[] points;
+	
 	public RayTracing(double remoteAzimuth, 
 			double remoteElevationAngle, 
 			ModelContext modelContext,
@@ -73,7 +75,7 @@ public class RayTracing
 		this.eastLimit = eastLimit;
 		this.westLimit = westLimit;
 		this.maxDataValue = maxDataValue;
-		
+		this.points = new double[3];
 	}
 	
 	
@@ -92,7 +94,7 @@ public class RayTracing
 	 */
 	public boolean isRayBlocked(double centerLatitude, double centerLongitude, double centerElevation) throws RayTracingException
 	{
-		double[] points = {0.0, 0.0, 0.0};
+		
 		
 		double radius = longitudeResolution;
 		while (true) {

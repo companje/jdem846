@@ -288,6 +288,11 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		prepare();
 	}
 	
+	public int getRows(double north, double south)
+	{
+		return (int) Math.round((north - south) / this.getLatitudeResolution());
+	}
+	
 	public int getRows()
 	{
 		return rows;
@@ -296,6 +301,11 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	protected void setRows(int rows)
 	{
 		this.rows = rows;
+	}
+	
+	public int getColumns(double east, double west)
+	{
+		return (int) Math.round((east - west) / this.getLongitudeResolution());
 	}
 	
 	public int getColumns()

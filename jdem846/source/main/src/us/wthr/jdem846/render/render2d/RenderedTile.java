@@ -10,14 +10,18 @@ public class RenderedTile
 	private double eastLimit;
 	private double westLimit;
 	
+	private int tileColumn = 0;
+	private int tileRow = 0;
 	
-	public RenderedTile(ModelCanvas modelCanvas, double northLimit, double southLimit, double eastLimit, double westLimit)
+	public RenderedTile(ModelCanvas modelCanvas, double northLimit, double southLimit, double eastLimit, double westLimit, int tileColumn, int tileRow )
 	{
 		this.modelCanvas = modelCanvas;
 		this.northLimit = northLimit;
 		this.southLimit = southLimit;
 		this.eastLimit = eastLimit;
 		this.westLimit = westLimit;
+		this.tileColumn = tileColumn;
+		this.tileRow = tileRow;
 	}
 
 
@@ -48,6 +52,30 @@ public class RenderedTile
 	public double getWestLimit() 
 	{
 		return westLimit;
+	}
+
+
+	public int getTileColumn()
+	{
+		return tileColumn;
+	}
+
+
+	public void setTileColumn(int tileColumn)
+	{
+		this.tileColumn = tileColumn;
+	}
+
+
+	public int getTileRow()
+	{
+		return tileRow;
+	}
+
+
+	public void setTileRow(int tileRow)
+	{
+		this.tileRow = tileRow;
 	}
 	
 	

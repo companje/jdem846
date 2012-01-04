@@ -358,13 +358,24 @@ public class RasterDataContext implements DataContext
 	
 	public int getDataRows()
 	{
+		return getDataRows(north, south);
+	}
+	
+	public int getDataRows(double north, double south)
+	{
 		return (int) Math.floor((north - south) / this.getLatitudeResolution());
 	}
 	
 	public int getDataColumns()
 	{
+		return getDataColumns(east, west);
+	}
+	
+	public int getDataColumns(double east, double west)
+	{
 		return (int) Math.floor((east - west) / this.getLongitudeResolution());
 	}
+
 	
 	public double getLatitudeResolution() 
 	{
@@ -416,6 +427,12 @@ public class RasterDataContext implements DataContext
 		
 		for (RasterData rasterData : rasterDataList) {
 			clone.rasterDataList.add(rasterData.copy());
+		}
+		
+		//List<RasterDataRowColumnBox> rasterDataRowColumnBoxes
+		
+		for (RasterDataRowColumnBox box : rasterDataRowColumnBoxes) {
+			clone.rasterDataRowColumnBoxes.add(box.copy());
 		}
 		
 		return clone;

@@ -8,6 +8,7 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
+import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
@@ -59,21 +60,22 @@ public class RowRenderer extends InterruptibleProcess
 	private boolean rayTraceShadows;
 	private double shadowIntensity;
 	
-	private int[] triangleColorNW = {0, 0, 0, 0};
-	private int[] triangleColorSE = {0, 0, 0, 0};
-	private int[] color = {0, 0, 0, 0};
-	private int[] reliefColor = {0, 0, 0, 0};
-	private int[] hillshadeColor = {0, 0, 0, 0};
+	private int[] triangleColorNW;
+	private int[] triangleColorSE;
+	private int[] color;
+	private int[] reliefColor;
+	private int[] hillshadeColor;
 	
-	private double sunsource[] = {0.0, 0.0, 0.0};	
-	private double normal[] = {0.0, 0.0, 0.0};
+	private double sunsource[];	
+	private double normal[];
 	
-	private double backLeftPoints[] = {-1.0, 0.0f, -1.0};
-	private double backRightPoints[] = {1.0, 0.0f, -1.0};
+	private double backLeftPoints[];
+	private double backRightPoints[];
 	
-	private double frontLeftPoints[] = {-1.0, 0.0f, 1.0};
-	private double frontRightPoints[] = {1.0, 0.0f, 1.0};
-	private DemPoint point = new DemPoint();
+	private double frontLeftPoints[];
+	private double frontRightPoints[];
+	private DemPoint point;
+
 
 	
 	public RowRenderer(ModelContext modelContext, ModelColoring modelColoring, ModelCanvas modelCanvas, RasterDataContext dataRasterContextSubset)
@@ -83,6 +85,10 @@ public class RowRenderer extends InterruptibleProcess
 		this.modelCanvas = modelCanvas;
 		this.dataRasterContextSubset = dataRasterContextSubset;
 		this.perspectives = new Perspectives();
+		
+		if (this.modelColoring == null) {
+			this.modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
+		}
 		
 		gridSize = getModelOptions().getGridSize();
 		metersResolution = getRasterDataContext().getMetersResolution();
@@ -121,13 +127,18 @@ public class RowRenderer extends InterruptibleProcess
 			lightSourceRayTracer = null;
 		}
 		
+		resetBuffers();
+		setUpLightSource();
 	}
 	
 	
 	public void renderRow(double latitude, double eastLimit, double westLimit) throws RenderEngineException
 	{
-		resetBuffers();
-		setUpLightSource();
+		
+		if (modelCanvas == null) {
+			modelCanvas = modelContext.getModelCanvas();
+		}
+		
 		
 		for (double longitude = westLimit; longitude <= eastLimit; longitude += longitudeResolution) {
 
@@ -482,6 +493,23 @@ public class RowRenderer extends InterruptibleProcess
 	
 	protected void resetBuffers()
 	{
+		triangleColorNW = new int[4];
+		triangleColorSE = new int[4];
+		color = new int[4];
+		reliefColor = new int[4];
+		hillshadeColor = new int[4];
+		
+		sunsource = new double[3];	
+		normal = new double[3];
+		
+		backLeftPoints = new double[3];
+		backRightPoints = new double[3];
+		
+		frontLeftPoints = new double[3];
+		frontRightPoints = new double[3];
+		point = new DemPoint();
+
+		
 		color[0] = color[1] = color[2] = 0; color[3] = 0xFF;
 		triangleColorNW[0] = triangleColorNW[1] = triangleColorNW[2]; triangleColorNW[3] = 0xFF;
 		triangleColorSE[0] = triangleColorSE[1] = triangleColorSE[2]; triangleColorSE[3] = 0xFF;
