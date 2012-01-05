@@ -85,6 +85,12 @@ public class MenuItem extends JMenuItem
 		setPreferredSize();
 	}
 	
+	public MenuItem(String text, ActionListener actionListener)
+	{
+		super(text);
+		this.addActionListener(actionListener);
+		setPreferredSize();
+	}
 	
 	protected void setPreferredSize()
 	{

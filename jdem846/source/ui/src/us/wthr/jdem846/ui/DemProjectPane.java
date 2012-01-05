@@ -953,6 +953,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		layerOverviewPanel.setLatitudeResolution(rasterData.getLatitudeResolution());
 		layerOverviewPanel.setLongitudeResolution(rasterData.getLongitudeResolution());
 		layerOverviewPanel.repaint();
+		//layerOverviewPanel.invalidate();
 	}
 	
 	public void updateShapeLayerOverview(int index)

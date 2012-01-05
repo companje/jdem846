@@ -59,58 +59,58 @@ public class DataOverviewPanel extends RoundedPanel
 	
 	public void setRows(int rows)
 	{
-		tableModel.rows = rows;
+		tableModel.setRows(rows);
 	}
 	
 	public void setColumns(int columns)
 	{
-		tableModel.columns = columns;
+		tableModel.setColumns(columns);
 	}
 	
 	public void setNorth(double north)
 	{
-		tableModel.north = north;
+		tableModel.setNorth(north);
 	}
 	
 	public void setSouth(double south)
 	{
-		tableModel.south = south;
+		tableModel.setSouth(south);
 	}
 	
 	public void setEast(double east)
 	{
-		tableModel.east = east;
+		tableModel.setEast(east);
 	}
 	
 	public void setWest(double west)
 	{
-		tableModel.west = west;
+		tableModel.setWest(west);
 	}
 	
 	public void setLatitudeResolution(double latitudeResolution)
 	{
-		tableModel.latitudeResolution = latitudeResolution;
+		tableModel.setLatitudeResolution(latitudeResolution);
 	}
 
 	public void setLongitudeResolution(double longitudeResolution)
 	{
-		tableModel.longitudeResolution = longitudeResolution;
+		tableModel.setLongitudeResolution(longitudeResolution);
 	}
 	
 
 	
 	class OverviewTableModel extends DefaultTableModel {
 		
-		public int rows;
-		public int columns;
+		private int rows;
+		private int columns;
 		
-		public double north;
-		public double south;
-		public double east;
-		public double west;
+		private double north;
+		private double south;
+		private double east;
+		private double west;
 		
-		public double latitudeResolution;
-		public double longitudeResolution;
+		private double latitudeResolution;
+		private double longitudeResolution;
 		
 		@Override
 		public int getRowCount()
@@ -189,6 +189,94 @@ public class DataOverviewPanel extends RoundedPanel
 			default:
 				return "";
 			}
+		}
+
+		public int getRows()
+		{
+			return rows;
+		}
+
+		public void setRows(int rows)
+		{
+			this.rows = rows;
+			this.fireTableDataChanged();
+		}
+
+		public int getColumns()
+		{
+			return columns;
+		}
+
+		public void setColumns(int columns)
+		{
+			this.columns = columns;
+			this.fireTableDataChanged();
+		}
+
+		public double getNorth()
+		{
+			return north;
+		}
+
+		public void setNorth(double north)
+		{
+			this.north = north;
+			this.fireTableDataChanged();
+		}
+
+		public double getSouth()
+		{
+			return south;
+		}
+
+		public void setSouth(double south)
+		{
+			this.south = south;
+			this.fireTableDataChanged();
+		}
+
+		public double getEast()
+		{
+			return east;
+		}
+
+		public void setEast(double east)
+		{
+			this.east = east;
+			this.fireTableDataChanged();
+		}
+
+		public double getWest()
+		{
+			return west;
+		}
+
+		public void setWest(double west)
+		{
+			this.west = west;
+			this.fireTableDataChanged();
+		}
+
+		public double getLatitudeResolution()
+		{
+			return latitudeResolution;
+		}
+
+		public void setLatitudeResolution(double latitudeResolution)
+		{
+			this.latitudeResolution = latitudeResolution;
+			this.fireTableDataChanged();
+		}
+
+		public double getLongitudeResolution()
+		{
+			return longitudeResolution;
+		}
+
+		public void setLongitudeResolution(double longitudeResolution)
+		{
+			this.longitudeResolution = longitudeResolution;
+			this.fireTableDataChanged();
 		}
 		
 		

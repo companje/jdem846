@@ -137,8 +137,11 @@ public class JdemFrame extends Frame
 			public void onExitClicked() {
 				exitApplication();
 			}
-			public void onNewProjectClicked() {
-				createNewProject(null);
+			public void onNewStandardProjectClicked() {
+				createNewStandardProject(null);
+			}
+			public void onNewScriptProjectClicked() {
+				createNewScriptProject(null);
 			}
 			public void onSaveProjectClicked() {
 				saveTab();
@@ -215,7 +218,7 @@ public class JdemFrame extends Frame
 		for (String path : paths) {
 			if (path != null && path.length() > 0) {
 				
-				createNewProject(path);
+				createNewStandardProject(path);
 			}
 		}
 	}
@@ -238,7 +241,7 @@ public class JdemFrame extends Frame
 		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.new"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.new"), KeyEvent.VK_N, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				createNewProject(null);
+				createNewStandardProject(null);
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK)));
 		
@@ -366,11 +369,20 @@ public class JdemFrame extends Frame
 	    int returnVal = chooser.showOpenDialog(this);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 	    	File selectedFile = chooser.getSelectedFile();
-	    	createNewProject(selectedFile.getAbsolutePath());
+	    	createNewStandardProject(selectedFile.getAbsolutePath());
 	    }
 	}
 	
-	public void createNewProject(String filePath)
+	public void createNewScriptProject(String filePath)
+	{
+		JOptionPane.showMessageDialog(getRootPane(),
+				I18N.get("us.wthr.jdem846.ui.notYetImplemented.message"),
+			    I18N.get("us.wthr.jdem846.ui.notYetImplemented.title"),
+			    JOptionPane.INFORMATION_MESSAGE);
+		
+	}
+	
+	public void createNewStandardProject(String filePath)
 	{
 		log.info("Creating new project");
 		
