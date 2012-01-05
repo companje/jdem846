@@ -114,6 +114,7 @@ public class ThreadedModelRenderer extends ModelRenderer
 		on2DModelBefore(modelCanvas);
 		
 		double pctComplete = 0;
+		/*
 		final TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas);
 		
 		this.setProcessInterruptListener(new ProcessInterruptListener() {
@@ -131,7 +132,7 @@ public class ThreadedModelRenderer extends ModelRenderer
 				tileRenderer.resume();
 			}
 		});
-		
+		*/
 		
 		if (fullCaching) {
 			try {
@@ -144,7 +145,9 @@ public class ThreadedModelRenderer extends ModelRenderer
 		
 		if ( getRasterDataContext().getRasterDataListSize() > 0) {
 			
-			LinkedList<TileRenderRunnable> renderQueue = new LinkedList<TileRenderRunnable>();
+			ExecutorService exec = Executors.newFixedThreadPool(getModelOptions().getConcurrentRenderPoolSize());
+			LinkedList<Future<RenderedTile>> futureRenderedTiles = new LinkedList<Future<RenderedTile>>();
+			//LinkedList<TileRenderRunnable> renderQueue = new LinkedList<TileRenderRunnable>();
 			// Latitude
 			for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
 				double tileSouth = tileNorth - tileLatitudeHeight;
@@ -174,7 +177,7 @@ public class ThreadedModelRenderer extends ModelRenderer
 					
 					TileRenderRunnable tileRenderRunnable = null;
 					try {
-						ModelContext tileContext = modelContext.copy();
+						ModelContext tileContext = modelContext.copy(true);
 						tileContext.setNorthLimit(tileNorth);
 						tileContext.setSouthLimit(tileSouth);
 						tileContext.setEastLimit(tileEast);
@@ -184,7 +187,8 @@ public class ThreadedModelRenderer extends ModelRenderer
 						throw new RenderEngineException("Failed to create tile render runnable: " + ex.getMessage(), ex);
 					}
 					
-					renderQueue.add(tileRenderRunnable);
+					futureRenderedTiles.add(exec.submit(tileRenderRunnable));
+					//renderQueue.add(tileRenderRunnable);
 					//tileRenderRunnable.run();
 					
 					tileColumn++;
@@ -192,9 +196,9 @@ public class ThreadedModelRenderer extends ModelRenderer
 
 					
 					
-					pctComplete = (double)tileNumber / (double)tileCount;
+					//pctComplete = (double)tileNumber / (double)tileCount;
 					
-					fireTileCompletionListeners(modelCanvas, pctComplete);
+					//fireTileCompletionListeners(modelCanvas, pctComplete);
 					
 					if (isCancelled()) {
 						break;
@@ -209,16 +213,33 @@ public class ThreadedModelRenderer extends ModelRenderer
 				
 			}
 			
+			/*
+			try {
+				log.info("Sleeping, so connect the JConsole!");
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			*/
 			
 			try {
-				ExecutorService exec = Executors.newFixedThreadPool(getModelOptions().getConcurrentRenderPoolSize());
-				List<Future<RenderedTile>> futureRenderedTiles = exec.invokeAll(renderQueue);
+				log.info("Beginning Threaded Rendering...");
 				
+				
+				//List<Future<RenderedTile>> futureRenderedTiles = exec.invokeAll(renderQueue);
+				//renderQueue.clear();
+				
+				//System.gc();
+				
+				//List<Future<RenderedTile>> futureRenderedTiles = new LinkedList<Future<RenderedTile>>();
 				List<Future<RenderedTile>> processedTiles = new LinkedList<Future<RenderedTile>>();
+				
+				log.info(" Future tile list size: " + futureRenderedTiles.size());
+
 				
 				tileNumber = 1;
 				while(futureRenderedTiles.size() > 0) {
-
 					processedTiles.clear();
 					
 					for (Future<RenderedTile> futureRenderedTile : futureRenderedTiles) {
@@ -226,10 +247,9 @@ public class ThreadedModelRenderer extends ModelRenderer
 							continue;
 						}
 						
-						
+						/*
 						RenderedTile renderedTile = futureRenderedTile.get();
 						
-						//ImageWriter.saveImage((BufferedImage)renderedTile.getModelCanvas().getFinalizedImage(), "C:/srv/elevation/DataRaster-Testing/output/tile-" + renderedTile.getTileRow() + "-" + renderedTile.getTileColumn() + ".png");
 						ModelCanvas tileCanvas = renderedTile.getModelCanvas();
 						BufferedImage subImage = (BufferedImage) tileCanvas.getSubImage(renderedTile.getNorthLimit(),
 								renderedTile.getSouthLimit(), 
@@ -245,17 +265,23 @@ public class ThreadedModelRenderer extends ModelRenderer
 						
 						tileCanvas.dispose();
 						subImage = null;
+						*/
 						
 						tileNumber++;
 						pctComplete = (double)tileNumber / (double)tileCount;
+						log.info("Percent Complete: " + (pctComplete * 100));
 						fireTileCompletionListeners(modelCanvas, pctComplete);
 						
 						processedTiles.add(futureRenderedTile);
+						
+						//System.gc();
 						Thread.yield();
+						//Thread.sleep(200);
 					}
 					
 					futureRenderedTiles.removeAll(processedTiles);
 					Thread.yield();
+					//Thread.sleep(500);
 				}
 				
 				exec.shutdown();

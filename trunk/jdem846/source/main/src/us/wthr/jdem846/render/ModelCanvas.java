@@ -61,31 +61,32 @@ public class ModelCanvas
 	
 	public ModelCanvas(ModelContext modelContext)
 	{
+		this(modelContext, null);
+	}
+	
+	public ModelCanvas(ModelContext modelContext, BufferedImage masterImage)
+	{
 		this.modelContext = modelContext;
 		backgroundColor = ColorSerializationUtil.stringToColor(modelContext.getModelOptions().getBackgroundColor());
 		modelDimensions = modelContext.getModelDimensions();
 		
 		width = modelContext.getModelDimensions().getOutputWidth();
 		height = modelContext.getModelDimensions().getOutputHeight();
-		//width = modelContext.getModelOptions().getWidth();
-		//height = modelContext.getModelOptions().getHeight();
-		//width = (int) modelContext.getModelDimensions().getTileOutputWidth();
-		//height = (int) modelContext.getModelDimensions().getTileOutputHeight();
-		
-		//modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
-		
+
 		isAntiAliased = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED);
 		
-		GraphicsConfiguration gc = getGraphicsConfiguration();
+		if (masterImage != null) {
+			image = masterImage;
+		} else {
+			GraphicsConfiguration gc = getGraphicsConfiguration();
+			int transparencyType = (isAntiAliased) ? Transparency.TRANSLUCENT : Transparency.BITMASK;
+			image = gc.createCompatibleImage(getWidth()-1, getHeight()-1, transparencyType);
+		}
 		
-		
-		
-		int transparencyType = (isAntiAliased) ? Transparency.TRANSLUCENT : Transparency.BITMASK;
-		
-		image = gc.createCompatibleImage(getWidth()-1, getHeight()-1, transparencyType);
 		raster = image.getRaster();
 		
-		graphics = (Graphics2D) image.getGraphics();
+		
+		graphics = (Graphics2D) image.createGraphics();
 		graphics.setComposite(AlphaComposite.SrcOver);
 		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		
@@ -105,6 +106,12 @@ public class ModelCanvas
 		}
 	}
 
+	public ModelCanvas getDependentHandle() throws CanvasException
+	{
+		ModelCanvas other = new ModelCanvas(modelContext, image);
+		return other;
+	}
+	
 	
 	public ModelCanvas getCopy(boolean overlayImage) throws CanvasException
 	{
@@ -747,6 +754,7 @@ public class ModelCanvas
 		if (!isDisposed) {
 			graphics.dispose();
 			graphics = null;
+			image.flush();
 			image = null;
 		}
 	}

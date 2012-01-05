@@ -18,6 +18,7 @@ package us.wthr.jdem846;
 
 import java.util.UUID;
 
+import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ScriptCompilationFailedException;
 import us.wthr.jdem846.exception.ScriptingException;
@@ -100,6 +101,9 @@ public class ModelContext
 	
 	public ModelCanvas createModelCanvas()
 	{
+		log.info("****************************");
+		log.info("Creating Model Canvas!!");
+		log.info("****************************");
 		return new ModelCanvas(this);
 	}
 	
@@ -231,14 +235,28 @@ public class ModelContext
 		}
 	}
 	
-
 	public ModelContext copy() throws DataSourceException
+	{
+		return copy(false);
+	}
+	
+	
+	public ModelContext copy(boolean withDependentCanvas) throws DataSourceException
 	{
 		
 		RasterDataContext rasterDataCopy = (rasterDataContext == null) ? null : rasterDataContext.copy();
 		ShapeDataContext shapeDataCopy = (shapeDataContext == null) ? null : shapeDataContext.copy();
 		ModelOptions modelOptionsCopy = (modelOptions == null) ? null : modelOptions.copy();
 		LightingContext lightingContextCopy = (lightingContext == null) ? null : lightingContext.copy();
+		ModelCanvas modelCanvasCopy = null;
+		
+		try {
+			if (withDependentCanvas) {
+				modelCanvasCopy = getModelCanvas(true).getDependentHandle();
+			}
+		} catch (CanvasException ex) {
+			throw new DataSourceException("Error creating dependent canvas handle: " + ex.getMessage(), ex);
+		}
 		
 		// TODO: Implement script proxy copy
 		//ScriptProxy scriptProxyCopy = null;//(scriptProxy == null) ? null : scriptProxy.copy();
@@ -258,6 +276,7 @@ public class ModelContext
 		clone.southLimit = this.southLimit;
 		clone.eastLimit = this.eastLimit;
 		clone.westLimit = this.westLimit;
+		clone.modelCanvas = modelCanvasCopy;
 		return clone;
 
 	}
