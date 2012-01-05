@@ -16,12 +16,16 @@
 
 package us.wthr.jdem846.render;
 
+import java.util.List;
+
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.render2d.ModelRenderer;
+import us.wthr.jdem846.render.render2d.ThreadedModelRenderer;
 import us.wthr.jdem846.render.shapelayer.ShapeLayerRenderer;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
@@ -66,7 +70,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		
 		try {
 			
-			final ModelRenderer rasterRenderer = new ModelRenderer(getModelContext(), tileCompletionListeners);
+			final ModelRenderer rasterRenderer = getModelRenderer(getModelContext(), tileCompletionListeners);
 			final ShapeLayerRenderer shapeRenderer = new ShapeLayerRenderer(getModelContext(), tileCompletionListeners);
 			
 			this.setProcessInterruptListener(new ProcessInterruptListener() {
@@ -123,6 +127,14 @@ public class Dem2dGenerator extends BasicRenderEngine
 	}
 	
 	
+	protected ModelRenderer getModelRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
+	{
+		if (modelContext.getModelOptions().getConcurrentRenderPoolSize() == 1) {
+			return new ModelRenderer(getModelContext(), tileCompletionListeners);
+		} else {
+			return new ThreadedModelRenderer(getModelContext(), tileCompletionListeners);
+		}
+	}
 	
 	
 	

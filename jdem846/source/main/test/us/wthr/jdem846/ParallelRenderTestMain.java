@@ -44,10 +44,13 @@ public class ParallelRenderTestMain extends AbstractTestMain
 	{
 		List<String> inputDataList = new LinkedList<String>();
 		
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
-		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		//String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
 		
+		
+		inputDataList.add("F:/Presidential Range/02167570.flt");
+		String saveOutputTo = "F:/Presidential Range/model-output.png";
 		
 		RasterDataContext dataProxy = new RasterDataContext();
 		
@@ -67,7 +70,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		ModelOptions modelOptions = new ModelOptions();
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
-		modelOptions.setTileSize(100);
+		modelOptions.setTileSize(1000);
 		modelOptions.setWidth(dataProxy.getDataColumns());
 		modelOptions.setHeight(dataProxy.getDataRows());
 		modelOptions.setDoublePrecisionHillshading(false);
@@ -77,7 +80,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;0");
 		//modelOptions.setHillShading(false);
-		modelOptions.setConcurrentRenderPoolSize(1);
+		modelOptions.setConcurrentRenderPoolSize(10);
 		//modelOptions.getProjection().setRotateX(30);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions);
