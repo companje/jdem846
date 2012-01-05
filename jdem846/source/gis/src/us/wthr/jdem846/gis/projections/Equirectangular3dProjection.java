@@ -4,6 +4,7 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.render.gfx.Vector;
 
 public class Equirectangular3dProjection extends EquirectangularProjection
@@ -56,7 +57,7 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		rotateX = 30;
 		rotateY = 0;
 		
-		eyeVector[2] = width;
+		eyeVector[2] = width*2;
 		nearVector[2] = (width/2.0f);
 		
 	}
@@ -84,14 +85,18 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		pointVector[1] = elev;
 		pointVector[2] = point.row - (getHeight() / 2.0);
 		
+		
 		Vector.rotate(0, rotateY, 0, pointVector);
 		Vector.rotate(rotateX, 0, 0, pointVector);
 		
+		
 		projectTo(pointVector, eyeVector, nearVector);
 		
-		point.column = -pointVector[0] + (getWidth()/2.0);
-		point.row = pointVector[1] + (getHeight()/2.0);
+		//point.column = -pointVector[0] + (getWidth()/2.0);
+		//point.row = pointVector[1] + (getHeight()/2.0);
 		
+		point.column = pointVector[0] + (getWidth()/2.0);
+		point.row = -pointVector[1] + (getHeight()/2.0);
 		
 		//log.info("Lat/Lon " + latitude + "/" + longitude + " projected to X/Y " + point.column + "/" + point.row + " - Width/Height: " + getWidth() + "/" + getHeight() + ", N/S: " + getNorth() + "/" + getSouth());
 		
@@ -102,34 +107,38 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 	
 	public void projectTo(double[] vector, double[] eye, double[] near) //Vector eye, Vector near)
 	{
-		//double thetaX = 0; // Orientation of the camera
-		//double thetaY = 0;
-		//double thetaZ = 0;
-		
 		double[] a = vector;   // 3D position of points being projected
 		double[] e = near;     // Viewer's position relative to the display surface
 		double[] c = eye;      // Camera position
 		
+		//vector[0] = ((a[0] - c[0]) - e[0]) * (e[2] / (a[2] - c[2]));
+		//vector[1] = ((a[1] - c[1]) - e[1]) * (e[2] / (a[2] - c[2]));
+		
+		double thetaX = 0; // Orientation of the camera
+		double thetaY = 0;
+		double thetaZ = 0;
 		
 		
-		/*
-		double sinTX = sin(thetaX);
-		double sinTY = sin(thetaY);
-		double sinTZ = sin(thetaZ);
 		
-		double cosTX = cos(thetaX);
-		double cosTY = cos(thetaY);
-		double cosTZ = cos(thetaZ);
+		
+		
+		
+		double sinTX = MathExt.sin(thetaX);
+		double sinTY = MathExt.sin(thetaY);
+		double sinTZ = MathExt.sin(thetaZ);
+		
+		double cosTX = MathExt.cos(thetaX);
+		double cosTY = MathExt.cos(thetaY);
+		double cosTZ = MathExt.cos(thetaZ);
 		
 		double dX = cosTY * (sinTZ * (a[1] - c[1]) + cosTZ * (a[0] - c[0])) - sinTY * (a[2] - c[2]);
 		double dY = sinTX * (cosTY * (a[2] - c[2]) + sinTY * (sinTZ * (a[1] - c[1]) + cosTZ * (a[0] - c[0]))) + cosTX * (cosTZ * (a[1] - c[1]) - sinTZ * (a[0] - c[0]));
 		double dZ = cosTX * (cosTY * (a[2] - c[2]) + sinTY * (sinTZ * (a[1] - c[1]) + cosTZ * (a[0] - c[0]))) - sinTX * (cosTZ * (a[1] - c[1]) - sinTZ * (a[0] - c[0]));
-		*/
 		
-		vector[0] = ((a[0] - c[0]) - e[0]) * (e[2] / (a[2] - c[2]));
-		vector[1] = ((a[1] - c[1]) - e[1]) * (e[2] / (a[2] - c[2]));
 		
-		//vector[0] = bX;
-		///vector[1] = bY;
+		
+		vector[0] = dX;
+		vector[1] = dY;
+		
 	}
 }
