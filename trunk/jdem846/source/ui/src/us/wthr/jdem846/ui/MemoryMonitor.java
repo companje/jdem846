@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
@@ -82,7 +83,7 @@ public class MemoryMonitor extends Label
 		this.paintTrend = paintTrend;
 		
 		setToolTipText(I18N.get("us.wthr.jdem846.ui.memoryMonitor.tooltip"));
-		setText("                       ");
+		setText("                                        ");
 		this.setOpaque(false);
 		nf.setMaximumFractionDigits(1);
 		
@@ -180,13 +181,19 @@ public class MemoryMonitor extends Label
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, width, height);
 		
-		
+		int imgWidth = (int) ((paintCurrentState && paintTrend) ? (width / 2.0) : width);
 		if (paintCurrentState) {
-			paintCurrentState(g2d);
+			BufferedImage csImage = new BufferedImage(imgWidth, height, BufferedImage.TYPE_INT_RGB);
+			paintCurrentState((Graphics2D)csImage.getGraphics(), imgWidth, height);
+			g2d.drawImage(csImage, 0, 0, null);
 		}
 		
 		if (paintTrend) {
-			paintTrend(g2d);
+			BufferedImage trImage = new BufferedImage(imgWidth, height, BufferedImage.TYPE_INT_RGB);
+			paintTrend((Graphics2D)trImage.getGraphics(), imgWidth, height);
+			int imgX = (paintCurrentState) ? imgWidth : 0;
+			g2d.drawImage(trImage, imgX, 0, null);
+			
 		}
 		
 		g2d.setColor(lineColor);
@@ -194,12 +201,15 @@ public class MemoryMonitor extends Label
 
 	}
 	
-	protected void paintCurrentState(Graphics2D g2d)
+	protected void paintCurrentState(Graphics2D g2d, int width, int height)
 	{
 		Stroke origStroke = g2d.getStroke(); 
-
-		int width = this.getWidth();
-		int height = this.getHeight();
+		
+		g2d.setColor(Color.WHITE);
+		g2d.fillRect(0, 0, width, height);
+		
+		//int width = this.getWidth();
+		//int height = this.getHeight();
 		
 		
 		MemoryUsage usageBean = memoryBean.getHeapMemoryUsage();
@@ -230,12 +240,15 @@ public class MemoryMonitor extends Label
 		
 	}
 	
-	protected void paintTrend(Graphics2D g2d)
+	protected void paintTrend(Graphics2D g2d, int width, int height)
 	{
 		Stroke origStroke = g2d.getStroke(); 
 
-		int width = this.getWidth();
-		int height = this.getHeight();
+		g2d.setColor(Color.WHITE);
+		g2d.fillRect(0, 0, width, height);
+		
+		//int width = this.getWidth();
+		//int height = this.getHeight();
 		
 		long maxCommitted = getMaxCommittedInList();
 		long maxUsed = getMaxUsedInList();

@@ -28,22 +28,24 @@ import javax.swing.JToolBar;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
 public class TopButtonBar extends ComponentButtonBar
 {
 
-	public static final int BTN_NEW_PROJECT = 0;
-	public static final int BTN_OPEN_PROJECT = 1;
-	public static final int BTN_SAVE_PROJECT = 2;
-	public static final int BTN_SAVE_PROJECT_AS = 3;
-	public static final int BTN_EXIT = 4;
+	public static final int BTN_NEW_STANDARD_PROJECT = 0;
+	public static final int BTN_NEW_SCRIPT_PROJECT = 1;
+	public static final int BTN_OPEN_PROJECT = 2;
+	public static final int BTN_SAVE_PROJECT = 3;
+	public static final int BTN_SAVE_PROJECT_AS = 4;
+	public static final int BTN_EXIT = 5;
 	
 	private List<ButtonClickedListener> buttonClickedListeners = new LinkedList<ButtonClickedListener>();
 	
 	
-	private ToolbarButton jbtnNewProject;
+	private DropDownButton jbtnNewProject;
 	private ToolbarButton jbtnOpenProject;
 	private ToolbarButton jbtnSaveProject;
 	private ToolbarButton jbtnSaveProjectAs;
@@ -53,12 +55,32 @@ public class TopButtonBar extends ComponentButtonBar
 	{
 		super(null);
 		// Create components
-		
+		/*
 		jbtnNewProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.new"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_NEW_PROJECT);
 			}
 		});
+		*/
+		jbtnNewProject = new DropDownButton(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.new"), new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fireButtonClickedListeners(BTN_NEW_STANDARD_PROJECT);
+			}
+		});
+		MenuItem newStdProject = new MenuItem(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton.newStandardProject"), new ActionListener() {
+			public void actionPerformed(ActionEvent arg0)
+			{
+				fireButtonClickedListeners(BTN_NEW_STANDARD_PROJECT);
+			}
+		});
+		jbtnNewProject.addMenuItem(newStdProject);
+		MenuItem newScriptProject = new MenuItem(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton.newScriptProject"), new ActionListener() {
+			public void actionPerformed(ActionEvent arg0)
+			{
+				fireButtonClickedListeners(BTN_NEW_SCRIPT_PROJECT);
+			}
+		});
+		jbtnNewProject.addMenuItem(newScriptProject);
 		
 		jbtnOpenProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.open"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -101,7 +123,8 @@ public class TopButtonBar extends ComponentButtonBar
 		//this.setMargin(new Insets(3, 3, 3, 3));
 		
 		// Set layout
-		add(jbtnNewProject);
+		//add(jbtnNewProject);
+		jbtnNewProject.addToToolBar(this);
 		add(jbtnOpenProject);
 		add(jbtnSaveProject);
 		add(jbtnSaveProjectAs);
@@ -115,7 +138,8 @@ public class TopButtonBar extends ComponentButtonBar
 	{
 
 		switch (button) {
-		case BTN_NEW_PROJECT:
+		case BTN_NEW_STANDARD_PROJECT:
+		case BTN_NEW_SCRIPT_PROJECT:
 			jbtnNewProject.setEnabled(enabled);
 			break;
 		case BTN_OPEN_PROJECT:
@@ -143,8 +167,11 @@ public class TopButtonBar extends ComponentButtonBar
 	{
 		for (ButtonClickedListener listener : buttonClickedListeners) {
 			switch (button) {
-			case BTN_NEW_PROJECT:
-				listener.onNewProjectClicked();
+			case BTN_NEW_STANDARD_PROJECT:
+				listener.onNewStandardProjectClicked();
+				break;
+			case BTN_NEW_SCRIPT_PROJECT:
+				listener.onNewScriptProjectClicked();
 				break;
 			case BTN_OPEN_PROJECT:
 				listener.onOpenProjectClicked();
@@ -164,7 +191,8 @@ public class TopButtonBar extends ComponentButtonBar
 	
 	public interface ButtonClickedListener
 	{
-		public void onNewProjectClicked();
+		public void onNewStandardProjectClicked();
+		public void onNewScriptProjectClicked();
 		public void onOpenProjectClicked();
 		public void onSaveProjectClicked();
 		public void onSaveProjectAsClicked();

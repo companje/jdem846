@@ -452,13 +452,15 @@ public class ModelPreviewPane extends RoundedPanel
 				return;
 			}
 			
-			double coordWidthLat = (Math.abs(north) + Math.abs(south)) / 12;
-			double coordWidthLon = (Math.abs(west) + Math.abs(east)) / 24;
 			
-			for (double latitude = north; latitude >= south; latitude-=coordWidthLat) {
-				for (double longitude = west; longitude <= east; longitude+=coordWidthLon) {
+			
+			double coordWidthLat = (Math.abs(90) + Math.abs(-90)) / 12;
+			double coordWidthLon = (Math.abs(-180) + Math.abs(180)) / 24;
+			
+			for (double latitude = 90; latitude >= -90; latitude-=coordWidthLat) {
+				for (double longitude = -180; longitude <= 180; longitude+=coordWidthLon) {
 					
-					if (latitude > south) {
+					if (latitude > -90) {
 
 						canvas.drawLine(i_strokeColor, 
 								latitude, longitude, 0.0, 
@@ -466,7 +468,7 @@ public class ModelPreviewPane extends RoundedPanel
 
 					}
 					
-					if (longitude < east) {
+					if (longitude < 180) {
 						canvas.drawLine(i_strokeColor, 
 								latitude, longitude, 0.0, 
 								latitude, longitude+coordWidthLon, 0.0);
