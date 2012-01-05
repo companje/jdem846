@@ -44,13 +44,13 @@ public class ParallelRenderTestMain extends AbstractTestMain
 	{
 		List<String> inputDataList = new LinkedList<String>();
 		
-		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
-		//String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
 		
 		
-		inputDataList.add("F:/Presidential Range/02167570.flt");
-		String saveOutputTo = "F:/Presidential Range/model-output.png";
+		//inputDataList.add("F:/Presidential Range/02167570.flt");
+		//String saveOutputTo = "F:/Presidential Range/model-output.png";
 		
 		RasterDataContext dataProxy = new RasterDataContext();
 		

@@ -12,7 +12,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ProcessInterruptListener;
 
-public class TileRenderRunnable implements Runnable, Callable<RenderedTile> 
+public class TileRenderRunnable implements  Callable<RenderedTile> 
 {
 	private static Log log = Logging.getLog(TileRenderRunnable.class);
 	
@@ -56,7 +56,7 @@ public class TileRenderRunnable implements Runnable, Callable<RenderedTile>
 	public RenderedTile __run() 
 	{
 		//ModelCanvas modelCanvas = modelContext.getModelCanvas();
-		
+		log.info("Starting tile row #" + tileRow + ", column #" + tileColumn);
 		TileRenderer tileRenderer = new TileRenderer(modelContext);
 		
 		try {
@@ -64,11 +64,12 @@ public class TileRenderRunnable implements Runnable, Callable<RenderedTile>
 		} catch (RenderEngineException ex) {
 			ex.printStackTrace();
 		}
+		
+		
 		tileRenderer = null;
-		
-		log.info("Completed tile row #" + tileRow + ", column #" + tileColumn);
-		
 		ModelCanvas modelCanvas = modelContext.getModelCanvas();
+		
+		
 		try {
 			modelContext.getRasterDataContext().dispose();
 		} catch (DataSourceException ex) {
@@ -76,6 +77,7 @@ public class TileRenderRunnable implements Runnable, Callable<RenderedTile>
 		}
 		modelContext = null;
 		
+		log.info("Completed tile row #" + tileRow + ", column #" + tileColumn);
 		return new RenderedTile(modelCanvas, northLimit, southLimit, eastLimit, westLimit, tileColumn, tileRow);
 		
 	}
