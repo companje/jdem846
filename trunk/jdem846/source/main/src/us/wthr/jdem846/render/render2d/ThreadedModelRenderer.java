@@ -216,15 +216,13 @@ public class ThreadedModelRenderer extends ModelRenderer
 				
 				List<Future<RenderedTile>> processedTiles = new LinkedList<Future<RenderedTile>>();
 				
-				boolean allComplete = false;
-				while(!allComplete && futureRenderedTiles.size() > 0) {
-					
-					allComplete = true;
+				tileNumber = 1;
+				while(futureRenderedTiles.size() > 0) {
+
 					processedTiles.clear();
 					
 					for (Future<RenderedTile> futureRenderedTile : futureRenderedTiles) {
 						if (!futureRenderedTile.isDone()) {
-							allComplete = false;
 							continue;
 						}
 						
@@ -248,6 +246,9 @@ public class ThreadedModelRenderer extends ModelRenderer
 						tileCanvas.dispose();
 						subImage = null;
 						
+						tileNumber++;
+						pctComplete = (double)tileNumber / (double)tileCount;
+						fireTileCompletionListeners(modelCanvas, pctComplete);
 						
 						processedTiles.add(futureRenderedTile);
 						Thread.yield();
