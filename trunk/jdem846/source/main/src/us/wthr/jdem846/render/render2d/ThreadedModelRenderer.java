@@ -1,8 +1,6 @@
 package us.wthr.jdem846.render.render2d;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,41 +10,28 @@ import java.util.concurrent.Future;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.exception.ImageException;
-import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.render.ProcessInterruptListener;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
-import us.wthr.jdem846.gis.projections.MapProjection;
-import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
-import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
-public class ModelRenderer extends InterruptibleProcess
+public class ThreadedModelRenderer extends ModelRenderer
 {
-	private static Log log = Logging.getLog(ModelRenderer.class);
-	private static Color DEFAULT_BACKGROUND = new Color(0, 0, 0, 0);
+	private static Log log = Logging.getLog(ThreadedModelRenderer.class);
 	
-	protected ModelContext modelContext;
-	private List<TileCompletionListener> tileCompletionListeners;
-	
-	
-	public ModelRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
+	public ThreadedModelRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
 	{
-		this.modelContext = modelContext;
-		this.tileCompletionListeners = tileCompletionListeners;
+		super(modelContext, tileCompletionListeners);
 	}
+	
+	
 	
 	public ModelCanvas renderModel() throws RenderEngineException
 	{
@@ -159,7 +144,7 @@ public class ModelRenderer extends InterruptibleProcess
 		
 		if ( getRasterDataContext().getRasterDataListSize() > 0) {
 			
-			
+			LinkedList<TileRenderRunnable> renderQueue = new LinkedList<TileRenderRunnable>();
 			// Latitude
 			for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
 				double tileSouth = tileNorth - tileLatitudeHeight;
@@ -184,8 +169,22 @@ public class ModelRenderer extends InterruptibleProcess
 					log.info("    East: " + tileEast);
 					log.info("    West: " + tileWest);	
 					
-					tileRenderer.renderTile(tileNorth, tileSouth, tileEast, tileWest);
-
+					//tileRenderer.renderTile(tileNorth, tileSouth, tileEast, tileWest);
+					
+					
+					TileRenderRunnable tileRenderRunnable = null;
+					try {
+						ModelContext tileContext = modelContext.copy();
+						tileContext.setNorthLimit(tileNorth);
+						tileContext.setSouthLimit(tileSouth);
+						tileContext.setEastLimit(tileEast);
+						tileContext.setWestLimit(tileWest);
+						tileRenderRunnable = new TileRenderRunnable(tileContext, tileNorth, tileSouth, tileEast, tileWest, (tileColumn + 1), (tileRow + 1));
+					} catch (DataSourceException ex) {
+						throw new RenderEngineException("Failed to create tile render runnable: " + ex.getMessage(), ex);
+					}
+					
+					renderQueue.add(tileRenderRunnable);
 					//tileRenderRunnable.run();
 					
 					tileColumn++;
@@ -210,6 +209,61 @@ public class ModelRenderer extends InterruptibleProcess
 				
 			}
 			
+			
+			try {
+				ExecutorService exec = Executors.newFixedThreadPool(getModelOptions().getConcurrentRenderPoolSize());
+				List<Future<RenderedTile>> futureRenderedTiles = exec.invokeAll(renderQueue);
+				
+				List<Future<RenderedTile>> processedTiles = new LinkedList<Future<RenderedTile>>();
+				
+				boolean allComplete = false;
+				while(!allComplete && futureRenderedTiles.size() > 0) {
+					
+					allComplete = true;
+					processedTiles.clear();
+					
+					for (Future<RenderedTile> futureRenderedTile : futureRenderedTiles) {
+						if (!futureRenderedTile.isDone()) {
+							allComplete = false;
+							continue;
+						}
+						
+						
+						RenderedTile renderedTile = futureRenderedTile.get();
+						
+						//ImageWriter.saveImage((BufferedImage)renderedTile.getModelCanvas().getFinalizedImage(), "C:/srv/elevation/DataRaster-Testing/output/tile-" + renderedTile.getTileRow() + "-" + renderedTile.getTileColumn() + ".png");
+						ModelCanvas tileCanvas = renderedTile.getModelCanvas();
+						BufferedImage subImage = (BufferedImage) tileCanvas.getSubImage(renderedTile.getNorthLimit(),
+								renderedTile.getSouthLimit(), 
+								renderedTile.getEastLimit(), 
+								renderedTile.getWestLimit());
+						
+
+						modelCanvas.drawImage(subImage, 
+								renderedTile.getNorthLimit(), 
+								renderedTile.getSouthLimit(), 
+								renderedTile.getEastLimit(), 
+								renderedTile.getWestLimit());
+						
+						tileCanvas.dispose();
+						subImage = null;
+						
+						
+						processedTiles.add(futureRenderedTile);
+						Thread.yield();
+					}
+					
+					futureRenderedTiles.removeAll(processedTiles);
+					Thread.yield();
+				}
+				
+				exec.shutdown();
+				
+				log.info("All Done.");
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		
 		}
 		
 		if (fullCaching) {
@@ -227,68 +281,5 @@ public class ModelRenderer extends InterruptibleProcess
 		
 		return modelCanvas;
 	}
-	
-	protected void fireTileCompletionListeners(ModelCanvas modelCanvas, double pctComplete)
-	{
-		if (tileCompletionListeners != null) {
-			for (TileCompletionListener listener : tileCompletionListeners) {
-				listener.onTileCompleted(modelCanvas, pctComplete);
-			}
-		}
-	}
-	
-	protected RasterDataContext getRasterDataContext()
-	{
-		return modelContext.getRasterDataContext();
-	}
 
-	
-	protected ModelOptions getModelOptions()
-	{
-		return modelContext.getModelOptions();
-	}
-	
-	
-	protected void on2DModelBefore(ModelCanvas modelCanvas) throws RenderEngineException
-	{
-		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
-			if (scriptProxy != null) {
-				scriptProxy.on2DModelBefore(modelContext, modelCanvas);
-			}
-		} catch (Exception ex) {
-			throw new RenderEngineException("Exception thrown in user script", ex);
-		}
-		
-	}
-	
-	protected void on2DModelAfter(ModelCanvas modelCanvas) throws RenderEngineException
-	{
-		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
-			if (scriptProxy != null) {
-				scriptProxy.on2DModelAfter(modelContext, modelCanvas);
-			}
-		} catch (Exception ex) {
-			throw new RenderEngineException("Exception thrown in user script", ex);
-		}
-	}
-
-	
-	
-	
-	
-	public static ModelCanvas render(ModelContext modelContext) throws RenderEngineException
-	{
-		ModelRenderer renderer = new ModelRenderer(modelContext, null);
-		ModelCanvas canvas = renderer.renderModel();
-		return canvas;
-	}
-	
-	public static ModelCanvas render(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners) throws RenderEngineException
-	{
-		ModelRenderer renderer = new ModelRenderer(modelContext, tileCompletionListeners);
-		ModelCanvas canvas = renderer.renderModel();
-		return canvas;
-	}
 }

@@ -151,6 +151,7 @@ public class LightingPreviewPanel extends Panel
 			modelOptions.setUseSimpleCanvasFill(true);
 			modelOptions.setAntialiased(false);
 			modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
+			modelOptions.setConcurrentRenderPoolSize(1);
 			
 			rasterDataContext = new RasterDataContext();
 			rasterDataContext.addRasterData(rasterData);
@@ -213,7 +214,6 @@ public class LightingPreviewPanel extends Panel
 
 	public void update(boolean rerenderPreview)
 	{
-
 		if (rerenderPreview && (renderedAzimuth != solarAzimuth || renderedElevation != solarElevation)) {
 			
 			//JdemFrame.getInstance().setGlassVisible(I18N.get("us.wthr.jdem846.ui.modelPreviewPane.working"), this, true);
