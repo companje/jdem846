@@ -120,6 +120,14 @@ public class JsonProjectFileReader
 	{
 		ProjectModel projectModel = new ProjectModel();
 		
+		if (json.has("type")) {
+			String projectTypeIdentifier = json.getString("type");
+			if (projectTypeIdentifier != null) {
+				ProjectTypeEnum projectType = ProjectTypeEnum.getProjectTypeFromIdentifier(projectTypeIdentifier);
+				projectModel.setProjectType(projectType);
+			}
+		}
+		
 		JSONArray settingsArray = json.getJSONArray("settings");
 		JSONArray layersArray = json.getJSONArray("layers");
 		

@@ -53,7 +53,13 @@ public class XmlProjectFileWriter
         jdem846.addAttribute("generated", ""+(new Date(System.currentTimeMillis())));
 
         Element project = jdem846.addElement("project");
-
+        
+        
+        if (projectModel.getProjectType() != null) {
+        	Element projectType = project.addElement("type");
+        	projectType.addText(projectModel.getProjectType().identifier());
+        }
+        
         Element options = project.addElement("options");
 
         

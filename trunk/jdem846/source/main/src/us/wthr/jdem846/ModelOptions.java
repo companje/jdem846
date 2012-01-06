@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import us.wthr.jdem846.project.ProjectModel;
+import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.util.ColorSerializationUtil;
@@ -164,13 +165,23 @@ public class ModelOptions extends MappedOptions
 			this.setScriptLanguage(projectModel.getScriptLanguage());
 		}
 		
-		this.projection.setRotateX(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_X));
-		this.projection.setRotateY(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Y));
-		this.projection.setRotateZ(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Z));
+		if (projectModel.hasOption(ModelOptionNamesEnum.PROJECTION_ROTATE_X))
+			this.projection.setRotateX(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_X));
 		
-		this.projection.setShiftX(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_X));
-		this.projection.setShiftY(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Y));
-		this.projection.setShiftZ(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Z));
+		if (projectModel.hasOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Y))
+			this.projection.setRotateY(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Y));
+		
+		if (projectModel.hasOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Y))
+			this.projection.setRotateZ(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ROTATE_Z));
+		
+		if (projectModel.hasOption(ModelOptionNamesEnum.PROJECTION_SHIFT_X))
+			this.projection.setShiftX(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_X));
+		
+		if (projectModel.hasOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Y))
+			this.projection.setShiftY(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Y));
+		
+		if (projectModel.hasOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Z))
+			this.projection.setShiftZ(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Z));
 		
 		
 	}

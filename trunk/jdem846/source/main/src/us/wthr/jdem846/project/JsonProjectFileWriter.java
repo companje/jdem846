@@ -81,6 +81,11 @@ public class JsonProjectFileWriter
 	protected static JSONObject createJsonObject(ProjectModel projectModel)
 	{
 		JSONObject jsonObject = new JSONObject();
+		
+		if (projectModel.getProjectType() != null) {
+			jsonObject.element("type", projectModel.getProjectType().identifier());
+		}
+		
 		jsonObject.element("settings", createSettingsObject(projectModel));
 		jsonObject.element("layers", createLayersObject(projectModel));
 		

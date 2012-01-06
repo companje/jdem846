@@ -49,7 +49,7 @@ public class RayTracedShadowTestMain extends AbstractTestMain
 		}
 		
 		log = Logging.getLog(RayTracedShadowTestMain.class);
-				
+		
 		RayTracedShadowTestMain tester = new RayTracedShadowTestMain();
 		try {
 			tester.doTesting(args);

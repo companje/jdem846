@@ -22,8 +22,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import us.wthr.jdem846.exception.ComponentException;
@@ -42,8 +46,10 @@ public class DockingContainerPanel extends Panel
 	private SideDockingPanel leftPanel = null;
 	private SideDockingPanel rightPanel = null;
 	private EmbeddedTabbedPane centerTabPanel = null;
+	private EmbeddedTabbedPane southTabPanel = null;
 	private SplitPane outterSplit = null;
 	private SplitPane innerSplit = null;
+	private SplitPane verticalSplit = null;
 	
 	public DockingContainerPanel()
 	{
@@ -55,6 +61,7 @@ public class DockingContainerPanel extends Panel
 		
 		
 		centerTabPanel = new EmbeddedTabbedPane();
+		southTabPanel = new EmbeddedTabbedPane();
 		//centerTabPanel.setBorder(BorderFactory.createEmptyBorder());
 		//centerTabPanel.setUI(new BasicTabbedPaneUI() {
 		//	protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) { }
@@ -68,6 +75,10 @@ public class DockingContainerPanel extends Panel
 		//add(leftPanel, BorderLayout.WEST);
 		//add(rightPanel, BorderLayout.EAST);
 		//add(centerTabPanel, BorderLayout.CENTER);
+		
+		verticalSplit = new SplitPane(SplitPane.VERTICAL_SPLIT);
+		verticalSplit.setBorder(BorderFactory.createEmptyBorder());
+		verticalSplit.setResizeWeight(1);
 		
 		outterSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 		outterSplit.setBorder(BorderFactory.createEmptyBorder());
@@ -86,7 +97,10 @@ public class DockingContainerPanel extends Panel
 		outterSplit.add(leftPanel);
 		outterSplit.add(innerSplit);
 		
-		add(outterSplit, BorderLayout.CENTER);
+		verticalSplit.add(outterSplit);
+		verticalSplit.add(southTabPanel);
+		
+		add(verticalSplit, BorderLayout.CENTER);
 		
 		
 		this.addComponentListener(new ComponentListener() {
@@ -101,6 +115,7 @@ public class DockingContainerPanel extends Panel
 			public void componentShown(ComponentEvent e)
 			{
 				innerSplit.setDividerLocation(innerSplit.getWidth() - 200);
+				verticalSplit.setDividerLocation(verticalSplit.getHeight() - 200);
 				removeComponentListener(this);
 			}
 			public void componentHidden(ComponentEvent e)
@@ -130,7 +145,13 @@ public class DockingContainerPanel extends Panel
 	
 	public void addCenter(String title, Component component)
 	{
-		centerTabPanel.add(title, component);
+		centerTabPanel.addTab(title, component);
+	}
+	
+	
+	public void addSouth(String title, Component component)
+	{
+		southTabPanel.addTab(title, component);
 	}
 	
 	public void setSouth(Component component)
@@ -164,11 +185,23 @@ public class DockingContainerPanel extends Panel
 		
 	}
 	
+	public void setSouthVisible(boolean v)
+	{
+		southTabPanel.setVisible(v);
+		if (!v) {
+			verticalSplit.setDividerSize(0);
+		} else {
+			verticalSplit.setDividerSize(5);
+		}
+	}
+	
 	@Override
 	public void dispose() throws ComponentException
 	{
 		super.dispose();
 	}
+	
+
 	
 	
 	

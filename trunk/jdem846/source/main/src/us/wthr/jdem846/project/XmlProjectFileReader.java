@@ -68,6 +68,12 @@ public class XmlProjectFileReader
 		ProjectModel projectModel = new ProjectModel();
 		Node node = null;
 		
+		Node projectTypeNode = doc.selectSingleNode("//jdem846/project/type");
+		if (projectTypeNode != null) {
+			ProjectTypeEnum projectType = ProjectTypeEnum.getProjectTypeFromIdentifier(projectTypeNode.getText());
+			projectModel.setProjectType(projectType);
+		}
+		
 		List optionsList = doc.selectNodes( "//jdem846/project/options/option" );
 		for (Iterator iter = optionsList.iterator(); iter.hasNext(); ) {
 			Node inputNode = (Node) iter.next();

@@ -2,7 +2,7 @@ package us.wthr.jdem846;
 
 public enum ModelOptionNamesEnum
 {
-	
+
 	ENGINE("us.wthr.jdem846.modelOptions.engine"),
 	GRADIENT_LEVELS("us.wthr.jdem846.modelOptions.gradientLevels"),
 	WRITE_TO("us.wthr.jdem846.modelOptions.writeTo"),
