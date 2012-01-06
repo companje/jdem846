@@ -38,19 +38,20 @@ public class EmbeddedTabbedPane extends TabPane
 	
 	public EmbeddedTabbedPane()
 	{	
+		super();
+		
 		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.usingJGoodies")) {
 			putClientProperty("jgoodies.noContentBorder", Boolean.TRUE);
 			putClientProperty("jgoodies.embeddedTabs", Boolean.TRUE);
-		} else {
+		} /*else {
 			setUI(new EmbeddedTabbedPaneUI());
 		}
-		
+		*/
 		
 		
 		
 
 	}
-	
 	
 	class EmbeddedTabbedPaneUI extends BasicTabbedPaneUI
 	{
@@ -61,6 +62,14 @@ public class EmbeddedTabbedPane extends TabPane
 		}
 
 		
+		@Override
+		protected void paintTabArea(Graphics g, int tabPlacement,
+				int selectedIndex)
+		{
+			super.paintTabArea(g, tabPlacement, selectedIndex);
+		}
+
+
 		@Override
 		protected void paintContentBorderTopEdge(Graphics g, int tabPlacement,
 				int selectedIndex, int x, int y, int w, int h)

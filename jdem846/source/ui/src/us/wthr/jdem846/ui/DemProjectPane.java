@@ -63,6 +63,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectModel;
+import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
@@ -112,7 +113,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	private Menu projectMenu;
 	//private StatusBar statusBar;
 	
-	private ProjectModel projectModel;
+	//private ProjectModel projectModel;
 	
 	private ModelContext modelContext;
 	private ModelOptions modelOptions;
@@ -137,6 +138,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	{
 		initialize(projectModel);
 	}
+
 	
 	protected void initialize(ProjectModel projectModel)
 	{
@@ -151,7 +153,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, modelOptions);
 		
-		this.projectModel = projectModel;
+		//this.projectModel = projectModel;
 		
 		// Apply model options
 		if (projectModel != null) {
@@ -405,6 +407,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		setLeftWidth(350);
 		this.setRightVisible(false);
+		this.setSouthVisible(false);
 		//this.addRight(gradientConfigPanel, false);
 		//this.addRight(lightPositionConfigPanel, false);
 		//this.addRight(projectionConfigPanel, false);
@@ -515,7 +518,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		applyOptionsToModel(modelOptions);
 		
 		ProjectModel projectModel = new ProjectModel();
-		
+		projectModel.setProjectType(ProjectTypeEnum.STANDARD_PROJECT);
 		projectModel.setLoadedFrom(projectLoadedFrom);
 		modelOptions.syncToProjectModel(projectModel);
 		lightingContext.syncToProjectModel(projectModel);
@@ -1110,9 +1113,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	public void saveAs()
 	{
 		FileChooser chooser = new FileChooser();
-		//FileNameExtensionFilter filter = 
-		//chooser.setFileFilter(filter);
-		
+
 		FileNameExtensionFilter xdemFilter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.xdem.name"), "xdem");
 		FileNameExtensionFilter zdemFilter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.zdem.name"), "zdem");
 		

@@ -57,6 +57,7 @@ import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectFiles;
+import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.project.XmlProjectFileReader;
 import us.wthr.jdem846.project.XmlProjectFileWriter;
 import us.wthr.jdem846.project.ProjectModel;
@@ -137,11 +138,9 @@ public class JdemFrame extends Frame
 			public void onExitClicked() {
 				exitApplication();
 			}
-			public void onNewStandardProjectClicked() {
-				createNewStandardProject(null);
-			}
-			public void onNewScriptProjectClicked() {
-				createNewScriptProject(null);
+			public void onNewProjectClicked(ProjectTypeEnum projectType) {
+				newProject(projectType);
+				//createNewStandardProject(null);
 			}
 			public void onSaveProjectClicked() {
 				saveTab();
@@ -217,8 +216,8 @@ public class JdemFrame extends Frame
 	{
 		for (String path : paths) {
 			if (path != null && path.length() > 0) {
-				
-				createNewStandardProject(path);
+				openProject(path);
+				//createNewStandardProject(path);
 			}
 		}
 	}
@@ -241,7 +240,8 @@ public class JdemFrame extends Frame
 		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.new"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.new"), KeyEvent.VK_N, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				createNewStandardProject(null);
+				newProject(ProjectTypeEnum.STANDARD_PROJECT);
+				//createNewStandardProject(null);
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK)));
 		
@@ -369,83 +369,132 @@ public class JdemFrame extends Frame
 	    int returnVal = chooser.showOpenDialog(this);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 	    	File selectedFile = chooser.getSelectedFile();
-	    	createNewStandardProject(selectedFile.getAbsolutePath());
+	    	openProject(selectedFile.getAbsolutePath());
+	    	//createNewStandardProject(selectedFile.getAbsolutePath());
 	    }
 	}
 	
-	public void createNewScriptProject(String filePath)
+	
+	
+	public void newProject(ProjectTypeEnum projectType)
 	{
-		JOptionPane.showMessageDialog(getRootPane(),
-				I18N.get("us.wthr.jdem846.ui.notYetImplemented.message"),
-			    I18N.get("us.wthr.jdem846.ui.notYetImplemented.title"),
-			    JOptionPane.INFORMATION_MESSAGE);
+		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.loadingNew"));
 		
+		ProjectModel projectModel = new ProjectModel();
+		projectModel.setProjectType(projectType);
+		buildProjectUI(projectModel);
 	}
 	
-	public void createNewStandardProject(String filePath)
+	public void openProject(String filePath)
 	{
-		log.info("Creating new project");
+		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.loadingPath") + " " + filePath);
 		
-		if (filePath != null) {
-			SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.loadingPath") + " " + filePath);
-		} else {
-			SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.loadingNew"));
-		}
-		
-		
-		
+		ProjectModel projectModel = null;
+
 		try {
-			ProjectModel projectModel = null;
-			if (filePath != null) {
-				projectModel = ProjectFiles.read(filePath);
-				projectModel.setLoadedFrom(filePath);
-			}
-			
-			DemProjectPane projectPane = new DemProjectPane(projectModel);
-			
-			projectPane.addCreateModelListener(new CreateModelListener() {
-				public void onCreateModel(ModelContext modelContext) {
-					onCreateModelTab(modelContext);
-				}
-			});
-			
-			String title = I18N.get("us.wthr.jdem846.ui.defaultProjectTitle");
-			if (projectModel != null && projectModel.getLoadedFrom() != null) {
-				File f = new File(projectModel.getLoadedFrom());
-				title = f.getName();
-			}
-			
-			tabPane.addTab(title, projectPane, true);
-			tabPane.setSelectedComponent(projectPane);
-			projectPane.setTitle(title);
-			projectPane.setSavedPath(filePath);
-			
+			projectModel = ProjectFiles.read(filePath);
 		} catch (FileNotFoundException ex) {
 			log.warn("Project file not found: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(getRootPane(),
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.fileNotFound.message"),
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.fileNotFound.title"),
 				    JOptionPane.ERROR_MESSAGE);
-			
+			return;
 		} catch (IOException ex) {
 			log.warn("IO error reading from disk: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(getRootPane(),
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.ioError.message"),
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.ioError.title"),
 				    JOptionPane.ERROR_MESSAGE);
-
+			return;
 		} catch (ProjectParseException ex) {
 			log.warn("Error parsing project: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(getRootPane(),
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.parseError.message"),
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.projectLoadError.parseError.title"),
 				    JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		
+		projectModel.setLoadedFrom(filePath);
+		
+		buildProjectUI(projectModel);
+	}
+	
+	
+	protected void buildProjectUI(ProjectModel projectModel)
+	{
+		if (projectModel.getProjectType() == ProjectTypeEnum.STANDARD_PROJECT) {
+			buildStandardProjectUI(projectModel);
+		} else if (projectModel.getProjectType() == ProjectTypeEnum.SCRIPT_PROJECT) {
+			buildScriptProjectUI(projectModel);
+		} else {
+			log.warn("Invalid project type: " + projectModel.getProjectType());
+			// TODO: Message Dialog
+		}
+	}
+	
+	
+	protected void buildStandardProjectUI(ProjectModel projectModel)
+	{
+		
+		DemProjectPane projectPane = new DemProjectPane(projectModel);
+		
+		projectPane.addCreateModelListener(new CreateModelListener() {
+			public void onCreateModel(ModelContext modelContext) {
+				onCreateModelTab(modelContext);
+			}
+		});
+		
+		String title = I18N.get("us.wthr.jdem846.ui.defaultProjectTitle");
+		if (projectModel != null && projectModel.getLoadedFrom() != null) {
+			File f = new File(projectModel.getLoadedFrom());
+			title = f.getName();
+			projectPane.setSavedPath(projectModel.getLoadedFrom());
+		}
+		
+		tabPane.addTab(title, projectPane, true);
+		tabPane.setSelectedComponent(projectPane);
+		projectPane.setTitle(title);
+
 		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.ready"));
 		
+	}
+	
+	protected void buildScriptProjectUI(ProjectModel projectModel)
+	{
+		/*
+		JOptionPane.showMessageDialog(getRootPane(),
+				I18N.get("us.wthr.jdem846.ui.notYetImplemented.message"),
+			    I18N.get("us.wthr.jdem846.ui.notYetImplemented.title"),
+			    JOptionPane.INFORMATION_MESSAGE);
+		*/
+		
+		ScriptProjectPane projectPane = new ScriptProjectPane(projectModel);
+		
+		/*
+		projectPane.addCreateModelListener(new CreateModelListener() {
+			public void onCreateModel(ModelContext modelContext) {
+				onCreateModelTab(modelContext);
+			}
+		});
+		*/
+		
+		String title = I18N.get("us.wthr.jdem846.ui.defaultProjectTitle");
+		if (projectModel != null && projectModel.getLoadedFrom() != null) {
+			File f = new File(projectModel.getLoadedFrom());
+			title = f.getName();
+			projectPane.setSavedPath(projectModel.getLoadedFrom());
+		}
+		
+		tabPane.addTab(title, projectPane, true);
+		tabPane.setSelectedComponent(projectPane);
+		projectPane.setTitle(title);
+
+		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.ready"));
 		
 	}
+
 	
 	@Override
 	public void setTitle(String title)

@@ -28,6 +28,7 @@ import javax.swing.JToolBar;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.ToolBar;
 
@@ -35,12 +36,11 @@ import us.wthr.jdem846.ui.base.ToolBar;
 public class TopButtonBar extends ComponentButtonBar
 {
 
-	public static final int BTN_NEW_STANDARD_PROJECT = 0;
-	public static final int BTN_NEW_SCRIPT_PROJECT = 1;
-	public static final int BTN_OPEN_PROJECT = 2;
-	public static final int BTN_SAVE_PROJECT = 3;
-	public static final int BTN_SAVE_PROJECT_AS = 4;
-	public static final int BTN_EXIT = 5;
+	public static final int BTN_NEW_PROJECT = 0;
+	public static final int BTN_OPEN_PROJECT = 1;
+	public static final int BTN_SAVE_PROJECT = 2;
+	public static final int BTN_SAVE_PROJECT_AS = 3;
+	public static final int BTN_EXIT = 4;
 	
 	private List<ButtonClickedListener> buttonClickedListeners = new LinkedList<ButtonClickedListener>();
 	
@@ -64,45 +64,45 @@ public class TopButtonBar extends ComponentButtonBar
 		*/
 		jbtnNewProject = new DropDownButton(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.new"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				fireButtonClickedListeners(BTN_NEW_STANDARD_PROJECT);
+				fireButtonClickedListeners(BTN_NEW_PROJECT, ProjectTypeEnum.STANDARD_PROJECT);
 			}
 		});
 		MenuItem newStdProject = new MenuItem(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton.newStandardProject"), new ActionListener() {
 			public void actionPerformed(ActionEvent arg0)
 			{
-				fireButtonClickedListeners(BTN_NEW_STANDARD_PROJECT);
+				fireButtonClickedListeners(BTN_NEW_PROJECT, ProjectTypeEnum.STANDARD_PROJECT);
 			}
 		});
 		jbtnNewProject.addMenuItem(newStdProject);
 		MenuItem newScriptProject = new MenuItem(I18N.get("us.wthr.jdem846.ui.topToolbar.newProjectButton.newScriptProject"), new ActionListener() {
 			public void actionPerformed(ActionEvent arg0)
 			{
-				fireButtonClickedListeners(BTN_NEW_SCRIPT_PROJECT);
+				fireButtonClickedListeners(BTN_NEW_PROJECT, ProjectTypeEnum.SCRIPT_PROJECT);
 			}
 		});
 		jbtnNewProject.addMenuItem(newScriptProject);
 		
 		jbtnOpenProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.openProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.open"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				fireButtonClickedListeners(BTN_OPEN_PROJECT);
+				fireButtonClickedListeners(BTN_OPEN_PROJECT, null);
 			}
 		});
 		
 		jbtnSaveProject = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.save"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				fireButtonClickedListeners(BTN_SAVE_PROJECT);
+				fireButtonClickedListeners(BTN_SAVE_PROJECT, null);
 			}
 		});
 		
 		jbtnSaveProjectAs = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.saveProjectAsButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.saveAs"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				fireButtonClickedListeners(BTN_SAVE_PROJECT_AS);
+				fireButtonClickedListeners(BTN_SAVE_PROJECT_AS, null);
 			}
 		});
 		
 		jbtnExit = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.topToolbar.exitButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.exit"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				fireButtonClickedListeners(BTN_EXIT);
+				fireButtonClickedListeners(BTN_EXIT, null);
 			}
 		});
 		
@@ -138,8 +138,7 @@ public class TopButtonBar extends ComponentButtonBar
 	{
 
 		switch (button) {
-		case BTN_NEW_STANDARD_PROJECT:
-		case BTN_NEW_SCRIPT_PROJECT:
+		case BTN_NEW_PROJECT:
 			jbtnNewProject.setEnabled(enabled);
 			break;
 		case BTN_OPEN_PROJECT:
@@ -163,15 +162,12 @@ public class TopButtonBar extends ComponentButtonBar
 		buttonClickedListeners.add(listener);
 	}
 	
-	protected void fireButtonClickedListeners(int button)
+	protected void fireButtonClickedListeners(int button, ProjectTypeEnum projectType)
 	{
 		for (ButtonClickedListener listener : buttonClickedListeners) {
 			switch (button) {
-			case BTN_NEW_STANDARD_PROJECT:
-				listener.onNewStandardProjectClicked();
-				break;
-			case BTN_NEW_SCRIPT_PROJECT:
-				listener.onNewScriptProjectClicked();
+			case BTN_NEW_PROJECT:
+				listener.onNewProjectClicked(projectType);
 				break;
 			case BTN_OPEN_PROJECT:
 				listener.onOpenProjectClicked();
@@ -191,8 +187,7 @@ public class TopButtonBar extends ComponentButtonBar
 	
 	public interface ButtonClickedListener
 	{
-		public void onNewStandardProjectClicked();
-		public void onNewScriptProjectClicked();
+		public void onNewProjectClicked(ProjectTypeEnum projectType);
 		public void onOpenProjectClicked();
 		public void onSaveProjectClicked();
 		public void onSaveProjectAsClicked();

@@ -134,9 +134,11 @@ public abstract class MappedOptions
 				continue;
 			}
 			
-			String optionValue = projectModel.getOption(optionName);
-			if (optionValue != null) {
-				this.setOption(optionName, optionValue);
+			if (projectModel.hasOption(optionName)) {
+				String optionValue = projectModel.getOption(optionName);
+				if (optionValue != null) {
+					this.setOption(optionName, optionValue);
+				}
 			}
 		}
 		

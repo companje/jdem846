@@ -29,7 +29,7 @@ import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
 public class ProjectModel 
 {
-
+	private ProjectTypeEnum projectType = ProjectTypeEnum.STANDARD_PROJECT;
 	
 	private Map<String, String> optionsMap = new HashMap<String, String>();
 	private List<String> inputFiles = new LinkedList<String>();
@@ -45,7 +45,15 @@ public class ProjectModel
 		
 	}
 	
+	public boolean hasOption(String key)
+	{
+		return optionsMap.containsKey(key);
+	}
 	
+	public boolean hasOption(ModelOptionNamesEnum key)
+	{
+		return hasOption(key.optionName());
+	}
 
 	public void setOption(String key, String value)
 	{
@@ -176,6 +184,21 @@ public class ProjectModel
 		this.userScript = userScript;
 	}
 
+	public ProjectTypeEnum getProjectType()
+	{
+		return projectType;
+	}
+	
+	public void setProjectType(ProjectTypeEnum projectType)
+	{
+		this.projectType = projectType;
+	}
+	
+	public void setProjectType(String identifier)
+	{
+		this.projectType = ProjectTypeEnum.getProjectTypeFromIdentifier(identifier);
+	}
+	
 	public ScriptLanguageEnum getScriptLanguage()
 	{
 		return scriptLanguage;
