@@ -17,6 +17,7 @@ import java.awt.image.*
 def rasterList = []
 rasterList.add("C:\\srv\\elevation\\DataRaster-Testing\\PresRange_1-3as.flt")
 rasterList.add("C:\\srv\\elevation\\DataRaster-Testing\\PresRange_1as.flt")
+def outputFileName = "C:\\srv\\elevation\\DataRaster-Testing\\groovy-script-output.png"
 
 def log = Logging.getLog(this.getClass());
 
@@ -29,7 +30,7 @@ modelOptions.setHeight(1000)
 modelOptions.setTileSize(1000)
 modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR)
 modelOptions.setBackgroundColor("255;255;255;0")
-modelOptions.setAntialiased(false)
+modelOptions.setAntialiased(true)
 modelOptions.setDoublePrecisionHillshading(false)
 modelOptions.setUseSimpleCanvasFill(false)
 modelOptions.setConcurrentRenderPoolSize(1)
@@ -39,10 +40,10 @@ rasterList.each { inputDataPath ->
 	def rasterData = RasterDataProviderFactory.loadRasterData(inputDataPath);
 	rasterDataContext.addRasterData(rasterData);
 }
+rasterDataContext.calculateElevationMinMax(true);
 
 
-
-def modelContext = ModelContext.createInstance(rasterDataContext, modelOptions, lightingContext)
+def modelContext = ModelContext.createInstance(rasterDataContext, lightingContext, modelOptions)
 
 
 def dem2d = new Dem2dGenerator(modelContext)

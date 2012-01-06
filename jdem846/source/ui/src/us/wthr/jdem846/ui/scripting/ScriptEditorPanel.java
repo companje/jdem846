@@ -40,6 +40,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.AttributeSet;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
@@ -78,6 +79,11 @@ public class ScriptEditorPanel extends Panel
 		
 		jsyntaxpane.DefaultSyntaxKit.initKit();
 		
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.scriptEditorPane.textAA")) {
+			jsyntaxpane.DefaultSyntaxKit.setProperty("TextAA", "ON");
+		} else {
+			jsyntaxpane.DefaultSyntaxKit.setProperty("TextAA", "OFF");
+		}
 		
 		// Create Components
 		buttonBar = new ScriptEditorButtonBar(this);
