@@ -1,10 +1,14 @@
 package us.wthr.jdem846.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -13,8 +17,12 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.exception.ScriptCompilationFailedException;
+import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -22,10 +30,20 @@ import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.rasterdata.RasterData;
+import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
+import us.wthr.jdem846.scripting.ScriptShell;
+import us.wthr.jdem846.scripting.ScriptShellFactory;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.tasks.RunnableTask;
+import us.wthr.jdem846.tasks.TaskControllerService;
+import us.wthr.jdem846.tasks.TaskStatusListener;
+import us.wthr.jdem846.ui.ScriptProjectButtonBar.ButtonClickedListener;
 import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Menu;
+import us.wthr.jdem846.ui.base.MenuItem;
+import us.wthr.jdem846.ui.base.ProgressBar;
 import us.wthr.jdem846.ui.scripting.ScriptEditorPanel;
 
 @SuppressWarnings("serial")
@@ -36,9 +54,16 @@ public class ScriptProjectPane extends JdemPanel implements Savable
 	
 	private ModelOptions modelOptions;
 	
+	private ScriptProjectButtonBar projectButtonBar;
 	private Menu projectMenu;
 	private ScriptEditorPanel scriptPane;
 	private LogOutputPanel logViewer;
+	
+	private RunnableTask renderTask;
+	private TaskStatusListener taskStatusListener;
+	
+	
+	private ProcessWorkingSpinner spinner;
 	
 	public ScriptProjectPane()
 	{
@@ -62,8 +87,30 @@ public class ScriptProjectPane extends JdemPanel implements Savable
 		scriptPane = new ScriptEditorPanel();
 		logViewer = new LogOutputPanel();
 		
+		projectButtonBar = new ScriptProjectButtonBar(this);
+		MainButtonBar.addToolBar(projectButtonBar);
+		projectButtonBar.addButtonClickedListener(new ButtonClickedListener() {
+			public void onExecuteClicked()
+			{
+				onExecuteScript();
+			}
+		});
+		
+		spinner = new ProcessWorkingSpinner();
+		spinner.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		spinner.step();
+		projectButtonBar.add( Box.createHorizontalGlue() );
+		projectButtonBar.add(spinner);
+		
+		
 		projectMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.projectPane.menu.project"), KeyEvent.VK_P);
 		MainMenuBar.insertMenu(projectMenu);
+		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.scriptProjectPane.menu.execute.label"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.createModel"), KeyEvent.VK_E, new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				onExecuteScript();
+			}
+		}));
 		
 		
 		addCenter(I18N.get("us.wthr.jdem846.ui.scriptProjectPane.scriptTab.label"), scriptPane);
@@ -80,6 +127,107 @@ public class ScriptProjectPane extends JdemPanel implements Savable
 			loadDefaultScripting();
 		}
 		
+	}
+	
+	protected void onExecuteScript()
+	{
+		
+		final String scriptCode = scriptPane.getScriptContent();
+		final ScriptLanguageEnum language = scriptPane.getScriptLanguage();
+		
+		
+		renderTask = new RunnableTask("Model Render Task") {
+			
+			public void run() throws RenderEngineException
+			{
+				log.info("Script execution starting");
+				this.setStoppable(false);
+				
+				long start = 0;
+				long elapsed = 0;
+				
+				start = System.currentTimeMillis();
+				
+				try {
+					ScriptShell shell = ScriptShellFactory.getScriptShell(language);
+					shell.evaluate(scriptCode);
+				} catch (ScriptCompilationFailedException ex) {
+					JOptionPane.showMessageDialog(getRootPane(),
+							I18N.get("us.wthr.jdem846.ui.scriptProjectPane.compileError.message") + ": " + ex.getMessage(),
+						    I18N.get("us.wthr.jdem846.ui.scriptProjectPane.compileError.title"),
+						    JOptionPane.ERROR_MESSAGE);
+				} catch (ScriptingException ex) {
+					JOptionPane.showMessageDialog(getRootPane(),
+							I18N.get("us.wthr.jdem846.ui.scriptProjectPane.scriptError.message") + ": " + ex.getMessage(),
+						    I18N.get("us.wthr.jdem846.ui.scriptProjectPane.scriptError.title"),
+						    JOptionPane.ERROR_MESSAGE);
+				}
+				
+				
+				elapsed = (System.currentTimeMillis() - start) / 1000;
+				log.info("Completed render task in " + elapsed + " seconds");
+
+			}
+			
+			@Override
+			public void cancel()
+			{
+			
+			}
+			
+			@Override
+			public void pause()
+			{
+				
+			}
+			
+			@Override
+			public void resume()
+			{
+				
+			}
+		};
+		
+		taskStatusListener = new TaskStatusListener() {
+			public void taskStarting(RunnableTask task)
+			{
+				setProcessWorkingState(true);
+			}
+			public void taskFailed(RunnableTask task, Throwable thrown)
+			{
+				setProcessWorkingState(false);
+			}
+			public void taskCompleted(RunnableTask task)
+			{
+				setProcessWorkingState(false);
+			}
+			public void taskCancelled(RunnableTask task)
+			{
+				setProcessWorkingState(false);
+			}
+			public void taskPaused(RunnableTask task)
+			{
+				//spinner.stop();
+			}
+			public void taskResumed(RunnableTask task)
+			{
+				//spinner.start();
+			}
+		};
+		
+		TaskControllerService.addTask(renderTask, taskStatusListener);
+	}
+	
+	
+	protected void setProcessWorkingState(boolean working)
+	{
+		if (working) {
+			spinner.start();
+			projectButtonBar.setButtonEnabled(ScriptProjectButtonBar.BTN_EXECUTE, false);
+		} else {
+			spinner.stop();
+			projectButtonBar.setButtonEnabled(ScriptProjectButtonBar.BTN_EXECUTE, true);
+		}
 	}
 	
 	public void loadDefaultScripting()
@@ -155,7 +303,7 @@ public class ScriptProjectPane extends JdemPanel implements Savable
 		log.info("Closing script project pane.");
 		
 		MainMenuBar.removeMenu(projectMenu);
-		//MainButtonBar.removeToolBar(projectButtonBar);
+		MainButtonBar.removeToolBar(projectButtonBar);
 		
 		super.dispose();
 		
