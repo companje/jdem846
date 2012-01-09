@@ -50,28 +50,9 @@ public class ModelRenderer extends InterruptibleProcess
 	
 	public ModelCanvas renderModel() throws RenderEngineException
 	{
-		//ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(getDataPackage(), getModelOptions());
 		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
-		//getDataPackage().setAvgXDim(modelDimensions.getxDim());
-		//getDataPackage().setAvgYDim(modelDimensions.getyDim());
-		
-		Color backgroundColor = ColorSerializationUtil.stringToColor(getModelOptions().getBackgroundColor());
-		
+
 		boolean fullCaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
-		
-		//int gridSize = getModelOptions().getGridSize();
-		//int tileSizeAdjusted = (int)Math.round((double)modelDimensions.getTileSize() / (double) gridSize);
-		//DemCanvas tileCanvas = new DemCanvas(backgroundColor, tileSizeAdjusted, tileSizeAdjusted);
-		//DemCanvas outputCanvas = new DemCanvas(backgroundColor, (int)modelDimensions.getOutputWidth(), (int)modelDimensions.getOutputHeight());
-		
-		
-		
-		
-		//int tileRow = 0;
-		//int tileCol = 0;
-		//int tileNum = 0;
-		//int dataRows = modelDimensions.getDataRows();
-		//int dataCols = modelDimensions.getDataColumns();
 		int tileNumber = 0;
 		int tileRow = 0;
 		int tileColumn = 0;
@@ -79,11 +60,6 @@ public class ModelRenderer extends InterruptibleProcess
 		long tileCount = modelDimensions.getTileCount();
 		
 		
-		//int tileOutputWidth = (int) modelDimensions.getTileOutputWidth();
-		//int tileOutputHeight = (int) modelDimensions.getTileOutputHeight();
-		
-		//double scaledWidthPercent = (double) modelDimensions.getOutputWidth() / (double) dataCols;
-		//double scaledHeightPercent = (double) modelDimensions.getOutputHeight() / (double) dataRows;
 		double northLimit = getRasterDataContext().getNorth();
 		double southLimit = getRasterDataContext().getSouth();
 		double eastLimit = getRasterDataContext().getEast();
@@ -91,9 +67,7 @@ public class ModelRenderer extends InterruptibleProcess
 		
 		double latitudeResolution = getRasterDataContext().getLatitudeResolution();
 		double longitudeResolution = getRasterDataContext().getLongitudeResolution();
-		
-		//double tileSize = modelContext.getModelOptions().getTileSize();
-		
+
 		double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
 		double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
 		
@@ -102,28 +76,7 @@ public class ModelRenderer extends InterruptibleProcess
 		log.info("Tile Longitude Width: " + tileLongitudeWidth);
 		
 		ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
-		
-		
-		/*
-		ModelCanvas modelCanvas = new ModelCanvas(modelContext);
-		MapProjection mapProjection = null;
-		try {
-			
-			mapProjection = MapProjectionProviderFactory.getMapProjection(
-									getModelOptions().getMapProjection(),
-									northLimit, 
-									southLimit, 
-									eastLimit, 
-									westLimit, 
-									modelDimensions.getOutputWidth(), 
-									modelDimensions.getOutputHeight());
-			
-		} catch (MapProjectionException ex) {
-			throw new RenderEngineException("Error loading map projection algorithm: " + ex.getMessage(), ex);
-		}
-		modelCanvas.setMapProjection(mapProjection);
-		*/
-		//ModelCanvas modelCanvas = modelContext.createModelCanvas();
+
 		final ModelCanvas modelCanvas = modelContext.getModelCanvas();
 		
 		on2DModelBefore(modelCanvas);

@@ -59,7 +59,8 @@ public class ModelCanvas
 	
 	private MapPoint mapPoint = new MapPoint();
 	
-	private int[][] zBuffer; // TODO: Implement this for crying out loud!
+	//private int[][] zBuffer; // TODO: Implement this for crying out loud!
+	private ZBuffer zBuffer;
 	
 	public ModelCanvas(ModelContext modelContext)
 	{
@@ -106,6 +107,8 @@ public class ModelCanvas
 			mapProjection = new EquirectangularProjection();
 			mapProjection.setUp(modelContext);
 		}
+		
+		zBuffer = new ZBuffer(getWidth(), getHeight());
 	}
 
 	public ModelCanvas getDependentHandle() throws CanvasException
@@ -259,6 +262,9 @@ public class ModelCanvas
 			mapProjection.getPoint(latitude-height, longitude+width, elevation, mapPoint);
 			row1 = mapPoint.row;
 			column1 = mapPoint.column;
+			
+			
+			
 		} catch (MapProjectionException ex) {
 			throw new CanvasException("Failed to project coordinates to canvas: " + ex.getMessage(), ex);
 		}
@@ -375,23 +381,39 @@ public class ModelCanvas
 
 		double row0, row1, row2, row3;
 		double column0, column1, column2, column3;
-		
+		//double z = 0;
 		try {
 			mapProjection.getPoint(lat0, lon0, elev0, mapPoint);
 			row0 = mapPoint.row;
 			column0 = mapPoint.column;
+			//z += mapPoint.z;
+			
 			
 			mapProjection.getPoint(lat1, lon1, elev1, mapPoint);
 			row1 = mapPoint.row;
 			column1 = mapPoint.column;
-			
+			//z += mapPoint.z;
+
 			mapProjection.getPoint(lat2, lon2, elev2, mapPoint);
 			row2 = mapPoint.row;
 			column2 = mapPoint.column;
+			//z += mapPoint.z;
+
 			
 			mapProjection.getPoint(lat3, lon3, elev3, mapPoint);
 			row3 = mapPoint.row;
 			column3 = mapPoint.column;
+			//z += mapPoint.z;
+			
+			//double midRow = (row0 + row1 + row2 + row3) / 4.0;
+			//double midCol = (column0 + column1 + column2 + column3) / 4.0;
+			
+			//if (mapPoint.z != 0) {
+			//	if (!zBuffer.isVisible((int)Math.round(midCol), (int)Math.round(midRow), (z/4.0))) {
+			//		return;
+			//	}
+			//}
+			
 		} catch (MapProjectionException ex) {
 			throw new CanvasException("Failed to project coordates to canvas: " + ex.getMessage(), ex);
 		}
@@ -412,7 +434,6 @@ public class ModelCanvas
 		
 		
 		Color fillColor = new Color(color[0], color[1], color[2], alpha);
-		
 		fillShape(fillColor, null, pathBuffer);
 		
 		/*

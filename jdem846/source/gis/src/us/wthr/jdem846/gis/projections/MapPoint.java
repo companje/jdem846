@@ -5,6 +5,7 @@ public class MapPoint
 	
 	public double row;
 	public double column;
+	public double z = 0;
 	
 	public MapPoint()
 	{
@@ -30,6 +31,17 @@ public class MapPoint
 	{
 		this.column = column;
 	}
+
+	public double getZ()
+	{
+		return z;
+	}
+
+	public void setZ(double z)
+	{
+		this.z = z;
+	}
+	
 	
 	
 	
