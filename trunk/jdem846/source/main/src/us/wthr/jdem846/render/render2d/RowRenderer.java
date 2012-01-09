@@ -165,13 +165,18 @@ public class RowRenderer extends InterruptibleProcess
 	
 	protected void renderCellStandardPrecision(double latitude, double longitude) throws RenderEngineException
 	{
-
+		
 		try {
 			getPoint(latitude, longitude, gridSize, point);
 		} catch (DataSourceException ex) {
 			throw new RenderEngineException("Error loading elevation data: " + ex.getMessage(), ex);
 		}
 		
+		//point.condition = DemConstants.STAT_SUCCESSFUL;
+		//point.backLeftElevation = 700;
+		//point.backRightElevation = 700;
+		//point.frontLeftElevation = 700;
+		//point.frontRightElevation = 700;
 		
 		if (point.condition == DemConstants.STAT_SUCCESSFUL) {
 			
@@ -184,8 +189,9 @@ public class RowRenderer extends InterruptibleProcess
 			double avgElevationNW = (backLeftPoints[1] + frontLeftPoints[1] + backRightPoints[1] + frontRightPoints[1]) / 4.0;
 			renderTriangle(latitude, longitude, avgElevationNW, backLeftPoints, frontLeftPoints, backRightPoints, triangleColorNW);
 			
+			
 			try {
-
+				
 				if (useSimpleCanvasFill) {
 					modelCanvas.fillRectangle(triangleColorNW, 
 								latitude, longitude, 
@@ -198,6 +204,7 @@ public class RowRenderer extends InterruptibleProcess
 								latitude-latitudeResolution, longitude+longitudeResolution, frontRightPoints[1],
 								latitude, longitude+longitudeResolution, backRightPoints[1]);
 				}
+				
 
 			} catch (CanvasException ex) {
 				throw new RenderEngineException("Failed to fill points on canvas: " + ex.getMessage(), ex);
