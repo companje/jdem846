@@ -183,8 +183,10 @@ public class TileRenderer extends InterruptibleProcess
 		
 		
 		log.info("Initializing model point buffer...");
-		int rows = dataProxy.getDataRows();
-		int columns = dataProxy.getDataColumns();
+		//int rows = dataProxy.getDataRows();
+		//int columns = dataProxy.getDataColumns();
+		int rows = (int) Math.ceil((northLimit - southLimit) / latitudeResolution);
+		int columns = (int) Math.ceil((eastLimit - westLimit) / longitudeResolution);
 		pointBuffer = new ModelPoint[rows][columns];
 		
 		log.info("Processing data points...");
@@ -273,7 +275,7 @@ public class TileRenderer extends InterruptibleProcess
 		ModelPoint point = null;
 		
 		
-		if (latitude - latitudeResolution >= southLimit) {
+		if (latitude - latitudeResolution > southLimit) {
 			point = doElevation(latitude-latitudeResolution, longitude);
 			elevationSW = point.getElevation();
 		}
@@ -284,7 +286,7 @@ public class TileRenderer extends InterruptibleProcess
 		//	elevationSE = point.getElevation();
 		//}
 		
-		if ((longitude+longitudeResolution <= eastLimit)) {
+		if ((longitude+longitudeResolution < eastLimit)) {
 			point = doElevation(latitude, longitude+longitudeResolution);
 			elevationNE = point.getElevation();
 		}
