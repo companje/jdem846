@@ -187,6 +187,11 @@ public class TileRenderer extends InterruptibleProcess
 		//int columns = dataProxy.getDataColumns();
 		int rows = (int) Math.ceil((northLimit - southLimit) / latitudeResolution);
 		int columns = (int) Math.ceil((eastLimit - westLimit) / longitudeResolution);
+		
+		if (rows <= 0 || columns <= 0) {
+			return;
+		}
+		
 		pointBuffer = new ModelPoint[rows][columns];
 		
 		log.info("Processing data points...");
@@ -268,6 +273,8 @@ public class TileRenderer extends InterruptibleProcess
 			throw new RenderEngineException("Data error: " + ex.getMessage(), ex);
 		}
 		
+		
+		
 		double elevationSW = elevationNW;
 		double elevationSE = elevationNW;
 		double elevationNE = elevationNW;
@@ -277,7 +284,8 @@ public class TileRenderer extends InterruptibleProcess
 		
 		if (latitude - latitudeResolution > southLimit) {
 			point = doElevation(latitude-latitudeResolution, longitude);
-			elevationSW = point.getElevation();
+			if (point != null)
+				elevationSW = point.getElevation();
 		}
 		
 		
@@ -288,8 +296,23 @@ public class TileRenderer extends InterruptibleProcess
 		
 		if ((longitude+longitudeResolution < eastLimit)) {
 			point = doElevation(latitude, longitude+longitudeResolution);
-			elevationNE = point.getElevation();
+			if (point != null)
+				elevationNE = point.getElevation();
 		}
+		
+		
+		if (elevationSW == DemConstants.ELEV_NO_DATA) 
+			elevationSW = elevationNW;
+		
+		//if (se == DemConstants.ELEV_NO_DATA)
+		//	se = nw;
+		
+		if (elevationNE == DemConstants.ELEV_NO_DATA)
+			elevationNE = elevationNW;
+		
+		//if (elevationNW == DemConstants.ELEV_NO_DATA) {
+		//	return null;
+		//}
 		
 		double pointElevation = (elevationNW + elevationSW +  elevationNE) / 3.0;
 		calculateNormal(elevationNW, elevationSW, elevationSE, elevationNE, normal);
@@ -297,6 +320,14 @@ public class TileRenderer extends InterruptibleProcess
 		onGetPointColor(latitude, longitude, pointElevation, elevationMin, elevationMax, reliefColor);
 		
 		double dot = calculateDotProduct();
+		if (rayTraceShadows) {
+			try {
+				dot = calculateRayTracedDotProduct(latitude, longitude, elevationNW, dot);
+			} catch (RayTracingException ex) {
+				throw new RenderEngineException("Error on ray tracing: " + ex.getMessage(), ex);
+			}
+		}
+		
 		
 		point = new ModelPoint(latitude, longitude, elevationNW, reliefColor, dot);
 		pointBuffer[row][column] = point;
@@ -316,12 +347,27 @@ public class TileRenderer extends InterruptibleProcess
 		double dot = perspectives.dotProduct(normal, sunsource);
 		dot = Math.pow(dot, spotExponent);
 		
+
+		
 		if (dot > 0) {
 			dot *= relativeLightIntensity;
 		} else if (dot < 0) {
 			dot *= relativeDarkIntensity;
 		}
 		
+		return dot;
+	}
+	
+	
+	protected double calculateRayTracedDotProduct(double latitude, double longitude, double elevation, double dot) throws RayTracingException
+	{
+		if (lightSourceRayTracer.isRayBlocked(latitude, longitude, elevation)) {
+			// I'm not 100% happy with this method...
+			dot = dot - (2 * shadowIntensity);
+			if (dot < -1.0) {
+				dot = -1.0;
+			}
+		}
 		return dot;
 	}
 	
@@ -338,6 +384,10 @@ public class TileRenderer extends InterruptibleProcess
 	
 	protected void renderModelPoint(ModelPoint point) throws CanvasException
 	{
+		if (point.getElevation() == DemConstants.ELEV_NO_DATA) {
+			return;
+		}
+		
 		double latitude = point.getLatitude();
 		double longitude = point.getLongitude();
 		
@@ -354,11 +404,35 @@ public class TileRenderer extends InterruptibleProcess
 						latitudeResolution, longitudeResolution,
 						point.getElevation());
 		} else {
+			
+			int row = (int) Math.floor((northLimit - latitude) / latitudeResolution);
+			int column = (int) Math.floor((longitude - westLimit) / longitudeResolution);
+			
+			
+			double nw = point.getElevation();
+			double sw = nw;
+			double se = nw;
+			double ne = nw;
+			
+			if (row + 1 < pointBuffer.length) {
+				sw = pointBuffer[row+1][column].getElevation();
+			}
+			
+			if (row + 1 < pointBuffer.length && column + 1 < pointBuffer[0].length) {
+				se = pointBuffer[row+1][column+1].getElevation();
+			}
+			
+			if (column + 1 < pointBuffer[0].length) {
+				ne = pointBuffer[row][column+1].getElevation();
+			}
+			
+
+			
 			modelCanvas.fillRectangle(color,
-					latitude, longitude, 0.0,
-					latitude-latitudeResolution, longitude, 0.0,
-					latitude-latitudeResolution, longitude+longitudeResolution, 0.0,
-					latitude, longitude+longitudeResolution, 0.0);
+					latitude, longitude, nw,
+					latitude-latitudeResolution, longitude, sw,
+					latitude-latitudeResolution, longitude+longitudeResolution, se,
+					latitude, longitude+longitudeResolution, ne);
 		}
 		
 		

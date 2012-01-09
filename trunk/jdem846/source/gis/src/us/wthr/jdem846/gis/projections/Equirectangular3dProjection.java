@@ -115,6 +115,7 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		//vector[0] = ((a[0] - c[0]) - e[0]) * (e[2] / (a[2] - c[2]));
 		//vector[1] = ((a[1] - c[1]) - e[1]) * (e[2] / (a[2] - c[2]));
 		
+		
 		double thetaX = 0; // Orientation of the camera
 		double thetaY = 0;
 		double thetaZ = 0;
@@ -141,5 +142,6 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		vector[0] = dX;
 		vector[1] = dY;
 		vector[2] = dZ;
+		
 	}
 }
