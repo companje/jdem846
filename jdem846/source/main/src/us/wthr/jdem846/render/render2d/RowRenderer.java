@@ -35,7 +35,7 @@ public class RowRenderer extends InterruptibleProcess
 	private ModelCanvas modelCanvas;
 	private Perspectives perspectives;
 	
-	protected RasterDataContext dataRasterContextSubset;
+	//protected RasterDataContext dataRasterContextSubset;
 	
 	private double gridSize;
 	private boolean doublePrecisionHillshading;
@@ -78,12 +78,12 @@ public class RowRenderer extends InterruptibleProcess
 
 
 	
-	public RowRenderer(ModelContext modelContext, ModelColoring modelColoring, ModelCanvas modelCanvas, RasterDataContext dataRasterContextSubset)
+	public RowRenderer(ModelContext modelContext, ModelColoring modelColoring, ModelCanvas modelCanvas)
 	{
 		this.modelContext = modelContext;
 		this.modelColoring = modelColoring;
 		this.modelCanvas = modelCanvas;
-		this.dataRasterContextSubset = dataRasterContextSubset;
+		//this.dataRasterContextSubset = dataRasterContextSubset;
 		this.perspectives = new Perspectives();
 		
 		if (this.modelColoring == null) {
@@ -352,11 +352,11 @@ public class RowRenderer extends InterruptibleProcess
 	{
 		double data = DemConstants.ELEV_NO_DATA;
 		
-		if (dataRasterContextSubset != null) {
-			data = dataRasterContextSubset.getData(latitude, longitude, false, true);
-		} else {
+		//if (dataRasterContextSubset != null) {
+		//	data = dataRasterContextSubset.getData(latitude, longitude, false, true);
+		//} else {
 			data = getRasterDataContext().getData(latitude, longitude, false, true);
-		}
+		//}
 		
 		return data;
 	}

@@ -182,6 +182,7 @@ public class ThreadedModelRenderer extends ModelRenderer
 						tileContext.setSouthLimit(tileSouth);
 						tileContext.setEastLimit(tileEast);
 						tileContext.setWestLimit(tileWest);
+						tileContext.setRasterDataContext(modelContext.getRasterDataContext().getSubSet(tileNorth, tileSouth, tileEast, tileWest).copy());
 						tileRenderRunnable = new TileRenderRunnable(tileContext, tileNorth, tileSouth, tileEast, tileWest, (tileColumn + 1), (tileRow + 1));
 					} catch (DataSourceException ex) {
 						throw new RenderEngineException("Failed to create tile render runnable: " + ex.getMessage(), ex);

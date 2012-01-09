@@ -46,7 +46,7 @@ public class TileRenderer extends InterruptibleProcess
 	private ModelColoring modelColoring;
 	private ModelCanvas modelCanvas;
 
-	protected RasterDataContext dataRasterContextSubset;
+	//protected RasterDataContext dataRasterContextSubset;
 
 	private boolean tiledPrecaching;
 	private double latitudeResolution;
@@ -75,7 +75,7 @@ public class TileRenderer extends InterruptibleProcess
 		latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
 		
 		
-		rowRenderer = new RowRenderer(modelContext, modelColoring, modelCanvas, dataRasterContextSubset);
+		rowRenderer = new RowRenderer(modelContext, modelColoring, modelCanvas);
 	}
 	
 	
@@ -123,25 +123,25 @@ public class TileRenderer extends InterruptibleProcess
 
 	
 
-	public void precacheData() throws DataSourceException
-	{
-		if (dataRasterContextSubset != null) {
-			dataRasterContextSubset.fillBuffers();
-		}
-	}
+	//public void precacheData() throws DataSourceException
+	//{
+	////	if (dataRasterContextSubset != null) {
+	//		dataRasterContextSubset.fillBuffers();
+	//	}
+	//}
 	
-	public void unloadData() throws DataSourceException
-	{
-		if (dataRasterContextSubset != null) {
-			dataRasterContextSubset.clearBuffers();
-		}
-	}
+	//public void unloadData() throws DataSourceException
+	//{
+	//	if (dataRasterContextSubset != null) {
+	//		dataRasterContextSubset.clearBuffers();
+	//	}
+	//}
 	
 	
-	public void loadDataSubset(double north, double south, double east, double west) throws DataSourceException
-	{
-		dataRasterContextSubset = getRasterDataContext().getSubSet(north, south, east, west);
-	}
+	//public void loadDataSubset(double north, double south, double east, double west) throws DataSourceException
+	//{
+	//	dataRasterContextSubset = getRasterDataContext().getSubSet(north, south, east, west);
+	//}
 	
 	protected RasterDataContext getRasterDataContext()
 	{
