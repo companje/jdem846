@@ -59,6 +59,8 @@ public class ModelCanvas
 	
 	private MapPoint mapPoint = new MapPoint();
 	
+	private int[][] zBuffer; // TODO: Implement this for crying out loud!
+	
 	public ModelCanvas(ModelContext modelContext)
 	{
 		this(modelContext, null);

@@ -70,11 +70,11 @@ public class TileRenderRunnable implements  Callable<RenderedTile>
 		ModelCanvas modelCanvas = modelContext.getModelCanvas();
 		
 		
-		try {
-			modelContext.getRasterDataContext().dispose();
-		} catch (DataSourceException ex) {
-			log.error("Error disposing of tile raster data context: " + ex.getMessage(), ex);
-		}
+		//try {
+		//	modelContext.getRasterDataContext().dispose();
+		//} catch (DataSourceException ex) {
+		///	log.error("Error disposing of tile raster data context: " + ex.getMessage(), ex);
+		//}
 		modelContext = null;
 		
 		log.info("Completed tile row #" + tileRow + ", column #" + tileColumn);

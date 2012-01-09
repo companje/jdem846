@@ -125,6 +125,11 @@ public class ModelContext
 		this.modelCanvas = null;
 	}
 	
+	public void setRasterDataContext(RasterDataContext rasterDataContext)
+	{
+		this.rasterDataContext = rasterDataContext;
+	}
+	
 	public RasterDataContext getRasterDataContext()
 	{
 		return rasterDataContext;
