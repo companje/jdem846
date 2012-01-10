@@ -46,7 +46,7 @@ public class NewTileMethodTestMain extends AbstractTestMain
 		
 		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
 		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
-		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/new-method-model-output.png";
+		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/new-canvas-output.png";
 		
 		
 		//inputDataList.add("F:/Presidential Range/02167570.flt");
@@ -74,14 +74,15 @@ public class NewTileMethodTestMain extends AbstractTestMain
 		modelOptions.setWidth(dataProxy.getDataColumns());
 		modelOptions.setHeight(dataProxy.getDataRows());
 		modelOptions.setDoublePrecisionHillshading(false);
-		modelOptions.setUseSimpleCanvasFill(true);
+		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(false);
-		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
+		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR3D);
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;0");
 		//modelOptions.setHillShading(false);
 		//modelOptions.setConcurrentRenderPoolSize(10);
-		//modelOptions.getProjection().setRotateX(30);
+		modelOptions.getProjection().setRotateX(15);
+		modelOptions.getProjection().setRotateY(180);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions);
 		

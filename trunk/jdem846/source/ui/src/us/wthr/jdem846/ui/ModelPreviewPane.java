@@ -225,6 +225,8 @@ public class ModelPreviewPane extends RoundedPanel
 	
 	protected void updateLayer(TaskStatusListener taskStatusListener, final boolean renderRasterData, final boolean renderShapes)
 	{
+		
+		
 		ModelContext modelContext;
 		try {
 			modelContext = this.modelContext.copy();
@@ -294,7 +296,7 @@ public class ModelPreviewPane extends RoundedPanel
 			}
 		};
 		TaskControllerService.addTask(renderTask, taskStatusListener);
-		
+	
 	}
 	
 	protected void mergeAndSetLayers()
@@ -352,9 +354,11 @@ public class ModelPreviewPane extends RoundedPanel
 	{
 		log.info("Drawing simple raster preview...");
 
-		int[] i_strokeColor = {Color.GRAY.getRed(), Color.GRAY.getGreen(), Color.GRAY.getBlue(), 255};
-		Color strokeColor = Color.DARK_GRAY;
-		Color fillColor = Color.LIGHT_GRAY;
+		int[] i_strokeColor = {Color.DARK_GRAY.getRed(), Color.DARK_GRAY.getGreen(), Color.DARK_GRAY.getBlue(), 255};
+		//Color strokeColor = Color.DARK_GRAY;
+		//Color fillColor = Color.LIGHT_GRAY;
+		int[] i_fillColor = {Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue(), 255};
+		
 		int[] textColor = {0x0, 0x0, 0x0, 0xFF};
 
 		MapProjection projection = canvas.getMapProjection();
@@ -441,8 +445,8 @@ public class ModelPreviewPane extends RoundedPanel
 				
 				path.closePath();
 				
-				canvas.fillShape(fillColor, null, path);
-				canvas.drawShape(strokeColor, null, path);
+				canvas.fillShape(path, i_fillColor);
+				canvas.drawShape(path, i_strokeColor);
 				
 				
 				

@@ -100,7 +100,7 @@ public class MathExt
     {
     	return Math.round(a);
     }
-	
+	/*
 	public static double min(double a, double b)
 	{
 		return Math.min(a, b);
@@ -110,4 +110,45 @@ public class MathExt
 	{
 		return Math.max(a, b);
 	}
+	*/
+	
+	public static double min(double...values)
+	{
+		double m = Double.MAX_VALUE;
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] < m)
+				m = values[i];
+		}
+		return m;
+	}
+	
+	public static double max(double...values)
+	{
+		double m = Double.MIN_VALUE;
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] > m)
+				m = values[i];
+		}
+		return m;
+	}
+	
+	public static int interpolate(int i00, int i01, int i10, int i11, double xFrac, double yFrac)
+	{
+		double s00 = (double) i00;
+		double s01 = (double) i01;
+		double s10 = (double) i10;
+		double s11 = (double) i11;
+
+        return (int) Math.round(interpolate(s00, s01, s10, s11, xFrac, yFrac));
+	}
+	
+	public static double interpolate(double s00, double s01, double s10, double s11, double xFrac, double yFrac)
+	{
+		double s0 = (s01 - s00)*xFrac + s00;
+        double s1 = (s11 - s10)*xFrac + s10;
+        return (s1 - s0)*yFrac + s0;
+	}
+	
+	
+	
 }
