@@ -239,8 +239,8 @@ public class ModelPreviewPane extends RoundedPanel
 		modelContext.getModelOptions().setBackgroundColor("0;0;0;0");
 		modelContext.getModelOptions().setColoringType("hypsometric-tint");
 		modelContext.getModelOptions().setAntialiased(true);
-		modelContext.getModelOptions().setWidth(1000);
-		modelContext.getModelOptions().setHeight(1000);
+		modelContext.getModelOptions().setWidth(500);
+		modelContext.getModelOptions().setHeight(500);
 		
 		
 		if (modelContext.getRasterDataContext().getDataMinimumValue() >= modelContext.getRasterDataContext().getDataMaximumValue()) {
@@ -345,7 +345,7 @@ public class ModelPreviewPane extends RoundedPanel
 			canvas.drawImage(shapeLayerCanvas.getImage(), 0, 0, shapeLayerCanvas.getWidth(), shapeLayerCanvas.getHeight());
 		}
 
-		imagePanel.setImage((BufferedImage)canvas.getImage());
+		imagePanel.setImage((BufferedImage)canvas.getFinalizedImage());
 		repaint();
 	}
 	
@@ -386,29 +386,6 @@ public class ModelPreviewPane extends RoundedPanel
 
 			Path2D.Double path = new Path2D.Double();
 			
-			/*
-			try {
-				projection.getPoint(north, west, 0.0, point);
-				path.moveTo(point.column, point.row);
-				
-				projection.getPoint(south, west, 0.0, point);
-				path.moveTo(point.column, point.row);
-				
-				projection.getPoint(south, east, 0.0, point);
-				path.moveTo(point.column, point.row);
-				
-				projection.getPoint(north, east, 0.0, point);
-				path.moveTo(point.column, point.row);
-				
-				path.closePath();
-				canvas.fillShape(fillColor, null, path);
-			} catch (Exception ex) {
-				log.error("Aw, crap! " + ex.getMessage(), ex);
-			}
-			
-			path.reset();
-			*/
-			
 			
 			try {
 				int pointCount = 0;
@@ -445,7 +422,7 @@ public class ModelPreviewPane extends RoundedPanel
 				
 				path.closePath();
 				
-				canvas.fillShape(path, i_fillColor);
+				//canvas.fillShape(path, i_fillColor);
 				canvas.drawShape(path, i_strokeColor);
 				
 				

@@ -46,7 +46,7 @@ public class NewTileMethodTestMain extends AbstractTestMain
 		
 		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
 		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
-		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/new-canvas-output.png";
+		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/output/frame-{iter}.png";
 		
 		
 		//inputDataList.add("F:/Presidential Range/02167570.flt");
@@ -82,23 +82,26 @@ public class NewTileMethodTestMain extends AbstractTestMain
 		//modelOptions.setHillShading(false);
 		//modelOptions.setConcurrentRenderPoolSize(10);
 		modelOptions.getProjection().setRotateX(15);
-		modelOptions.getProjection().setRotateY(180);
-		
-		ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions);
 		
 		
-		
-		double startTime = System.currentTimeMillis();
-		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
-		OutputProduct<ModelCanvas> product = dem2d.generate();
-		double endTime = System.currentTimeMillis();
-		double renderSeconds = (endTime - startTime) / 1000;
-		log.info("Completed render in " + renderSeconds + " seconds");
-		
-		
-		ModelCanvas canvas = product.getProduct();
-		canvas.save(saveOutputTo);
-		
+		for(double rotateY = 0; rotateY < 360; rotateY++) {
+			modelOptions.getProjection().setRotateY(180);
+			
+			ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions);
+			
+			
+			
+			double startTime = System.currentTimeMillis();
+			Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
+			OutputProduct<ModelCanvas> product = dem2d.generate();
+			double endTime = System.currentTimeMillis();
+			double renderSeconds = (endTime - startTime) / 1000;
+			log.info("Completed render in " + renderSeconds + " seconds");
+			
+			
+			ModelCanvas canvas = product.getProduct();
+			canvas.save(saveOutputTo.replace("{iter}", ""+(100000+rotateY)));
+		}
 		
 	}
 	

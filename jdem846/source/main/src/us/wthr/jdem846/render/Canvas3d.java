@@ -34,12 +34,12 @@ public class Canvas3d
 		zBuffer.fill(Canvas3d.Z_VALUE_NOT_SET);
 	}
 	
-	public void draw(Shape shape, int[] rgb)
+	public void draw(Shape shape, int[] rgba)
 	{
-		draw(shape, rgbToInt(rgb));
+		draw(shape, rgbaToInt(rgba));
 	}
 	
-	public void draw(Shape shape, int rgb)
+	public void draw(Shape shape, int rgba)
 	{
 		AffineTransform at = new AffineTransform();
 		PathIterator path = shape.getPathIterator(at);
@@ -56,34 +56,39 @@ public class Canvas3d
 		
 	}
 	
-	public void drawLine(int x0, int y0, double z0, int x1, int y1, double z1, int[] rgb)
+	public void drawLine(int x0, int y0, double z0, int x1, int y1, double z1, int[] rgba)
 	{
-		drawLine(x0, y0, z0, x1, y1, z1, rgbToInt(rgb));
+		drawLine(x0, y0, z0, x1, y1, z1, rgbaToInt(rgba));
 	}
 	
-	public void drawLine(int x0, int y0, double z0, int x1, int y1, double z1, int rgb)
+	public void drawLine(int x0, int y0, double z0, int x1, int y1, double z1, int rgba)
 	{
 		// TODO: ...
 	}
 	
-	public void fill(Quadrangle3d quad, int[] rgb)
+	public void fill(Quadrangle3d quad, int[] rgba)
 	{
-		fill(quad, rgbToInt(rgb));
+		fill(quad, rgbaToInt(rgba));
 	}
 	
 	public void fill(Quadrangle3d quad, int rgb)
 	{
 		Rectangle2D bounds = quad.getBounds2D();
 		
-		for (double y = bounds.getMinY(); y <= bounds.getMaxY(); y++) {
-			for (double x = bounds.getMinX(); x <= bounds.getMaxX(); x++) {
+		double minX = bounds.getMinX();
+		double maxX = bounds.getMaxX();
+		double minY = bounds.getMinY();
+		double maxY = bounds.getMaxY();
+		
+		for (double y = minY; y <= maxY; y++) {
+			for (double x = minX; x <= maxX; x++) {
 				//if (quad.contains(x, y)) {
 				if (quad.intersects(x, y, 1, 1)) {
 					int _x = (int) Math.round(x);
 					int _y = (int) Math.round(y);
 					
-					double xFrac = (x - bounds.getMinX()) / (bounds.getMaxX() - bounds.getMinX());
-					double yFrac = (y - bounds.getMinY()) / (bounds.getMaxY() - bounds.getMinY());
+					double xFrac = (x - minX) / (maxX - minX);
+					double yFrac = (y - minY) / (maxY - minY);
 					double z = quad.interpolateZ(xFrac, yFrac);
 					
 					set(_x, _y, z, rgb);
@@ -92,22 +97,27 @@ public class Canvas3d
 		}
 	}
 	
-	public void fill(Shape shape, int[] rgb)
+	public void fill(Shape shape, int[] rgba)
 	{
-		fill(shape, rgbToInt(rgb));
+		fill(shape, rgbaToInt(rgba));
 	}
 	
-	public void fill(Shape shape, int rgb)
+	public void fill(Shape shape, int rgba)
 	{
 		Rectangle2D bounds = shape.getBounds2D();
 		
-		for (double y = bounds.getMinY(); y <= bounds.getMaxY(); y++) {
-			for (double x = bounds.getMinX(); x <= bounds.getMaxX(); x++) {
+		double minX = bounds.getMinX();
+		double maxX = bounds.getMaxX();
+		double minY = bounds.getMinY();
+		double maxY = bounds.getMaxY();
+		
+		for (double y = minY; y <= maxY; y++) {
+			for (double x = minX; x <= maxX; x++) {
 				if (shape.contains(x, y)) {
 				//if (shape.intersects(x, y, 1, 1)) {
 					int _x = (int) Math.round(x);
 					int _y = (int) Math.round(y);
-					set(_x, _y, 0.0, rgb);
+					set(_x, _y, 0.0, rgba);
 				}
 			}
 		}
@@ -116,12 +126,12 @@ public class Canvas3d
 	
 	public void set(int x, int y, double z, int[] rgb)
 	{
-		set(x, y, z, rgbToInt(rgb[0], rgb[1], rgb[2]));
+		set(x, y, z, rgbaToInt(rgb));
 	}
 	
 	public void set(int x, int y, double z, int r, int g, int b)
 	{
-		set(x, y, z, rgbToInt(r, g, b));
+		set(x, y, z, rgbaToInt(r, g, b));
 	}
 	
 	public void set(int x, int y, double z, int rgb)
@@ -143,7 +153,7 @@ public class Canvas3d
 	public void get(int x, int y, int[] rgb)
 	{
 		int c = get(x, y);
-		intToRGB(c, rgb);
+		intToRGBA(c, rgb);
 	}
 	
 	public int getWidth()
@@ -183,30 +193,39 @@ public class Canvas3d
 		zBuffer.dispose();
 	}
 	
-	protected static int rgbToInt(int[] rgb)
+	protected static int rgbaToInt(int[] rgb)
 	{
 		int r = rgb[0];
 		int g = rgb[1];
 		int b = rgb[2];
-		return rgbToInt(r, g, b);
+		int a = 0xFF;
+		if (rgb.length >= 4) {
+			a = rgb[3];
+		}
+		return rgbaToInt(r, g, b, a);
 	}
 	
-	protected static int rgbToInt(int r, int g, int b)
+	protected static int rgbaToInt(int r, int g, int b)
 	{	
-		int v = (0xFF << 24) |
+		return rgbaToInt(r, g, b, 0xFF);
+	}
+	
+	protected static int rgbaToInt(int r, int g, int b, int a)
+	{	
+		int v = (a << 24) |
 				((r & 0xff) << 16) |
 				((g & 0xff) << 8) |
 				(b & 0xff);
 		return v;
 	}
 	
-	protected static void intToRGB(int c, int[] rgb)
+	protected static void intToRGBA(int c, int[] rgba)
 	{
-		rgb[0] = 0xFF & (c >>> 16);
-		rgb[1] = 0xFF & (c >>> 8);
-		rgb[2] = 0xFF & c;
-		if (rgb.length >= 4) {
-			rgb[3] = 0xFF;
+		rgba[0] = 0xFF & (c >>> 16);
+		rgba[1] = 0xFF & (c >>> 8);
+		rgba[2] = 0xFF & c;
+		if (rgba.length >= 4) {
+			rgba[3] = 0xFF & (c >>> 24);
 		}
 	}
 	
