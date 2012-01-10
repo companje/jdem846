@@ -184,17 +184,17 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 
 		for (LineStroke lineStroke : lineStrokes) {
 			
-
+			// TODO: Restore this!
 			if (shapeType == ShapeConstants.TYPE_POLYGON ||
 				shapeType == ShapeConstants.TYPE_POLYGONM ||
 				shapeType == ShapeConstants.TYPE_POLYGONZ) {
 					
-				modelCanvas.fillShape(lineStroke.getColor(), lineStroke, path);
+				//modelCanvas.fillShape(lineStroke.getColor(), lineStroke, path);
 
 			} else if (shapeType == ShapeConstants.TYPE_POLYLINE ||
 						shapeType == ShapeConstants.TYPE_POLYLINEM ||
 						shapeType == ShapeConstants.TYPE_POLYLINEZ) {
-				modelCanvas.drawShape(lineStroke.getColor(), lineStroke, path);
+				//modelCanvas.drawShape(lineStroke.getColor(), lineStroke, path);
 
 			} else {
 				throw new RenderEngineException("Unsupported shape type: " + shapeType);
