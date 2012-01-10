@@ -136,6 +136,10 @@ public class Canvas3d
 	
 	public void set(int x, int y, double z, int rgb)
 	{
+		if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
+			return;
+		}
+		
 		double _z = zBuffer.get(x, y);
 		
 		if (Double.isNaN(_z) || _z < z) {

@@ -82,10 +82,10 @@ public class NewTileMethodTestMain extends AbstractTestMain
 		//modelOptions.setHillShading(false);
 		//modelOptions.setConcurrentRenderPoolSize(10);
 		modelOptions.getProjection().setRotateX(15);
+		double rotateY = 0;
 		
-		
-		for(double rotateY = 0; rotateY < 360; rotateY++) {
-			modelOptions.getProjection().setRotateY(180);
+		//for(double rotateY = 0; rotateY < 360; rotateY++) {
+			modelOptions.getProjection().setRotateY(rotateY);
 			
 			ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions);
 			
@@ -100,8 +100,8 @@ public class NewTileMethodTestMain extends AbstractTestMain
 			
 			
 			ModelCanvas canvas = product.getProduct();
-			canvas.save(saveOutputTo.replace("{iter}", ""+(100000+rotateY)));
-		}
+			canvas.save(saveOutputTo.replace("{iter}", ""+(100000+((int)rotateY))));
+		//}
 		
 	}
 	
