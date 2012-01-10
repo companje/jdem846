@@ -1,1 +1,10 @@
 mencoder mf://frames/*.png -mf fps=25:type=png -ovc lavc -lavcopts vcodec=mpeg4 -oac copy -o output.mp4 -ffourcc DX50
+
+
+
+optimal_bitrate = 50 * 25 * width * height / 256
+
+Widescreen: use scale "704:294" (2.35:1) or "768:432" (16:9)
+Fullscreen: use scale "640:480"
+
+mencoder mf://output/*.png -mf fps=25:type=png -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=1500000 -vf scale=640:480 -oac copy -o output.mp4 -ffourcc DX50
