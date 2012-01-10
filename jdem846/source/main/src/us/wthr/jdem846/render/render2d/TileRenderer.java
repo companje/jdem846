@@ -33,6 +33,7 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.BasicRenderEngine;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.DemCanvas;
+import us.wthr.jdem846.render.MatrixBuffer;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RayTracing;
 import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
@@ -91,9 +92,10 @@ public class TileRenderer extends InterruptibleProcess
 	private double southLimit;
 	private double eastLimit;
 	private double westLimit;
-	private ModelPoint[][] pointBuffer;
+	//private ModelPoint[][] pointBuffer;
+	private MatrixBuffer<ModelPoint> pointBuffer;
 	
-	private RowRenderer rowRenderer;
+	//private RowRenderer rowRenderer;
 	
 	public TileRenderer(ModelContext modelContext)
 	{
@@ -155,7 +157,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		resetBuffers();
 		setUpLightSource();
-		rowRenderer = new RowRenderer(modelContext, modelColoring, modelCanvas);
+		//rowRenderer = new RowRenderer(modelContext, modelColoring, modelCanvas);
 	}
 	
 	
@@ -192,7 +194,8 @@ public class TileRenderer extends InterruptibleProcess
 			return;
 		}
 		
-		pointBuffer = new ModelPoint[rows][columns];
+		//pointBuffer = new ModelPoint[rows][columns];
+		pointBuffer = new MatrixBuffer<ModelPoint>(columns, rows);
 		
 		log.info("Processing data points...");
 		doElevation(northLimit, westLimit);
@@ -202,7 +205,8 @@ public class TileRenderer extends InterruptibleProcess
 		ModelPoint point = null;
 		for (int y = 0; y < rows; y++) {
 			for (int x = 0; x < columns; x++) {
-				point = pointBuffer[y][x];
+				point = getModelPoint(x, y);
+				//point = pointBuffer[y][x];
 				if (point != null) {
 					try {
 						renderModelPoint(point);
@@ -222,7 +226,7 @@ public class TileRenderer extends InterruptibleProcess
 		}
 		
 		
-		
+		pointBuffer.dispose();
 		pointBuffer = null;
 		
 		
@@ -254,14 +258,54 @@ public class TileRenderer extends InterruptibleProcess
 	}
 	
 
+	protected ModelPoint getModelPoint(double latitude, double longitude)
+	{
+		int y = (int) Math.floor((northLimit - latitude) / latitudeResolution);
+		int x = (int) Math.floor((longitude - westLimit) / longitudeResolution);
+		
+		return getModelPoint(x, y);
+	}
+	
+	protected ModelPoint getModelPoint(int x, int y)
+	{
+		//if (y < pointBuffer.length && x < pointBuffer[0].length) {
+		//	return pointBuffer[y][x];
+		if (x >= 0 && x < pointBuffer.getWidth() && y >= 0 && y < pointBuffer.getHeight()) {
+			return pointBuffer.get(x, y);
+		} else {
+			return null;
+		}
+	}
+	
+	protected void setModelPoint(double latitude, double longitude, ModelPoint modelPoint)
+	{
+		int y = (int) Math.floor((northLimit - latitude) / latitudeResolution);
+		int x = (int) Math.floor((longitude - westLimit) / longitudeResolution);
+		setModelPoint(x, y, modelPoint);
+	}
+	
+	protected void setModelPoint(int x, int y, ModelPoint modelPoint)
+	{
+		//if (y < pointBuffer.length && x < pointBuffer[0].length) {
+		//	pointBuffer[y][x] = modelPoint;
+		if (x >= 0 && x < pointBuffer.getWidth() && y >= 0 && y < pointBuffer.getHeight()) {
+			pointBuffer.set(x, y, modelPoint);
+		} 
+	}
+	
 	protected ModelPoint doElevation(double latitude, double longitude) throws RenderEngineException
 	{
-		int row = (int) Math.floor((northLimit - latitude) / latitudeResolution);
-		int column = (int) Math.floor((longitude - westLimit) / longitudeResolution);
+		//int row = (int) Math.floor((northLimit - latitude) / latitudeResolution);
+		//int column = (int) Math.floor((longitude - westLimit) / longitudeResolution);
 		
-		if (pointBuffer[row][column] != null) {
-			return pointBuffer[row][column];
+		ModelPoint exists = getModelPoint(latitude, longitude);
+		if (exists != null) {
+			return exists;
 		}
+		
+		//if (pointBuffer[row][column] != null) {
+		//	return pointBuffer[row][column];
+		//}
 		
 		
 		
@@ -282,7 +326,7 @@ public class TileRenderer extends InterruptibleProcess
 		ModelPoint point = null;
 		
 		
-		if (latitude - latitudeResolution > southLimit) {
+		if (latitude - latitudeResolution >= southLimit) {
 			point = doElevation(latitude-latitudeResolution, longitude);
 			if (point != null)
 				elevationSW = point.getElevation();
@@ -294,7 +338,7 @@ public class TileRenderer extends InterruptibleProcess
 		//	elevationSE = point.getElevation();
 		//}
 		
-		if ((longitude+longitudeResolution < eastLimit)) {
+		if ((longitude+longitudeResolution <= eastLimit)) {
 			point = doElevation(latitude, longitude+longitudeResolution);
 			if (point != null)
 				elevationNE = point.getElevation();
@@ -330,7 +374,8 @@ public class TileRenderer extends InterruptibleProcess
 		
 		
 		point = new ModelPoint(latitude, longitude, elevationNW, reliefColor, dot);
-		pointBuffer[row][column] = point;
+		//pointBuffer[row][column] = point;
+		setModelPoint(latitude, longitude, point);
 		
 		this.checkPause();
 		if (isCancelled()) {
@@ -414,17 +459,19 @@ public class TileRenderer extends InterruptibleProcess
 			double se = nw;
 			double ne = nw;
 			
-			if (row + 1 < pointBuffer.length) {
-				sw = pointBuffer[row+1][column].getElevation();
-			}
+			ModelPoint other = null;
 			
-			if (row + 1 < pointBuffer.length && column + 1 < pointBuffer[0].length) {
-				se = pointBuffer[row+1][column+1].getElevation();
-			}
+			other = getModelPoint(column, row+1);
+			if (other != null)
+				sw = other.getElevation();
 			
-			if (column + 1 < pointBuffer[0].length) {
-				ne = pointBuffer[row][column+1].getElevation();
-			}
+			other = getModelPoint(column+1, row+1);
+			if (other != null)
+				se = other.getElevation();
+			
+			other = getModelPoint(column+1, row);
+			if (other != null)
+				ne = other.getElevation();
 			
 
 			

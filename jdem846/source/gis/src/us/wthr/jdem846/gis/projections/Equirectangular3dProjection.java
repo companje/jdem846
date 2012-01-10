@@ -57,8 +57,9 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		rotateX = 30;
 		rotateY = 0;
 		
-		eyeVector[2] = width*2;
-		nearVector[2] = (width/2.0f);
+
+		eyeVector[2] = width;			// Camera position
+		nearVector[2] = (width/2.0f);	// Viewer's position relative to the display surface
 		
 	}
 	
@@ -109,8 +110,14 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 	public void projectTo(double[] vector, double[] eye, double[] near) //Vector eye, Vector near)
 	{
 		double[] a = vector;   // 3D position of points being projected
-		double[] e = near;     // Viewer's position relative to the display surface
+		//double[] e = near;     // Viewer's position relative to the display surface
 		double[] c = eye;      // Camera position
+		
+		//eyeVector[2] = width;			// Camera position
+		//nearVector[2] = (width/2.0f);	// Viewer's position relative to the display surface
+		
+		//double[] c = {1.0, 1.0, getWidth() * 20};
+		
 		
 		//vector[0] = ((a[0] - c[0]) - e[0]) * (e[2] / (a[2] - c[2]));
 		//vector[1] = ((a[1] - c[1]) - e[1]) * (e[2] / (a[2] - c[2]));
@@ -142,6 +149,7 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		vector[0] = dX;
 		vector[1] = dY;
 		vector[2] = dZ;
+		
 		
 	}
 }
