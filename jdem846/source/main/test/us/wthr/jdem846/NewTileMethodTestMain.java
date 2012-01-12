@@ -81,12 +81,13 @@ public class NewTileMethodTestMain extends AbstractTestMain
 		modelOptions.setBackgroundColor("255;255;255;0");
 		//modelOptions.setHillShading(false);
 		//modelOptions.setConcurrentRenderPoolSize(10);
-		modelOptions.getProjection().setRotateX(15);
-		double rotateY = 0;
+		//modelOptions.getProjection().setRotateX(0);
+		double rotateY = 45;
+		double rotateX = 15;
 		
 		//for(double rotateY = 0; rotateY < 360; rotateY++) {
 			modelOptions.getProjection().setRotateY(rotateY);
-			
+			modelOptions.getProjection().setRotateX(rotateX);
 			ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions);
 			
 			
