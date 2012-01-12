@@ -99,7 +99,8 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		point.column = pointVector[0] + (getWidth()/2.0);
 		point.row = -pointVector[1] + (getHeight()/2.0);
 		point.z = pointVector[2];
-		
+		//point.column = pointVector[0] - (getWidth()/4.0);
+		///point.row = -pointVector[1];
 		//log.info("Lat/Lon " + latitude + "/" + longitude + " projected to X/Y " + point.column + "/" + point.row + " - Width/Height: " + getWidth() + "/" + getHeight() + ", N/S: " + getNorth() + "/" + getSouth());
 		
 		//log.info("row/col: " + point.row + "/" + point.column);
@@ -123,8 +124,8 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		//vector[1] = ((a[1] - c[1]) - e[1]) * (e[2] / (a[2] - c[2]));
 		
 		
-		double thetaX = 0; // Orientation of the camera
-		double thetaY = 0;
+		double thetaX = 0;//MathExt.radians(15); // Orientation of the camera
+		double thetaY = 0;//MathExt.radians(45);
 		double thetaZ = 0;
 		
 		
