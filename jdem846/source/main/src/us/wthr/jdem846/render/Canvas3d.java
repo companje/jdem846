@@ -22,6 +22,8 @@ public class Canvas3d
 	private MatrixBuffer<Integer> pixelBuffer;
 	private MatrixBuffer<Double> zBuffer;
 	
+
+	
 	public Canvas3d(int width, int height)
 	{
 		this.width = width;
@@ -32,6 +34,7 @@ public class Canvas3d
 		
 		pixelBuffer.fill(0x0);
 		zBuffer.fill(Canvas3d.Z_VALUE_NOT_SET);
+
 	}
 	
 	public void draw(Shape shape, int[] rgba)
