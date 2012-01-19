@@ -5,11 +5,11 @@ public class Coordinate {
 	private double decimal;
     private int hour;
     private int minute;
-    private int second;
+    private double second;
     private CardinalDirectionEnum direction;
     private CoordinateTypeEnum coordinateType;
 
-    public Coordinate(int hour, int minute, int second, CardinalDirectionEnum direction, CoordinateTypeEnum coordinateType)
+    public Coordinate(int hour, int minute, double second, CardinalDirectionEnum direction, CoordinateTypeEnum coordinateType)
     {
     	setHour(hour);
     	setMinute(minute);
@@ -55,7 +55,7 @@ public class Coordinate {
     	this.decimal = Math.abs(decimal);
     	this.hour = (int) Math.floor(this.decimal);
     	this.minute = (int)  Math.floor(60 * (this.decimal - hour));
-    	this.second = (int) Math.round(((this.decimal - hour - (minute / 60.0)) * 3600.0));
+    	this.second = ((this.decimal - hour - (minute / 60.0)) * 3600.0);
     }
     
     
@@ -89,12 +89,12 @@ public class Coordinate {
 		this.minute = minute;
 	}
 
-	public int getSecond()
+	public double getSecond()
 	{
 		return second;
 	}
 
-	public void setSecond(int second)
+	public void setSecond(double second)
 	{
 		this.second = second;
 	}

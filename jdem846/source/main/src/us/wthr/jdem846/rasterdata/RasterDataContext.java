@@ -381,10 +381,20 @@ public class RasterDataContext implements DataContext
 	{
 		return latitudeResolution;
 	}
+	
+	public void setLatitudeResolution(double latitudeResolution)
+	{
+		this.latitudeResolution = latitudeResolution;
+	}
 
 	public double getLongitudeResolution() 
 	{
 		return longitudeResolution;
+	}
+	
+	public void setLongitudeResolution(double longitudeResolution)
+	{
+		this.longitudeResolution = longitudeResolution;
 	}
 
 	public double getDataMinimumValue()

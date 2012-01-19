@@ -9,7 +9,12 @@ public class Location
 
     private Coordinate latitude;
     private Coordinate longitude;
-
+    
+    public Location(Coordinate latitude, Coordinate longitude)
+    {
+    	this(null, latitude, longitude, 0, false);
+    }
+    
     public Location(String name, Coordinate latitude, Coordinate longitude)
     {
     	this(name, latitude, longitude, 0, false);
@@ -24,12 +29,17 @@ public class Location
     	setDst(dst);
     }
     
-    Location(String name, double latitude, double longitude)
+    public Location(double latitude, double longitude)
+    {
+    	this(null, latitude, longitude, 0, false);
+    }
+    
+    public Location(String name, double latitude, double longitude)
     {
     	this(name, latitude, longitude, 0, false);
     }
     
-    Location(String name, double latitude, double longitude, int timezone, boolean dst)
+    public Location(String name, double latitude, double longitude, int timezone, boolean dst)
     {
     	setName(name);
     	setLatitude(new Coordinate(latitude, CoordinateTypeEnum.LATITUDE));
