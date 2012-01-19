@@ -37,7 +37,7 @@ public class CoordinateTest extends TestCase
 		Coordinate c = new Coordinate(42.7575, CoordinateTypeEnum.LATITUDE);
 		assertEquals(42, c.getHour());
 		assertEquals(45, c.getMinute());
-		assertEquals(27, c.getSecond());
+		assertEquals(27, c.getSecond(), 0.0001);
 		assertEquals(CardinalDirectionEnum.NORTH, c.getDirection());
 	}
 	
@@ -48,7 +48,7 @@ public class CoordinateTest extends TestCase
 		Coordinate c = new Coordinate(-71.464444, CoordinateTypeEnum.LONGITUDE);
 		assertEquals(71, c.getHour());
 		assertEquals(27, c.getMinute());
-		assertEquals(52, c.getSecond());
+		assertEquals(51.9984, c.getSecond(), 0.0001);
 		assertEquals(CardinalDirectionEnum.WEST, c.getDirection());
 	}
 	
@@ -81,7 +81,7 @@ public class CoordinateTest extends TestCase
 		Coordinate c = new Coordinate(-33.925278, CoordinateTypeEnum.LATITUDE);
 		assertEquals(33, c.getHour());
 		assertEquals(55, c.getMinute());
-		assertEquals(31, c.getSecond());
+		assertEquals(31.0008, c.getSecond(), 0.0001);
 		assertEquals(CardinalDirectionEnum.SOUTH, c.getDirection());
 	}
 	
@@ -92,7 +92,7 @@ public class CoordinateTest extends TestCase
 		Coordinate c = new Coordinate(18.423889, CoordinateTypeEnum.LONGITUDE);
 		assertEquals(18, c.getHour());
 		assertEquals(25, c.getMinute());
-		assertEquals(26, c.getSecond());
+		assertEquals(26.0004, c.getSecond(), 0.0001);
 		assertEquals(CardinalDirectionEnum.EAST, c.getDirection());
 	}
 	

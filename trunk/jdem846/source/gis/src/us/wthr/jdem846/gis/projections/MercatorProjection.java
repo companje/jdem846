@@ -27,8 +27,9 @@ public class MercatorProjection extends AbstractBaseProjection
 	public MercatorProjection(double north, double south, double east, double west, double width, double height)
 	{
 		super(north, south, east, west, width, height);
-		setNorth(latitudeToY(Math.toRadians((north > maxLatitude) ? maxLatitude : north)));
-		setSouth(latitudeToY(Math.toRadians((south < minLatitude) ? minLatitude : south)));
+		// TODO: Restore
+		//setNorth(latitudeToY(Math.toRadians((north > maxLatitude) ? maxLatitude : north)));
+		//setSouth(latitudeToY(Math.toRadians((south < minLatitude) ? minLatitude : south)));
 	}
 	
 

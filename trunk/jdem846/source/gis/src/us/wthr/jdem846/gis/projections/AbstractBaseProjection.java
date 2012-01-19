@@ -1,6 +1,8 @@
 package us.wthr.jdem846.gis.projections;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.gis.Location;
+import us.wthr.jdem846.math.MathExt;
 
 public abstract class AbstractBaseProjection implements MapProjection
 {
@@ -23,10 +25,15 @@ public abstract class AbstractBaseProjection implements MapProjection
 	protected final static double C68 = .00569661458333333333;
 	protected final static double C88 = .3076171875;
 	
-	private double north;
-	private double south;
-	private double east;
-	private double west;
+	//private double north;
+	//private double south;
+	//private double east;
+	//private double west;
+	
+	private Location northWest;
+	private Location northEast;
+	private Location southWest;
+	private Location southEast;
 	
 	private double width; 
 	private double height;
@@ -43,6 +50,36 @@ public abstract class AbstractBaseProjection implements MapProjection
 		setUp(north, south, east, west, width, height);
 	}
 
+	public AbstractBaseProjection(double northWestLatitude,
+									double northWestLongitude,
+									double northEastLatitude,
+									double northEastLongitude,
+									double southWestLatitude,
+									double southWestLongitude,
+									double southEastLatitude,
+									double southEastLongitude, 
+									double width, 
+									double height)
+	{
+		setUp(northWestLatitude,
+				northWestLongitude,
+				northEastLatitude,
+				northEastLongitude,
+				southWestLatitude,
+				southWestLongitude,
+				southEastLatitude,
+				southEastLongitude, 
+				width, 
+				height);
+		
+	}
+	
+	public AbstractBaseProjection(Location northWest, Location northEast, Location southWest, Location southEast, double width, double height)
+	{
+		setUp(northWest, northEast, southWest, southEast, width, height);
+	}
+	
+	
 	public void setUp(ModelContext modelContext)
 	{
 		setUp(modelContext.getNorth(), 
@@ -55,10 +92,43 @@ public abstract class AbstractBaseProjection implements MapProjection
 	
 	public void setUp(double north, double south, double east, double west, double width, double height)
 	{
-		this.north = north;
-		this.south = south;
-		this.east = east;
-		this.west = west;
+		//this.north = north;
+		//this.south = south;
+		//this.east = east;
+		//this.west = west;
+		setUp(north, west,
+				north, east,
+				south, west,
+				south, east,
+				width, height);
+		//this.width = width;
+		//this.height = height;
+	}
+	
+	public void setUp(double northWestLatitude,
+					double northWestLongitude,
+					double northEastLatitude,
+					double northEastLongitude,
+					double southWestLatitude,
+					double southWestLongitude,
+					double southEastLatitude,
+					double southEastLongitude, 
+					double width, 
+					double height)
+	{
+		setUp(new Location(northWestLatitude, northWestLongitude),
+				new Location(northEastLatitude, northEastLongitude),
+				new Location(southWestLatitude, southWestLongitude),
+				new Location(southEastLatitude, southEastLongitude),
+				width, height);
+	}
+	
+	public void setUp(Location northWest, Location northEast, Location southWest, Location southEast, double width, double height)
+	{
+		this.northWest = northWest;
+		this.northEast = northEast;
+		this.southWest = southWest;
+		this.southEast = southEast;
 		this.width = width;
 		this.height = height;
 	}
@@ -66,38 +136,54 @@ public abstract class AbstractBaseProjection implements MapProjection
 	
 	public double latitudeToRow(double latitude)
 	{
-		double range = north - south;
-		double pos = range - (north - latitude);
-		double row = (1.0 - (pos / range)) * (double)height;
+		// TODO: This method is not very accurate... Fix it
+		double wyFrac = (latitude - southWest.getLatitude().toDecimal()) / (northWest.getLatitude().toDecimal() - southWest.getLatitude().toDecimal());
+		double eyFrac = (latitude - southEast.getLatitude().toDecimal()) / (northEast.getLatitude().toDecimal() - southEast.getLatitude().toDecimal());
+		double yFrac = 1.0 - ((wyFrac + eyFrac) / 2.0);
+		double row = yFrac * (double) height;
 		return row;
+		
+		
+		//double range = north - south;
+		//double pos = range - (north - latitude);
+		//double row = (1.0 - (pos / range)) * (double)height;
+		//return row;
 	}
 	
 	public double longitudeToColumn(double longitude)
 	{
-		double range = east - west;
-		double pos = range - (longitude - west);
-		double col = (1.0 - (pos / range)) * (double) width;
-		return col;
+		// TODO: This method is not very accurate... Fix it
+		double nxFrac = (longitude - northWest.getLongitude().toDecimal()) / (northEast.getLongitude().toDecimal() - northWest.getLongitude().toDecimal());
+		double sxFrac = (longitude - southWest.getLongitude().toDecimal()) / (southEast.getLongitude().toDecimal() - southWest.getLongitude().toDecimal());
+		double xFrac = (nxFrac + sxFrac) / 2.0;
+		double column = xFrac * (double)width;
+		return column;
+		
+		
+		//double range = east - west;
+		//double pos = range - (longitude - west);
+		//double col = (1.0 - (pos / range)) * (double) width;
+		//return col;
 	}
 
 	protected double getNorth()
 	{
-		return north;
+		return getMaxNorth();
 	}
 
 	protected double getSouth()
 	{
-		return south;
+		return getMinSouth();
 	}
 
 	protected double getEast()
 	{
-		return east;
+		return getMaxEast();
 	}
 
 	protected double getWest()
 	{
-		return west;
+		return getMinWest();
 	}
 
 	protected double getWidth()
@@ -111,7 +197,7 @@ public abstract class AbstractBaseProjection implements MapProjection
 	}
 	
 	
-	
+	/*
 	protected void setNorth(double north)
 	{
 		this.north = north;
@@ -126,6 +212,7 @@ public abstract class AbstractBaseProjection implements MapProjection
 	{
 		this.west = west;
 	}
+	*/
 
 	protected void setWidth(double width)
 	{
@@ -173,5 +260,31 @@ public abstract class AbstractBaseProjection implements MapProjection
 		if (Math.abs(v) > 1.)
 			return v < 0.0 ? Math.PI : 0.0;
 		return Math.acos(v);
+	}
+	
+	
+	
+	
+	
+	
+	
+	protected double getMaxNorth()
+	{
+		return MathExt.max(northWest.getLatitude().toDecimal(), northEast.getLatitude().toDecimal());
+	}
+
+	protected double getMinSouth()
+	{
+		return MathExt.min(southWest.getLatitude().toDecimal(), southEast.getLatitude().toDecimal());
+	}
+
+	protected double getMaxEast()
+	{
+		return MathExt.max(northEast.getLongitude().toDecimal(), southEast.getLongitude().toDecimal());
+	}
+
+	protected double getMinWest()
+	{
+		return MathExt.min(northWest.getLongitude().toDecimal(), southWest.getLongitude().toDecimal());
 	}
 }

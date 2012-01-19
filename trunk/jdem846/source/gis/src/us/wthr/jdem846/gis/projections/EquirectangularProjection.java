@@ -1,6 +1,7 @@
 package us.wthr.jdem846.gis.projections;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.gis.Location;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -28,6 +29,33 @@ public class EquirectangularProjection extends AbstractBaseProjection
 		super(north, south, east, west, width, height);
 	}
 	
+	public EquirectangularProjection(double northWestLatitude,
+			double northWestLongitude,
+			double northEastLatitude,
+			double northEastLongitude,
+			double southWestLatitude,
+			double southWestLongitude,
+			double southEastLatitude,
+			double southEastLongitude, 
+			double width, 
+			double height)
+	{
+		super(northWestLatitude,
+				northWestLongitude,
+				northEastLatitude,
+				northEastLongitude,
+				southWestLatitude,
+				southWestLongitude,
+				southEastLatitude,
+				southEastLongitude, 
+				width, 
+				height);
+	}
+	
+	public EquirectangularProjection(Location northWest, Location northEast, Location southWest, Location southEast, double width, double height)
+	{
+		super(northWest, northEast, southWest, southEast, width, height);
+	}
 
 	
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
