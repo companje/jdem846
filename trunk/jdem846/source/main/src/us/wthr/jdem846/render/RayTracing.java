@@ -5,6 +5,7 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
 
 public class RayTracing
@@ -18,6 +19,7 @@ public class RayTracing
 	
 	private double longitudeResolution;
 	private double latitudeResolution;
+	private double radiusInterval;
 	
 	private double metersResolution;
 	
@@ -76,6 +78,9 @@ public class RayTracing
 		this.westLimit = westLimit;
 		this.maxDataValue = maxDataValue;
 		this.points = new double[3];
+		
+		
+		radiusInterval = MathExt.sqrt(MathExt.sqr(latitudeResolution) + MathExt.sqr(longitudeResolution));
 	}
 	
 	
@@ -95,23 +100,30 @@ public class RayTracing
 	public boolean isRayBlocked(double centerLatitude, double centerLongitude, double centerElevation) throws RayTracingException
 	{
 		
+		int tryCount = 1;
+		boolean isBlocked = false;
+		double latitude = 0;
+		double longitude = 0;
 		
-		double radius = longitudeResolution;
+		
+		
+		double radius = radiusInterval;
 		while (true) {
 			Spheres.getPoint3D(this.remoteAzimuth, this.remoteElevationAngle, radius, points);
 			
-			double latitude = centerLatitude + points[0];
-			double longitude = centerLongitude - points[2];
+			latitude = centerLatitude + points[0];
+			longitude = centerLongitude - points[2];
 			
 			
 			if (latitude > northLimit ||
 					latitude < southLimit ||
 					longitude > eastLimit ||
 					longitude < westLimit) {
-				return false;
+				isBlocked = false;
+				break;
 			}
 			
-			double resolution = (points[1] / longitudeResolution);
+			double resolution = (points[1] / radiusInterval);
 			double rayElevation = centerElevation + (resolution * metersResolution);
 			double pointElevation = 0;
 			//log.info("Radius: " + radius + ", X/Y/Z: " + points[0] + "/" + points[1] + "/" + points[2] + ", Center Elevation: " + centerElevation + ", Ray Elevation: " + rayElevation);;
@@ -121,22 +133,34 @@ public class RayTracing
 				throw new RayTracingException("Failed to get elevation for point: " + ex.getMessage(), ex);
 			}
 			
+			
 			if (pointElevation == DemConstants.ELEV_NO_DATA) {
 				continue;
 			}
 			
 			if (pointElevation > rayElevation) {
-				return true;
+				isBlocked = true;
+				break;
 			}
 			
 			if (rayElevation > this.maxDataValue) {
-				return false;
+				isBlocked = false;
+				break;
 			}
 			
 
-			
-			radius += longitudeResolution;
+			tryCount++;
+			radius += radiusInterval;
 		}
+		
+		//if (isBlocked) {
+			
+		//	double a = longitude - centerLongitude;
+			//double b = 
+			
+		//	log.info("Lat/Lon: " + centerLatitude + "/" + centerLongitude +  " At Lat/Lon: " + latitude + "/" + longitude + ", Tries: " + tryCount + ", Lon Res: " + longitudeResolution + ", R-Step: " + radiusInterval);
+		//}
+		return isBlocked;
 		
 	}
 	

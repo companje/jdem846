@@ -44,9 +44,9 @@ public class NewTileMethodTestMain extends AbstractTestMain
 	{
 		List<String> inputDataList = new LinkedList<String>();
 		
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
-		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/output/frame-{iter}.png";
+		inputDataList.add("F:/DataRaster-Testing/PresRange_1-3as.flt");
+		inputDataList.add("F:/DataRaster-Testing/PresRange_1as.flt");
+		String saveOutputTo = "F:/DataRaster-Testing/shadow-frame-{iter}.png";
 		
 		
 		//inputDataList.add("F:/Presidential Range/02167570.flt");
@@ -76,18 +76,25 @@ public class NewTileMethodTestMain extends AbstractTestMain
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(false);
-		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR3D);
+		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;0");
+		modelOptions.setElevationMultiple(3.0);
 		//modelOptions.setHillShading(false);
 		//modelOptions.setConcurrentRenderPoolSize(10);
 		//modelOptions.getProjection().setRotateX(0);
-		double rotateY = 45;
-		double rotateX = 15;
+		//double rotateY = 45;
+		//double rotateX = 15;
+		log.info("Rotate X: " + modelOptions.getProjection().getRotateX());
+		log.info("Rotate Y: " + modelOptions.getProjection().getRotateY());
+		
+		lightingContext.setRayTraceShadows(true);
+		lightingContext.setLightingElevation(10);
+		lightingContext.setLightingAzimuth(45);
 		
 		//for(double rotateY = 0; rotateY < 360; rotateY++) {
-			modelOptions.getProjection().setRotateY(rotateY);
-			modelOptions.getProjection().setRotateX(rotateX);
+			//modelOptions.getProjection().setRotateY(rotateY);
+			//modelOptions.getProjection().setRotateX(rotateX);
 			ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions);
 			
 			
@@ -101,7 +108,7 @@ public class NewTileMethodTestMain extends AbstractTestMain
 			
 			
 			ModelCanvas canvas = product.getProduct();
-			canvas.save(saveOutputTo.replace("{iter}", ""+(100000+((int)rotateY))));
+			canvas.save(saveOutputTo.replace("{iter}", ""+(100000+((int)0))));
 		//}
 		
 	}

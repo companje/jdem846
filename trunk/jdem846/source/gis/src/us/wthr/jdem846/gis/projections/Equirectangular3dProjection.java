@@ -153,4 +153,28 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		
 		
 	}
+
+	public double getRotateX() 
+	{
+		return rotateX;
+	}
+
+	public void setRotateX(double rotateX)
+	{
+		this.rotateX = rotateX;
+	}
+
+	public double getRotateY() 
+	{
+		return rotateY;
+	}
+
+	public void setRotateY(double rotateY)
+	{
+		this.rotateY = rotateY;
+	}
+	
+	
+	
+	
 }
