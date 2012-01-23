@@ -207,18 +207,19 @@ public class TileRenderer extends InterruptibleProcess
 		log.info("Processing data points...");
 		doElevation(northLimit, westLimit);
 		
-		log.info("Calculating shadows...");
+		
 		if (rayTraceShadows) {
+			log.info("Calculating shadows...");
 			for (int y = 0; y < rows; y++) {
 				for (int x = 0; x < columns; x++) {
 					point = getModelPoint(x, y);
-					
-					try {
-						point.setDot(calculateRayTracedDotProduct(point.getLatitude(), point.getLongitude(), point.getElevation(), point.getDot()));
-					} catch (RayTracingException ex) {
-						throw new RenderEngineException("Error on ray tracing: " + ex.getMessage(), ex);
+					if (point != null) {
+						try {
+							point.setDot(calculateRayTracedDotProduct(point.getLatitude(), point.getLongitude(), point.getElevation(), point.getDot()));
+						} catch (RayTracingException ex) {
+							throw new RenderEngineException("Error on ray tracing: " + ex.getMessage(), ex);
+						}
 					}
-				
 				}
 			}
 		}
