@@ -190,8 +190,8 @@ public class ModelPreviewPane extends RoundedPanel
 		};
 		
 		
-		updateShapeLayers(taskStatusListener);
-		updateRasterLayers(taskStatusListener);
+		//updateShapeLayers(taskStatusListener);
+		//updateRasterLayers(taskStatusListener);
 	}
 	
 	

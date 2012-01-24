@@ -134,7 +134,7 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 		
 		log.info("Combining shapes...");
 		
-		shapeLayer = shapeLayer.getCombinedPathsByTypes();
+		//shapeLayer = shapeLayer.getCombinedPathsByTypes();
 		return shapeLayer;
 	}
 	
@@ -181,14 +181,20 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 		}
 			
 		List<LineStroke> lineStrokes = featureStroke.getLineStrokes();
-
+		
+		int[] color = new int[4];
+		
 		for (LineStroke lineStroke : lineStrokes) {
 			
 			// TODO: Restore this!
 			if (shapeType == ShapeConstants.TYPE_POLYGON ||
 				shapeType == ShapeConstants.TYPE_POLYGONM ||
 				shapeType == ShapeConstants.TYPE_POLYGONZ) {
-					
+				lineStroke.getColor(color);
+				color[3] = 255;
+				modelCanvas.fillShape(path, color);
+				//public void fillShape(Shape shape, int[] color)
+				
 				//modelCanvas.fillShape(lineStroke.getColor(), lineStroke, path);
 
 			} else if (shapeType == ShapeConstants.TYPE_POLYLINE ||

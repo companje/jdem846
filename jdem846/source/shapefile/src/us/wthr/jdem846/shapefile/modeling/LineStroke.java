@@ -58,7 +58,17 @@ public class LineStroke extends BasicStroke
 		super(arg0);
 		this.color = color;
 	}
-
+	
+	public void getColor(int[] c)
+	{
+		c[0] = color.getRed();
+		c[1] = color.getGreen();
+		c[2] = color.getBlue();
+		if (c.length >= 4) {
+			c[3] = color.getAlpha();
+		}
+	}
+	
 	public Color getColor()
 	{
 		return color;
