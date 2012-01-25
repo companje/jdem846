@@ -80,7 +80,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;0");
 		//modelOptions.setHillShading(false);
-		modelOptions.setConcurrentRenderPoolSize(10);
+		//modelOptions.setConcurrentRenderPoolSize(10);
 		//modelOptions.getProjection().setRotateX(30);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions);

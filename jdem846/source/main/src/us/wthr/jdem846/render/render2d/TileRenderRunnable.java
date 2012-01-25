@@ -16,29 +16,11 @@ public class TileRenderRunnable implements  Callable<RenderedTile>
 {
 	private static Log log = Logging.getLog(TileRenderRunnable.class);
 	
-	private ModelContext modelContext;
-	private double northLimit; 
-	private double southLimit;
-	private double eastLimit;
-	private double westLimit;
-	
-	private int tileColumn = 0;
-	private int tileRow = 0;
-	
-	private TileRenderer tileRenderer = null;
+	private TileRenderContainer tileRenderContainer;
 	
 	public TileRenderRunnable(ModelContext modelContext, double northLimit, double southLimit, double eastLimit, double westLimit, int tileColumn, int tileRow)
 	{
-		this.modelContext = modelContext;
-		this.northLimit = northLimit;
-		this.southLimit = southLimit;
-		this.eastLimit = eastLimit;
-		this.westLimit = westLimit;
-		this.tileColumn = tileColumn;
-		this.tileRow = tileRow;
-		
-		
-		
+		this.tileRenderContainer = new TileRenderContainer(modelContext, northLimit, southLimit, eastLimit, westLimit, tileColumn, tileRow);
 	}
 	
 	
@@ -55,30 +37,17 @@ public class TileRenderRunnable implements  Callable<RenderedTile>
 
 	public RenderedTile __run() 
 	{
-		//ModelCanvas modelCanvas = modelContext.getModelCanvas();
-		log.info("Starting tile row #" + tileRow + ", column #" + tileColumn);
-		TileRenderer tileRenderer = new TileRenderer(modelContext);
+		//log.info("Starting tile row #" + tileRow + ", column #" + tileColumn);
+		
+		RenderedTile renderedTile = null;
 		
 		try {
-			tileRenderer.renderTile(northLimit, southLimit, eastLimit, westLimit);
+			renderedTile = tileRenderContainer.render(null);
 		} catch (RenderEngineException ex) {
 			ex.printStackTrace();
 		}
+		return renderedTile;
 		
-		
-		tileRenderer = null;
-		ModelCanvas modelCanvas = modelContext.getModelCanvas();
-		
-		
-		//try {
-		//	modelContext.getRasterDataContext().dispose();
-		//} catch (DataSourceException ex) {
-		///	log.error("Error disposing of tile raster data context: " + ex.getMessage(), ex);
-		//}
-		modelContext = null;
-		
-		log.info("Completed tile row #" + tileRow + ", column #" + tileColumn);
-		return new RenderedTile(modelCanvas, northLimit, southLimit, eastLimit, westLimit, tileColumn, tileRow);
 		
 	}
 }

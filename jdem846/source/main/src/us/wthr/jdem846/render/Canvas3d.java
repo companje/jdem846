@@ -11,6 +11,7 @@ import java.awt.image.WritableRaster;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.render.render2d.ScanlinePath;
 
 public class Canvas3d
 {
@@ -24,10 +25,16 @@ public class Canvas3d
 	private MatrixBuffer<Integer> pixelBuffer;
 	private MatrixBuffer<Double> zBuffer;
 	
-
+	private RenderPipeline pipeline;
 	
 	public Canvas3d(int width, int height)
 	{
+		this(width, height, null);
+	}
+	
+	public Canvas3d(int width, int height, RenderPipeline pipeline)
+	{
+		this.pipeline = pipeline;
 		this.width = width;
 		this.height = height;
 		
@@ -233,7 +240,25 @@ public class Canvas3d
 	
 	protected void fillScanLine(int leftX, int rightX, int y, double z, int rgba)
 	{
-		for (int x = leftX; x <= rightX; x++) {
+		if (pipeline == null) {
+			_fillScanLine(leftX, rightX, y, z, rgba);
+		} else {
+			pipeline.submit(new ScanlinePath(leftX, rightX, y, z, rgba));
+		}
+	}
+	
+	public void fillScanLine(ScanlinePath scanline)
+	{
+		_fillScanLine(scanline.getLeftX(),
+				scanline.getRightX(),
+				scanline.getY(),
+				scanline.getZ(),
+				scanline.getRgba());
+	}
+	
+	protected void _fillScanLine(double leftX, double rightX, double y, double z, int rgba)
+	{
+		for (double x = leftX; x <= rightX; x++) {
 			set(x, y, z, rgba);
 		}
 	}
@@ -263,7 +288,14 @@ public class Canvas3d
 		
 	}
 	
-	public void set(double x, double y, double z, int[] rgb)
+	public void set(double x, double y, double z, int rgba)
+	{
+		int[] _rgba = new int[4];
+		intToRGBA(rgba, _rgba);
+		set(x, y, z, _rgba);
+	}
+	
+	public void set(double x, double y, double z, int[] rgba)
 	{
 		
 		int _x = (int) x;
@@ -277,7 +309,7 @@ public class Canvas3d
 		
 		double _z = zBuffer.get(_x, _y);
 		if (Double.isNaN(_z)) {
-			set(_x, _y, z, rgb);
+			set(_x, _y, z, rgba);
 			return;
 		} else {
 			get(_x, _y, pixel);
@@ -286,7 +318,7 @@ public class Canvas3d
 			double yFrac = y - _y;
 			double pct = xFrac * yFrac;
 			
-			ColorAdjustments.interpolateColor(pixel, rgb, pixel, pct);
+			ColorAdjustments.interpolateColor(pixel, rgba, pixel, pct);
 			
 			set(_x, _y, z, pixel);
 		}
@@ -351,6 +383,11 @@ public class Canvas3d
 	{
 		pixelBuffer.dispose();
 		zBuffer.dispose();
+	}
+	
+	public void setRenderPipeline(RenderPipeline pipeline)
+	{
+		this.pipeline = pipeline;
 	}
 	
 	protected static int rgbaToInt(int[] rgb)

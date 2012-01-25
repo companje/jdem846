@@ -31,12 +31,14 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.BasicRenderEngine;
+import us.wthr.jdem846.render.CanvasRectangleFill;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.MatrixBuffer;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RayTracing;
 import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
+import us.wthr.jdem846.render.RenderPipeline;
 import us.wthr.jdem846.render.ShadowBuffer;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.scripting.ScriptProxy;
@@ -49,6 +51,7 @@ public class TileRenderer extends InterruptibleProcess
 	private ModelColoring modelColoring;
 	private ModelCanvas modelCanvas;
 	private Perspectives perspectives = new Perspectives();
+	private RenderPipeline renderPipeline;
 	
 	//protected RasterDataContext dataRasterContextSubset;
 
@@ -101,20 +104,35 @@ public class TileRenderer extends InterruptibleProcess
 	
 	public TileRenderer(ModelContext modelContext)
 	{
-		this(modelContext, null, null);
+		this(modelContext, null, null, null);
 	}
 	
+	public TileRenderer(ModelContext modelContext, RenderPipeline pipeline)
+	{
+		this(modelContext, null, null, pipeline);
+	}
 	
 	public TileRenderer(ModelContext modelContext, ModelColoring modelColoring)
 	{
-		this(modelContext, modelColoring, null);
+		this(modelContext, modelColoring, null, null);
+	}
+	
+	public TileRenderer(ModelContext modelContext, ModelColoring modelColoring, RenderPipeline renderPipeline)
+	{
+		this(modelContext, modelColoring, null, renderPipeline);
 	}
 	
 	public TileRenderer(ModelContext modelContext, ModelColoring modelColoring, ModelCanvas modelCanvas)
 	{
+		this(modelContext, modelColoring, modelCanvas, null);
+	}
+	
+	public TileRenderer(ModelContext modelContext, ModelColoring modelColoring, ModelCanvas modelCanvas, RenderPipeline renderPipeline)
+	{
 		this.modelContext = modelContext;
 		this.modelColoring = modelColoring;
 		this.modelCanvas = modelCanvas;
+		this.renderPipeline = renderPipeline;
 		
 		tiledPrecaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
@@ -223,6 +241,7 @@ public class TileRenderer extends InterruptibleProcess
 				}
 			}
 		}
+		
 		
 		
 		log.info("Rendering data points...");
@@ -463,7 +482,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		double latitude = point.getLatitude();
 		double longitude = point.getLongitude();
-		double elevation = point.getElevation();
+		//double elevation = point.getElevation();
 		
 		double dot = point.getDot();
 		
@@ -517,24 +536,37 @@ public class TileRenderer extends InterruptibleProcess
 		ColorAdjustments.interpolateColor(reliefColor, hillshadeColor, color, lightingMultiple);
 		
 		
-		if (useSimpleCanvasFill) {
-			modelCanvas.fillRectangle(color, 
-						latitude, longitude, 
-						latitudeResolution, longitudeResolution,
-						point.getElevation());
+		if (renderPipeline == null) {
+			
+			if (useSimpleCanvasFill) {
+				modelCanvas.fillRectangle(color, 
+							latitude, longitude, 
+							latitudeResolution, longitudeResolution,
+							point.getElevation());
+			} else {
+				modelCanvas.fillRectangle(color,
+						latitude, longitude, nw,
+						latitude-latitudeResolution, longitude, sw,
+						latitude-latitudeResolution, longitude+longitudeResolution, se,
+						latitude, longitude+longitudeResolution, ne);
+			}
+			
 		} else {
 			
+			if (useSimpleCanvasFill) {
+				renderPipeline.submit(new CanvasRectangleFill(color, latitude, longitude, 
+							latitudeResolution, longitudeResolution,
+							point.getElevation()));
+				
+			} else {
+				renderPipeline.submit(new CanvasRectangleFill(color, 
+						latitude, longitude, nw,
+						latitude-latitudeResolution, longitude, sw,
+						latitude-latitudeResolution, longitude+longitudeResolution, se,
+						latitude, longitude+longitudeResolution, ne));
+			}
 			
-			
-
-			
-			modelCanvas.fillRectangle(color,
-					latitude, longitude, nw,
-					latitude-latitudeResolution, longitude, sw,
-					latitude-latitudeResolution, longitude+longitudeResolution, se,
-					latitude, longitude+longitudeResolution, ne);
 		}
-		
 		
 		
 	}

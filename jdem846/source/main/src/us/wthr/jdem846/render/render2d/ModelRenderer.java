@@ -28,6 +28,8 @@ import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.render.ProcessInterruptListener;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
+import us.wthr.jdem846.render.RenderPipeline;
+import us.wthr.jdem846.render.RenderPipelineProcessContainer;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
@@ -79,10 +81,13 @@ public class ModelRenderer extends InterruptibleProcess
 
 		final ModelCanvas modelCanvas = modelContext.getModelCanvas();
 		
+		RenderPipeline renderPipeline = new RenderPipeline(modelContext);
+		RenderPipelineProcessContainer pipelineContainer = new RenderPipelineProcessContainer(renderPipeline, modelContext);
+		
 		on2DModelBefore(modelCanvas);
 		
 		double pctComplete = 0;
-		final TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas);
+		final TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas, renderPipeline);
 		
 		this.setProcessInterruptListener(new ProcessInterruptListener() {
 			public void onProcessCancelled()
@@ -137,7 +142,24 @@ public class ModelRenderer extends InterruptibleProcess
 					log.info("    East: " + tileEast);
 					log.info("    West: " + tileWest);	
 					
-					tileRenderer.renderTile(tileNorth, tileSouth, tileEast, tileWest);
+					TileRenderContainer tileRenderContainer = null;
+					tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, tileNorth, tileSouth, tileEast, tileWest, (tileColumn + 1), (tileRow + 1));
+					/*
+					try {
+						ModelContext tileContext = modelContext.copy(true);
+						tileContext.setNorthLimit(tileNorth);
+						tileContext.setSouthLimit(tileSouth);
+						tileContext.setEastLimit(tileEast);
+						tileContext.setWestLimit(tileWest);
+						tileContext.setRasterDataContext(modelContext.getRasterDataContext().getSubSet(tileNorth, tileSouth, tileEast, tileWest).copy());
+						tileRenderContainer = new TileRenderContainer(tileContext, tileNorth, tileSouth, tileEast, tileWest, (tileColumn + 1), (tileRow + 1));
+					} catch (DataSourceException ex) {
+						throw new RenderEngineException("Failed to create tile render runnable: " + ex.getMessage(), ex);
+					}
+					*/
+					
+					renderPipeline.submit(tileRenderContainer);
+					//tileRenderer.renderTile(tileNorth, tileSouth, tileEast, tileWest);
 
 					//tileRenderRunnable.run();
 					
@@ -148,7 +170,7 @@ public class ModelRenderer extends InterruptibleProcess
 					
 					pctComplete = (double)tileNumber / (double)tileCount;
 					
-					fireTileCompletionListeners(modelCanvas, pctComplete);
+					//fireTileCompletionListeners(modelCanvas, pctComplete);
 					
 					if (isCancelled()) {
 						break;
@@ -164,6 +186,28 @@ public class ModelRenderer extends InterruptibleProcess
 			}
 			
 		}
+		
+		log.info("Starting pipeline container...");
+		pipelineContainer.start();
+		
+		while(true) {
+			
+			if (pipelineContainer.areQueuesEmpty()) {
+				log.info("Pipeline queues emptied. Stopping pipeline threads");
+				pipelineContainer.stop(true);
+				log.info("Pipeline threads exited. Cleaning up model render");
+				break;
+			}
+			
+			Thread.yield();
+			if (isCancelled()) {
+				break;
+			}
+		}
+		
+		
+		
+		
 		
 		if (fullCaching) {
 			try {
