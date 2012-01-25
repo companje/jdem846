@@ -31,6 +31,7 @@ import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.render.render2d.ScanlinePath;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
 public class ModelCanvas
@@ -117,6 +118,11 @@ public class ModelCanvas
 		//zBuffer = new ZBuffer(getWidth(), getHeight());
 	}
 
+	public void setRenderPipeline(RenderPipeline pipeline)
+	{
+		this.canvas.setRenderPipeline(pipeline);
+	}
+	
 	public ModelCanvas getDependentHandle() throws CanvasException
 	{
 		//ModelCanvas other = new ModelCanvas(modelContext, image);
@@ -141,6 +147,8 @@ public class ModelCanvas
 		return copy;
 		
 	}
+	
+	
 	
 	protected GraphicsConfiguration getGraphicsConfiguration()
 	{
@@ -172,6 +180,11 @@ public class ModelCanvas
 		this.mapProjection = mapProjection;
 	}
 
+	public void fillScanLine(ScanlinePath scanline)
+	{
+		this.canvas.fillScanLine(scanline);
+	}
+	
 	public void fillTriangle(int[] color, 
 								double latitude0, double longitude0, double elevation0,
 								double latitude1, double longitude1, double elevation1,
