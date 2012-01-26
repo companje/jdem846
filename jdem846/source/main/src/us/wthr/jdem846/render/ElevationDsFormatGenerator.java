@@ -54,7 +54,7 @@ import us.wthr.jdem846.scaling.ResizeDimensions;
 			generatesImage=false,
 			usesRelativeLightMultiple=false,
 			usesRelativeDarkMultiple=false,
-			enabled=true,
+			enabled=false,
 			usesMapProjection=false,
 			needsOutputFileOfType=ElevationDatasetExchange.class)
 public class ElevationDsFormatGenerator extends RenderEngine

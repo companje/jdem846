@@ -44,6 +44,9 @@ public class ShapePath implements java.awt.Shape // Path2D.Double
 		setFeatureType(null);
 	}
 	
+	
+	
+	
 	public ShapePath(FeatureType featureType)
 	{
 		this.setFeatureType(featureType);
@@ -59,9 +62,22 @@ public class ShapePath implements java.awt.Shape // Path2D.Double
 		return featureType;
 	}
 	
+	public boolean intersectsPoint(double x, double y, double w, double h)
+	{
+		if (!path.intersects(x, y, w, h))
+			return false;
+		
+		for (ShapePath subPath : subParts) {
+			if (subPath.intersects(x, y, w, h)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	public boolean containsPoint(double x, double y)
 	{
-		if (!this.contains(x, y))
+		if (!path.contains(x, y))
 			return false;
 		
 		for (ShapePath subPath : subParts) {
@@ -71,6 +87,8 @@ public class ShapePath implements java.awt.Shape // Path2D.Double
 		}
 		return true;
 	}
+	
+
 	
 	public List<ShapePath> getSubParts()
 	{
@@ -193,7 +211,8 @@ public class ShapePath implements java.awt.Shape // Path2D.Double
 	@Override
 	public boolean contains(double x, double y)
 	{
-		return path.contains(x, y);
+		//return path.contains(x, y);
+		return this.containsPoint(x, y);
 	}
 
 	@Override
@@ -229,13 +248,13 @@ public class ShapePath implements java.awt.Shape // Path2D.Double
 	@Override
 	public boolean intersects(Rectangle2D r)
 	{
-		return path.intersects(r);
+		return intersectsPoint(r.getX(), r.getY(), r.getWidth(), r.getHeight());
 	}
 
 	@Override
 	public boolean intersects(double x, double y, double w, double h)
 	{
-		return path.intersects(x, y, w, h);
+		return intersectsPoint(x, y, w, h);
 	}
 	
 }

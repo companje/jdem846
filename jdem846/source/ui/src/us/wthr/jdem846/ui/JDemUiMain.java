@@ -32,6 +32,8 @@ import com.jgoodies.looks.FontPolicy;
 import com.jgoodies.looks.FontSet;
 import com.jgoodies.looks.FontSets;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticTheme;
+import com.jgoodies.looks.plastic.theme.DarkStar;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
@@ -336,28 +338,62 @@ public class JDemUiMain
 				found = true;
 			}
 		}
+		
+		PlasticTheme theme = getConfiguredPlasticTheme();
+		if (theme != null) {
+			PlasticLookAndFeel.setPlasticTheme(theme);
+		}
+		
 		if (!found) {
 			UIManager.installLookAndFeel("JGoodies Plastic 3D",
 					"com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
 		}
 		
-		String os = System.getProperty("os.name");
-		FontSet fontSet = null;
-		if (os.startsWith("Windows")) {
-			fontSet = FontSets.createDefaultFontSet(new Font(
-					"arial unicode MS", Font.PLAIN, 12));
-		} else {
-			fontSet = FontSets.createDefaultFontSet(new Font(
-					"arial unicode", Font.PLAIN, 12));				
-		}
+		String fontName = getConfiguredFontName();
+		int fontStyle = JDem846Properties.getIntProperty("us.wthr.jdem846.ui.font.style");
+		int fontSize = JDem846Properties.getIntProperty("us.wthr.jdem846.ui.font.size");
+
+		FontSet fontSet = FontSets.createDefaultFontSet(new Font(fontName, fontStyle, fontSize));
+
 		FontPolicy fixedPolicy = FontPolicies.createFixedPolicy(fontSet);
 		PlasticLookAndFeel.setFontPolicy(fixedPolicy);
 
+	}
+	
+	public static String getConfiguredFontName()
+	{
+		String fontName = null;
+		String os = System.getProperty("os.name");
 		
-		//PlasticLookAndFeel.setTabStyle(PlasticLookAndFeel.TAB_STYLE_METAL_VALUE);
-
-		//UIManager
-		//		.setLookAndFeel("com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
+		if (os.toUpperCase().contains("WINDOWS")) {
+			fontName = JDem846Properties.getProperty("us.wthr.jdem846.ui.font.windows");
+		} else if (os.toUpperCase().contains("LINUX")) {
+			fontName = JDem846Properties.getProperty("us.wthr.jdem846.ui.font.linux");
+		} else {
+			fontName = JDem846Properties.getProperty("us.wthr.jdem846.ui.font.default");
+		}
+		return fontName;
+	}
+	
+	
+	public static PlasticTheme getConfiguredPlasticTheme()
+	{
+		String theme = JDem846Properties.getProperty("us.wthr.jdem846.ui.jgoodies.theme");
+		
+		if (theme == null || theme.length() == 0) {
+			return null;
+		}
+		
+		PlasticTheme plasticTheme = null;
+		
+		try {
+			Class<PlasticTheme> clazz = (Class<PlasticTheme>) Class.forName(theme);
+			plasticTheme = clazz.newInstance();
+		} catch (Exception ex) {
+			log.warn("Failed to load pastic theme '" + theme + "': " + ex.getMessage(), ex);
+		}
+		
+		return plasticTheme;
 	}
 	
 }

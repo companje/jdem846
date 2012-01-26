@@ -12,7 +12,7 @@ import us.wthr.jdem846.logging.Logging;
 @DemEngine(name="us.wthr.jdem846.render.demEngine2dTiledKML.name", 
 				identifier="dem2d-tiled-kml-gen", 
 				usesProjection=false,
-				enabled=true)
+				enabled=false)
 public class Dem2dTiledKmlGenerator extends BasicRenderEngine
 {
 	

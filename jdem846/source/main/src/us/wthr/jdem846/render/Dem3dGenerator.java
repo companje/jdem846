@@ -54,7 +54,7 @@ import us.wthr.jdem846.render.gfx.StaticPolygonList;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.gfx.ViewportBuffer;
 
-@DemEngine(name="us.wthr.jdem846.render.demEngine3D.name", identifier="dem3d-gen", usesProjection=true, enabled=true)
+@DemEngine(name="us.wthr.jdem846.render.demEngine3D.name", identifier="dem3d-gen", usesProjection=true, enabled=false)
 public class Dem3dGenerator extends BasicRenderEngine
 {
 	private static Log log = Logging.getLog(Dem3dGenerator.class);
