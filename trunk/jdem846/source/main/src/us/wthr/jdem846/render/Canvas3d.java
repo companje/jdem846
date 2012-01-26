@@ -194,15 +194,23 @@ public class Canvas3d
 	
 	public void fill(Shape shape, int rgba)
 	{
-		log.info("Getting bounds 3D");
+		//log.info("Getting bounds 3D");
 		
 		
 		Rectangle2D bounds = shape.getBounds2D();
 		
-		int minX = (int) Math.round(bounds.getMinX());
-		int maxX = (int) Math.round(bounds.getMaxX());
-		int minY = (int) Math.round(bounds.getMinY());
-		int maxY = (int) Math.round(bounds.getMaxY());
+		//int minX = (int) Math.round(bounds.getMinX());
+		//int maxX = (int) Math.round(bounds.getMaxX());
+		//int minY = (int) Math.round(bounds.getMinY());
+		//int maxY = (int) Math.round(bounds.getMaxY());
+		
+		double minX = Math.round(bounds.getMinX());
+		double maxX = Math.round(bounds.getMaxX());
+		double minY = Math.round(bounds.getMinY());
+		double maxY = Math.round(bounds.getMaxY());
+		
+		if (maxX < 0 || minX >= getWidth() || maxY < 0 || minY >= getHeight())
+			return;
 		
 		if (minX < 0)
 			minX = 0;
@@ -218,11 +226,16 @@ public class Canvas3d
 		if (maxY <= minY)
 			maxY = minY + 1;
 		
+		
 		boolean inside = false;
-		int leftX = 0;
+		double leftX = 0;
 		log.info("Filling polygon min x/y: " + minX + "/" + minY + ", max x/y: " + maxX + "/" + maxY);
-		for (int y = minY; y <= maxY; y++) {
-			for (int x = minX; x <= maxX; x++) {
+		for (double y = minY; y <= maxY; y++) {
+			
+
+			for (double x = minX; x <= maxX; x++) {
+
+				
 				//if (shape.contains(x, y) && !inside) {
 				if (shape.intersects(x, y, 1, 1) && !inside) {
 					leftX = x;
@@ -237,6 +250,15 @@ public class Canvas3d
 		
 	}
 	
+	
+	protected void fillScanLine(double leftX, double rightX, double y, double z, int rgba)
+	{
+		if (pipeline == null) {
+			_fillScanLine(leftX, rightX, y, z, rgba);
+		} else {
+			pipeline.submit(new ScanlinePath(leftX, rightX, y, z, rgba));
+		}
+	}
 	
 	protected void fillScanLine(int leftX, int rightX, int y, double z, int rgba)
 	{
@@ -258,8 +280,21 @@ public class Canvas3d
 	
 	protected void _fillScanLine(double leftX, double rightX, double y, double z, int rgba)
 	{
+
 		for (double x = leftX; x <= rightX; x++) {
-			set(x, y, z, rgba);
+			set((int)x, (int)y, z, rgba);
+			
+			/*
+			if (x > leftX && x < rightX) {
+				set((int)x, (int)y, z, rgba);
+				
+			} else {
+				set(x, Math.round(y), z, rgba);
+			}
+			*/
+				
+			
+			
 		}
 	}
 	
@@ -316,6 +351,15 @@ public class Canvas3d
 			
 			double xFrac = x - _x;
 			double yFrac = y - _y;
+			
+			if (xFrac == 0) {
+				xFrac = 1.0;
+			}
+			
+			if (yFrac == 0) {
+				yFrac = 1.0;
+			}
+			
 			double pct = xFrac * yFrac;
 			
 			ColorAdjustments.interpolateColor(pixel, rgba, pixel, pct);

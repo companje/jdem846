@@ -43,11 +43,23 @@ public class ModelRenderer extends InterruptibleProcess
 	protected ModelContext modelContext;
 	private List<TileCompletionListener> tileCompletionListeners;
 	
+	private RenderPipeline renderPipeline;
 	
 	public ModelRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
 	{
+		this(modelContext, null, tileCompletionListeners);
+	}
+	
+	public ModelRenderer(ModelContext modelContext, RenderPipeline renderPipeline, List<TileCompletionListener> tileCompletionListeners)
+	{
 		this.modelContext = modelContext;
 		this.tileCompletionListeners = tileCompletionListeners;
+		
+		if (renderPipeline != null) {
+			this.renderPipeline = renderPipeline;
+		} else {
+			this.renderPipeline = new RenderPipeline(modelContext);
+		}
 	}
 	
 	public ModelCanvas renderModel() throws RenderEngineException
@@ -81,8 +93,6 @@ public class ModelRenderer extends InterruptibleProcess
 
 		final ModelCanvas modelCanvas = modelContext.getModelCanvas();
 		
-		RenderPipeline renderPipeline = new RenderPipeline(modelContext);
-		RenderPipelineProcessContainer pipelineContainer = new RenderPipelineProcessContainer(renderPipeline, modelContext);
 		
 		on2DModelBefore(modelCanvas);
 		
@@ -187,6 +197,7 @@ public class ModelRenderer extends InterruptibleProcess
 			
 		}
 		
+		/*
 		log.info("Starting pipeline container...");
 		pipelineContainer.start();
 		
@@ -204,6 +215,7 @@ public class ModelRenderer extends InterruptibleProcess
 				break;
 			}
 		}
+		*/
 		
 		
 		

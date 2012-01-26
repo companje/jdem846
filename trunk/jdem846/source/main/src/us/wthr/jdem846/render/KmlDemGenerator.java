@@ -30,7 +30,7 @@ import us.wthr.jdem846.render.kml.GriddedModelGenerator;
 import us.wthr.jdem846.render.kml.KmlModelGenerator;
 import us.wthr.jdem846.render.kml.Tile;
 
-@DemEngine(name="us.wthr.jdem846.render.demEngineKml.name", identifier="dem-kml-gen", generatesImage=false)
+@DemEngine(name="us.wthr.jdem846.render.demEngineKml.name", identifier="dem-kml-gen", generatesImage=false, enabled=false)
 public class KmlDemGenerator extends BasicRenderEngine
 {
 	private static Log log = Logging.getLog(KmlDemGenerator.class);

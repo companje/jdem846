@@ -11,6 +11,7 @@ import us.wthr.jdem846.render.render2d.ModelPoint;
 import us.wthr.jdem846.render.render2d.ScanlinePath;
 import us.wthr.jdem846.render.render2d.TileRenderContainer;
 import us.wthr.jdem846.render.render2d.TileRenderRunnable;
+import us.wthr.jdem846.render.shapelayer.ShapeFill;
 
 public class RenderPipeline
 {
@@ -18,6 +19,7 @@ public class RenderPipeline
 	
 	private Queue<TileRenderContainer> tileRenderQueue;
 	private Queue<CanvasRectangleFill> canvasRectangeFillQueue;
+	private Queue<ShapeFill> shapeFillQueue;
 	private Queue<ScanlinePath> scanlinePathQueue;
 	
 	
@@ -34,7 +36,7 @@ public class RenderPipeline
 		tileRenderQueue = new ConcurrentLinkedQueue<TileRenderContainer>();
 		canvasRectangeFillQueue = new ConcurrentLinkedQueue<CanvasRectangleFill>();
 		scanlinePathQueue = new ConcurrentLinkedQueue<ScanlinePath>();
-		
+		shapeFillQueue = new ConcurrentLinkedQueue<ShapeFill>();
 	}
 	
 	public void submit(TileRenderContainer tileRenderRunnableInstance)
@@ -50,6 +52,11 @@ public class RenderPipeline
 	public void submit(ScanlinePath scanlinePathInstance)
 	{
 		scanlinePathQueue.add(scanlinePathInstance);
+	}
+	
+	public void submit(ShapeFill shapeFillInstance)
+	{
+		shapeFillQueue.add(shapeFillInstance);
 	}
 	
 	
@@ -68,6 +75,11 @@ public class RenderPipeline
 		return scanlinePathQueue.poll();
 	}
 	
+	public ShapeFill fetchNextShapeFill()
+	{
+		return shapeFillQueue.poll();
+	}
+	
 	public boolean hasMoreTileRenderRunnables()
 	{
 		return (tileRenderQueue.size() > 0);
@@ -83,6 +95,10 @@ public class RenderPipeline
 		return (scanlinePathQueue.size() > 0);
 	}
 	
+	public boolean hasMoreShapeFills()
+	{
+		return (shapeFillQueue.size() > 0);
+	}
 	
 	protected void setCompleted(boolean completed)
 	{

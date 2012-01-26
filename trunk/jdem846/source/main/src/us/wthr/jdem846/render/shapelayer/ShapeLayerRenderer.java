@@ -10,6 +10,7 @@ import java.util.List;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.input.DataPackage;
@@ -20,6 +21,7 @@ import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
+import us.wthr.jdem846.render.RenderPipeline;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
@@ -42,20 +44,41 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 	private List<TileCompletionListener> tileCompletionListeners;
 	//private DemCanvas canvas;
 	private ModelCanvas modelCanvas;
-	
+	private RenderPipeline renderPipeline;
 	
 	public ShapeLayerRenderer(ModelContext modelContext, ModelCanvas modelCanvas, List<TileCompletionListener> tileCompletionListeners)
+	{
+		this(modelContext, null, modelCanvas, tileCompletionListeners);
+	}
+	
+	
+	
+	public ShapeLayerRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
+	{
+		this(modelContext, null, null, tileCompletionListeners);
+	}
+	
+	public ShapeLayerRenderer(ModelContext modelContext, RenderPipeline renderPipeline, List<TileCompletionListener> tileCompletionListeners)
+	{
+		this(modelContext, renderPipeline, null, tileCompletionListeners);
+	}
+	
+	public ShapeLayerRenderer(ModelContext modelContext, RenderPipeline renderPipeline, ModelCanvas modelCanvas, List<TileCompletionListener> tileCompletionListeners)
 	{
 		this.modelContext = modelContext;
 		this.modelCanvas = modelCanvas;
 		this.tileCompletionListeners = tileCompletionListeners;
+		this.renderPipeline = renderPipeline;
 	}
 	
-	public ShapeLayerRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
+	/*
+	public ShapeLayerRenderer(ModelContext modelContext, RenderPipeline renderPipeline, List<TileCompletionListener> tileCompletionListeners)
 	{
 		this.modelContext = modelContext;
 		this.tileCompletionListeners = tileCompletionListeners;
+		this.renderPipeline = renderPipeline;
 	}
+	*/
 	
 	public void render() throws RenderEngineException
 	{
@@ -186,7 +209,26 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 		
 		for (LineStroke lineStroke : lineStrokes) {
 			
+			lineStroke.getColor(color);
+			color[3] = 255;
+			
+			boolean fill = (shapeType == ShapeConstants.TYPE_POLYGON ||
+					shapeType == ShapeConstants.TYPE_POLYGONM ||
+					shapeType == ShapeConstants.TYPE_POLYGONZ);
+			
+			ShapeFill shapeFill = new ShapeFill(color, shapeType, path, lineStroke, fill);
+			
+			if (renderPipeline != null) {
+				renderPipeline.submit(shapeFill);
+			} else {
+				try {
+					shapeFill.fill(modelCanvas);
+				} catch (CanvasException ex) {
+					throw new RenderEngineException("Shape fill error: " + shapeType);
+				}
+			}
 			// TODO: Restore this!
+			/*
 			if (shapeType == ShapeConstants.TYPE_POLYGON ||
 				shapeType == ShapeConstants.TYPE_POLYGONM ||
 				shapeType == ShapeConstants.TYPE_POLYGONZ) {
@@ -205,6 +247,7 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 			} else {
 				throw new RenderEngineException("Unsupported shape type: " + shapeType);
 			}
+			*/
 		}	
 	}
 	

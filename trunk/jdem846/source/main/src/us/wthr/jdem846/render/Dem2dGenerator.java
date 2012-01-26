@@ -68,10 +68,14 @@ public class Dem2dGenerator extends BasicRenderEngine
 		}
 		
 		
+		RenderPipeline renderPipeline = new RenderPipeline(getModelContext());
+		RenderPipelineProcessContainer pipelineContainer = new RenderPipelineProcessContainer(renderPipeline, getModelContext());
+		
+		
 		try {
 			
-			final ModelRenderer rasterRenderer = getModelRenderer(getModelContext(), tileCompletionListeners);
-			final ShapeLayerRenderer shapeRenderer = new ShapeLayerRenderer(getModelContext(), tileCompletionListeners);
+			final ModelRenderer rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
+			final ShapeLayerRenderer shapeRenderer = new ShapeLayerRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
 			
 			this.setProcessInterruptListener(new ProcessInterruptListener() {
 				public void onProcessCancelled()
@@ -95,15 +99,22 @@ public class Dem2dGenerator extends BasicRenderEngine
 			ModelCanvas canvas = getModelContext().getModelCanvas(true);
 			
 			
+			
+			
 			if (!skipElevation) {
 				rasterRenderer.renderModel();
 			}
+			
 			
 			if (!skipShapes && !isCancelled() && getModelContext().getShapeDataContext() != null && getModelContext().getShapeDataContext().getShapeDataListSize() > 0) {
 				shapeRenderer.render();
 			} else {
 				log.info("Shape data context is null, skipping render stage");
 			}
+			//Thread.sleep(3000);
+			startPipelineProcesses(pipelineContainer, true);
+			//waitForPipelineProcessCompletion(pipelineContainer);
+			
 			
 			product = new OutputProduct<ModelCanvas>(OutputProduct.IMAGE, getModelContext().getModelCanvas());
 		} catch (OutOfMemoryError err) {
@@ -126,11 +137,40 @@ public class Dem2dGenerator extends BasicRenderEngine
 		return product;
 	}
 	
+	protected void startPipelineProcesses(RenderPipelineProcessContainer pipelineContainer, boolean waitForCompletion)
+	{
+		
+		log.info("Starting pipeline container...");
+		pipelineContainer.start();
+		
+		if (waitForCompletion) {
+			waitForPipelineProcessCompletion(pipelineContainer);
+		}
+	}
 	
-	protected ModelRenderer getModelRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
+	protected void waitForPipelineProcessCompletion(RenderPipelineProcessContainer pipelineContainer)
+	{
+		while(true) {
+			
+			if (pipelineContainer.areQueuesEmpty()) {
+				log.info("Pipeline queues emptied. Stopping pipeline threads");
+				pipelineContainer.stop(true);
+				log.info("Pipeline threads exited. Cleaning up model render");
+				break;
+			}
+			
+			Thread.yield();
+			if (isCancelled()) {
+				break;
+			}
+		}
+	}
+	
+	
+	protected ModelRenderer getModelRenderer(ModelContext modelContext, RenderPipeline renderPipeline, List<TileCompletionListener> tileCompletionListeners)
 	{
 		if (modelContext.getModelOptions().getConcurrentRenderPoolSize() == 1) {
-			return new ModelRenderer(getModelContext(), tileCompletionListeners);
+			return new ModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
 		} else {
 			return new ThreadedModelRenderer(getModelContext(), tileCompletionListeners);
 		}

@@ -14,6 +14,8 @@ import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
+import us.wthr.jdem846.shapedata.ShapeDataContext;
+import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
 public class ParallelRenderTestMain extends AbstractTestMain
 {
@@ -43,10 +45,19 @@ public class ParallelRenderTestMain extends AbstractTestMain
 	public void doTesting() throws Exception
 	{
 		List<String> inputDataList = new LinkedList<String>();
+		List<ShapeFileRequest> inputShapeList = new LinkedList<ShapeFileRequest>();
 		
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
-		String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		//String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
+		
+		inputDataList.add("C:/srv/elevation/Nashua NH/Elevation 1-3 Arc Second/Elevation 1-3 Arc Second.flt");
+		inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDArea.shp", "usgs-hydrography"));
+		inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDFlowline.shp", "usgs-hydrography"));
+		inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDWaterbody.shp", "usgs-hydrography"));
+		
+		
+		String saveOutputTo = "C:/srv/elevation/Nashua NH/model-output.png";
 		
 		
 		//inputDataList.add("F:/Presidential Range/02167570.flt");
@@ -61,6 +72,13 @@ public class ParallelRenderTestMain extends AbstractTestMain
 			
 		}
 		
+		ShapeDataContext shapeContext = new ShapeDataContext();
+		for (ShapeFileRequest shapeDataReq : inputShapeList) {
+			log.info("Adding shapefile '" + shapeDataReq.getPath() + "'");
+			shapeContext.addShapeFile(shapeDataReq);
+			
+		}
+		
 		dataProxy.calculateElevationMinMax(true);
 		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
 		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
@@ -71,8 +89,8 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
 		modelOptions.setTileSize(1000);
-		modelOptions.setWidth(dataProxy.getDataColumns());
-		modelOptions.setHeight(dataProxy.getDataRows());
+		modelOptions.setWidth(700);//dataProxy.getDataColumns());
+		modelOptions.setHeight(700);//dataProxy.getDataRows());
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(true);
@@ -83,7 +101,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		//modelOptions.setConcurrentRenderPoolSize(10);
 		//modelOptions.getProjection().setRotateX(30);
 		
-		ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions);
+		ModelContext modelContext = ModelContext.createInstance(dataProxy, shapeContext, lightingContext, modelOptions);
 		
 		
 		

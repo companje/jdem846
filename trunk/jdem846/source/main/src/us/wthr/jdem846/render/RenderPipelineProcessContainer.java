@@ -15,10 +15,12 @@ public class RenderPipelineProcessContainer
 	private TileProcessPipe tileProcessPipe;
 	private CanvasFillRenderPipe canvasFillRenderPipe;
 	private ScanlinePathRenderPipe scanlinePathRenderingPipe;
+	private ShapeFillPipe shapeFillPipe;
 	
 	private Thread tileProcessThread;
 	private Thread canvasFillRenderThread;
 	private Thread scanlinePathRenderingThread;
+	private Thread shapeFillThread;
 	
 	public RenderPipelineProcessContainer(ModelContext modelContext)
 	{
@@ -33,7 +35,7 @@ public class RenderPipelineProcessContainer
 		tileProcessPipe = new TileProcessPipe(pipeline, modelContext);
 		canvasFillRenderPipe = new CanvasFillRenderPipe(pipeline, modelContext);
 		scanlinePathRenderingPipe = new ScanlinePathRenderPipe(pipeline, modelContext);
-		
+		shapeFillPipe = new ShapeFillPipe(pipeline, modelContext);
 	}
 	
 	public void start()
@@ -62,8 +64,24 @@ public class RenderPipelineProcessContainer
 			}
 		};
 		
+		shapeFillThread = new Thread()
+		{
+			public void run()
+			{
+				shapeFillPipe.run();
+			}
+		};
+		
+		log.info("Starting Tile Process Thread...");
 		tileProcessThread.start();
+		
+		log.info("Starting Canvas Fill Render Thread...");
 		canvasFillRenderThread.start();
+		
+		log.info("Starting Shape Fill Thread...");
+		shapeFillThread.start();
+		
+		log.info("Starting Scanline Path Rendering Thread...");
 		scanlinePathRenderingThread.start();
 		
 	}
@@ -73,7 +91,8 @@ public class RenderPipelineProcessContainer
 	{
 		return (!pipeline.hasMoreCanvasRectangeFills()
 				&& !pipeline.hasMoreScanlinePaths()
-				&& !pipeline.hasMoreTileRenderRunnables());
+				&& !pipeline.hasMoreTileRenderRunnables()
+				&& !pipeline.hasMoreShapeFills());
 	}
 	
 	
@@ -82,6 +101,7 @@ public class RenderPipelineProcessContainer
 		tileProcessPipe.pause();
 		canvasFillRenderPipe.pause();
 		scanlinePathRenderingPipe.pause();
+		shapeFillPipe.pause();
 	}
 	
 	public void stop(boolean block)
@@ -89,6 +109,7 @@ public class RenderPipelineProcessContainer
 		tileProcessPipe.cancel();
 		canvasFillRenderPipe.cancel();
 		scanlinePathRenderingPipe.cancel();
+		shapeFillPipe.cancel();
 		
 		if (block) {
 			while(!tileProcessPipe.isCompleted()) {
@@ -97,9 +118,13 @@ public class RenderPipelineProcessContainer
 			while(!canvasFillRenderPipe.isCompleted()) {
 				
 			}
+			while(!shapeFillPipe.isCompleted()) {
+				
+			}
 			while(!scanlinePathRenderingPipe.isCompleted()) {
 				
 			}
+			
 		}
 		
 	}
