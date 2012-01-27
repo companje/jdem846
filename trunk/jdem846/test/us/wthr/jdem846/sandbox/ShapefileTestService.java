@@ -208,12 +208,13 @@ public class ShapefileTestService extends AbstractLockableService
 				}
 				
 				shapeLayer.translate(new PointTranslateHandler() {
-					public void translatePoint(double[] coords)
+					public boolean translatePoint(double[] coords)
 					{
 						double x = rasterDataContext.longitudeToColumn((float) coords[0]);
 						double y = rasterDataContext.latitudeToRow((float) coords[1]);
 						coords[0] = x;
 						coords[1] = y;
+						return true;
 					}
 				}, false);
 				

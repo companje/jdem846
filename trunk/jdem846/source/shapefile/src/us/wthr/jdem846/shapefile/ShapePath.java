@@ -116,17 +116,19 @@ public class ShapePath implements java.awt.Shape // Path2D.Double
 		boolean hasFirst = false;
 		while(!iterator.isDone()) {
 			iterator.currentSegment(coords);
-			translateHandler.translatePoint(coords);
 			
-			double x = coords[0];
-			double y = coords[1];
-			if (!hasFirst) {
-				newPath.moveTo(x, y);
-				hasFirst = true;
-			} else {
-				newPath.lineTo(x, y);
+			
+			boolean include = translateHandler.translatePoint(coords);
+			if (include) {
+				double x = coords[0];
+				double y = coords[1];
+				if (!hasFirst) {
+					newPath.moveTo(x, y);
+					hasFirst = true;
+				} else {
+					newPath.lineTo(x, y);
+				}
 			}
-			
 			iterator.next();
 		}
 		

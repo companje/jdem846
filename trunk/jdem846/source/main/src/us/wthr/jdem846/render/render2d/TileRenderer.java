@@ -536,7 +536,7 @@ public class TileRenderer extends InterruptibleProcess
 		ColorAdjustments.interpolateColor(reliefColor, hillshadeColor, color, lightingMultiple);
 		
 		
-		if (renderPipeline == null) {
+	if (renderPipeline == null) {
 			
 			if (useSimpleCanvasFill) {
 				modelCanvas.fillRectangle(color, 
