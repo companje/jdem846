@@ -2,7 +2,7 @@ package us.wthr.jdem846.render.shapelayer;
 
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.render.Edge;
+import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.shapefile.ShapeConstants;
 import us.wthr.jdem846.shapefile.ShapePath;

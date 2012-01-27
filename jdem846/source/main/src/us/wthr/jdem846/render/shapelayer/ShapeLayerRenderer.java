@@ -140,17 +140,28 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 		log.info("Translating coordinates...");
 		final MapPoint mapPoint = new MapPoint();
 		shapeLayer.translate(new PointTranslateHandler() {
-			public void translatePoint(double[] coords)
+			public boolean translatePoint(double[] coords)
 			{
 				try {
 					double elevation = getElevationAtPoint(coords[1], coords[0]);
 					modelCanvas.getMapProjection().getPoint(coords[1], coords[0], elevation, mapPoint);
 					coords[0] = mapPoint.column;
 					coords[1] = mapPoint.row;
+					
+					if (coords[0] < 0 && coords[1] < 0) {
+						return false;
+					} else if (coords[0] >= modelCanvas.getWidth() && coords[1] >= modelCanvas.getHeight()) {
+						return false;
+					} else {
+						return true;
+					}
+					
 				} catch (MapProjectionException ex) {
 					log.warn("Error projecting coordinates to map: " + ex.getMessage(), ex);
+					return false;
 				} catch (DataSourceException ex) {
 					log.warn("Error retrieving elevation for point: " + ex.getMessage(), ex);
+					return false;
 				}
 			}
 		}, false);
@@ -217,7 +228,12 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 					shapeType == ShapeConstants.TYPE_POLYGONZ);
 			
 			ShapeFill shapeFill = new ShapeFill(color, shapeType, path, lineStroke, fill);
-			
+			try {
+				shapeFill.fill(modelCanvas);
+			} catch (CanvasException ex) {
+				throw new RenderEngineException("Shape fill error: " + shapeType);
+			}
+			/*
 			if (renderPipeline != null) {
 				renderPipeline.submit(shapeFill);
 			} else {
@@ -227,6 +243,7 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 					throw new RenderEngineException("Shape fill error: " + shapeType);
 				}
 			}
+			*/
 			// TODO: Restore this!
 			/*
 			if (shapeType == ShapeConstants.TYPE_POLYGON ||

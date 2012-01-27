@@ -185,6 +185,28 @@ public class ModelCanvas
 		this.canvas.fillScanLine(scanline);
 	}
 	
+	public void fillScanLine(int leftX, int rightX, int y, double z, int[] rgba)
+	{
+		this.canvas.fillScanLine(leftX, rightX, y, z, rgba);
+	}
+	
+	public void fillScanLine(int leftX, int rightX, int y, double z, int rgba)
+	{
+		this.canvas.fillScanLine(leftX, rightX, y, z, rgba);
+	}
+	
+	public void fillScanLine(double leftX, double rightX, double y, double z, int[] rgba)
+	{
+		this.canvas.fillScanLine(leftX, rightX, y, z, rgba);
+	}
+	
+	
+	public void fillScanLine(double leftX, double rightX, double y, double z, int rgba)
+	{
+		this.canvas.fillScanLine(leftX, rightX, y, z, rgba);
+	}
+	
+	
 	public void fillTriangle(int[] color, 
 								double latitude0, double longitude0, double elevation0,
 								double latitude1, double longitude1, double elevation1,
