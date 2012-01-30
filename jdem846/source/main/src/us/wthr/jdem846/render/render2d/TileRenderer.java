@@ -424,6 +424,13 @@ public class TileRenderer extends InterruptibleProcess
 		//pointBuffer[row][column] = point;
 		setModelPoint(latitude, longitude, point);
 		
+		
+		//try {
+		//	renderModelPoint(point);
+		//} catch (CanvasException ex) {
+		//	throw new RenderEngineException("Canvas exception in render process: " + ex.getMessage(), ex);
+		//}
+		
 		this.checkPause();
 		if (isCancelled()) {
 			throw new RenderEngineException("Process Cancelled");

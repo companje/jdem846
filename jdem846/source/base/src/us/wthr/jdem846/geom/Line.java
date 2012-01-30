@@ -1,34 +1,20 @@
 package us.wthr.jdem846.geom;
 
-import java.awt.Shape;
-import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class Polygon<T>
+public class Line<T> 
 {
 	
 	private List<Edge<T>> edges = new ArrayList<Edge<T>>();
 	
 	
-	public Polygon()
+	public Line()
 	{
 		
 	}
-	
-	public void addEdge(Edge<T> edge)
-	{
-		edges.add(edge);
-	}
-	
-	public void addEdge(T x0, T y0, T x1, T y1)
-	{
-		edges.add(new Edge<T>(new Vertex<T>(x0, y0), new Vertex<T>(x1, y1)));
-		
-	}
-	
 	
 	public Edge<T>[] getEdges(boolean sort)
 	{

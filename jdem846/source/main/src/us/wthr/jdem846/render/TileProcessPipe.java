@@ -39,6 +39,7 @@ public class TileProcessPipe extends InterruptibleProcess implements RenderPipe
 				}
 			}
 			
+			Thread.yield();
 			this.checkPause();
 			if (isCancelled()) {
 				doLoop = false;

@@ -48,7 +48,7 @@ public class ShapeFillPipe extends InterruptibleProcess implements RenderPipe
 				}
 			}
 			
-			//Thread.yield();
+			Thread.yield();
 			this.checkPause();
 			if (isCancelled()) {
 				doLoop = false;

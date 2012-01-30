@@ -159,6 +159,13 @@ public class Dem2dGenerator extends BasicRenderEngine
 				break;
 			}
 			
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException ex) {
+				log.warn("Pipeline wait loop delay interrupted: " + ex.getMessage(), ex);
+			}
+			
+			fireTileCompletionListeners();
 			Thread.yield();
 			if (isCancelled()) {
 				break;
@@ -177,6 +184,12 @@ public class Dem2dGenerator extends BasicRenderEngine
 	}
 	
 	
+	protected void fireTileCompletionListeners()
+	{
+		for (TileCompletionListener listener : tileCompletionListeners) {
+			listener.onTileCompleted(getModelContext().getModelCanvas(), 0);
+		}
+	}
 	
 	/*
 	public void applyTiledBackground(DemCanvas canvas, String path) throws RenderEngineException
