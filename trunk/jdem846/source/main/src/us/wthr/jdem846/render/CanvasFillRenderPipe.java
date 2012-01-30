@@ -41,6 +41,7 @@ public class CanvasFillRenderPipe extends InterruptibleProcess implements Render
 				}
 			}
 			
+			Thread.yield();
 			this.checkPause();
 			if (isCancelled()) {
 				doLoop = false;

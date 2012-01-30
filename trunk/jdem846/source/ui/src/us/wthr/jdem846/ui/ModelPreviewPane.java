@@ -190,8 +190,8 @@ public class ModelPreviewPane extends RoundedPanel
 		};
 		
 		
-		//updateShapeLayers(taskStatusListener);
-		//updateRasterLayers(taskStatusListener);
+		updateShapeLayers(taskStatusListener);
+		updateRasterLayers(taskStatusListener);
 	}
 	
 	
@@ -422,7 +422,7 @@ public class ModelPreviewPane extends RoundedPanel
 				
 				path.closePath();
 				
-				//canvas.fillShape(path, i_fillColor);
+				canvas.fillShape(path, i_fillColor);
 				canvas.drawShape(path, i_strokeColor);
 				
 				

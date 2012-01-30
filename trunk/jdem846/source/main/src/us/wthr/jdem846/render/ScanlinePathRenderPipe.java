@@ -35,6 +35,8 @@ public class ScanlinePathRenderPipe extends InterruptibleProcess implements Rend
 				modelCanvas.fillScanLine(scanlinePathInstance);
 			}
 			
+			Thread.yield();
+			
 			this.checkPause();
 			if (isCancelled()) {
 				doLoop = false;
