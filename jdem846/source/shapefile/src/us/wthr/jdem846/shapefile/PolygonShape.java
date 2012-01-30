@@ -19,6 +19,8 @@ package us.wthr.jdem846.shapefile;
 import java.awt.Polygon;
 import java.awt.geom.Path2D;
 
+import us.wthr.jdem846.geom.Edge;
+
 public class PolygonShape extends Shape
 {
 
@@ -92,12 +94,28 @@ public class PolygonShape extends Shape
 		ShapePath path = new ShapePath();
 		Point[] mainPoints = getPart(index);
 		
-		path.moveTo(mainPoints[0].getX(), mainPoints[0].getY());
+		double lastX = mainPoints[0].getX();
+		double lastY = mainPoints[0].getY();
 		
 		for (int i = 1; i < mainPoints.length; i++) {
-			Point point = mainPoints[i];
-			path.lineTo(point.getX(), point.getY());
+			
+			double x = mainPoints[i].getX();
+			double y = mainPoints[i].getY();
+			
+			path.addEdge(new Edge(lastX, lastY, x, y));
+			
+			lastX = x;
+			lastY = y;
 		}
+		
+		//Point[] mainPoints = getPart(index);
+		
+		//path.moveTo(mainPoints[0].getX(), mainPoints[0].getY());
+		
+		//for (int i = 1; i < mainPoints.length; i++) {
+		//	Point point = mainPoints[i];
+		//	path.lineTo(point.getX(), point.getY());
+		//}
 		//path.closePath();
 		
 		if (getFeatureType() != null)

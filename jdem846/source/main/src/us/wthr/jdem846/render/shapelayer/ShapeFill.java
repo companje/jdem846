@@ -46,6 +46,9 @@ public class ShapeFill
 		} else if (shapeType == ShapeConstants.TYPE_POLYLINE ||
 					shapeType == ShapeConstants.TYPE_POLYLINEM ||
 					shapeType == ShapeConstants.TYPE_POLYLINEZ) {
+			lineStroke.getColor(color);
+			color[3] = 255;
+			modelCanvas.drawShape(path, color);
 		} else {
 			throw new RenderEngineException("Unsupported shape type: " + shapeType);
 		}

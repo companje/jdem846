@@ -50,14 +50,13 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
 		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
 		//String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
+		String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/render-test.png";
 		
 		inputDataList.add("C:/srv/elevation/Nashua NH/Elevation 1-3 Arc Second/Elevation 1-3 Arc Second.flt");
 		inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDArea.shp", "usgs-hydrography"));
 		inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDFlowline.shp", "usgs-hydrography"));
 		inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDWaterbody.shp", "usgs-hydrography"));
-		
-		
-		String saveOutputTo = "C:/srv/elevation/Nashua NH/model-output.png";
+		//String saveOutputTo = "C:/srv/elevation/Nashua NH/model-output.png";
 		
 		
 		//inputDataList.add("F:/Presidential Range/02167570.flt");
@@ -100,6 +99,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		//modelOptions.setHillShading(false);
 		//modelOptions.setConcurrentRenderPoolSize(10);
 		//modelOptions.getProjection().setRotateX(30);
+		modelOptions.getProjection().setRotateY(20);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, shapeContext, lightingContext, modelOptions);
 		
@@ -107,7 +107,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		
 		double startTime = System.currentTimeMillis();
 		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
-		OutputProduct<ModelCanvas> product = dem2d.generate();
+		OutputProduct<ModelCanvas> product = dem2d.generate(false, false);
 		double endTime = System.currentTimeMillis();
 		ModelCanvas canvas = product.getProduct();
 		canvas.save(saveOutputTo);

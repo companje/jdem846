@@ -19,6 +19,9 @@ public class AbstractTestMain
 			System.setProperty("us.wthr.jdem846.userSettingsPath", System.getProperty("user.home") + "/.jdem846");
 		}
 		
+		if (System.getProperty("us.wthr.jdem846.testOutputPath") == null) {
+			System.setProperty("us.wthr.jdem846.testOutputPath", System.getProperty("user.dir") + "/test-output");
+		}
 	}
 	
 	

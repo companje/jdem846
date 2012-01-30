@@ -18,5 +18,5 @@ package us.wthr.jdem846.shapefile;
 
 public interface PointTranslateHandler
 {
-	public boolean translatePoint(double[] coords);
+	public void translatePoint(double[] coords);
 }

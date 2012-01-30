@@ -81,19 +81,22 @@ public abstract class Shape
 			return false;
 		
 		
-		ShapeBounds rec = (ShapeBounds) path.getBounds2D();
-		
-		return field.intersects(rec);
+		//ShapeBounds rec = (ShapeBounds) path.getBounds2D();
+		// TODO: Restore isPartiallyWithin
+		return false;//field.intersects(rec);
 		
 	}
 	
 	public boolean contains(double x, double y)
 	{
+		/*
 		ShapePath path = getShapePath();
 		if (path == null)
 			return false;
 		else
 			return path.contains(x, y);
+		*/
+		return false;// TODO: Restore contains
 	}
 
 	public int getRecordNumber()
