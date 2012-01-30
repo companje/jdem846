@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.shapefile;
 
+/*
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -23,21 +24,24 @@ import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+*/
 import java.util.LinkedList;
 import java.util.List;
 
+import us.wthr.jdem846.geom.Edge;
+import us.wthr.jdem846.geom.Geometric;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.modeling.FeatureType;
 
 @SuppressWarnings("serial")
-public class ShapePath implements java.awt.Shape // Path2D.Double
+public class ShapePath extends Geometric //java.awt.Shape // Path2D.Double
 {
 	private static Log log = Logging.getLog(ShapePath.class);
 	
 	private List<ShapePath> subParts = new LinkedList<ShapePath>();
 	private FeatureType featureType;
-	private Path2D.Double path = new Path2D.Double();
+	//private Path2D.Double path = new Path2D.Double();
 	
 	public ShapePath()
 	{
@@ -62,6 +66,7 @@ public class ShapePath implements java.awt.Shape // Path2D.Double
 		return featureType;
 	}
 	
+	/*
 	public boolean intersectsPoint(double x, double y, double w, double h)
 	{
 		if (!path.intersects(x, y, w, h))
@@ -87,7 +92,7 @@ public class ShapePath implements java.awt.Shape // Path2D.Double
 		}
 		return true;
 	}
-	
+	*/
 
 	
 	public List<ShapePath> getSubParts()
@@ -105,35 +110,46 @@ public class ShapePath implements java.awt.Shape // Path2D.Double
 		return subParts.remove(subPart);
 	}
 	
+	
 	public ShapePath translate(PointTranslateHandler translateHandler, boolean closePath)
 	{
 		ShapePath newPath = new ShapePath();
 		
-		PathIterator iterator = getPathIterator(null);
+		//PathIterator iterator = getPathIterator(null);
+		Edge[] edges = getEdges();
 		
-		double[] coords = new double[2];
+		double[] coords = new double[3];
 
-		boolean hasFirst = false;
-		while(!iterator.isDone()) {
-			iterator.currentSegment(coords);
+		for (Edge edge : edges) {
 			
+			coords[0] = edge.p0.x;
+			coords[1] = edge.p0.y;
+			coords[2] = edge.p0.z;
 			
-			boolean include = translateHandler.translatePoint(coords);
-			if (include) {
-				double x = coords[0];
-				double y = coords[1];
-				if (!hasFirst) {
-					newPath.moveTo(x, y);
-					hasFirst = true;
-				} else {
-					newPath.lineTo(x, y);
-				}
-			}
-			iterator.next();
+			translateHandler.translatePoint(coords);
+			
+			double x0 = coords[0];
+			double y0 = coords[1];
+			double z0 = coords[2];
+			
+			coords[0] = edge.p1.x;
+			coords[1] = edge.p1.y;
+			coords[2] = edge.p1.z;
+			
+			translateHandler.translatePoint(coords);
+			
+			double x1 = coords[0];
+			double y1 = coords[1];
+			double z1 = coords[2];
+			
+			Edge newEdge = new Edge(x0, y0, z0, x1, y1, z1);
+			newPath.addEdge(newEdge);
+
+			
 		}
 		
-		if (closePath)
-			newPath.closePath();
+		//if (closePath)
+		//	newPath.closePath();
 	
 		for (ShapePath subPath : subParts) {
 			ShapePath newSubPath = subPath.translate(translateHandler, closePath);
@@ -145,6 +161,25 @@ public class ShapePath implements java.awt.Shape // Path2D.Double
 		return newPath;
 	}
 	
+	public ShapePath getCopy()
+	{
+		ShapePath path = new ShapePath();
+		Edge[] edges = getEdges();
+
+		for (Edge edge : edges) {
+			Edge newEdge = new Edge(edge);
+			path.addEdge(newEdge);
+		}
+		
+		path.featureType = this.featureType;
+		for (ShapePath sub : this.subParts) {
+			path.addSubPart(sub.getCopy());
+		}
+		
+		return path;
+	}
+	
+	/*
 	public void append(ShapePath shapePath, boolean connect)
 	{
 		path.append(shapePath, connect);
@@ -258,5 +293,5 @@ public class ShapePath implements java.awt.Shape // Path2D.Double
 	{
 		return intersectsPoint(x, y, w, h);
 	}
-	
+	*/
 }

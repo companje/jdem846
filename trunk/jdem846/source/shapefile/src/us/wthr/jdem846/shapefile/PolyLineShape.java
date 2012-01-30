@@ -18,6 +18,8 @@ package us.wthr.jdem846.shapefile;
 
 import java.awt.geom.Path2D;
 
+import us.wthr.jdem846.geom.Edge;
+
 public class PolyLineShape extends Shape
 {
 	private Box bounds;
@@ -70,6 +72,8 @@ public class PolyLineShape extends Shape
 	@Override
 	public ShapePath getShapePath()
 	{
+		
+		/*
 		ShapePath path = new ShapePath();
 		Point[] mainPoints = getPart(0);
 		
@@ -80,6 +84,24 @@ public class PolyLineShape extends Shape
 			path.lineTo(point.getX(), point.getY());
 		}
 		//path.closePath();
+		*/
+		
+		ShapePath path = new ShapePath();
+		Point[] mainPoints = getPart(0);
+		
+		double lastX = mainPoints[0].getX();
+		double lastY = mainPoints[0].getY();
+		
+		for (int i = 1; i < mainPoints.length; i++) {
+			
+			double x = mainPoints[i].getX();
+			double y = mainPoints[i].getY();
+			
+			path.addEdge(new Edge(lastX, lastY, x, y));
+			
+			lastX = x;
+			lastY = y;
+		}
 		
 		if (getFeatureType() != null)
 			path.setFeatureType(this.getFeatureType());

@@ -13,10 +13,16 @@ import java.util.Comparator;
 import java.util.List;
 
 import us.wthr.jdem846.color.ColorAdjustments;
+import us.wthr.jdem846.geom.Bounds;
 import us.wthr.jdem846.geom.Edge;
+import us.wthr.jdem846.geom.Geometric;
+import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.render.gfx.NumberUtil;
+import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.render2d.ScanlinePath;
 import us.wthr.jdem846.shapefile.ShapePath;
 
@@ -53,27 +59,22 @@ public class Canvas3d
 
 	}
 	
-	public void draw(Shape shape, int[] rgba)
+	public void draw(Geometric shape, int[] rgba)
 	{
 		draw(shape, rgbaToInt(rgba));
 	}
 	
-	public void draw(Shape shape, int rgba)
+	public void draw(Geometric shape, int rgba)
 	{
-		AffineTransform at = new AffineTransform();
-		PathIterator path = shape.getPathIterator(at);
 		
-		double[] prev = new double[2];
-		double[] next = new double[2];
-		while(!path.isDone()) {
-			path.next();
-			int moveType = path.currentSegment(next);
-			
-			// TODO: ...
+		Edge[] edgeList = shape.getEdges();
+		
+		for (Edge edge : edgeList) {
+			draw(edge, rgba);
 		}
 		
-		
 	}
+	
 	
 	public void drawLine(int x0, int y0, double z0, int x1, int y1, double z1, int[] rgba)
 	{
@@ -82,135 +83,278 @@ public class Canvas3d
 	
 	public void drawLine(int x0, int y0, double z0, int x1, int y1, double z1, int rgba)
 	{
-		// TODO: ...
+		Edge edge = new Edge(x0, y0, z0, x1, y1, z1);
+		draw(edge, rgba);
 	}
+	
+	public void draw(Edge edge, int rgba)
+	{
+
+		double x0 = edge.p0.x;
+		double y0 = edge.p0.y;
+		
+		double x1 = edge.p1.x;
+		double y1 = edge.p1.y;
+		
+		if (edge.p0.compareTo(edge.p1) < 0) {
+			x0 = edge.p1.x;
+			y0 = edge.p1.y;
+			
+			x1 = edge.p0.x;
+			y1 = edge.p0.y;
+			
+		} else {
+			x0 = edge.p0.x;
+			y0 = edge.p0.y;
+			
+			x1 = edge.p1.x;
+			y1 = edge.p1.y;
+		}
+		
+
+		int xMn = (int)MathExt.min(x0, x1);
+		int xMx = (int)MathExt.max(x0, x1);
+		
+		int yMn = (int)MathExt.min(y0, y1);
+		int yMx = (int)MathExt.max(y0, y1);
+
+		int mxX = (int) x1;
+		int mxY = (int) y1;
+
+		int mnX = (int) x0;
+		int mnY = (int) y0;
+		
+		double s = edge.m;//(double)(mnY - mxY) / (double)(mnX - mxX);
+		boolean isValidSlope = NumberUtil.isValidNumber(s);
+		
+		if (Math.abs(x1 - x0) >= Math.abs(y1 - y0)) {
+			// Long
+			for (int x = xMn; x <= xMx; x++) {
+				int y = (int) ((isValidSlope) ? ((s * (x - mxX)) + mxY) + 1 : mxY);
+				double f = (double)(x - xMn) / (double)(xMx - xMn);
+				double z = edge.getInterpolatedZ(f);
+				set(x, y, z, rgba);
+			}
+			
+		} else {
+			// Tall
+			for (int y = yMn; y <= yMx; y++) {
+				int x =  (int) ((isValidSlope) ? (((y - mxY) / s) + mxX) : mxX);
+				double f = ((yMx - yMn) != 0) ? (y - yMn) / (yMx - yMn) : 0;
+				double z = edge.getInterpolatedZ(f);
+				set(x, y+1, z, rgba);
+			}
+			
+		}
+	}
+	
+	
+	public void draw(Shape shape, int[] rgba)
+	{
+		draw(shape, rgbaToInt(rgba));
+	}
+	
+	public void draw(Shape shape, int rgba)
+	{
+		Edge[] edgeArray = getEdges(shape, true);
+		
+		Polygon poly = new Polygon();
+		for (Edge edge : edgeArray) {
+			poly.addEdge(edge);
+		}
+		
+		draw(poly, rgba);
+	}
+	
+	
 	
 	public void fill(Quadrangle3d quad, int[] rgba)
 	{
-		//fill(quad, rgbaToInt(rgba));
-		Rectangle2D bounds = quad.getBounds2D();
-		
-		
-		double minX = bounds.getMinX();
-		double maxX = bounds.getMaxX();
-		double minY = bounds.getMinY();
-		double maxY = bounds.getMaxY();
-		
-		for (double y = minY; y <= maxY; y+=1.0) {
-			for (double x = minX; x <= maxX; x+=1.0) {
-				//if (quad.contains(x, y)) {
-				if (quad.intersects(x, y, 1, 1)) {
-					
-					double xFrac = (double)(x - minX) / (double)(maxX - minX);
-					double yFrac = (double)(y - minY) / (double)(maxY - minY);
-					double z = quad.interpolateZ(xFrac, yFrac);
-					
-					set(x, y, z, rgba);
-				}
-			}
-		}
+		fill(quad, rgbaToInt(rgba));
+
 	}
 	
 	public void fill(Quadrangle3d quad, int rgba)
 	{
-		Rectangle2D bounds = quad.getBounds2D();
 		
-		/*
-		int minX = (int) Math.floor(bounds.getMinX());
-		int maxX = (int) Math.ceil(bounds.getMaxX());
-		int minY = (int) Math.floor(bounds.getMinY());
-		int maxY = (int) Math.ceil(bounds.getMaxY());
-		
-		if (minX < 0)
-			minX = 0;
-		if (maxX >= getWidth())
-			maxX = getWidth() - 1;
-		if (minY < 0)
-			minY = 0;
-		if (minY >= getHeight())
-			minY = getHeight() - 1;
-		
-		if (maxX <= minX)
-			maxX = minX + 1;
-		if (maxY <= minY)
-			maxY = minY + 1;
-		
+		double[] point = new double[3];
 
+		Polygon poly = new Polygon();
 		
-		for (int y = minY; y <= maxY; y++) {
-			for (int x = minX; x <= maxX; x++) {
-				//if (quad.contains(x, y)) {
-				if (quad.intersects(x, y, 1, 1)) {
-					
-					double xFrac = (double)(x - minX) / (double)(maxX - minX);
-					double yFrac = (double)(y - minY) / (double)(maxY - minY);
-					double z = quad.interpolateZ(xFrac, yFrac);
-					
-					set(x, y, z, rgba);
-				}
-			}
-		}
-		*/
+		quad.get(0, point);
+		double x0 = point[0];
+		double y0 = point[1];
+		double z0 = point[2];
+		
+		quad.get(1, point);
+		double x1 = point[0];
+		double y1 = point[1];
+		double z1 = point[2];
+		
+		quad.get(2, point);
+		double x2 = point[0];
+		double y2 = point[1];
+		double z2 = point[2];
+		
+		quad.get(3, point);
+		double x3 = point[0];
+		double y3 = point[1];
+		double z3 = point[2];
+
+		poly.addEdge((int)x0, (int)y0, (int)z0, (int)x1, (int)y1, (int)z1);
+		poly.addEdge((int)x1, (int)y1, (int)z1, (int)x2, (int)y2, (int)z2);
+		poly.addEdge((int)x2, (int)y2, (int)z2, (int)x3, (int)y3, (int)z3);
+
+		fill(poly, rgba);
+	
+	}
+	
+	public void fill(Geometric shape, int[] rgba)
+	{
+		fill(shape,  rgbaToInt(rgba));
 	}
 	
 	public void fill(Shape shape, int[] rgba)
 	{
 		fill(shape, rgbaToInt(rgba));
 		
-		/*
-		Rectangle2D bounds = shape.getBounds2D();
-		
-		double minX = bounds.getMinX();
-		double maxX = bounds.getMaxX();
-		double minY = bounds.getMinY();
-		double maxY = bounds.getMaxY();
-		
-		if (minX < 0)
-			minX = 0;
-		if (maxX >= getWidth())
-			maxX = getWidth() - 1;
-		if (minY < 0)
-			minY = 0;
-		if (minY >= getHeight())
-			minY = getHeight() - 1;
-		
-		if (maxX <= minX)
-			maxX = minX + 1;
-		if (maxY <= minY)
-			maxY = minY + 1;
-		
-		boolean inside = false;
-		double leftX = 0;
-		log.info("Filling polygon min x/y: " + minX + "/" + minY + ", max x/y: " + maxX + "/" + maxY);
-		for (double y = minY; y <= maxY; y++) {
-			for (double x = minX; x <= maxX; x++) {
-				//if (shape.contains(x, y) && !inside) {
-				if (shape.intersects(x, y, 1, 1) && !inside) {
-					leftX = x;
-					inside = true;
-				} else if (inside) {
-					for (double _x = leftX; _x <= x; _x++) {
-						set(_x, y, 10.0, rgba);
-					}
-					inside = false;
-				}
-			}
-		}
-		*/
 	}
 	
-	public void fill(Shape shape, int rgba)
+	
+	
+	public void fill(Geometric shape, int rgba)
 	{
 		int minY = Integer.MAX_VALUE;
 		int maxY = Integer.MIN_VALUE;
 		
-		Edge<Integer>[] edgeArray = getEdges(shape, true);
+		Edge[] edgeArray = shape.getEdges(true);
 		
 		for (int i = 0; i < edgeArray.length; i++) {
-			if (maxY < edgeArray[i].p1.y)
-				maxY = edgeArray[i].p1.y;
+			if (maxY < (int)edgeArray[i].p1.y)
+				maxY = (int)edgeArray[i].p1.y;
 		}
-		minY = edgeArray[0].p0.y;
+		minY = (int)edgeArray[0].p0.y;
+			
+			
+		if (minY >= getHeight() || maxY < 0 || minY == maxY)
+			return;
+			
+		if (minY < 0)
+			minY = 0;
+		if (maxY >= getHeight())
+			maxY = getHeight() - 1;
+		
+		if (maxY == minY) {
+			maxY = minY + 1;
+		}
+		
+		List<Integer> xList = new ArrayList<Integer>();
+		List<Integer> zList = new ArrayList<Integer>();
+		
+		for (int y = minY; y <= maxY; y++) {
+			xList.clear();
+			zList.clear();
+			
+			for (int i = 0; i < edgeArray.length; i++) {
+				
+
+				int curX = (int) edgeArray[i].curX;
+				int curZ = (int) edgeArray[i].curZ;
+				
+				if (y == edgeArray[i].p0.y) 
+                {
+                    if (y == edgeArray[i].p1.y)
+                    {
+                        // the current edge is horizontal, so we add both vertices
+                    	edgeArray[i].deactivate();
+                    	xList.add(curX);
+                    	zList.add(curZ);
+                    } else {
+                    	edgeArray[i].activate();
+                        // we don't insert it in the list cause this vertice is also
+                        // the (bigger) vertice of another edge and already handled
+                    }
+                }
+                
+                // here the scanline intersects the bigger vertice
+                if (y == edgeArray[i].p1.y) {
+                	edgeArray[i].deactivate();
+                	xList.add(curX);
+                	zList.add(curZ);
+                }
+                
+                // here the scanline intersects the edge, so calc intersection point
+                if (y > edgeArray[i].p0.y && y < edgeArray[i].p1.y) {
+                	edgeArray[i].update();
+                	xList.add(curX);
+                	zList.add(curZ);
+                }
+			}
+			
+			if (xList.size() < 2 || xList.size() % 2 != 0) 
+            {
+               //log.warn("This should never happen! (list size: " + list.size() + ", Edge Count: " + edgeArray.length + ")");
+                continue;
+            } 
+			
+			int xSwap;
+			int zSwap;
+            for (int i = 0; i < xList.size(); i++) {
+                for (int j = 0; j < xList.size() - 1; j++) {
+                    if (xList.get(j) > xList.get(j+1)) {
+                    	xSwap = xList.get(j);
+                        xList.set(j, xList.get(j+1));
+                        xList.set(j+1, xSwap);
+                        
+                        zSwap = zList.get(j);
+                        zList.set(j, zList.get(j+1));
+                        zList.set(j+1, zSwap);
+                    }
+                
+                }
+            }
+            
+            
+             
+            // so draw all line segments on current scanline
+            for (int i = 0; i < xList.size(); i+=2)
+            {
+            	if (i+1 < xList.size()) {
+            		int leftX = xList.get(i);
+            		int rightX = xList.get(i+1);
+            		int leftZ = zList.get(i);
+            		int rightZ = zList.get(i+1);
+            		//_fillScanLine(leftX, rightX, y, leftZ, rightZ, rgba);
+            		Edge edge = new Edge(leftX, y-1, leftZ, rightX, y-1, rightZ);
+            		draw(edge, rgba);
+
+            	}
+            }
+		
+		}
+	}
+	
+	public void fill(Shape shape, int rgba)
+	{
+		
+		
+		Edge[] edgeArray = getEdges(shape, true);
+		
+		Polygon poly = new Polygon();
+		for (Edge edge : edgeArray) {
+			poly.addEdge(edge);
+		}
+		
+		fill(poly, rgba);
+		
+		/*
+		int minY = Integer.MAX_VALUE;
+		int maxY = Integer.MIN_VALUE;
+		for (int i = 0; i < edgeArray.length; i++) {
+			if (maxY < edgeArray[i].p1.y)
+				maxY = (int)edgeArray[i].p1.y;
+		}
+		minY = (int)edgeArray[0].p0.y;
 			
 			
 		if (minY >= getHeight() || maxY < 0 || minY == maxY)
@@ -290,6 +434,8 @@ public class Canvas3d
             }
 		
 		}
+		*/
+		
 		//log.info("Completed polygon");
 		//log.info("Getting bounds 3D");
 		/*
@@ -394,22 +540,19 @@ public class Canvas3d
 			
 		}
 	}
+	
 	protected void _fillScanLine(double leftX, double rightX, double y, double z, int rgba)
+	{
+		_fillScanLine(leftX, rightX, y, z, z, rgba);
+	}
+	
+	protected void _fillScanLine(double leftX, double rightX, double y, double leftZ, double rightZ, int rgba)
 	{
 
 		for (double x = leftX; x <= rightX; x++) {
+			double frac = (x - leftX) / (rightX - leftX);
+			double z = interpolate(leftZ, rightZ, frac);
 			set((int)x, (int)y, z, rgba);
-			
-			/*
-			if (x > leftX && x < rightX) {
-				set((int)x, (int)y, z, rgba);
-				
-			} else {
-				set(x, Math.round(y), z, rgba);
-			}
-			*/
-				
-			
 			
 		}
 	}
@@ -501,6 +644,23 @@ public class Canvas3d
 		intToRGBA(c, rgb);
 	}
 	
+	
+	protected double interpolate(double z0, double z1, double frac)
+    {
+    	//double z0 = p0.z;
+		//double z1 = p1.z;
+		
+    	double value = 0;
+		
+		if (!NumberUtil.isValidNumber(frac)) {
+			value = z0;
+		} else {
+			value = (z1 - z0)*frac + z0;
+		}
+
+		return value;
+    }
+	
 	public int getWidth()
 	{
 		return width;
@@ -587,9 +747,9 @@ public class Canvas3d
 	}
 	
 	
-	protected Edge<Integer>[] getEdges(Shape path, boolean sort)
+	protected Edge[] getEdges(Shape path, boolean sort)
 	{
-		List<Edge<Integer>> edgeList = new ArrayList<Edge<Integer>>();
+		List<Edge> edgeList = new ArrayList<Edge>();
 		double[] coords = new double[2];
 		PathIterator iter = path.getPathIterator(null);
 		
@@ -608,9 +768,9 @@ public class Canvas3d
 			} else {
 				
 				if (lastY < y) {
-					edgeList.add(new Edge<Integer>(lastX, lastY, x, y));
+					edgeList.add(new Edge(lastX, lastY, x, y));
 				} else {
-					edgeList.add(new Edge<Integer>(x, y, lastX, lastY));
+					edgeList.add(new Edge(x, y, lastX, lastY));
 				}
 			}
 			
@@ -622,13 +782,13 @@ public class Canvas3d
             i++;
 		} 
         
-		Edge<Integer>[] edgeArray = new Edge[edgeList.size()];
+		Edge[] edgeArray = new Edge[edgeList.size()];
 		edgeList.toArray(edgeArray);
 		
 		
 		if (sort) {
-			Arrays.sort(edgeArray, new Comparator<Edge<Integer>>() {
-				public int compare(Edge<Integer> e0, Edge<Integer> e1)
+			Arrays.sort(edgeArray, new Comparator<Edge>() {
+				public int compare(Edge e0, Edge e1)
 				{
 					return e0.compareTo(e1);
 					/*

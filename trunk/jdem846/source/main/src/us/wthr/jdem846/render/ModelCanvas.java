@@ -27,6 +27,8 @@ import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.geom.Geometric;
+import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
@@ -212,15 +214,7 @@ public class ModelCanvas
 								double latitude1, double longitude1, double elevation1,
 								double latitude2, double longitude2, double elevation2) throws CanvasException
 	{
-		pathBuffer.reset();
-		
-		int alpha = 0xFF;
-		if (color.length >= 4) {
-			alpha = color[3];
-		}
 
-		//Color fillColor = new Color(color[0], color[1], color[2], alpha);
-		
 		double row0, row1, row2;
 		double column0, column1, column2;
 		
@@ -240,15 +234,11 @@ public class ModelCanvas
 			throw new CanvasException("Failed to project coordinates to canvas: " + ex.getMessage(), ex);
 		}
 
-		pathBuffer.moveTo(column0, row0);
-		pathBuffer.lineTo(column1, row1);
-		pathBuffer.lineTo(column2, row2);
-		pathBuffer.closePath();
+		Polygon poly = new Polygon();
+		poly.addEdge((int)row0, (int)column0, (int)row1, (int)column1);
+		poly.addEdge((int)row1, (int)column1, (int)row2, (int)column2);
+		fillShape(poly, color);
 		
-		fillShape(pathBuffer, color);
-		//fillShape(fillColor, null, pathBuffer);
-		//graphics.setColor(fillColor);
-		//graphics.fill(pathBuffer);
 		
 	}
 	
@@ -306,8 +296,6 @@ public class ModelCanvas
 			row1 = mapPoint.row;
 			column1 = mapPoint.column;
 			
-			
-			
 		} catch (MapProjectionException ex) {
 			throw new CanvasException("Failed to project coordinates to canvas: " + ex.getMessage(), ex);
 		}
@@ -328,7 +316,7 @@ public class ModelCanvas
 												double row1, double column1,
 												boolean fill)
 	{
-		//color[3] = 0xFF;
+		
 		int _column0 = (int) column0;
 		int _column1 = (int) Math.ceil(column1);
 		if (_column1 <= _column0)
@@ -342,19 +330,13 @@ public class ModelCanvas
 		if (_row1 - _row0 <= 0 || _column1 - _column0 <= 0) {
 			int i = 0;
 		}
-		
-		
-		
-		//int maxRow = raster.getHeight() - 1;
-		//int maxCol = raster.getWidth() - 1;
-		
+
 		int maxRow = canvas.getHeight() - 1;
 		int maxCol = canvas.getWidth() - 1;
 		
 		for (int row = _row0; row <= _row1 && row < maxRow; row++) {
 			for (int col = _column0; col <= _column1 && col < maxCol; col++) {
 				canvas.set(col, row, 0.0, color);
-				//raster.setPixel(col, row, color);
 			}
 		}
 		
@@ -365,23 +347,16 @@ public class ModelCanvas
 												double row1, double column1,
 												boolean filled)
 	{
-		int alpha = 255;
-		if (color.length >= 4) {
-			alpha = color[3];
-		}
 
-		//Color fillColor = new Color(color[0], color[1], color[2], alpha);
-		rectangle.x = column0;
-		rectangle.y = row0;
-		rectangle.width = column1 - column0;
-		rectangle.height = row1 - row0;
+		Polygon poly = new Polygon();
+		poly.addEdge((int)column0, (int)row0, (int)column0, (int)row1);
+		poly.addEdge((int)column0, (int)row1, (int)column1, (int)row1);
+		poly.addEdge((int)column1, (int)row1, (int)column1, (int)row0);
 
 		if (filled) {
-			fillShape(rectangle, color);
-			//fillShape(fillColor, null, rectangle);
+			fillShape(poly, color);
 		} else {
-			drawShape(rectangle, color);
-			//drawShape(fillColor, null, rectangle);
+			drawShape(poly, color);
 		}
 	}
 	
@@ -425,80 +400,49 @@ public class ModelCanvas
 			double lat2, double lon2, double elev2,
 			double lat3, double lon3, double elev3) throws CanvasException
 	{
-		//pathBuffer.reset();
-		
 
 		double row0, row1, row2, row3;
 		double column0, column1, column2, column3;
 		double z0, z1, z2, z3;
-		//double z = 0;
+		
 		try {
 			mapProjection.getPoint(lat0, lon0, elev0, mapPoint);
 			row0 = mapPoint.row;
 			column0 = mapPoint.column;
 			z0 = mapPoint.z;
-			//z += mapPoint.z;
-			
+
 			
 			mapProjection.getPoint(lat1, lon1, elev1, mapPoint);
 			row1 = mapPoint.row;
 			column1 = mapPoint.column;
-			z1 = mapPoint.z;
-			//z += mapPoint.z;
+			z1 = mapPoint.z;			//z += mapPoint.z;
 
 			mapProjection.getPoint(lat2, lon2, elev2, mapPoint);
 			row2 = mapPoint.row;
 			column2 = mapPoint.column;
 			z2 = mapPoint.z;
-			//z += mapPoint.z;
 
-			
 			mapProjection.getPoint(lat3, lon3, elev3, mapPoint);
 			row3 = mapPoint.row;
 			column3 = mapPoint.column;
 			z3 = mapPoint.z;
-			//z += mapPoint.z;
-			
-			//double midRow = (row0 + row1 + row2 + row3) / 4.0;
-			//double midCol = (column0 + column1 + column2 + column3) / 4.0;
-			
-			//if (mapPoint.z != 0) {
-			//	if (!zBuffer.isVisible((int)Math.round(midCol), (int)Math.round(midRow), (z/4.0))) {
-			//		return;
-			//	}
-			//}
-			
+
 		} catch (MapProjectionException ex) {
 			throw new CanvasException("Failed to project coordates to canvas: " + ex.getMessage(), ex);
 		}
 		
-		//if (row1 < row0 || row2 < row3)
-		//	return;
+		Polygon poly = new Polygon();
+		poly.addEdge((int)column0, (int)row0, (int)z0, (int)column1, (int)row1, (int)z1);
+		poly.addEdge((int)column1, (int)row1, (int)z1, (int)column2, (int)row2, (int)z2);
+		poly.addEdge((int)column2, (int)row2, (int)z2, (int)column3, (int)row3, (int)z3);
+		fillShape(poly, color);
+
 		
-		//pathBuffer.moveTo(column0, row0);
-		//pathBuffer.lineTo(column1, row1);
-		//pathBuffer.lineTo(column2, row2);
-		//pathBuffer.lineTo(column3, row3);
-		//pathBuffer.closePath();
-		
-		quad.set(0, column0, row0, z0);
-		quad.set(1, column1, row1, z1);
-		quad.set(2, column2, row2, z2);
-		quad.set(3, column3, row3, z3);
-		
-		//int alpha = 255;
-		////if (color.length >= 4) {
-		//	alpha = color[3];
-		//}
-		
-		fillShape(quad, color);
-		//Color fillColor = new Color(color[0], color[1], color[2], alpha);
-		//fillShape(fillColor, null, pathBuffer);
-		
-		/*
-		
-		*/
-		
+	}
+	
+	public void fillShape(Geometric poly, int[] color)
+	{
+		canvas.fill(poly, color);
 	}
 	
 	public void fillShape(Quadrangle3d quad, int[] color)
@@ -510,48 +454,18 @@ public class ModelCanvas
 	{
 		canvas.fill(shape, color);
 	}
-	/*
-	public void fillShape(Color color, Stroke stroke, Shape shape)
+
+	
+	public void drawShape(Geometric poly, int[] color)
 	{
-		
-		
-		if (color != null) {
-			graphics.setColor(color);
-		}
-			
-		Stroke origStroke = graphics.getStroke();
-			
-		if (stroke != null) {
-			graphics.setStroke(stroke);
-		}
-			
-		graphics.fill(shape);
-		graphics.setStroke(origStroke);
-		
+		canvas.draw(poly, color);
 	}
-	*/
 	
 	public void drawShape(Shape shape, int[] color)
 	{
 		canvas.draw(shape, color);
 	}
-	/*
-	public void drawShape(Color color, Stroke stroke, Shape shape)
-	{
-		if (color != null) {
-			graphics.setColor(color);
-		}
-			
-		Stroke origStroke = graphics.getStroke();
-			
-		if (stroke != null) {
-			graphics.setStroke(stroke);
-		}
-			
-		graphics.draw(shape);
-		graphics.setStroke(origStroke);
-	}
-	*/
+
 	
 	public void fillCircle(int[] color, double latitude, double longitude, double elevation, double radiusPixels) throws CanvasException
 	{
@@ -583,12 +497,7 @@ public class ModelCanvas
 		
 		int radius = (int) Math.round(radiusPixels);
 		
-		
-		//if (color != null) {
-		//	graphics.setColor(color);
-		//}
-		//graphics.fillOval(x, y, radius, radius);
-		
+		// TODO: Restore fillCircle
 		
 	}
 	
@@ -612,7 +521,7 @@ public class ModelCanvas
 			throw new CanvasException("Failed to project coordinates: " + ex.getMessage(), ex);
 		}
 		
-
+		// TODO: Restore drawText
 		//graphics.setColor(textColor);
 		//graphics.drawString(text, x, y);
 		
@@ -634,26 +543,18 @@ public class ModelCanvas
 			height = image.getHeight(null);
 			
 			mapProjection.getPoint(south, east, 0, mapPoint);
-			//height = (int) Math.ceil(mapPoint.row - y);
-			//width = (int) Math.ceil(mapPoint.column - x);
-			
-			//int y2 = (int) Math.ceil(mapPoint.row);
-			//int x2 = (int) Math.ceil(mapPoint.column);
-			
-			//width = x2 - x;
-			//height = y2 - y;
 			
 		} catch (Exception ex) {
 			throw new CanvasException("Failed to project coordinates: " + ex.getMessage(), ex);
 		}
 		
-		//BufferedImage scaled = ImageUtilities.getScaledInstance((BufferedImage)image, width, height, RenderingHints.VALUE_INTERPOLATION_BILINEAR, true);
 		drawImage(image, x, y, width, height);
 		
 	}
 	
 	public void drawImage(Image image, int x, int y, int width, int height)
 	{
+		// TODO: Restore drawImage
 		//graphics.drawImage(image, x, y, width, height, null);
 	}
 	
@@ -662,9 +563,7 @@ public class ModelCanvas
 		if (x < 0 || x >= canvas.getWidth() || y < 0 || y >= canvas.getHeight())
 			return 0;
 		
-		// TODO: Restore pixel color fetch
 		return canvas.get(x, y);
-		//return image.getRGB(x, y);
 	}
 
 	

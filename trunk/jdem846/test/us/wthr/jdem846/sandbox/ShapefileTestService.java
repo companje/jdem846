@@ -208,13 +208,12 @@ public class ShapefileTestService extends AbstractLockableService
 				}
 				
 				shapeLayer.translate(new PointTranslateHandler() {
-					public boolean translatePoint(double[] coords)
+					public void translatePoint(double[] coords)
 					{
 						double x = rasterDataContext.longitudeToColumn((float) coords[0]);
 						double y = rasterDataContext.latitudeToRow((float) coords[1]);
 						coords[0] = x;
 						coords[1] = y;
-						return true;
 					}
 				}, false);
 				
@@ -293,13 +292,13 @@ public class ShapefileTestService extends AbstractLockableService
 						shapeType == ShapeConstants.TYPE_POLYGONM ||
 						shapeType == ShapeConstants.TYPE_POLYGONZ) {
 					
-					g2d.fill(path);
+					//g2d.fill(path);
 					
 				} else if (shapeType == ShapeConstants.TYPE_POLYLINE ||
 							shapeType == ShapeConstants.TYPE_POLYLINEM ||
 							shapeType == ShapeConstants.TYPE_POLYLINEZ) {
 					
-					g2d.draw(path);
+					//g2d.draw(path);
 
 				}					
 			}	

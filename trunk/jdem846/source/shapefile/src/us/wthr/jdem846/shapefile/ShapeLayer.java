@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.shapefile.modeling.FeatureType;
 
 public class ShapeLayer
@@ -98,7 +99,13 @@ public class ShapeLayer
 		boolean atLeastOnePoint = false;
 		for (ShapePath shapePath : shapePaths) {
 			if (featureType == null || (shapePath.getFeatureType() != null && shapePath.getFeatureType().equals(featureType))) {
-				combinedPath.append(shapePath, false);
+				
+				Edge[] edgeList = shapePath.getEdges();
+				for (Edge edge : edgeList) {
+					combinedPath.addEdge(edge);
+				}
+				
+				//combinedPath.append(shapePath, false);
 				atLeastOnePoint = true;
 			}
 		}
