@@ -54,6 +54,7 @@ import us.wthr.jdem846.tasks.TaskStatusListener;
 import us.wthr.jdem846.ui.panels.RoundedPanel;
 
 @SuppressWarnings("serial")
+@Deprecated
 public class ModelPreviewPane extends RoundedPanel
 {
 	private static Log log = Logging.getLog(ModelPreviewPane.class);

@@ -1,6 +1,5 @@
 package us.wthr.jdem846.geom;
 
-import java.awt.Point;
 
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.render.gfx.NumberUtil;
@@ -106,5 +105,8 @@ public class Edge implements Comparable<Edge>
 
 		return value;
     }
+    
+    
+ 
     
 }

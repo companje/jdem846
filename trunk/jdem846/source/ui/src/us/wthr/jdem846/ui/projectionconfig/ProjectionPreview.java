@@ -136,7 +136,7 @@ public class ProjectionPreview extends Panel
 		//double farDistance = 50;
 		
 		Vector rotateXVector = new Vector(rotateX, 0, 0);
-		Vector rotateYVector = new Vector(0, rotateY, 0);
+		Vector rotateYVector = new Vector(0, -rotateY, 0);
 		Vector rotateZVector = new Vector(0, 0, rotateZ);
 		
 		Vector translate = new Vector(0, 0, translateZ);
