@@ -360,6 +360,9 @@ public class TileRenderer extends InterruptibleProcess
 			throw new RenderEngineException("Data error: " + ex.getMessage(), ex);
 		}
 		
+		if (elevationNW == DemConstants.ELEV_NO_DATA)
+			return null;
+		
 		
 		
 		double elevationSW = elevationNW;
