@@ -105,7 +105,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 	
 	private DataOverviewPanel regionOverviewPanel;
 	private DataOverviewPanel layerOverviewPanel;
-	private ModelPreviewPane previewPane;
+	//private ModelPreviewPane previewPane;
+	private ModelVisualizationPanel visualizationPanel;
 	//private DataInputLayoutPane layoutPane;
 	private ScriptEditorPanel scriptPane;
 	
@@ -151,7 +152,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		
 		
-		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, modelOptions);
+		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, lightingContext, modelOptions);
 		
 		//this.projectModel = projectModel;
 		
@@ -196,7 +197,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 		layerOverviewPanel = new DataOverviewPanel();
 		
 		//layoutPane = new DataInputLayoutPane(modelContext);
-		previewPane = new ModelPreviewPane(modelContext);
+		//previewPane = new ModelPreviewPane(modelContext);
+		visualizationPanel = new ModelVisualizationPanel(modelContext);
 		scriptPane = new ScriptEditorPanel();
 		
 		//statusBar = new StatusBar();
@@ -402,7 +404,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		*/
 		
 		//this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layout"), layoutPane);
-		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"), previewPane);
+		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"), visualizationPanel);
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.script"), scriptPane);
 		
 		setLeftWidth(350);
@@ -882,7 +884,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 	
 	protected void updatePreviewPane(boolean updateRaster, boolean updateShape)
 	{
-		previewPane.update(updateRaster, updateShape);
+		//previewPane.update(updateRaster, updateShape);
+		visualizationPanel.update();
 	}
 	
 	

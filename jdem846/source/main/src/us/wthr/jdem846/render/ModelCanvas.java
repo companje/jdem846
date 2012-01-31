@@ -407,34 +407,34 @@ public class ModelCanvas
 		
 		try {
 			mapProjection.getPoint(lat0, lon0, elev0, mapPoint);
-			row0 = mapPoint.row;
-			column0 = mapPoint.column;
-			z0 = mapPoint.z;
+			row0 = (int) Math.round(mapPoint.row);
+			column0 = (int) Math.round(mapPoint.column);
+			z0 = (int) Math.round(mapPoint.z);
 
 			
 			mapProjection.getPoint(lat1, lon1, elev1, mapPoint);
-			row1 = mapPoint.row;
-			column1 = mapPoint.column;
-			z1 = mapPoint.z;			//z += mapPoint.z;
+			row1 = (int) Math.round(mapPoint.row);
+			column1 = (int) Math.round(mapPoint.column);
+			z1 = (int) Math.round(mapPoint.z);			//z += mapPoint.z;
 
 			mapProjection.getPoint(lat2, lon2, elev2, mapPoint);
-			row2 = mapPoint.row;
-			column2 = mapPoint.column;
-			z2 = mapPoint.z;
+			row2 = (int) Math.round(mapPoint.row);
+			column2 = (int) Math.round(mapPoint.column);
+			z2 = (int) Math.round(mapPoint.z);
 
 			mapProjection.getPoint(lat3, lon3, elev3, mapPoint);
-			row3 = mapPoint.row;
-			column3 = mapPoint.column;
-			z3 = mapPoint.z;
+			row3 = (int) Math.round(mapPoint.row);
+			column3 = (int) Math.round(mapPoint.column);
+			z3 = (int) Math.round(mapPoint.z);
 
 		} catch (MapProjectionException ex) {
 			throw new CanvasException("Failed to project coordates to canvas: " + ex.getMessage(), ex);
 		}
 		
 		Polygon poly = new Polygon();
-		poly.addEdge((int)column0, (int)row0, (int)z0, (int)column1, (int)row1, (int)z1);
-		poly.addEdge((int)column1, (int)row1, (int)z1, (int)column2, (int)row2, (int)z2);
-		poly.addEdge((int)column2, (int)row2, (int)z2, (int)column3, (int)row3, (int)z3);
+		poly.addEdge(column0, row0, z0, column1, row1, z1);
+		poly.addEdge(column1, row1, z1, column2, row2, z2);
+		poly.addEdge(column2, row2, z2, column3, row3, z3);
 		fillShape(poly, color);
 
 		

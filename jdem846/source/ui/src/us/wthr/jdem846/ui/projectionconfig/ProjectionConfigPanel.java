@@ -177,7 +177,7 @@ public class ProjectionConfigPanel extends RoundedPanel
 			if (rotateX > 90)
 				rotateX = 90;
 			
-			rotateY -= (deltaX * 2);
+			rotateY += (deltaX * 2);
 			if (rotateY < -180)
 				rotateY = -180;
 			if (rotateY > 180)

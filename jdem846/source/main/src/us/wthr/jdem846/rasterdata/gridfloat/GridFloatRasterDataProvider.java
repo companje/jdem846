@@ -43,9 +43,9 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 		this.setColumns(header.getColumns());
 		this.setRows(header.getRows());
 		
-		this.setNorth(header.getyLowerLeft() + (header.getCellSize() * header.getRows()));
-		this.setSouth(header.getyLowerLeft());
-		this.setEast(header.getxLowerLeft() + (header.getCellSize() * header.getColumns()));
+		this.setNorth(header.getyLowerLeft() + header.getCellSize() + (header.getCellSize() * (header.getRows() - 2)));
+		this.setSouth(header.getyLowerLeft() + header.getCellSize());
+		this.setEast(header.getxLowerLeft() + (header.getCellSize() * (header.getColumns() - 2)));
 		this.setWest(header.getxLowerLeft());
 		
 		this.setLatitudeResolution(header.getCellSize());
@@ -96,6 +96,15 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 		if (isDisposed()) {
 			throw new DataSourceException("Data raster provider has been disposed.");
 		}
+		
+		if (row >= this.getRows()) {
+			throw new DataSourceException("Specified row exceeds data limits: " + row);
+		}
+		
+		if (column >= this.getColumns()) {
+			throw new DataSourceException("Specified column exceeds data limits: " + column);
+		}
+		
 		
 		double data = dataReader.get(row, column);
 		

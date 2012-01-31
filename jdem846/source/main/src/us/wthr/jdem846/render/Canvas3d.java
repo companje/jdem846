@@ -256,19 +256,13 @@ public class Canvas3d
 			zList.clear();
 			
 			for (int i = 0; i < edgeArray.length; i++) {
-				
 
-				int curX = (int) edgeArray[i].curX;
-				int curZ = (int) edgeArray[i].curZ;
-				
-				if (y == edgeArray[i].p0.y) 
-                {
-                    if (y == edgeArray[i].p1.y)
-                    {
+				if (y == edgeArray[i].p0.y) {
+                    if (y == edgeArray[i].p1.y) {
                         // the current edge is horizontal, so we add both vertices
                     	edgeArray[i].deactivate();
-                    	xList.add(curX);
-                    	zList.add(curZ);
+                    	xList.add((int) edgeArray[i].curX);
+                    	zList.add((int) edgeArray[i].curZ);
                     } else {
                     	edgeArray[i].activate();
                         // we don't insert it in the list cause this vertice is also
@@ -279,22 +273,22 @@ public class Canvas3d
                 // here the scanline intersects the bigger vertice
                 if (y == edgeArray[i].p1.y) {
                 	edgeArray[i].deactivate();
-                	xList.add(curX);
-                	zList.add(curZ);
+                	xList.add((int) edgeArray[i].curX);
+                	zList.add((int) edgeArray[i].curZ);
                 }
                 
                 // here the scanline intersects the edge, so calc intersection point
                 if (y > edgeArray[i].p0.y && y < edgeArray[i].p1.y) {
                 	edgeArray[i].update();
-                	xList.add(curX);
-                	zList.add(curZ);
+                	xList.add((int) edgeArray[i].curX);
+                	zList.add((int) edgeArray[i].curZ);
                 }
 			}
 			
 			if (xList.size() < 2 || xList.size() % 2 != 0) 
             {
-               //log.warn("This should never happen! (list size: " + list.size() + ", Edge Count: " + edgeArray.length + ")");
-                continue;
+               //log.warn("This should never happen! (list size: " + xList.size() + ", Edge Count: " + edgeArray.length + ")");
+                //continue;
             } 
 			
 			int xSwap;
@@ -315,7 +309,7 @@ public class Canvas3d
             }
             
             
-             
+            //int pointsDrawn = 0;
             // so draw all line segments on current scanline
             for (int i = 0; i < xList.size(); i+=2)
             {
@@ -324,13 +318,20 @@ public class Canvas3d
             		int rightX = xList.get(i+1);
             		int leftZ = zList.get(i);
             		int rightZ = zList.get(i+1);
+            		if (rightX == leftX) {
+            			rightX++;
+            		}
             		//_fillScanLine(leftX, rightX, y, leftZ, rightZ, rgba);
             		Edge edge = new Edge(leftX, y-1, leftZ, rightX, y-1, rightZ);
             		draw(edge, rgba);
-
+            		//pointsDrawn += 1;
             	}
             }
-		
+            //if (pointsDrawn == 0) {
+            	//log.info("Points Drawn: " + pointsDrawn + ", "+ xList.size());
+            //}
+            
+             
 		}
 	}
 	
