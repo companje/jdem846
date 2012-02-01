@@ -84,11 +84,11 @@ public class ModelVisualizationPanel extends RoundedPanel
 			}
 			public void componentResized(ComponentEvent arg0)
 			{
-				update();
+				update(false);
 			}
 			public void componentShown(ComponentEvent arg0)
 			{
-				update();
+				update(false);
 			}
 		});
 		
@@ -108,7 +108,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 				lastX = -1;
 				lastY = -1;
 				//useElevationOnDataGrids = true;
-				update();
+				update(false);
 				//fireChangeListeners();
 			}
 		};
@@ -152,19 +152,26 @@ public class ModelVisualizationPanel extends RoundedPanel
 			modelContextWorkingCopy.getModelOptions().getProjection().setRotateY(rotateY);
 			modelContextWorkingCopy.getModelOptions().getProjection().setRotateZ(rotateZ);
 			
-			update();
+			//update(false);
 			//this.setRotation(rotateX, rotateY, rotateZ);
 		}
 		
 		lastX = x;
 		lastY = y;
 		
-		update();
+		update(false);
 	}
 	
 	
-	public void update()
+	public void update(boolean updateFromActual)
 	{
+		
+		if (updateFromActual) {
+			modelContextWorkingCopy.getModelOptions().setProjection(modelContextActual.getModelOptions().getProjection().copy());
+			modelContextWorkingCopy.getModelOptions().setMapProjection(modelContextActual.getModelOptions().getMapProjection());
+		}
+		
+		
 		renderModelVisualizationImage();
 		
 		this.repaint();
