@@ -393,19 +393,19 @@ public class ModelVisualizationPanel extends RoundedPanel
 				}
 				
 				
-				if (Double.isNaN(nwElev)) {
+				if (Double.isNaN(nwElev) || nwElev == DemConstants.ELEV_NO_DATA) {
 					continue;
 				}
 				
-				if (Double.isNaN(neElev)) {
+				if (Double.isNaN(neElev) || neElev == DemConstants.ELEV_NO_DATA) {
 					neElev = nwElev;
 				}
 				
-				if (Double.isNaN(swElev)) {
+				if (Double.isNaN(swElev) || swElev == DemConstants.ELEV_NO_DATA) {
 					swElev = nwElev;
 				}
 				
-				if (Double.isNaN(seElev)) {
+				if (Double.isNaN(seElev) || seElev == DemConstants.ELEV_NO_DATA) {
 					seElev = swElev;
 				}
 				
