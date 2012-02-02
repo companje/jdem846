@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
@@ -23,6 +24,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
+import us.wthr.jdem846.rasterdata.ElevationDataMap;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.render.Canvas3d;
 import us.wthr.jdem846.render.ModelCanvas;
@@ -41,7 +43,13 @@ public class ModelVisualizationPanel extends RoundedPanel
 	int lastX = -1;
 	int lastY = -1;
 	
+	double rotateX;
+	double rotateY;
+	double rotateZ;
+	
 	private boolean useElevationOnDataGrids = true;
+	
+	private ElevationDataMap elevationMap;
 	
 	public ModelVisualizationPanel(ModelContext modelContext)
 	{
@@ -51,27 +59,20 @@ public class ModelVisualizationPanel extends RoundedPanel
 		
 		// Create working copy of model context
 		
+		rotateX = modelContextActual.getModelOptions().getProjection().getRotateX();
+		rotateY = modelContextActual.getModelOptions().getProjection().getRotateY();
+		rotateZ = modelContextActual.getModelOptions().getProjection().getRotateZ();
+		
 		try {
 			modelContextWorkingCopy = modelContextActual.copy();
+			setWorkingCopyOptions();
 		} catch (DataSourceException ex) {
 			log.error("Failed to copy model context: " + ex.getMessage(), ex);
 			return;
 		}
 		
 		//modelContextWorkingCopy.getModelOptions().setBackgroundColor("255;255;255;0");
-		modelContextWorkingCopy.getModelOptions().setBackgroundColor("0;0;0;0");
-		modelContextWorkingCopy.getModelOptions().setColoringType("hypsometric-tint");
-		modelContextWorkingCopy.getModelOptions().setAntialiased(false);
-		modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
-		modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
-		modelContextWorkingCopy.getModelOptions().setElevationMultiple(1.0);
 		
-		if (modelContextWorkingCopy.getRasterDataContext().getDataMinimumValue() >= modelContext.getRasterDataContext().getDataMaximumValue()) {
-			modelContextWorkingCopy.getRasterDataContext().setDataMaximumValue(8850);
-			modelContextWorkingCopy.getRasterDataContext().setDataMinimumValue(-10971);
-		}
-		
-		modelContextWorkingCopy.updateContext();
 		
 		this.addComponentListener(new ComponentListener() {
 			public void componentHidden(ComponentEvent arg0)
@@ -84,11 +85,11 @@ public class ModelVisualizationPanel extends RoundedPanel
 			}
 			public void componentResized(ComponentEvent arg0)
 			{
-				update(false);
+				update(false, false);
 			}
 			public void componentShown(ComponentEvent arg0)
 			{
-				update(false);
+				update(false, false);
 			}
 		});
 		
@@ -108,7 +109,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 				lastX = -1;
 				lastY = -1;
 				//useElevationOnDataGrids = true;
-				update(false);
+				update(false, false);
 				//fireChangeListeners();
 			}
 		};
@@ -119,6 +120,24 @@ public class ModelVisualizationPanel extends RoundedPanel
 		setLayout(new BorderLayout());
 		
 	}
+	
+	protected void setWorkingCopyOptions()
+	{
+		modelContextWorkingCopy.getModelOptions().setBackgroundColor("0;0;0;0");
+		modelContextWorkingCopy.getModelOptions().setColoringType("hypsometric-tint");
+		modelContextWorkingCopy.getModelOptions().setAntialiased(false);
+		modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
+		modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
+		modelContextWorkingCopy.getModelOptions().setElevationMultiple(1.0);
+		
+		if (modelContextWorkingCopy.getRasterDataContext().getDataMinimumValue() >= modelContextWorkingCopy.getRasterDataContext().getDataMaximumValue()) {
+			modelContextWorkingCopy.getRasterDataContext().setDataMaximumValue(8850);
+			modelContextWorkingCopy.getRasterDataContext().setDataMinimumValue(-10971);
+		}
+		
+		modelContextWorkingCopy.updateContext();
+	}
+	
 	
 	protected void onMouseDragged(MouseEvent e)
 	{
@@ -132,25 +151,25 @@ public class ModelVisualizationPanel extends RoundedPanel
 			
 			//log.info("X: " + x + ", Y: " + y + ", deltaX: " + deltaX + ", deltaY: " + deltaY);
 		
-			double rotateX = modelContextWorkingCopy.getModelOptions().getProjection().getRotateX();
-			double rotateY = modelContextWorkingCopy.getModelOptions().getProjection().getRotateY();
-			double rotateZ = modelContextWorkingCopy.getModelOptions().getProjection().getRotateZ();
+			//double _rotateX = modelContextWorkingCopy.getModelOptions().getProjection().getRotateX();
+			//double _rotateY = modelContextWorkingCopy.getModelOptions().getProjection().getRotateY();
+			//double _rotateZ = modelContextWorkingCopy.getModelOptions().getProjection().getRotateZ();
 			
-			rotateX += (deltaY * 2);
+			rotateX += (deltaY * 1);
 			if (rotateX < 0)
 				rotateX = 0;
 			if (rotateX > 90)
 				rotateX = 90;
 			
-			rotateY += (deltaX * 2);
+			rotateY += (deltaX * 1);
 			if (rotateY < -180)
 				rotateY = -180;
 			if (rotateY > 180)
 				rotateY = 180;
 			
-			modelContextWorkingCopy.getModelOptions().getProjection().setRotateX(rotateX);
-			modelContextWorkingCopy.getModelOptions().getProjection().setRotateY(rotateY);
-			modelContextWorkingCopy.getModelOptions().getProjection().setRotateZ(rotateZ);
+			//modelContextWorkingCopy.getModelOptions().getProjection().setRotateX(rotateX);
+		//	modelContextWorkingCopy.getModelOptions().getProjection().setRotateY(rotateY);
+			//modelContextWorkingCopy.getModelOptions().getProjection().setRotateZ(rotateZ);
 			
 			//update(false);
 			//this.setRotation(rotateX, rotateY, rotateZ);
@@ -159,18 +178,40 @@ public class ModelVisualizationPanel extends RoundedPanel
 		lastX = x;
 		lastY = y;
 		
-		update(false);
+		update(false, false);
 	}
 	
 	
-	public void update(boolean updateFromActual)
+	
+	public void update(boolean dataModelChange, boolean updateFromActual)
 	{
 		
-		if (updateFromActual) {
-			modelContextWorkingCopy.getModelOptions().setProjection(modelContextActual.getModelOptions().getProjection().copy());
-			modelContextWorkingCopy.getModelOptions().setMapProjection(modelContextActual.getModelOptions().getMapProjection());
+		//if (updateFromActual) {
+		//	modelContextWorkingCopy.getModelOptions().setProjection(modelContextActual.getModelOptions().getProjection().copy());
+		//	modelContextWorkingCopy.getModelOptions().setMapProjection(modelContextActual.getModelOptions().getMapProjection());
+		//}
+		
+		try {
+			modelContextWorkingCopy = modelContextActual.copy();
+			setWorkingCopyOptions();
+		} catch (DataSourceException ex) {
+			log.error("Failed to copy model context: " + ex.getMessage(), ex);
+			return;
 		}
 		
+		modelContextWorkingCopy.getModelOptions().getProjection().setRotateX(rotateX);
+		modelContextWorkingCopy.getModelOptions().getProjection().setRotateY(rotateY);
+		modelContextWorkingCopy.getModelOptions().getProjection().setRotateZ(rotateZ);
+		
+		
+		if (elevationMap == null || dataModelChange) {
+			elevationMap = ElevationDataMap.create(modelContextWorkingCopy.getNorth(), 
+					modelContextWorkingCopy.getSouth(), 
+					modelContextWorkingCopy.getEast(), 
+					modelContextWorkingCopy.getWest(), 
+					modelContextWorkingCopy.getRasterDataContext().getEffectiveLatitudeResolution(), 
+					modelContextWorkingCopy.getRasterDataContext().getEffectiveLongitudeResolution());
+		}
 		
 		renderModelVisualizationImage();
 		
@@ -302,29 +343,24 @@ public class ModelVisualizationPanel extends RoundedPanel
 		double west = rasterData.getWest();
 		
 		Line line = new Line();
+
+		//double lonStep = ((rasterData.getColumns() - 1) / 12.0) * rasterData.getLongitudeResolution();
+		//double latStep = ((rasterData.getRows()) / 12.0) * rasterData.getLatitudeResolution();
 		
-		/*
-		double datanw = modelContext.getRasterDataContext().getData(north, west);
-		double datane = modelContext.getRasterDataContext().getData(north, east);
-		double datasw = modelContext.getRasterDataContext().getData(lat-latStep, lon);
-		double datase = modelContext.getRasterDataContext().getData(lat-latStep, lon+lonStep);
+		double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / 12;
+		double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / 12;
 		
-		
-		line.addEdge(createEdge(modelContext, north, west, 1.0, south, west, 1.0));
-		line.addEdge(createEdge(modelContext, south, west, 1.0, south, east, 1.0));
-		line.addEdge(createEdge(modelContext, south, east, 1.0, north, east, 1.0));
-		line.addEdge(createEdge(modelContext, north, east, 1.0, north, west, 1.0));
-		*/
-		
-		//double lonStep = (east - west) / 12.0;
-		//double latStep = (north - south) / 12.0;
-		double lonStep = ((rasterData.getColumns() - 1) / 12.0) * rasterData.getLongitudeResolution();
-		double latStep = ((rasterData.getRows() - 1) / 12.0) * rasterData.getLatitudeResolution();
-		
-		//double latitudeResolution = modelContext.getRasterDataContext().
-		
-		for (double lon = west; lon < east; lon+=lonStep) {
-			for (double lat = north; lat > south; lat-=latStep) {
+
+		for (double lon = west; lon < east - rasterData.getLongitudeResolution(); lon+=lonStep) {
+			for (double lat = north; lat > south + rasterData.getLatitudeResolution(); lat-=latStep) {
+				
+				//if (lon >= east) {
+				//	lon -= rasterData.getLongitudeResolution();
+				//}
+				
+				//if (lat <= south) {
+				//	lat += rasterData.getLatitudeResolution();
+				//}
 				
 				double nwLat = lat;
 				double nwLon = lon;
@@ -346,15 +382,16 @@ public class ModelVisualizationPanel extends RoundedPanel
 				
 				if (useElevationOnDataGrids) {
 					try {
-						nwElev = rasterData.getData(nwLat, nwLon);
-						neElev = rasterData.getData(neLat, neLon);
-						swElev = rasterData.getData(swLat, swLon);
-						seElev = rasterData.getData(seLat, seLon);
+						nwElev = getElevation(modelContext, nwLat, nwLon);
+						neElev = getElevation(modelContext, neLat, neLon);
+						swElev = getElevation(modelContext, swLat, swLon);
+						seElev = getElevation(modelContext, seLat, seLon);
 					} catch (Exception ex) {
 						ex.printStackTrace();
 						continue;
 					}
 				}
+				
 				
 				if (Double.isNaN(nwElev)) {
 					continue;
@@ -393,6 +430,19 @@ public class ModelVisualizationPanel extends RoundedPanel
 		
 		canvas.drawShape(line, rgba);
 		
+	}
+	
+	protected double getElevation(ModelContext modelContext, double latitude, double longitude) throws DataSourceException
+	{
+		
+		double elevation = elevationMap.get(latitude, longitude, DemConstants.ELEV_NO_DATA);
+		if (elevation != DemConstants.ELEV_NO_DATA)
+			return elevation;
+	
+		elevation = modelContext.getRasterDataContext().getDataStandardResolution(latitude, longitude, false, false);
+		
+		elevationMap.put(latitude, longitude, elevation);
+		return elevation;
 	}
 	
 	protected void paintBasicGrid(ModelContext modelContext, ModelCanvas canvas) throws Exception

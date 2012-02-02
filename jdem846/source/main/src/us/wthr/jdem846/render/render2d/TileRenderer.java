@@ -31,6 +31,7 @@ import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Spheres;
+import us.wthr.jdem846.rasterdata.ElevationDataMap;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.BasicRenderEngine;
 import us.wthr.jdem846.render.CanvasRectangleFill;
@@ -99,7 +100,9 @@ public class TileRenderer extends InterruptibleProcess
 	private double eastLimit;
 	private double westLimit;
 	
-	private Map<Integer, Double> pointMap;
+	private ElevationDataMap elevationMap;
+	
+	//private Map<Integer, Double> pointMap;
 	
 	//private ModelPoint[][] pointBuffer;
 	//private MatrixBuffer<Double> pointBuffer;
@@ -218,16 +221,18 @@ public class TileRenderer extends InterruptibleProcess
 		
 		
 		log.info("Initializing model point buffer...");
+		elevationMap = ElevationDataMap.create(northLimit, southLimit, eastLimit, westLimit, latitudeResolution, longitudeResolution);
+		
 		//int rows = dataProxy.getDataRows();
 		//int columns = dataProxy.getDataColumns();
-		int rows = (int) Math.ceil((northLimit - southLimit) / latitudeResolution) + 1;
-		int columns = (int) Math.ceil((eastLimit - westLimit) / longitudeResolution) + 1;
+		//int rows = (int) Math.ceil((northLimit - southLimit) / latitudeResolution) + 1;
+		//int columns = (int) Math.ceil((eastLimit - westLimit) / longitudeResolution) + 1;
 		
 		//if (rows <= 0 || columns <= 0) {
 		//	return;
 		//}
 		
-		pointMap = new Hashtable<Integer, Double>(rows * columns, 1.25f);
+		//pointMap = new Hashtable<Integer, Double>(rows * columns, 1.25f);
 		
 		//ModelPoint point = null;
 		//pointBuffer = new ModelPoint[rows][columns];
@@ -322,8 +327,8 @@ public class TileRenderer extends InterruptibleProcess
 		}
 		*/
 		
-		pointMap.clear();
-		pointMap = null;
+		elevationMap.clear();
+		elevationMap = null;
 		//pointBuffer.dispose();
 		//pointBuffer = null;
 		
@@ -358,30 +363,13 @@ public class TileRenderer extends InterruptibleProcess
 
 	protected Double getModelPoint(double latitude, double longitude)
 	{
-		int key = getMapPointKey(latitude, longitude);
-		Double value = pointMap.get(key);
-		if (value != null) {
-			return value;
-		} else {
-			return DemConstants.ELEV_NO_DATA;
-		}
+		return elevationMap.get(latitude, longitude, DemConstants.ELEV_NO_DATA);
 	}
 
-	protected int getMapPointKey(double latitude, double longitude)
-	{
-		int columns = (int) Math.ceil((eastLimit - westLimit) / longitudeResolution) + 1;
-		
-		int row = (int) Math.ceil((northLimit - latitude) / latitudeResolution);
-		int column = (int) Math.ceil((longitude - westLimit) / longitudeResolution);
-		
-		int key = (row * columns) + column;
-		return key;
-	}
-	
+
 	protected void setModelPoint(double latitude, double longitude, double elevation)
 	{
-		int key = getMapPointKey(latitude, longitude);
-		pointMap.put(key, elevation);
+		elevationMap.put(latitude, longitude, elevation);
 
 	}
 
