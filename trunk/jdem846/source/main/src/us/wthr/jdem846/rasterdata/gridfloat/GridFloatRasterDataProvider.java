@@ -47,7 +47,12 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 		this.setSouth(header.getyLowerLeft());
 		this.setEast(header.getxLowerLeft() + (header.getCellSize() * (header.getColumns())));
 		this.setWest(header.getxLowerLeft());
-		
+		////this.setNorth(header.getyLowerLeft() + header.getCellSize() + (header.getCellSize() * (header.getRows() - 2)));
+        //this.setSouth(header.getyLowerLeft() + header.getCellSize());
+        //this.setEast(header.getxLowerLeft() + (header.getCellSize() * (header.getColumns() - 2)));
+        //this.setWest(header.getxLowerLeft());
+
+        
 		this.setLatitudeResolution(header.getCellSize());
 		this.setLongitudeResolution(header.getCellSize());
 		

@@ -65,7 +65,7 @@ public class ModelDimensions2D
 			modelDimensions.outputHeight = (int) Math.round(((double)modelDimensions.outputWidth) * modelDimensions.sizeRatio);
 		}
 		
-		log.info("Output width/height: " + modelDimensions.outputWidth + "/" + modelDimensions.outputHeight);
+		//log.info("Output width/height: " + modelDimensions.outputWidth + "/" + modelDimensions.outputHeight);
 		
 		double xdimRatio = (double)modelDimensions.outputWidth / (double)modelDimensions.dataColumns;
 		modelDimensions.outputLongitudeResolution = dataContext.getLongitudeResolution() / xdimRatio;

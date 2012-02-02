@@ -283,7 +283,7 @@ public class RasterDataContext implements DataContext
 		}
 	}
 	
-	protected double getDataStandardResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
+	public double getDataStandardResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
 	{
 		double value = 0;
 		double dataMatches = 0;
@@ -306,7 +306,7 @@ public class RasterDataContext implements DataContext
 		return (value / dataMatches);
 	}
 	
-	protected double getDataAtEffectiveResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
+	public double getDataAtEffectiveResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
 	{
 		
 		

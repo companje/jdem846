@@ -885,7 +885,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	protected void updatePreviewPane(boolean updateRaster, boolean updateShape)
 	{
 		//previewPane.update(updateRaster, updateShape);
-		visualizationPanel.update(true);
+		visualizationPanel.update(updateRaster, true);
 	}
 	
 	

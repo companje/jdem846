@@ -107,9 +107,9 @@ public class ModelContext
 	
 	public ModelCanvas createModelCanvas()
 	{
-		log.info("****************************");
-		log.info("Creating Model Canvas!!");
-		log.info("****************************");
+		////log.info("****************************");
+		//log.info("Creating Model Canvas!!");
+		//log.info("****************************");
 		return new ModelCanvas(this);
 	}
 	
