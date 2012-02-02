@@ -201,9 +201,27 @@ public class Canvas3d
 		double y3 = point[1];
 		double z3 = point[2];
 
-		poly.addEdge((int)x0, (int)y0, (int)z0, (int)x1, (int)y1, (int)z1);
-		poly.addEdge((int)x1, (int)y1, (int)z1, (int)x2, (int)y2, (int)z2);
-		poly.addEdge((int)x2, (int)y2, (int)z2, (int)x3, (int)y3, (int)z3);
+		x0 = Math.round(x0);
+		y0 = Math.round(y0);
+		z0 = Math.round(z0);
+		
+		x1 = Math.round(x1);
+		y1 = Math.round(y1);
+		z1 = Math.round(z1);
+		
+		x2 = Math.round(x2);
+		y2 = Math.round(y2);
+		z2 = Math.round(z2);
+		
+		x3 = Math.round(x3);
+		y3 = Math.round(y3);
+		z3 = Math.round(z3);
+		
+		
+		
+		poly.addEdge(x0, y0, z0, x1, y1, z1);
+		poly.addEdge(x1, y1, z1, x2, y2, z2);
+		poly.addEdge(x2, y2, z2, x3, y3, z3);
 
 		fill(poly, rgba);
 	

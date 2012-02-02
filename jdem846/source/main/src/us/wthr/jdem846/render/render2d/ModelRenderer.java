@@ -22,6 +22,7 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
@@ -79,11 +80,27 @@ public class ModelRenderer extends InterruptibleProcess
 		double eastLimit = getRasterDataContext().getEast();
 		double westLimit = getRasterDataContext().getWest();
 		
+		log.info("Model North Limit: " + northLimit);
+		log.info("Model South Limit: " + southLimit);
+		log.info("Model East Limit: " + eastLimit);
+		log.info("Model West Limit: " + westLimit);
+		
 		double latitudeResolution = getRasterDataContext().getLatitudeResolution();
 		double longitudeResolution = getRasterDataContext().getLongitudeResolution();
-
+		
+		double effectiveLatitudeResolution = getRasterDataContext().getEffectiveLatitudeResolution();
+		double effectiveLongitudeResolution = getRasterDataContext().getEffectiveLongitudeResolution();
+		double effectiveRows = (northLimit - southLimit - latitudeResolution) / effectiveLatitudeResolution;
+		double effectiveColumns = (eastLimit - westLimit) / effectiveLongitudeResolution;
+		
+		
+		
 		double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
 		double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
+		
+		double effectiveTileRows = tileLatitudeHeight / effectiveLatitudeResolution;
+		double effectiveTileColumns = tileLongitudeWidth / effectiveLongitudeResolution;
+				
 		
 		log.info("Tile Size: " + tileSize);
 		log.info("Tile Latitude Height: " + tileLatitudeHeight);
@@ -129,8 +146,8 @@ public class ModelRenderer extends InterruptibleProcess
 			
 			
 			// Latitude
-			for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
-				double tileSouth = tileNorth - tileLatitudeHeight;
+			for (double tileNorth = northLimit; tileNorth >= southLimit; tileNorth -= tileLatitudeHeight) {
+				double tileSouth = (tileNorth - tileLatitudeHeight);
 				if (tileSouth <= southLimit) {
 					tileSouth = southLimit + latitudeResolution;
 				}
@@ -138,12 +155,41 @@ public class ModelRenderer extends InterruptibleProcess
 				tileColumn = 0;
 				
 				// Longitude
-				for (double tileWest = westLimit; tileWest < eastLimit; tileWest += tileLongitudeWidth) {
+				for (double tileWest = westLimit; tileWest <= eastLimit; tileWest += tileLongitudeWidth) {
 					double tileEast = tileWest + tileLongitudeWidth;
 					
 					if (tileEast >= eastLimit) {
 						tileEast = eastLimit - longitudeResolution;
 					}
+					
+					
+					//double topRow = MathExt.floor(((northLimit - tileNorth ) / (northLimit - southLimit)) * effectiveRows);
+					//double bottomRow = MathExt.ceil(((northLimit - tileSouth ) / (northLimit - southLimit)) * effectiveRows);
+					//double bottomRow = MathExt.ceil(((northLimit - (tileNorth - effectiveLatitudeResolution)) / (northLimit - southLimit)) * effectiveRows);
+					
+					//double leftColumn = MathExt.floor(((tileWest - westLimit) / (eastLimit - westLimit)) * effectiveColumns);
+					//double rightColumn = MathExt.ceil(((tileEast - westLimit) / (eastLimit - westLimit)) * effectiveColumns);
+					
+					//double rightColumn = MathExt.ceil((((tileWest + effectiveLongitudeResolution) - westLimit) / (eastLimit - westLimit)) * effectiveColumns);
+					
+					//int dataWidth = (int) (rightColumn - leftColumn + 1);
+					//int dataHeight = (int) (bottomRow - topRow + 1);
+					
+					//double topLatitude = northLimit - topRow * effectiveLatitudeResolution;
+				//	double bottomLatitude = northLimit - bottomRow * effectiveLatitudeResolution;
+					//double bottomLatitude = topLatitude - (effectiveTileRows * effectiveLatitudeResolution);
+					
+					//double leftLongitude = westLimit + leftColumn * effectiveLongitudeResolution;
+					//double rightLongitude = westLimit + rightColumn * effectiveLongitudeResolution;
+					//double rightLongtiude = leftLongitude + (effectiveTileColumns * effectiveLongitudeResolution);
+					
+					
+					
+					
+					
+				
+					
+					
 					
 					
 					log.info("Tile #" + (tileNumber + 1) + " of " + tileCount + ", Row #" + (tileRow + 1) + ", Column #" + (tileColumn + 1));
@@ -152,8 +198,14 @@ public class ModelRenderer extends InterruptibleProcess
 					log.info("    East: " + tileEast);
 					log.info("    West: " + tileWest);	
 					
+					//log.info("    North: " + topLatitude);
+					//log.info("    South: " + bottomLatitude);
+					//log.info("    East: " + rightLongitude);
+					//log.info("    West: " + leftLongitude);	
+					
 					TileRenderContainer tileRenderContainer = null;
 					tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, tileNorth, tileSouth, tileEast, tileWest, (tileColumn + 1), (tileRow + 1));
+					//tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, topLatitude, bottomLatitude, rightLongitude, leftLongitude, (tileColumn + 1), (tileRow + 1));
 					/*
 					try {
 						ModelContext tileContext = modelContext.copy(true);
@@ -184,7 +236,8 @@ public class ModelRenderer extends InterruptibleProcess
 					
 					if (isCancelled()) {
 						break;
-					}	
+					}
+					//break;
 				}
 				
 				tileRow++;
@@ -194,6 +247,7 @@ public class ModelRenderer extends InterruptibleProcess
 				}
 				
 			}
+			
 			
 		}
 		

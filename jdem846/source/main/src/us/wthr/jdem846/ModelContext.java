@@ -78,6 +78,12 @@ public class ModelContext
 	public void updateContext()
 	{
 		modelDimensions = ModelDimensions2D.getModelDimensions(this);
+		
+		if (this.rasterDataContext != null) {
+			rasterDataContext.setEffectiveLatitudeResolution(modelDimensions.getOutputLatitudeResolution());
+			rasterDataContext.setEffectiveLongitudeResolution(modelDimensions.getOutputLongitudeResolution());
+		}
+		
 		try {
 			
 			mapProjection = MapProjectionProviderFactory.getMapProjection(this);

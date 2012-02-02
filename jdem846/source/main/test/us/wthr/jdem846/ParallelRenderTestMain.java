@@ -47,15 +47,15 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		List<String> inputDataList = new LinkedList<String>();
 		List<ShapeFileRequest> inputShapeList = new LinkedList<ShapeFileRequest>();
 		
-		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
 		//String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
 		String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/render-test.png";
 		
-		inputDataList.add("C:/srv/elevation/Nashua NH/Elevation 1-3 Arc Second/Elevation 1-3 Arc Second.flt");
-		inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDArea.shp", "usgs-hydrography"));
-		inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDFlowline.shp", "usgs-hydrography"));
-		inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDWaterbody.shp", "usgs-hydrography"));
+		//inputDataList.add("C:/srv/elevation/Nashua NH/Elevation 1-3 Arc Second/Elevation 1-3 Arc Second.flt");
+		//inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDArea.shp", "usgs-hydrography"));
+		//inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDFlowline.shp", "usgs-hydrography"));
+		//inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDWaterbody.shp", "usgs-hydrography"));
 		//String saveOutputTo = "C:/srv/elevation/Nashua NH/model-output.png";
 		
 		
@@ -88,12 +88,12 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
 		modelOptions.setTileSize(1000);
-		modelOptions.setWidth(700);//dataProxy.getDataColumns());
-		modelOptions.setHeight(700);//dataProxy.getDataRows());
+		modelOptions.setWidth(dataProxy.getDataColumns() - 1);
+		modelOptions.setHeight(dataProxy.getDataRows() - 1);
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(true);
-		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
+		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR3D);
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;0");
 		//modelOptions.setHillShading(false);

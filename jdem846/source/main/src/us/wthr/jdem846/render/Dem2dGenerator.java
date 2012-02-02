@@ -150,7 +150,14 @@ public class Dem2dGenerator extends BasicRenderEngine
 	
 	protected void waitForPipelineProcessCompletion(RenderPipelineProcessContainer pipelineContainer)
 	{
+
 		while(true) {
+			
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException ex) {
+				log.warn("Pipeline wait loop delay interrupted: " + ex.getMessage(), ex);
+			}
 			
 			if (pipelineContainer.areQueuesEmpty()) {
 				log.info("Pipeline queues emptied. Stopping pipeline threads");
@@ -159,11 +166,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 				break;
 			}
 			
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException ex) {
-				log.warn("Pipeline wait loop delay interrupted: " + ex.getMessage(), ex);
-			}
+			
 			
 			fireTileCompletionListeners();
 			Thread.yield();
