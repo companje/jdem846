@@ -119,7 +119,7 @@ public class CachingGridFloatDataReader
 			return buffer[bufferRow][bufferColumn];
 		} else {
 			if (buffer != null) {
-				return 1000.0;//DemConstants.ELEV_NO_DATA;
+				return DemConstants.ELEV_NO_DATA;
 			} else {
 				return dataReader.get(row, column);
 			}

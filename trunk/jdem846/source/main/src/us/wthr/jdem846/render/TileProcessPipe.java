@@ -40,6 +40,16 @@ public class TileProcessPipe extends InterruptibleProcess implements RenderPipe
 			}
 			
 			Thread.yield();
+			
+			/*
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			*/
+			
 			this.checkPause();
 			if (isCancelled()) {
 				doLoop = false;

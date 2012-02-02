@@ -19,8 +19,8 @@ public class ModelDimensions2D
 	private double sizeRatio;
 	private int outputWidth;
 	private int outputHeight;
-	private double xDim;
-	private double yDim;
+	private double outputLongitudeResolution;
+	private double outputLatitudeResolution;
 	private double numTilesHorizontal;
 	private double numTilesVertical;
 	private long tileOutputWidth;
@@ -68,11 +68,11 @@ public class ModelDimensions2D
 		log.info("Output width/height: " + modelDimensions.outputWidth + "/" + modelDimensions.outputHeight);
 		
 		double xdimRatio = (double)modelDimensions.outputWidth / (double)modelDimensions.dataColumns;
-		modelDimensions.xDim = dataContext.getLongitudeResolution() / xdimRatio;
+		modelDimensions.outputLongitudeResolution = dataContext.getLongitudeResolution() / xdimRatio;
 		//dataPackage.setAvgXDim(xDim);
 
 		double ydimRatio = (double)modelDimensions.outputHeight / (double)modelDimensions.dataRows;
-		modelDimensions.yDim = dataContext.getLatitudeResolution() / ydimRatio;
+		modelDimensions.outputLatitudeResolution = dataContext.getLatitudeResolution() / ydimRatio;
 		//dataPackage.setAvgYDim(yDim);
 		//log.info("X/Y Dimension (cellsize): " + xDim + "/" + yDim);
 		
@@ -123,18 +123,15 @@ public class ModelDimensions2D
 		return outputHeight;
 	}
 
-
-	public double getxDim()
+	public double getOutputLongitudeResolution()
 	{
-		return xDim;
+		return outputLongitudeResolution;
 	}
 
-
-	public double getyDim()
+	public double getOutputLatitudeResolution()
 	{
-		return yDim;
+		return outputLatitudeResolution;
 	}
-
 
 	public double getNumTilesHorizontal()
 	{

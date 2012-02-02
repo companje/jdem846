@@ -8,10 +8,13 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 
 public class RasterDataContext implements DataContext
 {
 	private static Log log = Logging.getLog(RasterDataContext.class);
+	private static final double NOT_SET = DemConstants.ELEV_NO_DATA;
+	
 	
 	private List<RasterData> rasterDataList = new LinkedList<RasterData>();
 	private List<RasterDataRowColumnBox> rasterDataRowColumnBoxes = new LinkedList<RasterDataRowColumnBox>();
@@ -23,6 +26,9 @@ public class RasterDataContext implements DataContext
 	
 	private double latitudeResolution;
 	private double longitudeResolution;
+	
+	private double effectiveLatitudeResolution = NOT_SET;
+	private double effectiveLongitudeResolution = NOT_SET;
 	
 	private double dataMinimumValue = 0;
 	private double dataMaximumValue = 0;
@@ -270,6 +276,15 @@ public class RasterDataContext implements DataContext
 	
 	public double getData(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
 	{
+		if (effectiveLatitudeResolution == NOT_SET && effectiveLongitudeResolution == NOT_SET) {
+			return getDataStandardResolution(latitude, longitude, avgOfAllRasterValues, interpolate);
+		} else {
+			return getDataAtEffectiveResolution(latitude, longitude, avgOfAllRasterValues, interpolate);
+		}
+	}
+	
+	protected double getDataStandardResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
+	{
 		double value = 0;
 		double dataMatches = 0;
 		
@@ -281,7 +296,7 @@ public class RasterDataContext implements DataContext
 					return rasterValue;
 				}
 				
-				if (rasterValue != DemConstants.ELEV_NO_DATA) {
+				if (rasterValue != DemConstants.ELEV_NO_DATA && !Double.isNaN(rasterValue)) {
 					value += rasterValue;
 					dataMatches++;
 				}
@@ -289,6 +304,93 @@ public class RasterDataContext implements DataContext
 		}
 		
 		return (value / dataMatches);
+	}
+	
+	protected double getDataAtEffectiveResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
+	{
+		
+		
+		double width = effectiveLongitudeResolution / longitudeResolution;
+		double height = effectiveLatitudeResolution / latitudeResolution;
+		
+		double northLimit = getNorth();
+		double southLimit = getSouth();
+		double eastLimit = getEast();
+		double westLimit = getWest();
+		
+		
+		double effectiveRows = (north - south) / effectiveLatitudeResolution;
+		double effectiveColumns = (east - west) / effectiveLongitudeResolution;
+		
+		double dataNorth = latitude;
+		double dataSouth = latitude - effectiveLatitudeResolution;
+		
+		double dataWest = longitude;
+		double dataEast = longitude + effectiveLongitudeResolution;
+		
+		//double topRow = MathExt.floor(((north - latitude) / (north - south)) * effectiveRows);
+		//double bottomRow = MathExt.ceil(((north - (latitude - effectiveLatitudeResolution)) / (north - south)) * effectiveRows);
+		
+		//double leftColumn = MathExt.floor(((longitude - west) / (east - west)) * effectiveColumns);
+		//double rightColumn = MathExt.ceil((((longitude + effectiveLongitudeResolution) - west) / (east - west)) * effectiveColumns);
+		
+		double topRow = MathExt.floor(((northLimit - dataNorth ) / (northLimit - southLimit)) * effectiveRows) - 1;
+		double bottomRow = MathExt.ceil(((northLimit - dataSouth ) / (northLimit - southLimit)) * effectiveRows);
+		
+		double leftColumn = MathExt.floor(((dataWest - westLimit) / (eastLimit - westLimit)) * effectiveColumns);
+		double rightColumn = MathExt.ceil(((dataEast - westLimit) / (eastLimit - westLimit)) * effectiveColumns);
+		
+		
+		
+		int dataWidth = (int) (rightColumn - leftColumn )+ 1;
+		int dataHeight = (int) (bottomRow - topRow) + 1;
+		
+		//double topLatitude = north - topRow * effectiveLatitudeResolution;
+		//double bottomLatitude = topLatitude - (dataHeight * effectiveLatitudeResolution);
+		
+		//double topLatitude = northLimit - topRow * effectiveLatitudeResolution;
+		//double bottomLatitude = northLimit - bottomRow * effectiveLatitudeResolution;
+		//double leftLongitude = westLimit + leftColumn * effectiveLongitudeResolution;
+		//double rightLongitude = westLimit + rightColumn * effectiveLongitudeResolution;
+		
+		
+		
+		//double leftLongitude = west + leftColumn * effectiveLongitudeResolution;
+		//double rightLongtiude = leftLongitude + (dataWidth * effectiveLongitudeResolution);
+		
+		
+		
+		
+		//int dataWidth = (int) Math.ceil(width);
+		//int dataHeight = (int) Math.ceil(height);
+		
+		double[][] data = new double[dataHeight][dataWidth];
+		
+		
+		for (int h = 0; h < dataHeight; h++) {
+			for (int w = 0; w < dataWidth; w++) {
+				double getLat = dataNorth - (h * latitudeResolution);
+				double getLon = dataWest + (w * longitudeResolution);
+				double value = getDataStandardResolution(getLat, getLon, avgOfAllRasterValues, interpolate);
+				data[h][w] = value;
+			}
+		}
+		
+		// Not 100% correct, but works for now...
+		double dataSum = 0;
+		double dataPoints = 0;
+		for (int h = 0; h < dataHeight; h++) {
+			for (int w = 0; w < dataWidth; w++) {
+				double value = data[h][w];
+				if (value != DemConstants.ELEV_NO_DATA && !Double.isNaN(value)) {
+					dataSum += value;
+					dataPoints++;
+				}
+			}
+		}
+		
+		double finalValue = dataSum / dataPoints;
+		return finalValue;
 	}
 
 	
@@ -417,6 +519,34 @@ public class RasterDataContext implements DataContext
 		this.dataMaximumValue = dataMaximumValue;
 	}
 	
+	
+	
+	public double getEffectiveLatitudeResolution()
+	{
+		if (effectiveLatitudeResolution != NOT_SET)
+			return effectiveLatitudeResolution;
+		else
+			return getLatitudeResolution();
+	}
+
+	public void setEffectiveLatitudeResolution(double effectiveLatitudeResolution)
+	{
+		this.effectiveLatitudeResolution = effectiveLatitudeResolution;
+	}
+
+	public double getEffectiveLongitudeResolution()
+	{
+		if (effectiveLongitudeResolution != NOT_SET)
+			return effectiveLongitudeResolution;
+		else
+			return getLongitudeResolution();
+	}
+
+	public void setEffectiveLongitudeResolution(double effectiveLongitudeResolution)
+	{
+		this.effectiveLongitudeResolution = effectiveLongitudeResolution;
+	}
+
 	public RasterDataContext copy() throws DataSourceException
 	{
 		if (isDisposed()) {
@@ -430,6 +560,8 @@ public class RasterDataContext implements DataContext
 		clone.west = getWest();
 		clone.latitudeResolution = getLatitudeResolution();
 		clone.longitudeResolution = getLongitudeResolution();
+		clone.effectiveLatitudeResolution = getEffectiveLatitudeResolution();
+		clone.effectiveLongitudeResolution = getEffectiveLongitudeResolution();
 		clone.dataMaximumValue = getDataMaximumValue();
 		clone.dataMinimumValue = getDataMinimumValue();
 		clone.isDisposed = isDisposed(); // Should be false at this point...		

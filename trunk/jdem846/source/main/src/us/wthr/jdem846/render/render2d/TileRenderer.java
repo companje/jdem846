@@ -4,8 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.math.BigDecimal;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -96,8 +98,11 @@ public class TileRenderer extends InterruptibleProcess
 	private double southLimit;
 	private double eastLimit;
 	private double westLimit;
+	
+	private Map<Integer, Double> pointMap;
+	
 	//private ModelPoint[][] pointBuffer;
-	private MatrixBuffer<ModelPoint> pointBuffer;
+	//private MatrixBuffer<Double> pointBuffer;
 	
 	//private ShadowBuffer shadowBuffer;
 	//private RowRenderer rowRenderer;
@@ -135,7 +140,8 @@ public class TileRenderer extends InterruptibleProcess
 		this.renderPipeline = renderPipeline;
 		
 		tiledPrecaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
-		latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
+		//latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
+		
 		
 		
 		gridSize = getModelOptions().getGridSize();
@@ -157,8 +163,11 @@ public class TileRenderer extends InterruptibleProcess
 		rayTraceShadows = getLightingContext().getRayTraceShadows();
 		shadowIntensity = getLightingContext().getShadowIntensity();
 		
-		latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
-		longitudeResolution = modelContext.getRasterDataContext().getLongitudeResolution();
+		latitudeResolution = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
+		longitudeResolution = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
+		
+		//latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
+		//longitudeResolution = modelContext.getRasterDataContext().getLongitudeResolution();
 		latitudeGridSize = gridSize * latitudeResolution;
 		longitudeGridSize = gridSize * longitudeResolution; 
 		
@@ -188,8 +197,8 @@ public class TileRenderer extends InterruptibleProcess
 	public void renderTile(double northLimit, double southLimit, double eastLimit, double westLimit) throws RenderEngineException
 	{
 		this.northLimit = northLimit;
-		this.southLimit = southLimit;
-		this.eastLimit = eastLimit;
+		this.southLimit = southLimit - latitudeResolution;
+		this.eastLimit = eastLimit + longitudeResolution;
 		this.westLimit = westLimit;
 		
 		RasterDataContext dataProxy = modelContext.getRasterDataContext();//.getSubSet(northLimit, southLimit, eastLimit, westLimit);
@@ -211,21 +220,65 @@ public class TileRenderer extends InterruptibleProcess
 		log.info("Initializing model point buffer...");
 		//int rows = dataProxy.getDataRows();
 		//int columns = dataProxy.getDataColumns();
-		int rows = (int) Math.ceil((northLimit - southLimit) / latitudeResolution);
-		int columns = (int) Math.ceil((eastLimit - westLimit) / longitudeResolution);
+		int rows = (int) Math.ceil((northLimit - southLimit) / latitudeResolution) + 1;
+		int columns = (int) Math.ceil((eastLimit - westLimit) / longitudeResolution) + 1;
 		
-		if (rows <= 0 || columns <= 0) {
-			return;
+		//if (rows <= 0 || columns <= 0) {
+		//	return;
+		//}
+		
+		pointMap = new Hashtable<Integer, Double>(rows * columns, 1.25f);
+		
+		//ModelPoint point = null;
+		//pointBuffer = new ModelPoint[rows][columns];
+		//pointBuffer = new MatrixBuffer<Double>(columns, rows);
+		//for (int y = 0; y < rows; y++) {
+		//	for (int x = 0; x < columns; x++) {
+		//		pointBuffer.set(x, y, DemConstants.ELEV_NO_DATA);
+		//	}
+		//}
+		log.info("Processing data points...");
+		
+		/*
+		try {
+			double test = getRasterData(northLimit, westLimit);
+		} catch (DataSourceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+		
+		
+		/*
+		for (double y = 0; y < rows; y++) {
+			for (double x = 0; x < columns; x++) {
+				double latitude = northLimit - (y * latitudeResolution);
+				double longitude = westLimit + (x * longitudeResolution);
+				
+				doElevation(latitude, longitude);
+		
+			}
+		}
+		*/
+		
+		
+		for (double latitude = northLimit; latitude >= southLimit; latitude-=latitudeResolution) {
+			for (double longitude = westLimit; longitude <= eastLimit; longitude+=longitudeResolution) {
+		
+		//for (double latitude = southLimit; latitude <= northLimit + latitudeResolution; latitude+=latitudeResolution) {
+		//	for (double longitude = eastLimit; longitude >= westLimit - longitudeResolution; longitude-=longitudeResolution) {
+				doElevation(latitude, longitude);
+				
+				this.checkPause();
+				if (isCancelled()) {
+					break;
+				}
+			}
+			
 		}
 		
-		ModelPoint point = null;
-		//pointBuffer = new ModelPoint[rows][columns];
-		pointBuffer = new MatrixBuffer<ModelPoint>(columns, rows);
 		
-		log.info("Processing data points...");
-		doElevation(northLimit, westLimit);
-		
-		
+		/*
 		if (rayTraceShadows) {
 			log.info("Calculating shadows...");
 			for (int y = 0; y < rows; y++) {
@@ -241,11 +294,11 @@ public class TileRenderer extends InterruptibleProcess
 				}
 			}
 		}
+		*/
 		
 		
-		
-		log.info("Rendering data points...");
-		
+		//log.info("Rendering data points...");
+		/*
 		for (int y = 0; y < rows; y++) {
 			for (int x = 0; x < columns; x++) {
 				point = getModelPoint(x, y);
@@ -267,10 +320,12 @@ public class TileRenderer extends InterruptibleProcess
 				break;
 			}
 		}
+		*/
 		
-		
-		pointBuffer.dispose();
-		pointBuffer = null;
+		pointMap.clear();
+		pointMap = null;
+		//pointBuffer.dispose();
+		//pointBuffer = null;
 		
 		
 		//LinkedList<RowRenderRunnable> renderQueue = new LinkedList<RowRenderRunnable>();
@@ -301,58 +356,38 @@ public class TileRenderer extends InterruptibleProcess
 	}
 	
 
-	protected ModelPoint getModelPoint(double latitude, double longitude)
+	protected Double getModelPoint(double latitude, double longitude)
 	{
-		int y = (int) Math.floor((northLimit - latitude) / latitudeResolution);
-		int x = (int) Math.floor((longitude - westLimit) / longitudeResolution);
-		
-		return getModelPoint(x, y);
-	}
-	
-	protected ModelPoint getModelPoint(int x, int y)
-	{
-		//if (y < pointBuffer.length && x < pointBuffer[0].length) {
-		//	return pointBuffer[y][x];
-		if (x >= 0 && x < pointBuffer.getWidth() && y >= 0 && y < pointBuffer.getHeight()) {
-			return pointBuffer.get(x, y);
+		int key = getMapPointKey(latitude, longitude);
+		Double value = pointMap.get(key);
+		if (value != null) {
+			return value;
 		} else {
-			return null;
+			return DemConstants.ELEV_NO_DATA;
 		}
 	}
-	
-	protected void setModelPoint(double latitude, double longitude, ModelPoint modelPoint)
+
+	protected int getMapPointKey(double latitude, double longitude)
 	{
-		int y = (int) Math.floor((northLimit - latitude) / latitudeResolution);
-		int x = (int) Math.floor((longitude - westLimit) / longitudeResolution);
-		setModelPoint(x, y, modelPoint);
+		int columns = (int) Math.ceil((eastLimit - westLimit) / longitudeResolution) + 1;
+		
+		int row = (int) Math.ceil((northLimit - latitude) / latitudeResolution);
+		int column = (int) Math.ceil((longitude - westLimit) / longitudeResolution);
+		
+		int key = (row * columns) + column;
+		return key;
 	}
 	
-	protected void setModelPoint(int x, int y, ModelPoint modelPoint)
+	protected void setModelPoint(double latitude, double longitude, double elevation)
 	{
-		//if (y < pointBuffer.length && x < pointBuffer[0].length) {
-		//	pointBuffer[y][x] = modelPoint;
-		if (x >= 0 && x < pointBuffer.getWidth() && y >= 0 && y < pointBuffer.getHeight()) {
-			pointBuffer.set(x, y, modelPoint);
-		} 
+		int key = getMapPointKey(latitude, longitude);
+		pointMap.put(key, elevation);
+
 	}
-	
-	protected ModelPoint doElevation(double latitude, double longitude) throws RenderEngineException
+
+	protected void doElevation(double latitude, double longitude) throws RenderEngineException
 	{
-		//int row = (int) Math.floor((northLimit - latitude) / latitudeResolution);
-		//int column = (int) Math.floor((longitude - westLimit) / longitudeResolution);
-		
-		ModelPoint exists = getModelPoint(latitude, longitude);
-		if (exists != null) {
-			return exists;
-		}
-		
-		//if (pointBuffer[row][column] != null) {
-		//	return pointBuffer[row][column];
-		//}
-		
-		
-		
-		
+
 		double elevationNW = 0.0;
 		try {
 			elevationNW = getRasterData(latitude, longitude);
@@ -361,35 +396,29 @@ public class TileRenderer extends InterruptibleProcess
 		}
 		
 		if (elevationNW == DemConstants.ELEV_NO_DATA)
-			return null;
-		
-		
+			return;
 		
 		double elevationSW = elevationNW;
 		double elevationSE = elevationNW;
 		double elevationNE = elevationNW;
 		
-		ModelPoint point = null;
-		
-		
-		if (latitude - latitudeResolution >= southLimit) {
-			point = doElevation(latitude-latitudeResolution, longitude);
-			if (point != null)
-				elevationSW = point.getElevation();
+		try {
+			if (latitude - latitudeResolution > southLimit) {
+				elevationSW = getRasterData(latitude-latitudeResolution, longitude);
+			}
+			
+			
+			if ((latitude - latitudeResolution > southLimit) && (longitude+longitudeResolution < eastLimit)) {
+				elevationSE = getRasterData(latitude-latitudeResolution, longitude+longitudeResolution);
+			}
+			
+			if ((longitude+longitudeResolution < eastLimit)) {
+				elevationNE = getRasterData(latitude, longitude+longitudeResolution);
+			}
+			
+		} catch (DataSourceException ex) {
+			throw new RenderEngineException("Error retrieving data: " + ex.getMessage(), ex);
 		}
-		
-		
-		if ((latitude - latitudeResolution >= southLimit) && (longitude+longitudeResolution <= eastLimit)) {
-			point = doElevation(latitude-latitudeResolution, longitude+longitudeResolution);
-			elevationSE = point.getElevation();
-		}
-		
-		if ((longitude+longitudeResolution <= eastLimit)) {
-			point = doElevation(latitude, longitude+longitudeResolution);
-			if (point != null)
-				elevationNE = point.getElevation();
-		}
-		
 		
 		if (elevationSW == DemConstants.ELEV_NO_DATA) 
 			elevationSW = elevationNW;
@@ -399,48 +428,80 @@ public class TileRenderer extends InterruptibleProcess
 		
 		if (elevationNE == DemConstants.ELEV_NO_DATA)
 			elevationNE = elevationNW;
-		
-		//if (elevationNW == DemConstants.ELEV_NO_DATA) {
-		//	return null;
-		//}
+
 		
 		double pointElevation = (elevationNW + elevationSW +  elevationNE) / 3.0;
+
+		
 		calculateNormal(elevationNW, elevationSW, elevationSE, elevationNE, normal);
 		modelColoring.getGradientColor(pointElevation, elevationMin, elevationMax, reliefColor);
 		onGetPointColor(latitude, longitude, pointElevation, elevationMin, elevationMax, reliefColor);
-		/*
-		try {
-			shadowBuffer.setRectangle(latitude, longitude, elevationNW,
-					latitude-latitudeResolution, longitude, elevationSW,
-					latitude-latitudeResolution, longitude+longitudeResolution, elevationSE,
-					latitude, longitude+longitudeResolution, elevationNE);
-		} catch (RayTracingException ex) {
-			throw new RenderEngineException("Shadow buffer error: " + ex.getMessage(), ex);
-		}
-		*/
+
 		double dot = calculateDotProduct();
-		
-		
-		
-		
-		point = new ModelPoint(latitude, longitude, elevationNW, reliefColor, dot);
-		//pointBuffer[row][column] = point;
-		setModelPoint(latitude, longitude, point);
-		
-		
-		//try {
-		//	renderModelPoint(point);
-		//} catch (CanvasException ex) {
-		//	throw new RenderEngineException("Canvas exception in render process: " + ex.getMessage(), ex);
-		//}
-		
-		this.checkPause();
-		if (isCancelled()) {
-			throw new RenderEngineException("Process Cancelled");
-			//break;
+
+		if (rayTraceShadows) {
+			try {
+				dot = calculateRayTracedDotProduct(latitude, longitude, pointElevation, dot);
+			} catch (RayTracingException ex) {
+				throw new RenderEngineException("Shadow buffer error: " + ex.getMessage(), ex);
+			}
 		}
 		
-		return point;
+		if (lightingEnabled) {
+
+			hillshadeColor[0] = reliefColor[0];
+			hillshadeColor[1] = reliefColor[1];
+			hillshadeColor[2] = reliefColor[2];
+			hillshadeColor[3] = reliefColor[3];
+			
+			ColorAdjustments.adjustBrightness(hillshadeColor, dot);
+			ColorAdjustments.interpolateColor(reliefColor, hillshadeColor, color, lightingMultiple);
+		} else {
+			color[0] = reliefColor[0];
+			color[1] = reliefColor[1];
+			color[2] = reliefColor[2];
+			color[3] = reliefColor[3];
+
+		}
+		
+		try {
+			if (renderPipeline == null) {
+				
+				if (useSimpleCanvasFill) {
+					modelCanvas.fillRectangle(color, 
+								latitude, longitude, 
+								latitudeResolution, longitudeResolution,
+								elevationNW);
+				} else {
+					modelCanvas.fillRectangle(color,
+							latitude, longitude, elevationNW,
+							latitude-latitudeResolution, longitude, elevationSW,
+							latitude-latitudeResolution, longitude+longitudeResolution, elevationSE,
+							latitude, longitude+longitudeResolution, elevationNE);
+				}
+				
+			} else {
+				
+				if (useSimpleCanvasFill) {
+					renderPipeline.submit(new CanvasRectangleFill(color, latitude, longitude, 
+								latitudeResolution, longitudeResolution,
+								elevationNW));
+					
+				} else {
+					renderPipeline.submit(new CanvasRectangleFill(color, 
+							latitude, longitude, elevationNW,
+							latitude-latitudeResolution, longitude, elevationSW,
+							latitude-latitudeResolution, longitude+longitudeResolution, elevationSE,
+							latitude, longitude+longitudeResolution, elevationNE));
+				}
+				
+			}
+		} catch (CanvasException ex) {
+			throw new RenderEngineException("Canvas exception in render process: " + ex.getMessage(), ex);
+		}
+		
+		
+
 	}
 	
 	
@@ -483,7 +544,7 @@ public class TileRenderer extends InterruptibleProcess
 		perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
 	}
 	
-	
+	/*
 	protected void renderModelPoint(ModelPoint point) throws CanvasException, RenderEngineException
 	{
 		if (point.getElevation() == DemConstants.ELEV_NO_DATA) {
@@ -519,34 +580,20 @@ public class TileRenderer extends InterruptibleProcess
 		if (other != null)
 			ne = other.getElevation();
 		
-		/*
-		try {
-			
-			double shaded = shadowBuffer.isShaded(latitude, longitude, nw,
-					latitude-latitudeResolution, longitude, sw,
-					latitude-latitudeResolution, longitude+longitudeResolution, se,
-					latitude, longitude+longitudeResolution, ne);
-			
-			if (shaded == 1.0) {
-			
-				dot = dot - (2 * (shaded * shadowIntensity));
-				if (dot < -1.0) {
-					dot = -1.0;
-				}
-			}
-		} catch (RayTracingException ex) {
-			throw new RenderEngineException("Error determining shadow buffer state: " + ex.getMessage(), ex);
+
+		
+		
+		if (lightingEnabled) {
+			point.getColor(reliefColor);
+			point.getColor(hillshadeColor);
+		
+			ColorAdjustments.adjustBrightness(hillshadeColor, dot);
+			ColorAdjustments.interpolateColor(reliefColor, hillshadeColor, color, lightingMultiple);
+		} else {
+			point.getColor(color);
 		}
-		*/
 		
-		point.getColor(reliefColor);
-		point.getColor(hillshadeColor);
-		
-		ColorAdjustments.adjustBrightness(hillshadeColor, dot);
-		ColorAdjustments.interpolateColor(reliefColor, hillshadeColor, color, lightingMultiple);
-		
-		
-	if (renderPipeline == null) {
+		if (renderPipeline == null) {
 			
 			if (useSimpleCanvasFill) {
 				modelCanvas.fillRectangle(color, 
@@ -580,7 +627,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		
 	}
-	
+	*/
 	
 	protected void setUpLightSource()
 	{
@@ -632,12 +679,17 @@ public class TileRenderer extends InterruptibleProcess
 	protected double getRasterData(double latitude, double longitude) throws DataSourceException, RenderEngineException
 	{
 		
-		ModelPoint modelPoint = getModelPoint(latitude, longitude);
-		if (modelPoint != null) {
-			return modelPoint.getElevation();
-		}
+		//ModelPoint modelPoint = getModelPoint(latitude, longitude);
+		//if (modelPoint != null) {
+		//	return modelPoint.getElevation();
+		//}
 		
-		double elevation = 0;
+		double elevation = getModelPoint(latitude, longitude);
+		if (elevation != DemConstants.ELEV_NO_DATA) {
+			return elevation;
+		} else {
+			elevation = 0;
+		}
 		
 		
 		try {
@@ -673,6 +725,7 @@ public class TileRenderer extends InterruptibleProcess
 		}
 		
 		
+		setModelPoint(latitude, longitude, elevation);
 		
 		return elevation;
 	}
