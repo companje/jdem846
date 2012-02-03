@@ -68,7 +68,7 @@ public class ModelRenderer extends InterruptibleProcess
 		int tileNumber = 0;
 		int tileRow = 0;
 		int tileColumn = 0;
-		int tileSize = modelDimensions.getTileSize();
+		int tileSize = modelDimensions.getEffectiveTileSize();
 		long tileCount = modelDimensions.getTileCount();
 		
 		

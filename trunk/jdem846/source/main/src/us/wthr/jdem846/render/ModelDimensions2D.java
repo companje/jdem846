@@ -14,6 +14,7 @@ public class ModelDimensions2D
 	private static Log log = Logging.getLog(ModelDimensions2D.class);
 	
 	private int tileSize;
+	private int effectiveTileSize;
 	private int dataRows;
 	private int dataColumns;
 	private double sizeRatio;
@@ -76,6 +77,8 @@ public class ModelDimensions2D
 		//dataPackage.setAvgYDim(yDim);
 		//log.info("X/Y Dimension (cellsize): " + xDim + "/" + yDim);
 		
+		
+		modelDimensions.effectiveTileSize = (int) Math.ceil(((double) modelDimensions.tileSize) * modelDimensions.sizeRatio);
 
 		modelDimensions.numTilesHorizontal = ((double)modelDimensions.dataColumns) / ((double)modelDimensions.tileSize);
 		modelDimensions.numTilesVertical = ((double)modelDimensions.dataRows) / ((double)modelDimensions.tileSize);
@@ -92,7 +95,11 @@ public class ModelDimensions2D
 	{
 		return tileSize;
 	}
-
+	
+	public int getEffectiveTileSize()
+	{
+		return effectiveTileSize;
+	}
 
 	public int getDataRows()
 	{
