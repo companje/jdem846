@@ -627,7 +627,7 @@ public class TileRenderer extends InterruptibleProcess
 		if (elevation != DemConstants.ELEV_NO_DATA) {
 			return elevation;
 		} else {
-			elevation = 0;
+			elevation = DemConstants.ELEV_NO_DATA;
 		}
 		
 		

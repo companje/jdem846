@@ -140,8 +140,8 @@ public class LightingPreviewPanel extends Panel
 			
 			
 			modelOptions.setBackgroundColor(I18N.get("us.wthr.jdem846.color.transparent"));
-			modelOptions.setWidth(rasterData.getColumns());
-			modelOptions.setHeight(rasterData.getRows());
+			modelOptions.setWidth(300);//rasterData.getColumns());
+			modelOptions.setHeight(300);//rasterData.getRows());
 			lightingContext.setRelativeLightIntensity(0.75);
 			lightingContext.setRelativeDarkIntensity(1.0);
 			lightingContext.setRayTraceShadows(false);
@@ -152,6 +152,7 @@ public class LightingPreviewPanel extends Panel
 			modelOptions.setAntialiased(false);
 			modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
 			modelOptions.setConcurrentRenderPoolSize(1);
+			modelOptions.setUsePipelineRender(false);
 			
 			rasterDataContext = new RasterDataContext();
 			rasterDataContext.addRasterData(rasterData);
@@ -222,6 +223,7 @@ public class LightingPreviewPanel extends Panel
 			try {
 				log.info("Updating lighting preview model image");
 				log.info("****************************************");
+				modelContext.resetModelCanvas();
 				OutputProduct<ModelCanvas> product = dem2d.generate();
 				prerendered = (BufferedImage) product.getProduct().getImage();
 				
