@@ -55,12 +55,9 @@ public class ModelRenderer extends InterruptibleProcess
 	{
 		this.modelContext = modelContext;
 		this.tileCompletionListeners = tileCompletionListeners;
-		
-		if (renderPipeline != null) {
-			this.renderPipeline = renderPipeline;
-		} else {
-			this.renderPipeline = new RenderPipeline(modelContext);
-		}
+
+		this.renderPipeline = renderPipeline;
+
 	}
 	
 	public ModelCanvas renderModel() throws RenderEngineException
@@ -219,8 +216,11 @@ public class ModelRenderer extends InterruptibleProcess
 						throw new RenderEngineException("Failed to create tile render runnable: " + ex.getMessage(), ex);
 					}
 					*/
-					
-					renderPipeline.submit(tileRenderContainer);
+					if (renderPipeline != null) {
+						renderPipeline.submit(tileRenderContainer);
+					} else {
+						tileRenderContainer.render(null);
+					}
 					//tileRenderer.renderTile(tileNorth, tileSouth, tileEast, tileWest);
 
 					//tileRenderRunnable.run();

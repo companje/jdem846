@@ -460,7 +460,17 @@ public class ModelOptions extends MappedOptions
 		setOption(ModelOptionNamesEnum.CONCURRENT_RENDER_POOL_SIZE, concurrentRenderPoolSize);
 	}
 	
-
+	public boolean usePipelineRender()
+	{
+		return getBooleanOption(ModelOptionNamesEnum.PIPELINE_RENDER);
+	}
+	
+	public void setUsePipelineRender(boolean usePipelineRender)
+	{
+		setOption(ModelOptionNamesEnum.PIPELINE_RENDER, usePipelineRender);
+	}
+	
+	
 	public String getWriteTo()
 	{
 		return writeTo;
