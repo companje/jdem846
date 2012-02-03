@@ -85,22 +85,22 @@ public class ModelRenderer extends InterruptibleProcess
 		log.info("Model East Limit: " + eastLimit);
 		log.info("Model West Limit: " + westLimit);
 		
-		double latitudeResolution = getRasterDataContext().getLatitudeResolution();
-		double longitudeResolution = getRasterDataContext().getLongitudeResolution();
+		double latitudeResolution = getRasterDataContext().getEffectiveLatitudeResolution();
+		double longitudeResolution = getRasterDataContext().getEffectiveLongitudeResolution();
 		
-		double effectiveLatitudeResolution = getRasterDataContext().getEffectiveLatitudeResolution();
-		double effectiveLongitudeResolution = getRasterDataContext().getEffectiveLongitudeResolution();
-		double effectiveRows = (northLimit - southLimit - latitudeResolution) / effectiveLatitudeResolution;
-		double effectiveColumns = (eastLimit - westLimit) / effectiveLongitudeResolution;
+		//double effectiveLatitudeResolution = getRasterDataContext().getEffectiveLatitudeResolution();
+		//double effectiveLongitudeResolution = getRasterDataContext().getEffectiveLongitudeResolution();
+		//double effectiveRows = (northLimit - southLimit - latitudeResolution) / effectiveLatitudeResolution;
+		//double effectiveColumns = (eastLimit - westLimit) / effectiveLongitudeResolution;
 		
 		
 		
 		double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
 		double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
 		
-		double effectiveTileRows = tileLatitudeHeight / effectiveLatitudeResolution;
-		double effectiveTileColumns = tileLongitudeWidth / effectiveLongitudeResolution;
-				
+		//double effectiveTileRows = tileLatitudeHeight / effectiveLatitudeResolution;
+		//double effectiveTileColumns = tileLongitudeWidth / effectiveLongitudeResolution;
+		//		
 		
 		log.info("Tile Size: " + tileSize);
 		log.info("Tile Latitude Height: " + tileLatitudeHeight);
