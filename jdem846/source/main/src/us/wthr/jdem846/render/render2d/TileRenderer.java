@@ -56,7 +56,7 @@ public class TileRenderer extends InterruptibleProcess
 	private Perspectives perspectives = new Perspectives();
 	private RenderPipeline renderPipeline;
 	
-	//protected RasterDataContext dataRasterContextSubset;
+	protected RasterDataContext dataRasterContextSubset;
 
 	private boolean tiledPrecaching;
 	private double latitudeResolution;
@@ -204,15 +204,20 @@ public class TileRenderer extends InterruptibleProcess
 		this.eastLimit = eastLimit + longitudeResolution;
 		this.westLimit = westLimit;
 		
-		RasterDataContext dataProxy = modelContext.getRasterDataContext();//.getSubSet(northLimit, southLimit, eastLimit, westLimit);
+		
+		try {
+			loadRasterDataSubset(northLimit, southLimit, eastLimit, westLimit);
+		} catch (DataSourceException ex) {
+			throw new RenderEngineException("Error loading data subset: " + ex.getMessage(), ex);
+		}
+		
+		//RasterDataContext dataProxy = modelContext.getRasterDataContext();//.getSubSet(northLimit, southLimit, eastLimit, westLimit);
 
 		// TODO: If Buffered
-		if (tiledPrecaching) {
-			try {
-				dataProxy.fillBuffers(northLimit, southLimit, eastLimit, westLimit);
-			} catch (Exception ex) {
-				throw new RenderEngineException("Failed to buffer data: " + ex.getMessage(), ex);
-			}
+		try {
+			loadDataBuffers(northLimit, southLimit, eastLimit, westLimit);
+		} catch (RenderEngineException ex) {
+			throw new RenderEngineException("Error loading data buffer: " + ex.getMessage(), ex);
 		}
 
 		onTileBefore(modelCanvas);
@@ -348,7 +353,8 @@ public class TileRenderer extends InterruptibleProcess
 		
 		
 		onTileAfter(modelCanvas);
-		
+		unloadDataBuffers();
+		/*
 		if (tiledPrecaching) {
 			try {
 				dataProxy.clearBuffers();
@@ -356,7 +362,7 @@ public class TileRenderer extends InterruptibleProcess
 				throw new RenderEngineException("Failed to clear buffer data: " + ex.getMessage(), ex);
 			}
 		}
-		
+		*/
 
 	}
 	
@@ -641,7 +647,37 @@ public class TileRenderer extends InterruptibleProcess
 	
 	
 	
+	protected void loadRasterDataSubset(double north, double south, double east, double west) throws DataSourceException
+	{
+		dataRasterContextSubset = getRasterDataContext().getSubSet(north, south, east, west);
+	}
 	
+	protected void loadDataBuffers(double north, double south, double east, double west) throws RenderEngineException
+	{
+		
+		RasterDataContext dataContext = (dataRasterContextSubset != null) ? dataRasterContextSubset : getRasterDataContext();
+		
+		if (tiledPrecaching) {
+			try {
+				dataContext.fillBuffers(north, south, east, west);
+			} catch (Exception ex) {
+				throw new RenderEngineException("Failed to buffer data: " + ex.getMessage(), ex);
+			}
+		}
+	}
+	
+	
+	protected void unloadDataBuffers() throws RenderEngineException
+	{
+		RasterDataContext dataContext = (dataRasterContextSubset != null) ? dataRasterContextSubset : getRasterDataContext();
+		if (tiledPrecaching) {
+			try {
+				dataContext.clearBuffers();
+			} catch (Exception ex) {
+				throw new RenderEngineException("Failed to clear buffer data: " + ex.getMessage(), ex);
+			}
+		}
+	}
 	
 	
 
@@ -649,11 +685,11 @@ public class TileRenderer extends InterruptibleProcess
 	{
 		double data = DemConstants.ELEV_NO_DATA;
 		
-		//if (dataRasterContextSubset != null) {
-		//	data = dataRasterContextSubset.getData(latitude, longitude, false, true);
-		//} else {
-			data = getRasterDataContext().getData(latitude, longitude, false, true);
-		//}
+		if (dataRasterContextSubset != null) {
+			data = dataRasterContextSubset.getData(latitude, longitude, true, true);
+		} else {
+			data = getRasterDataContext().getData(latitude, longitude, true, true);
+		}
 		
 		return data;
 	}
