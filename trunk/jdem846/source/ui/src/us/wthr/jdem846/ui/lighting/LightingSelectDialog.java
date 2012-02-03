@@ -116,6 +116,6 @@ public class LightingSelectDialog extends Dialog
 		if (okClicked) {
 			listener.onLightPositionSelected(lightPositionConfigPanel.getSolarAzimuth(), lightPositionConfigPanel.getSolarElevation());
 		}
-		disposeData();
+		//disposeData();
 	}
 }
