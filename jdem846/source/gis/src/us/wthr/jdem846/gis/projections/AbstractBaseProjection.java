@@ -137,6 +137,7 @@ public abstract class AbstractBaseProjection implements MapProjection
 	public double latitudeToRow(double latitude)
 	{
 		// TODO: This method is not very accurate... Fix it
+		
 		double wyFrac = (latitude - southWest.getLatitude().toDecimal()) / (northWest.getLatitude().toDecimal() - southWest.getLatitude().toDecimal());
 		double eyFrac = (latitude - southEast.getLatitude().toDecimal()) / (northEast.getLatitude().toDecimal() - southEast.getLatitude().toDecimal());
 		double yFrac = 1.0 - ((wyFrac + eyFrac) / 2.0);
@@ -144,14 +145,15 @@ public abstract class AbstractBaseProjection implements MapProjection
 		return row;
 		
 		
-		//double range = north - south;
-		//double pos = range - (north - latitude);
+		//double range = getNorth() - getSouth();
+		//double pos = range - (getNorth() - latitude);
 		//double row = (1.0 - (pos / range)) * (double)height;
 		//return row;
 	}
 	
 	public double longitudeToColumn(double longitude)
 	{
+		
 		// TODO: This method is not very accurate... Fix it
 		double nxFrac = (longitude - northWest.getLongitude().toDecimal()) / (northEast.getLongitude().toDecimal() - northWest.getLongitude().toDecimal());
 		double sxFrac = (longitude - southWest.getLongitude().toDecimal()) / (southEast.getLongitude().toDecimal() - southWest.getLongitude().toDecimal());
@@ -159,9 +161,9 @@ public abstract class AbstractBaseProjection implements MapProjection
 		double column = xFrac * (double)width;
 		return column;
 		
-		
-		//double range = east - west;
-		//double pos = range - (longitude - west);
+
+		//double range = getEast() - getWest();
+		//double pos = range - (longitude - getWest());
 		//double col = (1.0 - (pos / range)) * (double) width;
 		//return col;
 	}
@@ -281,6 +283,8 @@ public abstract class AbstractBaseProjection implements MapProjection
 	protected double getMaxEast()
 	{
 		return MathExt.max(northEast.getLongitude().toDecimal(), southEast.getLongitude().toDecimal());
+		
+		//return southEast.getLongitude().toDecimal();
 	}
 
 	protected double getMinWest()

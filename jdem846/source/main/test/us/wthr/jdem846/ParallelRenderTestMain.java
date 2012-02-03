@@ -92,7 +92,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		modelOptions.setHeight(600);
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
-		modelOptions.setAntialiased(true);
+		modelOptions.setAntialiased(false);
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;0");

@@ -27,9 +27,9 @@ public class Coordinate {
 
     public double toDecimal()
     {
-    	double _d = this.hour + (this.minute / 60.0) + (this.second / 3600.0);
+    	double _d = Math.abs((double)this.hour + ((double)this.minute / 60.0) + ((double)this.second / 3600.0));
         if (this.direction == CardinalDirectionEnum.SOUTH || this.direction == CardinalDirectionEnum.WEST) {
-        	_d *= -1;
+        	_d *= -1.0;
         }
         return _d;
     }

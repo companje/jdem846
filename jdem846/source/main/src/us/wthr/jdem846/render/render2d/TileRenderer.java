@@ -200,8 +200,8 @@ public class TileRenderer extends InterruptibleProcess
 	public void renderTile(double northLimit, double southLimit, double eastLimit, double westLimit) throws RenderEngineException
 	{
 		this.northLimit = northLimit;
-		this.southLimit = southLimit - latitudeResolution;
-		this.eastLimit = eastLimit + longitudeResolution;
+		this.southLimit = southLimit;
+		this.eastLimit = eastLimit;
 		this.westLimit = westLimit;
 		
 		
@@ -215,7 +215,7 @@ public class TileRenderer extends InterruptibleProcess
 
 		// TODO: If Buffered
 		try {
-			loadDataBuffers(northLimit, southLimit, eastLimit, westLimit);
+			loadDataBuffers(northLimit, southLimit-latitudeResolution, eastLimit+longitudeResolution, westLimit);
 		} catch (RenderEngineException ex) {
 			throw new RenderEngineException("Error loading data buffer: " + ex.getMessage(), ex);
 		}
@@ -226,7 +226,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		
 		log.info("Initializing model point buffer...");
-		elevationMap = ElevationDataMap.create(northLimit, southLimit, eastLimit, westLimit, latitudeResolution, longitudeResolution);
+		elevationMap = ElevationDataMap.create(northLimit, southLimit-latitudeResolution, eastLimit+longitudeResolution, westLimit, latitudeResolution, longitudeResolution);
 		
 		//int rows = dataProxy.getDataRows();
 		//int columns = dataProxy.getDataColumns();
@@ -272,8 +272,8 @@ public class TileRenderer extends InterruptibleProcess
 		*/
 		
 		
-		for (double latitude = northLimit; latitude >= southLimit; latitude-=latitudeResolution) {
-			for (double longitude = westLimit; longitude <= eastLimit; longitude+=longitudeResolution) {
+		for (double latitude = northLimit; latitude > southLimit; latitude-=latitudeResolution) {
+			for (double longitude = westLimit; longitude < eastLimit; longitude+=longitudeResolution) {
 		
 		//for (double latitude = southLimit; latitude <= northLimit + latitudeResolution; latitude+=latitudeResolution) {
 		//	for (double longitude = eastLimit; longitude >= westLimit - longitudeResolution; longitude-=longitudeResolution) {
@@ -397,18 +397,17 @@ public class TileRenderer extends InterruptibleProcess
 		double elevationNE = elevationNW;
 		
 		try {
-			if (latitude - latitudeResolution > southLimit) {
+			//if (latitude - latitudeResolution >= southLimit) {
 				elevationSW = getRasterData(latitude-latitudeResolution, longitude);
-			}
+			//}
 			
-			
-			if ((latitude - latitudeResolution > southLimit) && (longitude+longitudeResolution < eastLimit)) {
+			//if ((latitude - latitudeResolution >= southLimit) && (longitude+longitudeResolution <= eastLimit)) {
 				elevationSE = getRasterData(latitude-latitudeResolution, longitude+longitudeResolution);
-			}
+			//}
 			
-			if ((longitude+longitudeResolution < eastLimit)) {
+			//if ((longitude+longitudeResolution <= eastLimit)) {
 				elevationNE = getRasterData(latitude, longitude+longitudeResolution);
-			}
+			//}
 			
 		} catch (DataSourceException ex) {
 			throw new RenderEngineException("Error retrieving data: " + ex.getMessage(), ex);

@@ -78,7 +78,7 @@ public class ModelDimensions2D
 		//log.info("X/Y Dimension (cellsize): " + xDim + "/" + yDim);
 		
 		
-		modelDimensions.effectiveTileSize = (int) Math.ceil(((double) modelDimensions.tileSize) * modelDimensions.sizeRatio);
+		modelDimensions.effectiveTileSize = (int) Math.floor(((double) modelDimensions.tileSize) * xdimRatio);
 
 		modelDimensions.numTilesHorizontal = ((double)modelDimensions.dataColumns) / ((double)modelDimensions.tileSize);
 		modelDimensions.numTilesVertical = ((double)modelDimensions.dataRows) / ((double)modelDimensions.tileSize);
