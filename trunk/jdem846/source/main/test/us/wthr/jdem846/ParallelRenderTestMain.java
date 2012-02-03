@@ -88,8 +88,8 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
 		modelOptions.setTileSize(1000);
-		modelOptions.setWidth(dataProxy.getDataColumns() - 1);
-		modelOptions.setHeight(dataProxy.getDataRows() - 1);
+		modelOptions.setWidth(600);
+		modelOptions.setHeight(600);
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(true);
