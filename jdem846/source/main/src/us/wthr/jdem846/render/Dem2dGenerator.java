@@ -56,6 +56,101 @@ public class Dem2dGenerator extends BasicRenderEngine
 	
 	public OutputProduct<ModelCanvas> generate(boolean skipElevation, boolean skipShapes) throws RenderEngineException
 	{
+		boolean usePipelineRender = getModelContext().getModelOptions().usePipelineRender();
+		
+		if (usePipelineRender) {
+			return generatePipelined(skipElevation, skipShapes);
+		} else {
+			return generateStandard(skipElevation, skipShapes);
+		}
+	}
+	
+	public OutputProduct<ModelCanvas> generateStandard(boolean skipElevation, boolean skipShapes) throws RenderEngineException
+	{
+		OutputProduct<ModelCanvas> product = null;
+		
+		try {
+			ScriptProxy scriptProxy = getModelContext().getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.initialize(getModelContext());
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+		
+		RenderPipeline renderPipeline = null;
+		RenderPipelineProcessContainer pipelineContainer = null;
+		
+		
+		try {
+			
+			final ModelRenderer rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
+			final ShapeLayerRenderer shapeRenderer = new ShapeLayerRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
+			
+			this.setProcessInterruptListener(new ProcessInterruptListener() {
+				public void onProcessCancelled()
+				{
+					rasterRenderer.cancel();
+					shapeRenderer.cancel();
+				}
+				public void onProcessPaused()
+				{
+					rasterRenderer.pause();
+					shapeRenderer.pause();
+				}
+				public void onProcessResumed()
+				{
+					rasterRenderer.resume();
+					shapeRenderer.resume();
+				}
+			});
+			
+			//ModelCanvas canvas = null;
+			ModelCanvas canvas = getModelContext().getModelCanvas(true);
+			
+			
+			
+			
+			if (!skipElevation) {
+				rasterRenderer.renderModel();
+			}
+			
+			
+			if (!skipShapes && !isCancelled() && getModelContext().getShapeDataContext() != null && getModelContext().getShapeDataContext().getShapeDataListSize() > 0) {
+				shapeRenderer.render();
+			} else {
+				log.info("Shape data context is null, skipping render stage");
+			}
+			//Thread.sleep(3000);
+			//startPipelineProcesses(pipelineContainer, true);
+			//waitForPipelineProcessCompletion(pipelineContainer);
+			
+			
+			product = new OutputProduct<ModelCanvas>(OutputProduct.IMAGE, getModelContext().getModelCanvas());
+		} catch (OutOfMemoryError err) {
+			log.error("Out of memory error when generating model", err);
+			throw new RenderEngineException("Out of memory error when generating model", err);
+		} catch (Exception ex) {
+			log.error("Error occured generating model", ex);
+			throw new RenderEngineException("Error occured generating model", ex);
+		}
+		
+		try {
+			ScriptProxy scriptProxy = getModelContext().getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.destroy(getModelContext());
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+		return product;
+	}
+	
+	
+	public OutputProduct<ModelCanvas> generatePipelined(boolean skipElevation, boolean skipShapes) throws RenderEngineException
+	{
 		OutputProduct<ModelCanvas> product = null;
 		
 		try {
