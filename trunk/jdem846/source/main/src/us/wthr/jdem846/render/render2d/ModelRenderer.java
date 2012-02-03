@@ -158,33 +158,7 @@ public class ModelRenderer extends InterruptibleProcess
 					if (tileEast >= eastLimit) {
 						tileEast = eastLimit - longitudeResolution;
 					}
-					
-					
-					//double topRow = MathExt.floor(((northLimit - tileNorth ) / (northLimit - southLimit)) * effectiveRows);
-					//double bottomRow = MathExt.ceil(((northLimit - tileSouth ) / (northLimit - southLimit)) * effectiveRows);
-					//double bottomRow = MathExt.ceil(((northLimit - (tileNorth - effectiveLatitudeResolution)) / (northLimit - southLimit)) * effectiveRows);
-					
-					//double leftColumn = MathExt.floor(((tileWest - westLimit) / (eastLimit - westLimit)) * effectiveColumns);
-					//double rightColumn = MathExt.ceil(((tileEast - westLimit) / (eastLimit - westLimit)) * effectiveColumns);
-					
-					//double rightColumn = MathExt.ceil((((tileWest + effectiveLongitudeResolution) - westLimit) / (eastLimit - westLimit)) * effectiveColumns);
-					
-					//int dataWidth = (int) (rightColumn - leftColumn + 1);
-					//int dataHeight = (int) (bottomRow - topRow + 1);
-					
-					//double topLatitude = northLimit - topRow * effectiveLatitudeResolution;
-				//	double bottomLatitude = northLimit - bottomRow * effectiveLatitudeResolution;
-					//double bottomLatitude = topLatitude - (effectiveTileRows * effectiveLatitudeResolution);
-					
-					//double leftLongitude = westLimit + leftColumn * effectiveLongitudeResolution;
-					//double rightLongitude = westLimit + rightColumn * effectiveLongitudeResolution;
-					//double rightLongtiude = leftLongitude + (effectiveTileColumns * effectiveLongitudeResolution);
-					
-					
-					
-					
-					
-				
+
 					
 					
 					
@@ -194,37 +168,16 @@ public class ModelRenderer extends InterruptibleProcess
 					log.info("    South: " + tileSouth);
 					log.info("    East: " + tileEast);
 					log.info("    West: " + tileWest);	
-					
-					//log.info("    North: " + topLatitude);
-					//log.info("    South: " + bottomLatitude);
-					//log.info("    East: " + rightLongitude);
-					//log.info("    West: " + leftLongitude);	
-					
+	
 					TileRenderContainer tileRenderContainer = null;
 					tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, tileNorth, tileSouth, tileEast, tileWest, (tileColumn + 1), (tileRow + 1));
-					//tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, topLatitude, bottomLatitude, rightLongitude, leftLongitude, (tileColumn + 1), (tileRow + 1));
-					/*
-					try {
-						ModelContext tileContext = modelContext.copy(true);
-						tileContext.setNorthLimit(tileNorth);
-						tileContext.setSouthLimit(tileSouth);
-						tileContext.setEastLimit(tileEast);
-						tileContext.setWestLimit(tileWest);
-						tileContext.setRasterDataContext(modelContext.getRasterDataContext().getSubSet(tileNorth, tileSouth, tileEast, tileWest).copy());
-						tileRenderContainer = new TileRenderContainer(tileContext, tileNorth, tileSouth, tileEast, tileWest, (tileColumn + 1), (tileRow + 1));
-					} catch (DataSourceException ex) {
-						throw new RenderEngineException("Failed to create tile render runnable: " + ex.getMessage(), ex);
-					}
-					*/
+
 					if (renderPipeline != null) {
 						renderPipeline.submit(tileRenderContainer);
 					} else {
 						tileRenderContainer.render(null);
 					}
-					//tileRenderer.renderTile(tileNorth, tileSouth, tileEast, tileWest);
 
-					//tileRenderRunnable.run();
-					
 					tileColumn++;
 					tileNumber++;
 
@@ -232,7 +185,9 @@ public class ModelRenderer extends InterruptibleProcess
 					
 					pctComplete = (double)tileNumber / (double)tileCount;
 					
-					//fireTileCompletionListeners(modelCanvas, pctComplete);
+					if (renderPipeline == null) {
+						fireTileCompletionListeners(modelCanvas, pctComplete);
+					}
 					
 					if (isCancelled()) {
 						break;
@@ -245,6 +200,7 @@ public class ModelRenderer extends InterruptibleProcess
 				if (isCancelled()) {
 					break;
 				}
+				//break;
 				
 			}
 			

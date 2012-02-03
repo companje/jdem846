@@ -11,6 +11,8 @@ public class ElevationDataMap extends Hashtable<Integer, Double>
 	private double east;
 	private double west;
 	
+	private int columns;
+	
 	private double latitudeResolution;
 	private double longitudeResolution;
 	
@@ -25,6 +27,12 @@ public class ElevationDataMap extends Hashtable<Integer, Double>
 		
 		this.latitudeResolution = latitudeResolution;
 		this.longitudeResolution = longitudeResolution;
+		
+		
+		columns = (int) Math.ceil((east - west) / longitudeResolution);
+		this.west = east + (longitudeResolution * columns);
+		
+		
 	}
 	
 	public Double put(double latitude, double longitude, double elevation)
@@ -48,10 +56,10 @@ public class ElevationDataMap extends Hashtable<Integer, Double>
 	
 	protected int getHashKey(double latitude, double longitude)
 	{
-		int columns = (int) Math.ceil((east - west) / longitudeResolution) + 1;
+		//int columns = (int) Math.ceil((east - west) / longitudeResolution);
 		
-		int row = (int) Math.ceil((north - latitude) / latitudeResolution);
-		int column = (int) Math.ceil((longitude - west) / longitudeResolution);
+		int row = (int) Math.round((north - latitude) / latitudeResolution);
+		int column = (int) Math.round((longitude - west) / longitudeResolution);
 		
 		int key = (row * columns) + column;
 		return key;
