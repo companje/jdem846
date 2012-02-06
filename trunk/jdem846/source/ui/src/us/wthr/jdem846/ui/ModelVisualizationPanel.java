@@ -10,6 +10,8 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
@@ -50,6 +52,8 @@ public class ModelVisualizationPanel extends RoundedPanel
 	private boolean useElevationOnDataGrids = true;
 	
 	private ElevationDataMap elevationMap;
+	
+	private List<ProjectionChangeListener> projectionChangeListeners = new LinkedList<ProjectionChangeListener>();
 	
 	public ModelVisualizationPanel(ModelContext modelContext)
 	{
@@ -110,6 +114,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 				lastY = -1;
 				//useElevationOnDataGrids = true;
 				update(false, false);
+				fireProjectionChangeListeners();
 				//fireChangeListeners();
 			}
 		};
@@ -213,7 +218,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 					modelContextWorkingCopy.getRasterDataContext().getEffectiveLongitudeResolution());
 		}
 		
-		// renderModelVisualizationImage();
+		renderModelVisualizationImage();
 		
 		this.repaint();
 	}
@@ -508,4 +513,29 @@ public class ModelVisualizationPanel extends RoundedPanel
     	return new Edge(x0, y0, z0, x1, y1, z1);
     	
     }
+	
+	
+	public void addProjectionChangeListener(ProjectionChangeListener listener)
+	{
+		projectionChangeListeners.add(listener);
+	}
+	
+	public boolean removeProjectionChangeListener(ProjectionChangeListener listener)
+	{
+		return projectionChangeListeners.remove(listener);
+	}
+	
+	protected void fireProjectionChangeListeners()
+	{
+		for (ProjectionChangeListener listener : projectionChangeListeners) {
+			listener.onProjectionChanged(rotateX, rotateY, rotateZ);
+		}
+	}
+	
+	
+	public interface ProjectionChangeListener 
+	{
+		public void onProjectionChanged(double rotateX, double rotateY, double rotateZ);
+	}
+	
 }
