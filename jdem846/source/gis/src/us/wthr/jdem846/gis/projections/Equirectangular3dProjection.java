@@ -93,11 +93,11 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		
 		projectTo(pointVector, eyeVector, nearVector);
 		
-		//point.column = -pointVector[0] + (getWidth()/2.0);
-		//point.row = pointVector[1] + (getHeight()/2.0);
+		point.column = -pointVector[0] + (getWidth()/2.0);
+		point.row = pointVector[1] + (getHeight()/2.0);
 		
-		point.column = pointVector[0] + (getWidth()/2.0);
-		point.row = -pointVector[1] + (getHeight()/2.0);
+		//point.column = pointVector[0] + (getWidth()/2.0);
+		//point.row = -pointVector[1] + (getHeight()/2.0);
 		point.z = pointVector[2];
 		//point.column = pointVector[0] - (getWidth()/4.0);
 		///point.row = -pointVector[1];
@@ -146,10 +146,13 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		double dZ = cosTX * (cosTY * (a[2] - c[2]) + sinTY * (sinTZ * (a[1] - c[1]) + cosTZ * (a[0] - c[0]))) - sinTX * (cosTZ * (a[1] - c[1]) - sinTZ * (a[0] - c[0]));
 		
 		
+		vector[0] = (dX - e[0]) * (e[2] / dZ);
+		vector[1] = (dY - e[1]) * (e[2] / dZ);
+		vector[2] = (dZ - e[2]) * (e[2] / dZ);
 		
-		vector[0] = dX;
-		vector[1] = dY;
-		vector[2] = dZ;
+		//vector[0] = dX;
+		//vector[1] = dY;
+		//vector[2] = dZ;
 		
 		
 	}

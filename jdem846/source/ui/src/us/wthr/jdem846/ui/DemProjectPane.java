@@ -73,6 +73,7 @@ import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 import us.wthr.jdem846.ui.DataSetTree.DatasetSelectionListener;
+import us.wthr.jdem846.ui.ModelVisualizationPanel.ProjectionChangeListener;
 import us.wthr.jdem846.ui.MonitoredThread.ProgressListener;
 import us.wthr.jdem846.ui.OrderingButtonBar.OrderingButtonClickedListener;
 import us.wthr.jdem846.ui.ProjectButtonBar.ButtonClickedListener;
@@ -354,6 +355,23 @@ public class DemProjectPane extends JdemPanel implements Savable
 				
 			}
 		});
+		
+		visualizationPanel.addProjectionChangeListener(new ProjectionChangeListener() {
+			public void onProjectionChanged(double rotateX, double rotateY, double rotateZ)
+			{
+				/*
+				modelOptionsPanel.getModelOptions().getProjection().setRotateX(rotateX);
+				modelOptionsPanel.getModelOptions().getProjection().setRotateX(rotateY);
+				modelOptionsPanel.getModelOptions().getProjection().setRotateX(rotateZ);
+				modelOptionsPanel.applyOptionsToUI();
+				applyOptionsToUI();
+				applyEngineSelectionConfiguration();
+				
+				onDataModelChanged(true, true);
+				*/
+			}
+		});
+		
 		
 		ChangeListener basicChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
