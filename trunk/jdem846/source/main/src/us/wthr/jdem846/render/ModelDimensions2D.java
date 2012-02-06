@@ -42,10 +42,9 @@ public class ModelDimensions2D
 		ModelDimensions2D modelDimensions = new ModelDimensions2D();
 		
 		modelDimensions.tileSize = modelOptions.getTileSize();
-		
-		
 		modelDimensions.dataRows = dataContext.getDataRows(modelContext.getNorth(), modelContext.getSouth());
 		modelDimensions.dataColumns = dataContext.getDataColumns(modelContext.getEast(), modelContext.getWest());
+		
 		
 		if (modelDimensions.tileSize > modelDimensions.dataRows && modelDimensions.dataRows > modelDimensions.dataColumns)
 			modelDimensions.tileSize = modelDimensions.dataRows;
@@ -69,16 +68,12 @@ public class ModelDimensions2D
 		//log.info("Output width/height: " + modelDimensions.outputWidth + "/" + modelDimensions.outputHeight);
 		
 		double xdimRatio = (double)modelDimensions.outputWidth / (double)modelDimensions.dataColumns;
-		modelDimensions.outputLongitudeResolution = dataContext.getLongitudeResolution() / xdimRatio;
-		//dataPackage.setAvgXDim(xDim);
-
 		double ydimRatio = (double)modelDimensions.outputHeight / (double)modelDimensions.dataRows;
+		
+		modelDimensions.outputLongitudeResolution = dataContext.getLongitudeResolution() / ydimRatio;
 		modelDimensions.outputLatitudeResolution = dataContext.getLatitudeResolution() / ydimRatio;
-		//dataPackage.setAvgYDim(yDim);
-		//log.info("X/Y Dimension (cellsize): " + xDim + "/" + yDim);
-		
-		
-		modelDimensions.effectiveTileSize = (int) Math.floor(((double) modelDimensions.tileSize) * xdimRatio);
+
+		modelDimensions.effectiveTileSize = (int) Math.round(((double) modelDimensions.tileSize) * xdimRatio);
 
 		modelDimensions.numTilesHorizontal = ((double)modelDimensions.dataColumns) / ((double)modelDimensions.tileSize);
 		modelDimensions.numTilesVertical = ((double)modelDimensions.dataRows) / ((double)modelDimensions.tileSize);

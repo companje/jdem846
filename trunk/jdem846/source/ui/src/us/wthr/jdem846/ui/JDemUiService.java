@@ -33,12 +33,13 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
 
-@Service(name="us.wthr.jdem846.ui.jdemuiservice", enabled=true)
+@Service(name="us.wthr.jdem846.ui.jdemuiservice", enabled=false)
 public class JDemUiService extends AbstractLockableService
 {
 	
 	private static Log log = Logging.getLog(JDemUiService.class);
 	private JdemFrame frame;
+	
 	
 	
 	
@@ -54,8 +55,9 @@ public class JDemUiService extends AbstractLockableService
 		log.info("JDemUIService.initialize()");
 		
 		
-		
-		frame = JdemFrame.getInstance();
+		if (JDem846Properties.hasProperty("us.wthr.jdem846.ui.jdemUiMain.display") && JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.jdemUiMain.display")) {
+			frame = JdemFrame.getInstance();
+		}
 	}
 	
 	
@@ -66,45 +68,48 @@ public class JDemUiService extends AbstractLockableService
 		//System.out.println("JDemUiService.runtime()");
 		log.info("JDemUiService.runtime()");
 		
+		if (JDem846Properties.hasProperty("us.wthr.jdem846.ui.jdemUiMain.display") && JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.jdemUiMain.display")) {
 		
-		
-		frame.addWindowListener(new WindowListener() {
-			public void windowActivated(WindowEvent event) { }
-			public void windowClosing(WindowEvent event) 
-			{ 
-				log.info("JDemUiService.windowClosing()");
-				//System.out.println("JDemUiService.windowClosing()");
-				//setLocked(false);
-				//event.
-			}
-			public void windowDeactivated(WindowEvent event) { }
-			public void windowDeiconified(WindowEvent event) { }
-			public void windowIconified(WindowEvent event) { }
-			public void windowOpened(WindowEvent event) { }
+			frame.addWindowListener(new WindowListener() {
+				public void windowActivated(WindowEvent event) { }
+				public void windowClosing(WindowEvent event) 
+				{ 
+					log.info("JDemUiService.windowClosing()");
+					//System.out.println("JDemUiService.windowClosing()");
+					//setLocked(false);
+					//event.
+				}
+				public void windowDeactivated(WindowEvent event) { }
+				public void windowDeiconified(WindowEvent event) { }
+				public void windowIconified(WindowEvent event) { }
+				public void windowOpened(WindowEvent event) { }
+				
+				public void windowClosed(WindowEvent event)
+				{ 
+					log.info("JDemUiService.windowClosed()");
+					//System.out.println("JDemUiService.windowClosed()");
+					setLocked(false);
+				}
+			});
 			
-			public void windowClosed(WindowEvent event)
-			{ 
-				log.info("JDemUiService.windowClosed()");
-				//System.out.println("JDemUiService.windowClosed()");
-				setLocked(false);
+			setLocked(true);
+			frame.setVisible(true);
+			
+			while (this.isLocked()) {
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-		});
+			
+			log.info("Window was closed & lock released.");
+			
+			ServiceKernel.initiateApplicationShutdown();
 		
-		setLocked(true);
-		frame.setVisible(true);
-		
-		while (this.isLocked()) {
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		} else {
+			log.info("Main JDem UI disabled.");
 		}
-		
-		log.info("Window was closed & lock released.");
-		
-		ServiceKernel.initiateApplicationShutdown();
-		
 		//System.out.println("Window was closed & lock released.");
 	}
 	

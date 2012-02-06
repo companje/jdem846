@@ -407,25 +407,25 @@ public class ModelCanvas
 		
 		try {
 			mapProjection.getPoint(lat0, lon0, elev0, mapPoint);
-			row0 =  Math.round(mapPoint.row);
-			column0 = Math.round(mapPoint.column);
-			z0 = Math.round(mapPoint.z);
+			row0 =  Math.floor(mapPoint.row);
+			column0 = Math.floor(mapPoint.column);
+			z0 = mapPoint.z;
 
 			
 			mapProjection.getPoint(lat1, lon1, elev1, mapPoint);
-			row1 = Math.round(mapPoint.row);
-			column1 = Math.round(mapPoint.column);
-			z1 = Math.round(mapPoint.z);			//z += mapPoint.z;
+			row1 = Math.floor(mapPoint.row);
+			column1 = Math.floor(mapPoint.column);
+			z1 = mapPoint.z;			//z += mapPoint.z;
 
 			mapProjection.getPoint(lat2, lon2, elev2, mapPoint);
-			row2 = Math.round(mapPoint.row);
-			column2 =  Math.round(mapPoint.column);
-			z2 = Math.round(mapPoint.z);
+			row2 = Math.floor(mapPoint.row);
+			column2 =  Math.floor(mapPoint.column);
+			z2 = mapPoint.z;
 
 			mapProjection.getPoint(lat3, lon3, elev3, mapPoint);
-			row3 = Math.round(mapPoint.row);
-			column3 = Math.round(mapPoint.column);
-			z3 = Math.round(mapPoint.z);
+			row3 = Math.floor(mapPoint.row);
+			column3 = Math.floor(mapPoint.column);
+			z3 = mapPoint.z;
 
 		} catch (MapProjectionException ex) {
 			throw new CanvasException("Failed to project coordates to canvas: " + ex.getMessage(), ex);
