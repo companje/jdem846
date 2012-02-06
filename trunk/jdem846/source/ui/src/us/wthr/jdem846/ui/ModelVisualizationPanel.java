@@ -213,7 +213,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 					modelContextWorkingCopy.getRasterDataContext().getEffectiveLongitudeResolution());
 		}
 		
-		renderModelVisualizationImage();
+		// renderModelVisualizationImage();
 		
 		this.repaint();
 	}
