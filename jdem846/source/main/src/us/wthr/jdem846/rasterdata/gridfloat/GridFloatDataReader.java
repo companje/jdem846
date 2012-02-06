@@ -24,7 +24,7 @@ public class GridFloatDataReader
 	private RandomAccessFile dataReader = null;
 	
 	private byte[] buffer4 = {0, 0, 0, 0};
-	
+	private long size;
 	
 	public GridFloatDataReader(File dataFile, int rows, int columns, ByteOrder byteOrder)
 	{
@@ -32,6 +32,8 @@ public class GridFloatDataReader
 		this.rows = rows;
 		this.columns = columns;
 		this.byteOrder = byteOrder;
+		
+		size = dataFile.length();
 	}
 	
 	
@@ -53,6 +55,8 @@ public class GridFloatDataReader
 		return isDisposed;
 	}
 	
+
+	
 	public double get(int row, int column) throws DataSourceException
 	{
 		RandomAccessFile dataReader = getFileReader(row, column);
@@ -70,11 +74,20 @@ public class GridFloatDataReader
 	
 	public void get(int row, int startColumn, float[] buffer)  throws DataSourceException
 	{
+		if (row < 0 || row >= rows || startColumn < 0 || startColumn >= columns) {
+			return;
+		}
+		
+		
 		RandomAccessFile dataReader = getFileReader(row, startColumn);
+		if (dataReader == null) {
+			log.info("Data reader is null... I should be throwing an exception here...");
+		}
+		
 		
 		int bufferLength = buffer.length;
-		if (bufferLength + startColumn > columns) {
-			bufferLength = columns - startColumn;
+		if (bufferLength + startColumn >= columns) {
+			bufferLength = columns - startColumn - 1;
 		}
 		
 		int readLength = bufferLength * (Float.SIZE / 8);
@@ -133,6 +146,10 @@ public class GridFloatDataReader
 	
 	protected RandomAccessFile getFileReader(int row, int column) throws DataSourceException
 	{
+		
+		if (row < 0 || row >= rows || column < 0 || column >= columns)
+			return null;
+		
 		open();
 		
 		long pos = (row * columns) + column;
@@ -146,8 +163,11 @@ public class GridFloatDataReader
 		}
 		
 		if (seekStart >= length) {
+			//return null;
 			throw new DataSourceException("Cannot seek past end of file (seek to: " + seekStart + ", length: " + length + ")");
 		}
+		
+		
 		
 		try {
 			dataReader.seek(seekStart);

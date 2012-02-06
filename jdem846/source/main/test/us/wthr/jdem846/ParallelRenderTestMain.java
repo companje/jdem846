@@ -47,9 +47,10 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		List<String> inputDataList = new LinkedList<String>();
 		List<ShapeFileRequest> inputShapeList = new LinkedList<ShapeFileRequest>();
 		
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
 		//String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
+		inputDataList.add("F:\\GEBCO_08\\gebco_08.flt");
 		String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/render-test.png";
 		
 		//inputDataList.add("C:/srv/elevation/Nashua NH/Elevation 1-3 Arc Second/Elevation 1-3 Arc Second.flt");
@@ -78,7 +79,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 			
 		}
 		
-		dataProxy.calculateElevationMinMax(true);
+		//dataProxy.calculateElevationMinMax(true);
 		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
 		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
 		
@@ -87,9 +88,9 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		ModelOptions modelOptions = new ModelOptions();
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
-		modelOptions.setTileSize(1000);
-		modelOptions.setWidth(600);
-		modelOptions.setHeight(600);
+		modelOptions.setTileSize(6000);
+		modelOptions.setWidth(2000);
+		modelOptions.setHeight(1000);
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(false);
@@ -97,13 +98,15 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;0");
 		modelOptions.setUsePipelineRender(false);
+		modelOptions.setColoringType("hypsometric-etopo1-tint");
+		
 		//modelOptions.setHillShading(false);
 		//modelOptions.setConcurrentRenderPoolSize(10);
 		//modelOptions.getProjection().setRotateX(30);
 		modelOptions.getProjection().setRotateY(20);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, shapeContext, lightingContext, modelOptions);
-		
+		modelContext.updateContext();
 		
 		
 		double startTime = System.currentTimeMillis();

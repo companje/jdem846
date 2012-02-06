@@ -310,8 +310,8 @@ public class RasterDataContext implements DataContext
 	{
 		
 		
-		double width = effectiveLongitudeResolution / longitudeResolution;
-		double height = effectiveLatitudeResolution / latitudeResolution;
+		//double width = effectiveLongitudeResolution / longitudeResolution;
+		//double height = effectiveLatitudeResolution / latitudeResolution;
 		
 		double northLimit = getNorth();
 		double southLimit = getSouth();
@@ -319,50 +319,25 @@ public class RasterDataContext implements DataContext
 		double westLimit = getWest();
 		
 		
-		double effectiveRows = (north - south) / effectiveLatitudeResolution;
-		double effectiveColumns = (east - west) / effectiveLongitudeResolution;
-		
-		double dataNorth = latitude;
-		double dataSouth = latitude - effectiveLatitudeResolution;
-		
-		double dataWest = longitude;
-		double dataEast = longitude + effectiveLongitudeResolution;
-		
-		//double topRow = MathExt.floor(((north - latitude) / (north - south)) * effectiveRows);
-		//double bottomRow = MathExt.ceil(((north - (latitude - effectiveLatitudeResolution)) / (north - south)) * effectiveRows);
-		
-		//double leftColumn = MathExt.floor(((longitude - west) / (east - west)) * effectiveColumns);
-		//double rightColumn = MathExt.ceil((((longitude + effectiveLongitudeResolution) - west) / (east - west)) * effectiveColumns);
-		
-		double topRow = MathExt.floor(((northLimit - dataNorth ) / (northLimit - southLimit)) * effectiveRows) - 1;
-		double bottomRow = MathExt.ceil(((northLimit - dataSouth ) / (northLimit - southLimit)) * effectiveRows);
-		
-		double leftColumn = MathExt.floor(((dataWest - westLimit) / (eastLimit - westLimit)) * effectiveColumns);
-		double rightColumn = MathExt.ceil(((dataEast - westLimit) / (eastLimit - westLimit)) * effectiveColumns);
+		//double outCols = (longitudeResolution / effectiveLongitudeResolution) * (double)getDataColumns();
+		//double outRows = (latitudeResolution / effectiveLatitudeResolution) * (double)getDataRows();
 		
 		
+		//int dataWidth = (int) MathExt.ceil((double)getDataColumns() / outCols);
+		//int dataHeight = (int) MathExt.ceil((double)getDataRows() / outRows);
 		
-		int dataWidth = (int) (rightColumn - leftColumn )+ 1;
-		int dataHeight = (int) (bottomRow - topRow) + 1;
+		double dataNorth = (northLimit - (MathExt.floor((northLimit-latitude)/effectiveLatitudeResolution)*effectiveLatitudeResolution)) + (effectiveLatitudeResolution / 2.0);
+		double dataWest = (westLimit + (MathExt.floor((longitude-westLimit)/effectiveLongitudeResolution)*effectiveLongitudeResolution)) - (effectiveLongitudeResolution / 2.0);
 		
-		//double topLatitude = north - topRow * effectiveLatitudeResolution;
-		//double bottomLatitude = topLatitude - (dataHeight * effectiveLatitudeResolution);
-		
-		//double topLatitude = northLimit - topRow * effectiveLatitudeResolution;
-		//double bottomLatitude = northLimit - bottomRow * effectiveLatitudeResolution;
-		//double leftLongitude = westLimit + leftColumn * effectiveLongitudeResolution;
-		//double rightLongitude = westLimit + rightColumn * effectiveLongitudeResolution;
+		double dataSouth = dataNorth - effectiveLatitudeResolution;
+		double dataEast = dataWest + effectiveLongitudeResolution;
 		
 		
+		double latFrac = (dataNorth - latitude) / (dataNorth - dataSouth);
+		double lonFrac = (longitude - dataWest) / (dataEast - dataWest);
 		
-		//double leftLongitude = west + leftColumn * effectiveLongitudeResolution;
-		//double rightLongtiude = leftLongitude + (dataWidth * effectiveLongitudeResolution);
-		
-		
-		
-		
-		//int dataWidth = (int) Math.ceil(width);
-		//int dataHeight = (int) Math.ceil(height);
+		int dataHeight = (int) MathExt.ceil((dataNorth - dataSouth) / latitudeResolution);
+		int dataWidth = (int) MathExt.ceil((dataEast - dataWest) / longitudeResolution);
 		
 		double[][] data = new double[dataHeight][dataWidth];
 		
@@ -409,7 +384,8 @@ public class RasterDataContext implements DataContext
 		}
 		
 		newDataProxy.prepare();
-
+		newDataProxy.setEffectiveLatitudeResolution(effectiveLatitudeResolution);
+		newDataProxy.setEffectiveLongitudeResolution(effectiveLongitudeResolution);
 		
 		return newDataProxy;
 	}
