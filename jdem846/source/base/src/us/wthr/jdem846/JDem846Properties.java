@@ -41,7 +41,10 @@ public class JDem846Properties
 	}
 	
 	
-	
+	public static boolean hasProperty(String name)
+	{
+		return properties.containsKey(name);
+	}
 	
 	public static void setProperty(String name, String value)
 	{

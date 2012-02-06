@@ -87,7 +87,7 @@ public class GridFloatDataReader
 		
 		int bufferLength = buffer.length;
 		if (bufferLength + startColumn >= columns) {
-			bufferLength = columns - startColumn - 1;
+			bufferLength = columns - startColumn;
 		}
 		
 		int readLength = bufferLength * (Float.SIZE / 8);

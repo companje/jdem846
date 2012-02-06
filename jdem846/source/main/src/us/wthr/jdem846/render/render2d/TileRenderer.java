@@ -211,6 +211,7 @@ public class TileRenderer extends InterruptibleProcess
 			throw new RenderEngineException("Error loading data subset: " + ex.getMessage(), ex);
 		}
 		
+		
 		//RasterDataContext dataProxy = modelContext.getRasterDataContext();//.getSubSet(northLimit, southLimit, eastLimit, westLimit);
 
 		// TODO: If Buffered
@@ -228,49 +229,9 @@ public class TileRenderer extends InterruptibleProcess
 		log.info("Initializing model point buffer...");
 		elevationMap = ElevationDataMap.create(northLimit, southLimit-latitudeResolution, eastLimit+longitudeResolution, westLimit, latitudeResolution, longitudeResolution);
 		
-		//int rows = dataProxy.getDataRows();
-		//int columns = dataProxy.getDataColumns();
-		//int rows = (int) Math.ceil((northLimit - southLimit) / latitudeResolution) + 1;
-		//int columns = (int) Math.ceil((eastLimit - westLimit) / longitudeResolution) + 1;
-		
-		//if (rows <= 0 || columns <= 0) {
-		//	return;
-		//}
-		
-		//pointMap = new Hashtable<Integer, Double>(rows * columns, 1.25f);
-		
-		//ModelPoint point = null;
-		//pointBuffer = new ModelPoint[rows][columns];
-		//pointBuffer = new MatrixBuffer<Double>(columns, rows);
-		//for (int y = 0; y < rows; y++) {
-		//	for (int x = 0; x < columns; x++) {
-		//		pointBuffer.set(x, y, DemConstants.ELEV_NO_DATA);
-		//	}
-		//}
+
 		log.info("Processing data points...");
-		
-		/*
-		try {
-			double test = getRasterData(northLimit, westLimit);
-		} catch (DataSourceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
-		
-		
-		/*
-		for (double y = 0; y < rows; y++) {
-			for (double x = 0; x < columns; x++) {
-				double latitude = northLimit - (y * latitudeResolution);
-				double longitude = westLimit + (x * longitudeResolution);
-				
-				doElevation(latitude, longitude);
-		
-			}
-		}
-		*/
-		
+	
 		
 		for (double latitude = northLimit; latitude > southLimit; latitude-=latitudeResolution) {
 			for (double longitude = westLimit; longitude < eastLimit; longitude+=longitudeResolution) {
@@ -288,81 +249,13 @@ public class TileRenderer extends InterruptibleProcess
 		}
 		
 		
-		/*
-		if (rayTraceShadows) {
-			log.info("Calculating shadows...");
-			for (int y = 0; y < rows; y++) {
-				for (int x = 0; x < columns; x++) {
-					point = getModelPoint(x, y);
-					if (point != null) {
-						try {
-							point.setDot(calculateRayTracedDotProduct(point.getLatitude(), point.getLongitude(), point.getElevation(), point.getDot()));
-						} catch (RayTracingException ex) {
-							throw new RenderEngineException("Error on ray tracing: " + ex.getMessage(), ex);
-						}
-					}
-				}
-			}
-		}
-		*/
-		
-		
-		//log.info("Rendering data points...");
-		/*
-		for (int y = 0; y < rows; y++) {
-			for (int x = 0; x < columns; x++) {
-				point = getModelPoint(x, y);
-				//point = pointBuffer[y][x];
-				if (point != null) {
-					try {
-						renderModelPoint(point);
-					} catch (CanvasException ex) {
-						throw new RenderEngineException("Error rendering point: " + ex.getMessage(), ex);
-					}
-				}
-				this.checkPause();
-				if (isCancelled()) {
-					break;
-				}
-			}
-			this.checkPause();
-			if (isCancelled()) {
-				break;
-			}
-		}
-		*/
 		
 		elevationMap.clear();
 		elevationMap = null;
-		//pointBuffer.dispose();
-		//pointBuffer = null;
-		
-		
-		//LinkedList<RowRenderRunnable> renderQueue = new LinkedList<RowRenderRunnable>();
-		
-		
-		//for (double latitude = northLimit; latitude >= southLimit; latitude -= latitudeResolution) {
-		//for (double latitude = southLimit; latitude <= northLimit; latitude += latitudeResolution) {
-		//	rowRenderer.renderRow(latitude, eastLimit, westLimit);
-			//this.checkPause();
-			//if (isCancelled()) {
-			//	break;
-			//}
-			
-		//}
-		
-		
+
 		onTileAfter(modelCanvas);
 		unloadDataBuffers();
-		/*
-		if (tiledPrecaching) {
-			try {
-				dataProxy.clearBuffers();
-			} catch (DataSourceException ex) {
-				throw new RenderEngineException("Failed to clear buffer data: " + ex.getMessage(), ex);
-			}
-		}
-		*/
+
 
 	}
 	
@@ -397,35 +290,34 @@ public class TileRenderer extends InterruptibleProcess
 		double elevationNE = elevationNW;
 		
 		try {
-			//if (latitude - latitudeResolution >= southLimit) {
-				elevationSW = getRasterData(latitude-latitudeResolution, longitude);
-			//}
-			
-			//if ((latitude - latitudeResolution >= southLimit) && (longitude+longitudeResolution <= eastLimit)) {
-				elevationSE = getRasterData(latitude-latitudeResolution, longitude+longitudeResolution);
-			//}
-			
-			//if ((longitude+longitudeResolution <= eastLimit)) {
-				elevationNE = getRasterData(latitude, longitude+longitudeResolution);
-			//}
-			
+			//double cellWidth = (longitudeResolution/2.0);
+			//double cellHeight = (latitudeResolution/2.0);
+			double cellWidth = longitudeResolution;
+			double cellHeight = latitudeResolution;
+			elevationSW = getRasterData(latitude-cellHeight, longitude, false);
+			elevationSE = getRasterData(latitude-cellHeight, longitude+cellWidth, false);
+			elevationNE = getRasterData(latitude, longitude+cellWidth, false);
+
 		} catch (DataSourceException ex) {
 			throw new RenderEngineException("Error retrieving data: " + ex.getMessage(), ex);
 		}
 		
-		if (elevationSW == DemConstants.ELEV_NO_DATA) 
+		if (elevationSW == DemConstants.ELEV_NO_DATA) {
 			elevationSW = elevationNW;
+		}
 		
-		if (elevationSE == DemConstants.ELEV_NO_DATA)
+		if (elevationSE == DemConstants.ELEV_NO_DATA) {
 			elevationSE = elevationNW;
+		}
 		
-		if (elevationNE == DemConstants.ELEV_NO_DATA)
+		if (elevationNE == DemConstants.ELEV_NO_DATA) {
 			elevationNE = elevationNW;
+		}
 
 		
 		double pointElevation = (elevationNW + elevationSW +  elevationNE) / 3.0;
 
-		
+
 		calculateNormal(elevationNW, elevationSW, elevationSE, elevationNE, normal);
 		modelColoring.getGradientColor(pointElevation, elevationMin, elevationMax, reliefColor);
 		onGetPointColor(latitude, longitude, pointElevation, elevationMin, elevationMax, reliefColor);
@@ -617,17 +509,25 @@ public class TileRenderer extends InterruptibleProcess
 	
 	protected double getRasterData(double latitude, double longitude) throws DataSourceException, RenderEngineException
 	{
+		return getRasterData(latitude, longitude, true);
+	}
+	
+	protected double getRasterData(double latitude, double longitude, boolean cache) throws DataSourceException, RenderEngineException
+	{
 		
 		//ModelPoint modelPoint = getModelPoint(latitude, longitude);
 		//if (modelPoint != null) {
 		//	return modelPoint.getElevation();
 		//}
 		
-		double elevation = getModelPoint(latitude, longitude);
-		if (elevation != DemConstants.ELEV_NO_DATA) {
-			return elevation;
-		} else {
-			elevation = DemConstants.ELEV_NO_DATA;
+		double elevation = DemConstants.ELEV_NO_DATA;
+		if (cache) {
+			elevation = getModelPoint(latitude, longitude);
+			if (elevation != DemConstants.ELEV_NO_DATA) {
+				return elevation;
+			} else {
+				elevation = DemConstants.ELEV_NO_DATA;
+			}
 		}
 		
 		
@@ -663,8 +563,9 @@ public class TileRenderer extends InterruptibleProcess
 			throw new RenderEngineException("Error executing onGetElevationAfter(" + latitude + ", " + longitude + ", " + elevation + ")", ex);
 		}
 		
-		
-		setModelPoint(latitude, longitude, elevation);
+		if (cache) {
+			setModelPoint(latitude, longitude, elevation);
+		}
 		
 		return elevation;
 	}

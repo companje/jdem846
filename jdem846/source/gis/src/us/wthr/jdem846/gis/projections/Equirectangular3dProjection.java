@@ -93,12 +93,12 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		
 		projectTo(pointVector, eyeVector, nearVector);
 		
-		point.column = -pointVector[0] + (getWidth()/2.0);
-		point.row = pointVector[1] + (getHeight()/2.0);
+		//point.column = -pointVector[0] + (getWidth()/2.0);
+		//point.row = pointVector[1] + (getHeight()/2.0);
 		
-		//point.column = pointVector[0] + (getWidth()/2.0);
-		//point.row = -pointVector[1] + (getHeight()/2.0);
-		//point.z = pointVector[2];
+		point.column = pointVector[0] + (getWidth()/2.0);
+		point.row = -pointVector[1] + (getHeight()/2.0);
+		point.z = pointVector[2];
 		//point.column = pointVector[0] - (getWidth()/4.0);
 		///point.row = -pointVector[1];
 		//log.info("Lat/Lon " + latitude + "/" + longitude + " projected to X/Y " + point.column + "/" + point.row + " - Width/Height: " + getWidth() + "/" + getHeight() + ", N/S: " + getNorth() + "/" + getSouth());
@@ -120,10 +120,10 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		//double[] c = {1.0, 1.0, getWidth() * 20};
 		
 		
-		vector[0] = ((a[0] - c[0]) - e[0]) * (e[2] / (a[2] - c[2]));
-		vector[1] = ((a[1] - c[1]) - e[1]) * (e[2] / (a[2] - c[2]));
+		//vector[0] = ((a[0] - c[0]) - e[0]) * (e[2] / (a[2] - c[2]));
+		//vector[1] = ((a[1] - c[1]) - e[1]) * (e[2] / (a[2] - c[2]));
 		
-		/*
+		
 		double thetaX = 0;//MathExt.radians(15); // Orientation of the camera
 		double thetaY = 0;//MathExt.radians(45);
 		double thetaZ = 0;
@@ -150,7 +150,7 @@ public class Equirectangular3dProjection extends EquirectangularProjection
 		vector[0] = dX;
 		vector[1] = dY;
 		vector[2] = dZ;
-		*/
+		
 		
 	}
 

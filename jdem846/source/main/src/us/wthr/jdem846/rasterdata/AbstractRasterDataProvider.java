@@ -199,13 +199,15 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		if ((column + 1 < columns && row + 1 < rows)) {
 			
 			s01 = getData(row, column + 1);
-			s01 = (s01 != DemConstants.ELEV_NO_DATA) ? s01 : s00;
-			
 			s10 = getData(row + 1, column);
-			s10 = (s10 != DemConstants.ELEV_NO_DATA) ? s10 : s00;
-			
 			s11 = getData(row + 1, column + 1);
-			s11 = (s11 != DemConstants.ELEV_NO_DATA) ? s11 : s00;
+			
+			
+			
+			s00 = getNotElevNoData(s00, s01, s10, s11);
+			s01 = getNotElevNoData(s01, s00, s11, s10);
+			s10 = getNotElevNoData(s10, s00, s11, s01);
+			s11 = getNotElevNoData(s11, s01, s10, s00);
 
 		} else {
 			s11 = s10 = s01 = s00;
@@ -213,8 +215,19 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		
 
 		double data = interpolate(s00, s01, s10, s11, xFrac, yFrac);
+
 		return data;
 
+	}
+	
+	protected double getNotElevNoData(double...values)
+	{
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] != DemConstants.ELEV_NO_DATA) {
+				return values[i];
+			}
+		}
+		return DemConstants.ELEV_NO_DATA;
 	}
 	
 	protected double interpolate(double s00, double s01, double s10, double s11, double xFrac, double yFrac)

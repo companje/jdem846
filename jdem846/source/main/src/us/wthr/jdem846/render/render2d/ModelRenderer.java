@@ -139,12 +139,41 @@ public class ModelRenderer extends InterruptibleProcess
 		}
 		
 		
+		/*
+		double latStep = (northLimit - southLimit) / 6.0;
+		double lonStep = (eastLimit - westLimit) / 6.0;
+		
+		for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= latStep) {
+			
+			double tileSouth = tileNorth - latStep - tileLatitudeHeight;
+			
+			for (double tileWest = westLimit; tileWest < eastLimit; tileWest += lonStep ) {
+				
+				double tileEast = tileWest + lonStep + tileLongitudeWidth;
+				TileRenderContainer tileRenderContainer = null;
+				tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, tileNorth, tileSouth, tileEast, tileWest, (tileColumn + 1), (tileRow + 1));
+
+				if (renderPipeline != null) {
+					renderPipeline.submit(tileRenderContainer);
+				} else {
+					tileRenderContainer.render(null);
+				}
+				
+				//break;
+			}
+			//break;
+		}
+		*/
+		
+		
+		
+		
 		if ( getRasterDataContext().getRasterDataListSize() > 0) {
 			
 			
 			// Latitude
 			for (double tileNorth = northLimit; tileNorth >= southLimit; tileNorth -= tileLatitudeHeight) {
-				double tileSouth = (tileNorth - tileLatitudeHeight);
+				double tileSouth = (tileNorth - tileLatitudeHeight) - latitudeResolution;
 				if (tileSouth <= southLimit) {
 					tileSouth = southLimit + latitudeResolution;
 				}
@@ -153,7 +182,7 @@ public class ModelRenderer extends InterruptibleProcess
 				
 				// Longitude
 				for (double tileWest = westLimit; tileWest <= eastLimit; tileWest += tileLongitudeWidth) {
-					double tileEast = tileWest + tileLongitudeWidth;
+					double tileEast = tileWest + tileLongitudeWidth + longitudeResolution;
 					
 					if (tileEast >= eastLimit) {
 						tileEast = eastLimit - longitudeResolution;
@@ -206,6 +235,7 @@ public class ModelRenderer extends InterruptibleProcess
 			
 			
 		}
+		
 		
 		/*
 		log.info("Starting pipeline container...");
