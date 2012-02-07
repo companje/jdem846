@@ -43,10 +43,11 @@ public class ModelCanvas
 	private int width;
 	private int height;
 	
-	private MapProjection mapProjection;
+	//private MapProjection mapProjection;
 	private ModelContext modelContext;
 	private Color backgroundColor;
 	private ModelDimensions2D modelDimensions;
+	private CanvasProjection canvasProjection;
 	
 	//private BufferedImage image;
 	//private WritableRaster raster;
@@ -55,9 +56,9 @@ public class ModelCanvas
 	
 	private boolean isDisposed = false;
 	
-	private Path2D.Double pathBuffer = new Path2D.Double();
-	private Rectangle2D.Double rectangle = new Rectangle2D.Double();
-	private Quadrangle3d quad = new Quadrangle3d();
+	//private Path2D.Double pathBuffer = new Path2D.Double();
+	//private Rectangle2D.Double rectangle = new Rectangle2D.Double();
+	//private Quadrangle3d quad = new Quadrangle3d();
 	
 	private boolean isAntiAliased = false;
 	
@@ -110,12 +111,16 @@ public class ModelCanvas
 		graphics.fillRect(0, 0, getWidth(), getHeight());
 		*/
 		
+		/*
 		if (modelContext.getMapProjection() != null) {
 			mapProjection = modelContext.getMapProjection();
 		} else {
 			mapProjection = new EquirectangularProjection();
 			mapProjection.setUp(modelContext);
 		}
+		*/
+		
+		canvasProjection = CanvasProjectionFactory.create(modelContext);
 		
 		//zBuffer = new ZBuffer(getWidth(), getHeight());
 	}
@@ -172,14 +177,24 @@ public class ModelCanvas
 		return defaultConfiguration;
 	}
 	
+	public CanvasProjection getCanvasProjection()
+	{
+		return canvasProjection;
+	}
+	
+	public void setCanvasProjection(CanvasProjection canvasProjection)
+	{
+		this.canvasProjection = canvasProjection;
+	}
+	
 	public MapProjection getMapProjection()
 	{
-		return mapProjection;
+		return canvasProjection.getMapProjection();
 	}
 
 	public void setMapProjection(MapProjection mapProjection)
 	{
-		this.mapProjection = mapProjection;
+		canvasProjection.setMapProjection(mapProjection);
 	}
 
 	public void fillScanLine(ScanlinePath scanline)
@@ -219,15 +234,15 @@ public class ModelCanvas
 		double column0, column1, column2;
 		
 		try {
-			mapProjection.getPoint(latitude0, longitude0, elevation0, mapPoint);
+			canvasProjection.getPoint(latitude0, longitude0, elevation0, mapPoint);
 			row0 = mapPoint.row;
 			column0 = mapPoint.column;
 			
-			mapProjection.getPoint(latitude1, longitude1, elevation1, mapPoint);
+			canvasProjection.getPoint(latitude1, longitude1, elevation1, mapPoint);
 			row1 = mapPoint.row;
 			column1 = mapPoint.column;
 			
-			mapProjection.getPoint(latitude2, longitude2, elevation2, mapPoint);
+			canvasProjection.getPoint(latitude2, longitude2, elevation2, mapPoint);
 			row2 = mapPoint.row;
 			column2 = mapPoint.column;
 		} catch (MapProjectionException ex) {
@@ -287,12 +302,12 @@ public class ModelCanvas
 		double column0, column1;
 
 		try {
-			mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
+			canvasProjection.getPoint(latitude, longitude, elevation, mapPoint);
 			row0 = mapPoint.row;
 			column0 = mapPoint.column;
 	
 			
-			mapProjection.getPoint(latitude-height, longitude+width, elevation, mapPoint);
+			canvasProjection.getPoint(latitude-height, longitude+width, elevation, mapPoint);
 			row1 = mapPoint.row;
 			column1 = mapPoint.column;
 			
@@ -369,11 +384,11 @@ public class ModelCanvas
 		
 
 		try {
-			mapProjection.getPoint(lat0, lon0, elev0, mapPoint);
+			canvasProjection.getPoint(lat0, lon0, elev0, mapPoint);
 			row0 = mapPoint.row;
 			column0 = mapPoint.column;
 			
-			mapProjection.getPoint(lat1, lon1, elev1, mapPoint);
+			canvasProjection.getPoint(lat1, lon1, elev1, mapPoint);
 			row1 = mapPoint.row;
 			column1 = mapPoint.column;
 		} catch (MapProjectionException ex) {
@@ -406,23 +421,23 @@ public class ModelCanvas
 		double z0, z1, z2, z3;
 		
 		try {
-			mapProjection.getPoint(lat0, lon0, elev0, mapPoint);
+			canvasProjection.getPoint(lat0, lon0, elev0, mapPoint);
 			row0 =  Math.floor(mapPoint.row);
 			column0 = Math.floor(mapPoint.column);
 			z0 = mapPoint.z;
 
 			
-			mapProjection.getPoint(lat1, lon1, elev1, mapPoint);
+			canvasProjection.getPoint(lat1, lon1, elev1, mapPoint);
 			row1 = Math.floor(mapPoint.row);
 			column1 = Math.floor(mapPoint.column);
 			z1 = mapPoint.z;			//z += mapPoint.z;
 
-			mapProjection.getPoint(lat2, lon2, elev2, mapPoint);
+			canvasProjection.getPoint(lat2, lon2, elev2, mapPoint);
 			row2 = Math.floor(mapPoint.row);
 			column2 =  Math.floor(mapPoint.column);
 			z2 = mapPoint.z;
 
-			mapProjection.getPoint(lat3, lon3, elev3, mapPoint);
+			canvasProjection.getPoint(lat3, lon3, elev3, mapPoint);
 			row3 = Math.floor(mapPoint.row);
 			column3 = Math.floor(mapPoint.column);
 			z3 = mapPoint.z;
@@ -485,7 +500,7 @@ public class ModelCanvas
 		double row, column = 0;
 		
 		try {
-			mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
+			canvasProjection.getPoint(latitude, longitude, elevation, mapPoint);
 			row = mapPoint.row;
 			column = mapPoint.column;
 		} catch (MapProjectionException ex) {
@@ -514,7 +529,7 @@ public class ModelCanvas
 		int y = 0;
 		
 		try {
-			mapProjection.getPoint(latitude, longitude, 0, mapPoint);
+			canvasProjection.getPoint(latitude, longitude, 0, mapPoint);
 			y = (int) Math.round(mapPoint.row);
 			x = (int) Math.round(mapPoint.column);
 		} catch (Exception ex) {
@@ -535,14 +550,14 @@ public class ModelCanvas
 		int height = 0;
 		
 		try {
-			mapProjection.getPoint(north, west, 0, mapPoint);
+			canvasProjection.getPoint(north, west, 0, mapPoint);
 			y = (int) Math.floor(mapPoint.row);
 			x = (int) Math.floor(mapPoint.column);
 			
 			width = image.getWidth(null);
 			height = image.getHeight(null);
 			
-			mapProjection.getPoint(south, east, 0, mapPoint);
+			canvasProjection.getPoint(south, east, 0, mapPoint);
 			
 		} catch (Exception ex) {
 			throw new CanvasException("Failed to project coordinates: " + ex.getMessage(), ex);
@@ -625,11 +640,11 @@ public class ModelCanvas
 		int height = 0;
 		
 		try {
-			mapProjection.getPoint(north, west, 0, mapPoint);
+			canvasProjection.getPoint(north, west, 0, mapPoint);
 			srcY = (int) Math.floor(mapPoint.row);
 			srcX = (int) Math.floor(mapPoint.column);
 			
-			mapProjection.getPoint(south, east, 0, mapPoint);
+			canvasProjection.getPoint(south, east, 0, mapPoint);
 			int srcY2 = (int) Math.ceil(mapPoint.row);
 			int srcX2 = (int) Math.ceil(mapPoint.column);
 			

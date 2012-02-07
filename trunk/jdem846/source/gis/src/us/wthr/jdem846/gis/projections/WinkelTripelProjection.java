@@ -54,8 +54,8 @@ public class WinkelTripelProjection extends AbstractBaseProjection
 		y = (y + lpphi) / 2.0;
 		
 
-		point.column = longitudeToColumn(Math.toDegrees(x));
-		point.row = latitudeToRow(Math.toDegrees(y));
+		point.column = Math.toDegrees(x);
+		point.row = Math.toDegrees(y);
 
 	}
 

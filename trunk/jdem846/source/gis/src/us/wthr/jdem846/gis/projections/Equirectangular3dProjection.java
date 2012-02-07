@@ -7,6 +7,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.render.gfx.Vector;
 
+@Deprecated
 public class Equirectangular3dProjection extends EquirectangularProjection
 {
 	private static Log log = Logging.getLog(Equirectangular3dProjection.class);

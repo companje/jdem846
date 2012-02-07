@@ -48,8 +48,8 @@ public class AitoffProjection extends AbstractBaseProjection
 		x = Math.toDegrees(x);
 		y = Math.toDegrees(y);
 		
-		point.column = longitudeToColumn(x);
-		point.row = latitudeToRow(y);
+		point.column = x;
+		point.row = y;
 		
 	}
 	

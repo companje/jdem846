@@ -106,8 +106,8 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 		x = Math.toDegrees(x);
 		y = Math.toDegrees(y);
 		
-		x = longitudeToColumn(x);
-		y = latitudeToRow(y);
+		//x = longitudeToColumn(x);
+		//y = latitudeToRow(y);
 		
 		point.column = x;
 		point.row = y;
@@ -153,8 +153,8 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 		x = Math.toDegrees(x);
 		y = Math.toDegrees(y);
 		
-		x = longitudeToColumn(x);
-		y = latitudeToRow(y);
+		//x = longitudeToColumn(x);
+		//y = latitudeToRow(y);
 		
 		point.column = x;
 		point.row = y;

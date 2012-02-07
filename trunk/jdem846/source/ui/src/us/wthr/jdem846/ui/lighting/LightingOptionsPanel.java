@@ -266,6 +266,7 @@ public class LightingOptionsPanel extends RoundedPanel
 		lightingContext.setLightingElevation(lightSourceControl.getSolarElevation());
 		lightingContext.setRayTraceShadows(chkRayTraceShadows.getModel().isSelected());
 		lightingContext.setShadowIntensity((double)((Integer)spnShadowIntensity.getValue()) / 100.0);
+		lightingContext.setSpotExponent((Integer)spnSpotExponent.getValue());
 	}
 	
 	protected void checkControlState()
