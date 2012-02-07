@@ -15,21 +15,26 @@ import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.Perspectives;
+import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Line;
+import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
-import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.rasterdata.ElevationDataMap;
 import us.wthr.jdem846.rasterdata.RasterData;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.Canvas3d;
+import us.wthr.jdem846.render.CanvasProjection;
 import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.ui.panels.RoundedPanel;
 
 @SuppressWarnings("serial")
@@ -54,6 +59,23 @@ public class ModelVisualizationPanel extends RoundedPanel
 	private ElevationDataMap elevationMap;
 	
 	private List<ProjectionChangeListener> projectionChangeListeners = new LinkedList<ProjectionChangeListener>();
+	
+	private Perspectives perspectives = new Perspectives();
+	private double normal[] = new double[3];
+	private double backLeftPoints[] = new double[3];
+	private double backRightPoints[] = new double[3];
+	private double frontLeftPoints[] = new double[3];
+	private double frontRightPoints[] = new double[3];
+	private double sunsource[] = new double[3];	
+	private int colorBufferA[] = new int[4];
+	private int colorBufferB[] = new int[4];
+	
+	private double spotExponent = 0;
+	private double relativeLightIntensity = 0;
+	private double relativeDarkIntensity = 0;
+	
+	private double latitudeSlices = 70;
+	private double longitudeSlices = 70;
 	
 	public ModelVisualizationPanel(ModelContext modelContext)
 	{
@@ -89,6 +111,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 			}
 			public void componentResized(ComponentEvent arg0)
 			{
+				elevationMap = null;
 				update(false, false);
 			}
 			public void componentShown(ComponentEvent arg0)
@@ -124,6 +147,22 @@ public class ModelVisualizationPanel extends RoundedPanel
 		// Set Layout
 		setLayout(new BorderLayout());
 		
+		
+		backLeftPoints[0] = -1.0;
+		backLeftPoints[1] = 0.0;
+		backLeftPoints[2] = -1.0;
+		
+		backRightPoints[0] = 1.0;
+		backRightPoints[1] = 0.0;
+		backRightPoints[2] = -1.0;
+		
+		frontLeftPoints[0] = -1.0;
+		frontLeftPoints[1] = 0.0;
+		frontLeftPoints[2] = 1.0;
+		
+		frontRightPoints[0] = 1.0;
+		frontRightPoints[1] = 0.0;
+		frontRightPoints[2] = 1.0;
 	}
 	
 	protected void setWorkingCopyOptions()
@@ -134,11 +173,12 @@ public class ModelVisualizationPanel extends RoundedPanel
 		modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
 		modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
 		modelContextWorkingCopy.getModelOptions().setElevationMultiple(1.0);
+
 		
-		if (modelContextWorkingCopy.getRasterDataContext().getDataMinimumValue() >= modelContextWorkingCopy.getRasterDataContext().getDataMaximumValue()) {
-			modelContextWorkingCopy.getRasterDataContext().setDataMaximumValue(8850);
-			modelContextWorkingCopy.getRasterDataContext().setDataMinimumValue(-10971);
-		}
+		//if (modelContextWorkingCopy.getRasterDataContext().getDataMinimumValue() >= modelContextWorkingCopy.getRasterDataContext().getDataMaximumValue()) {
+		//	modelContextWorkingCopy.getRasterDataContext().setDataMaximumValue(8850);
+		//	modelContextWorkingCopy.getRasterDataContext().setDataMinimumValue(-10971);
+		//}
 		
 		modelContextWorkingCopy.updateContext();
 	}
@@ -196,14 +236,17 @@ public class ModelVisualizationPanel extends RoundedPanel
 		//	modelContextWorkingCopy.getModelOptions().setMapProjection(modelContextActual.getModelOptions().getMapProjection());
 		//}
 		
-		try {
-			modelContextWorkingCopy = modelContextActual.copy();
-			setWorkingCopyOptions();
-		} catch (DataSourceException ex) {
-			log.error("Failed to copy model context: " + ex.getMessage(), ex);
-			return;
+		if (updateFromActual) {
+			try {
+				modelContextWorkingCopy = modelContextActual.copy();
+				setWorkingCopyOptions();
+			} catch (DataSourceException ex) {
+				log.error("Failed to copy model context: " + ex.getMessage(), ex);
+				return;
+			}
 		}
 		
+		//modelContextWorkingCopy.getModelOptions().setProject3d(true);
 		modelContextWorkingCopy.getModelOptions().getProjection().setRotateX(rotateX);
 		modelContextWorkingCopy.getModelOptions().getProjection().setRotateY(rotateY);
 		modelContextWorkingCopy.getModelOptions().getProjection().setRotateZ(rotateZ);
@@ -216,6 +259,12 @@ public class ModelVisualizationPanel extends RoundedPanel
 					modelContextWorkingCopy.getWest(), 
 					modelContextWorkingCopy.getRasterDataContext().getEffectiveLatitudeResolution(), 
 					modelContextWorkingCopy.getRasterDataContext().getEffectiveLongitudeResolution());
+			
+			try {
+				determineDataRangeLowRes(modelContextWorkingCopy);
+			} catch (DataSourceException ex) {
+				log.error("Error determining elevation min & max: " + ex.getMessage(), ex);
+			}
 		}
 		
 		renderModelVisualizationImage();
@@ -255,6 +304,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 			log.error("Error painting light source lines: " + ex.getMessage(), ex);
 		}
 		
+		/*
 		for (int i = modelContextWorkingCopy.getRasterDataContext().getRasterDataListSize() - 1; i >= 0; i--) {
 			RasterData rasterData = modelContextWorkingCopy.getRasterDataContext().getRasterDataList().get(i);
 			
@@ -263,6 +313,12 @@ public class ModelVisualizationPanel extends RoundedPanel
 			} catch (Exception ex) {
 				log.error("Error painting raster grid: " + ex.getMessage(), ex);
 			}
+		}
+		*/
+		try {
+			paintRasterPlot(modelContextWorkingCopy, modelCanvas);
+		} catch (Exception ex) {
+			log.error("Error painting raster grid: " + ex.getMessage(), ex);
 		}
 		
 		try {
@@ -294,7 +350,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 	
 	protected void paintLightSourceLines(ModelContext modelContext, ModelCanvas canvas) throws Exception
 	{
-		int[] rgba = {Color.GRAY.getRed(), Color.GRAY.getGreen(), Color.GRAY.getBlue(), 255};
+		int[] rgba = {Color.RED.getRed(), Color.RED.getGreen(), Color.RED.getBlue(), 255};
 		
 		if (modelContext.getLightingContext() == null || !modelContext.getLightingContext().isLightingEnabled()) {
 			log.info("Lighting not enabled, skipping light source lines");
@@ -338,26 +394,36 @@ public class ModelVisualizationPanel extends RoundedPanel
 		canvas.drawShape(line, rgba);
 	}
 	
-	protected void paintRasterPlot(ModelContext modelContext, ModelCanvas canvas, RasterData rasterData) throws Exception
+	protected void paintRasterPlot(ModelContext modelContext, ModelCanvas canvas) throws Exception
 	{
-		int[] rgba = {Color.DARK_GRAY.getRed(), Color.DARK_GRAY.getGreen(), Color.DARK_GRAY.getBlue(), 255};
+		int[] rgba = {Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue(), 255};
 		
-		double north = rasterData.getNorth();
-		double south = rasterData.getSouth();
-		double east = rasterData.getEast();
-		double west = rasterData.getWest();
+		setUpLightSource(modelContext.getLightingContext().getLightingElevation(), modelContext.getLightingContext().getLightingAzimuth());
 		
-		Line line = new Line();
+		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
+		
+		spotExponent = modelContext.getLightingContext().getSpotExponent();
+		relativeLightIntensity = modelContext.getLightingContext().getRelativeLightIntensity();
+		relativeDarkIntensity = modelContext.getLightingContext().getRelativeDarkIntensity();
+		
+		double lightingMultiple = modelContext.getLightingContext().getLightingMultiple();
+		
+		double north = rasterDataContext.getNorth();
+		double south = rasterDataContext.getSouth();
+		double east = rasterDataContext.getEast();
+		double west = rasterDataContext.getWest();
+		
+		//Line line = new Line();
 
 		//double lonStep = ((rasterData.getColumns() - 1) / 12.0) * rasterData.getLongitudeResolution();
 		//double latStep = ((rasterData.getRows()) / 12.0) * rasterData.getLatitudeResolution();
 		
-		double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / 12;
-		double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / 12;
+		double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
+		double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
 		
 
-		for (double lon = west; lon < east - rasterData.getLongitudeResolution(); lon+=lonStep) {
-			for (double lat = north; lat > south + rasterData.getLatitudeResolution(); lat-=latStep) {
+		for (double lon = west; lon < east - rasterDataContext.getLongitudeResolution(); lon+=lonStep) {
+			for (double lat = north; lat > south + rasterDataContext.getLatitudeResolution(); lat-=latStep) {
 				
 				//if (lon >= east) {
 				//	lon -= rasterData.getLongitudeResolution();
@@ -403,39 +469,89 @@ public class ModelVisualizationPanel extends RoundedPanel
 				}
 				
 				if (Double.isNaN(neElev) || neElev == DemConstants.ELEV_NO_DATA) {
-					neElev = nwElev;
+					//neElev = nwElev;
+					continue;
 				}
 				
 				if (Double.isNaN(swElev) || swElev == DemConstants.ELEV_NO_DATA) {
-					swElev = nwElev;
+					//swElev = nwElev;
+					continue;
 				}
 				
 				if (Double.isNaN(seElev) || seElev == DemConstants.ELEV_NO_DATA) {
-					seElev = swElev;
+					//seElev = swElev;
+					continue;
 				}
 				
+				calculateNormal(nwElev, swElev, seElev, neElev, normal);
+				double dot = calculateDotProduct();
 				
+				colorBufferA[0] = rgba[0];
+				colorBufferA[1] = rgba[1];
+				colorBufferA[2] = rgba[2];
+				colorBufferA[3] = rgba[3];
 				
+				ColorAdjustments.adjustBrightness(colorBufferA, dot);
+				ColorAdjustments.interpolateColor(rgba, colorBufferA, colorBufferB, lightingMultiple);
 				
-				line.addEdge(createEdge(modelContext, nwLat, nwLon, nwElev, swLat, swLon, swElev));
-				line.addEdge(createEdge(modelContext, swLat, swLon, swElev, seLat, seLon, seElev));
+				colorBufferB[3] = 255;
 				
-				line.addEdge(createEdge(modelContext, seLat, seLon, seElev, neLat, neLon, neElev));
-				line.addEdge(createEdge(modelContext, neLat, neLon, neElev, nwLat, nwLon, nwElev));
-				
+				Polygon poly = new Polygon();
+				poly.addEdge(createEdge(modelContext, nwLat, nwLon, nwElev, swLat, swLon, swElev));
+				poly.addEdge(createEdge(modelContext, swLat, swLon, swElev, seLat, seLon, seElev));
+				poly.addEdge(createEdge(modelContext, seLat, seLon, seElev, neLat, neLon, neElev));
+				poly.addEdge(createEdge(modelContext, neLat, neLon, neElev, nwLat, nwLon, nwElev));
+				canvas.fillShape(poly, colorBufferB);
+
 			}
 			
-			//line.addEdge(createEdge(modelContext, north, lon, 0.0, south, lon, 0.0));
+			
 		}
+
 		
-		
-		
-			//line.addEdge(createEdge(modelContext, lat, west, 0.0, lat, east, 0.0));
-		//}
-		
-		canvas.drawShape(line, rgba);
+		//canvas.drawShape(line, rgba);
 		
 	}
+	
+	protected void calculateNormal(double nw, double sw, double se, double ne, double[] normal)
+	{
+		backLeftPoints[1] = nw;
+		backRightPoints[1] = ne;
+		frontLeftPoints[1] = sw;
+		frontRightPoints[1] = se;
+		
+		perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
+	}
+	
+	protected double calculateDotProduct()
+	{
+		double dot = perspectives.dotProduct(normal, sunsource);
+		dot = Math.pow(dot, spotExponent);
+		
+
+		
+		if (dot > 0) {
+			dot *= relativeLightIntensity;
+		} else if (dot < 0) {
+			dot *= relativeDarkIntensity;
+		}
+		
+		return dot;
+	}
+	
+	protected void setUpLightSource(double solarElevation, double solarAzimuth)
+	{
+		
+		Vector sun = new Vector(0.0, 0.0, -1.0);
+		Vector angles = new Vector(solarElevation, -solarAzimuth, 0.0);
+		sun.rotate(angles);
+
+		sunsource[0] = sun.getX();
+		sunsource[1] = sun.getY();
+		sunsource[2] = sun.getZ();
+		
+	}
+	
 	
 	protected double getElevation(ModelContext modelContext, double latitude, double longitude) throws DataSourceException
 	{
@@ -489,7 +605,8 @@ public class ModelVisualizationPanel extends RoundedPanel
 	
 	protected Edge createEdge(ModelContext modelContext, double lat0, double lon0, double elev0, double lat1, double lon1, double elev1) throws MapProjectionException
     {
-		MapProjection projection = modelContext.getMapProjection();
+		//MapProjection projection = modelContext.getMapProjection();
+		CanvasProjection projection = modelContext.getModelCanvas().getCanvasProjection();
 		
     	MapPoint point = new MapPoint();
     	projection.getPoint(lat0, lon0, elev0, point);
@@ -503,17 +620,46 @@ public class ModelVisualizationPanel extends RoundedPanel
     	double x1 = (int) point.column;
     	double y1 = (int) point.row;
     	double z1 = (int) point.z;
-    	
-    	if (x0 != 0 && x1 == 0 && y1 == 0 && z1 == 0) {
-    		int i = 0;
-    	}
-    	
-    	//log.info("Edge: " + x0 + "/" + y0 + "/" + z0 + ", " + x1 + "/" + y1 + "/" + z1);
-    	
+
     	return new Edge(x0, y0, z0, x1, y1, z1);
     	
     }
 	
+	
+	public void determineDataRangeLowRes(ModelContext modelContext) throws DataSourceException
+	{
+		
+		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
+
+		double north = rasterDataContext.getNorth();
+		double south = rasterDataContext.getSouth();
+		double east = rasterDataContext.getEast();
+		double west = rasterDataContext.getWest();
+		
+		double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
+		double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
+		
+		double min = Double.MAX_VALUE;
+		double max = Double.MIN_VALUE;
+		
+		for (double lon = west; lon < east - rasterDataContext.getLongitudeResolution(); lon+=lonStep) {
+			for (double lat = north; lat > south + rasterDataContext.getLatitudeResolution(); lat-=latStep) {
+				double elevation = getElevation(modelContext, lat, lon);
+				
+				if (!Double.isNaN(elevation) && elevation != DemConstants.ELEV_NO_DATA) {
+					min = MathExt.min(elevation, min);
+					max = MathExt.max(elevation, max);
+				}
+				
+			}
+			
+		}
+		
+		rasterDataContext.setDataMaximumValue(max);
+		rasterDataContext.setDataMinimumValue(min);
+		
+		
+	}
 	
 	public void addProjectionChangeListener(ProjectionChangeListener listener)
 	{

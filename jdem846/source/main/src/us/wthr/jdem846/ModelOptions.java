@@ -470,6 +470,15 @@ public class ModelOptions extends MappedOptions
 		setOption(ModelOptionNamesEnum.PIPELINE_RENDER, usePipelineRender);
 	}
 	
+	public boolean getProject3d()
+	{
+		return getBooleanOption(ModelOptionNamesEnum.PROJECT_3D);
+	}
+	
+	public void setProject3d(boolean project3d)
+	{
+		setOption(ModelOptionNamesEnum.PROJECT_3D, project3d);
+	}
 	
 	public String getWriteTo()
 	{

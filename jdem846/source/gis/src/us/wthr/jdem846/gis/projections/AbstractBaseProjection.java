@@ -133,7 +133,7 @@ public abstract class AbstractBaseProjection implements MapProjection
 		this.height = height;
 	}
 	
-	
+	/*
 	public double latitudeToRow(double latitude)
 	{
 		// TODO: This method is not very accurate... Fix it
@@ -167,7 +167,8 @@ public abstract class AbstractBaseProjection implements MapProjection
 		//double col = (1.0 - (pos / range)) * (double) width;
 		//return col;
 	}
-
+	*/
+	
 	protected double getNorth()
 	{
 		return getMaxNorth();

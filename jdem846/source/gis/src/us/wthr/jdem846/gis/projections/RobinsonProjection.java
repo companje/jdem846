@@ -83,7 +83,7 @@ public class RobinsonProjection extends AbstractBaseProjection
 		double pdfe = interpolate(lower[2], higher[2], frac);
 		
 		double latLen = plen * width;
-		point.column = ((width - latLen) / 2.0) + (longitudeToColumn(longitude) * (latLen / width));
+		point.column = ((width - latLen) / 2.0) + (longitude * (latLen / width));
 		
 		if (latitudeOrig >= 0) {
 			point.row = (height / 2.0) - (height * (pdfe * 0.5 /*0.5072*/));

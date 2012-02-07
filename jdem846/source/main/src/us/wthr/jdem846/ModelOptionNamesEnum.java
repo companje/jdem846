@@ -42,7 +42,8 @@ public enum ModelOptionNamesEnum
 	USER_SCRIPT_JYTHON_TEMPLATE("us.wthr.jdem846.modelOptions.userScript.jython.template"),
 	
 	MAP_PROJECTION("us.wthr.jdem846.modelOptions.mapProjection"),
-	PIPELINE_RENDER("us.wthr.jdem846.modelOptions.pipelineRender");
+	PIPELINE_RENDER("us.wthr.jdem846.modelOptions.pipelineRender"),
+	PROJECT_3D("us.wthr.jdem846.modelOptions.project3d");
 	
 	private final String optionName;
 	

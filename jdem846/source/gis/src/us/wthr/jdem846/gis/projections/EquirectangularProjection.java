@@ -60,8 +60,8 @@ public class EquirectangularProjection extends AbstractBaseProjection
 	
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
-		point.row = latitudeToRow(latitude);
-		point.column = longitudeToColumn(longitude);
+		point.row = latitude;
+		point.column = longitude;
 	}
 	
 	

@@ -33,7 +33,7 @@ public class RasterDataContext implements DataContext
 	private double dataMinimumValue = 0;
 	private double dataMaximumValue = 0;
 	
-	private double metersResolution;
+	private double metersResolution = NOT_SET;
 	
 	private boolean isDisposed = false;
 	

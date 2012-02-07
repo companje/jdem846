@@ -38,7 +38,7 @@ public class MercatorProjection extends AbstractBaseProjection
 	{
 
 		double phi = Math.toRadians(latitude);
-		point.column = longitudeToColumn(longitude);
+		point.column = longitude;
 		
 		if (Math.abs(Math.abs(phi) - HALFPI) <= EPS10) {
 			if (latitude > 0)
@@ -48,7 +48,7 @@ public class MercatorProjection extends AbstractBaseProjection
 			return;
 		}
 
-		point.row =  latitudeToRow(latitudeToY(phi));
+		point.row =  latitudeToY(phi);
 
 	}
 	
