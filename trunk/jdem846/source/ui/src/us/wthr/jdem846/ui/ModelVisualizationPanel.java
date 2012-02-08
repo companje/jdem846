@@ -14,14 +14,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
+import us.wthr.jdem846.color.ColoringRegistry;
+import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Line;
 import us.wthr.jdem846.geom.Polygon;
+import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.logging.Log;
@@ -73,9 +77,15 @@ public class ModelVisualizationPanel extends RoundedPanel
 	private double spotExponent = 0;
 	private double relativeLightIntensity = 0;
 	private double relativeDarkIntensity = 0;
+	private double lightingMultiple = 0;
+	private int[] rgba = {Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue(), 255};
+
+	private MapPoint point = new MapPoint();
 	
-	private double latitudeSlices = 70;
-	private double longitudeSlices = 70;
+	private double latitudeSlices = 50;
+	private double longitudeSlices = 50;
+	
+	private boolean ignoreUpdate = false;
 	
 	public ModelVisualizationPanel(ModelContext modelContext)
 	{
@@ -84,6 +94,9 @@ public class ModelVisualizationPanel extends RoundedPanel
 		setBackground(Color.WHITE);
 		
 		// Create working copy of model context
+		
+		latitudeSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.modelVisualization.latitudeSlices");
+		longitudeSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.modelVisualization.longitudeSlices");
 		
 		rotateX = modelContextActual.getModelOptions().getProjection().getRotateX();
 		rotateY = modelContextActual.getModelOptions().getProjection().getRotateY();
@@ -136,8 +149,10 @@ public class ModelVisualizationPanel extends RoundedPanel
 				lastX = -1;
 				lastY = -1;
 				//useElevationOnDataGrids = true;
-				update(false, false);
+				//update(false, false);
+				ignoreUpdate = true;
 				fireProjectionChangeListeners();
+				ignoreUpdate = false;
 				//fireChangeListeners();
 			}
 		};
@@ -168,7 +183,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 	protected void setWorkingCopyOptions()
 	{
 		modelContextWorkingCopy.getModelOptions().setBackgroundColor("0;0;0;0");
-		modelContextWorkingCopy.getModelOptions().setColoringType("hypsometric-tint");
+		//modelContextWorkingCopy.getModelOptions().setColoringType("hypsometric-tint");
 		modelContextWorkingCopy.getModelOptions().setAntialiased(false);
 		modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
 		modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
@@ -230,6 +245,9 @@ public class ModelVisualizationPanel extends RoundedPanel
 	
 	public void update(boolean dataModelChange, boolean updateFromActual)
 	{
+		if (ignoreUpdate) {
+			return;
+		}
 		
 		//if (updateFromActual) {
 		//	modelContextWorkingCopy.getModelOptions().setProjection(modelContextActual.getModelOptions().getProjection().copy());
@@ -303,30 +321,20 @@ public class ModelVisualizationPanel extends RoundedPanel
 		} catch (Exception ex) {
 			log.error("Error painting light source lines: " + ex.getMessage(), ex);
 		}
-		
-		/*
-		for (int i = modelContextWorkingCopy.getRasterDataContext().getRasterDataListSize() - 1; i >= 0; i--) {
-			RasterData rasterData = modelContextWorkingCopy.getRasterDataContext().getRasterDataList().get(i);
-			
-			try {
-				paintRasterPlot(modelContextWorkingCopy, modelCanvas, rasterData);
-			} catch (Exception ex) {
-				log.error("Error painting raster grid: " + ex.getMessage(), ex);
-			}
-		}
-		*/
+
 		try {
 			paintRasterPlot(modelContextWorkingCopy, modelCanvas);
 		} catch (Exception ex) {
 			log.error("Error painting raster grid: " + ex.getMessage(), ex);
 		}
 		
+		
 		try {
 			paintBasicGrid(modelContextWorkingCopy, modelCanvas);
 		} catch (Exception ex) {
 			log.error("Error painting base grid: " + ex.getMessage(), ex);
 		}
-
+		
 		
 		modelVisualizationImage = modelCanvas.getFinalizedImage();
 		
@@ -397,6 +405,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 	protected void paintRasterPlot(ModelContext modelContext, ModelCanvas canvas) throws Exception
 	{
 		int[] rgba = {Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue(), 255};
+
 		
 		setUpLightSource(modelContext.getLightingContext().getLightingElevation(), modelContext.getLightingContext().getLightingAzimuth());
 		
@@ -406,7 +415,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 		relativeLightIntensity = modelContext.getLightingContext().getRelativeLightIntensity();
 		relativeDarkIntensity = modelContext.getLightingContext().getRelativeDarkIntensity();
 		
-		double lightingMultiple = modelContext.getLightingContext().getLightingMultiple();
+		lightingMultiple = modelContext.getLightingContext().getLightingMultiple();
 		
 		double north = rasterDataContext.getNorth();
 		double south = rasterDataContext.getSouth();
@@ -445,7 +454,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 				double seLat = lat - latStep;
 				double seLon = lon + lonStep;
 				
-				
+				/*
 				double nwElev = 0;
 				double neElev = 0;
 				double swElev = 0;
@@ -482,7 +491,11 @@ public class ModelVisualizationPanel extends RoundedPanel
 					//seElev = swElev;
 					continue;
 				}
+				*/
 				
+				
+				
+				/*
 				calculateNormal(nwElev, swElev, seElev, neElev, normal);
 				double dot = calculateDotProduct();
 				
@@ -495,13 +508,47 @@ public class ModelVisualizationPanel extends RoundedPanel
 				ColorAdjustments.interpolateColor(rgba, colorBufferA, colorBufferB, lightingMultiple);
 				
 				colorBufferB[3] = 255;
+				*/
 				
-				Polygon poly = new Polygon();
-				poly.addEdge(createEdge(modelContext, nwLat, nwLon, nwElev, swLat, swLon, swElev));
-				poly.addEdge(createEdge(modelContext, swLat, swLon, swElev, seLat, seLon, seElev));
-				poly.addEdge(createEdge(modelContext, seLat, seLon, seElev, neLat, neLon, neElev));
-				poly.addEdge(createEdge(modelContext, neLat, neLon, neElev, nwLat, nwLon, nwElev));
-				canvas.fillShape(poly, colorBufferB);
+				// NW
+				//calculateShadedColor(nwElev,swElev, seElev, neElev, "nw", rgba, colorBufferB);
+				
+				double elev = 0;
+				if ((elev = calculateShadedColor(modelContext, nwLat, nwLon, rgba)) == DemConstants.ELEV_NO_DATA) 
+					continue;
+				Vertex nwVtx = createVertex(modelContext, nwLat, nwLon, elev, rgba);
+				
+				// SW
+				//calculateShadedColor(nwElev,swElev, seElev, neElev, "sw", rgba, colorBufferB);
+				if ((elev = calculateShadedColor(modelContext, swLat, swLon, rgba)) == DemConstants.ELEV_NO_DATA)
+					continue;
+				Vertex swVtx = createVertex(modelContext, swLat, swLon, elev, rgba);
+				
+				// SE
+				//calculateShadedColor(nwElev,swElev, seElev, neElev, "se", rgba, colorBufferB);
+				if ((elev = calculateShadedColor(modelContext, seLat, seLon, rgba)) == DemConstants.ELEV_NO_DATA)
+					continue;
+				Vertex seVtx = createVertex(modelContext, seLat, seLon, elev, rgba);
+				
+				// NE
+				//calculateShadedColor(nwElev,swElev, seElev, neElev, "ne", rgba, colorBufferB);
+				if ((elev = calculateShadedColor(modelContext, neLat, neLon, rgba)) == DemConstants.ELEV_NO_DATA)
+					continue;
+				Vertex neVtx = createVertex(modelContext, neLat, neLon, elev, rgba);
+				
+				
+				Polygon poly0 = new Polygon();
+				poly0.addEdge(new Edge(nwVtx, swVtx));
+				poly0.addEdge(new Edge(swVtx, neVtx));
+				poly0.addEdge(new Edge(neVtx, nwVtx));
+				canvas.fillShape(poly0, colorBufferB);
+				
+				Polygon poly1 = new Polygon();
+				poly1.addEdge(new Edge(neVtx, swVtx));
+				poly1.addEdge(new Edge(swVtx, seVtx));
+				poly1.addEdge(new Edge(seVtx, neVtx));
+				canvas.fillShape(poly1, colorBufferB);
+				//poly.addEdge(new Edge(seVtx, neVtx));
 
 			}
 			
@@ -513,15 +560,117 @@ public class ModelVisualizationPanel extends RoundedPanel
 		
 	}
 	
-	protected void calculateNormal(double nw, double sw, double se, double ne, double[] normal)
+
+	
+	
+	
+	protected double calculateShadedColor(ModelContext modelContext, double latitude, double longitude, int[] rgba) throws DataSourceException
+	{
+		double north = modelContext.getRasterDataContext().getNorth();
+		double south = modelContext.getRasterDataContext().getSouth();
+		double east = modelContext.getRasterDataContext().getEast();
+		double west = modelContext.getRasterDataContext().getWest();
+		
+		double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
+		double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
+		
+		
+		double eLat = latitude;
+		double eLon = longitude + lonStep;
+		
+		double sLat = latitude - latStep;
+		double sLon = longitude;
+		
+		double wLat = latitude;
+		double wLon = longitude - lonStep;
+		
+		double nLat = latitude + latStep;
+		double nLon = longitude;
+		
+		
+		double midElev = getElevation(modelContext, latitude, longitude);
+		double eElev = getElevation(modelContext, eLat, eLon);
+		double sElev = getElevation(modelContext, sLat, sLon);
+		double wElev = getElevation(modelContext, wLat, wLon);
+		double nElev = getElevation(modelContext, nLat, nLon);
+		
+		if (midElev == DemConstants.ELEV_NO_DATA ||
+				eElev == DemConstants.ELEV_NO_DATA ||
+				sElev == DemConstants.ELEV_NO_DATA ||
+				wElev == DemConstants.ELEV_NO_DATA ||
+				nElev == DemConstants.ELEV_NO_DATA) {
+			return DemConstants.ELEV_NO_DATA;
+		}
+		
+		double[] pointNormal = new double[3];
+		
+		// NW Normal
+		calculateNormal(0.0, wElev, midElev, nElev, "se", normal);
+		pointNormal[0] = normal[0];
+		pointNormal[1] = normal[1];
+		pointNormal[2] = normal[2];
+		
+		// SW Normal
+		calculateNormal(wElev, 0.0, sElev, midElev, "ne", normal);
+		pointNormal[0] += normal[0];
+		pointNormal[1] += normal[1];
+		pointNormal[2] += normal[2];
+		
+		// SE Normal
+		calculateNormal(midElev, sElev, 0.0, eElev, "nw", normal);
+		pointNormal[0] += normal[0];
+		pointNormal[1] += normal[1];
+		pointNormal[2] += normal[2];
+		
+		// NE Normal
+		calculateNormal(nElev, midElev, eElev, 0.0, "sw", normal);
+		pointNormal[0] += normal[0];
+		pointNormal[1] += normal[1];
+		pointNormal[2] += normal[2];
+		
+		normal[0] = pointNormal[0] / 4.0;
+		normal[1] = pointNormal[1] / 4.0;
+		normal[2] = pointNormal[2] / 4.0;
+		
+		double dot = calculateDotProduct();
+		
+		double min = modelContext.getRasterDataContext().getDataMinimumValue();
+		double max = modelContext.getRasterDataContext().getDataMaximumValue();
+		
+		ModelColoring modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
+		
+		modelColoring.getGradientColor(midElev, min, max, colorBufferA);
+		copyRgba(colorBufferA, colorBufferB);
+		
+		
+		ColorAdjustments.adjustBrightness(colorBufferB, dot);
+		ColorAdjustments.interpolateColor(colorBufferA, colorBufferB, rgba, lightingMultiple);
+		
+		rgba[3] = 255;
+		
+		return midElev;
+	}
+	
+	
+	protected void calculateNormal(double nw, double sw, double se, double ne, String corner, double[] normal)
 	{
 		backLeftPoints[1] = nw;
 		backRightPoints[1] = ne;
 		frontLeftPoints[1] = sw;
 		frontRightPoints[1] = se;
 		
-		perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
+		if (corner.equalsIgnoreCase("nw")) {
+			perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
+		} else if (corner.equalsIgnoreCase("sw")) {
+			perspectives.calcNormal(backLeftPoints, frontLeftPoints, frontRightPoints, normal);
+		} else if (corner.equalsIgnoreCase("se")) {
+			perspectives.calcNormal(frontLeftPoints, frontRightPoints, backRightPoints, normal);
+		} else if (corner.equalsIgnoreCase("ne")) {
+			perspectives.calcNormal(backLeftPoints, frontRightPoints, backRightPoints, normal);
+		}
+		
 	}
+	
 	
 	protected double calculateDotProduct()
 	{
@@ -601,29 +750,33 @@ public class ModelVisualizationPanel extends RoundedPanel
 	}
 	
 	
-	
-	
 	protected Edge createEdge(ModelContext modelContext, double lat0, double lon0, double elev0, double lat1, double lon1, double elev1) throws MapProjectionException
     {
-		//MapProjection projection = modelContext.getMapProjection();
-		CanvasProjection projection = modelContext.getModelCanvas().getCanvasProjection();
-		
-    	MapPoint point = new MapPoint();
-    	projection.getPoint(lat0, lon0, elev0, point);
-    	
-    	double x0 = (int) point.column;
-    	double y0 = (int) point.row;
-    	double z0 = (int) point.z;
-    	
-    	projection.getPoint(lat1, lon1, elev1, point);
-    	
-    	double x1 = (int) point.column;
-    	double y1 = (int) point.row;
-    	double z1 = (int) point.z;
+		return createEdge(modelContext, lat0, lon0, elev0, null, lat1, lon1, elev1, null);
+    }
+	
+	protected Edge createEdge(ModelContext modelContext, double lat0, double lon0, double elev0, int[] rgba0, double lat1, double lon1, double elev1, int[] rgba1) throws MapProjectionException
+    {
 
-    	return new Edge(x0, y0, z0, x1, y1, z1);
+		Vertex v0 = createVertex(modelContext, lat0, lon0, elev0, rgba0);
+		Vertex v1 = createVertex(modelContext, lat1, lon1, elev1, rgba1);
+    	return new Edge(v0, v1);
     	
     }
+	
+	protected Vertex createVertex(ModelContext modelContext, double lat, double lon, double elev, int[] rgba) throws MapProjectionException
+	{
+		CanvasProjection projection = modelContext.getModelCanvas().getCanvasProjection();
+
+    	projection.getPoint(lat, lon, elev, point);
+    	
+    	double x = (int) point.column;
+    	double y = (int) point.row;
+    	double z = (int) point.z;
+		
+    	Vertex v = new Vertex(x, y, z, rgba);
+    	return v;
+	}
 	
 	
 	public void determineDataRangeLowRes(ModelContext modelContext) throws DataSourceException
@@ -658,6 +811,15 @@ public class ModelVisualizationPanel extends RoundedPanel
 		rasterDataContext.setDataMaximumValue(max);
 		rasterDataContext.setDataMinimumValue(min);
 		
+		
+	}
+	
+	protected void copyRgba(int[] rgba0, int[] rgba1)
+	{
+		rgba1[0] = rgba0[0];
+		rgba1[1] = rgba0[1];
+		rgba1[2] = rgba0[2];
+		rgba1[3] = rgba0[3];
 		
 	}
 	

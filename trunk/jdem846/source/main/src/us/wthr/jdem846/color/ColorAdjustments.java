@@ -20,7 +20,7 @@ package us.wthr.jdem846.color;
  * 
  * see: http://en.wikipedia.org/wiki/Image_editing
  * 
- * @author A345926
+ * @author Kevin M. Gill
  *
  */
 public class ColorAdjustments
@@ -94,6 +94,11 @@ public class ColorAdjustments
 		out[0] = (int) Math.round((c1[0] * ratio) + (c0[0] * (1.0 - ratio)));
 		out[1] = (int) Math.round((c1[1] * ratio) + (c0[1] * (1.0 - ratio)));
 		out[2] = (int) Math.round((c1[2] * ratio) + (c0[2] * (1.0 - ratio)));
+		
+		if (c0.length >= 4 && c1.length >= 4 && out.length >= 4) {
+			out[3] = (int) Math.round((c1[3] * ratio) + (c0[3] * (1.0 - ratio)));
+		}
+		
 	}
 	
 }
