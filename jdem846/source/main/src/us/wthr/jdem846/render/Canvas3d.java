@@ -87,9 +87,41 @@ public class Canvas3d
 		draw(edge, rgba);
 	}
 	
+	public void draw(Edge edge)
+	{
+		draw(edge, -1);
+	}
+	
 	public void draw(Edge edge, int rgba)
 	{
-
+		int[] rgba0 = new int[4];
+		int[] rgba1 = new int[4];
+		int[] pixel = new int[4];
+		
+		if (rgba != -1) {
+			rgba0 = new int[4];
+			rgba1 = new int[4];
+			
+			intToRGBA(rgba, rgba0);
+			intToRGBA(rgba, rgba1);
+			
+		} else {
+			//rgba0 = edge.p0.rgba;
+			//rgba1 = edge.p1.rgba;
+			//int i = 0;
+			rgba0[0] = edge.p0.rgba[0];
+			rgba0[1] = edge.p0.rgba[1];
+			rgba0[2] = edge.p0.rgba[2];
+			rgba0[3] = edge.p0.rgba[3];
+			
+			rgba1[0] = edge.p1.rgba[0];
+			rgba1[1] = edge.p1.rgba[1];
+			rgba1[2] = edge.p1.rgba[2];
+			rgba1[3] = edge.p1.rgba[3];
+			
+		}
+		
+		
 		double x0 = edge.p0.x;
 		double y0 = edge.p0.y;
 		
@@ -133,7 +165,10 @@ public class Canvas3d
 				int y = (int) ((isValidSlope) ? ((s * (x - mxX)) + mxY) + 1 : mxY);
 				double f = (double)(x - xMn) / (double)(xMx - xMn);
 				double z = edge.getInterpolatedZ(f);
-				set(x, y, z, rgba);
+				
+				ColorAdjustments.interpolateColor(rgba0, rgba1, pixel, f);
+				
+				set(x, y, z, pixel);
 			}
 			
 		} else {
@@ -142,7 +177,10 @@ public class Canvas3d
 				int x =  (int) ((isValidSlope) ? (((y - mxY) / s) + mxX) : mxX);
 				double f = ((yMx - yMn) != 0) ? (y - yMn) / (yMx - yMn) : 0;
 				double z = edge.getInterpolatedZ(f);
-				set(x, y+1, z, rgba);
+				
+				ColorAdjustments.interpolateColor(rgba0, rgba1, pixel, f);
+				
+				set(x, y+1, z, pixel);
 			}
 			
 		}
@@ -238,12 +276,17 @@ public class Canvas3d
 		
 	}
 	
-	
+	public void fill(Geometric shape)
+	{
+		fill(shape, -1);
+	}
 	
 	public void fill(Geometric shape, int rgba)
 	{
 		int minY = Integer.MAX_VALUE;
 		int maxY = Integer.MIN_VALUE;
+		
+		boolean useEdgeColors = (rgba == -1);
 		
 		Edge[] edgeArray = shape.getEdges(true);
 		
@@ -268,6 +311,7 @@ public class Canvas3d
 		
 		List<Integer> xList = new ArrayList<Integer>();
 		List<Integer> zList = new ArrayList<Integer>();
+		List<Rgba> rgbaList = new ArrayList<Rgba>();
 		
 		for (int y = minY; y <= maxY; y++) {
 			xList.clear();
@@ -278,11 +322,13 @@ public class Canvas3d
 				if (y == edgeArray[i].p0.y) {
                     if (y == edgeArray[i].p1.y) {
                         // the current edge is horizontal, so we add both vertices
-                    	edgeArray[i].deactivate();
+                    	edgeArray[i].deactivate(y);
                     	xList.add((int) edgeArray[i].curX);
                     	zList.add((int) edgeArray[i].curZ);
+                    	if (useEdgeColors)
+                    		rgbaList.add(new Rgba(edgeArray[i].curRgba));
                     } else {
-                    	edgeArray[i].activate();
+                    	edgeArray[i].activate(y);
                         // we don't insert it in the list cause this vertice is also
                         // the (bigger) vertice of another edge and already handled
                     }
@@ -290,16 +336,20 @@ public class Canvas3d
                 
                 // here the scanline intersects the bigger vertice
                 if (y == edgeArray[i].p1.y) {
-                	edgeArray[i].deactivate();
+                	edgeArray[i].deactivate(y);
                 	xList.add((int) edgeArray[i].curX);
                 	zList.add((int) edgeArray[i].curZ);
+                	if (useEdgeColors)
+                		rgbaList.add(new Rgba(edgeArray[i].curRgba));
                 }
                 
                 // here the scanline intersects the edge, so calc intersection point
                 if (y > edgeArray[i].p0.y && y < edgeArray[i].p1.y) {
-                	edgeArray[i].update();
+                	edgeArray[i].update(y);
                 	xList.add((int) edgeArray[i].curX);
                 	zList.add((int) edgeArray[i].curZ);
+                	if (useEdgeColors)
+                		rgbaList.add(new Rgba(edgeArray[i].curRgba));
                 }
 			}
 			
@@ -311,6 +361,7 @@ public class Canvas3d
 			
 			int xSwap;
 			int zSwap;
+			Rgba rSwap;
             for (int i = 0; i < xList.size(); i++) {
                 for (int j = 0; j < xList.size() - 1; j++) {
                     if (xList.get(j) > xList.get(j+1)) {
@@ -321,6 +372,12 @@ public class Canvas3d
                         zSwap = zList.get(j);
                         zList.set(j, zList.get(j+1));
                         zList.set(j+1, zSwap);
+                        
+                        if (useEdgeColors) {
+	                        rSwap = rgbaList.get(j);
+	                        rgbaList.set(j, rgbaList.get(j+1));
+	                        rgbaList.set(j+1, rSwap);
+                        }
                     }
                 
                 }
@@ -339,9 +396,21 @@ public class Canvas3d
             		if (rightX == leftX) {
             			rightX++;
             		}
-            		//_fillScanLine(leftX, rightX, y, leftZ, rightZ, rgba);
-            		Edge edge = new Edge(leftX, y-1, leftZ, rightX, y-1, rightZ);
-            		draw(edge, rgba);
+            		
+            		Edge edge = null;
+            		if (useEdgeColors) {
+	            		Rgba leftRgba = rgbaList.get(i);
+	            		Rgba rightRgba = rgbaList.get(i+1);
+	            		
+	            		
+	            		//_fillScanLine(leftX, rightX, y, leftZ, rightZ, rgba);
+	            		edge = new Edge(leftX, y-1, leftZ, leftRgba.rgba, rightX, y-1, rightZ, rightRgba.rgba);
+	            		draw(edge);
+            		} else {
+            			edge = new Edge(leftX, y-1, leftZ, rightX, y-1, rightZ);
+            			draw(edge, rgba);
+            		}
+	            	
             		//pointsDrawn += 1;
             	}
             }
@@ -679,5 +748,19 @@ public class Canvas3d
 		
 		return edgeArray;
 		
+	}
+	
+	class Rgba
+	{
+		public int[] rgba;
+		
+		public Rgba(int[] rgba)
+		{
+			this.rgba = new int[4];
+			this.rgba[0] = rgba[0];
+			this.rgba[1] = rgba[1];
+			this.rgba[2] = rgba[2];
+			this.rgba[3] = rgba[3];
+		}
 	}
 }
