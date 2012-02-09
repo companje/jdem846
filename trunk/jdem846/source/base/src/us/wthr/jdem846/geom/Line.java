@@ -14,5 +14,10 @@ public class Line extends Geometric
 		
 	}
 
-	
+	@Override
+	public double getInterpolatedZ(double x, double y)
+	{
+
+		return 0;
+	}
 }

@@ -178,6 +178,16 @@ public class ShapePath extends Geometric //java.awt.Shape // Path2D.Double
 		
 		return path;
 	}
+
+
+
+
+	@Override
+	public double getInterpolatedZ(double x, double y)
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 	/*
 	public void append(ShapePath shapePath, boolean connect)

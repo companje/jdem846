@@ -59,7 +59,18 @@ public class CanvasProjection3d extends CanvasProjection
 		
 		min = modelContext.getRasterDataContext().getDataMinimumValue();
 		max = modelContext.getRasterDataContext().getDataMaximumValue();
+		
+		double latRes = modelContext.getRasterDataContext().getLatitudeResolution();
+		double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
+		
+		
+		
 		resolution = modelContext.getRasterDataContext().getMetersResolution();
+		resolution = resolution / (latRes / effLatRes);
+		
+		if (Double.isNaN(resolution) || resolution == 0.0) {
+			resolution = 1.0;
+		}
 	}
 	
 	@Override
