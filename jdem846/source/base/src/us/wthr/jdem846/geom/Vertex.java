@@ -12,7 +12,7 @@ public class Vertex implements Comparable<Vertex>
 	
 	public Vertex(Vertex copy)
 	{
-		this(copy.x, copy.y, copy.z, null);
+		this(copy.x, copy.y, copy.z, copy.rgba);
 	}
 	
 	public Vertex(double x, double y)

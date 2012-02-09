@@ -18,13 +18,10 @@ public class Polygon extends Geometric
 	
 	
 	
-	
+	@Override
 	public double getInterpolatedZ(double x, double y)
 	{
-		
-		
-		
-		
+
 		return 0;
 	}
 	

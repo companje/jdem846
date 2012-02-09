@@ -29,6 +29,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.geom.Geometric;
 import us.wthr.jdem846.geom.Polygon;
+import us.wthr.jdem846.geom.Triangle;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
@@ -453,6 +454,11 @@ public class ModelCanvas
 		fillShape(poly, color);
 
 		
+	}
+	
+	public void fillShape(Triangle tri)
+	{
+		canvas.fill(tri);
 	}
 	
 	public void fillShape(Geometric poly, int[] color)

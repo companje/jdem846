@@ -17,6 +17,7 @@ import us.wthr.jdem846.geom.Bounds;
 import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Geometric;
 import us.wthr.jdem846.geom.Polygon;
+import us.wthr.jdem846.geom.Triangle;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -176,8 +177,8 @@ public class Canvas3d
 			for (int y = yMn; y <= yMx; y++) {
 				int x =  (int) ((isValidSlope) ? (((y - mxY) / s) + mxX) : mxX);
 				double f = ((yMx - yMn) != 0) ? (y - yMn) / (yMx - yMn) : 0;
-				double z = edge.getInterpolatedZ(f);
-				
+				//double z = edge.getInterpolatedZ( f);
+				double z = edge.getInterpolatedZ(x, y);
 				ColorAdjustments.interpolateColor(rgba0, rgba1, pixel, f);
 				
 				set(x, y+1, z, pixel);
@@ -280,6 +281,37 @@ public class Canvas3d
 	{
 		fill(shape, -1);
 	}
+	
+	public void fill(Triangle tri)
+	{
+		
+		Bounds bounds = tri.getBounds();
+		
+		double minX = bounds.x;
+		double maxX = bounds.x + bounds.width;
+		double minY = bounds.y;
+		double maxY = bounds.y + bounds.height;
+		
+		int[] rgba = new int[4];
+		
+		for (double y = minY; y <= maxY; y++) {
+			for (double x = minX; x <= maxX; x++) {
+				
+				if (tri.contains(x, y)) {
+					
+					double z = tri.getInterpolatedZ(x, y);
+					tri.getInterpolatedColor(x, y, rgba);
+					
+					set(x, y, z, rgba);
+					
+				}
+				
+			}
+		}
+		
+		
+	}
+	
 	
 	public void fill(Geometric shape, int rgba)
 	{
@@ -535,20 +567,20 @@ public class Canvas3d
 	public void set(double x, double y, double z, int[] rgba)
 	{
 		
-		int _x = (int) x;
-		int _y = (int) y;
+		int _x = (int) MathExt.round(x);
+		int _y = (int) MathExt.round(y);
 		
-		int[] pixel = new int[4];
 		
 		if (_x < 0 || _x >= getWidth() || _y < 0 || _y >= getHeight()) {
 			return;
 		}
 		
 		double _z = zBuffer.get(_x, _y);
-		if (Double.isNaN(_z)) {
+		if (Double.isNaN(_z) || z >= _z) {
 			set(_x, _y, z, rgba);
-			return;
-		} else {
+		} /*else {
+			int[] pixel = new int[4];
+		
 			get(_x, _y, pixel);
 			
 			double xFrac = x - _x;
@@ -567,7 +599,7 @@ public class Canvas3d
 			ColorAdjustments.interpolateColor(pixel, rgba, pixel, pct);
 			
 			set(_x, _y, z, pixel);
-		}
+		}*/
 		
 	}
 	

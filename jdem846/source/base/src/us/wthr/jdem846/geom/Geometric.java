@@ -7,7 +7,7 @@ import java.util.List;
 
 import us.wthr.jdem846.math.MathExt;
 
-public class Geometric 
+public abstract class Geometric extends RenderableShape
 {
 	protected List<Edge> edges = new ArrayList<Edge>();
 	
@@ -56,6 +56,7 @@ public class Geometric
 		
 	}
 	
+	@Override
 	public Bounds getBounds()
 	{
 		double minY = Double.MAX_VALUE;
