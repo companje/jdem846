@@ -278,6 +278,9 @@ public class SimpleRenderer
 		double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
 		double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
 		
+		
+		double maxZ = Double.MIN_VALUE;
+		double minZ = Double.MAX_VALUE;
 
 		for (double lon = west; lon < east - rasterDataContext.getLongitudeResolution(); lon+=lonStep) {
 			for (double lat = north; lat > south + rasterDataContext.getLatitudeResolution(); lat-=latStep) {
@@ -319,6 +322,9 @@ public class SimpleRenderer
 					continue;
 				Vertex neVtx = createVertex(neLat, neLon, elev, rgba);
 				
+				maxZ = MathExt.max(maxZ, nwVtx.z, swVtx.z, seVtx.z, neVtx.z);
+				minZ = MathExt.min(minZ, nwVtx.z, swVtx.z, seVtx.z, neVtx.z);
+				
 				Triangle tri0 = new Triangle(nwVtx, swVtx, neVtx);
 				canvas.fillShape(tri0);
 				
@@ -328,6 +334,9 @@ public class SimpleRenderer
 			}
 			
 		}
+		
+		log.info("Max Z: " + maxZ);
+		log.info("Min Z: " + minZ);
 		
 	}
 	

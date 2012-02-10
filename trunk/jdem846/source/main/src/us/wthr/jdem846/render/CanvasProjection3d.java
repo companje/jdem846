@@ -20,6 +20,10 @@ public class CanvasProjection3d extends CanvasProjection
 	private double rotateX = 30;
 	private double rotateY = 0;
 	
+	private double shiftX = 0;
+	private double shiftY = 0;
+	private double shiftZ = 0;
+	
 	private double min = 0;
 	private double max = 0;
 	private double resolution = 0;
@@ -56,6 +60,9 @@ public class CanvasProjection3d extends CanvasProjection
 		rotateX = modelContext.getModelOptions().getProjection().getRotateX();
 		rotateY = modelContext.getModelOptions().getProjection().getRotateY();
 		
+		shiftX = modelContext.getModelOptions().getProjection().getShiftX();
+		shiftY = modelContext.getModelOptions().getProjection().getShiftY();
+		shiftZ = modelContext.getModelOptions().getProjection().getShiftZ();
 		
 		min = modelContext.getRasterDataContext().getDataMinimumValue();
 		max = modelContext.getRasterDataContext().getDataMaximumValue();
@@ -92,6 +99,7 @@ public class CanvasProjection3d extends CanvasProjection
 		
 		Vector.rotate(0, rotateY, 0, pointVector);
 		Vector.rotate(rotateX, 0, 0, pointVector);
+		Vector.translate(shiftX, shiftY, shiftZ, pointVector);
 
 		projectTo(pointVector);
 		

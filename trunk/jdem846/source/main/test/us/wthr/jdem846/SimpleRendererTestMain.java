@@ -89,8 +89,8 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
 		modelOptions.setTileSize(500);
-		modelOptions.setWidth(1000);//dataProxy.getDataColumns());
-		modelOptions.setHeight(1000);//dataProxy.getDataRows());
+		modelOptions.setWidth(dataProxy.getDataColumns());
+		modelOptions.setHeight(dataProxy.getDataRows());
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(false);
@@ -103,13 +103,13 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		
 		dataProxy.fillBuffers();
 		
-		modelOptions.setProject3d(false);
+		modelOptions.setProject3d(true);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", false);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", true);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", true);
 		
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices",300);
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", 300);
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices",dataProxy.getDataRows());
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", dataProxy.getDataColumns());
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
 		

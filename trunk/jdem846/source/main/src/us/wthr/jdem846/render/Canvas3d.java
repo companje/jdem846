@@ -35,22 +35,26 @@ public class Canvas3d
 	
 	private int height;
 	private int width;
+	private double clipNearZ;
+	private double clipFarZ;
 	
 	private MatrixBuffer<Integer> pixelBuffer;
 	private MatrixBuffer<Double> zBuffer;
 	
 	private RenderPipeline pipeline;
 	
-	public Canvas3d(int width, int height)
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ)
 	{
-		this(width, height, null);
+		this(width, height, clipNearZ, clipFarZ, null);
 	}
 	
-	public Canvas3d(int width, int height, RenderPipeline pipeline)
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, RenderPipeline pipeline)
 	{
 		this.pipeline = pipeline;
 		this.width = width;
 		this.height = height;
+		this.clipNearZ = clipNearZ;
+		this.clipFarZ = clipFarZ;
 		
 		pixelBuffer = new MatrixBuffer<Integer>(width, height);
 		zBuffer = new MatrixBuffer<Double>(width, height);
@@ -285,12 +289,33 @@ public class Canvas3d
 	public void fill(Triangle tri)
 	{
 		
+		if (!isValidZCoordinate(tri.p0.z) && !isValidZCoordinate(tri.p1.z) && !isValidZCoordinate(tri.p2.z)) {
+			return;
+		}
+		
+		
 		Bounds bounds = tri.getBounds();
 		
 		double minX = bounds.x;
 		double maxX = bounds.x + bounds.width;
 		double minY = bounds.y;
 		double maxY = bounds.y + bounds.height;
+		
+		if (maxX < 0 || minX >= getWidth() || maxY < 0 || minY >= getHeight()) {
+			return;
+		}
+		
+		if (minX < 0)
+			minX = 0;
+		if (maxX >= getWidth()) 
+			maxX = getWidth() - 1;
+		
+		if (minY < 0)
+			minY = 0;
+		if (maxY >= getHeight())
+			maxY = getHeight() - 1;
+		
+		
 		
 		int[] rgba = new int[4];
 		
@@ -548,6 +573,10 @@ public class Canvas3d
 			return;
 		}
 		
+		if (!isValidZCoordinate(z)) {
+			return;
+		}
+
 		double _z = zBuffer.get(x, y);
 		
 		if (Double.isNaN(_z) || _z < z) {
@@ -570,6 +599,9 @@ public class Canvas3d
 		int _x = (int) MathExt.round(x);
 		int _y = (int) MathExt.round(y);
 		
+		if (!isValidZCoordinate(z))
+			return;
+
 		
 		if (_x < 0 || _x >= getWidth() || _y < 0 || _y >= getHeight()) {
 			return;
@@ -603,6 +635,14 @@ public class Canvas3d
 		
 	}
 	
+	private boolean isValidZCoordinate(double z)
+	{
+		if (z < clipFarZ || z > clipNearZ) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 	
 	public int get(int x, int y)
 	{

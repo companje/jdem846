@@ -357,12 +357,17 @@ public class DemProjectPane extends JdemPanel implements Savable
 		});
 		
 		visualizationPanel.addProjectionChangeListener(new ProjectionChangeListener() {
-			public void onProjectionChanged(double rotateX, double rotateY, double rotateZ)
+			public void onProjectionChanged(double rotateX, double rotateY, double rotateZ, double shiftX, double shiftY, double shiftZ)
 			{
 				
 				modelOptionsPanel.getModelOptions(false).getProjection().setRotateX(rotateX);
 				modelOptionsPanel.getModelOptions(false).getProjection().setRotateY(rotateY);
 				modelOptionsPanel.getModelOptions(false).getProjection().setRotateZ(rotateZ);
+				
+				modelOptionsPanel.getModelOptions(false).getProjection().setShiftX(shiftX);
+				modelOptionsPanel.getModelOptions(false).getProjection().setShiftY(shiftY);
+				modelOptionsPanel.getModelOptions(false).getProjection().setShiftZ(shiftZ);
+				
 				modelOptionsPanel.applyOptionsToUI();
 				applyOptionsToUI();
 				//applyEngineSelectionConfiguration();
