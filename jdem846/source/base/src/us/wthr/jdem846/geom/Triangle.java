@@ -8,9 +8,9 @@ import us.wthr.jdem846.math.MathExt;
 public class Triangle extends RenderableShape
 {
 	
-	private Vertex p0;
-	private Vertex p1;
-	private Vertex p2;
+	public Vertex p0;
+	public Vertex p1;
+	public Vertex p2;
 	
 
 	private double[] a;

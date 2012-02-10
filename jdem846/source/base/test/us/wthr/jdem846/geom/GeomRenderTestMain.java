@@ -42,7 +42,7 @@ public class GeomRenderTestMain extends AbstractTestMain
 	
 	public void doTesting() throws Exception
 	{
-		Canvas3d canvas = new Canvas3d(500, 500, null);
+		Canvas3d canvas = new Canvas3d(500, 500, 500000, -500000, null);
 		
 		
 		int[] poly1Color = {255, 0, 0, 255};

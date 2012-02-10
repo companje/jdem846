@@ -52,12 +52,16 @@ public class ModelVisualizationPanel extends RoundedPanel
 	private ModelContext modelContextWorkingCopy;
 	private Image modelVisualizationImage = null;
 	
+	int buttonDown = -1;
 	int lastX = -1;
 	int lastY = -1;
 	
 	double rotateX;
 	double rotateY;
 	double rotateZ;
+	
+	double shiftZ;
+	double shiftX;
 	
 	private boolean useElevationOnDataGrids = true;
 
@@ -115,7 +119,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 		MouseAdapter mouseAdapter = new MouseAdapter() {
 			public void mousePressed(MouseEvent e) 
 			{
-				//useElevationOnDataGrids = false;
+				buttonDown = e.getButton();
 			}
 			public void mouseDragged(MouseEvent e)
 			{
@@ -125,6 +129,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 			@Override
 			public void mouseReleased(MouseEvent e)
 			{
+				buttonDown = -1;
 				lastX = -1;
 				lastY = -1;
 
@@ -158,15 +163,45 @@ public class ModelVisualizationPanel extends RoundedPanel
 		
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", true);
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", true);
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
 		
 		
 		modelContextWorkingCopy.updateContext();
 	}
 	
-	
 	protected void onMouseDragged(MouseEvent e)
+	{
+		if (buttonDown == 1) {
+			onMouseDraggedLeftButton(e);
+		} else if (buttonDown == 2) {
+			onMouseDraggedMiddleButton(e);
+		}
+		
+	}
+	
+	protected void onMouseDraggedMiddleButton(MouseEvent e)
+	{
+		int x = e.getX();
+		int y = e.getY();
+		
+		if (lastX != -1 && lastY != -1) {
+			
+			int deltaX = x - lastX;
+			int deltaY = y - lastY;
+			
+			shiftZ += (deltaY * 5);
+			shiftX += (deltaX * 5);
+			
+		}
+		
+		lastX = x;
+		lastY = y;
+			
+		update(false, false);
+	}
+	
+	protected void onMouseDraggedLeftButton(MouseEvent e)
 	{
 		int x = e.getX();
 		int y = e.getY();
@@ -220,6 +255,9 @@ public class ModelVisualizationPanel extends RoundedPanel
 		modelContextWorkingCopy.getModelOptions().getProjection().setRotateY(rotateY);
 		modelContextWorkingCopy.getModelOptions().getProjection().setRotateZ(rotateZ);
 		
+		modelContextWorkingCopy.getModelOptions().getProjection().setShiftX(shiftX);
+		modelContextWorkingCopy.getModelOptions().getProjection().setShiftZ(shiftZ);
+		
 		
 		if (renderer == null) {
 			renderer = new SimpleRenderer(modelContextWorkingCopy);
@@ -255,6 +293,9 @@ public class ModelVisualizationPanel extends RoundedPanel
 		
 		log.info("Rendering model visualization image");
 		
+		int dimension = (int) MathExt.min((double)getWidth(), (double)getHeight());
+		//modelContextWorkingCopy.getModelOptions().setWidth(dimension - 20);
+		//modelContextWorkingCopy.getModelOptions().setHeight(dimension - 20);
 		
 		modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
 		modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
@@ -297,14 +338,14 @@ public class ModelVisualizationPanel extends RoundedPanel
 	protected void fireProjectionChangeListeners()
 	{
 		for (ProjectionChangeListener listener : projectionChangeListeners) {
-			listener.onProjectionChanged(rotateX, rotateY, rotateZ);
+			listener.onProjectionChanged(rotateX, rotateY, rotateZ, shiftX, 0.0, shiftZ);
 		}
 	}
 	
 	
 	public interface ProjectionChangeListener 
 	{
-		public void onProjectionChanged(double rotateX, double rotateY, double rotateZ);
+		public void onProjectionChanged(double rotateX, double rotateY, double rotateZ, double shiftX, double shiftY, double shiftZ);
 	}
 	
 }
