@@ -189,6 +189,12 @@ public class Vector
 		
 	}
 	
+	public static void scale(double x, double y, double z, double[] xyz)
+	{
+		xyz[0] = xyz[0] * x;
+		xyz[1] = xyz[1] * y;
+		xyz[2] = xyz[2] * z;
+	}
 	
 	
 	public void rotate(double angle, int axis)
@@ -251,6 +257,8 @@ public class Vector
 		this.y = rY;
 		this.z = rZ;
 	}
+	
+	
 	
 	public void setColor(int r, int g, int b)
 	{

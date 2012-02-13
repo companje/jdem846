@@ -87,7 +87,7 @@ public class ModelCanvas
 		isAntiAliased = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED);
 		
 		// I know this is wrong.
-		double clipNearZ = modelContext.getModelDimensions().getOutputWidth() * 2;
+		double clipNearZ = modelContext.getModelDimensions().getOutputWidth() * 5;
 		double clipFarZ = -modelContext.getModelDimensions().getOutputWidth();
 		
 		canvas = new Canvas3d(width, height, clipNearZ, clipFarZ);

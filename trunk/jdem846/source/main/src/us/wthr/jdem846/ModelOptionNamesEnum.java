@@ -33,6 +33,7 @@ public enum ModelOptionNamesEnum
 	PROJECTION_SHIFT_X("us.wthr.jdem846.modelOptions.projection.shiftX"),
 	PROJECTION_SHIFT_Y("us.wthr.jdem846.modelOptions.projection.shiftY"),
 	PROJECTION_SHIFT_Z("us.wthr.jdem846.modelOptions.projection.shiftZ"),
+	PROJECTION_ZOOM("us.wthr.jdem846.modelOptions.projection.zoom"),
 	
 	PRECACHE_STRATEGY("us.wthr.jdem846.modelOptions.precacheStrategy"),
 	ANTIALIASED("us.wthr.jdem846.modelOptions.antialiased"),
@@ -43,7 +44,9 @@ public enum ModelOptionNamesEnum
 	
 	MAP_PROJECTION("us.wthr.jdem846.modelOptions.mapProjection"),
 	PIPELINE_RENDER("us.wthr.jdem846.modelOptions.pipelineRender"),
-	PROJECT_3D("us.wthr.jdem846.modelOptions.project3d");
+	//PROJECT_3D("us.wthr.jdem846.modelOptions.project3d"),
+	MODEL_PROJECTION("us.wthr.jdem846.modelOptions.modelProjection"),
+	MAINTAIN_ASPECT_RATIO_TO_DATA("us.wthr.jdem846.modelOptions.maintainAspectRatioWithData");
 	
 	private final String optionName;
 	

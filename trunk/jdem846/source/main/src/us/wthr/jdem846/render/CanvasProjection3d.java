@@ -13,8 +13,8 @@ public class CanvasProjection3d extends CanvasProjection
 {
 	private static Log log = Logging.getLog(CanvasProjection3d.class);
 	
+	protected double[] cameraVector;
 	protected double[] eyeVector;
-	protected double[] nearVector;
 	protected double[] pointVector;
 	
 	protected double rotateX = 30;
@@ -23,6 +23,10 @@ public class CanvasProjection3d extends CanvasProjection
 	protected double shiftX = 0;
 	protected double shiftY = 0;
 	protected double shiftZ = 0;
+	
+	protected double scaleX = 1;
+	protected double scaleY = 1;
+	protected double scaleZ = 1;
 	
 	protected double min = 0;
 	protected double max = 0;
@@ -44,17 +48,17 @@ public class CanvasProjection3d extends CanvasProjection
 	public void setUp3d(ModelContext modelContext)
 	{
 		eyeVector = new double[3];
-		nearVector = new double[3];
+		cameraVector = new double[3];
 		pointVector = new double[3];
 		
 		
 		
+		cameraVector[0] = 0; cameraVector[1] = 0;
 		eyeVector[0] = 0; eyeVector[1] = 0;
-		nearVector[0] = 0; nearVector[1] = 0;
 		
 		
-		eyeVector[2] = getWidth();			// Camera position
-		nearVector[2] = (getWidth()/2.0f);	// Viewer's position relative to the display surface
+		cameraVector[2] = getWidth();			// Camera position
+		eyeVector[2] = (getWidth()/2.0f);	// Viewer's position relative to the display surface
 		
 		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		rotateX = modelContext.getModelOptions().getProjection().getRotateX();
@@ -63,6 +67,10 @@ public class CanvasProjection3d extends CanvasProjection
 		shiftX = modelContext.getModelOptions().getProjection().getShiftX();
 		shiftY = modelContext.getModelOptions().getProjection().getShiftY();
 		shiftZ = modelContext.getModelOptions().getProjection().getShiftZ();
+		
+		scaleX = modelContext.getModelOptions().getProjection().getZoom();
+		scaleY = modelContext.getModelOptions().getProjection().getZoom();
+		scaleZ = modelContext.getModelOptions().getProjection().getZoom();
 		
 		min = modelContext.getRasterDataContext().getDataMinimumValue();
 		max = modelContext.getRasterDataContext().getDataMaximumValue();
@@ -100,7 +108,8 @@ public class CanvasProjection3d extends CanvasProjection
 		Vector.rotate(0, rotateY, 0, pointVector);
 		Vector.rotate(rotateX, 0, 0, pointVector);
 		Vector.translate(shiftX, shiftY, shiftZ, pointVector);
-
+		Vector.scale(scaleX, scaleY, scaleZ, pointVector);
+		
 		projectTo(pointVector);
 		
 		point.column = -pointVector[0] + (getWidth()/2.0);
@@ -113,8 +122,8 @@ public class CanvasProjection3d extends CanvasProjection
 	public void projectTo(double[] vector) //Vector eye, Vector near)
 	{
 		double[] a = vector;   // 3D position of points being projected
-		double[] e = nearVector;     // Viewer's position relative to the display surface
-		double[] c = eyeVector;      // Camera position
+		double[] e = eyeVector;     // Viewer's position relative to the display surface
+		double[] c = cameraVector;      // Camera position
 		
 		//eyeVector[2] = width;			// Camera position
 		//nearVector[2] = (width/2.0f);	// Viewer's position relative to the display surface

@@ -25,6 +25,7 @@ import java.util.Set;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
+import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 import us.wthr.jdem846.util.NumberFormattingUtil;
@@ -67,6 +68,8 @@ public class ModelOptions extends MappedOptions
 		this.projection.setShiftX(getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_X));
 		this.projection.setShiftY(getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Y));
 		this.projection.setShiftZ(getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Z));
+		
+		this.projection.setZoom(getDoubleOption(ModelOptionNamesEnum.PROJECTION_ZOOM));
 		
 	}
 	
@@ -143,6 +146,8 @@ public class ModelOptions extends MappedOptions
 		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_SHIFT_X, projection.getShiftX());
 		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Y, projection.getShiftY());
 		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Z, projection.getShiftZ());
+		
+		projectModel.setOption(ModelOptionNamesEnum.PROJECTION_ZOOM, projection.getZoom());
 		
 		projectModel.setUserScript(getUserScript());
 		projectModel.setScriptLanguage(getScriptLanguage());
@@ -470,14 +475,27 @@ public class ModelOptions extends MappedOptions
 		setOption(ModelOptionNamesEnum.PIPELINE_RENDER, usePipelineRender);
 	}
 	
-	public boolean getProject3d()
+	
+	
+	public CanvasProjectionTypeEnum getModelProjection()
 	{
-		return getBooleanOption(ModelOptionNamesEnum.PROJECT_3D);
+		String identifier = getOption(ModelOptionNamesEnum.MODEL_PROJECTION);
+		if (identifier == null) {
+			return null;
+		}
+
+		return CanvasProjectionTypeEnum.getCanvasProjectionEnumFromIdentifier(identifier);
 	}
 	
-	public void setProject3d(boolean project3d)
+	public void setModelProjection(CanvasProjectionTypeEnum modelProjection)
 	{
-		setOption(ModelOptionNamesEnum.PROJECT_3D, project3d);
+		setOption(ModelOptionNamesEnum.MODEL_PROJECTION, modelProjection.projectionName());
+	}
+	
+	
+	public void setModelProjection(String modelProjection)
+	{
+		setOption(ModelOptionNamesEnum.MODEL_PROJECTION, modelProjection);
 	}
 	
 	public String getWriteTo()

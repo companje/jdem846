@@ -169,12 +169,15 @@ public class SimpleRenderer
 			}
 		}
 		
-		try {
-			paintRasterPlot(modelCanvas);
-		} catch (Exception ex) {
-			log.error("Error painting raster grid: " + ex.getMessage(), ex);
-		}
 		
+		
+		if (modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview")) {
+			try {
+				paintRasterPlot(modelCanvas);
+			} catch (Exception ex) {
+				log.error("Error painting raster grid: " + ex.getMessage(), ex);
+			}
+		}
 		
 	}
 	
@@ -252,9 +255,9 @@ public class SimpleRenderer
 		double slice_step = 360.0 / slices;
 		
 		
-		for (double phi = -90; phi <= 90; phi +=strip_step) {
-            for (double theta = -180; theta <= 180+slice_step ; theta+=slice_step) {
-				
+		for (double phi = south; phi <= north; phi +=strip_step) {
+            for (double theta = west; theta <= east+slice_step ; theta+=slice_step) {
+            	
             	
             	Vertex v0 = createVertex(phi, theta, -10.0, baseGridColor);
             	Vertex v1 = createVertex(phi, theta+slice_step, -10.0, baseGridColor);
@@ -271,45 +274,11 @@ public class SimpleRenderer
             	Line l1 = new Line();
             	l1.addEdge(e1);
             	canvas.drawShape(l1, baseGridColor);
-            	/*
-            	Spheres.getPoint3D(theta, phi, radius, p_tl);
-            	Spheres.getPoint3D(theta + slice_step, phi, radius, p_tr);
-            	Spheres.getPoint3D(theta, phi + strip_step, radius, p_bl);
-            	Spheres.getPoint3D(theta + slice_step, phi + strip_step, radius, p_br);
-            	
-            	
-            	Vertex v0 = new Vertex(p_tl[0]+buffer, p_tl[1]+buffer, p_tl[2], lineColor);
-            	Vertex v1 = new Vertex(p_tr[0]+buffer, p_tr[1]+buffer, p_tr[2], lineColor);
-            	
-            	Vertex v2 = new Vertex(p_bl[0]+buffer, p_bl[1]+buffer, p_bl[2], lineColor);
-            	Vertex v3 = new Vertex(p_tl[0]+buffer, p_tl[1]+buffer, p_tl[2], lineColor);
-            	
-            	
-            	
-            	Edge e0 = new Edge(v0, v1);
-            	canvas.draw(e0);
-            	
-            	Edge e1 = new Edge(v2, v3);
-            	canvas.draw(e1);
-            	*/
+
 			}
 			
 		}
-		
-		/*
-		double lonStep = (east - west) / 12;
-		for (double lon = west; lon <= east; lon+=lonStep) {
-			line.addEdge(createEdge(north, lon, -1.0, south, lon, -1.0));
-		}
-		
-		double latStep = (north - south) / 12;
-		for (double lat = south; lat <= north; lat+=latStep) {
-			line.addEdge(createEdge(lat, west, -1.0, lat, east, -1.0));
-		}
-		
-		
-		canvas.drawShape(line, baseGridColor);
-		*/
+
 	}
 	
 	

@@ -10,6 +10,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
+import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
@@ -111,12 +112,14 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		modelOptions.setElevationMultiple(1.0);
 		
 		dataProxy.fillBuffers();
-		
-		
+
 		dataProxy.setDataMaximumValue(8685.0);
 		dataProxy.setDataMinimumValue(-10977.0);
 		
-		modelOptions.setProject3d(true);
+		//modelOptions.setProject3d(true);
+		
+		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_3D);
+		
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", false);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", true);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", true);

@@ -15,6 +15,8 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 	private static Log log = Logging.getLog(CanvasProjectionGlobe.class);
 	
 	
+	
+	
 	public CanvasProjectionGlobe(ModelContext modelContext)
 	{
 		super(modelContext);
@@ -25,7 +27,6 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 	@Override
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
-		
 		
 		double radius = (getWidth() / 3);
 		
@@ -51,10 +52,14 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		//pointVector[2] = pointVector[2] - (getHeight() / 2.0);
 		
 		
+		//cameraVector[2] = radius;			// Camera position
+		//eyeVector[2] = (radius*3.0);	// Viewer's position relative to the display surface
+		
 		Vector.rotate(0, rotateY, 0, pointVector);
 		Vector.rotate(rotateX, 0, 0, pointVector);
 		Vector.translate(shiftX, shiftY, shiftZ, pointVector);
-
+		Vector.scale(scaleX, scaleY, scaleZ, pointVector);
+		
 		projectTo(pointVector);
 		
 		point.column = -pointVector[0] + (getWidth()/2.0);

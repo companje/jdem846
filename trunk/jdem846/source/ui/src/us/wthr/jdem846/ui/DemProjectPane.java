@@ -73,6 +73,7 @@ import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 import us.wthr.jdem846.ui.DataSetTree.DatasetSelectionListener;
+import us.wthr.jdem846.ui.ModelOptionsPanel.GetAspectRatioHandler;
 import us.wthr.jdem846.ui.ModelVisualizationPanel.ProjectionChangeListener;
 import us.wthr.jdem846.ui.MonitoredThread.ProgressListener;
 import us.wthr.jdem846.ui.OrderingButtonBar.OrderingButtonClickedListener;
@@ -212,6 +213,14 @@ public class DemProjectPane extends JdemPanel implements Savable
 		MainMenuBar.insertMenu(projectMenu);
 		
 		// Add listeners
+		
+		modelOptionsPanel.setGetAspectRatioHandler(new GetAspectRatioHandler() {
+			public double getAspectRatio()
+			{
+				return (double)rasterDataContext.getDataColumns() / (double)rasterDataContext.getDataRows();
+			}
+		});
+		
 		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.add"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.addData"), KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
@@ -357,7 +366,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		});
 		
 		visualizationPanel.addProjectionChangeListener(new ProjectionChangeListener() {
-			public void onProjectionChanged(double rotateX, double rotateY, double rotateZ, double shiftX, double shiftY, double shiftZ)
+			public void onProjectionChanged(double rotateX, double rotateY, double rotateZ, double shiftX, double shiftY, double shiftZ, double zoom)
 			{
 				
 				modelOptionsPanel.getModelOptions(false).getProjection().setRotateX(rotateX);
@@ -367,6 +376,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 				modelOptionsPanel.getModelOptions(false).getProjection().setShiftX(shiftX);
 				modelOptionsPanel.getModelOptions(false).getProjection().setShiftY(shiftY);
 				modelOptionsPanel.getModelOptions(false).getProjection().setShiftZ(shiftZ);
+				
+				modelOptionsPanel.getModelOptions(false).getProjection().setZoom(zoom);
 				
 				modelOptionsPanel.applyOptionsToUI();
 				applyOptionsToUI();
