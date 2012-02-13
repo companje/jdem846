@@ -163,8 +163,8 @@ public class ModelVisualizationPanel extends RoundedPanel
 		
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", true);
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", true);
 		
 		
 		modelContextWorkingCopy.updateContext();
@@ -294,7 +294,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 		log.info("Rendering model visualization image");
 		
 		int dimension = (int) MathExt.min((double)getWidth(), (double)getHeight());
-		//modelContextWorkingCopy.getModelOptions().setWidth(dimension - 20);
+		////modelContextWorkingCopy.getModelOptions().setWidth(dimension - 20);
 		//modelContextWorkingCopy.getModelOptions().setHeight(dimension - 20);
 		
 		modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);

@@ -13,24 +13,24 @@ public class CanvasProjection3d extends CanvasProjection
 {
 	private static Log log = Logging.getLog(CanvasProjection3d.class);
 	
-	private double[] eyeVector;
-	private double[] nearVector;
-	private double[] pointVector;
+	protected double[] eyeVector;
+	protected double[] nearVector;
+	protected double[] pointVector;
 	
-	private double rotateX = 30;
-	private double rotateY = 0;
+	protected double rotateX = 30;
+	protected double rotateY = 0;
 	
-	private double shiftX = 0;
-	private double shiftY = 0;
-	private double shiftZ = 0;
+	protected double shiftX = 0;
+	protected double shiftY = 0;
+	protected double shiftZ = 0;
 	
-	private double min = 0;
-	private double max = 0;
-	private double resolution = 0;
+	protected double min = 0;
+	protected double max = 0;
+	protected double resolution = 0;
 	
 	
 	
-	private double elevationMultiple = 1.0;
+	protected double elevationMultiple = 1.0;
 	
 	
 	public CanvasProjection3d(ModelContext modelContext)

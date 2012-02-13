@@ -48,10 +48,15 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		List<String> inputDataList = new LinkedList<String>();
 		List<ShapeFileRequest> inputShapeList = new LinkedList<ShapeFileRequest>();
 		
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		//inputDataList.add("F:/DataRaster-Testing/PresRange_1-3as.flt");
+		//inputDataList.add("F:/DataRaster-Testing/PresRange_1as.flt");
+		//inputDataList.add("F:/Hawaii 1 Arc Second/Honolulu 1-3 Arc Second.flt");
 		//String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
-		//inputDataList.add("F:\\GEBCO_08\\gebco_08.flt");
+		inputDataList.add("F:\\GEBCO_08\\gebco_08.flt");
+		
+		//inputDataList.add("F:\\etopo1_ice_g_f4\\etopo1_ice_g_f4.flt");
 		String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/render-test.png";
 		
 		//inputDataList.add("C:/srv/elevation/Nashua NH/Elevation 1-3 Arc Second/Elevation 1-3 Arc Second.flt");
@@ -79,7 +84,11 @@ public class SimpleRendererTestMain extends AbstractTestMain
 			shapeContext.addShapeFile(shapeDataReq);
 		}
 		
-		dataProxy.calculateElevationMinMax(true);
+		/*
+2012.02.12 21:01:30.156 EST     INFO SimpleRendererTestMain Raster Data Maximum Value: 8685.0
+2012.02.12 21:01:30.156 EST     INFO SimpleRendererTestMain Raster Data Minimum Value: -10977.0
+		 */
+		//dataProxy.calculateElevationMinMax(true);
 		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
 		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
 		
@@ -89,27 +98,31 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
 		modelOptions.setTileSize(500);
-		modelOptions.setWidth(dataProxy.getDataColumns());
-		modelOptions.setHeight(dataProxy.getDataRows());
+		modelOptions.setWidth(2000);
+		modelOptions.setHeight(2000);
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(false);
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
-		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
+		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;255");
 		modelOptions.setUsePipelineRender(false);
-	
+		modelOptions.setColoringType("hypsometric-etopo1-tint");
 		modelOptions.setElevationMultiple(1.0);
 		
 		dataProxy.fillBuffers();
+		
+		
+		dataProxy.setDataMaximumValue(8685.0);
+		dataProxy.setDataMinimumValue(-10977.0);
 		
 		modelOptions.setProject3d(true);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", false);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", true);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", true);
 		
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices",dataProxy.getDataRows());
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", dataProxy.getDataColumns());
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices",2000);
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", 2000);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
 		
@@ -131,7 +144,7 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		//Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 		//OutputProduct<ModelCanvas> product = dem2d.generate(false, false);
 		SimpleRenderer renderer = new SimpleRenderer(modelContext);
-		renderer.prepare(true, true);
+		renderer.prepare(true, false);
 		renderer.render();
 		double endTime = System.currentTimeMillis();
 		canvas.save(saveOutputTo);
