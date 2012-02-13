@@ -59,18 +59,20 @@ public class ModelDimensions2D
 
 		if (modelDimensions.dataRows > modelDimensions.dataColumns) {
 			modelDimensions.sizeRatio = (double)modelDimensions.dataColumns / (double)modelDimensions.dataRows;
-			modelDimensions.outputWidth = (int) Math.round(((double) modelDimensions.outputHeight) * modelDimensions.sizeRatio);
+			//modelDimensions.outputWidth = (int) Math.round(((double) modelDimensions.outputHeight) * modelDimensions.sizeRatio);
 		} else if (modelDimensions.dataColumns > modelDimensions.dataRows) {
 			modelDimensions.sizeRatio = (double)modelDimensions.dataRows / (double)modelDimensions.dataColumns;
-			modelDimensions.outputHeight = (int) Math.round(((double)modelDimensions.outputWidth) * modelDimensions.sizeRatio);
+			//modelDimensions.outputHeight = (int) Math.round(((double)modelDimensions.outputWidth) * modelDimensions.sizeRatio);
 		}
+		
+		
 		
 		//log.info("Output width/height: " + modelDimensions.outputWidth + "/" + modelDimensions.outputHeight);
 		
 		double xdimRatio = (double)modelDimensions.outputWidth / (double)modelDimensions.dataColumns;
 		double ydimRatio = (double)modelDimensions.outputHeight / (double)modelDimensions.dataRows;
 		
-		modelDimensions.outputLongitudeResolution = dataContext.getLongitudeResolution() / ydimRatio;
+		modelDimensions.outputLongitudeResolution = dataContext.getLongitudeResolution() / xdimRatio;
 		modelDimensions.outputLatitudeResolution = dataContext.getLatitudeResolution() / ydimRatio;
 
 		modelDimensions.effectiveTileSize = (int) Math.round(((double) modelDimensions.tileSize) * xdimRatio);

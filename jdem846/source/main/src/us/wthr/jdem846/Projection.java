@@ -11,6 +11,8 @@ public class Projection
 	private double shiftY = 0;
 	private double shiftZ = 0;
 	
+	private double zoom = 1.0;
+	
 	public Projection()
 	{
 		
@@ -76,6 +78,18 @@ public class Projection
 		this.shiftZ = shiftZ;
 	}
 	
+	
+	
+	public double getZoom()
+	{
+		return zoom;
+	}
+
+	public void setZoom(double zoom)
+	{
+		this.zoom = zoom;
+	}
+
 	public Projection copy()
 	{
 		Projection copy = new Projection();
@@ -87,6 +101,7 @@ public class Projection
 		copy.shiftX = this.shiftX;
 		copy.shiftY = this.shiftY;
 		copy.shiftZ = this.shiftZ;
+		copy.zoom = this.zoom;
 		
 		return copy;            
 	}

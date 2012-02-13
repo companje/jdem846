@@ -74,6 +74,11 @@ public class NumberTextField extends TextField
 		return Integer.valueOf(this.getText());
 	}
 	
+	public double getDouble()
+	{
+		return Double.valueOf(this.getText());
+	}
+	
 	public float getFloat()
 	{
 		return Float.valueOf(this.getText());

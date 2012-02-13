@@ -1,8 +1,13 @@
 package us.wthr.jdem846.render;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -160,6 +165,10 @@ public class Canvas3d
 
 		int mnX = (int) x0;
 		int mnY = (int) y0;
+		
+		if (xMx < 0 || xMn >= getWidth() || yMx < 0 || yMn >= getHeight()) {
+			return;
+		}
 		
 		double s = edge.m;//(double)(mnY - mxY) / (double)(mnX - mxX);
 		boolean isValidSlope = NumberUtil.isValidNumber(s);
@@ -691,24 +700,48 @@ public class Canvas3d
 	{
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		WritableRaster raster = image.getRaster();
-		
-		//Graphics gfx = image.getGraphics();
-		//log.info("*****************************");
-		//log.info("Class: " + gfx.getClass().getName());
-		//log.info("Class: " + ((sun.java2d.SunGraphics2D)gfx).shapepipe.getClass().getName());
-		//log.info("*****************************");;
-		//gfx.dispose();
-		
+
 		int[] rgba = new int[4];
 		rgba[3] = 0xFF;
 		
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				get(x, y, rgba);
-				//log.info("RGBA: " + rgba[0] + "/" + rgba[1] + "/" + rgba[2] + "/" + rgba[3]);
 				raster.setPixel(x, y, rgba);
 			}
 		}
+		
+		
+		/*
+		 * 
+		Graphics2D gfx = (Graphics2D) image.getGraphics();
+		gfx.setComposite(AlphaComposite.SrcOver);
+		gfx.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+		gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		Path2D.Double path = new Path2D.Double();
+		
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				get(x, y, rgba);
+				//Color color = new Color(rgbaToInt(rgba));
+				Color color = new Color(rgba[0], rgba[1], rgba[2]);
+				gfx.setColor(color);
+				path.reset();
+				
+				path.moveTo(x-0.25, y-0.25);
+				path.lineTo(x-0.25, y+1.25);
+				path.lineTo(x+1.25, y+1.25);
+				path.lineTo(x+1.25, y-0.25);
+				path.closePath();
+				gfx.fill(path);
+				
+				//gfx.fillRect(x, y, 1, 1);
+				//log.info("RGBA: " + rgba[0] + "/" + rgba[1] + "/" + rgba[2] + "/" + rgba[3]);
+				//raster.setPixel(x, y, rgba);
+			}
+		}
+		*/
 		
 		return image;
 	}

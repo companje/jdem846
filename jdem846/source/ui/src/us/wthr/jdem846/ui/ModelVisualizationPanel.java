@@ -9,6 +9,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
@@ -63,6 +65,8 @@ public class ModelVisualizationPanel extends RoundedPanel
 	double shiftZ;
 	double shiftX;
 	
+	double zoom;
+	
 	private boolean useElevationOnDataGrids = true;
 
 	private List<ProjectionChangeListener> projectionChangeListeners = new LinkedList<ProjectionChangeListener>();
@@ -82,6 +86,9 @@ public class ModelVisualizationPanel extends RoundedPanel
 		rotateX = modelContextActual.getModelOptions().getProjection().getRotateX();
 		rotateY = modelContextActual.getModelOptions().getProjection().getRotateY();
 		rotateZ = modelContextActual.getModelOptions().getProjection().getRotateZ();
+		shiftZ = modelContextActual.getModelOptions().getProjection().getShiftZ();
+		shiftX = modelContextActual.getModelOptions().getProjection().getShiftX();
+		zoom = modelContextActual.getModelOptions().getProjection().getZoom();
 		
 		try {
 			modelContextWorkingCopy = modelContextActual.copy();
@@ -121,6 +128,13 @@ public class ModelVisualizationPanel extends RoundedPanel
 			{
 				buttonDown = e.getButton();
 			}
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e)
+			{
+				onMouseWheelMoved(e);
+				
+				
+			}
 			public void mouseDragged(MouseEvent e)
 			{
 				onMouseDragged(e);
@@ -140,6 +154,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 		};
 		this.addMouseListener(mouseAdapter);
 		this.addMouseMotionListener(mouseAdapter);
+		this.addMouseWheelListener(mouseAdapter);
 		
 		// Set Layout
 		setLayout(new BorderLayout());
@@ -155,7 +170,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 		modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
 		modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
 		modelContextWorkingCopy.getModelOptions().setElevationMultiple(1.0);
-		
+		modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA, false);
 
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate"));
@@ -163,11 +178,25 @@ public class ModelVisualizationPanel extends RoundedPanel
 		
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", true);
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", true);
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", true);
 		
 		
 		modelContextWorkingCopy.updateContext();
+	}
+	
+	protected void onMouseWheelMoved(MouseWheelEvent e)
+	{
+		log.info("Scroll: " + e.getScrollAmount() + ", " + e.getWheelRotation());
+		
+		zoom += (e.getWheelRotation() * -0.1);
+		
+		update(false, false);
+		
+		ignoreUpdate = true;
+		fireProjectionChangeListeners();
+		ignoreUpdate = false;
 	}
 	
 	protected void onMouseDragged(MouseEvent e)
@@ -212,17 +241,17 @@ public class ModelVisualizationPanel extends RoundedPanel
 			int deltaY = y - lastY;
 			
 
-			rotateX += (deltaY * 1);
-			if (rotateX < 0)
-				rotateX = 0;
-			if (rotateX > 90)
-				rotateX = 90;
+			rotateX += ((deltaY * 1) / zoom);
+			//if (rotateX < 0)
+			//	rotateX = 0;
+			//if (rotateX > 90)
+			//	rotateX = 90;
 			
-			rotateY += (deltaX * 1);
-			if (rotateY < -180)
-				rotateY = -180;
-			if (rotateY > 180)
-				rotateY = 180;
+			rotateY += ((deltaX * 1) / zoom);
+			//if (rotateY < -180)
+			//	rotateY = -180;
+			//if (rotateY > 180)
+			//	rotateY = 180;
 			
 		}
 		
@@ -258,6 +287,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 		modelContextWorkingCopy.getModelOptions().getProjection().setShiftX(shiftX);
 		modelContextWorkingCopy.getModelOptions().getProjection().setShiftZ(shiftZ);
 		
+		modelContextWorkingCopy.getModelOptions().getProjection().setZoom(zoom);
 		
 		if (renderer == null) {
 			renderer = new SimpleRenderer(modelContextWorkingCopy);
@@ -338,14 +368,14 @@ public class ModelVisualizationPanel extends RoundedPanel
 	protected void fireProjectionChangeListeners()
 	{
 		for (ProjectionChangeListener listener : projectionChangeListeners) {
-			listener.onProjectionChanged(rotateX, rotateY, rotateZ, shiftX, 0.0, shiftZ);
+			listener.onProjectionChanged(rotateX, rotateY, rotateZ, shiftX, 0.0, shiftZ, zoom);
 		}
 	}
 	
 	
 	public interface ProjectionChangeListener 
 	{
-		public void onProjectionChanged(double rotateX, double rotateY, double rotateZ, double shiftX, double shiftY, double shiftZ);
+		public void onProjectionChanged(double rotateX, double rotateY, double rotateZ, double shiftX, double shiftY, double shiftZ, double zoom);
 	}
 	
 }
