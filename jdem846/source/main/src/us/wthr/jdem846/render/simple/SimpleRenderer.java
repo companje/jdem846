@@ -14,6 +14,7 @@ import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Line;
 import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.geom.Triangle;
+import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
@@ -29,6 +30,14 @@ import us.wthr.jdem846.render.gfx.Vector;
 
 public class SimpleRenderer
 {
+	
+	private enum CornerEnum {
+		NORTHEAST,
+		NORTHWEST,
+		SOUTHEAST,
+		SOUTHWEST
+	};
+	
 	private static Log log = Logging.getLog(SimpleRenderer.class);
 	
 	private ModelContext modelContext;
@@ -43,6 +52,7 @@ public class SimpleRenderer
 	private double sunsource[] = new double[3];	
 	private int colorBufferA[] = new int[4];
 	private int colorBufferB[] = new int[4];
+	private double[] pointNormal = new double[3];
 	
 	private double spotExponent = 0;
 	private double relativeLightIntensity = 0;
@@ -251,30 +261,41 @@ public class SimpleRenderer
 		double strips = 10.0;
 		double slices = 20.0;
 		
-		double strip_step = 90.0 / strips;
-		double slice_step = 360.0 / slices;
+		double strip_step = (north - south) / strips;
+		double slice_step = (east - west) / slices;
 		
+		Edge e;
+		Line l;
 		
 		for (double phi = south; phi <= north; phi +=strip_step) {
-            for (double theta = west; theta <= east+slice_step ; theta+=slice_step) {
+            for (double theta = west; theta < east-slice_step; theta+=slice_step) {
             	
             	
             	Vertex v0 = createVertex(phi, theta, -10.0, baseGridColor);
             	Vertex v1 = createVertex(phi, theta+slice_step, -10.0, baseGridColor);
             	Vertex v2 = createVertex(phi+strip_step, theta, -10.0, baseGridColor);
+            	Vertex v3 = createVertex(phi+strip_step, theta+slice_step, -10.0, baseGridColor);
             	
-            	Edge e0 = new Edge(v0, v1);
-            	Line l0 = new Line();
-            	l0.addEdge(e0);
+            	e = new Edge(v0, v1);
+            	l = new Line();
+            	l.addEdge(e);
+            	canvas.drawShape(l, baseGridColor);
             	
-            	canvas.drawShape(l0, baseGridColor);
             	
+            	e = new Edge(v0, v2);
+            	l = new Line();
+            	l.addEdge(e);
+            	canvas.drawShape(l, baseGridColor);
             	
-            	Edge e1 = new Edge(v0, v2);
-            	Line l1 = new Line();
-            	l1.addEdge(e1);
-            	canvas.drawShape(l1, baseGridColor);
-
+            	e = new Edge(v1, v3);
+            	l = new Line();
+            	l.addEdge(e);
+            	canvas.drawShape(l, baseGridColor);
+            	
+            	e = new Edge(v2, v3);
+            	l = new Line();
+            	l.addEdge(e);
+            	canvas.drawShape(l, baseGridColor);
 			}
 			
 		}
@@ -300,12 +321,19 @@ public class SimpleRenderer
 		double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
 		double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
 		
+		double longitudeResolution = rasterDataContext.getLongitudeResolution();
+		double latitudeResolution = rasterDataContext.getLatitudeResolution();
 		
-		double maxZ = Double.MIN_VALUE;
-		double minZ = Double.MAX_VALUE;
-
-		for (double lon = west; lon < east - rasterDataContext.getLongitudeResolution(); lon+=lonStep) {
-			for (double lat = north; lat > south + rasterDataContext.getLatitudeResolution(); lat-=latStep) {
+		double maxLon = east - longitudeResolution;
+		double minLat = south + latitudeResolution;
+		
+		TriangleStrip strip = new TriangleStrip();
+		
+		for (double lon = west; lon < maxLon; lon+=lonStep) {
+			
+			//strip.reset();
+			
+			for (double lat = north; lat > minLat; lat-=latStep) {
 
 				double nwLat = lat;
 				double nwLon = lon;
@@ -334,6 +362,8 @@ public class SimpleRenderer
 					continue;
 				Vertex swVtx = createVertex(swLat, swLon, elev, rgba);
 				
+				
+				
 				// SE
 				if ((elev = calculateShadedColor(seLat, seLon, rgba)) == DemConstants.ELEV_NO_DATA)
 					continue;
@@ -344,21 +374,21 @@ public class SimpleRenderer
 					continue;
 				Vertex neVtx = createVertex(neLat, neLon, elev, rgba);
 				
-				maxZ = MathExt.max(maxZ, nwVtx.z, swVtx.z, seVtx.z, neVtx.z);
-				minZ = MathExt.min(minZ, nwVtx.z, swVtx.z, seVtx.z, neVtx.z);
+				
+				//strip.addVertex(nwVtx);
+				//strip.addVertex(swVtx);
 				
 				Triangle tri0 = new Triangle(nwVtx, swVtx, neVtx);
 				canvas.fillShape(tri0);
 				
 				Triangle tri1 = new Triangle(neVtx, swVtx, seVtx);
 				canvas.fillShape(tri1);
-
+				
+				
 			}
 			
+			//canvas.fillShape(strip);
 		}
-		
-		log.info("Max Z: " + maxZ);
-		log.info("Min Z: " + minZ);
 		
 	}
 	
@@ -404,35 +434,31 @@ public class SimpleRenderer
 		if (nElev == DemConstants.ELEV_NO_DATA)
 			nElev = midElev;
 		
-		
-		double[] pointNormal = new double[3];
-		
-		
-		
+
 		/*
 		 * Ok, just trust me on these ones.... 
 		 */
 		
 		// NW Normal
-		calculateNormal(0.0, wElev, midElev, nElev, "se", normal);
+		calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normal);
 		pointNormal[0] = normal[0];
 		pointNormal[1] = normal[1];
 		pointNormal[2] = normal[2];
 		
 		// SW Normal
-		calculateNormal(wElev, 0.0, sElev, midElev, "ne", normal);
+		calculateNormal(wElev, 0.0, sElev, midElev, CornerEnum.NORTHEAST, normal);
 		pointNormal[0] += normal[0];
 		pointNormal[1] += normal[1];
 		pointNormal[2] += normal[2];
 		
 		// SE Normal
-		calculateNormal(midElev, sElev, 0.0, eElev, "nw", normal);
+		calculateNormal(midElev, sElev, 0.0, eElev, CornerEnum.NORTHWEST, normal);
 		pointNormal[0] += normal[0];
 		pointNormal[1] += normal[1];
 		pointNormal[2] += normal[2];
 		
 		// NE Normal
-		calculateNormal(nElev, midElev, eElev, 0.0, "sw", normal);
+		calculateNormal(nElev, midElev, eElev, 0.0, CornerEnum.SOUTHWEST, normal);
 		pointNormal[0] += normal[0];
 		pointNormal[1] += normal[1];
 		pointNormal[2] += normal[2];
@@ -459,20 +485,20 @@ public class SimpleRenderer
 		return midElev;
 	}
 	
-	protected void calculateNormal(double nw, double sw, double se, double ne, String corner, double[] normal)
+	protected void calculateNormal(double nw, double sw, double se, double ne, CornerEnum corner, double[] normal)
 	{
 		backLeftPoints[1] = nw;
 		backRightPoints[1] = ne;
 		frontLeftPoints[1] = sw;
 		frontRightPoints[1] = se;
 		
-		if (corner.equalsIgnoreCase("nw")) {
+		if (corner == CornerEnum.NORTHWEST) {
 			perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
-		} else if (corner.equalsIgnoreCase("sw")) {
+		} else if (corner == CornerEnum.SOUTHWEST) {
 			perspectives.calcNormal(backLeftPoints, frontLeftPoints, frontRightPoints, normal);
-		} else if (corner.equalsIgnoreCase("se")) {
+		} else if (corner == CornerEnum.SOUTHEAST) {
 			perspectives.calcNormal(frontLeftPoints, frontRightPoints, backRightPoints, normal);
-		} else if (corner.equalsIgnoreCase("ne")) {
+		} else if (corner == CornerEnum.NORTHEAST) {
 			perspectives.calcNormal(backLeftPoints, frontRightPoints, backRightPoints, normal);
 		}
 		
@@ -482,8 +508,6 @@ public class SimpleRenderer
 	{
 		double dot = perspectives.dotProduct(normal, sunsource);
 		dot = Math.pow(dot, spotExponent);
-		
-
 		
 		if (dot > 0) {
 			dot *= relativeLightIntensity;
