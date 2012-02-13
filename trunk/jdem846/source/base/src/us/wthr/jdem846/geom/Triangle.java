@@ -21,7 +21,7 @@ public class Triangle extends RenderableShape
 	private double bZ;
 	private double cZ;
 	
-	private TrianglePointTest pointTest;
+	//private TrianglePointTest pointTest;
 	
 	private Path2D.Double polygon;
 	
@@ -52,13 +52,15 @@ public class Triangle extends RenderableShape
 			c[i] = ((p1.x*p2.y-p2.x*p1.y)*(double)p0.rgba[i]+(p2.x*p0.y-p0.x*p2.y)*(double)p1.rgba[i]+(p0.x*p1.y-p1.x*p0.y)*(double)p2.rgba[i]) / det;
 		}
 		
-		pointTest = new TrianglePointTest();
+		//pointTest = new TrianglePointTest();
 	}
 	
 	public boolean contains(double x, double y)
 	{
 		return polygon.contains(x, y);
+		//return polygon.intersects(x, y, 1, 1);
 		//return pointTest.test(x, y, getInterpolatedZ(x, y));
+		//return true;
 	}
 
 	

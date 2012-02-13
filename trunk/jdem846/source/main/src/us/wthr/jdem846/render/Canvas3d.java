@@ -23,6 +23,7 @@ import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Geometric;
 import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.geom.Triangle;
+import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -295,6 +296,21 @@ public class Canvas3d
 		fill(shape, -1);
 	}
 	
+	public void fill(TriangleStrip strip)
+	{
+		
+		int count = strip.getTriangleCount();
+		for (int i = 0; i < count; i++) {
+			Triangle tri = strip.getTriangle(i);
+			
+			if (tri == null) {
+				break;
+			}
+			
+			fill(tri);
+		}
+	}
+	
 	public void fill(Triangle tri)
 	{
 		
@@ -303,12 +319,13 @@ public class Canvas3d
 		}
 		
 		
-		Bounds bounds = tri.getBounds();
+		//Bounds bounds = tri.getBounds();
 		
-		double minX = bounds.x;
-		double maxX = bounds.x + bounds.width;
-		double minY = bounds.y;
-		double maxY = bounds.y + bounds.height;
+		double maxX = MathExt.max(tri.p0.x, tri.p1.x, tri.p2.x);
+		double minX = MathExt.min(tri.p0.x, tri.p1.x, tri.p2.x);
+		double maxY = MathExt.max(tri.p0.y, tri.p1.y, tri.p2.y);
+		double minY = MathExt.min(tri.p0.y, tri.p1.y, tri.p2.y);
+
 		
 		if (maxX < 0 || minX >= getWidth() || maxY < 0 || minY >= getHeight()) {
 			return;
@@ -326,7 +343,7 @@ public class Canvas3d
 		
 		
 		
-		int[] rgba = new int[4];
+		int[] rgba = {0, 0, 0, 255};
 		
 		for (double y = minY; y <= maxY; y++) {
 			for (double x = minX; x <= maxX; x++) {

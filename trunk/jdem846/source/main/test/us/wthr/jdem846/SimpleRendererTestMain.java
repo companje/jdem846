@@ -49,13 +49,13 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		List<String> inputDataList = new LinkedList<String>();
 		List<ShapeFileRequest> inputShapeList = new LinkedList<ShapeFileRequest>();
 		
-		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
 		//inputDataList.add("F:/DataRaster-Testing/PresRange_1-3as.flt");
 		//inputDataList.add("F:/DataRaster-Testing/PresRange_1as.flt");
 		//inputDataList.add("F:/Hawaii 1 Arc Second/Honolulu 1-3 Arc Second.flt");
 		//String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
-		inputDataList.add("F:\\GEBCO_08\\gebco_08.flt");
+		//inputDataList.add("F:\\GEBCO_08\\gebco_08.flt");
 		
 		//inputDataList.add("F:\\etopo1_ice_g_f4\\etopo1_ice_g_f4.flt");
 		String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/render-test.png";
@@ -89,9 +89,11 @@ public class SimpleRendererTestMain extends AbstractTestMain
 2012.02.12 21:01:30.156 EST     INFO SimpleRendererTestMain Raster Data Maximum Value: 8685.0
 2012.02.12 21:01:30.156 EST     INFO SimpleRendererTestMain Raster Data Minimum Value: -10977.0
 		 */
-		//dataProxy.calculateElevationMinMax(true);
+		dataProxy.calculateElevationMinMax(true);
 		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
 		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
+		
+		double aspect = (double)dataProxy.getDataColumns() / (double)dataProxy.getDataRows();
 		
 		LightingContext lightingContext = new LightingContext();
 		lightingContext.setLightingEnabled(true);
@@ -99,8 +101,8 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
 		modelOptions.setTileSize(500);
-		modelOptions.setWidth(2000);
-		modelOptions.setHeight(2000);
+		modelOptions.setWidth(600);
+		modelOptions.setHeight((int) Math.round(600.0/aspect));
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(false);
@@ -108,27 +110,28 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;255");
 		modelOptions.setUsePipelineRender(false);
-		modelOptions.setColoringType("hypsometric-etopo1-tint");
+		//modelOptions.setColoringType("hypsometric-etopo1-tint");
 		modelOptions.setElevationMultiple(1.0);
 		
 		dataProxy.fillBuffers();
 
-		dataProxy.setDataMaximumValue(8685.0);
-		dataProxy.setDataMinimumValue(-10977.0);
+		//dataProxy.setDataMaximumValue(8685.0);
+		//dataProxy.setDataMinimumValue(-10977.0);
 		
 		//modelOptions.setProject3d(true);
 		
-		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_3D);
+		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_FLAT);
 		
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", false);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", true);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", true);
 		
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices",2000);
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", 2000);
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", modelOptions.getHeight());//dataProxy.getDataRows());
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", modelOptions.getWidth());//dataProxy.getDataColumns());
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
 		
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", true);
 		//lightingContext.setRelativeLightIntensity(1.0);
 		//lightingContext.setLightingMultiple(0.5);
 		//modelOptions.setColoringType("hypsometric-etopo1-tint");
@@ -136,7 +139,7 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		//modelOptions.setHillShading(false);
 		//modelOptions.setConcurrentRenderPoolSize(10);
 		//modelOptions.getProjection().setRotateX(30);
-		modelOptions.getProjection().setRotateY(20);
+		//modelOptions.getProjection().setRotateY(20);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, shapeContext, lightingContext, modelOptions);
 		modelContext.updateContext();
