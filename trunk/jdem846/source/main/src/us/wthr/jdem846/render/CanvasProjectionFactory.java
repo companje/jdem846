@@ -16,7 +16,8 @@ public class CanvasProjectionFactory
 		CanvasProjection canvasProjection = null;
 		
 		if (modelContext.getModelOptions().getProject3d()) {
-			canvasProjection = new CanvasProjection3d(modelContext);
+			//canvasProjection = new CanvasProjection3d(modelContext);
+			canvasProjection = new CanvasProjectionGlobe(modelContext);
 		} else {
 			canvasProjection = new CanvasProjection(modelContext);
 		}

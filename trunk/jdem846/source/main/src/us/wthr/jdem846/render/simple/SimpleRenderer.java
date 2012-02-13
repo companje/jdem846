@@ -244,7 +244,59 @@ public class SimpleRenderer
 		line.addEdge(createEdge(south, east, -1.0, north, east, -1.0));
 		line.addEdge(createEdge(north, east, -1.0, north, west, -1.0));
 		
-
+		
+		double strips = 10.0;
+		double slices = 20.0;
+		
+		double strip_step = 90.0 / strips;
+		double slice_step = 360.0 / slices;
+		
+		
+		for (double phi = -90; phi <= 90; phi +=strip_step) {
+            for (double theta = -180; theta <= 180+slice_step ; theta+=slice_step) {
+				
+            	
+            	Vertex v0 = createVertex(phi, theta, -10.0, baseGridColor);
+            	Vertex v1 = createVertex(phi, theta+slice_step, -10.0, baseGridColor);
+            	Vertex v2 = createVertex(phi+strip_step, theta, -10.0, baseGridColor);
+            	
+            	Edge e0 = new Edge(v0, v1);
+            	Line l0 = new Line();
+            	l0.addEdge(e0);
+            	
+            	canvas.drawShape(l0, baseGridColor);
+            	
+            	
+            	Edge e1 = new Edge(v0, v2);
+            	Line l1 = new Line();
+            	l1.addEdge(e1);
+            	canvas.drawShape(l1, baseGridColor);
+            	/*
+            	Spheres.getPoint3D(theta, phi, radius, p_tl);
+            	Spheres.getPoint3D(theta + slice_step, phi, radius, p_tr);
+            	Spheres.getPoint3D(theta, phi + strip_step, radius, p_bl);
+            	Spheres.getPoint3D(theta + slice_step, phi + strip_step, radius, p_br);
+            	
+            	
+            	Vertex v0 = new Vertex(p_tl[0]+buffer, p_tl[1]+buffer, p_tl[2], lineColor);
+            	Vertex v1 = new Vertex(p_tr[0]+buffer, p_tr[1]+buffer, p_tr[2], lineColor);
+            	
+            	Vertex v2 = new Vertex(p_bl[0]+buffer, p_bl[1]+buffer, p_bl[2], lineColor);
+            	Vertex v3 = new Vertex(p_tl[0]+buffer, p_tl[1]+buffer, p_tl[2], lineColor);
+            	
+            	
+            	
+            	Edge e0 = new Edge(v0, v1);
+            	canvas.draw(e0);
+            	
+            	Edge e1 = new Edge(v2, v3);
+            	canvas.draw(e1);
+            	*/
+			}
+			
+		}
+		
+		/*
 		double lonStep = (east - west) / 12;
 		for (double lon = west; lon <= east; lon+=lonStep) {
 			line.addEdge(createEdge(north, lon, -1.0, south, lon, -1.0));
@@ -257,6 +309,7 @@ public class SimpleRenderer
 		
 		
 		canvas.drawShape(line, baseGridColor);
+		*/
 	}
 	
 	
