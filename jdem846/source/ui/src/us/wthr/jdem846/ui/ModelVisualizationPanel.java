@@ -2,6 +2,7 @@ package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -13,6 +14,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
@@ -30,6 +34,7 @@ import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
+import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -42,17 +47,23 @@ import us.wthr.jdem846.render.CanvasProjection;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.simple.SimpleRenderer;
+import us.wthr.jdem846.ui.base.Label;
+import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.Slider;
 import us.wthr.jdem846.ui.panels.RoundedPanel;
 
 @SuppressWarnings("serial")
-public class ModelVisualizationPanel extends RoundedPanel
+public class ModelVisualizationPanel extends Panel
 {
 	
 	private static Log log = Logging.getLog(ModelVisualizationPanel.class);
 	
 	private ModelContext modelContextActual;
 	private ModelContext modelContextWorkingCopy;
-	private Image modelVisualizationImage = null;
+	
+	private ModelDisplayPanel pnlModelDisplay;
+	private Slider sldQuality;
+	
 	
 	int buttonDown = -1;
 	int lastX = -1;
@@ -67,6 +78,10 @@ public class ModelVisualizationPanel extends RoundedPanel
 	
 	double zoom;
 	
+	double quality;
+	double latitudeSlices;
+	double longitudeSlices;
+	
 	private boolean useElevationOnDataGrids = true;
 
 	private List<ProjectionChangeListener> projectionChangeListeners = new LinkedList<ProjectionChangeListener>();
@@ -79,8 +94,11 @@ public class ModelVisualizationPanel extends RoundedPanel
 	{
 		super();
 		this.modelContextActual = modelContext;
-		setBackground(Color.WHITE);
 		
+		// Set default values
+		latitudeSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
+		longitudeSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices");
+				
 		
 
 		rotateX = modelContextActual.getModelOptions().getProjection().getRotateX();
@@ -100,6 +118,18 @@ public class ModelVisualizationPanel extends RoundedPanel
 		
 		//modelContextWorkingCopy.getModelOptions().setBackgroundColor("255;255;255;0");
 		
+		// Create components
+		this.pnlModelDisplay = new ModelDisplayPanel();
+		sldQuality = new Slider(1, 100);
+		
+		// Add listeners
+		
+		sldQuality.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0)
+			{
+				onQualitySliderChanged();
+			}
+		});
 		
 		this.addComponentListener(new ComponentListener() {
 			public void componentHidden(ComponentEvent arg0)
@@ -156,10 +186,42 @@ public class ModelVisualizationPanel extends RoundedPanel
 		this.addMouseMotionListener(mouseAdapter);
 		this.addMouseWheelListener(mouseAdapter);
 		
+		
+		
+		
+		
+		Panel pnlControls = new Panel();
+		pnlControls.setLayout(new FlowLayout());
+		
+		pnlControls.add(new Label(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.quality") + ":"));
+		pnlControls.add(sldQuality);
+		
 		// Set Layout
 		setLayout(new BorderLayout());
+		add(pnlModelDisplay, BorderLayout.CENTER);
+		add(pnlControls, BorderLayout.SOUTH);
 		
-
+		updateQualitySlider();
+	}
+	
+	protected void updateQualitySlider()
+	{
+		
+		int value = (int) Math.round((longitudeSlices / 300.0) * 100);
+		sldQuality.setValue(value);
+		
+		
+		
+	}
+	
+	protected void onQualitySliderChanged()
+	{
+		double value = (double) sldQuality.getValue();
+		
+		longitudeSlices = (value / 100) * 300;
+		latitudeSlices = longitudeSlices;
+		
+		update(true, false);
 	}
 	
 	protected void setWorkingCopyOptions()
@@ -176,8 +238,8 @@ public class ModelVisualizationPanel extends RoundedPanel
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData"));
 		
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", true);
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", true);
@@ -242,17 +304,7 @@ public class ModelVisualizationPanel extends RoundedPanel
 			
 
 			rotateX += ((deltaY * 1) / zoom);
-			//if (rotateX < 0)
-			//	rotateX = 0;
-			//if (rotateX > 90)
-			//	rotateX = 90;
-			
 			rotateY += ((deltaX * 1) / zoom);
-			//if (rotateY < -180)
-			//	rotateY = -180;
-			//if (rotateY > 180)
-			//	rotateY = 180;
-			
 		}
 		
 		lastX = x;
@@ -337,23 +389,11 @@ public class ModelVisualizationPanel extends RoundedPanel
 		renderer.render();
 		
 		ModelCanvas modelCanvas = modelContextWorkingCopy.getModelCanvas();
-		modelVisualizationImage = modelCanvas.getImage();
+		pnlModelDisplay.modelVisualizationImage = modelCanvas.getImage();
 
 	}
 	
-	@Override
-	public void paint(Graphics g)
-	{
-		Graphics2D g2d = (Graphics2D) g;
-		super.paint(g2d);
-		
-		
-		if (modelVisualizationImage != null) {
-			g2d.drawImage(modelVisualizationImage, 10, 10, null);
-		}
 
-		
-	}
 	
 	public void addProjectionChangeListener(ProjectionChangeListener listener)
 	{
@@ -376,6 +416,36 @@ public class ModelVisualizationPanel extends RoundedPanel
 	public interface ProjectionChangeListener 
 	{
 		public void onProjectionChanged(double rotateX, double rotateY, double rotateZ, double shiftX, double shiftY, double shiftZ, double zoom);
+	}
+	
+	
+	
+	
+	private class ModelDisplayPanel extends RoundedPanel
+	{
+		public Image modelVisualizationImage = null;
+		
+		public ModelDisplayPanel()
+		{
+			this.setOpaque(false);
+			setBackground(Color.WHITE);
+		}
+		
+		@Override
+		public void paint(Graphics g)
+		{
+			Graphics2D g2d = (Graphics2D) g;
+			super.paint(g2d);
+			
+			
+			if (modelVisualizationImage != null) {
+				g2d.drawImage(modelVisualizationImage, 10, 10, null);
+			}
+
+			
+		}
+		
+		
 	}
 	
 }

@@ -321,10 +321,10 @@ public class Canvas3d
 		
 		//Bounds bounds = tri.getBounds();
 		
-		double maxX = MathExt.max(tri.p0.x, tri.p1.x, tri.p2.x);
-		double minX = MathExt.min(tri.p0.x, tri.p1.x, tri.p2.x);
-		double maxY = MathExt.max(tri.p0.y, tri.p1.y, tri.p2.y);
-		double minY = MathExt.min(tri.p0.y, tri.p1.y, tri.p2.y);
+		double maxX = MathExt.ceil(MathExt.max(tri.p0.x, tri.p1.x, tri.p2.x));
+		double minX = MathExt.floor(MathExt.min(tri.p0.x, tri.p1.x, tri.p2.x));
+		double maxY = MathExt.ceil(MathExt.max(tri.p0.y, tri.p1.y, tri.p2.y));
+		double minY = MathExt.floor(MathExt.min(tri.p0.y, tri.p1.y, tri.p2.y));
 
 		
 		if (maxX < 0 || minX >= getWidth() || maxY < 0 || minY >= getHeight()) {

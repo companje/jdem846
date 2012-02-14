@@ -329,12 +329,14 @@ public class SimpleRenderer
 		
 		TriangleStrip strip = new TriangleStrip();
 		
-		for (double lon = west; lon < maxLon; lon+=lonStep) {
+		
 			
-			//strip.reset();
 			
-			for (double lat = north; lat > minLat; lat-=latStep) {
-
+			
+		for (double lat = north; lat > minLat; lat-=latStep) {
+			strip.reset();
+			
+			for (double lon = west; lon < maxLon; lon+=lonStep) {
 				double nwLat = lat;
 				double nwLon = lon;
 				
@@ -364,30 +366,14 @@ public class SimpleRenderer
 				
 				
 				
-				// SE
-				if ((elev = calculateShadedColor(seLat, seLon, rgba)) == DemConstants.ELEV_NO_DATA)
-					continue;
-				Vertex seVtx = createVertex(seLat, seLon, elev, rgba);
-				
-				// NE
-				if ((elev = calculateShadedColor(neLat, neLon, rgba)) == DemConstants.ELEV_NO_DATA)
-					continue;
-				Vertex neVtx = createVertex(neLat, neLon, elev, rgba);
-				
-				
-				//strip.addVertex(nwVtx);
-				//strip.addVertex(swVtx);
-				
-				Triangle tri0 = new Triangle(nwVtx, swVtx, neVtx);
-				canvas.fillShape(tri0);
-				
-				Triangle tri1 = new Triangle(neVtx, swVtx, seVtx);
-				canvas.fillShape(tri1);
+				strip.addVertex(nwVtx);
+				strip.addVertex(swVtx);
+
 				
 				
 			}
+			canvas.fillShape(strip);
 			
-			//canvas.fillShape(strip);
 		}
 		
 	}

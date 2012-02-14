@@ -101,8 +101,11 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
 		modelOptions.setTileSize(500);
-		modelOptions.setWidth(600);
-		modelOptions.setHeight((int) Math.round(600.0/aspect));
+		
+		double width = 1000;
+		
+		modelOptions.setWidth((int)width);
+		modelOptions.setHeight((int) Math.round(width/aspect));
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(false);
@@ -120,7 +123,7 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		
 		//modelOptions.setProject3d(true);
 		
-		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_FLAT);
+		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_3D);
 		
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", false);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", true);
