@@ -331,7 +331,9 @@ public class ModelVisualizationPanel extends Panel
 			}
 		}
 		
-
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
+		
 		modelContextWorkingCopy.getModelOptions().getProjection().setRotateX(rotateX);
 		modelContextWorkingCopy.getModelOptions().getProjection().setRotateY(rotateY);
 		modelContextWorkingCopy.getModelOptions().getProjection().setRotateZ(rotateZ);
