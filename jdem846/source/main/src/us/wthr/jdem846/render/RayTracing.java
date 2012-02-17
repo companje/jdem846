@@ -39,8 +39,8 @@ public class RayTracing
 		{
 			this(remoteAzimuth,
 				remoteElevationAngle,
-				modelContext.getRasterDataContext().getLatitudeResolution(),
-				modelContext.getRasterDataContext().getLongitudeResolution(),
+				modelContext.getRasterDataContext().getEffectiveLatitudeResolution(),
+				modelContext.getRasterDataContext().getEffectiveLongitudeResolution(),
 				modelContext.getRasterDataContext().getMetersResolution(),
 				modelContext.getNorth(),
 				modelContext.getSouth(),

@@ -53,6 +53,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
+import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
@@ -61,6 +62,7 @@ import us.wthr.jdem846.render.gfx.Renderable;
 import us.wthr.jdem846.render.gfx.Square;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.gfx.ViewportBuffer;
+import us.wthr.jdem846.render.simple.SimpleRenderer;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.util.TempFiles;
 
@@ -86,7 +88,8 @@ public class LightingPreviewPanel extends Panel
 	private LightingContext lightingContext;
 	private RasterDataContext rasterDataContext;
 	private ModelContext modelContext;
-	private Dem2dGenerator dem2d;
+	//private Dem2dGenerator dem2d;
+	private SimpleRenderer renderer;
 	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
@@ -154,6 +157,22 @@ public class LightingPreviewPanel extends Panel
 			modelOptions.setConcurrentRenderPoolSize(1);
 			modelOptions.setUsePipelineRender(false);
 			
+			
+			double quality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewQuality");
+			double latitudeSlices = quality * (double) rasterData.getRows();
+			double longitudeSlices = quality * (double) rasterData.getColumns();
+			
+			
+			modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_FLAT);
+			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", true);
+			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", false);
+			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", false);
+			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);
+			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);
+			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
+			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
+			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", true);
+			
 			rasterDataContext = new RasterDataContext();
 			rasterDataContext.addRasterData(rasterData);
 			rasterDataContext.prepare();
@@ -162,7 +181,12 @@ public class LightingPreviewPanel extends Panel
 			
 			modelContext = ModelContext.createInstance(rasterDataContext, lightingContext, modelOptions);
 			
-			dem2d = new Dem2dGenerator(modelContext);
+			//dem2d = new Dem2dGenerator(modelContext);
+			
+			
+			renderer = new SimpleRenderer(modelContext);
+			renderer.prepare(true, false);
+			
 		} catch (Exception e1) {
 			
 			e1.printStackTrace();
@@ -224,10 +248,15 @@ public class LightingPreviewPanel extends Panel
 				log.info("Updating lighting preview model image");
 				log.info("****************************************");
 				modelContext.resetModelCanvas();
-				OutputProduct<ModelCanvas> product = dem2d.generate();
-				prerendered = (BufferedImage) product.getProduct().getImage();
 				
-			} catch (RenderEngineException e) {
+				renderer.prepare(false, false);
+				renderer.render();
+				
+				prerendered = (BufferedImage) modelContext.getModelCanvas().getFinalizedImage(false);
+				//OutputProduct<ModelCanvas> product = dem2d.generate();
+				//prerendered = (BufferedImage) product.getProduct().getImage();
+				
+			} catch (Exception e) {
 				log.warn("Failed to render preview image: " + e.getMessage(), e);
 				e.printStackTrace();
 			} finally {

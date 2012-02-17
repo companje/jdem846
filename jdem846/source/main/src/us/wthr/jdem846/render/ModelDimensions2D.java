@@ -13,20 +13,20 @@ public class ModelDimensions2D
 {
 	private static Log log = Logging.getLog(ModelDimensions2D.class);
 	
-	private int tileSize;
-	private int effectiveTileSize;
-	private int dataRows;
-	private int dataColumns;
-	private double sizeRatio;
-	private int outputWidth;
-	private int outputHeight;
-	private double outputLongitudeResolution;
-	private double outputLatitudeResolution;
-	private double numTilesHorizontal;
-	private double numTilesVertical;
-	private long tileOutputWidth;
-	private long tileOutputHeight;
-	private long tileCount;
+	public int tileSize;
+	public int effectiveTileSize;
+	public int dataRows;
+	public int dataColumns;
+	public double sizeRatio;
+	public int outputWidth;
+	public int outputHeight;
+	public double outputLongitudeResolution;
+	public double outputLatitudeResolution;
+	public double numTilesHorizontal;
+	public double numTilesVertical;
+	public long tileOutputWidth;
+	public long tileOutputHeight;
+	public long tileCount;
 	
 	protected ModelDimensions2D()
 	{

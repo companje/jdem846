@@ -1,6 +1,7 @@
 package us.wthr.jdem846.rasterdata;
 
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.rasterdata.bil.Bil16IntRasterDataProvider;
 import us.wthr.jdem846.rasterdata.gridfloat.GridFloatRasterDataProvider;
 //import us.wthr.jdem846.rasterdata.bil.Bil16IntRasterDataProvider;
 //import us.wthr.jdem846.rasterdata.gridascii.GridAsciiRasterDataProvider;
@@ -8,7 +9,7 @@ import us.wthr.jdem846.rasterdata.gridfloat.GridFloatRasterDataProvider;
 public enum RasterDataFormatEnum
 {
 	
-	//BIL_16INT("us.wthr.jdem846.input.bilInt16.name", "bil", Bil16IntRasterDataProvider.class),
+	BIL_16INT("us.wthr.jdem846.input.bilInt16.name", "bil", Bil16IntRasterDataProvider.class),
 	//GRIDASCII("us.wthr.jdem846.input.esri.gridAscii.name", "asc", GridAsciiRasterDataProvider.class),
 	GRIDFLOAT("us.wthr.jdem846.input.gridFloat.name", "flt", GridFloatRasterDataProvider.class);
 	

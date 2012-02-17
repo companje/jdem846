@@ -109,7 +109,6 @@ public class Edge implements Comparable<Edge>
     
     public double getInterpolatedZ(double x, double y)
     {
-    	
     	double a = (p1.z - p0.z) / (p1.x - p0.x);
     	double b = (p0.z*p1.x - p1.z*p0.x) / (p1.x - p0.x);
     	double z = a * x + b;
