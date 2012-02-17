@@ -297,17 +297,27 @@ public class ModelOptionsPanel extends RoundedPanel
 		//spnRelativeLightIntensity.addChangeListener(spinnerChangeListener);
 		//spnRelativeDarkIntensity.addChangeListener(spinnerChangeListener);
 		
-		
+		ActionListener checkBoxActionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				fireOptionsChangedListeners();
+			}
+		};
 		ChangeListener basicChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
 			{
 				fireOptionsChangedListeners();
 			}
 		};
-		chkDoubleSampling.addChangeListener(basicChangeListener);
-		chkUseFastRender.addChangeListener(basicChangeListener);
+		
+		
+		chkDoubleSampling.getModel().addActionListener(checkBoxActionListener);
+		chkUseFastRender.getModel().addActionListener(checkBoxActionListener);
+		chkMaintainAscpectRatio.getModel().addActionListener(checkBoxActionListener);
+		//chkDoubleSampling.addChangeListener(basicChangeListener);
+		//chkUseFastRender.addChangeListener(basicChangeListener);
 		//chkProject3d.addChangeListener(basicChangeListener);
-		chkMaintainAscpectRatio.addChangeListener(basicChangeListener);
+		//chkMaintainAscpectRatio.addChangeListener(basicChangeListener);
 		
 		coloringControl.addChangeListener(basicChangeListener);
 		colorSelection.addChangeListener(basicChangeListener);

@@ -179,7 +179,7 @@ public class Canvas3d
 			for (int x = xMn; x <= xMx; x++) {
 				int y = (int) ((isValidSlope) ? ((s * (x - mxX)) + mxY) + 1 : mxY);
 				double f = (double)(x - xMn) / (double)(xMx - xMn);
-				double z = edge.getInterpolatedZ(f);
+				double z = edge.getInterpolatedZ(x, y);
 				
 				ColorAdjustments.interpolateColor(rgba0, rgba1, pixel, f);
 				
@@ -195,7 +195,7 @@ public class Canvas3d
 				double z = edge.getInterpolatedZ(x, y);
 				ColorAdjustments.interpolateColor(rgba0, rgba1, pixel, f);
 				
-				set(x, y+1, z, pixel);
+				set(x, y, z, pixel);
 			}
 			
 		}

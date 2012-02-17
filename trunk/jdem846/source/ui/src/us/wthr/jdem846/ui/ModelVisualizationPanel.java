@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
@@ -15,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -47,6 +50,7 @@ import us.wthr.jdem846.render.CanvasProjection;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.simple.SimpleRenderer;
+import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Slider;
@@ -63,7 +67,7 @@ public class ModelVisualizationPanel extends Panel
 	
 	private ModelDisplayPanel pnlModelDisplay;
 	private Slider sldQuality;
-	
+	private CheckBox chkPreviewRaster;
 	
 	int buttonDown = -1;
 	int lastX = -1;
@@ -78,7 +82,11 @@ public class ModelVisualizationPanel extends Panel
 	
 	double zoom;
 	
-	double quality;
+	
+	boolean rasterPreview = true;
+	double maxPreviewSlices = 300;
+	double minPreviewSlices = 10;
+	double previewQuality = 0.25;
 	double latitudeSlices;
 	double longitudeSlices;
 	
@@ -99,8 +107,11 @@ public class ModelVisualizationPanel extends Panel
 		latitudeSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
 		longitudeSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices");
 				
-		
-
+		maxPreviewSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.modelVisualizationPanel.maxPreviewSlices");
+		minPreviewSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.modelVisualizationPanel.minPreviewSlices");
+		previewQuality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.modelVisualizationPanel.previewQuality");
+		rasterPreview = JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.modelVisualizationPanel.rasterPreview");
+				
 		rotateX = modelContextActual.getModelOptions().getProjection().getRotateX();
 		rotateY = modelContextActual.getModelOptions().getProjection().getRotateY();
 		rotateZ = modelContextActual.getModelOptions().getProjection().getRotateZ();
@@ -121,13 +132,24 @@ public class ModelVisualizationPanel extends Panel
 		// Create components
 		this.pnlModelDisplay = new ModelDisplayPanel();
 		sldQuality = new Slider(1, 100);
+		chkPreviewRaster = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.previewRaster.label"));
+		
+		// Set Tooltips
+		
+		sldQuality.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.quality.tooltip"));
+		chkPreviewRaster.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.previewRaster.tooltip"));
+		
 		
 		// Add listeners
 		
 		sldQuality.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent arg0)
+			public void stateChanged(ChangeEvent e)
 			{
-				onQualitySliderChanged();
+				JSlider source = (JSlider) e.getSource();
+				
+				if (!source.getValueIsAdjusting()) {
+					onQualitySliderChanged();
+				}
 			}
 		});
 		
@@ -182,45 +204,54 @@ public class ModelVisualizationPanel extends Panel
 				ignoreUpdate = false;
 			}
 		};
-		this.addMouseListener(mouseAdapter);
-		this.addMouseMotionListener(mouseAdapter);
-		this.addMouseWheelListener(mouseAdapter);
-		
-		
+		pnlModelDisplay.addMouseListener(mouseAdapter);
+		pnlModelDisplay.addMouseMotionListener(mouseAdapter);
+		pnlModelDisplay.addMouseWheelListener(mouseAdapter);
+		chkPreviewRaster.getModel().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0)
+			{
+				onRasterPreviewCheckChanged();
+			}
+		});
 		
 		
 		
 		Panel pnlControls = new Panel();
 		pnlControls.setLayout(new FlowLayout());
 		
-		pnlControls.add(new Label(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.quality") + ":"));
+		pnlControls.add(new Label(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.quality.label") + ":"));
 		pnlControls.add(sldQuality);
+		pnlControls.add(chkPreviewRaster);
 		
 		// Set Layout
 		setLayout(new BorderLayout());
 		add(pnlModelDisplay, BorderLayout.CENTER);
 		add(pnlControls, BorderLayout.SOUTH);
 		
-		updateQualitySlider();
+		setControlState();
 	}
 	
-	protected void updateQualitySlider()
+	
+	protected void setControlState()
 	{
-		
-		int value = (int) Math.round((longitudeSlices / 300.0) * 100);
+		int value = (int) Math.round(previewQuality * 100);
 		sldQuality.setValue(value);
 		
+		chkPreviewRaster.setSelected(rasterPreview);
 		
-		
+	}
+
+	
+	protected void onRasterPreviewCheckChanged()
+	{
+		rasterPreview = chkPreviewRaster.getModel().isSelected();
+		update(false, false);
 	}
 	
 	protected void onQualitySliderChanged()
 	{
 		double value = (double) sldQuality.getValue();
-		
-		longitudeSlices = (value / 100) * 300;
-		latitudeSlices = longitudeSlices;
-		
+		previewQuality = (value / 100);
 		update(true, false);
 	}
 	
@@ -240,9 +271,9 @@ public class ModelVisualizationPanel extends Panel
 		
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", true);
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", true);
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", true);
+		
 		
 		
 		modelContextWorkingCopy.updateContext();
@@ -331,8 +362,12 @@ public class ModelVisualizationPanel extends Panel
 			}
 		}
 		
+		longitudeSlices = this.minPreviewSlices + (previewQuality * (this.maxPreviewSlices - this.minPreviewSlices));
+		latitudeSlices = longitudeSlices;
+		
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", rasterPreview);
 		
 		modelContextWorkingCopy.getModelOptions().getProjection().setRotateX(rotateX);
 		modelContextWorkingCopy.getModelOptions().getProjection().setRotateY(rotateY);

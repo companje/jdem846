@@ -10,6 +10,7 @@ import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Line;
 import us.wthr.jdem846.geom.Polygon;
@@ -26,6 +27,8 @@ import us.wthr.jdem846.rasterdata.ElevationDataMap;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.CanvasProjection;
 import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.render.RayTracing;
+import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.render.gfx.Vector;
 
 public class SimpleRenderer
@@ -54,12 +57,21 @@ public class SimpleRenderer
 	private int colorBufferB[] = new int[4];
 	private double[] pointNormal = new double[3];
 	
+	private double longitudeResolution;
+	private double latitudeResolution;
+	
+	
+	private boolean lightingEnabled = true;
 	private double spotExponent = 0;
 	private double relativeLightIntensity = 0;
 	private double relativeDarkIntensity = 0;
 	private double lightingMultiple = 0;
 	private double lightAzimuth;
 	private double lightElevation;
+	
+	private RayTracing lightSourceRayTracer;
+	private boolean rayTraceShadows;
+	private double shadowIntensity;
 	
 	private ModelColoring modelColoring;
 	private CanvasProjection projection;
@@ -108,6 +120,18 @@ public class SimpleRenderer
 	{
 		log.info("Resetting simple renderer cache");
 		
+		double north = modelContext.getNorth();
+		double south = modelContext.getSouth();
+		double east = modelContext.getEast();
+		double west = modelContext.getWest();
+
+		latitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
+		longitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices");
+		
+		
+		latitudeResolution = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
+		longitudeResolution = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
+
 		
 		if (resetCache) {
 			elevationMap = ElevationDataMap.create(modelContext.getNorth(), 
@@ -133,10 +157,8 @@ public class SimpleRenderer
 			
 		getStandardResolutionElevation = modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval");
 		
-		latitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
-		longitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices");
 		
-		
+		lightingEnabled = modelContext.getLightingContext().isLightingEnabled();
 		spotExponent = modelContext.getLightingContext().getSpotExponent();
 		relativeLightIntensity = modelContext.getLightingContext().getRelativeLightIntensity();
 		relativeDarkIntensity = modelContext.getLightingContext().getRelativeDarkIntensity();
@@ -150,6 +172,24 @@ public class SimpleRenderer
 		projection = modelContext.getModelCanvas().getCanvasProjection();
 		
 		
+		
+		modelContext.getModelDimensions().outputLatitudeResolution = latitudeResolution;
+		modelContext.getModelDimensions().outputLongitudeResolution = longitudeResolution;
+		
+		rayTraceShadows = modelContext.getLightingContext().getRayTraceShadows();
+		shadowIntensity = modelContext.getLightingContext().getShadowIntensity();
+		if (rayTraceShadows) {
+			lightSourceRayTracer = new RayTracing(lightAzimuth,
+					lightElevation,
+					modelContext,
+					new RasterDataFetchHandler() {
+						public double getRasterData(double latitude, double longitude) throws Exception {
+							return getElevation(latitude, longitude);
+						}
+			});
+		} else {
+			lightSourceRayTracer = null;
+		}
 		
 	}
 	
@@ -310,7 +350,10 @@ public class SimpleRenderer
 		
 
 		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
-
+		
+		if (rasterDataContext.getRasterDataListSize() == 0) {
+			return;
+		}
 		
 		
 		double north = rasterDataContext.getNorth();
@@ -318,11 +361,11 @@ public class SimpleRenderer
 		double east = rasterDataContext.getEast();
 		double west = rasterDataContext.getWest();
 
-		double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
-		double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
+		//double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
+		//double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
 		
-		double longitudeResolution = rasterDataContext.getLongitudeResolution();
-		double latitudeResolution = rasterDataContext.getLatitudeResolution();
+		//double longitudeResolution = rasterDataContext.getLongitudeResolution();
+		//double latitudeResolution = rasterDataContext.getLatitudeResolution();
 		
 		double maxLon = east - longitudeResolution;
 		double minLat = south + latitudeResolution;
@@ -333,21 +376,21 @@ public class SimpleRenderer
 			
 			
 			
-		for (double lat = north; lat > minLat; lat-=latStep) {
+		for (double lat = north; lat > minLat; lat-=latitudeResolution) {
 			strip.reset();
 			
-			for (double lon = west; lon < maxLon; lon+=lonStep) {
+			for (double lon = west; lon < maxLon; lon+=longitudeResolution) {
 				double nwLat = lat;
 				double nwLon = lon;
 				
 				double neLat = lat;
-				double neLon = lon + lonStep;
+				double neLon = lon + longitudeResolution;
 				
-				double swLat = lat - latStep;
+				double swLat = lat - latitudeResolution;
 				double swLon = lon;
 				
-				double seLat = lat - latStep;
-				double seLon = lon + lonStep;
+				double seLat = lat - latitudeResolution;
+				double seLon = lon + longitudeResolution;
 
 				double elev = 0;
 				
@@ -378,94 +421,110 @@ public class SimpleRenderer
 		
 	}
 	
-	protected double calculateShadedColor(double latitude, double longitude, int[] rgba) throws DataSourceException
+	protected double calculateShadedColor(double latitude, double longitude, int[] rgba) throws DataSourceException, RayTracingException
 	{
-		double north = modelContext.getRasterDataContext().getNorth();
-		double south = modelContext.getRasterDataContext().getSouth();
-		double east = modelContext.getRasterDataContext().getEast();
-		double west = modelContext.getRasterDataContext().getWest();
+		//double north = modelContext.getRasterDataContext().getNorth();
+		//double south = modelContext.getRasterDataContext().getSouth();
+		//double east = modelContext.getRasterDataContext().getEast();
+		//double west = modelContext.getRasterDataContext().getWest();
 		
-		double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
-		double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
+		//double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
+		//double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
 		
 		
 		double eLat = latitude;
-		double eLon = longitude + lonStep;
+		double eLon = longitude + longitudeResolution;
 		
-		double sLat = latitude - latStep;
+		double sLat = latitude - latitudeResolution;
 		double sLon = longitude;
 		
 		double wLat = latitude;
-		double wLon = longitude - lonStep;
+		double wLon = longitude - longitudeResolution;
 		
-		double nLat = latitude + latStep;
+		double nLat = latitude + latitudeResolution;
 		double nLon = longitude;
 		
 		
 		double midElev = getElevation(latitude, longitude);
-		double eElev = getElevation(eLat, eLon);
-		double sElev = getElevation(sLat, sLon);
-		double wElev = getElevation(wLat, wLon);
-		double nElev = getElevation(nLat, nLon);
+		
 		
 		
 		if (midElev == DemConstants.ELEV_NO_DATA)
 			return DemConstants.ELEV_NO_DATA;
-		if (eElev == DemConstants.ELEV_NO_DATA)
-			eElev = midElev;
-		if (sElev == DemConstants.ELEV_NO_DATA)
-			sElev = midElev;
-		if (wElev == DemConstants.ELEV_NO_DATA)
-			wElev = midElev;
-		if (nElev == DemConstants.ELEV_NO_DATA)
-			nElev = midElev;
 		
-
+		
+		double min = modelContext.getRasterDataContext().getDataMinimumValue();
+		double max = modelContext.getRasterDataContext().getDataMaximumValue();
+		modelColoring.getGradientColor(midElev, min, max, colorBufferA);
+		
+		
 		/*
 		 * Ok, just trust me on these ones.... 
 		 */
 		
-		// NW Normal
-		calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normal);
-		pointNormal[0] = normal[0];
-		pointNormal[1] = normal[1];
-		pointNormal[2] = normal[2];
+		if (lightingEnabled) {
+			double eElev = getElevation(eLat, eLon);
+			double sElev = getElevation(sLat, sLon);
+			double wElev = getElevation(wLat, wLon);
+			double nElev = getElevation(nLat, nLon);
+			
+			
+			if (eElev == DemConstants.ELEV_NO_DATA)
+				eElev = midElev;
+			if (sElev == DemConstants.ELEV_NO_DATA)
+				sElev = midElev;
+			if (wElev == DemConstants.ELEV_NO_DATA)
+				wElev = midElev;
+			if (nElev == DemConstants.ELEV_NO_DATA)
+				nElev = midElev;
+			
+			// NW Normal
+			calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normal);
+			pointNormal[0] = normal[0];
+			pointNormal[1] = normal[1];
+			pointNormal[2] = normal[2];
+			
+			// SW Normal
+			calculateNormal(wElev, 0.0, sElev, midElev, CornerEnum.NORTHEAST, normal);
+			pointNormal[0] += normal[0];
+			pointNormal[1] += normal[1];
+			pointNormal[2] += normal[2];
+			
+			// SE Normal
+			calculateNormal(midElev, sElev, 0.0, eElev, CornerEnum.NORTHWEST, normal);
+			pointNormal[0] += normal[0];
+			pointNormal[1] += normal[1];
+			pointNormal[2] += normal[2];
+			
+			// NE Normal
+			calculateNormal(nElev, midElev, eElev, 0.0, CornerEnum.SOUTHWEST, normal);
+			pointNormal[0] += normal[0];
+			pointNormal[1] += normal[1];
+			pointNormal[2] += normal[2];
+			
+			normal[0] = pointNormal[0] / 4.0;
+			normal[1] = pointNormal[1] / 4.0;
+			normal[2] = pointNormal[2] / 4.0;
+			
+			double dot = calculateDotProduct();
+			
+			if (this.rayTraceShadows) {
+				if (lightSourceRayTracer.isRayBlocked(latitude, longitude, midElev)) {
+					// I'm not 100% happy with this method...
+					dot = dot - (2 * shadowIntensity);
+					if (dot < -1.0) {
+						dot = -1.0;
+					}
+				}
+			}
 		
-		// SW Normal
-		calculateNormal(wElev, 0.0, sElev, midElev, CornerEnum.NORTHEAST, normal);
-		pointNormal[0] += normal[0];
-		pointNormal[1] += normal[1];
-		pointNormal[2] += normal[2];
+			copyRgba(colorBufferA, colorBufferB);
+			ColorAdjustments.adjustBrightness(colorBufferB, dot);
+			ColorAdjustments.interpolateColor(colorBufferA, colorBufferB, rgba, lightingMultiple);
 		
-		// SE Normal
-		calculateNormal(midElev, sElev, 0.0, eElev, CornerEnum.NORTHWEST, normal);
-		pointNormal[0] += normal[0];
-		pointNormal[1] += normal[1];
-		pointNormal[2] += normal[2];
-		
-		// NE Normal
-		calculateNormal(nElev, midElev, eElev, 0.0, CornerEnum.SOUTHWEST, normal);
-		pointNormal[0] += normal[0];
-		pointNormal[1] += normal[1];
-		pointNormal[2] += normal[2];
-		
-		normal[0] = pointNormal[0] / 4.0;
-		normal[1] = pointNormal[1] / 4.0;
-		normal[2] = pointNormal[2] / 4.0;
-		
-		double dot = calculateDotProduct();
-		
-		double min = modelContext.getRasterDataContext().getDataMinimumValue();
-		double max = modelContext.getRasterDataContext().getDataMaximumValue();
-		
-		
-		modelColoring.getGradientColor(midElev, min, max, colorBufferA);
-		copyRgba(colorBufferA, colorBufferB);
-		
-		
-		ColorAdjustments.adjustBrightness(colorBufferB, dot);
-		ColorAdjustments.interpolateColor(colorBufferA, colorBufferB, rgba, lightingMultiple);
-		
+		} else {
+			copyRgba(colorBufferA, rgba);
+		}
 		rgba[3] = 255;
 		
 		return midElev;
@@ -500,6 +559,10 @@ public class SimpleRenderer
 		} else if (dot < 0) {
 			dot *= relativeDarkIntensity;
 		}
+		
+		
+		
+		
 		
 		return dot;
 	}
@@ -552,9 +615,9 @@ public class SimpleRenderer
 	{
     	projection.getPoint(lat, lon, elev, point);
     	
-    	double x = (int) point.column;
-    	double y = (int) point.row;
-    	double z = (int) point.z;
+    	double x = point.column;
+    	double y = point.row;
+    	double z = point.z;
 		
     	Vertex v = new Vertex(x, y, z, rgba);
     	return v;
@@ -575,13 +638,13 @@ public class SimpleRenderer
 			double east = rasterDataContext.getEast();
 			double west = rasterDataContext.getWest();
 			
-			double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
-			double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
+			//double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
+			//double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
 			
 			
 			
-			for (double lon = west; lon < east - rasterDataContext.getLongitudeResolution(); lon+=lonStep) {
-				for (double lat = north; lat > south + rasterDataContext.getLatitudeResolution(); lat-=latStep) {
+			for (double lon = west; lon < east - rasterDataContext.getLongitudeResolution(); lon+=longitudeResolution) {
+				for (double lat = north; lat > south + rasterDataContext.getLatitudeResolution(); lat-=latitudeResolution) {
 					double elevation = getElevation(lat, lon);
 					
 					if (!Double.isNaN(elevation) && elevation != DemConstants.ELEV_NO_DATA) {

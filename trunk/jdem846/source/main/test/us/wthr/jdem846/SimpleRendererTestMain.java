@@ -102,7 +102,7 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
 		modelOptions.setTileSize(500);
 		
-		double width = 1000;
+		double width = 600;
 		
 		modelOptions.setWidth((int)width);
 		modelOptions.setHeight((int) Math.round(width/aspect));
@@ -122,7 +122,9 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		//dataProxy.setDataMinimumValue(-10977.0);
 		
 		//modelOptions.setProject3d(true);
-		
+		lightingContext.setRayTraceShadows(true);
+		lightingContext.setLightingAzimuth(270.0);
+		lightingContext.setLightingElevation(3.0);
 		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_3D);
 		
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", false);
@@ -131,7 +133,7 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", modelOptions.getHeight());//dataProxy.getDataRows());
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", modelOptions.getWidth());//dataProxy.getDataColumns());
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", true);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
 		
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", true);

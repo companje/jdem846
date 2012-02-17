@@ -122,6 +122,13 @@ public class LightingOptionsPanel extends RoundedPanel
 				
 			}
 		};
+		ActionListener checkBoxActionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				checkControlState();
+				fireOptionsChangedListeners();
+			}
+		};
 		ItemListener lightSourceSpecifyTypeItemListener = new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -167,14 +174,16 @@ public class LightingOptionsPanel extends RoundedPanel
 		};
 		
 		cmbLightSourceSpecifyType.addItemListener(lightSourceSpecifyTypeItemListener);
-		chkLightingEnabled.addChangeListener(lightingEnabledChangeListener);
+		//chkLightingEnabled.addChangeListener(lightingEnabledChangeListener);
+		chkLightingEnabled.getModel().addActionListener(checkBoxActionListener);
 		spnLightMultiple.addChangeListener(spinnerChangeListener);
 		spnSpotExponent.addChangeListener(spinnerChangeListener);
 		spnRelativeLightIntensity.addChangeListener(spinnerChangeListener);
 		spnRelativeDarkIntensity.addChangeListener(spinnerChangeListener);
 		lightSourceControl.addChangeListener(basicChangeListener);
 		spnLightOnTime.addChangeListener(spinnerChangeListener);
-		chkRayTraceShadows.addChangeListener(basicChangeListener);
+		//chkRayTraceShadows.addChangeListener(basicChangeListener);
+		chkRayTraceShadows.getModel().addActionListener(checkBoxActionListener);
 		spnShadowIntensity.addChangeListener(spinnerChangeListener);
 		//jdtLightOnDate.get
 		//jdtLightOnDate.
