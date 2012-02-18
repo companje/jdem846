@@ -18,9 +18,12 @@ public class Bil16IntHeader
 	
 	private int columns = 0;
 	private int rows = 0;
-	private double xLowerLeft = -999999;
-	private double yLowerLeft = -999999;
-	private double cellSize = -999999;
+	private double xUpperLeft = DemConstants.ELEV_NO_DATA;
+	private double yUpperLeft = DemConstants.ELEV_NO_DATA;
+	private double xLowerLeft = -180.0;
+	private double yLowerLeft = -90.0;
+	private double xdim = DemConstants.ELEV_NO_DATA;
+	private double ydim = DemConstants.ELEV_NO_DATA;
 	private double noData = 0;
 	private int skipBytes = 0;
 	private int nbands = 0;
@@ -64,9 +67,17 @@ public class Bil16IntHeader
 	
 	private void correctBounds()
 	{
-		if (xLowerLeft != -999999) {
-			xLowerLeft = xLowerLeft - (rows * cellSize);
+		if (xdim == DemConstants.ELEV_NO_DATA) {
+			xdim = (yUpperLeft - yLowerLeft) / (double) rows;
 		}
+		
+		if (ydim == DemConstants.ELEV_NO_DATA) {
+			ydim = xdim;
+		}
+		
+		//if (xLowerLeft != DemConstants.ELEV_NO_DATA) {
+		//	xLowerLeft = xLowerLeft - (rows * cellSize);
+		//}
 	}
 	
 	private void readHeaderLine(String line)
@@ -97,11 +108,13 @@ public class Bil16IntHeader
 		if (title.equalsIgnoreCase("totalrowbytes"))
 			this.totalRowBytes = Integer.parseInt(value);
 		if (title.equalsIgnoreCase("ulxmap"))
-			this.xLowerLeft = Float.parseFloat(value);
+			this.xUpperLeft = Float.parseFloat(value);
 		if (title.equalsIgnoreCase("ulymap"))
-			this.yLowerLeft = Float.parseFloat(value);
+			this.yUpperLeft = Float.parseFloat(value);
 		if (title.equalsIgnoreCase("xdim"))
-			this.cellSize = Float.parseFloat(value);
+			this.xdim = Float.parseFloat(value);
+		if (title.equalsIgnoreCase("ydim"))
+			this.ydim = Float.parseFloat(value);
 		if (title.equalsIgnoreCase("NODATA"))
 			this.noData = Float.parseFloat(value);
 		if (title.equalsIgnoreCase("byteorder")) {
@@ -171,16 +184,45 @@ public class Bil16IntHeader
 		this.yLowerLeft = yLowerLeft;
 	}
 
+	
 
-	public double getCellSize()
-	{
-		return cellSize;
+	public double getxUpperLeft() {
+		return xUpperLeft;
 	}
 
 
-	public void setCellSize(double cellSize)
-	{
-		this.cellSize = cellSize;
+	public void setxUpperLeft(double xUpperLeft) {
+		this.xUpperLeft = xUpperLeft;
+	}
+
+
+	public double getyUpperLeft() {
+		return yUpperLeft;
+	}
+
+
+	public void setyUpperLeft(double yUpperLeft) {
+		this.yUpperLeft = yUpperLeft;
+	}
+
+
+	public double getXdim() {
+		return xdim;
+	}
+
+
+	public void setXdim(double xdim) {
+		this.xdim = xdim;
+	}
+
+
+	public double getYdim() {
+		return ydim;
+	}
+
+
+	public void setYdim(double ydim) {
+		this.ydim = ydim;
 	}
 
 

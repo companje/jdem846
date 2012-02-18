@@ -28,6 +28,8 @@ public class Bil16IntRasterDataProvider extends AbstractRasterDataProvider
 	
 	private boolean isDisposed = false;
 	
+	
+	
 	public Bil16IntRasterDataProvider()
 	{
 		
@@ -47,9 +49,9 @@ public class Bil16IntRasterDataProvider extends AbstractRasterDataProvider
 		this.setColumns(header.getColumns());
 		this.setRows(header.getRows());
 		
-		this.setNorth(header.getyLowerLeft() + (header.getCellSize() * (header.getRows() - 1)));
+		this.setNorth(header.getyLowerLeft() + (header.getYdim() * (header.getRows() - 1)));
 		this.setSouth(header.getyLowerLeft());
-		this.setEast(header.getxLowerLeft() + (header.getCellSize() * (header.getColumns())));
+		this.setEast(header.getxLowerLeft() + (header.getXdim() * (header.getColumns())));
 		this.setWest(header.getxLowerLeft());
 		////this.setNorth(header.getyLowerLeft() + header.getCellSize() + (header.getCellSize() * (header.getRows() - 2)));
         //this.setSouth(header.getyLowerLeft() + header.getCellSize());
@@ -57,10 +59,10 @@ public class Bil16IntRasterDataProvider extends AbstractRasterDataProvider
         //this.setWest(header.getxLowerLeft());
 
         
-		this.setLatitudeResolution(header.getCellSize());
-		this.setLongitudeResolution(header.getCellSize());
+		this.setLatitudeResolution(header.getYdim());
+		this.setLongitudeResolution(header.getXdim());
 		
-		dataReader = new CachingBil16IntDataReader(dataFile, header.getRows(), header.getColumns(), header.getByteOrder());
+		dataReader = new CachingBil16IntDataReader(dataFile, header.getRows(), header.getColumns(), header.getSkipBytes(), header.getByteOrder());
 	
 		log.info("Created BIL16INT raster data provider...");
 		log.info("    North/South: " + getNorth() + "/" + getSouth());

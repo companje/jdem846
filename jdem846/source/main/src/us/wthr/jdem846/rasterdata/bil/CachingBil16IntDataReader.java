@@ -21,9 +21,9 @@ public class CachingBil16IntDataReader
 	private int bufferColumns = -1;
 	private int[][] buffer = null;
 	
-	public CachingBil16IntDataReader(File dataFile, int rows, int columns, ByteOrder byteOrder)
+	public CachingBil16IntDataReader(File dataFile, int rows, int columns, int skipBytes, ByteOrder byteOrder)
 	{
-		dataReader = new Bil16IntDataReader(dataFile, rows, columns, byteOrder);
+		dataReader = new Bil16IntDataReader(dataFile, rows, columns, skipBytes, byteOrder);
 	}
 	
 	public void dispose() throws DataSourceException

@@ -18,8 +18,8 @@ public class GridFloatHeader
 	
 	private int columns = 0;
 	private int rows = 0;
-	private double xLowerLeft = 0;
-	private double yLowerLeft = 0;
+	private double xLowerLeft = -180.0;
+	private double yLowerLeft = -90.0;
 	private double cellSize = 0;
 	private double noData = 0;
 	private ByteOrder byteOrder = ByteOrder.LSBFIRST;
@@ -79,9 +79,9 @@ public class GridFloatHeader
 			this.xLowerLeft = Float.parseFloat(value);
 		if (title.equalsIgnoreCase("yllcorner") || title.equalsIgnoreCase("yllcenter"))
 			this.yLowerLeft = Float.parseFloat(value);
-		if (title.equalsIgnoreCase("cellsize"))
+		if (title.equalsIgnoreCase("cellsize") || title.equalsIgnoreCase("xdim"))
 			this.cellSize = Float.parseFloat(value);
-		if (title.equalsIgnoreCase("NODATA_value"))
+		if (title.equalsIgnoreCase("NODATA_value") || title.equalsIgnoreCase("NODATA"))
 			this.noData = Float.parseFloat(value);
 		if (title.equalsIgnoreCase("byteorder")) {
 			

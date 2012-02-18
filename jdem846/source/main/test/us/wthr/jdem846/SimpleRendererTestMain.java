@@ -49,16 +49,20 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		List<String> inputDataList = new LinkedList<String>();
 		List<ShapeFileRequest> inputShapeList = new LinkedList<ShapeFileRequest>();
 		
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
 		//inputDataList.add("F:/DataRaster-Testing/PresRange_1-3as.flt");
 		//inputDataList.add("F:/DataRaster-Testing/PresRange_1as.flt");
 		//inputDataList.add("F:/Hawaii 1 Arc Second/Honolulu 1-3 Arc Second.flt");
 		//String saveOutputTo = "C:/srv/elevation/DataRaster-Testing/model-output.png";
 		//inputDataList.add("F:\\GEBCO_08\\gebco_08.flt");
+		//inputDataList.add("F:\\MarsGIS_Equi0_v17\\Mars_Images_EquiCylindrical_clon0\\MOLA\\Mola16_90Nto90S_Simp_clon0\\megt90n000eb.flt");
 		
+		
+		inputDataList.add("F:\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0\\mola128_oc0\\w001001.flt");
 		//inputDataList.add("F:\\etopo1_ice_g_f4\\etopo1_ice_g_f4.flt");
-		String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/render-test.png";
+		//String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/render-test.png";
+		String saveOutputTo = "F:\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0_jdem_simprndr.png";
 		
 		//inputDataList.add("C:/srv/elevation/Nashua NH/Elevation 1-3 Arc Second/Elevation 1-3 Arc Second.flt");
 		//inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDArea.shp", "usgs-hydrography"));
@@ -89,9 +93,7 @@ public class SimpleRendererTestMain extends AbstractTestMain
 2012.02.12 21:01:30.156 EST     INFO SimpleRendererTestMain Raster Data Maximum Value: 8685.0
 2012.02.12 21:01:30.156 EST     INFO SimpleRendererTestMain Raster Data Minimum Value: -10977.0
 		 */
-		dataProxy.calculateElevationMinMax(true);
-		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
-		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
+		
 		
 		double aspect = (double)dataProxy.getDataColumns() / (double)dataProxy.getDataRows();
 		
@@ -100,9 +102,9 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		ModelOptions modelOptions = new ModelOptions();
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
-		modelOptions.setTileSize(500);
+		modelOptions.setTileSize(5000);
 		
-		double width = 600;
+		double width = 8000;
 		
 		modelOptions.setWidth((int)width);
 		modelOptions.setHeight((int) Math.round(width/aspect));
@@ -113,27 +115,30 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;255");
 		modelOptions.setUsePipelineRender(false);
-		//modelOptions.setColoringType("hypsometric-etopo1-tint");
+		modelOptions.setColoringType("hypsometric-tint-global");
 		modelOptions.setElevationMultiple(1.0);
 		
+		dataProxy.calculateElevationMinMax(true);
+		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
+		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
 		dataProxy.fillBuffers();
 
 		//dataProxy.setDataMaximumValue(8685.0);
 		//dataProxy.setDataMinimumValue(-10977.0);
 		
 		//modelOptions.setProject3d(true);
-		lightingContext.setRayTraceShadows(true);
-		lightingContext.setLightingAzimuth(270.0);
-		lightingContext.setLightingElevation(3.0);
-		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_3D);
+		//lightingContext.setRayTraceShadows(true);
+		//lightingContext.setLightingAzimuth(270.0);
+		//lightingContext.setLightingElevation(3.0);
+		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_FLAT);
 		
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", false);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", true);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", true);
 		
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", modelOptions.getHeight());//dataProxy.getDataRows());
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", modelOptions.getWidth());//dataProxy.getDataColumns());
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", true);
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", dataProxy.getDataRows());
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", dataProxy.getDataColumns());
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
 		
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", true);
