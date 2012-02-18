@@ -20,6 +20,7 @@ public class Bil16IntDataReader
 	private int columns;
 	private ByteOrder byteOrder;
 	private boolean isDisposed = false;
+	private int skipBytes = 0;
 	
 	private RandomAccessFile dataReader = null;
 	
@@ -27,11 +28,12 @@ public class Bil16IntDataReader
 	private byte[] buffer4 = new byte[4];
 	private long size;
 	
-	public Bil16IntDataReader(File dataFile, int rows, int columns, ByteOrder byteOrder)
+	public Bil16IntDataReader(File dataFile, int rows, int columns, int skipBytes, ByteOrder byteOrder)
 	{
 		this.dataFile = dataFile;
 		this.rows = rows;
 		this.columns = columns;
+		this.skipBytes = skipBytes;
 		this.byteOrder = byteOrder;
 		
 		size = dataFile.length();
@@ -68,7 +70,8 @@ public class Bil16IntDataReader
 			throw new DataSourceException("Failed to read bytes: " + ex.getMessage(), ex);
 		}
 		
-		int intBits = (((buffer2[1] & 0xFF) << 8) | (buffer2[0] & 0xFF));
+		//int intBits = (((buffer2[1] & 0xFF) << 8) | (buffer2[0] & 0xFF));
+		int intBits = bytesToInt(buffer2[0], buffer2[1]);
 		return intBits;
 	}
 	
@@ -101,7 +104,8 @@ public class Bil16IntDataReader
 		
 		for (int i = 0; i < bufferLength; i++) {
 			int readBufferPos = i * 2;
-			int intBits = (((readBuffer[readBufferPos+1] & 0xFF) << 8) | (readBuffer[readBufferPos] & 0xFF));
+			//int intBits = (((readBuffer[readBufferPos+1] & 0xFF) << 8) | (readBuffer[readBufferPos] & 0xFF));
+			int intBits = bytesToInt(readBuffer[readBufferPos], readBuffer[readBufferPos+1]);
 			buffer[i] = intBits;
 		}
 		
@@ -153,7 +157,7 @@ public class Bil16IntDataReader
 		open();
 		
 		long pos = (row * columns) + column;
-		long seekStart = pos * (16 / 8);
+		long seekStart = skipBytes + (pos * (16 / 8));
 		long length = 0;
 		
 		try {
@@ -176,4 +180,19 @@ public class Bil16IntDataReader
 		}
 		return dataReader;
 	}
+	
+	
+	public int bytesToInt(byte b00, byte b01)
+	{
+		int intBits = 0;
+		if (byteOrder == ByteOrder.INTEL_OR_MOTOROLA || byteOrder == ByteOrder.LSBFIRST || byteOrder == ByteOrder.INTEL_BYTE_ORDER) {
+			intBits = (((b00 & 0xFF) << 8) | (b01 & 0xFF));
+		} else if (byteOrder == ByteOrder.MSBFIRST) {
+			intBits = (((b01 & 0xFF) << 8) | (b00 & 0xFF));
+		}
+		
+		
+		return intBits;
+	}
+	
 }
