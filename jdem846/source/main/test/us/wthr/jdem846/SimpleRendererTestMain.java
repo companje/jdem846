@@ -62,7 +62,7 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		inputDataList.add("F:\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0\\mola128_oc0\\w001001.flt");
 		//inputDataList.add("F:\\etopo1_ice_g_f4\\etopo1_ice_g_f4.flt");
 		//String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/render-test.png";
-		String saveOutputTo = "F:\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0_jdem_simprndr.png";
+		String saveOutputTo = "F:\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0_jdem_simprndr_8x8.png";
 		
 		//inputDataList.add("C:/srv/elevation/Nashua NH/Elevation 1-3 Arc Second/Elevation 1-3 Arc Second.flt");
 		//inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDArea.shp", "usgs-hydrography"));
@@ -136,8 +136,8 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", true);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", true);
 		
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", dataProxy.getDataRows());
-		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", dataProxy.getDataColumns());
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", modelOptions.getHeight());//dataProxy.getDataRows());
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", modelOptions.getWidth());//dataProxy.getDataColumns());
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
 		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
 		
@@ -163,6 +163,9 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		renderer.prepare(true, false);
 		renderer.render();
 		double endTime = System.currentTimeMillis();
+		
+		dataProxy.clearBuffers();
+		
 		canvas.save(saveOutputTo);
 		
 		double renderSeconds = (endTime - startTime) / 1000;
