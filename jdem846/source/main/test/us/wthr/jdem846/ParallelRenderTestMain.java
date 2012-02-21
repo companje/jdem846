@@ -10,6 +10,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
+import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
@@ -78,26 +79,42 @@ public class ParallelRenderTestMain extends AbstractTestMain
 			shapeContext.addShapeFile(shapeDataReq);
 		}
 		
-		dataProxy.calculateElevationMinMax(true);
-		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
-		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
+		
 		
 		LightingContext lightingContext = new LightingContext();
 		lightingContext.setLightingEnabled(true);
 		ModelOptions modelOptions = new ModelOptions();
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
-		modelOptions.setTileSize(500);
-		modelOptions.setWidth(2000);//dataProxy.getDataColumns());
-		modelOptions.setHeight(2000);//dataProxy.getDataRows());
+		modelOptions.setTileSize(2000);
+		
+		double width = 1000;//dataProxy.getDataColumns();
+		double aspect = (double)dataProxy.getDataColumns() / (double)dataProxy.getDataRows();
+		
+		modelOptions.setWidth((int)width);//dataProxy.getDataColumns());
+		modelOptions.setHeight((int) Math.round(width/aspect));//dataProxy.getDataRows());
 		modelOptions.setDoublePrecisionHillshading(false);
 		modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(false);
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
-		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
+		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
 		modelOptions.setBackgroundColor("255;255;255;255");
-		modelOptions.setUsePipelineRender(false);
+		modelOptions.setUsePipelineRender(true);
 		modelOptions.setElevationMultiple(1.0);
+		modelOptions.setColoringType("hypsometric-tint-global");
+		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_FLAT);
+		
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", false);
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", true);
+		modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", true);
+		//modelOptions.setOption("us.wthr.jdem846.modelOptions.latitudeSlices", modelOptions.getHeight());//dataProxy.getDataRows());
+		//modelOptions.setOption("us.wthr.jdem846.modelOptions.longitudeSlices", modelOptions.getWidth());//dataProxy.getDataColumns());
+		
+		
+		dataProxy.calculateElevationMinMax(true);
+		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
+		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
+		dataProxy.fillBuffers();
 		
 		//lightingContext.setRelativeLightIntensity(1.0);
 		//lightingContext.setLightingMultiple(0.5);

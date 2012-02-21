@@ -185,9 +185,9 @@ public class Bil16IntDataReader
 	public int bytesToInt(byte b00, byte b01)
 	{
 		int intBits = 0;
-		if (byteOrder == ByteOrder.INTEL_OR_MOTOROLA || byteOrder == ByteOrder.LSBFIRST || byteOrder == ByteOrder.INTEL_BYTE_ORDER) {
+		if (byteOrder == ByteOrder.INTEL_OR_MOTOROLA || byteOrder == ByteOrder.LSBFIRST) {
 			intBits = (((b00 & 0xFF) << 8) | (b01 & 0xFF));
-		} else if (byteOrder == ByteOrder.MSBFIRST) {
+		} else if (byteOrder == ByteOrder.MSBFIRST || byteOrder == ByteOrder.INTEL_BYTE_ORDER) {
 			intBits = (((b01 & 0xFF) << 8) | (b00 & 0xFF));
 		}
 		

@@ -37,6 +37,8 @@ public class TileProcessPipe extends InterruptibleProcess implements RenderPipe
 					log.error("Error rendering tile: " + ex.getMessage(), ex);
 					this.cancel();
 				}
+			} else {
+				break;
 			}
 			
 			Thread.yield();

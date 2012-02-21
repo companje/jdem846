@@ -30,7 +30,7 @@ public class CanvasFillRenderPipe extends InterruptibleProcess implements Render
 		
 		while(doLoop) {
 			
-			CanvasRectangleFill canvasRectangeFillInstance = pipeline.fetchNextCanvasRectangeFill();
+			CanvasRectangleFill canvasRectangeFillInstance = null;//pipeline.fetchNextCanvasRectangeFill();
 			
 			if (canvasRectangeFillInstance != null) {
 				try {

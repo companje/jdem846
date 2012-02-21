@@ -249,12 +249,12 @@ public class Dem2dGenerator extends BasicRenderEngine
 		while(true) {
 			
 			try {
-				Thread.sleep(500);
+				Thread.sleep(2000);
 			} catch (InterruptedException ex) {
 				log.warn("Pipeline wait loop delay interrupted: " + ex.getMessage(), ex);
 			}
 			
-			if (pipelineContainer.areQueuesEmpty()) {
+			if (pipelineContainer.isTileProcessPipeCompleted() && pipelineContainer.areQueuesEmpty()) {
 				log.info("Pipeline queues emptied. Stopping pipeline threads");
 				pipelineContainer.stop(true);
 				log.info("Pipeline threads exited. Cleaning up model render");

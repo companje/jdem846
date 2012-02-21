@@ -13,12 +13,12 @@ public class RenderPipelineProcessContainer
 	private RenderPipeline pipeline;
 	
 	private TileProcessPipe tileProcessPipe;
-	private CanvasFillRenderPipe canvasFillRenderPipe;
+	private TriangleStripFillRenderPipe triangleStripFillRenderPipe;
 	private ScanlinePathRenderPipe scanlinePathRenderingPipe;
 	private ShapeFillPipe shapeFillPipe;
 	
 	private Thread tileProcessThread;
-	private Thread canvasFillRenderThread;
+	private Thread triangleStripFillRenderThread;
 	private Thread scanlinePathRenderingThread;
 	private Thread shapeFillThread;
 	
@@ -33,7 +33,7 @@ public class RenderPipelineProcessContainer
 		this.pipeline = pipeline;
 		
 		tileProcessPipe = new TileProcessPipe(pipeline, modelContext);
-		canvasFillRenderPipe = new CanvasFillRenderPipe(pipeline, modelContext);
+		triangleStripFillRenderPipe = new TriangleStripFillRenderPipe(pipeline, modelContext);
 		scanlinePathRenderingPipe = new ScanlinePathRenderPipe(pipeline, modelContext);
 		shapeFillPipe = new ShapeFillPipe(pipeline, modelContext);
 	}
@@ -48,11 +48,11 @@ public class RenderPipelineProcessContainer
 			}
 		};
 		
-		canvasFillRenderThread = new Thread()
+		triangleStripFillRenderThread = new Thread()
 		{
 			public void run()
 			{
-				canvasFillRenderPipe.run();
+				triangleStripFillRenderPipe.run();
 			}
 		};
 		
@@ -76,7 +76,7 @@ public class RenderPipelineProcessContainer
 		tileProcessThread.start();
 		
 		log.info("Starting Canvas Fill Render Thread...");
-		canvasFillRenderThread.start();
+		triangleStripFillRenderThread.start();
 		
 		log.info("Starting Shape Fill Thread...");
 		shapeFillThread.start();
@@ -89,42 +89,82 @@ public class RenderPipelineProcessContainer
 	
 	public boolean areQueuesEmpty()
 	{
-		return (!pipeline.hasMoreCanvasRectangeFills()
+		return (!pipeline.hasMoreTriangleStripFills()
 				&& !pipeline.hasMoreScanlinePaths()
 				&& !pipeline.hasMoreTileRenderRunnables()
 				&& !pipeline.hasMoreShapeFills());
+	}
+	
+	public boolean areAllCompleted()
+	{
+		return (isTileProcessPipeCompleted() &&
+				isTriangleStripRenderPipeCompleted() &&
+				isShapeFillPipeCompleted() &&
+				isScanlinePathRenderingPipeCompleted());
+
 	}
 	
 	
 	public void pause()
 	{
 		tileProcessPipe.pause();
-		canvasFillRenderPipe.pause();
+		triangleStripFillRenderPipe.pause();
 		scanlinePathRenderingPipe.pause();
 		shapeFillPipe.pause();
 	}
 	
-	public void stop(boolean block)
+	public boolean isTileProcessPipeCompleted()
+	{
+		return tileProcessPipe.isCompleted();
+	}
+	
+	public void cancelTileProcessPipe()
 	{
 		tileProcessPipe.cancel();
-		canvasFillRenderPipe.cancel();
+	}
+	
+	public boolean isTriangleStripRenderPipeCompleted()
+	{
+		return triangleStripFillRenderPipe.isCompleted();
+	}
+	
+	public void cancelTriangleStripRenderPipe()
+	{
+		triangleStripFillRenderPipe.cancel();
+	}
+	
+	public boolean isScanlinePathRenderingPipeCompleted()
+	{
+		return scanlinePathRenderingPipe.isCompleted();
+	}
+	
+	public void cancelScanlinePathRenderingPipe()
+	{
 		scanlinePathRenderingPipe.cancel();
+	}
+	
+	public boolean isShapeFillPipeCompleted()
+	{
+		return shapeFillPipe.isCompleted();
+	}
+	
+	public void cancelShapeFillPipe()
+	{
 		shapeFillPipe.cancel();
+	}
+	
+	public void stop(boolean block)
+	{
+		cancelTileProcessPipe();
+		cancelTriangleStripRenderPipe();
+		cancelScanlinePathRenderingPipe();
+		cancelShapeFillPipe();
+		
 		
 		if (block) {
-			while(!tileProcessPipe.isCompleted()) {
-				
+			while(!areAllCompleted()) {
+				// Kinda playing with fire here.. Unchecked infinite loop possibility here. Good stuff.
 			}
-			while(!canvasFillRenderPipe.isCompleted()) {
-				
-			}
-			while(!shapeFillPipe.isCompleted()) {
-				
-			}
-			while(!scanlinePathRenderingPipe.isCompleted()) {
-				
-			}
-			
 		}
 		
 	}

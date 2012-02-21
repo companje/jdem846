@@ -63,7 +63,7 @@ public class EsriHeader
 	private void readHeaderLine(String line)
 	{
 		
-		line = line.replaceAll("[ ]+", " ");
+		line = line.replaceAll("[ \t]+", " ");
 		String[] parts = line.split(" ");
 		if (parts.length < 2) {
 			return;
@@ -73,11 +73,16 @@ public class EsriHeader
 		title = title.trim();
 		value = value.trim();
 		
-		
+		title = title.toUpperCase();
+
 		valueMap.put(title, value);
 		
 	}
 	
+	public boolean hasAttribute(String key)
+	{
+		return valueMap.containsKey(key.toUpperCase());
+	}
 	
 	public String getAttribute(String key)
 	{
@@ -86,7 +91,7 @@ public class EsriHeader
 	
 	public String getAttribute(String key, String ifNull)
 	{
-		String value = valueMap.get(key);
+		String value = valueMap.get(key.toUpperCase());
 		if (value != null) {
 			return value;
 		} else {
