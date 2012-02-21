@@ -49,7 +49,8 @@ public class TileRenderContainer
 			tileRenderer = new TileRenderer(modelContext, pipeline);
 		}
 		
-		tileRenderer.renderTile(northLimit, southLimit, eastLimit, westLimit);
+		tileRenderer.prepare(northLimit, southLimit, eastLimit, westLimit, true, false);
+		tileRenderer.renderTile();
 
 		tileRenderer = null;
 		ModelCanvas modelCanvas = modelContext.getModelCanvas();

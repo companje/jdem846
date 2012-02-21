@@ -7,7 +7,10 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import us.wthr.jdem846.ByteOrder;
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.gis.exceptions.ParseException;
+import us.wthr.jdem846.gis.input.esri.EsriHeader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -34,70 +37,53 @@ public class GridFloatHeader
 
 	private void init(String filePath) throws DataSourceException
 	{
-		File headerFile = new File(filePath);
-		
-		if (!headerFile.exists()) {
-			throw new DataSourceException("GridFloat header file not found at " + filePath);
-		}
+		EsriHeader esriHeader = null;
 		
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(headerFile));
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				readHeaderLine(line);
-			}
-			reader.close();
-		} catch (FileNotFoundException ex) {
-			log.error("File Not Found error opening GridFloat data file: " + ex.getMessage(), ex);
-			throw new DataSourceException("File Not Found error opening GridFloat data file: " + ex.getMessage(), ex);
-		} catch (IOException ex) {
-			log.error("IO error when opening GridFloat data file: " + ex.getMessage(), ex);
-			throw new DataSourceException("IO error when opening GridFloat data file: " + ex.getMessage(), ex);
+			esriHeader = new EsriHeader(filePath);
+		} catch (ParseException ex) {
+			throw new DataSourceException("Error loading ESRI Header file: " + ex.getMessage(), ex);
 		}
+		
+		this.columns = esriHeader.getIntAttribute("ncols");
+		this.rows = esriHeader.getIntAttribute("nrows");
+		
+		// TODO: Adjust between corner and center for x/y
+		if (esriHeader.hasAttribute("xllcorner"))
+			this.xLowerLeft = esriHeader.getDoubleAttribute("xllcorner");
+		else if (esriHeader.hasAttribute("xllcenter"))
+			this.xLowerLeft = esriHeader.getDoubleAttribute("xllcenter");
+		
+		if (esriHeader.hasAttribute("yllcorner"))
+			this.yLowerLeft = esriHeader.getDoubleAttribute("yllcorner");
+		else if (esriHeader.hasAttribute("yllcenter")) 
+			this.yLowerLeft = esriHeader.getDoubleAttribute("yllcenter");
+		
+		if (esriHeader.hasAttribute("cellsize"))
+			this.cellSize = esriHeader.getDoubleAttribute("cellsize");
+		else if (esriHeader.hasAttribute("xdim"))
+			this.cellSize = esriHeader.getDoubleAttribute("xdim");
+		
+		if (esriHeader.hasAttribute("NODATA_value"))
+			this.noData = esriHeader.getDoubleAttribute("NODATA_value");
+		else if (esriHeader.hasAttribute("NODATA"))
+			this.noData = esriHeader.getDoubleAttribute("NODATA");
+
+
+		String _bo = esriHeader.getAttribute("byteorder", "MSBFIRST");
+		if (_bo != null && _bo.equalsIgnoreCase("LSBFIRST")) 
+			byteOrder = ByteOrder.LSBFIRST;
+		else if (_bo != null && _bo.equalsIgnoreCase("MSBFIRST"))
+			byteOrder = ByteOrder.MSBFIRST;
+		else if (_bo != null && _bo.equalsIgnoreCase("I"))
+			byteOrder = ByteOrder.INTEL_BYTE_ORDER;
+		else if (_bo != null && _bo.equalsIgnoreCase("M"))
+			byteOrder = ByteOrder.INTEL_OR_MOTOROLA;
+		
+		int i = 0;
 	}
 
 
-	private void readHeaderLine(String line)
-	{
-		
-		line = line.replaceAll("[ ]+", " ");
-		String[] parts = line.split(" ");
-		if (parts.length != 2) {
-			return;
-		}
-		String title = parts[0];
-		String value = parts[1];
-		title = title.trim();
-		value = value.trim();
-		
-
-		if (title.equalsIgnoreCase("ncols"))
-			this.columns = Integer.parseInt(value);
-		if (title.equalsIgnoreCase("nrows"))
-			this.rows = Integer.parseInt(value);
-		if (title.equalsIgnoreCase("xllcorner") || title.equalsIgnoreCase("xllcenter"))
-			this.xLowerLeft = Float.parseFloat(value);
-		if (title.equalsIgnoreCase("yllcorner") || title.equalsIgnoreCase("yllcenter"))
-			this.yLowerLeft = Float.parseFloat(value);
-		if (title.equalsIgnoreCase("cellsize") || title.equalsIgnoreCase("xdim"))
-			this.cellSize = Float.parseFloat(value);
-		if (title.equalsIgnoreCase("NODATA_value") || title.equalsIgnoreCase("NODATA"))
-			this.noData = Float.parseFloat(value);
-		if (title.equalsIgnoreCase("byteorder")) {
-			
-			if (value.equalsIgnoreCase("LSBFIRST")) 
-				byteOrder = ByteOrder.LSBFIRST;
-			if (value.equalsIgnoreCase("MSBFIRST"))
-				byteOrder = ByteOrder.MSBFIRST;
-			if (value.equalsIgnoreCase("INTEL_BYTE_ORDER"))
-				byteOrder = ByteOrder.INTEL_BYTE_ORDER;
-			if (value.equalsIgnoreCase("INTEL_OR_MOTOROLA"))
-				byteOrder = ByteOrder.INTEL_OR_MOTOROLA;
-			
-		}
-		
-	}
-	
 	public int getColumns()
 	{
 		return columns;

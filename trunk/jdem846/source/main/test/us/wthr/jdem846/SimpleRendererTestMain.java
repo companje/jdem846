@@ -49,8 +49,8 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		List<String> inputDataList = new LinkedList<String>();
 		List<ShapeFileRequest> inputShapeList = new LinkedList<ShapeFileRequest>();
 		
-		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
-		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");
+		inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
 		//inputDataList.add("F:/DataRaster-Testing/PresRange_1-3as.flt");
 		//inputDataList.add("F:/DataRaster-Testing/PresRange_1as.flt");
 		//inputDataList.add("F:/Hawaii 1 Arc Second/Honolulu 1-3 Arc Second.flt");
@@ -59,10 +59,10 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		//inputDataList.add("F:\\MarsGIS_Equi0_v17\\Mars_Images_EquiCylindrical_clon0\\MOLA\\Mola16_90Nto90S_Simp_clon0\\megt90n000eb.flt");
 		
 		
-		inputDataList.add("F:\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0\\mola128_oc0\\w001001.flt");
+		//inputDataList.add("F:\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0\\mola128_oc0\\w001001.flt");
 		//inputDataList.add("F:\\etopo1_ice_g_f4\\etopo1_ice_g_f4.flt");
-		//String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/render-test.png";
-		String saveOutputTo = "F:\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0_jdem_simprndr_8x8.png";
+		String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/render-test.png";
+		//String saveOutputTo = "F:\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0\\mola128_88Nto88S_Simp_clon0_jdem_simprndr_8x8.png";
 		
 		//inputDataList.add("C:/srv/elevation/Nashua NH/Elevation 1-3 Arc Second/Elevation 1-3 Arc Second.flt");
 		//inputShapeList.add(new ShapeFileRequest("C:/srv/elevation/Nashua NH/hydrography/NHDArea.shp", "usgs-hydrography"));
@@ -102,9 +102,9 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		ModelOptions modelOptions = new ModelOptions();
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
-		modelOptions.setTileSize(5000);
+		modelOptions.setTileSize(500);
 		
-		double width = 8000;
+		double width = 1000;
 		
 		modelOptions.setWidth((int)width);
 		modelOptions.setHeight((int) Math.round(width/aspect));

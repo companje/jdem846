@@ -9,6 +9,8 @@ import java.io.IOException;
 import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.gis.exceptions.ParseException;
+import us.wthr.jdem846.gis.input.esri.EsriHeader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -20,8 +22,8 @@ public class Bil16IntHeader
 	private int rows = 0;
 	private double xUpperLeft = DemConstants.ELEV_NO_DATA;
 	private double yUpperLeft = DemConstants.ELEV_NO_DATA;
-	private double xLowerLeft = -180.0;
-	private double yLowerLeft = -90.0;
+	private double xLowerLeft = DemConstants.ELEV_NO_DATA;
+	private double yLowerLeft = DemConstants.ELEV_NO_DATA;
 	private double xdim = DemConstants.ELEV_NO_DATA;
 	private double ydim = DemConstants.ELEV_NO_DATA;
 	private double noData = 0;
@@ -32,7 +34,7 @@ public class Bil16IntHeader
 	private int totalRowBytes = 0;
 	private int pixelType = DemConstants.PIXELTYPE_SIGNED_INT;
 	private ByteOrder byteOrder = ByteOrder.LSBFIRST;
-	
+
 	
 	public Bil16IntHeader(String filePath) throws DataSourceException
 	{
@@ -42,27 +44,46 @@ public class Bil16IntHeader
 	
 	private void init(String filePath) throws DataSourceException
 	{
-		File headerFile = new File(filePath);
-		
-		if (!headerFile.exists()) {
-			throw new DataSourceException("BIL16INT header file not found at " + filePath);
-		}
+		EsriHeader esriHeader = null;
 		
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(headerFile));
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				readHeaderLine(line);
-			}
-			reader.close();
-			correctBounds();
-		} catch (FileNotFoundException ex) {
-			log.error("File Not Found error opening BIL16INT data file: " + ex.getMessage(), ex);
-			throw new DataSourceException("File Not Found error opening BIL16INT data file: " + ex.getMessage(), ex);
-		} catch (IOException ex) {
-			log.error("IO error when opening BIL16INT data file: " + ex.getMessage(), ex);
-			throw new DataSourceException("IO error when opening BIL16INT data file: " + ex.getMessage(), ex);
+			esriHeader = new EsriHeader(filePath);
+		} catch (ParseException ex) {
+			throw new DataSourceException("Error loading ESRI Header file: " + ex.getMessage(), ex);
 		}
+		
+		this.columns = esriHeader.getIntAttribute("ncols");
+		this.rows = esriHeader.getIntAttribute("nrows");
+		this.nbands = esriHeader.getIntAttribute("nbands");
+		this.nbits = esriHeader.getIntAttribute("nbits");
+		this.skipBytes = esriHeader.getIntAttribute("skipbytes", 0);
+		this.bandRowBytes = esriHeader.getIntAttribute("bandrowbytes");
+		this.totalRowBytes = esriHeader.getIntAttribute("totalrowbytes");
+		this.xUpperLeft = esriHeader.getDoubleAttribute("ulxmap");
+		this.yUpperLeft = esriHeader.getDoubleAttribute("ulymap");
+		this.xdim = esriHeader.getDoubleAttribute("xdim");
+		this.ydim = esriHeader.getDoubleAttribute("ydim");
+		this.noData = esriHeader.getDoubleAttribute("NODATA", DemConstants.ELEV_NO_DATA);
+		
+		String _bo = esriHeader.getAttribute("byteorder", "MSBFIRST");
+		if (_bo != null && _bo.equalsIgnoreCase("LSBFIRST")) 
+			byteOrder = ByteOrder.LSBFIRST;
+		else if (_bo != null && _bo.equalsIgnoreCase("MSBFIRST"))
+			byteOrder = ByteOrder.MSBFIRST;
+		else if (_bo != null && _bo.equalsIgnoreCase("I"))
+			byteOrder = ByteOrder.INTEL_BYTE_ORDER;
+		else if (_bo != null && _bo.equalsIgnoreCase("M"))
+			byteOrder = ByteOrder.INTEL_OR_MOTOROLA;
+		
+		String _pt = esriHeader.getAttribute("pixeltype", "SIGNEDINT");
+
+		if (_pt != null && _pt.equalsIgnoreCase("SIGNEDINT"))
+			pixelType = DemConstants.PIXELTYPE_SIGNED_INT;
+		else if (_pt != null && _pt.equalsIgnoreCase("UNSIGNEDINT"))
+			pixelType = DemConstants.PIXELTYPE_UNSIGNED_INT;
+		
+		correctBounds();
+		int i = 0;
 	}
 	
 	private void correctBounds()
@@ -74,68 +95,30 @@ public class Bil16IntHeader
 		if (ydim == DemConstants.ELEV_NO_DATA) {
 			ydim = xdim;
 		}
-		
-		//if (xLowerLeft != DemConstants.ELEV_NO_DATA) {
-		//	xLowerLeft = xLowerLeft - (rows * cellSize);
-		//}
-	}
-	
-	private void readHeaderLine(String line)
-	{
-		
-		line = line.replaceAll("[ ]+", " ");
-		String[] parts = line.split(" ");
-		if (parts.length < 2) {
-			return;
-		}
-		String title = parts[0];
-		String value = parts[1];
-		title = title.trim();
-		value = value.trim();
-		
-		if (title.equalsIgnoreCase("ncols"))
-			this.columns = Integer.parseInt(value);
-		if (title.equalsIgnoreCase("nrows"))
-			this.rows = Integer.parseInt(value);
-		if (title.equalsIgnoreCase("nbands"))
-			this.nbands = Integer.parseInt(value);
-		if (title.equalsIgnoreCase("nbits"))
-			this.nbits = Integer.parseInt(value);
-		if (title.equalsIgnoreCase("skipbytes"))
-			this.skipBytes = Integer.parseInt(value);
-		if (title.equalsIgnoreCase("bandrowbytes"))
-			this.bandRowBytes = Integer.parseInt(value);
-		if (title.equalsIgnoreCase("totalrowbytes"))
-			this.totalRowBytes = Integer.parseInt(value);
-		if (title.equalsIgnoreCase("ulxmap"))
-			this.xUpperLeft = Float.parseFloat(value);
-		if (title.equalsIgnoreCase("ulymap"))
-			this.yUpperLeft = Float.parseFloat(value);
-		if (title.equalsIgnoreCase("xdim"))
-			this.xdim = Float.parseFloat(value);
-		if (title.equalsIgnoreCase("ydim"))
-			this.ydim = Float.parseFloat(value);
-		if (title.equalsIgnoreCase("NODATA"))
-			this.noData = Float.parseFloat(value);
-		if (title.equalsIgnoreCase("byteorder")) {
-			if (value.equalsIgnoreCase("LSBFIRST")) 
-				byteOrder = ByteOrder.LSBFIRST;
-			if (value.equalsIgnoreCase("MSBFIRST"))
-				byteOrder = ByteOrder.MSBFIRST;
-			if (value.equalsIgnoreCase("I"))
-				byteOrder = ByteOrder.INTEL_BYTE_ORDER;
-			if (value.equalsIgnoreCase("M"))
-				byteOrder = ByteOrder.INTEL_OR_MOTOROLA;
-		}
-		if (title.equalsIgnoreCase("pixeltype")) {
-			if (value.equalsIgnoreCase("SIGNEDINT"))
-				pixelType = DemConstants.PIXELTYPE_SIGNED_INT;
-			if (value.equalsIgnoreCase("UNSIGNEDINT"))
-				pixelType = DemConstants.PIXELTYPE_UNSIGNED_INT;
-		}
-		
-	}
 
+		if (xLowerLeft == DemConstants.ELEV_NO_DATA
+				&& yLowerLeft == DemConstants.ELEV_NO_DATA
+				&& xUpperLeft == DemConstants.ELEV_NO_DATA
+				&& yUpperLeft == DemConstants.ELEV_NO_DATA) {
+			
+			xdim = 1.0;
+			ydim = 1.0;
+			xUpperLeft = 0;
+			yUpperLeft = 0;
+			
+			xLowerLeft = 0;
+			yLowerLeft = -rows;
+			
+		} else {
+			if (xLowerLeft == DemConstants.ELEV_NO_DATA && xUpperLeft != DemConstants.ELEV_NO_DATA) {
+				xLowerLeft = xUpperLeft;
+			} if (yLowerLeft == DemConstants.ELEV_NO_DATA && yUpperLeft != DemConstants.ELEV_NO_DATA) {
+				yLowerLeft = yUpperLeft - (rows * ydim);
+			}
+		}
+		
+		
+	}
 
 	public int getColumns()
 	{

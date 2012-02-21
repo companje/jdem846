@@ -18,7 +18,7 @@ public class RenderPipeline
 	private static Log log = Logging.getLog(RenderPipeline.class);
 	
 	private Queue<TileRenderContainer> tileRenderQueue;
-	private Queue<CanvasRectangleFill> canvasRectangeFillQueue;
+	private Queue<TriangleStripFill> triangleStripFillQueue;
 	private Queue<ShapeFill> shapeFillQueue;
 	private Queue<ScanlinePath> scanlinePathQueue;
 	
@@ -34,7 +34,7 @@ public class RenderPipeline
 		this.modelContext = modelContext;
 		
 		tileRenderQueue = new ConcurrentLinkedQueue<TileRenderContainer>();
-		canvasRectangeFillQueue = new ConcurrentLinkedQueue<CanvasRectangleFill>();
+		triangleStripFillQueue = new ConcurrentLinkedQueue<TriangleStripFill>();
 		scanlinePathQueue = new ConcurrentLinkedQueue<ScanlinePath>();
 		shapeFillQueue = new ConcurrentLinkedQueue<ShapeFill>();
 	}
@@ -44,9 +44,9 @@ public class RenderPipeline
 		tileRenderQueue.add(tileRenderRunnableInstance);
 	}
 	
-	public void submit(CanvasRectangleFill canvasRectangeFillInstance)
+	public void submit(TriangleStripFill triangleStripFillInstance)
 	{
-		canvasRectangeFillQueue.add(canvasRectangeFillInstance);
+		triangleStripFillQueue.add(triangleStripFillInstance);
 	}
 	
 	public void submit(ScanlinePath scanlinePathInstance)
@@ -65,9 +65,9 @@ public class RenderPipeline
 		return tileRenderQueue.poll();
 	}
 	
-	public CanvasRectangleFill fetchNextCanvasRectangeFill()
+	public TriangleStripFill fetchNextTriangleStripFill()
 	{
-		return canvasRectangeFillQueue.poll();
+		return triangleStripFillQueue.poll();
 	}
 	
 	public ScanlinePath fetchNextScanlinePath()
@@ -85,9 +85,9 @@ public class RenderPipeline
 		return (tileRenderQueue.size() > 0);
 	}
 	
-	public boolean hasMoreCanvasRectangeFills()
+	public boolean hasMoreTriangleStripFills()
 	{
-		return (canvasRectangeFillQueue.size() > 0);
+		return (triangleStripFillQueue.size() > 0);
 	}
 	
 	public boolean hasMoreScanlinePaths()

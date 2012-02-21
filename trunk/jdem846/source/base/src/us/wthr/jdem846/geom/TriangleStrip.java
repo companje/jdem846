@@ -6,8 +6,8 @@ import java.util.List;
 
 public class TriangleStrip
 {
-	private List<Vertex> verteces = new LinkedList<Vertex>();
-	
+	private List<Vertex> verteces = new ArrayList<Vertex>();
+	private Triangle triangle;
 	
 	public TriangleStrip()
 	{
@@ -50,7 +50,15 @@ public class TriangleStrip
 		Vertex p1 = verteces.get(index + 1);
 		Vertex p2 = verteces.get(index + 2);
 		
-		return new Triangle(p0, p1, p2);
+		if (triangle == null) {
+			triangle = new Triangle();
+		}
+		triangle.p0 = p0;
+		triangle.p1 = p1;
+		triangle.p2 = p2;
+		triangle.initialize();
+		
+		return triangle;
 	}
 	
 }
