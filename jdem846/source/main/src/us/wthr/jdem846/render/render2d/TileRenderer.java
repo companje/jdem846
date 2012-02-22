@@ -244,7 +244,7 @@ public class TileRenderer extends InterruptibleProcess
 					modelContext,
 					new RasterDataFetchHandler() {
 						public double getRasterData(double latitude, double longitude) throws Exception {
-							return getRasterData(latitude, longitude);
+							return _getRasterData(latitude, longitude);
 						}
 			});
 		} else {
