@@ -8,6 +8,7 @@ public enum ModelOptionNamesEnum
 	WRITE_TO("us.wthr.jdem846.modelOptions.writeTo"),
 	WIDTH("us.wthr.jdem846.modelOptions.width"),
 	HEIGHT("us.wthr.jdem846.modelOptions.height"),
+	PLANET("us.wthr.jdem846.modelOptions.planet"),
 	GRID_SIZE("us.wthr.jdem846.modelOptions.gridSize"),
 	BACKGROUND_COLOR("us.wthr.jdem846.modelOptions.backgroundColor"),
 	HILLSHADING("us.wthr.jdem846.modelOptions.hillShading"),
@@ -46,7 +47,11 @@ public enum ModelOptionNamesEnum
 	PIPELINE_RENDER("us.wthr.jdem846.modelOptions.pipelineRender"),
 	//PROJECT_3D("us.wthr.jdem846.modelOptions.project3d"),
 	MODEL_PROJECTION("us.wthr.jdem846.modelOptions.modelProjection"),
-	MAINTAIN_ASPECT_RATIO_TO_DATA("us.wthr.jdem846.modelOptions.maintainAspectRatioWithData");
+	MAINTAIN_ASPECT_RATIO_TO_DATA("us.wthr.jdem846.modelOptions.maintainAspectRatioWithData"),
+
+	STANDARD_RESOLUTION_RETRIEVAL("us.wthr.jdem846.modelOptions.data.standardResolutionRetrieval"),
+	INTERPOLATE_HIGHER_RESOLUTION("us.wthr.jdem846.modelOptions.data.interpolate"),
+	AVERAGE_OVERLAPPING_RASTER_DATA("us.wthr.jdem846.modelOptions.data.averageOverlappedData");
 	
 	private final String optionName;
 	

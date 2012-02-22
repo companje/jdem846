@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
@@ -207,10 +208,10 @@ public class TileRenderer extends InterruptibleProcess
 		
 		setUpLightSource(modelContext.getLightingContext().getLightingElevation(), modelContext.getLightingContext().getLightingAzimuth());
 		
-		interpolateData = modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate");
-		averageOverlappedData = modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData");
+		getStandardResolutionElevation = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.STANDARD_RESOLUTION_RETRIEVAL);
+		interpolateData = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.INTERPOLATE_HIGHER_RESOLUTION);
+		averageOverlappedData = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.AVERAGE_OVERLAPPING_RASTER_DATA);
 			
-		getStandardResolutionElevation = modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval");
 		
 		
 		lightingEnabled = modelContext.getLightingContext().isLightingEnabled();
