@@ -109,8 +109,8 @@ public class ModelVisualizationPanel extends Panel
 				
 		maxPreviewSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.modelVisualizationPanel.maxPreviewSlices");
 		minPreviewSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.modelVisualizationPanel.minPreviewSlices");
-		previewQuality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.modelVisualizationPanel.previewQuality");
-		rasterPreview = JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.modelVisualizationPanel.rasterPreview");
+		previewQuality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewQuality");
+		rasterPreview = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.rasterPreview");
 				
 		rotateX = modelContextActual.getModelOptions().getProjection().getRotateX();
 		rotateY = modelContextActual.getModelOptions().getProjection().getRotateY();
@@ -246,6 +246,9 @@ public class ModelVisualizationPanel extends Panel
 	{
 		rasterPreview = chkPreviewRaster.getModel().isSelected();
 		update(false, false);
+		
+		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.rasterPreview", ""+rasterPreview);
+		
 	}
 	
 	protected void onQualitySliderChanged()
@@ -253,6 +256,8 @@ public class ModelVisualizationPanel extends Panel
 		double value = (double) sldQuality.getValue();
 		previewQuality = (value / 100);
 		update(true, false);
+		
+		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewQuality", ""+previewQuality);
 	}
 	
 	protected void setWorkingCopyOptions()
@@ -265,9 +270,9 @@ public class ModelVisualizationPanel extends Panel
 		modelContextWorkingCopy.getModelOptions().setElevationMultiple(1.0);
 		modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA, false);
 
-		modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.STANDARD_RESOLUTION_RETRIEVAL, JDem846Properties.getProperty("us.wthr.jdem846.ui.modelVisualizationPanel.data.standardResolutionRetrieval"));
-		modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.INTERPOLATE_HIGHER_RESOLUTION, JDem846Properties.getProperty("us.wthr.jdem846.ui.modelVisualizationPanel.data.interpolate"));
-		modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.AVERAGE_OVERLAPPING_RASTER_DATA, JDem846Properties.getProperty("us.wthr.jdem846.ui.modelVisualizationPanel.data.averageOverlappedData"));
+		//modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.STANDARD_RESOLUTION_RETRIEVAL, JDem846Properties.getProperty("us.wthr.jdem846.ui.modelVisualizationPanel.data.standardResolutionRetrieval"));
+		//modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.INTERPOLATE_HIGHER_RESOLUTION, JDem846Properties.getProperty("us.wthr.jdem846.ui.modelVisualizationPanel.data.interpolate"));
+		//modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.AVERAGE_OVERLAPPING_RASTER_DATA, JDem846Properties.getProperty("us.wthr.jdem846.ui.modelVisualizationPanel.data.averageOverlappedData"));
 		
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));

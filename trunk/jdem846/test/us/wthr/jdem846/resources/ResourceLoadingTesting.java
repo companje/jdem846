@@ -7,12 +7,13 @@ import java.io.InputStream;
 import java.net.URL;
 
 import junit.framework.TestCase;
+import us.wthr.jdem846.AbstractTestCase;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
-public class ResourceLoadingTesting extends TestCase
+public class ResourceLoadingTesting extends AbstractTestCase
 {
 
 	private static Log log = Logging.getLog(ResourceLoadingTesting.class);
@@ -22,7 +23,7 @@ public class ResourceLoadingTesting extends TestCase
 	protected void setUp() throws Exception
 	{
 		super.setUp();
-		bootstrapSystemProperties();
+		//bootstrapSystemProperties();
 	}
 
 	
@@ -125,7 +126,23 @@ public class ResourceLoadingTesting extends TestCase
 		__testLoadInputStream(System.getProperty("us.wthr.jdem846.installPath") + "\\jdem846-icon.png");
 	}
 	
+	/* Testing user://
+	 * 
+	 */
+	public void testLoadUserFile()
+	{
+		__testLoadFile("user://project.json");
+	}
 	
+	public void testLoadUserURL()
+	{
+		__testLoadURL("user://project.json");
+	}
+	
+	public void testLoadUserInputStream()
+	{
+		__testLoadInputStream("user://project.json");
+	}
 	
 	
 	public void __testLoadFile(String url)
@@ -176,20 +193,7 @@ public class ResourceLoadingTesting extends TestCase
 	}
 	
 	
-	
-	
-	
-	protected void bootstrapSystemProperties()
-	{
-		
-		if (System.getProperty("us.wthr.jdem846.installPath") == null) {
-			System.setProperty("us.wthr.jdem846.installPath", System.getProperty("user.dir"));
-		}
-		if (System.getProperty("us.wthr.jdem846.resourcesPath") == null) {
-			System.setProperty("us.wthr.jdem846.resourcesPath", System.getProperty("us.wthr.jdem846.installPath"));
-		}
-		
-	}
+
 	
 	
 	

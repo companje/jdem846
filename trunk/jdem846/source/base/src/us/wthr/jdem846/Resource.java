@@ -39,6 +39,10 @@ public class Resource
 			scheme = "resources://";
 			schemeType = ResourceTypeEnum.RESOURCE;
 			uri = url.substring(12);
+		} else if (url.indexOf("user://") == 0) {
+			scheme = "user://";
+			schemeType = ResourceTypeEnum.USER;
+			uri = url.substring(7);
 		} else {
 			scheme = "file://";
 			schemeType = ResourceTypeEnum.FILE;
@@ -72,6 +76,8 @@ public class Resource
 			return getJarFileAsInputStream();
 		} else if (schemeType == ResourceTypeEnum.RESOURCE) {
 			return getResourceAsInputStream();
+		} else if (schemeType == ResourceTypeEnum.USER) {
+			return getUserAsInputStream();
 		} else {
 			return null;
 		}
@@ -85,6 +91,8 @@ public class Resource
 			return getJarFileAsOutputStream();
 		} else if (schemeType == ResourceTypeEnum.RESOURCE) {
 			return getResourceAsOutputStream();
+		} else if (schemeType == ResourceTypeEnum.USER) {
+			return getUserAsOutputStream();
 		} else {
 			return null;
 		}
@@ -98,6 +106,8 @@ public class Resource
 			return getJarFileAsFile();
 		} else if (schemeType == ResourceTypeEnum.RESOURCE) {
 			return getResourceAsFile();
+		} else if (schemeType == ResourceTypeEnum.USER) {
+			return getUserAsFile();
 		} else {
 			return null;
 		}
@@ -113,6 +123,8 @@ public class Resource
 			return getJarFileAsURL();
 		} else if (schemeType == ResourceTypeEnum.RESOURCE) {
 			return getResourceAsURL();
+		} else if (schemeType == ResourceTypeEnum.USER) {
+			return getUserAsURL();
 		} else {
 			return null;
 		}
@@ -135,6 +147,12 @@ public class Resource
 		return new BufferedOutputStream(new FileOutputStream(file));
 	}
 	
+	protected OutputStream getUserAsOutputStream() throws Exception
+	{
+		File file = getUserAsFile();
+		return new BufferedOutputStream(new FileOutputStream(file));
+	}
+	
 	protected OutputStream getFileAsOutputStream() throws Exception
 	{
 		File file = getFileAsFile();
@@ -153,6 +171,12 @@ public class Resource
 	protected InputStream getResourceAsInputStream() throws Exception
 	{
 		File file = getResourceAsFile();
+		return new BufferedInputStream(new FileInputStream(file));
+	}
+	
+	protected InputStream getUserAsInputStream() throws Exception
+	{
+		File file = getUserAsFile();
 		return new BufferedInputStream(new FileInputStream(file));
 	}
 	
@@ -186,6 +210,14 @@ public class Resource
 		return new File(searchPath);
 	}
 	
+	protected File getUserAsFile() throws Exception
+	{
+		String resourcesPath = JDem846Properties.getProperty("user.home");
+		String searchPath = resourcesPath + "/" + uri;
+		
+		return new File(searchPath);
+	}
+	
 	
 	
 	
@@ -208,6 +240,15 @@ public class Resource
 	protected URL getResourceAsURL() throws Exception
 	{
 		String resourcesPath = JDem846Properties.getProperty("us.wthr.jdem846.resourcesPath");
+		String searchPath = resourcesPath + "/" + uri;
+		
+		return new URL("file:/" + searchPath);
+
+	}
+	
+	protected URL getUserAsURL() throws Exception
+	{
+		String resourcesPath = JDem846Properties.getProperty("user.home");
 		String searchPath = resourcesPath + "/" + uri;
 		
 		return new URL("file:/" + searchPath);

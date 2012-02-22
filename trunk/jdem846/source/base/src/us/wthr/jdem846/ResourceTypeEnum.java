@@ -4,5 +4,6 @@ public enum ResourceTypeEnum
 {
 	RESOURCE,
 	FILE,
-	JAR
+	JAR,
+	USER
 }

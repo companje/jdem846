@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -34,6 +35,17 @@ public class JDemResourceLoader
 		}
 	}
 	
+	public static OutputStream getAsOutputStream(String url) throws FileNotFoundException
+	{
+		try {
+			Resource resource = new Resource(url);
+			return resource.getAsOutputStream();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			setLastException(ex);
+			return null;
+		}
+	}
 	
 	public static File getAsFile(String url)
 	{

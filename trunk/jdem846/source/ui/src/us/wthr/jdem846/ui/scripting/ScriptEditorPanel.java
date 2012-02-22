@@ -79,7 +79,7 @@ public class ScriptEditorPanel extends Panel
 		
 		jsyntaxpane.DefaultSyntaxKit.initKit();
 		
-		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.scriptEditorPane.textAA")) {
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.scriptEditorPane.textAA")) {
 			jsyntaxpane.DefaultSyntaxKit.setProperty("TextAA", "ON");
 		} else {
 			jsyntaxpane.DefaultSyntaxKit.setProperty("TextAA", "OFF");

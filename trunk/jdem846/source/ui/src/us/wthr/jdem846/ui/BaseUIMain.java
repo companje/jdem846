@@ -72,6 +72,7 @@ public abstract class BaseUIMain
 		}
 		
 		JDem846Properties.initializeApplicationProperties();
+		JDem846Properties.initializeUserProperties();
 		
 		log = Logging.getLog(BaseUIMain.class);
 		
@@ -379,7 +380,7 @@ public abstract class BaseUIMain
 	
 	public static PlasticTheme getConfiguredPlasticTheme()
 	{
-		String theme = JDem846Properties.getProperty("us.wthr.jdem846.ui.jgoodies.theme");
+		String theme = JDem846Properties.getProperty("us.wthr.jdem846.general.ui.jgoodies.theme");
 		
 		if (theme == null || theme.length() == 0) {
 			return null;

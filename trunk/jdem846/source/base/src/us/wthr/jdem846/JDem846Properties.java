@@ -16,7 +16,11 @@
 
 package us.wthr.jdem846;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import us.wthr.jdem846.logging.Log;
@@ -71,10 +75,9 @@ public class JDem846Properties
 		return Boolean.parseBoolean(getProperty(name));
 	}
 	
-	protected static void load(String path)
+	protected static void load(String path, boolean ignoreFailure)
 	{
 		try {
-			//properties;
 			properties.load(JDemResourceLoader.getAsInputStream(path));
 			loaded = true;
 		} catch (IOException e) {
@@ -99,7 +102,92 @@ public class JDem846Properties
 	
 	public static void initializeApplicationProperties()
 	{
-		load("resources://jdem846.properties");
+		//load("resources://jdem846.properties", false);
+		String path = "resources://jdem846.properties";
+		try {
+			properties.load(JDemResourceLoader.getAsInputStream(path));
+			loaded = true;
+		} catch (IOException e) {
+			log.error("IO error loading properties file from '" + path + "': " + e.getMessage(), e);
+			loaded = false;
+		}
+		overrideWithSystemProperties();
+		
+	}
+	
+	public static void initializeUserProperties()
+	{
+		String path = "user://.jdem846/application.properties";
+		
+		InputStream in = null;
+		
+		try {
+			in = JDemResourceLoader.getAsInputStream(path);
+		} catch (FileNotFoundException  ex) {
+			log.warn("User properties file not found: " + path, ex);
+			return;
+		}
+		
+		if (in == null) {
+			log.warn("User properties file not found: " + path);
+			return;
+		}
+		
+		try {
+			properties.load(in);
+		} catch (IOException e) {
+			log.error("IO error loading properties file from '" + path + "': " + e.getMessage(), e);
+		} 
+		overrideWithSystemProperties();
+	}
+	
+	
+	protected static void verifyUserDirectoryExists() throws Exception
+	{
+		String path = getProperty("us.wthr.jdem846.user.directory");
+		File file = JDemResourceLoader.getAsFile(path);
+		
+		if (!file.exists()) {
+			file.mkdir();
+		}
+	}
+	
+	private static boolean propertyMatchesPrefixes(String property, String[] prefixList)
+	{
+		
+		for (String prefix : prefixList) {
+			if (property.indexOf(prefix) == 0) {
+				return true;
+			}
+		}
+		return false;		
+	}
+	
+	public static void writeUserPropertiesFile() throws Exception
+	{
+		verifyUserDirectoryExists();
+		
+		String path = getProperty("us.wthr.jdem846.user.directory") + "/" + getProperty("us.wthr.jdem846.user.properties");
+		
+		String[] prefixList = getProperty("us.wthr.jdem846.storePropertyPrefixes").split(",");
+		
+		Properties tmpProps = new Properties();
+		
+		// Not really the best way to weed out properties we don't want to write...
+		for (Object o_key : properties.keySet()) {
+			String key = (String) o_key;
+			if (propertyMatchesPrefixes(key, prefixList)) {
+				tmpProps.setProperty(key, properties.getProperty(key));
+			}
+			//if (!System.getProperties().containsKey(key)) {
+			//	tmpProps.setProperty(key, properties.getProperty(key));
+			//}
+		}
+		
+		OutputStream out = JDemResourceLoader.getAsOutputStream(path);
+		
+		tmpProps.store(out, "Autowritten by " + JDem846Properties.class.getCanonicalName());
+		
 	}
 	
 }
