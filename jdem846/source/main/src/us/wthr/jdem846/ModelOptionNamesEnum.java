@@ -44,14 +44,14 @@ public enum ModelOptionNamesEnum
 	USER_SCRIPT_JYTHON_TEMPLATE("us.wthr.jdem846.modelOptions.userScript.jython.template"),
 	
 	MAP_PROJECTION("us.wthr.jdem846.modelOptions.mapProjection"),
-	PIPELINE_RENDER("us.wthr.jdem846.modelOptions.pipelineRender"),
+	//PIPELINE_RENDER("us.wthr.jdem846.performance.pipelineRender"),
 	//PROJECT_3D("us.wthr.jdem846.modelOptions.project3d"),
 	MODEL_PROJECTION("us.wthr.jdem846.modelOptions.modelProjection"),
-	MAINTAIN_ASPECT_RATIO_TO_DATA("us.wthr.jdem846.modelOptions.maintainAspectRatioWithData"),
+	MAINTAIN_ASPECT_RATIO_TO_DATA("us.wthr.jdem846.modelOptions.maintainAspectRatioWithData");
 
-	STANDARD_RESOLUTION_RETRIEVAL("us.wthr.jdem846.modelOptions.data.standardResolutionRetrieval"),
-	INTERPOLATE_HIGHER_RESOLUTION("us.wthr.jdem846.modelOptions.data.interpolate"),
-	AVERAGE_OVERLAPPING_RASTER_DATA("us.wthr.jdem846.modelOptions.data.averageOverlappedData");
+	//STANDARD_RESOLUTION_RETRIEVAL("us.wthr.jdem846.performance.standardResolutionRetrieval"),
+	//INTERPOLATE_HIGHER_RESOLUTION("us.wthr.jdem846.performance.interpolateToHigherResolution"),
+	//AVERAGE_OVERLAPPING_RASTER_DATA("us.wthr.jdem846.performance.averageOverlappedData");
 	
 	private final String optionName;
 	

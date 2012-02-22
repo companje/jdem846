@@ -155,7 +155,7 @@ public class LightingPreviewPanel extends Panel
 			modelOptions.setAntialiased(false);
 			modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
 			modelOptions.setConcurrentRenderPoolSize(1);
-			modelOptions.setUsePipelineRender(false);
+			//modelOptions.setUsePipelineRender(false);
 			
 			
 			double quality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewQuality");

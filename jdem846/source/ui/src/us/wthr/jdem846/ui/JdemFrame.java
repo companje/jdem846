@@ -23,6 +23,8 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -93,7 +95,7 @@ public class JdemFrame extends Frame
 
 		// Set Properties
 		this.setTitle(null);
-		this.setSize(JDem846Properties.getIntProperty("us.wthr.jdem846.ui.windowWidth"), JDem846Properties.getIntProperty("us.wthr.jdem846.ui.windowHeight"));
+		this.setSize(JDem846Properties.getIntProperty("us.wthr.jdem846.general.ui.windowWidth"), JDem846Properties.getIntProperty("us.wthr.jdem846.general.ui.windowHeight"));
 		this.setLocationRelativeTo(null);
 		
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -121,7 +123,7 @@ public class JdemFrame extends Frame
 		
 		topButtonBar.add(Box.createHorizontalGlue());
 		
-		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.jdemFrame.displayMemoryMonitor")) {
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.jdemFrame.displayMemoryMonitor")) {
 			MemoryMonitor memoryCurrentState = new MemoryMonitor(1000, true, true);
 			memoryCurrentState.start();
 			SharedStatusBar.addControl(memoryCurrentState);
@@ -171,7 +173,25 @@ public class JdemFrame extends Frame
 
 			}
 		});
-		
+		this.addComponentListener(new ComponentListener() {
+			public void componentHidden(ComponentEvent e)
+			{
+				
+			}
+			public void componentMoved(ComponentEvent e)
+			{
+				
+			}
+			public void componentResized(ComponentEvent e)
+			{
+				JDem846Properties.setProperty("us.wthr.jdem846.general.ui.windowHeight", ""+getHeight());
+				JDem846Properties.setProperty("us.wthr.jdem846.general.ui.windowWidth", ""+getWidth());
+			}
+			public void componentShown(ComponentEvent e)
+			{
+				
+			}
+		});
 		
 		
 		this.setJMenuBar(menuBar);
@@ -185,7 +205,7 @@ public class JdemFrame extends Frame
 		this.add(tabPane, BorderLayout.CENTER);
 		this.add(statusBar, BorderLayout.SOUTH);
 		
-		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.ui.displayLogViewPanel")) {
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.displayLogViewPanel")) {
 			log.info("Log viewer panel is enabled");
 			LogViewerDialog logViewer = new LogViewerDialog();
 			logViewer.setVisible(true);

@@ -99,7 +99,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
 		modelOptions.setBackgroundColor("255;255;255;255");
-		modelOptions.setUsePipelineRender(true);
+		//modelOptions.setUsePipelineRender(true);
 		modelOptions.setElevationMultiple(1.0);
 		modelOptions.setColoringType("hypsometric-tint-global");
 		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_FLAT);

@@ -114,7 +114,7 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;255");
-		modelOptions.setUsePipelineRender(false);
+		//modelOptions.setUsePipelineRender(false);
 		modelOptions.setColoringType("hypsometric-tint-global");
 		modelOptions.setElevationMultiple(1.0);
 		

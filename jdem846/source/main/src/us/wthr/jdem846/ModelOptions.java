@@ -465,6 +465,7 @@ public class ModelOptions extends MappedOptions
 		setOption(ModelOptionNamesEnum.CONCURRENT_RENDER_POOL_SIZE, concurrentRenderPoolSize);
 	}
 	
+	/*
 	public boolean usePipelineRender()
 	{
 		return getBooleanOption(ModelOptionNamesEnum.PIPELINE_RENDER);
@@ -474,7 +475,7 @@ public class ModelOptions extends MappedOptions
 	{
 		setOption(ModelOptionNamesEnum.PIPELINE_RENDER, usePipelineRender);
 	}
-	
+	*/
 	
 	
 	public CanvasProjectionTypeEnum getModelProjection()

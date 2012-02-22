@@ -18,6 +18,7 @@ package us.wthr.jdem846.render;
 
 import java.util.List;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -56,7 +57,9 @@ public class Dem2dGenerator extends BasicRenderEngine
 	
 	public OutputProduct<ModelCanvas> generate(boolean skipElevation, boolean skipShapes) throws RenderEngineException
 	{
-		boolean usePipelineRender = getModelContext().getModelOptions().usePipelineRender();
+		//boolean usePipelineRender = getModelContext().getModelOptions().usePipelineRender();
+		
+		boolean usePipelineRender = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.pipelineRender");
 		
 		if (usePipelineRender) {
 			return generatePipelined(skipElevation, skipShapes);
