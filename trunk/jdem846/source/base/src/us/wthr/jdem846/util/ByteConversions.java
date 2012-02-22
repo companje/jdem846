@@ -70,7 +70,7 @@ public class ByteConversions
 				((b01 & 0xFF) << 16) |
 				((b10 & 0xFF) << 8) |
 				(b11 & 0xFF);
-		} else if (byteOrder == ByteOrder.LSBFIRST) {
+		} else if (byteOrder == ByteOrder.LSBFIRST || byteOrder == ByteOrder.INTEL_BYTE_ORDER) {
 			intBits = ((b11 & 0xFF) << 24) |
 				((b10 & 0xFF) << 16) |
 				((b01 & 0xFF) << 8) |
@@ -201,7 +201,7 @@ public class ByteConversions
 				((b10 & 0xFF) << 16) |
 				((b01 & 0xFF) << 8) |
 				(b00 & 0xFF);
-		} else if (byteOrder == ByteOrder.LSBFIRST) {
+		} else if (byteOrder == ByteOrder.LSBFIRST || byteOrder == ByteOrder.INTEL_BYTE_ORDER) {
 			intBits = ((b00 & 0xFF) << 24) |
 				((b01 & 0xFF) << 16) |
 				((b10 & 0xFF) << 8) |
@@ -256,7 +256,7 @@ public class ByteConversions
 				longBits <<= 8;  
 				longBits ^= (long)bytes[i] & 0xFF;      
 			}  
-		} else if (byteOrder == ByteOrder.LSBFIRST) {
+		} else if (byteOrder == ByteOrder.LSBFIRST || byteOrder == ByteOrder.INTEL_BYTE_ORDER) {
 			for(int i = 7; i >= 0; i--){      
 				longBits <<= 8;  
 				longBits ^= (long)bytes[i] & 0xFF;      

@@ -660,6 +660,9 @@ public class SimpleRenderer
 			min = 0;
 		}
 		
+		log.info("Simple renderer data maximum: " + max);
+		log.info("Simple renderer data minimum: " + min);
+		
 		rasterDataContext.setDataMaximumValue(max);
 		rasterDataContext.setDataMinimumValue(min);
 		

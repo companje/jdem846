@@ -27,7 +27,6 @@ public class GridFloatHeader
 	private double noData = 0;
 	private ByteOrder byteOrder = ByteOrder.LSBFIRST;
 	
-	
 
 	public GridFloatHeader(String file_path) throws DataSourceException
 	{
@@ -48,21 +47,35 @@ public class GridFloatHeader
 		this.columns = esriHeader.getIntAttribute("ncols");
 		this.rows = esriHeader.getIntAttribute("nrows");
 		
-		// TODO: Adjust between corner and center for x/y
-		if (esriHeader.hasAttribute("xllcorner"))
-			this.xLowerLeft = esriHeader.getDoubleAttribute("xllcorner");
-		else if (esriHeader.hasAttribute("xllcenter"))
-			this.xLowerLeft = esriHeader.getDoubleAttribute("xllcenter");
-		
-		if (esriHeader.hasAttribute("yllcorner"))
-			this.yLowerLeft = esriHeader.getDoubleAttribute("yllcorner");
-		else if (esriHeader.hasAttribute("yllcenter")) 
-			this.yLowerLeft = esriHeader.getDoubleAttribute("yllcenter");
 		
 		if (esriHeader.hasAttribute("cellsize"))
 			this.cellSize = esriHeader.getDoubleAttribute("cellsize");
 		else if (esriHeader.hasAttribute("xdim"))
 			this.cellSize = esriHeader.getDoubleAttribute("xdim");
+		
+		
+		// TODO: Adjust between corner and center for x/y
+		if (esriHeader.hasAttribute("xllcorner"))
+			this.xLowerLeft = esriHeader.getDoubleAttribute("xllcorner");
+		else if (esriHeader.hasAttribute("xllcenter"))
+			this.xLowerLeft = esriHeader.getDoubleAttribute("xllcenter");
+		else if (esriHeader.hasAttribute("ulxmap"))
+			this.xLowerLeft = esriHeader.getDoubleAttribute("ulxmap");
+		
+		if (esriHeader.hasAttribute("yllcorner"))
+			this.yLowerLeft = esriHeader.getDoubleAttribute("yllcorner");
+		else if (esriHeader.hasAttribute("yllcenter")) 
+			this.yLowerLeft = esriHeader.getDoubleAttribute("yllcenter");
+		else if (esriHeader.hasAttribute("ulymap")) {
+			double ulymap = esriHeader.getDoubleAttribute("ulymap");
+			this.yLowerLeft = ulymap - (rows * cellSize);
+		}
+		
+		
+		
+		
+		
+		
 		
 		if (esriHeader.hasAttribute("NODATA_value"))
 			this.noData = esriHeader.getDoubleAttribute("NODATA_value");

@@ -265,9 +265,9 @@ public class ModelVisualizationPanel extends Panel
 		modelContextWorkingCopy.getModelOptions().setElevationMultiple(1.0);
 		modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA, false);
 
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval"));
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate"));
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData"));
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", true);//JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval"));
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", false);//JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate"));
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", false);//JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData"));
 		
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
