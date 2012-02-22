@@ -71,6 +71,7 @@ import us.wthr.jdem846.ui.optionModels.CanvasProjectionListModel;
 import us.wthr.jdem846.ui.optionModels.EngineListModel;
 import us.wthr.jdem846.ui.optionModels.HillShadingOptionsListModel;
 import us.wthr.jdem846.ui.optionModels.MapProjectionListModel;
+import us.wthr.jdem846.ui.optionModels.PlanetListModel;
 import us.wthr.jdem846.ui.optionModels.PrecacheStrategyOptionsListModel;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
 import us.wthr.jdem846.ui.panels.RoundedPanel;
@@ -108,6 +109,10 @@ public class ModelOptionsPanel extends RoundedPanel
 	//private BackgroundColorOptionsListModel backgroundModel;
 	//private ColoringListModel coloringModel;
 	//private HillShadingOptionsListModel hillShadingModel;
+	
+	private ComboBox cmbPlanet;
+	private PlanetListModel planetListModel;
+	
 	private ComboBox cmbMapProjection;
 	private MapProjectionListModel mapProjectionListModel;
 	
@@ -163,6 +168,10 @@ public class ModelOptionsPanel extends RoundedPanel
 		canvasProjectionListModel = new CanvasProjectionListModel();
 		cmbCanvasProjection = new ComboBox(canvasProjectionListModel);
 		
+		planetListModel = new PlanetListModel();
+		cmbPlanet = new ComboBox(planetListModel);
+
+		
 		coloringControl = new ColoringValueControl();
 		//lightSourceControl = new LightingValueControl();
 		//backgroundModel = new BackgroundColorOptionsListModel();
@@ -200,6 +209,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		txtWidth.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.widthText.tooltip"));
 		txtHeight.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.heightText.tooltip"));
 		cmbEngine.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.engineCombo.tooltip"));
+		cmbPlanet.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.planet.tooltip"));
 		colorSelection.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.tooltip"));
 		//cmbColoring.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.coloringCombo.tooltip"));
 		//cmbHillshading.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.tooltip"));
@@ -265,6 +275,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		};
 		
 		cmbEngine.addItemListener(comboBoxItemListener);
+		cmbPlanet.addItemListener(comboBoxItemListener);
 		//cmbBackgroundColor.addItemListener(comboBoxItemListener);
 		//cmbColoring.addItemListener(comboBoxItemListener);
 		//cmbHillshading.addItemListener(comboBoxItemListener);
@@ -344,6 +355,10 @@ public class ModelOptionsPanel extends RoundedPanel
 		
 		//controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.label") + ":"));
 		//controlGrid.add(cmbBackgroundColor);
+		
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.planet.label") + ":"));
+		controlGrid.add(cmbPlanet);
+		
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.label") + ":"));
 		controlGrid.add(colorSelection);
@@ -425,6 +440,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		ignoreValueChanges = true;
 		
 		engineModel.setSelectedItemByValue(modelOptions.getEngine());
+		planetListModel.setSelectedItemByValue(modelOptions.getOption(ModelOptionNamesEnum.PLANET));
+		
 		txtWidth.setText(""+modelOptions.getWidth());
 		txtHeight.setText(""+modelOptions.getHeight());
 		chkMaintainAscpectRatio.setSelected(modelOptions.getBooleanOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA));
@@ -484,7 +501,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		modelOptions.setEngine(engineModel.getSelectedItemValue());
 		modelOptions.setWidth(txtWidth.getInteger());
 		modelOptions.setHeight(txtHeight.getInteger());
-		
+		modelOptions.setOption(ModelOptionNamesEnum.PLANET, planetListModel.getSelectedItemValue());
 		
 		modelOptions.setOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA, chkMaintainAscpectRatio.getModel().isSelected());
 		//modelOptions.setBackgroundColor(backgroundModel.getSelectedItemValue());
@@ -496,7 +513,9 @@ public class ModelOptionsPanel extends RoundedPanel
 		
 		//modelOptions.setHillShadeType(hillShadingModel.getSelectedItemValue());
 		//modelOptions.setLightingMultiple((double)((Integer)spnLightMultiple.getValue()) / 100.0);
-		modelOptions.setElevationMultiple((double)((Integer)spnElevationMultiple.getValue()));
+		
+		double elevationMultiple = (double)((Integer)spnElevationMultiple.getValue());
+		modelOptions.setElevationMultiple(elevationMultiple);
 		
 		//modelOptions.setRelativeLightIntensity((double)((Integer)spnRelativeLightIntensity.getValue()) / 100.0);
 		//modelOptions.setRelativeDarkIntensity((double)((Integer)spnRelativeDarkIntensity.getValue()) / 100.0);

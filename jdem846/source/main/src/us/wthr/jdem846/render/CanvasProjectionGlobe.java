@@ -2,7 +2,10 @@ package us.wthr.jdem846.render;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
+import us.wthr.jdem846.gis.planets.Planet;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -15,11 +18,21 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 	private static Log log = Logging.getLog(CanvasProjectionGlobe.class);
 	
 	
-	
+	private double meanRadius; // In meters
 	
 	public CanvasProjectionGlobe(ModelContext modelContext)
 	{
 		super(modelContext);
+		
+		
+		Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
+		
+		
+		if (planet != null) {
+			meanRadius = planet.getMeanRadius() * 1000;
+		} else {
+			meanRadius = DemConstants.EARTH_MEAN_RADIUS * 1000;
+		}
 	}
 	
 	
@@ -34,9 +47,11 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		elevation -= ((max + min) / 2.0);
 		elev = (elevation / resolution) * elevationMultiple;
 		
-		double earthMeanRadiusMeters = DemConstants.EARTH_MEAN_RADIUS * 1000;
 		
-		radius = (radius / earthMeanRadiusMeters) * (earthMeanRadiusMeters + elevation);
+		
+		//double earthMeanRadiusMeters = DemConstants.EARTH_MEAN_RADIUS * 1000;
+		
+		radius = (radius / meanRadius) * (meanRadius + elevation);
 		
 		//double[] points = new double[3];
 		Spheres.getPoint3D(longitude+180, latitude, radius, pointVector);

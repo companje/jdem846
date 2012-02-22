@@ -1,7 +1,11 @@
 package us.wthr.jdem846.render;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
+import us.wthr.jdem846.gis.planets.Planet;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.logging.Log;
@@ -78,9 +82,14 @@ public class CanvasProjection3d extends CanvasProjection
 		double latRes = modelContext.getRasterDataContext().getLatitudeResolution();
 		double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
 		
+		Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
+		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
 		
+		if (planet != null) {
+			meanRadius = planet.getMeanRadius();
+		}
 		
-		resolution = modelContext.getRasterDataContext().getMetersResolution();
+		resolution = modelContext.getRasterDataContext().getMetersResolution(meanRadius);
 		resolution = resolution / (latRes / effLatRes);
 		
 		if (Double.isNaN(resolution) || resolution == 0.0) {
@@ -97,7 +106,7 @@ public class CanvasProjection3d extends CanvasProjection
 		double elev = 0;
 
 		elevation -= ((max + min) / 2.0);
-		elev = (elevation / resolution) * elevationMultiple;
+		elev = (elevation / resolution);
 
 
 		pointVector[0] = point.column - (getWidth() / 2.0);
@@ -105,10 +114,11 @@ public class CanvasProjection3d extends CanvasProjection
 		pointVector[2] = point.row - (getHeight() / 2.0);
 		
 		
+		Vector.scale(1.0, elevationMultiple, 1.0, pointVector);
 		Vector.rotate(0, rotateY, 0, pointVector);
 		Vector.rotate(rotateX, 0, 0, pointVector);
 		Vector.translate(shiftX, shiftY, shiftZ, pointVector);
-		Vector.scale(scaleX, scaleY, scaleZ, pointVector);
+		Vector.scale(scaleX, scaleY , scaleZ, pointVector);
 		
 		projectTo(pointVector);
 		
