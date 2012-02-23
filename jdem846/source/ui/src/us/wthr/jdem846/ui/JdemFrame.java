@@ -74,6 +74,7 @@ import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.TabPane;
 import us.wthr.jdem846.ui.base.ToolBar;
+import us.wthr.jdem846.ui.preferences.PreferencesDialog;
 import us.wthr.jdem846.util.TempFiles;
 
 @SuppressWarnings("serial")
@@ -249,14 +250,9 @@ public class JdemFrame extends Frame
 		
 		menuBar = MainMenuBar.getInstance();
 
-		//menu = new JMenu("File");
+		// File menu
 		ComponentMenu fileMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.menu.file"), KeyEvent.VK_F);
-		//menu.setMnemonic(KeyEvent.VK_F);
 		menuBar.add(fileMenu);
-		
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(
-        //KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		
 		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.new"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.new"), KeyEvent.VK_N, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
@@ -297,7 +293,18 @@ public class JdemFrame extends Frame
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK)));
 
+		// Edit Menu
 		
+		ComponentMenu editMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.menu.edit"), KeyEvent.VK_E);
+		menuBar.add(editMenu);
+		editMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.edit.preferences"), JDem846Properties.getProperty("us.wthr.jdem846.ui.edit.preferences"), KeyEvent.VK_P, new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				onPreferences();
+			}
+		}));
+		
+		// Help Menu
 		menuBar.add(Box.createHorizontalGlue());
 		ComponentMenu helpMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.menu.help"), KeyEvent.VK_H);
 		menuBar.add(helpMenu);
@@ -309,7 +316,7 @@ public class JdemFrame extends Frame
 		}));
 
 		
-		MainMenuBar.setInsertIndex(1);
+		MainMenuBar.setInsertIndex(2);
 	}
 	
 	public void onAbout()
@@ -369,6 +376,14 @@ public class JdemFrame extends Frame
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.invalidTab.title"),
 				    JOptionPane.WARNING_MESSAGE);
 		}
+		
+	}
+	
+	public void onPreferences()
+	{
+		
+		PreferencesDialog preferencesDialog = new PreferencesDialog();
+		preferencesDialog.setVisible(true);
 		
 	}
 	
