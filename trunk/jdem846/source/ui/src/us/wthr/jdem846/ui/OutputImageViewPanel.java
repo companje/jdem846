@@ -96,10 +96,13 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 	
 	private String lastSavePath = null;
 	
+	private boolean showPreviews = true;
+	
 	public OutputImageViewPanel(final RenderEngine engine)
 	{
 		// Set Properties
 		//this.canvas = canvas;
+		showPreviews = JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.renderInProcessPreviewing");
 		this.setLayout(new BorderLayout());
 		//this.engine = engine;
 		//this.dataPackage = engine.getDataPackage();
@@ -246,12 +249,13 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 		
 		tileCompletionListener = new TileCompletionListener() {
 			public void onTileCompleted(ModelCanvas modelCanvas, double pctComplete) {
-				//statusBar.setProgress((int)(pctComplete * 100));
 				prgProgress.setValue((int)(pctComplete * 100));
-				imageDisplay.setImage(modelCanvas.getFinalizedImage());
-				//imageDisplay.zoomFit();
-				canvas = modelCanvas;
-				repaint();
+				
+				if (showPreviews) {
+					imageDisplay.setImage(modelCanvas.getFinalizedImage());
+					canvas = modelCanvas;
+					repaint();
+				}
 			}
 		};
 		engine.addTileCompletionListener(tileCompletionListener);
