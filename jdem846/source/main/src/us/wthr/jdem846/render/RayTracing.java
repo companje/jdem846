@@ -133,6 +133,7 @@ public class RayTracing
 				throw new RayTracingException("Failed to get elevation for point: " + ex.getMessage(), ex);
 			}
 			
+			radius += radiusInterval;
 			
 			if (pointElevation == DemConstants.ELEV_NO_DATA) {
 				continue;
@@ -150,7 +151,7 @@ public class RayTracing
 			
 
 			tryCount++;
-			radius += radiusInterval;
+			
 		}
 		
 		//if (isBlocked) {
