@@ -358,6 +358,10 @@ public class TileRenderer extends InterruptibleProcess
 		
 		TriangleStrip strip = null;
 
+		
+		double lastElevN = rasterDataContext.getDataMinimumValue();
+		double lastElevS = rasterDataContext.getDataMinimumValue();
+		
 		for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
 			//strip.reset();
 			
@@ -378,6 +382,9 @@ public class TileRenderer extends InterruptibleProcess
 					rgba[1] = backgroundColor[1];
 					rgba[2] = backgroundColor[2];
 					rgba[3] = backgroundColor[3];
+					elev = lastElevN;
+				} else {
+					lastElevN = elev;
 				}
 				Vertex nwVtx = createVertex(nwLat, nwLon, elev, rgba);
 				
@@ -388,6 +395,9 @@ public class TileRenderer extends InterruptibleProcess
 					rgba[1] = backgroundColor[1];
 					rgba[2] = backgroundColor[2];
 					rgba[3] = backgroundColor[3];
+					elev = lastElevS;
+				} else {
+					lastElevS = elev;
 				}
 				Vertex swVtx = createVertex(swLat, swLon, elev, rgba);
 				/*
