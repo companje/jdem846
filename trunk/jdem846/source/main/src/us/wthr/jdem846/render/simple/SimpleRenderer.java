@@ -386,7 +386,8 @@ public class SimpleRenderer
 		
 		
 			
-			
+		double lastElevN = rasterDataContext.getDataMinimumValue();
+		double lastElevS = rasterDataContext.getDataMinimumValue();	
 			
 		for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
 			strip.reset();
@@ -407,6 +408,9 @@ public class SimpleRenderer
 					rgba[1] = 255;
 					rgba[2] = 255;
 					rgba[3] = 255;
+					elev = lastElevN;
+				} else {
+					lastElevN = elev;
 				}
 				Vertex nwVtx = createVertex(nwLat, nwLon, elev, rgba);
 				
@@ -417,6 +421,9 @@ public class SimpleRenderer
 					rgba[1] = 255;
 					rgba[2] = 255;
 					rgba[3] = 255;
+					elev = lastElevS;
+				} else {
+					lastElevS = elev;
 				}
 				Vertex swVtx = createVertex(swLat, swLon, elev, rgba);
 				
