@@ -104,23 +104,22 @@ public class Edge implements Comparable<Edge>
     
     public double getInterpolatedZ(double frac)
     {
-    	return 0;
+    	return (p1.z * frac) + (p0.x * (1.0 - frac));
     }
     
     public double getInterpolatedZ(double x, double y)
     {
-    	double a = (p1.z - p0.z) / (p1.x - p0.x);
-    	double b = (p0.z*p1.x - p1.z*p0.x) / (p1.x - p0.x);
-    	double z = a * x + b;
-		return z;
-
+    	if (MathExt.abs(p1.y - p0.y) > MathExt.abs(p1.x - p0.x)) {
+    		return y;
+    	} else {
+	    	double z = p0.z + (p1.z - p0.z) * (x - p0.x) / (p1.x - p0.x);
+	    	return z;
+    	}
     }
     
     
     public void getInterpolatedColor(double x, double y, int[] rgba)
     {
-    	//double y0 = MathExt.max(p0.y, p1.y);
-    	//double y1 = MathExt.min(p0.y, p1.y);
     	Vertex p0 = (this.p0.compareToX(this.p1) < 0) ? this.p0 : this.p1;
     	Vertex p1 = (this.p0.compareToX(this.p1) < 0) ? this.p1 : this.p0;
     	

@@ -246,6 +246,8 @@ public class SimpleRenderer
 			return;
 		}
 		
+		double minElevation = modelContext.getRasterDataContext().getDataMinimumValue() - 10;
+		
 		double north = modelContext.getNorth();
 		double south = modelContext.getSouth();
 		double east = modelContext.getEast();
@@ -264,7 +266,7 @@ public class SimpleRenderer
 		double radiusInterval = MathExt.sqrt(MathExt.sqr(latitudeResolution) + MathExt.sqr(longitudeResolution));
 		
 		
-		Line line = new Line();
+		//Line line = new Line();
 		
 		
 		double[] points = new double[3];
@@ -277,10 +279,21 @@ public class SimpleRenderer
 		double resolution = (points[1] / radiusInterval);
 		double elevation = (resolution * metersResolution);
 
-		line.addEdge(createEdge(latitude, longitude, elevation, centerLatitude, centerLongitude, 0.0));
-		line.addEdge(createEdge(latitude, longitude, 0, centerLatitude, centerLongitude, 0.0));
 		
-		canvas.drawShape(line, sourceLineColor);
+		Vertex vMid = createVertex(centerLatitude, centerLongitude, minElevation, sourceLineColor);
+		Vertex vHigh = createVertex(latitude, longitude, elevation, sourceLineColor);
+		Vertex vLow = createVertex(latitude, longitude, minElevation, sourceLineColor);
+		
+		Edge e = new Edge(vMid, vHigh);
+    	Line l = new Line();
+    	l.addEdge(e);
+    	canvas.drawShape(l, sourceLineColor);
+    	
+    	e = new Edge(vMid, vLow);
+    	l = new Line();
+    	l.addEdge(e);
+    	canvas.drawShape(l, sourceLineColor);
+
 	}
 	
 
@@ -310,14 +323,16 @@ public class SimpleRenderer
 		Edge e;
 		Line l;
 		
-		for (double phi = south; phi <= north; phi +=strip_step) {
+		double minElevation = modelContext.getRasterDataContext().getDataMinimumValue() - 10;
+		
+		for (double phi = south; phi < north - strip_step; phi +=strip_step) {
             for (double theta = west; theta < east-slice_step; theta+=slice_step) {
             	
             	
-            	Vertex v0 = createVertex(phi, theta, -10.0, baseGridColor);
-            	Vertex v1 = createVertex(phi, theta+slice_step, -10.0, baseGridColor);
-            	Vertex v2 = createVertex(phi+strip_step, theta, -10.0, baseGridColor);
-            	Vertex v3 = createVertex(phi+strip_step, theta+slice_step, -10.0, baseGridColor);
+            	Vertex v0 = createVertex(phi, theta, minElevation, baseGridColor);
+            	Vertex v1 = createVertex(phi, theta+slice_step, minElevation, baseGridColor);
+            	Vertex v2 = createVertex(phi+strip_step, theta, minElevation, baseGridColor);
+            	Vertex v3 = createVertex(phi+strip_step, theta+slice_step, minElevation, baseGridColor);
             	
             	e = new Edge(v0, v1);
             	l = new Line();
@@ -364,12 +379,6 @@ public class SimpleRenderer
 		double east = rasterDataContext.getEast();
 		double west = rasterDataContext.getWest();
 
-		//double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
-		//double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
-		
-		//double longitudeResolution = rasterDataContext.getLongitudeResolution();
-		//double latitudeResolution = rasterDataContext.getLatitudeResolution();
-		
 		double maxLon = east - longitudeResolution;
 		double minLat = south + latitudeResolution;
 		
@@ -379,27 +388,39 @@ public class SimpleRenderer
 			
 			
 			
-		for (double lat = north; lat > minLat; lat-=latitudeResolution) {
+		for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
 			strip.reset();
 			
-			for (double lon = west; lon < maxLon; lon+=longitudeResolution) {
+			for (double lon = west; lon <= maxLon; lon+=longitudeResolution) {
 				double nwLat = lat;
 				double nwLon = lon;
-				
-				double neLat = lat;
-				double neLon = lon + longitudeResolution;
-				
+
 				double swLat = lat - latitudeResolution;
 				double swLon = lon;
-				
-				double seLat = lat - latitudeResolution;
-				double seLon = lon + longitudeResolution;
 
 				double elev = 0;
 				
+				// NW
+				elev = calculateShadedColor(nwLat, nwLon, rgba);
+				if (elev == DemConstants.ELEV_NO_DATA) {
+					rgba[0] = 255;
+					rgba[1] = 255;
+					rgba[2] = 255;
+					rgba[3] = 255;
+				}
+				Vertex nwVtx = createVertex(nwLat, nwLon, elev, rgba);
 				
+				// SW
+				elev = calculateShadedColor(swLat, swLon, rgba);
+				if (elev == DemConstants.ELEV_NO_DATA) {
+					rgba[0] = 255;
+					rgba[1] = 255;
+					rgba[2] = 255;
+					rgba[3] = 255;
+				}
+				Vertex swVtx = createVertex(swLat, swLon, elev, rgba);
 				
-				
+				/*
 				// NW
 				if ((elev = calculateShadedColor(nwLat, nwLon, rgba)) == DemConstants.ELEV_NO_DATA) 
 					continue;
@@ -409,7 +430,7 @@ public class SimpleRenderer
 				if ((elev = calculateShadedColor(swLat, swLon, rgba)) == DemConstants.ELEV_NO_DATA)
 					continue;
 				Vertex swVtx = createVertex(swLat, swLon, elev, rgba);
-				
+				*/
 				
 				
 				strip.addVertex(nwVtx);
@@ -426,15 +447,6 @@ public class SimpleRenderer
 	
 	protected double calculateShadedColor(double latitude, double longitude, int[] rgba) throws DataSourceException, RayTracingException
 	{
-		//double north = modelContext.getRasterDataContext().getNorth();
-		//double south = modelContext.getRasterDataContext().getSouth();
-		//double east = modelContext.getRasterDataContext().getEast();
-		//double west = modelContext.getRasterDataContext().getWest();
-		
-		//double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
-		//double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
-		
-		
 		double eLat = latitude;
 		double eLon = longitude + longitudeResolution;
 		

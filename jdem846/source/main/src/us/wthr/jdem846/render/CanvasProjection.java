@@ -62,9 +62,11 @@ public class CanvasProjection
 			mapProjection.getPoint(latitude, longitude, elevation, point);
 			point.row = latitudeToRow(point.row);
 			point.column = longitudeToColumn(point.column);
+			point.z = elevation;
 		} else {
 			point.row = latitudeToRow(latitude);
 			point.column = longitudeToColumn(longitude);
+			point.z = elevation;
 		}
 	}
 	
