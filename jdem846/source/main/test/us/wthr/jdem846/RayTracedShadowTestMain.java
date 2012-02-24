@@ -112,11 +112,11 @@ public class RayTracedShadowTestMain extends AbstractTestMain
 		ModelOptions modelOptions = new ModelOptions();
 		modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
-		modelOptions.setTileSize(5000);
+		//modelOptions.setTileSize(5000);
 		modelOptions.setWidth(dataProxy.getDataColumns());
 		modelOptions.setHeight(dataProxy.getDataRows());
-		modelOptions.setDoublePrecisionHillshading(false);
-		modelOptions.setUseSimpleCanvasFill(false);
+		//modelOptions.setDoublePrecisionHillshading(false);
+		//modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(true);
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
 		//modelOptions.setProject3d(true);

@@ -62,12 +62,12 @@ public class NewRender2DProcessTesting
 		//modelOptions.setHillShadeType(DemConstants.HILLSHADING_NONE);
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		//modelOptions.setRelativeLightIntensity(0.5);
-		modelOptions.setTileSize(1000);
+		//modelOptions.setTileSize(1000);
 		//modelOptions.setGridSize(1);
 		//modelOptions.setHeight(3000);
 		//modelOptions.setWidth(3000);
 		//modelOptions.setRelativeLightIntensity(-1.0);
-		modelOptions.setDoublePrecisionHillshading(false);
+		//modelOptions.setDoublePrecisionHillshading(false);
 		//modelOptions.setHillShadeType(DemConstants.HILLSHADING_NONE);
 		//modelOptions.setHeight((int)dataPackage.getRows());
 		//modelOptions.setWidth((int)dataPackage.getColumns());

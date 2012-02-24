@@ -103,11 +103,11 @@ public class PolygonFillTestMain extends AbstractTestMain
 		ModelOptions modelOptions = new ModelOptions();
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
-		modelOptions.setTileSize(1000);
+		//modelOptions.setTileSize(1000);
 		modelOptions.setWidth(700);//dataProxy.getDataColumns());
 		modelOptions.setHeight(700);//dataProxy.getDataRows());
-		modelOptions.setDoublePrecisionHillshading(false);
-		modelOptions.setUseSimpleCanvasFill(false);
+		//modelOptions.setDoublePrecisionHillshading(false);
+		//modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(true);
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);

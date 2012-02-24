@@ -118,7 +118,7 @@ public class SolarUtilTest extends AbstractTestCase
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
 		modelOptions.setBackgroundColor("255;255;255;0");
 		modelOptions.setAntialiased(false);
-		modelOptions.setUseSimpleCanvasFill(false);
+		//modelOptions.setUseSimpleCanvasFill(false);
 		RasterDataContext rasterDataContext = new RasterDataContext();
 		ModelContext modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
 		

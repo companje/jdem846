@@ -18,6 +18,7 @@ package us.wthr.jdem846.render;
 
 import java.awt.Rectangle;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.DemEngine;
@@ -108,7 +109,7 @@ public class ElevationDsFormatGenerator extends RenderEngine
 		int dataCols = rasterDataContext.getDataColumns();
 		int dataRows = rasterDataContext.getDataRows();
 		
-		int tileSize = modelOptions.getTileSize();
+		int tileSize = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
 		if (tileSize > dataRows && dataRows > dataCols)
 			tileSize = dataRows;
 		
