@@ -36,7 +36,7 @@ public enum ModelOptionNamesEnum
 	PROJECTION_SHIFT_Z("us.wthr.jdem846.modelOptions.projection.shiftZ"),
 	PROJECTION_ZOOM("us.wthr.jdem846.modelOptions.projection.zoom"),
 	
-	PRECACHE_STRATEGY("us.wthr.jdem846.modelOptions.precacheStrategy"),
+	//PRECACHE_STRATEGY("us.wthr.jdem846.modelOptions.precacheStrategy"),
 	ANTIALIASED("us.wthr.jdem846.modelOptions.antialiased"),
 	
 	USER_SCRIPT_LANGUAGE("us.wthr.jdem846.modelOptions.userScript.language"),

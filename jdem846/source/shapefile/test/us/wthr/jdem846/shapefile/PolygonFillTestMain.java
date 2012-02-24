@@ -110,7 +110,7 @@ public class PolygonFillTestMain extends AbstractTestMain
 		//modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(true);
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
-		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
+		//modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;0");
 		//modelOptions.setHillShading(false);
 		//modelOptions.setConcurrentRenderPoolSize(10);

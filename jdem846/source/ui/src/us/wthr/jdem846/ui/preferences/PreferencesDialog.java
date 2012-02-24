@@ -21,6 +21,7 @@ import us.wthr.jdem846.ui.base.Slider;
 import us.wthr.jdem846.ui.base.TabPane;
 import us.wthr.jdem846.ui.optionModels.JGoodiesColorThemeListModel;
 import us.wthr.jdem846.ui.optionModels.LanguageListModel;
+import us.wthr.jdem846.ui.optionModels.PrecacheStrategyOptionsListModel;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
 
 
@@ -35,6 +36,10 @@ public class PreferencesDialog extends Dialog
 	
 	
 	private LanguageListModel languageListModel;
+	private PrecacheStrategyOptionsListModel precacheStrategyModel;
+	
+	
+	
 	private ComboBox cmbGeneralLanguage;
 	private JGoodiesColorThemeListModel colorThemeListModel;
 	private ComboBox cmbGeneralColorTheme;
@@ -54,6 +59,8 @@ public class PreferencesDialog extends Dialog
 	private CheckBox chkPerfInterpolateLowerResolutionData;
 	private CheckBox chkPerfAverageOverlappingData;
 	private NumberTextField txtPerfTileSize;
+	private ComboBox cmbPerfPrecacheStrategy;
+	
 	
 	public PreferencesDialog()
 	{
@@ -85,6 +92,8 @@ public class PreferencesDialog extends Dialog
 		chkPerfInterpolateLowerResolutionData = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.interpolateLowerResolutionData"));
 		chkPerfAverageOverlappingData = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.averageOverlappingData"));
 		txtPerfTileSize = new NumberTextField(false);
+		precacheStrategyModel = new PrecacheStrategyOptionsListModel();
+		cmbPerfPrecacheStrategy = new ComboBox(precacheStrategyModel);
 		
 		// Add listeners
 		btnOk.addActionListener(new ActionListener() {
@@ -154,6 +163,10 @@ public class PreferencesDialog extends Dialog
 		performancePanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.tileSize") + ":"));
 		performancePanel.add(txtPerfTileSize);
 		
+		
+		performancePanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.precacheStrategy") + ":"));
+		performancePanel.add(cmbPerfPrecacheStrategy);
+		
 		performancePanel.add(new Label(""));
 		performancePanel.add(chkPerfPipelineRendering);
 		
@@ -201,6 +214,7 @@ public class PreferencesDialog extends Dialog
 		chkPerfAverageOverlappingData.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData"));
 		txtPerfTileSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.performance.tileSize"));
 		
+		precacheStrategyModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy"));
 		
 	}
 	
@@ -225,6 +239,8 @@ public class PreferencesDialog extends Dialog
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.interpolateToHigherResolution", ""+chkPerfInterpolateLowerResolutionData.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.averageOverlappedData", ""+chkPerfAverageOverlappingData.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.tileSize", txtPerfTileSize.getText());
+		JDem846Properties.setProperty("us.wthr.jdem846.performance.precacheStrategy", precacheStrategyModel.getSelectedItemValue());
+		
 		
 	}
 	

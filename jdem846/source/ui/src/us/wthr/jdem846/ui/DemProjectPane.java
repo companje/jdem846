@@ -20,7 +20,12 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -419,15 +424,36 @@ public class DemProjectPane extends JdemPanel implements Savable
 		leftLowerTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.modelOverview"), regionOverviewPanel);
 		leftLowerTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layerOverview"), layerOverviewPanel);
 		
-		SplitPane leftSplit = new SplitPane(SplitPane.VERTICAL_SPLIT);
+		final SplitPane leftSplit = new SplitPane(SplitPane.VERTICAL_SPLIT);
 		leftSplit.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
 		leftSplit.add(leftTabPane);
 		leftSplit.add(leftLowerTabPane);
 		leftSplit.setResizeWeight(0);
 		//leftSplit.setDividerSize(5);
-		leftSplit.setDividerLocation(320);
+		leftSplit.setDividerLocation(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.demProjectPane.leftVerticalSplitPosition"));
 		addLeft(leftSplit, false);
+		
+		
+		ComponentAdapter dividerChangeListener = new ComponentAdapter() {
+			public void componentResized(ComponentEvent arg0) {
+				int location = leftSplit.getDividerLocation();
+				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.demProjectPane.leftVerticalSplitPosition", ""+location);
+			}
+		};
+		leftTabPane.addComponentListener(dividerChangeListener);
+		leftLowerTabPane.addComponentListener(dividerChangeListener);
+		
+		//leftSplit.get
+		leftSplit.addPropertyChangeListener(new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent e) {
+				log.info("Property: " + e.getPropertyName());
+			}
+			
+		});
+		
 		//addLeft(leftTabPane, false);
 		//addLeft(overviewPanel, false);
 		/*

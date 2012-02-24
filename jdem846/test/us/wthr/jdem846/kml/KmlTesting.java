@@ -117,7 +117,7 @@ public class KmlTesting
 
 		modelOptions = new ModelOptions();
 		modelOptions.setColoringType("hypsometric-etopo1-tint");
-		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
+		//modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		//modelOptions.setTileSize(1000);
 		//modelOptions.setDoublePrecisionHillshading(true);
 		

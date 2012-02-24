@@ -96,7 +96,7 @@ public class JdemFrame extends Frame
 
 		// Set Properties
 		this.setTitle(null);
-		this.setSize(JDem846Properties.getIntProperty("us.wthr.jdem846.general.ui.windowWidth"), JDem846Properties.getIntProperty("us.wthr.jdem846.general.ui.windowHeight"));
+		this.setSize(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.windowWidth"), JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.windowHeight"));
 		this.setLocationRelativeTo(null);
 		
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -185,8 +185,8 @@ public class JdemFrame extends Frame
 			}
 			public void componentResized(ComponentEvent e)
 			{
-				JDem846Properties.setProperty("us.wthr.jdem846.general.ui.windowHeight", ""+getHeight());
-				JDem846Properties.setProperty("us.wthr.jdem846.general.ui.windowWidth", ""+getWidth());
+				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.windowHeight", ""+getHeight());
+				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.windowWidth", ""+getWidth());
 			}
 			public void componentShown(ComponentEvent e)
 			{

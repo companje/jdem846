@@ -77,7 +77,7 @@ public class NewTileMethodTestMain extends AbstractTestMain
 		//modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(false);
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
-		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
+		//modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		modelOptions.setBackgroundColor("255;255;255;0");
 		modelOptions.setElevationMultiple(3.0);
 		//modelOptions.setHillShading(false);

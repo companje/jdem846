@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColoringRegistry;
@@ -64,7 +65,8 @@ public class ModelRenderer extends InterruptibleProcess
 	{
 		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
 
-		boolean fullCaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
+		boolean fullCaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
+		//boolean fullCaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
 		int tileNumber = 0;
 		int tileRow = 0;
 		int tileColumn = 0;

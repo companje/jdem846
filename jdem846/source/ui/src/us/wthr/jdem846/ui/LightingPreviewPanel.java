@@ -153,7 +153,7 @@ public class LightingPreviewPanel extends Panel
 			modelOptions.setGridSize(2);
 			//modelOptions.setUseSimpleCanvasFill(true);
 			modelOptions.setAntialiased(false);
-			modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
+			//modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
 			modelOptions.setConcurrentRenderPoolSize(1);
 			//modelOptions.setUsePipelineRender(false);
 			

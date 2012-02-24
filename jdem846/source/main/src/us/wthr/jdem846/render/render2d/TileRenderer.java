@@ -176,7 +176,7 @@ public class TileRenderer extends InterruptibleProcess
 		eastLimit = east;
 		westLimit = west;
 		
-		tiledPrecaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
+		tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		
 		
 		latitudeResolution = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();

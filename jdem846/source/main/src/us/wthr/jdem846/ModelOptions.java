@@ -423,7 +423,7 @@ public class ModelOptions extends MappedOptions
 		setOption(ModelOptionNamesEnum.GRADIENT_LEVELS, gradientLevels);
 	}
 
-
+	/*
 	public String getPrecacheStrategy() 
 	{
 		return getOption(ModelOptionNamesEnum.PRECACHE_STRATEGY);
@@ -434,7 +434,7 @@ public class ModelOptions extends MappedOptions
 	{
 		setOption(ModelOptionNamesEnum.PRECACHE_STRATEGY, precacheStrategy);
 	}
-
+	*/
 
 	public boolean isAntialiased() 
 	{
