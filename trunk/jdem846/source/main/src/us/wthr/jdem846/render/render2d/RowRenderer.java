@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
@@ -93,7 +94,7 @@ public class RowRenderer extends InterruptibleProcess
 		gridSize = getModelOptions().getGridSize();
 		metersResolution = getRasterDataContext().getMetersResolution();
 		lightingEnabled = getLightingContext().isLightingEnabled();
-		tiledPrecaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
+		tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		doublePrecisionHillshading = false;//getModelOptions().getDoublePrecisionHillshading();
 		relativeLightIntensity = getLightingContext().getRelativeLightIntensity();
 		relativeDarkIntensity = getLightingContext().getRelativeDarkIntensity();

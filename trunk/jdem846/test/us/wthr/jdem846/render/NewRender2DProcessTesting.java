@@ -60,7 +60,7 @@ public class NewRender2DProcessTesting
 		ModelOptions modelOptions = new ModelOptions();
 		//modelOptions.setColoringType("hypsometric-etopo1-tint");
 		//modelOptions.setHillShadeType(DemConstants.HILLSHADING_NONE);
-		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
+		//modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);
 		//modelOptions.setRelativeLightIntensity(0.5);
 		//modelOptions.setTileSize(1000);
 		//modelOptions.setGridSize(1);

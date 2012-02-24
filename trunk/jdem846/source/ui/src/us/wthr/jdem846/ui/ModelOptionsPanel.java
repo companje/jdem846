@@ -122,8 +122,8 @@ public class ModelOptionsPanel extends RoundedPanel
 	private ComboBox cmbAntialiasing;
 	private AntialiasingOptionsListModel antialiasingModel;
 	
-	private ComboBox cmbPrecacheStrategy;
-	private PrecacheStrategyOptionsListModel precacheStrategyModel;
+	//private ComboBox cmbPrecacheStrategy;
+	//private PrecacheStrategyOptionsListModel precacheStrategyModel;
 	
 	private ColorSelection colorSelection;
 	
@@ -186,8 +186,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		antialiasingModel = new AntialiasingOptionsListModel();
 		cmbAntialiasing = new ComboBox(antialiasingModel);
 
-		precacheStrategyModel = new PrecacheStrategyOptionsListModel();
-		cmbPrecacheStrategy = new ComboBox(precacheStrategyModel);
+		//precacheStrategyModel = new PrecacheStrategyOptionsListModel();
+		//cmbPrecacheStrategy = new ComboBox(precacheStrategyModel);
 		
 		perspectiveControl = new PerspectiveValueControl();
 		
@@ -221,7 +221,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		//spnRelativeLightIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeLightIntensity.tooltip"));
 		//spnRelativeDarkIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeDarkIntensity.tooltip"));
 		cmbAntialiasing.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.antialiasingCombo.tooltip"));
-		cmbPrecacheStrategy.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.tooltip"));
+		//cmbPrecacheStrategy.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.tooltip"));
 		cmbMapProjection.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.mapProjection.tooltip"));
 		cmbCanvasProjection.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.canvasProjection.tooltip"));
 		perspectiveControl.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.perspectiveValueControl.tooltip"));
@@ -375,8 +375,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.antialiasingCombo.label") + ":"));
 		controlGrid.add(cmbAntialiasing);
 		
-		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.label") + ":"));
-		controlGrid.add(cmbPrecacheStrategy);
+		//controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.label") + ":"));
+		//controlGrid.add(cmbPrecacheStrategy);
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.mapProjection.label")));
 		controlGrid.add(cmbMapProjection);
@@ -458,7 +458,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		colorSelection.setValueString(modelOptions.getBackgroundColor());
 		
 		antialiasingModel.setSelectedItemByValue(modelOptions.isAntialiased());
-		precacheStrategyModel.setSelectedItemByValue(modelOptions.getPrecacheStrategy());
+		//precacheStrategyModel.setSelectedItemByValue(modelOptions.getPrecacheStrategy());
 		mapProjectionListModel.setSelectedItemByValue(modelOptions.getMapProjection().identifier());
 		canvasProjectionListModel.setSelectedItemByValue(modelOptions.getModelProjection().identifier());
 		
@@ -524,7 +524,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		//modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
 		
 		modelOptions.setAntialiased(antialiasingModel.getSelectedItemValue());
-		modelOptions.setPrecacheStrategy(precacheStrategyModel.getSelectedItemValue());
+		//modelOptions.setPrecacheStrategy(precacheStrategyModel.getSelectedItemValue());
 		
 		//modelOptions.setLightingAzimuth(lightSourceControl.getSolarAzimuth());
 		//modelOptions.setLightingElevation(lightSourceControl.getSolarElevation());
@@ -565,7 +565,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		coloringControl.setEnabled(engineInstance.usesColoring());
 		//cmbHillshading.setEnabled(engineInstance.usesHillshading());
 		cmbAntialiasing.setEnabled(engineInstance.usesAntialiasing());
-		cmbPrecacheStrategy.setEnabled(engineInstance.usesPrecacheStrategy());
+		//cmbPrecacheStrategy.setEnabled(engineInstance.usesPrecacheStrategy());
 		cmbMapProjection.setEnabled(engineInstance.usesMapProjection());
 		//spnLightMultiple.setEnabled(engineInstance.usesLightMultiple());
 		//jsldSpotExponent.setEnabled(engineInstance.usesSpotExponent());

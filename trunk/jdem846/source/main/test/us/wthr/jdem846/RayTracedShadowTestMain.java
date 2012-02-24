@@ -120,7 +120,7 @@ public class RayTracedShadowTestMain extends AbstractTestMain
 		modelOptions.setAntialiased(true);
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
 		//modelOptions.setProject3d(true);
-		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
+		//modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
 		modelOptions.setBackgroundColor("255;255;255;255");
 		modelOptions.getProjection().setRotateX(30);
 		
