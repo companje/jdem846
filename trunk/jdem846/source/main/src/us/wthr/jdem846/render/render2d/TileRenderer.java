@@ -50,6 +50,7 @@ import us.wthr.jdem846.render.ShadowBuffer;
 import us.wthr.jdem846.render.TriangleStripFill;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.scripting.ScriptProxy;
+import us.wthr.jdem846.util.ColorSerializationUtil;
 
 public class TileRenderer extends InterruptibleProcess
 {
@@ -108,7 +109,8 @@ public class TileRenderer extends InterruptibleProcess
 	private int colorBufferA[] = new int[4];
 	private int colorBufferB[] = new int[4];
 	private double[] pointNormal = new double[3];
-
+	private int[] backgroundColor = new int[4];
+	
 	private double latitudeSlices = 50;
 	private double longitudeSlices = 50;
 	
@@ -175,6 +177,9 @@ public class TileRenderer extends InterruptibleProcess
 		southLimit = south;
 		eastLimit = east;
 		westLimit = west;
+		
+		
+		ColorSerializationUtil.stringToColor(modelContext.getModelOptions().getBackgroundColor(), backgroundColor);
 		
 		tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		
@@ -367,6 +372,26 @@ public class TileRenderer extends InterruptibleProcess
 				double elev = 0;
 				
 				// NW
+				elev = calculateShadedColor(nwLat, nwLon, rgba);
+				if (elev == DemConstants.ELEV_NO_DATA) {
+					rgba[0] = backgroundColor[0];
+					rgba[1] = backgroundColor[1];
+					rgba[2] = backgroundColor[2];
+					rgba[3] = backgroundColor[3];
+				}
+				Vertex nwVtx = createVertex(nwLat, nwLon, elev, rgba);
+				
+				// SW
+				elev = calculateShadedColor(swLat, swLon, rgba);
+				if (elev == DemConstants.ELEV_NO_DATA) {
+					rgba[0] = backgroundColor[0];
+					rgba[1] = backgroundColor[1];
+					rgba[2] = backgroundColor[2];
+					rgba[3] = backgroundColor[3];
+				}
+				Vertex swVtx = createVertex(swLat, swLon, elev, rgba);
+				/*
+				// NW
 				if ((elev = calculateShadedColor(nwLat, nwLon, rgba)) == DemConstants.ELEV_NO_DATA) 
 					continue;
 				Vertex nwVtx = createVertex(nwLat, nwLon, elev, rgba);
@@ -375,7 +400,7 @@ public class TileRenderer extends InterruptibleProcess
 				if ((elev = calculateShadedColor(swLat, swLon, rgba)) == DemConstants.ELEV_NO_DATA)
 					continue;
 				Vertex swVtx = createVertex(swLat, swLon, elev, rgba);
-				
+				*/
 				
 				
 				strip.addVertex(nwVtx);

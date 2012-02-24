@@ -66,7 +66,7 @@ public class PerspectiveValueControl extends Panel implements PerspectiveSelecti
 		constraints.weightx = 0.25;
 		constraints.gridwidth  = GridBagConstraints.REMAINDER;
 		gridbag.setConstraints(btnChange, constraints);
-		add(btnChange);
+		//add(btnChange);
 		
 		
 		updateValueText();

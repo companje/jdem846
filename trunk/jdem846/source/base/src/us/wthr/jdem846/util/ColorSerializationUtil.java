@@ -31,4 +31,32 @@ public class ColorSerializationUtil
 	}
 	
 	
+	public static void stringToColor(String colorString, int[] rgba)
+	{
+		if (colorString == null) {
+			rgba[3] = 0;
+			return;
+		}
+		
+		String[] tokens = colorString.split(";");
+		if (tokens.length != 4) {
+			rgba[3] = 0;
+			return;
+		}
+		
+		int red = Integer.valueOf(tokens[0]);
+		int green = Integer.valueOf(tokens[1]);
+		int blue = Integer.valueOf(tokens[2]);
+		int alpha = Integer.valueOf(tokens[3]);
+		
+		rgba[0] = red;
+		rgba[1] = green;
+		rgba[2] = blue;
+		rgba[3] = alpha;
+		
+		//return new Color(red, green, blue, alpha);
+	}
+	
+	
+	
 }

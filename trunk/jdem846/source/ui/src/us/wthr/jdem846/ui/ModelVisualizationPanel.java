@@ -26,6 +26,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.Perspectives;
+import us.wthr.jdem846.PropertiesChangeListener;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
@@ -70,6 +71,8 @@ public class ModelVisualizationPanel extends Panel
 	private CheckBox chkPreviewRaster;
 	
 	int buttonDown = -1;
+	int downX = -1;
+	int downY = -1;
 	int lastX = -1;
 	int lastY = -1;
 	
@@ -179,6 +182,8 @@ public class ModelVisualizationPanel extends Panel
 			public void mousePressed(MouseEvent e) 
 			{
 				buttonDown = e.getButton();
+				downX = e.getX();
+				downY = e.getY();
 			}
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e)
@@ -198,10 +203,13 @@ public class ModelVisualizationPanel extends Panel
 				buttonDown = -1;
 				lastX = -1;
 				lastY = -1;
-
+				downX = -1;
+				downY = -1;
+				
 				ignoreUpdate = true;
 				fireProjectionChangeListeners();
 				ignoreUpdate = false;
+				pnlModelDisplay.repaint();
 			}
 		};
 		pnlModelDisplay.addMouseListener(mouseAdapter);
@@ -214,7 +222,21 @@ public class ModelVisualizationPanel extends Panel
 			}
 		});
 		
-		
+		JDem846Properties.addPropertiesChangeListener(new PropertiesChangeListener() {
+			public void onPropertyChanged(String property, String oldValue, String newValue)
+			{
+				if (property.equals("us.wthr.jdem846.previewing.ui.rasterPreview")) {
+					rasterPreview = Boolean.parseBoolean(newValue);
+					update(false, false);
+					setControlState();
+				} else if (property.equals("us.wthr.jdem846.previewing.ui.previewQuality")) {
+					previewQuality = Double.parseDouble(newValue);
+					update(false, false);
+					setControlState();
+				}
+				
+			}
+		});
 		
 		Panel pnlControls = new Panel();
 		pnlControls.setLayout(new FlowLayout());
@@ -245,7 +267,7 @@ public class ModelVisualizationPanel extends Panel
 	protected void onRasterPreviewCheckChanged()
 	{
 		rasterPreview = chkPreviewRaster.getModel().isSelected();
-		update(false, false);
+		//update(false, false);
 		
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.rasterPreview", ""+rasterPreview);
 		
@@ -255,7 +277,7 @@ public class ModelVisualizationPanel extends Panel
 	{
 		double value = (double) sldQuality.getValue();
 		previewQuality = (value / 100);
-		update(true, false);
+		//update(true, false);
 		
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewQuality", ""+previewQuality);
 	}
@@ -277,7 +299,7 @@ public class ModelVisualizationPanel extends Panel
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", true);
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", true);
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
 		
 		
 		
@@ -303,8 +325,18 @@ public class ModelVisualizationPanel extends Panel
 			onMouseDraggedLeftButton(e);
 		} else if (buttonDown == 2) {
 			onMouseDraggedMiddleButton(e);
+		} else if (buttonDown == 3) {
+			onMouseDraggedRightButton(e);
 		}
 		
+	}
+	
+	protected void onMouseDraggedRightButton(MouseEvent e)
+	{
+		
+		lastX = e.getX();
+		lastY = e.getY();
+		pnlModelDisplay.repaint();
 	}
 	
 	protected void onMouseDraggedMiddleButton(MouseEvent e)
@@ -418,12 +450,12 @@ public class ModelVisualizationPanel extends Panel
 		
 		log.info("Rendering model visualization image");
 		
-		int dimension = (int) MathExt.min((double)getWidth(), (double)getHeight());
-		////modelContextWorkingCopy.getModelOptions().setWidth(dimension - 20);
-		//modelContextWorkingCopy.getModelOptions().setHeight(dimension - 20);
+		int dimension = (int) MathExt.min((double)pnlModelDisplay.getWidth(), (double)pnlModelDisplay.getHeight());
+		modelContextWorkingCopy.getModelOptions().setWidth(dimension - 20);
+		modelContextWorkingCopy.getModelOptions().setHeight(dimension - 20);
 		
-		modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
-		modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
+		//modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
+		//modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
 		
 		modelContextWorkingCopy.updateContext();
 		modelContextWorkingCopy.resetModelCanvas();
@@ -482,9 +514,31 @@ public class ModelVisualizationPanel extends Panel
 			
 			
 			if (modelVisualizationImage != null) {
-				g2d.drawImage(modelVisualizationImage, 10, 10, null);
+				
+				int x = (int) ((getWidth() / 2.0) - (modelVisualizationImage.getWidth(null) / 2.0));
+				int y = (int) ((getHeight() / 2.0) - (modelVisualizationImage.getHeight(null) / 2.0));
+				
+				g2d.drawImage(modelVisualizationImage, x, y, null);
 			}
-
+			
+			if (downX != -1 && downY != -1 && buttonDown == 3) {
+				
+				
+				int x0 = (int) MathExt.min(downX, lastX);
+				int y0 = (int) MathExt.min(downY, lastY);
+				
+				int x1 = (int) MathExt.max(downX, lastX);
+				int y1 = (int) MathExt.max(downY, lastY);
+				
+				g2d.setColor(Color.BLUE);
+				g2d.drawRect(x0, y0, x1 - x0, y1 - y0);
+				
+				
+				g2d.setColor(new Color(Color.BLUE.getRed(), Color.BLUE.getGreen(), Color.BLUE.getBlue(), 25));
+				g2d.fillRect(x0, y0, x1 - x0, y1 - y0);
+			}
+			
+			
 			
 		}
 		

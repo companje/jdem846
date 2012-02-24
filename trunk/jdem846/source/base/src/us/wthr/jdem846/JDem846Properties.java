@@ -21,6 +21,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import us.wthr.jdem846.logging.Log;
@@ -40,6 +44,8 @@ public class JDem846Properties
 	private static boolean loaded = false;
 	private static Properties properties = new Properties();
 	
+	private static Map<String, List<PropertiesChangeListener>> propertiesChangeListeners = new HashMap<String, List<PropertiesChangeListener>>();
+
 	static {
 		overrideWithSystemProperties();
 	}
@@ -52,7 +58,10 @@ public class JDem846Properties
 	
 	public static void setProperty(String name, String value)
 	{
+		String oldValue = properties.getProperty(name);
 		properties.setProperty(name, value);
+		
+		firePropertiesChangeListener(name, oldValue, value);
 	}
 	
 	public static String getProperty(String name)
@@ -190,4 +199,51 @@ public class JDem846Properties
 		
 	}
 	
+	public static void firePropertiesChangeListener(String property, String oldValue, String newValue)
+	{
+		List<PropertiesChangeListener> propertyListeners = new LinkedList<PropertiesChangeListener>();
+		if (propertiesChangeListeners.containsKey(property)) {
+			propertyListeners.addAll(propertiesChangeListeners.get(property));
+		}
+		if (propertiesChangeListeners.containsKey("*************")) {
+			propertyListeners.addAll(propertiesChangeListeners.get("*************"));
+		}
+		
+		for (PropertiesChangeListener listener : propertyListeners) {
+			listener.onPropertyChanged(property, oldValue, newValue);
+		}
+
+	}
+	
+	
+	public static void addPropertiesChangeListener(String property, PropertiesChangeListener listener)
+	{
+		if (!propertiesChangeListeners.containsKey(property)) {
+			propertiesChangeListeners.put(property, new LinkedList<PropertiesChangeListener>());
+		}
+		
+		if (!propertiesChangeListeners.get(property).contains(listener)) {
+			propertiesChangeListeners.get(property).add(listener);
+		}
+	}
+	
+	
+	public static void addPropertiesChangeListener(PropertiesChangeListener listener)
+	{
+		addPropertiesChangeListener("*************", listener);
+	}
+	
+	public static void removePropertiesChangeListener(PropertiesChangeListener listener)
+	{
+		for (String property : propertiesChangeListeners.keySet()) {
+			removePropertiesChangeListener(property, listener);
+		}
+	}
+	
+	public static void removePropertiesChangeListener(String property, PropertiesChangeListener listener)
+	{
+		if (propertiesChangeListeners.containsKey(property)) {
+			propertiesChangeListeners.get(property).remove(listener);
+		}
+	}
 }

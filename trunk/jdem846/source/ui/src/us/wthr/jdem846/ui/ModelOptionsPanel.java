@@ -79,7 +79,7 @@ import us.wthr.jdem846.ui.perspective.PerspectiveValueControl;
 import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 
 @SuppressWarnings("serial")
-public class ModelOptionsPanel extends RoundedPanel
+public class ModelOptionsPanel extends Panel
 {
 	private static Log log = Logging.getLog(ModelOptionsPanel.class);
 	
@@ -146,6 +146,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		//gridLayout.setVgap(2);
 		//controlGrid.setLayout(gridLayout);
 		//TitledRoundedPanel optionsGrid = new TitledRoundedPanel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.controlGrid.title"));
+		
+		this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		FlexGridPanel controlGrid = new FlexGridPanel(2);
 		
@@ -372,8 +374,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		//controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.label") + ":"));
 		//controlGrid.add(cmbHillshading);
 		
-		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.antialiasingCombo.label") + ":"));
-		controlGrid.add(cmbAntialiasing);
+		//controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.antialiasingCombo.label") + ":"));
+		//controlGrid.add(cmbAntialiasing);
 		
 		//controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.precacheStrategyCombo.label") + ":"));
 		//controlGrid.add(cmbPrecacheStrategy);
@@ -442,8 +444,11 @@ public class ModelOptionsPanel extends RoundedPanel
 		engineModel.setSelectedItemByValue(modelOptions.getEngine());
 		planetListModel.setSelectedItemByValue(modelOptions.getOption(ModelOptionNamesEnum.PLANET));
 		
-		txtWidth.setText(""+modelOptions.getWidth());
-		txtHeight.setText(""+modelOptions.getHeight());
+		int width = modelOptions.getWidth();
+		int height = modelOptions.getHeight();
+		
+		txtWidth.setText(""+width);
+		txtHeight.setText(""+height);
 		chkMaintainAscpectRatio.setSelected(modelOptions.getBooleanOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA));
 		
 		//backgroundModel.setSelectedItemByValue(modelOptions.getBackgroundColor());
@@ -600,22 +605,24 @@ public class ModelOptionsPanel extends RoundedPanel
 	
 	protected void onSizeChanged(Object object)
 	{
-		if (!modelOptions.getBooleanOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA)) {
+		if (ignoreValueChanges || !modelOptions.getBooleanOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA)) {
 			return;
 		}
+		
 		
 		int height = this.txtHeight.getInteger();
 		int width = this.txtWidth.getInteger();
 		
 		if (object == this.txtHeight) {
-			log.info("Height modified!");
+			//log.info("Height modified!");
 			width = (int) Math.round((double)height * getAspectRatio());
 			this.txtWidth.setText(""+width);
 		} else if (object == this.txtWidth) {
-			log.info("Width modified!");
+			//log.info("Width modified!");
 			height = (int) Math.round((double)width / getAspectRatio());
 			this.txtHeight.setText(""+height);
 		}
+		
 	}
 	
 	protected double getAspectRatio()
