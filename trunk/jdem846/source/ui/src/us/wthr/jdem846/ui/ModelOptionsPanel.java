@@ -85,7 +85,7 @@ public class ModelOptionsPanel extends RoundedPanel
 	
 	private NumberTextField txtWidth;
 	private NumberTextField txtHeight;
-	private NumberTextField txtTileSize;
+	//private NumberTextField txtTileSize;
 	private ComboBox cmbEngine;
 	//private ComboBox cmbColoring;
 	//private ComboBox cmbHillshading;
@@ -100,8 +100,8 @@ public class ModelOptionsPanel extends RoundedPanel
 	
 	private CheckBox chkMaintainAscpectRatio;
 	//private CheckBox chkProject3d;
-	private CheckBox chkDoubleSampling;
-	private CheckBox chkUseFastRender;
+	//private CheckBox chkDoubleSampling;
+	//private CheckBox chkUseFastRender;
 	
 	private PerspectiveValueControl perspectiveControl;
 	
@@ -157,7 +157,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		// Create components
 		txtWidth = new NumberTextField(false);
 		txtHeight = new NumberTextField(false);
-		txtTileSize = new NumberTextField(false);
+		//txtTileSize = new NumberTextField(false);
 		
 		engineModel = new EngineListModel();
 		cmbEngine = new ComboBox(engineModel);
@@ -192,8 +192,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		perspectiveControl = new PerspectiveValueControl();
 		
 		//chkProject3d = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.project3d.label"));
-		chkDoubleSampling = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.doubleSampling.label"));
-		chkUseFastRender = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.useFastRender.label"));
+		//chkDoubleSampling = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.doubleSampling.label"));
+		//chkUseFastRender = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.useFastRender.label"));
 		chkMaintainAscpectRatio = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.maintainAspectRatio.label"));
 		
 		colorSelection = new ColorSelection();
@@ -213,7 +213,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		colorSelection.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.tooltip"));
 		//cmbColoring.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.coloringCombo.tooltip"));
 		//cmbHillshading.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.hillshadingCombo.tooltip"));
-		txtTileSize.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.tooltip"));
+		//txtTileSize.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.tooltip"));
 		//spnLightMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.tooltip"));
 		//jsldSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
 		//spnSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
@@ -225,8 +225,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		cmbMapProjection.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.mapProjection.tooltip"));
 		cmbCanvasProjection.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.canvasProjection.tooltip"));
 		perspectiveControl.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.perspectiveValueControl.tooltip"));
-		chkDoubleSampling.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.doubleSampling.tooltip"));
-		chkUseFastRender.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.useFastRender.tooltip"));
+		//chkDoubleSampling.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.doubleSampling.tooltip"));
+		//chkUseFastRender.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.useFastRender.tooltip"));
 		//chkProject3d.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.project3d.tooltip"));
 		chkMaintainAscpectRatio.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.maintainAspectRatio.tooltip"));
 		
@@ -264,8 +264,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		txtWidth.addFocusListener(modelSizeFocusListener);
 		txtHeight.addFocusListener(modelSizeFocusListener);
 		
-		txtTileSize.addActionListener(textFieldActionListener);
-		txtTileSize.addFocusListener(focusListener);
+		//txtTileSize.addActionListener(textFieldActionListener);
+		//txtTileSize.addFocusListener(focusListener);
 		
 		ItemListener comboBoxItemListener = new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -322,8 +322,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		};
 		
 		
-		chkDoubleSampling.getModel().addActionListener(checkBoxActionListener);
-		chkUseFastRender.getModel().addActionListener(checkBoxActionListener);
+	//	/chkDoubleSampling.getModel().addActionListener(checkBoxActionListener);
+		//chkUseFastRender.getModel().addActionListener(checkBoxActionListener);
 		chkMaintainAscpectRatio.getModel().addActionListener(checkBoxActionListener);
 		//chkDoubleSampling.addChangeListener(basicChangeListener);
 		//chkUseFastRender.addChangeListener(basicChangeListener);
@@ -350,8 +350,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		controlGrid.add(new JLabel());
 		controlGrid.add(chkMaintainAscpectRatio);
 		
-		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.label") + ":"));
-		controlGrid.add(txtTileSize);
+		//controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.tileSizeText.label") + ":"));
+		//controlGrid.add(txtTileSize);
 		
 		//controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.label") + ":"));
 		//controlGrid.add(cmbBackgroundColor);
@@ -406,11 +406,11 @@ public class ModelOptionsPanel extends RoundedPanel
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.perspectiveValueControl.label") + ":"));
 		controlGrid.add(perspectiveControl);
 		
-		controlGrid.add(new JLabel());
-		controlGrid.add(chkDoubleSampling);
+		//controlGrid.add(new JLabel());
+		//controlGrid.add(chkDoubleSampling);
 		
-		controlGrid.add(new JLabel());
-		controlGrid.add(chkUseFastRender);
+		//controlGrid.add(new JLabel());
+		//controlGrid.add(chkUseFastRender);
 		
 		
 		BorderLayout layout = new BorderLayout();
@@ -462,7 +462,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		mapProjectionListModel.setSelectedItemByValue(modelOptions.getMapProjection().identifier());
 		canvasProjectionListModel.setSelectedItemByValue(modelOptions.getModelProjection().identifier());
 		
-		txtTileSize.setText(""+modelOptions.getTileSize());
+		//txtTileSize.setText(""+modelOptions.getTileSize());
 		//spnLightMultiple.setValue((int)Math.round(modelOptions.getLightingMultiple() * 100));
 		//jsldSpotExponent.setValue(modelOptions.getSpotExponent());
 		//spnSpotExponent.setValue(modelOptions.getSpotExponent());
@@ -476,8 +476,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		perspectiveControl.setRotateX(modelOptions.getProjection().getRotateX());
 		perspectiveControl.setRotateY(modelOptions.getProjection().getRotateY());
 		
-		chkDoubleSampling.setSelected(modelOptions.getDoublePrecisionHillshading());
-		chkUseFastRender.setSelected(modelOptions.getUseSimpleCanvasFill());
+		//chkDoubleSampling.setSelected(modelOptions.getDoublePrecisionHillshading());
+		//chkUseFastRender.setSelected(modelOptions.getUseSimpleCanvasFill());
 		//chkProject3d.setSelected(modelOptions.getProject3d());
 		
 		//gradientConfigPanel.setGradientIdentifier(modelOptions.getColoringType());
@@ -520,7 +520,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		//modelOptions.setRelativeLightIntensity((double)((Integer)spnRelativeLightIntensity.getValue()) / 100.0);
 		//modelOptions.setRelativeDarkIntensity((double)((Integer)spnRelativeDarkIntensity.getValue()) / 100.0);
 		
-		modelOptions.setTileSize(txtTileSize.getInteger());
+		//modelOptions.setTileSize(txtTileSize.getInteger());
 		//modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
 		
 		modelOptions.setAntialiased(antialiasingModel.getSelectedItemValue());
@@ -540,8 +540,8 @@ public class ModelOptionsPanel extends RoundedPanel
 		//modelOptions.setSpotExponent(jsldSpotExponent.getValue());
 		//modelOptions.setSpotExponent((Integer)spnSpotExponent.getValue());
 		
-		modelOptions.setDoublePrecisionHillshading(chkDoubleSampling.getModel().isSelected());
-		modelOptions.setUseSimpleCanvasFill(chkUseFastRender.getModel().isSelected());
+		//modelOptions.setDoublePrecisionHillshading(chkDoubleSampling.getModel().isSelected());
+		//modelOptions.setUseSimpleCanvasFill(chkUseFastRender.getModel().isSelected());
 		//modelOptions.setProject3d(chkProject3d.getModel().isSelected());
 		
 		modelOptions.setModelProjection(canvasProjectionListModel.getSelectedItemValue());
@@ -570,7 +570,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		//spnLightMultiple.setEnabled(engineInstance.usesLightMultiple());
 		//jsldSpotExponent.setEnabled(engineInstance.usesSpotExponent());
 		//spnSpotExponent.setEnabled(engineInstance.usesSpotExponent());
-		txtTileSize.setEnabled(engineInstance.usesTileSize());
+		//txtTileSize.setEnabled(engineInstance.usesTileSize());
 		//gradientConfigPanel.setEnabled(engineInstance.usesColoring());
 		//lightSourceControl.setEnabled(engineInstance.usesLightDirection());
 		
@@ -594,7 +594,7 @@ public class ModelOptionsPanel extends RoundedPanel
 		//spnLightMultiple.setEnabled(engineInstance.usesLightMultiple());
 		
 		
-		chkDoubleSampling.setEnabled(engineInstance.usesHillshading());
+		//chkDoubleSampling.setEnabled(engineInstance.usesHillshading());
 	}
 	
 	

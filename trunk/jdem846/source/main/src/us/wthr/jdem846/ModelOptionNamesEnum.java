@@ -13,15 +13,15 @@ public enum ModelOptionNamesEnum
 	BACKGROUND_COLOR("us.wthr.jdem846.modelOptions.backgroundColor"),
 	HILLSHADING("us.wthr.jdem846.modelOptions.hillShading"),
 	//HILLSHADE_TYPE("us.wthr.jdem846.modelOptions.hillShadeType"),
-	DOUBLE_PRECISION_HILLSHADING("us.wthr.jdem846.modelOptions.doublePrecisionHillshading"),
+	//DOUBLE_PRECISION_HILLSHADING("us.wthr.jdem846.modelOptions.doublePrecisionHillshading"),
 	COLORING_TYPE("us.wthr.jdem846.modelOptions.coloringType"),
 	//LIGHTING_AZIMUTH("us.wthr.jdem846.modelOptions.lightingAzimuth"),
 	//LIGHTING_ELEVATION("us.wthr.jdem846.modelOptions.lightingElevation"),
-	TILE_SIZE("us.wthr.jdem846.modelOptions.tileSize"),
+	//TILE_SIZE("us.wthr.jdem846.modelOptions.tileSize"),
 	//LIGHTING_MULTIPLE("us.wthr.jdem846.modelOptions.lightingMultiple"),
 	//SPOT_EXPONENT("us.wthr.jdem846.modelOptions.spotExponent"),
 	ELEVATION_MULTIPLE("us.wthr.jdem846.modelOptions.elevationMultiple"),
-	USE_SIMPLE_CANVAS_FILL("us.wthr.jdem846.modelOptions.useSimpleCanvasFill"),
+	//USE_SIMPLE_CANVAS_FILL("us.wthr.jdem846.modelOptions.useSimpleCanvasFill"),
 	
 	CONCURRENT_RENDER_POOL_SIZE("us.wthr.jdem846.modelOptions.concurrentRenderPoolSize"),
 	

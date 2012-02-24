@@ -94,7 +94,7 @@ public class RowRenderer extends InterruptibleProcess
 		metersResolution = getRasterDataContext().getMetersResolution();
 		lightingEnabled = getLightingContext().isLightingEnabled();
 		tiledPrecaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
-		doublePrecisionHillshading = getModelOptions().getDoublePrecisionHillshading();
+		doublePrecisionHillshading = false;//getModelOptions().getDoublePrecisionHillshading();
 		relativeLightIntensity = getLightingContext().getRelativeLightIntensity();
 		relativeDarkIntensity = getLightingContext().getRelativeDarkIntensity();
 		//hillShadeType = getModelOptions().getHillShadeType();

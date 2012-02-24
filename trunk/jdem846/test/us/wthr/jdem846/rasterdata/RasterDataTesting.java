@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.RegistryKernel;
@@ -116,11 +117,11 @@ public class RasterDataTesting
 		
 		ModelOptions modelOptions = new ModelOptions();
 		
-		modelOptions.setTileSize(1000);
+		//modelOptions.setTileSize(1000);
 		modelOptions.setWidth(dataProxy.getDataColumns());
 		modelOptions.setHeight(dataProxy.getDataRows());
-		modelOptions.setDoublePrecisionHillshading(false);
-		modelOptions.setUseSimpleCanvasFill(true);
+		//modelOptions.setDoublePrecisionHillshading(false);
+		//modelOptions.setUseSimpleCanvasFill(true);
 		modelOptions.setAntialiased(false);
 		//modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR3D);
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, modelOptions);
@@ -146,7 +147,7 @@ public class RasterDataTesting
 		
 		ModelOptions modelOptions = new ModelOptions();
 		
-		modelOptions.setTileSize(1000);
+		///modelOptions.setTileSize(1000);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, modelOptions);
 		
@@ -168,7 +169,7 @@ public class RasterDataTesting
 		double latitudeResolution = dataProxy.getLatitudeResolution();
 		double longitudeResolution = dataProxy.getLongitudeResolution();
 		
-		double tileSize = modelContext.getModelOptions().getTileSize();
+		double tileSize = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
 		
 		double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
 		double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;

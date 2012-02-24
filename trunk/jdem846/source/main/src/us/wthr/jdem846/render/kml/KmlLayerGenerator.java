@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.ImageException;
@@ -105,7 +106,7 @@ public class KmlLayerGenerator
 
 	protected File createImageTile() throws KmlException, IOException
 	{
-		int tempTileSize = modelContext.getModelOptions().getTileSize();
+		int tempTileSize = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
 		
 		int fromRow = modelContext.getRasterDataContext().latitudeToRow(north);
 		int toRow = modelContext.getRasterDataContext().latitudeToRow(south);

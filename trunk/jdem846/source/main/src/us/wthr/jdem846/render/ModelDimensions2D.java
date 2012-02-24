@@ -2,6 +2,7 @@ package us.wthr.jdem846.render;
 
 import java.awt.Color;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.input.DataPackage;
@@ -41,7 +42,7 @@ public class ModelDimensions2D
 		
 		ModelDimensions2D modelDimensions = new ModelDimensions2D();
 		
-		modelDimensions.tileSize = modelOptions.getTileSize();
+		modelDimensions.tileSize = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
 		modelDimensions.dataRows = dataContext.getDataRows(modelContext.getNorth(), modelContext.getSouth());
 		modelDimensions.dataColumns = dataContext.getDataColumns(modelContext.getEast(), modelContext.getWest());
 		

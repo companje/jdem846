@@ -276,7 +276,7 @@ public class ModelOptions extends MappedOptions
 	*/
 
 
-
+	/*
 	public int getTileSize() 
 	{
 		return getIntegerOption(ModelOptionNamesEnum.TILE_SIZE);
@@ -286,7 +286,7 @@ public class ModelOptions extends MappedOptions
 	{
 		setOption(ModelOptionNamesEnum.TILE_SIZE, tileSize);
 	}
-
+	*/
 	
 
 
@@ -341,6 +341,7 @@ public class ModelOptions extends MappedOptions
 	}
 	*/
 
+	/*
 	public boolean getDoublePrecisionHillshading()
 	{
 		return getBooleanOption(ModelOptionNamesEnum.DOUBLE_PRECISION_HILLSHADING);
@@ -350,6 +351,7 @@ public class ModelOptions extends MappedOptions
 	{
 		setOption(ModelOptionNamesEnum.DOUBLE_PRECISION_HILLSHADING, doublePrecisionHillshading);
 	}
+	*/
 	
 	public String getColoringType()
 	{
@@ -445,6 +447,7 @@ public class ModelOptions extends MappedOptions
 		setOption(ModelOptionNamesEnum.ANTIALIASED, antialiased);
 	}
 
+	/*
 	public boolean getUseSimpleCanvasFill()
 	{
 		return getBooleanOption(ModelOptionNamesEnum.USE_SIMPLE_CANVAS_FILL);
@@ -454,6 +457,7 @@ public class ModelOptions extends MappedOptions
 	{
 		setOption(ModelOptionNamesEnum.USE_SIMPLE_CANVAS_FILL, useSimpleCanvasFill);
 	}
+	*/
 	
 	public int getConcurrentRenderPoolSize()
 	{

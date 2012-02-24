@@ -79,7 +79,7 @@ public class BaseMapProjectionTest extends TestCase
 		modelOptions.setMapProjection(mapProjectionDef);
 		modelOptions.setBackgroundColor("255;255;255;255");
 		modelOptions.setAntialiased(false);
-		modelOptions.setUseSimpleCanvasFill(false);
+		//modelOptions.setUseSimpleCanvasFill(false);
 		RasterDataContext rasterDataContext = new RasterDataContext();
 		ModelContext modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
 		

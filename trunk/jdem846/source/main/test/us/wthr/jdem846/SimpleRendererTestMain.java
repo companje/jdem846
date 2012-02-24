@@ -102,14 +102,14 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		ModelOptions modelOptions = new ModelOptions();
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
-		modelOptions.setTileSize(500);
+		//modelOptions.setTileSize(500);
 		
 		double width = 1000;
 		
 		modelOptions.setWidth((int)width);
 		modelOptions.setHeight((int) Math.round(width/aspect));
-		modelOptions.setDoublePrecisionHillshading(false);
-		modelOptions.setUseSimpleCanvasFill(false);
+		//modelOptions.setDoublePrecisionHillshading(false);
+		//modelOptions.setUseSimpleCanvasFill(false);
 		modelOptions.setAntialiased(false);
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
 		modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_TILED);

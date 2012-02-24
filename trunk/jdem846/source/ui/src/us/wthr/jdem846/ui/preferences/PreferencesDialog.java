@@ -10,6 +10,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.NumberTextField;
 import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.ComboBox;
@@ -52,13 +53,13 @@ public class PreferencesDialog extends Dialog
 	private CheckBox chkPerfNearestNeighborDataRetrieval;
 	private CheckBox chkPerfInterpolateLowerResolutionData;
 	private CheckBox chkPerfAverageOverlappingData;
-	
+	private NumberTextField txtPerfTileSize;
 	
 	public PreferencesDialog()
 	{
 		this.setTitle(I18N.get("us.wthr.jdem846.ui.preferencesDialog.title"));
 		this.setModal(true);
-		this.setSize(400, 300);
+		this.setSize(430, 300);
 		this.setLocationRelativeTo(null);
 		
 		
@@ -83,6 +84,7 @@ public class PreferencesDialog extends Dialog
 		chkPerfNearestNeighborDataRetrieval = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.nearestNeighborDataRetrieval"));
 		chkPerfInterpolateLowerResolutionData = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.interpolateLowerResolutionData"));
 		chkPerfAverageOverlappingData = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.averageOverlappingData"));
+		txtPerfTileSize = new NumberTextField(false);
 		
 		// Add listeners
 		btnOk.addActionListener(new ActionListener() {
@@ -105,7 +107,7 @@ public class PreferencesDialog extends Dialog
 		add(tabPane, BorderLayout.CENTER);
 		
 		
-		FlexGridPanel performancePanel = new FlexGridPanel(1);
+		FlexGridPanel performancePanel = new FlexGridPanel(2);
 		FlexGridPanel previewPanel = new FlexGridPanel(2);
 		FlexGridPanel generalPanel = new FlexGridPanel(2);
 
@@ -149,18 +151,22 @@ public class PreferencesDialog extends Dialog
 		previewPanel.add(chkPreviewingIncludeRasterDataInPreview);
 		
 		
+		performancePanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.tileSize") + ":"));
+		performancePanel.add(txtPerfTileSize);
 		
-		//performancePanel.add(new Label(""));
+		performancePanel.add(new Label(""));
 		performancePanel.add(chkPerfPipelineRendering);
 		
-		//performancePanel.add(new Label(""));
+		performancePanel.add(new Label(""));
 		performancePanel.add(chkPerfNearestNeighborDataRetrieval);
 		
-		//performancePanel.add(new Label(""));
+		performancePanel.add(new Label(""));
 		performancePanel.add(chkPerfInterpolateLowerResolutionData);
 		
-		//performancePanel.add(new Label(""));
+		performancePanel.add(new Label(""));
 		performancePanel.add(chkPerfAverageOverlappingData);
+		
+		
 		
 		
 		
@@ -193,7 +199,7 @@ public class PreferencesDialog extends Dialog
 		chkPerfNearestNeighborDataRetrieval.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.standardResolutionRetrieval"));
 		chkPerfInterpolateLowerResolutionData.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.interpolateToHigherResolution"));
 		chkPerfAverageOverlappingData.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData"));
-
+		txtPerfTileSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.performance.tileSize"));
 		
 		
 	}
@@ -218,8 +224,7 @@ public class PreferencesDialog extends Dialog
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.standardResolutionRetrieval", ""+chkPerfNearestNeighborDataRetrieval.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.interpolateToHigherResolution", ""+chkPerfInterpolateLowerResolutionData.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.averageOverlappedData", ""+chkPerfAverageOverlappingData.getModel().isSelected());
-
-		
+		JDem846Properties.setProperty("us.wthr.jdem846.performance.tileSize", txtPerfTileSize.getText());
 		
 	}
 	
