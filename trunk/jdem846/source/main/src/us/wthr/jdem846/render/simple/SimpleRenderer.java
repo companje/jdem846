@@ -63,6 +63,7 @@ public class SimpleRenderer
 	private double longitudeResolution;
 	private double latitudeResolution;
 	
+	private double elevationMultiple;
 	
 	private boolean lightingEnabled = true;
 	private double spotExponent = 0;
@@ -178,6 +179,7 @@ public class SimpleRenderer
 		lightAzimuth = modelContext.getLightingContext().getLightingAzimuth();
 		lightElevation = modelContext.getLightingContext().getLightingElevation();
 		
+		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		
 		modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
 		projection = modelContext.getModelCanvas().getCanvasProjection();
@@ -580,10 +582,13 @@ public class SimpleRenderer
 					}
 				}
 			}
-		
-			copyRgba(colorBufferA, colorBufferB);
-			ColorAdjustments.adjustBrightness(colorBufferB, dot);
-			ColorAdjustments.interpolateColor(colorBufferA, colorBufferB, rgba, lightingMultiple);
+			
+			copyRgba(colorBufferA, rgba);
+			ColorAdjustments.adjustBrightness(rgba, dot);
+			
+			//copyRgba(colorBufferA, colorBufferB);
+			//ColorAdjustments.adjustBrightness(colorBufferB, dot);
+			//ColorAdjustments.interpolateColor(colorBufferA, colorBufferB, rgba, lightingMultiple);
 		
 		} else {
 			copyRgba(colorBufferA, rgba);
@@ -595,10 +600,10 @@ public class SimpleRenderer
 	
 	protected void calculateNormal(double nw, double sw, double se, double ne, CornerEnum corner, double[] normal)
 	{
-		backLeftPoints[1] = nw;
-		backRightPoints[1] = ne;
-		frontLeftPoints[1] = sw;
-		frontRightPoints[1] = se;
+		backLeftPoints[1] = nw * lightingMultiple;
+		backRightPoints[1] = ne * lightingMultiple;
+		frontLeftPoints[1] = sw * lightingMultiple;
+		frontRightPoints[1] = se * lightingMultiple;
 		
 		if (corner == CornerEnum.NORTHWEST) {
 			perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
