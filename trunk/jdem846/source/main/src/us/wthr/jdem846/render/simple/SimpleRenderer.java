@@ -19,6 +19,8 @@ import us.wthr.jdem846.geom.Triangle;
 import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
+import us.wthr.jdem846.gis.planets.Planet;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -92,8 +94,11 @@ public class SimpleRenderer
 	{
 		this.modelContext = modelContext;
 		
+
+			
+			
 		
-		
+		/*
 		backLeftPoints[0] = -1.0;
 		backLeftPoints[1] = 0.0;
 		backLeftPoints[2] = -1.0;
@@ -109,7 +114,7 @@ public class SimpleRenderer
 		frontRightPoints[0] = 1.0;
 		frontRightPoints[1] = 0.0;
 		frontRightPoints[2] = 1.0;
-		
+		*/
 	}
 	
 	public void setModelContext(ModelContext modelContext)
@@ -132,7 +137,10 @@ public class SimpleRenderer
 		
 		latitudeResolution = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
 		longitudeResolution = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
-
+		
+		////latitudeResolution = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
+		//longitudeResolution = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
+		
 		
 		if (resetCache) {
 			elevationMap = ElevationDataMap.create(modelContext.getNorth(), 
@@ -194,6 +202,37 @@ public class SimpleRenderer
 			lightSourceRayTracer = null;
 		}
 		
+		double latRes = modelContext.getRasterDataContext().getLatitudeResolution();
+		//double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
+		
+		
+		Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
+		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
+		
+		if (planet != null) {
+			meanRadius = planet.getMeanRadius();
+		}
+		
+		double resolution = modelContext.getRasterDataContext().getMetersResolution(meanRadius);
+		resolution = resolution / (latRes / latitudeResolution);
+		
+		double xzRes = (resolution / 2.0);
+		
+		backLeftPoints[0] = -xzRes;
+		backLeftPoints[1] = 0.0;
+		backLeftPoints[2] = -xzRes;
+		
+		backRightPoints[0] = xzRes;
+		backRightPoints[1] = 0.0;
+		backRightPoints[2] = -xzRes;
+		
+		frontLeftPoints[0] = -xzRes;
+		frontLeftPoints[1] = 0.0;
+		frontLeftPoints[2] = xzRes;
+		
+		frontRightPoints[0] = xzRes;
+		frontRightPoints[1] = 0.0;
+		frontRightPoints[2] = xzRes;
 	}
 	
 	
@@ -388,7 +427,9 @@ public class SimpleRenderer
 			
 		double lastElevN = rasterDataContext.getDataMinimumValue();
 		double lastElevS = rasterDataContext.getDataMinimumValue();	
-			
+		
+		
+		
 		for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
 			strip.reset();
 			
@@ -442,10 +483,10 @@ public class SimpleRenderer
 				
 				strip.addVertex(nwVtx);
 				strip.addVertex(swVtx);
-
 				
 				
 			}
+			//log.info("Filling " + strip.getTriangleCount() + " triangles with " + strip.getVertexCount() + " vertecies");
 			canvas.fillShape(strip);
 			
 		}
@@ -639,7 +680,7 @@ public class SimpleRenderer
     	
     	double x = point.column;
     	double y = point.row;
-    	double z = point.z;
+    	double z = modelContext.getRasterDataContext().getDataMinimumValue();//point.z;
 		
     	Vertex v = new Vertex(x, y, z, rgba);
     	return v;
