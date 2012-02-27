@@ -76,7 +76,7 @@ public class LightingOptionsPanel extends RoundedPanel
 		
 		lightSourceControl = new LightingValueControl();
 		
-		spnLightMultiple = new Spinner(new SpinnerNumberModel(50, 0, 1000, 1));
+		spnLightMultiple = new Spinner(new SpinnerNumberModel(50, 0, 100000, 1));
 		spnSpotExponent = new Spinner(new SpinnerNumberModel(1, 1, 5, 1));
 		spnRelativeLightIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
 		spnRelativeDarkIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
