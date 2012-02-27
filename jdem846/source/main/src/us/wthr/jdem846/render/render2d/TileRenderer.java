@@ -100,6 +100,7 @@ public class TileRenderer extends InterruptibleProcess
 	private double lightAzimuth;
 	private double lightElevation;
 	private boolean doubleBuffered;
+	private double elevationMultiple;
 	
 	private MapPoint point = new MapPoint();
 	private Perspectives perspectives = new Perspectives();
@@ -236,6 +237,7 @@ public class TileRenderer extends InterruptibleProcess
 		lightAzimuth = modelContext.getLightingContext().getLightingAzimuth();
 		lightElevation = modelContext.getLightingContext().getLightingElevation();
 		
+		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		
 		modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
 		projection = modelContext.getModelCanvas().getCanvasProjection();
@@ -531,10 +533,13 @@ public class TileRenderer extends InterruptibleProcess
 				}
 			}
 		
-			copyRgba(colorBufferA, colorBufferB);
-			ColorAdjustments.adjustBrightness(colorBufferB, dot);
-			ColorAdjustments.interpolateColor(colorBufferA, colorBufferB, rgba, lightingMultiple);
+			copyRgba(colorBufferA, rgba);
+			ColorAdjustments.adjustBrightness(rgba, dot);
+			//ColorAdjustments.adjustBrightness(colorBufferB, dot);
+			//ColorAdjustments.interpolateColor(colorBufferA, colorBufferB, rgba, lightingMultiple);
 		
+			
+			
 		} else {
 			copyRgba(colorBufferA, rgba);
 		}
@@ -548,10 +553,10 @@ public class TileRenderer extends InterruptibleProcess
 
 	protected void calculateNormal(double nw, double sw, double se, double ne, CornerEnum corner, double[] normal)
 	{
-		backLeftPoints[1] = nw;
-		backRightPoints[1] = ne;
-		frontLeftPoints[1] = sw;
-		frontRightPoints[1] = se;
+		backLeftPoints[1] = nw * lightingMultiple;
+		backRightPoints[1] = ne * lightingMultiple;
+		frontLeftPoints[1] = sw * lightingMultiple;
+		frontRightPoints[1] = se * lightingMultiple;
 		
 		if (corner == CornerEnum.NORTHWEST) {
 			perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
