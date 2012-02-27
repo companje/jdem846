@@ -181,10 +181,19 @@ public class RasterDataContext implements DataContext
 	
 	public double getMetersResolution(double meanRadius)
 	{
-		double lat1 = getSouth();
-		double lon1 = getWest();
-		double lat2 = lat1 + getLatitudeResolution();
-		double lon2 = lon1 + getLongitudeResolution();
+		
+		double lat = (getNorth() - getSouth()) / 2.0;
+		double lon = (getEast() - getWest()) / 2.0;
+		return getMetersResolution(meanRadius, lat, lon, getLatitudeResolution(), getLongitudeResolution());
+
+	}
+	
+	public static double getMetersResolution(double meanRadius, double latitude, double longitude, double latitudeResolution, double longitudeResolution)
+	{
+		double lat1 = latitude;
+		double lon1 = longitude;
+		double lat2 = lat1 + latitudeResolution;
+		double lon2 = lon1 + longitudeResolution;
 		double R = meanRadius;
 		double dLat = Math.toRadians(lat2 - lat1);
 		double dLon = Math.toRadians(lon2 - lon1);
@@ -195,7 +204,6 @@ public class RasterDataContext implements DataContext
 		double d = R * c * 1000;
 		return d;
 	}
-	
 	
 	public void addRasterData(RasterData rasterData) throws DataSourceException
 	{

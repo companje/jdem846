@@ -96,26 +96,6 @@ public class SimpleRenderer
 		this.modelContext = modelContext;
 		
 
-			
-			
-		
-		/*
-		backLeftPoints[0] = -1.0;
-		backLeftPoints[1] = 0.0;
-		backLeftPoints[2] = -1.0;
-		
-		backRightPoints[0] = 1.0;
-		backRightPoints[1] = 0.0;
-		backRightPoints[2] = -1.0;
-		
-		frontLeftPoints[0] = -1.0;
-		frontLeftPoints[1] = 0.0;
-		frontLeftPoints[2] = 1.0;
-		
-		frontRightPoints[0] = 1.0;
-		frontRightPoints[1] = 0.0;
-		frontRightPoints[2] = 1.0;
-		*/
 	}
 	
 	public void setModelContext(ModelContext modelContext)
@@ -204,37 +184,7 @@ public class SimpleRenderer
 			lightSourceRayTracer = null;
 		}
 		
-		double latRes = modelContext.getRasterDataContext().getLatitudeResolution();
-		//double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
-		
-		
-		Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
-		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
-		
-		if (planet != null) {
-			meanRadius = planet.getMeanRadius();
-		}
-		
-		double resolution = modelContext.getRasterDataContext().getMetersResolution(meanRadius);
-		resolution = resolution / (latRes / latitudeResolution);
-		
-		double xzRes = (resolution / 2.0);
-		
-		backLeftPoints[0] = -xzRes;
-		backLeftPoints[1] = 0.0;
-		backLeftPoints[2] = -xzRes;
-		
-		backRightPoints[0] = xzRes;
-		backRightPoints[1] = 0.0;
-		backRightPoints[2] = -xzRes;
-		
-		frontLeftPoints[0] = -xzRes;
-		frontLeftPoints[1] = 0.0;
-		frontLeftPoints[2] = xzRes;
-		
-		frontRightPoints[0] = xzRes;
-		frontRightPoints[1] = 0.0;
-		frontRightPoints[2] = xzRes;
+
 	}
 	
 	
@@ -543,6 +493,8 @@ public class SimpleRenderer
 			if (nElev == DemConstants.ELEV_NO_DATA)
 				nElev = midElev;
 			
+			resetBuffers(latitude, longitude);
+			
 			// NW Normal
 			calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normal);
 			pointNormal[0] = normal[0];
@@ -645,6 +597,39 @@ public class SimpleRenderer
 		sunsource[0] = sun.getX();
 		sunsource[1] = sun.getY();
 		sunsource[2] = sun.getZ();
+		
+	}
+	
+	protected void resetBuffers(double latitude, double longitude)
+	{
+		//double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
+		//double effLonRes = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
+		
+		Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
+		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
+		
+		if (planet != null) {
+			meanRadius = planet.getMeanRadius();
+		}
+		
+		double resolutionMeters = RasterDataContext.getMetersResolution(meanRadius, latitude, longitude, latitudeResolution, longitudeResolution);
+		double xzRes = (resolutionMeters / 2.0);
+		
+		backLeftPoints[0] = -xzRes;
+		backLeftPoints[1] = 0.0;
+		backLeftPoints[2] = -xzRes;
+		
+		backRightPoints[0] = xzRes;
+		backRightPoints[1] = 0.0;
+		backRightPoints[2] = -xzRes;
+		
+		frontLeftPoints[0] = -xzRes;
+		frontLeftPoints[1] = 0.0;
+		frontLeftPoints[2] = xzRes;
+		
+		frontRightPoints[0] = xzRes;
+		frontRightPoints[1] = 0.0;
+		frontRightPoints[2] = xzRes;
 		
 	}
 	
