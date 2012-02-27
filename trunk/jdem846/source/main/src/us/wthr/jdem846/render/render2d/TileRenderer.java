@@ -168,7 +168,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		//shadowBuffer = new ShadowBuffer(modelContext);
 		
-		resetBuffers();
+		//resetBuffers();
 		//setUpLightSource();
 		//rowRenderer = new RowRenderer(modelContext, modelColoring, modelCanvas);
 	}
@@ -262,7 +262,7 @@ public class TileRenderer extends InterruptibleProcess
 			lightSourceRayTracer = null;
 		}
 		
-		this.resetBuffers();
+		//this.resetBuffers();
 	}
 	
 	public void dispose()
@@ -492,6 +492,9 @@ public class TileRenderer extends InterruptibleProcess
 				wElev = midElev;
 			if (nElev == DemConstants.ELEV_NO_DATA)
 				nElev = midElev;
+			
+			resetBuffers(latitude, longitude);
+			
 			
 			// NW Normal
 			calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normal);
@@ -729,11 +732,10 @@ public class TileRenderer extends InterruptibleProcess
 		return elevation;
 	}
 	
-	protected void resetBuffers()
+	protected void resetBuffers(double latitude, double longitude)
 	{
-		double latRes = modelContext.getRasterDataContext().getLatitudeResolution();
 		double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
-		
+		double effLonRes = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
 		
 		Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
 		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
@@ -742,10 +744,8 @@ public class TileRenderer extends InterruptibleProcess
 			meanRadius = planet.getMeanRadius();
 		}
 		
-		double resolution = modelContext.getRasterDataContext().getMetersResolution(meanRadius);
-		resolution = resolution / (latRes / effLatRes);
-		
-		double xzRes = (resolution / 2.0);
+		double resolutionMeters = RasterDataContext.getMetersResolution(meanRadius, latitude, longitude, effLatRes, effLonRes);
+		double xzRes = (resolutionMeters / 2.0);
 		
 		backLeftPoints[0] = -xzRes;
 		backLeftPoints[1] = 0.0;

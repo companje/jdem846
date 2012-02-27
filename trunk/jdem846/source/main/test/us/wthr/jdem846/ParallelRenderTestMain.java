@@ -3,6 +3,8 @@ package us.wthr.jdem846;
 import java.util.LinkedList;
 import java.util.List;
 
+import us.wthr.jdem846.gis.planets.Planet;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
@@ -128,7 +130,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, shapeContext, lightingContext, modelOptions);
 		modelContext.updateContext();
 		
-		
+		/*
 		double startTime = System.currentTimeMillis();
 		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 		OutputProduct<ModelCanvas> product = dem2d.generate(false, false);
@@ -138,6 +140,13 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		
 		double renderSeconds = (endTime - startTime) / 1000;
 		log.info("Completed render in " + renderSeconds + " seconds");
+		*/
+		Planet earth = PlanetsRegistry.getPlanet("Earth");
+		for (double lat = 90; lat >= -90; lat-=1.0) {
+			double res = RasterDataContext.getMetersResolution(earth.getMeanRadius(), lat, 0.0, dataProxy.getEffectiveLatitudeResolution(), dataProxy.getEffectiveLongitudeResolution());
+			
+			log.info("Resolution @ " + lat + ": " + res);
+		}
 		
 	}
 }
