@@ -353,21 +353,22 @@ public class TileRenderer extends InterruptibleProcess
 		double east = eastLimit;
 		double west = westLimit;
 
-		double maxLon = east + longitudeResolution;
+		double maxLon = east + (longitudeResolution * 2);
 		double minLat = south - latitudeResolution;
 		
 		TriangleStrip strip = null;
 
 		
-		double lastElevN = rasterDataContext.getDataMinimumValue();
-		double lastElevS = rasterDataContext.getDataMinimumValue();
+		
 		
 		for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
 			//strip.reset();
+			double lastElevN = 0;//rasterDataContext.getDataMinimumValue();
+			double lastElevS = 0;//rasterDataContext.getDataMinimumValue();
 			
 			strip = new TriangleStrip();
 			
-			for (double lon = west; lon <= maxLon; lon+=longitudeResolution) {
+			for (double lon = west + longitudeResolution; lon <= maxLon; lon+=longitudeResolution) {
 				double nwLat = lat;
 				double nwLon = lon;
 				double swLat = lat - latitudeResolution;

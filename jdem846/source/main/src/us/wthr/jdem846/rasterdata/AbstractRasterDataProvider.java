@@ -1,6 +1,7 @@
 package us.wthr.jdem846.rasterdata;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -86,7 +87,7 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		double latitudeResolution = this.getLatitudeResolution();
 		double longitudeResolution = this.getLongitudeResolution();
 		
-		int tileSize = 1000;
+		int tileSize = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
 		double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
 		double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
 		
