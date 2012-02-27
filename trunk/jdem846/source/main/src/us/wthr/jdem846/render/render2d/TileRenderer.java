@@ -469,7 +469,7 @@ public class TileRenderer extends InterruptibleProcess
 		double min = modelContext.getRasterDataContext().getDataMinimumValue();
 		double max = modelContext.getRasterDataContext().getDataMaximumValue();
 		modelColoring.getGradientColor(midElev, min, max, colorBufferA);
-		
+		onGetPointColor(latitude, longitude, midElev, min, max, colorBufferA);
 		
 		/*
 		 * Ok, just trust me on these ones.... 
