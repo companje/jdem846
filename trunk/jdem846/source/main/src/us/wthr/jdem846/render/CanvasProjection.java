@@ -36,6 +36,25 @@ public class CanvasProjection
 				modelContext.getModelDimensions().getOutputHeight());
 	}
 	
+	public CanvasProjection(ModelContext modelContext,
+			MapProjection mapProjection,
+			double north,
+			double south,
+			double east,
+			double west,
+			double width,
+			double height)
+	{
+		setUp(modelContext,
+				mapProjection,
+				north, 
+				south,
+				east,
+				west,
+				width,
+				height);
+	}
+	
 	public void setUp(ModelContext modelContext,
 					MapProjection mapProjection,
 					double north,
