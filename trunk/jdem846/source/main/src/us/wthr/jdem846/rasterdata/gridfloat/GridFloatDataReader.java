@@ -152,8 +152,8 @@ public class GridFloatDataReader
 		
 		open();
 		
-		long pos = (row * columns) + column;
-		long seekStart = pos * (Float.SIZE / 8);
+		long pos = ((long)row * (long)columns) + (long)column;
+		long seekStart = pos * ((long)(Float.SIZE / 8));
 		long length = 0;
 		
 		try {
