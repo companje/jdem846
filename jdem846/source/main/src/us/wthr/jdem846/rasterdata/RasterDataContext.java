@@ -319,89 +319,36 @@ public class RasterDataContext implements DataContext
 	public double getDataAtEffectiveResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
 	{
 		
+		double north = latitude + (effectiveLatitudeResolution / 2.0);
+		double south = latitude - (effectiveLatitudeResolution / 2.0);
 		
-		//double width = effectiveLongitudeResolution / longitudeResolution;
-		//double height = effectiveLatitudeResolution / latitudeResolution;
+		double west = longitude - (effectiveLongitudeResolution / 2.0);
+		double east = longitude + (effectiveLongitudeResolution / 2.0);
 		
-		double northLimit = getNorth();
-		double southLimit = getSouth();
-		double eastLimit = getEast();
-		double westLimit = getWest();
+		double samples = 0;
 		
+		double data = 0;
 		
-		//double outCols = (longitudeResolution / effectiveLongitudeResolution) * (double)getDataColumns();
-		//double outRows = (latitudeResolution / effectiveLatitudeResolution) * (double)getDataRows();
-		
-		
-		//int dataWidth = (int) MathExt.ceil((double)getDataColumns() / outCols);
-		//int dataHeight = (int) MathExt.ceil((double)getDataRows() / outRows);
-		
-		double dataNorth = (northLimit - (MathExt.floor((northLimit-latitude)/effectiveLatitudeResolution)*effectiveLatitudeResolution)) + (effectiveLatitudeResolution / 2.0);
-		double dataWest = (westLimit + (MathExt.floor((longitude-westLimit)/effectiveLongitudeResolution)*effectiveLongitudeResolution)) - (effectiveLongitudeResolution / 2.0);
-		
-		double dataSouth = dataNorth - effectiveLatitudeResolution;
-		double dataEast = dataWest + effectiveLongitudeResolution;
-		
-		
-		double latFrac = (dataNorth - latitude) / (dataNorth - dataSouth);
-		double lonFrac = (longitude - dataWest) / (dataEast - dataWest);
-		
-		
-		
-		
-		double dataHeight = (dataNorth - dataSouth) / latitudeResolution;
-		double dataWidth = (dataEast - dataWest) / longitudeResolution;
-		
-		int dataRows = (int) MathExt.ceil(dataHeight);
-		int dataColumns = (int) MathExt.ceil(dataWidth);
-		
-		double borderColumnWidth = (1.0 - (dataColumns - dataWidth)) / 2.0;
-		double borderRowHeight = (1.0 - (dataRows - dataHeight)) / 2.0;
-		
-		
-		double[][] data = new double[dataRows][dataColumns];
-
-		
-		// Not 100% correct, but works for now...
-		double dataSum = 0;
-		double dataPoints = 0;
-		for (int h = 0; h < dataRows; h++) {
-			for (int w = 0; w < dataColumns; w++) {
-				double getLat = dataNorth - (h * latitudeResolution);
-				double getLon = dataWest + (w * longitudeResolution);
-				double value = getDataStandardResolution(getLat, getLon, avgOfAllRasterValues, interpolate);
-				data[h][w] = value;
+		// Still not quite as I would like it, but works for now...
+		for (double x = west; x <= east; x+=longitudeResolution) {
+			for (double y = north; y >= south; y-=latitudeResolution) {
+				double _data = getDataStandardResolution(y, x, avgOfAllRasterValues, interpolate);
 				
-				if (value != DemConstants.ELEV_NO_DATA && !Double.isNaN(value)) {
-					
-					double pointWeight = 1.0;
-					if (h == 0 || h == dataRows - 1) {
-						value *= borderRowHeight;
-						pointWeight *= borderRowHeight;
-					}
-					
-					if (w == 0 || w == dataColumns - 1) {
-						value *= borderColumnWidth;
-						pointWeight *= borderColumnWidth;
-					}
-					
-					dataSum += value;
-					dataPoints += pointWeight;
-
+				if (_data != DemConstants.ELEV_NO_DATA) {
+					data += _data;
+					samples++;
 				}
 				
 			}
 		}
+		
 		double finalValue = DemConstants.ELEV_NO_DATA;
-		
-		if (dataPoints > 0) {
-			finalValue = dataSum / dataPoints;
+		if (samples > 0) {
+			finalValue = data / samples;
 		}
-		
-
 		return finalValue;
-		
 	}
+	
 
 	
 	public RasterDataContext getSubSet(double north, double south, double east, double west) throws DataSourceException

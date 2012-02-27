@@ -60,7 +60,7 @@ public class PreferencesDialog extends Dialog
 	private CheckBox chkPerfAverageOverlappingData;
 	private NumberTextField txtPerfTileSize;
 	private ComboBox cmbPerfPrecacheStrategy;
-	
+	private CheckBox chkPerfDoubleBuffered;
 	
 	public PreferencesDialog()
 	{
@@ -94,6 +94,7 @@ public class PreferencesDialog extends Dialog
 		txtPerfTileSize = new NumberTextField(false);
 		precacheStrategyModel = new PrecacheStrategyOptionsListModel();
 		cmbPerfPrecacheStrategy = new ComboBox(precacheStrategyModel);
+		chkPerfDoubleBuffered = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.doubleBuffered"));
 		
 		// Add listeners
 		btnOk.addActionListener(new ActionListener() {
@@ -168,6 +169,9 @@ public class PreferencesDialog extends Dialog
 		performancePanel.add(cmbPerfPrecacheStrategy);
 		
 		performancePanel.add(new Label(""));
+		performancePanel.add(chkPerfDoubleBuffered);
+		
+		performancePanel.add(new Label(""));
 		performancePanel.add(chkPerfPipelineRendering);
 		
 		performancePanel.add(new Label(""));
@@ -213,6 +217,7 @@ public class PreferencesDialog extends Dialog
 		chkPerfInterpolateLowerResolutionData.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.interpolateToHigherResolution"));
 		chkPerfAverageOverlappingData.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData"));
 		txtPerfTileSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.performance.tileSize"));
+		chkPerfDoubleBuffered.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.doubleBuffered"));
 		
 		precacheStrategyModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy"));
 		
@@ -240,6 +245,7 @@ public class PreferencesDialog extends Dialog
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.averageOverlappedData", ""+chkPerfAverageOverlappingData.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.tileSize", txtPerfTileSize.getText());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.precacheStrategy", precacheStrategyModel.getSelectedItemValue());
+		JDem846Properties.setProperty("us.wthr.jdem846.performance.doubleBuffered", ""+chkPerfDoubleBuffered.getModel().isSelected());
 		
 		
 	}

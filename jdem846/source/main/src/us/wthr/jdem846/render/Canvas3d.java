@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.geom.Bounds;
 import us.wthr.jdem846.geom.Edge;
@@ -37,7 +38,7 @@ public class Canvas3d
 {
 	private static Log log = Logging.getLog(Canvas3d.class);
 	
-	private static final double Z_VALUE_NOT_SET = Double.NaN;
+	private static final double Z_VALUE_NOT_SET = DemConstants.ELEV_NO_DATA;
 	
 	private int height;
 	private int width;
@@ -341,8 +342,6 @@ public class Canvas3d
 		if (maxY >= getHeight())
 			maxY = getHeight() - 1;
 		
-		
-		
 		int[] rgba = {0, 0, 0, 255};
 		
 		for (double y = minY; y <= maxY; y++) {
@@ -352,6 +351,15 @@ public class Canvas3d
 					
 					double z = tri.getInterpolatedZ(x, y);
 					tri.getInterpolatedColor(x, y, rgba);
+					
+					if (y < 1) {
+						int i = 0;
+					}
+					
+					//rgba[0] = 255;
+					//rgba[1] = 0;
+				//	rgba[2] = 0;
+					//rgba[3] = 255;
 					
 					set(x, y, z, rgba);
 					
@@ -605,7 +613,7 @@ public class Canvas3d
 
 		double _z = zBuffer.get(x, y);
 		
-		if (Double.isNaN(_z) || _z < z) {
+		if (_z == DemConstants.ELEV_NO_DATA || _z < z) {
 			pixelBuffer.set(x, y, rgb);
 			zBuffer.set(x, y, z);
 		}
@@ -622,8 +630,8 @@ public class Canvas3d
 	public void set(double x, double y, double z, int[] rgba)
 	{
 		
-		int _x = (int) MathExt.round(x);
-		int _y = (int) MathExt.round(y);
+		int _x = (int) MathExt.floor(x);
+		int _y = (int) MathExt.floor(y);
 		
 		if (!isValidZCoordinate(z))
 			return;
@@ -634,7 +642,7 @@ public class Canvas3d
 		}
 		
 		double _z = zBuffer.get(_x, _y);
-		if (Double.isNaN(_z) || z >= _z) {
+		if (_z == DemConstants.ELEV_NO_DATA || z >= _z) {
 			set(_x, _y, z, rgba);
 		} /*else {
 			int[] pixel = new int[4];

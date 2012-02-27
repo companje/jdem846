@@ -187,7 +187,7 @@ public class ModelRenderer extends InterruptibleProcess
 					double tileEast = tileWest + tileLongitudeWidth + longitudeResolution;
 					
 					if (tileEast >= eastLimit) {
-						tileEast = eastLimit - longitudeResolution;
+						tileEast = eastLimit;
 					}
 
 					if (tileEast - tileWest < longitudeResolution) {

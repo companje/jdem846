@@ -62,7 +62,9 @@ public class CanvasProjection
 			mapProjection.getPoint(latitude, longitude, elevation, point);
 			point.row = latitudeToRow(point.row);
 			point.column = longitudeToColumn(point.column);
-			point.z = elevation;
+			//point.z = elevation;
+			//int i = 0;
+			point.z = 0.0;
 		} else {
 			point.row = latitudeToRow(latitude);
 			point.column = longitudeToColumn(longitude);
@@ -73,18 +75,12 @@ public class CanvasProjection
 	
 	public double latitudeToRow(double latitude)
 	{
-		double range = getNorth() - getSouth();
-		double pos = range - (getNorth() - latitude);
-		double row = (1.0 - (pos / range)) * (double)height;
-		return row;
+		return ((double) height) * ((getNorth() - latitude) / (getNorth() - getSouth()));
 	}
 	
 	public double longitudeToColumn(double longitude)
 	{
-		double range = getEast() - getWest();
-		double pos = range - (longitude - getWest());
-		double col = (1.0 - (pos / range)) * (double) width;
-		return col;
+		return ((double)width) * ((longitude - getWest()) / (getEast() - getWest()));
 	}
 
 	public MapProjection getMapProjection()

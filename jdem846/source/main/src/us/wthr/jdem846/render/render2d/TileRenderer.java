@@ -29,6 +29,8 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
+import us.wthr.jdem846.gis.planets.Planet;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
@@ -97,6 +99,7 @@ public class TileRenderer extends InterruptibleProcess
 	private double shadowIntensity;
 	private double lightAzimuth;
 	private double lightElevation;
+	private boolean doubleBuffered;
 	
 	private MapPoint point = new MapPoint();
 	private Perspectives perspectives = new Perspectives();
@@ -193,9 +196,10 @@ public class TileRenderer extends InterruptibleProcess
 		
 		//latitudeResolution = (northLimit - southLimit - effectiveLatitudeResolution) / latitudeSlices;
 		//longitudeResolution = (eastLimit - westLimit - effectiveLongitudeResolution) / longitudeSlices;
-
 		
-		if (resetCache) {
+		doubleBuffered = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.doubleBuffered");
+		
+		if (doubleBuffered && resetCache) {
 			elevationMap = ElevationDataMap.create(northLimit, 
 					southLimit - latitudeResolution, 
 					eastLimit + longitudeResolution, 
@@ -256,6 +260,7 @@ public class TileRenderer extends InterruptibleProcess
 			lightSourceRayTracer = null;
 		}
 		
+		this.resetBuffers();
 	}
 	
 	public void dispose()
@@ -353,8 +358,8 @@ public class TileRenderer extends InterruptibleProcess
 		double east = eastLimit;
 		double west = westLimit;
 
-		double maxLon = east + (longitudeResolution * 2);
-		double minLat = south - latitudeResolution;
+		double maxLon = east;
+		double minLat = south;
 		
 		TriangleStrip strip = null;
 
@@ -363,12 +368,12 @@ public class TileRenderer extends InterruptibleProcess
 		
 		for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
 			//strip.reset();
-			double lastElevN = 0;//rasterDataContext.getDataMinimumValue();
-			double lastElevS = 0;//rasterDataContext.getDataMinimumValue();
+			double lastElevN = rasterDataContext.getDataMinimumValue();
+			double lastElevS = rasterDataContext.getDataMinimumValue();
 			
 			strip = new TriangleStrip();
 			
-			for (double lon = west + longitudeResolution; lon <= maxLon; lon+=longitudeResolution) {
+			for (double lon = west; lon <= maxLon; lon+=longitudeResolution) {
 				double nwLat = lat;
 				double nwLon = lon;
 				double swLat = lat - latitudeResolution;
@@ -384,6 +389,7 @@ public class TileRenderer extends InterruptibleProcess
 					rgba[2] = backgroundColor[2];
 					rgba[3] = backgroundColor[3];
 					elev = lastElevN;
+					//continue;
 				} else {
 					lastElevN = elev;
 				}
@@ -397,6 +403,7 @@ public class TileRenderer extends InterruptibleProcess
 					rgba[2] = backgroundColor[2];
 					rgba[3] = backgroundColor[3];
 					elev = lastElevS;
+					//continue;
 				} else {
 					lastElevS = elev;
 				}
@@ -671,7 +678,7 @@ public class TileRenderer extends InterruptibleProcess
 		//}
 		
 		double elevation = DemConstants.ELEV_NO_DATA;
-		if (cache) {
+		if (doubleBuffered && cache) {
 			elevation = elevationMap.get(latitude, longitude, DemConstants.ELEV_NO_DATA);
 			if (elevation != DemConstants.ELEV_NO_DATA)
 				return elevation;
@@ -710,7 +717,7 @@ public class TileRenderer extends InterruptibleProcess
 			throw new RenderEngineException("Error executing onGetElevationAfter(" + latitude + ", " + longitude + ", " + elevation + ")", ex);
 		}
 		
-		if (cache) {
+		if (doubleBuffered && cache) {
 			elevationMap.put(latitude, longitude, elevation);
 		}
 		
@@ -719,23 +726,37 @@ public class TileRenderer extends InterruptibleProcess
 	
 	protected void resetBuffers()
 	{
-
+		double latRes = modelContext.getRasterDataContext().getLatitudeResolution();
+		double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
 		
-		backLeftPoints[0] = -1.0;
+		
+		Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
+		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
+		
+		if (planet != null) {
+			meanRadius = planet.getMeanRadius();
+		}
+		
+		double resolution = modelContext.getRasterDataContext().getMetersResolution(meanRadius);
+		resolution = resolution / (latRes / effLatRes);
+		
+		double xzRes = (resolution / 2.0);
+		
+		backLeftPoints[0] = -xzRes;
 		backLeftPoints[1] = 0.0;
-		backLeftPoints[2] = -1.0;
+		backLeftPoints[2] = -xzRes;
 		
-		backRightPoints[0] = 1.0;
+		backRightPoints[0] = xzRes;
 		backRightPoints[1] = 0.0;
-		backRightPoints[2] = -1.0;
+		backRightPoints[2] = -xzRes;
 		
-		frontLeftPoints[0] = -1.0;
+		frontLeftPoints[0] = -xzRes;
 		frontLeftPoints[1] = 0.0;
-		frontLeftPoints[2] = 1.0;
+		frontLeftPoints[2] = xzRes;
 		
-		frontRightPoints[0] = 1.0;
+		frontRightPoints[0] = xzRes;
 		frontRightPoints[1] = 0.0;
-		frontRightPoints[2] = 1.0;
+		frontRightPoints[2] = xzRes;
 		
 	}
 	

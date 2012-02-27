@@ -57,7 +57,7 @@ public class TriangleStrip
 		triangle.p1 = p1;
 		triangle.p2 = p2;
 		triangle.initialize();
-		
+		//Triangle triangle = new Triangle(p0, p1, p2);
 		return triangle;
 	}
 	
