@@ -110,9 +110,7 @@ public class TileRenderer extends InterruptibleProcess
 	private boolean doubleBuffered;
 	private double elevationMultiple;
 	
-	private LightSourceSpecifyTypeEnum lightSourceType;
-	private long lightOnDate;
-	private boolean recalcLightOnEachPoint;
+	
 	
 	private MapPoint point = new MapPoint();
 	private Perspectives perspectives = new Perspectives();
@@ -134,12 +132,15 @@ public class TileRenderer extends InterruptibleProcess
 	private boolean interpolateData = true;
 	private boolean averageOverlappedData = true;
 	
+	private LightSourceSpecifyTypeEnum lightSourceType;
+	private long lightOnDate;
+	private boolean recalcLightOnEachPoint;
 	private SolarCalculator solarCalculator;
 	private SolarPosition position;
 	private EarthDateTime datetime;
 	private Coordinate latitudeCoordinate;
 	private Coordinate longitudeCoordinate;
-	
+	private boolean sunIsUp = false;
 	
 	private double northLimit;
 	private double southLimit;
@@ -242,6 +243,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
+			sunIsUp = true;
 			setUpLightSource(0, 0, modelContext.getLightingContext().getLightingElevation(), modelContext.getLightingContext().getLightingAzimuth(), true);
 		}
 		
@@ -639,6 +641,11 @@ public class TileRenderer extends InterruptibleProcess
 	
 	protected double calculateDotProduct()
 	{
+		if (!sunIsUp) {
+			return -1;
+		}
+		
+		
 		double dot = perspectives.dotProduct(normal, sunsource);
 		dot = Math.pow(dot, spotExponent);
 		
@@ -695,7 +702,14 @@ public class TileRenderer extends InterruptibleProcess
 		solarCalculator.setLongitude(longitudeCoordinate);
 		double solarElevation = solarCalculator.solarElevationAngle();
 		double solarAzimuth = solarCalculator.solarAzimuthAngle();
-
+		double solarZenith = solarCalculator.solarZenithAngle();
+		
+		if (solarZenith > 108.0) {
+			sunIsUp = false;
+		} else {
+			sunIsUp = true;
+		}
+		
 		setUpLightSourceBasic(solarElevation, solarAzimuth);
 		
 	}

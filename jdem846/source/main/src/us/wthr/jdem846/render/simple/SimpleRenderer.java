@@ -98,6 +98,7 @@ public class SimpleRenderer
 	private EarthDateTime datetime;
 	private Coordinate latitudeCoordinate;
 	private Coordinate longitudeCoordinate;
+	private boolean sunIsUp = false;
 	
 	private double latitudeSlices = 50;
 	private double longitudeSlices = 50;
@@ -170,6 +171,7 @@ public class SimpleRenderer
 		
 		
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
+			sunIsUp = true;
 			setUpLightSource(0, 0, modelContext.getLightingContext().getLightingElevation(), modelContext.getLightingContext().getLightingAzimuth(), true);
 		}
 		
@@ -186,6 +188,7 @@ public class SimpleRenderer
 			int second = cal.get(Calendar.SECOND);
 			
 			log.info("Setting initial date/time to " + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
+			
 			
 			position = new SolarPosition();
 			datetime = new EarthDateTime(year, month, day, hour, minute, second, 0, false);
@@ -641,6 +644,10 @@ public class SimpleRenderer
 	
 	protected double calculateDotProduct()
 	{
+		if (!sunIsUp) {
+			return -1;
+		}
+		
 		double dot = perspectives.dotProduct(normal, sunsource);
 		dot = Math.pow(dot, spotExponent);
 		
@@ -686,7 +693,15 @@ public class SimpleRenderer
 		solarCalculator.setLongitude(longitudeCoordinate);
 		double solarElevation = solarCalculator.solarElevationAngle();
 		double solarAzimuth = solarCalculator.solarAzimuthAngle();
-
+		
+		double solarZenith = solarCalculator.solarZenithAngle();
+		
+		if (solarZenith > 108.0) {
+			sunIsUp = false;
+		} else {
+			sunIsUp = true;
+		}
+		
 		setUpLightSourceBasic(solarElevation, solarAzimuth);
 		
 	}
