@@ -7,6 +7,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -185,7 +186,8 @@ public class LightingOptionsPanel extends RoundedPanel
 		spnRelativeLightIntensity.addChangeListener(spinnerChangeListener);
 		spnRelativeDarkIntensity.addChangeListener(spinnerChangeListener);
 		lightSourceControl.addChangeListener(basicChangeListener);
-		spnLightOnTime.addChangeListener(spinnerChangeListener);
+		//spnLightOnTime.addChangeListener(spinnerChangeListener);
+		spnLightOnTime.getModel().addChangeListener(spinnerChangeListener);
 		//chkRayTraceShadows.addChangeListener(basicChangeListener);
 		chkRayTraceShadows.getModel().addActionListener(checkBoxActionListener);
 		spnShadowIntensity.addChangeListener(spinnerChangeListener);
@@ -270,8 +272,30 @@ public class LightingOptionsPanel extends RoundedPanel
 		spnShadowIntensity.setValue((int)Math.round(lightingContext.getShadowIntensity() * 100));
 		
 		if (lightingContext.getLightingOnDate() != -1) {
-			Date date = new Date(lightingContext.getLightingOnDate());
+			
+			Calendar cal = Calendar.getInstance();
+			long currentOffset = cal.get(Calendar.ZONE_OFFSET);
+			
+			long dateTime = lightingContext.getLightingOnDate() - currentOffset;
+			
+			Date date = new Date(dateTime);
+			
+			//cal.set(Calendar.ZONE_OFFSET, 0);
+			//cal.setTimeInMillis(dateTime - (dateTime % 86400000));
+			
+			jdtLightOnDate.setDate(date);
 			lightOnTimeModel.setValue(date);
+			//jdtLightOnDate.setCalendar(cal);
+			
+			//cal = Calendar.getInstance();
+			//cal.set(Calendar.ZONE_OFFSET, 0);
+			//cal.setTimeInMillis((dateTime) % 86400000);
+			
+			//lightOnTimeModel.
+			//Date date = cal.getTime();
+			//date = new Date(dateTime % 8640000);
+			//lightOnTimeModel.setValue(cal.getTime());
+			
 		}
 		
 		chkRecalcLightOnEachPoint.getModel().setSelected(lightingContext.getRecalcLightOnEachPoint());
@@ -294,7 +318,24 @@ public class LightingOptionsPanel extends RoundedPanel
 		lightingContext.setRayTraceShadows(chkRayTraceShadows.getModel().isSelected());
 		lightingContext.setShadowIntensity((double)((Integer)spnShadowIntensity.getValue()) / 100.0);
 		lightingContext.setSpotExponent((Integer)spnSpotExponent.getValue());
-		lightingContext.setLightingOnDate(lightOnTimeModel.getDate());
+		
+		
+		Calendar cal = Calendar.getInstance();
+		int offset = cal.get(Calendar.ZONE_OFFSET);
+		long lightingOnDate = jdtLightOnDate.getDate().getTime() + offset ;
+		
+		lightingOnDate = lightingOnDate - (lightingOnDate % 86400000);
+		
+		//int hour = lightOnTimeModel.getDate().getHours();
+		//int minutes = lightOnTimeModel.getDate().getMinutes();
+		//long lightingOnTime = (hour * )
+				
+		long lightingOnTime = lightOnTimeModel.getDate().getTime() + offset;
+		
+		long lightingDateTime = lightingOnDate + lightingOnTime;
+		lightingContext.setLightingOnDate(lightingDateTime);
+		
+		
 		
 		lightingContext.setRecalcLightOnEachPoint(chkRecalcLightOnEachPoint.getModel().isSelected());
 		//Date date = lightOnTimeModel.getDate();
