@@ -56,6 +56,7 @@ public class LightingOptionsPanel extends RoundedPanel
 	private SpinnerDateModel lightOnTimeModel;
 	private Spinner spnLightOnTime;
 	private JDateChooser jdtLightOnDate;
+	private CheckBox chkRecalcLightOnEachPoint;
 	
 	private LightSourceSpecifyTypeListModel lightSourceSpecifyTypeModel;
 	private ComboBox cmbLightSourceSpecifyType;
@@ -95,6 +96,8 @@ public class LightingOptionsPanel extends RoundedPanel
 		jdtLightOnDate.getJCalendar().setTodayButtonVisible(true);
 		jdtLightOnDate.setDate(new Date(System.currentTimeMillis()));
 		
+		chkRecalcLightOnEachPoint = new CheckBox(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.recalcLightOnEachPoint.label"));
+		
 		lightOnTimeModel = new SpinnerDateModel();
 		spnLightOnTime = new Spinner(lightOnTimeModel);
 		JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(spnLightOnTime, I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.timeSpinner.format"));
@@ -113,6 +116,7 @@ public class LightingOptionsPanel extends RoundedPanel
 		spnLightOnTime.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.timeSpinner.tooltip"));
 		chkRayTraceShadows.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.rayTraceShadows.tooltip"));
 		spnShadowIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.shadowIntensity.tooltip"));
+		chkRecalcLightOnEachPoint.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.recalcLightOnEachPoint.tooltip"));
 		
 		// Add listeners
 		ActionListener textFieldActionListener = new ActionListener() {
@@ -185,6 +189,8 @@ public class LightingOptionsPanel extends RoundedPanel
 		//chkRayTraceShadows.addChangeListener(basicChangeListener);
 		chkRayTraceShadows.getModel().addActionListener(checkBoxActionListener);
 		spnShadowIntensity.addChangeListener(spinnerChangeListener);
+		chkRecalcLightOnEachPoint.getModel().addActionListener(checkBoxActionListener);
+		
 		//jdtLightOnDate.get
 		//jdtLightOnDate.
 		jdtLightOnDate.addPropertyChangeListener("date", datePropertyChangeListener);
@@ -203,6 +209,10 @@ public class LightingOptionsPanel extends RoundedPanel
 		controlGrid.add(jdtLightOnDate);
 		controlGrid.add(new Label(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.timeSpinner.label")));
 		controlGrid.add(spnLightOnTime);
+		
+		controlGrid.add(new Label(""));
+		controlGrid.add(chkRecalcLightOnEachPoint);
+		
 		
 		controlGrid.add(new Label(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.lightMultipleSlider.label") + ":"));
 		controlGrid.add(spnLightMultiple);
@@ -250,13 +260,21 @@ public class LightingOptionsPanel extends RoundedPanel
 		lightSourceControl.setSolarAzimuth(lightingContext.getLightingAzimuth());
 		lightSourceControl.setSolarElevation(lightingContext.getLightingElevation());
 		
-		spnLightMultiple.setValue((int)Math.round(lightingContext.getLightingMultiple() * 100));
+		spnLightMultiple.setValue((int)Math.round(lightingContext.getLightingMultiple()));
+		
 		spnSpotExponent.setValue(lightingContext.getSpotExponent());
 		spnRelativeLightIntensity.setValue((int)Math.round(lightingContext.getRelativeLightIntensity() * 100));
 		spnRelativeDarkIntensity.setValue((int)Math.round(lightingContext.getRelativeDarkIntensity() * 100));
 		
 		chkRayTraceShadows.setSelected(lightingContext.getRayTraceShadows());
 		spnShadowIntensity.setValue((int)Math.round(lightingContext.getShadowIntensity() * 100));
+		
+		if (lightingContext.getLightingOnDate() != -1) {
+			Date date = new Date(lightingContext.getLightingOnDate());
+			lightOnTimeModel.setValue(date);
+		}
+		
+		chkRecalcLightOnEachPoint.getModel().setSelected(lightingContext.getRecalcLightOnEachPoint());
 		
 		ignoreValueChanges = false;	
 	}
@@ -268,7 +286,7 @@ public class LightingOptionsPanel extends RoundedPanel
 		
 		lightingContext.setLightSourceSpecifyType(lightSourceSpecifyTypeModel.getSelectedItemValue());
 		lightingContext.setLightingEnabled(chkLightingEnabled.getModel().isSelected());
-		lightingContext.setLightingMultiple((double)((Integer)spnLightMultiple.getValue()) / 100.0);
+		lightingContext.setLightingMultiple((double)((Integer)spnLightMultiple.getValue()));
 		lightingContext.setRelativeLightIntensity((double)((Integer)spnRelativeLightIntensity.getValue()) / 100.0);
 		lightingContext.setRelativeDarkIntensity((double)((Integer)spnRelativeDarkIntensity.getValue()) / 100.0);
 		lightingContext.setLightingAzimuth(lightSourceControl.getSolarAzimuth());
@@ -276,6 +294,12 @@ public class LightingOptionsPanel extends RoundedPanel
 		lightingContext.setRayTraceShadows(chkRayTraceShadows.getModel().isSelected());
 		lightingContext.setShadowIntensity((double)((Integer)spnShadowIntensity.getValue()) / 100.0);
 		lightingContext.setSpotExponent((Integer)spnSpotExponent.getValue());
+		lightingContext.setLightingOnDate(lightOnTimeModel.getDate());
+		
+		lightingContext.setRecalcLightOnEachPoint(chkRecalcLightOnEachPoint.getModel().isSelected());
+		//Date date = lightOnTimeModel.getDate();
+		
+		//log.info("Light on Date: " + date.getTime());
 	}
 	
 	protected void checkControlState()

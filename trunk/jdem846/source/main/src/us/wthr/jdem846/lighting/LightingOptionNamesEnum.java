@@ -7,6 +7,8 @@ public enum LightingOptionNamesEnum
 	LIGHTING_AZIMUTH("us.wthr.jdem846.lightingContext.lightingAzimuth"),
 	LIGHTING_ELEVATION("us.wthr.jdem846.lightingContext.lightingElevation"),
 	LIGHTING_MULTIPLE("us.wthr.jdem846.lightingContext.lightingMultiple"),
+	LIGHTING_ON_DATE("us.wthr.jdem846.lightingContext.lightOnDate"),
+	RECALC_LIGHT_ON_EACH_POINT("us.wthr.jdem846.lightingContext.recalculateLightSourceOnEachPoint"),
 	RELATIVE_LIGHT_INTENSITY("us.wthr.jdem846.lightingContext.relativeLightIntensity"),
 	RELATIVE_DARK_INTENSITY("us.wthr.jdem846.lightingContext.relativeDarkIntensity"),
 	SPOT_EXPONENT("us.wthr.jdem846.lightingContext.spotExponent"),
