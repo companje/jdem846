@@ -1,5 +1,7 @@
 package us.wthr.jdem846.lighting;
 
+import java.util.Date;
+
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.MappedOptions;
 import us.wthr.jdem846.ModelOptionNamesEnum;
@@ -177,6 +179,33 @@ public class LightingContext extends MappedOptions
 		setOption(LightingOptionNamesEnum.LIGHTING_ELEVATION, lightingElevation);
 	}
 
+	
+	public long getLightingOnDate()
+	{
+		return getLongOption(LightingOptionNamesEnum.LIGHTING_ON_DATE);
+	}
+	
+	public void setLightingOnDate(long lightingOnDate)
+	{
+		setOption(LightingOptionNamesEnum.LIGHTING_ON_DATE, lightingOnDate);
+	}
+	
+	public void setLightingOnDate(Date lightingOnDate)
+	{
+		setLightingOnDate(lightingOnDate.getTime());
+	}
+	
+	public boolean getRecalcLightOnEachPoint()
+	{
+		return getBooleanOption(LightingOptionNamesEnum.RECALC_LIGHT_ON_EACH_POINT);
+	}
+	
+	public void setRecalcLightOnEachPoint(boolean recalcLightOnEachPoint)
+	{
+		setOption(LightingOptionNamesEnum.RECALC_LIGHT_ON_EACH_POINT, recalcLightOnEachPoint);
+	}
+	
+	
 	public boolean getRayTraceShadows()
 	{
 		return getBooleanOption(LightingOptionNamesEnum.RAY_TRACE_SHADOWS);

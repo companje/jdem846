@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,10 +29,17 @@ import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
+import us.wthr.jdem846.gis.Coordinate;
+import us.wthr.jdem846.gis.CoordinateTypeEnum;
+import us.wthr.jdem846.gis.datetime.EarthDateTime;
+import us.wthr.jdem846.gis.datetime.SolarCalculator;
+import us.wthr.jdem846.gis.datetime.SolarPosition;
+import us.wthr.jdem846.gis.datetime.SolarUtil;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
+import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -102,6 +110,10 @@ public class TileRenderer extends InterruptibleProcess
 	private boolean doubleBuffered;
 	private double elevationMultiple;
 	
+	private LightSourceSpecifyTypeEnum lightSourceType;
+	private long lightOnDate;
+	private boolean recalcLightOnEachPoint;
+	
 	private MapPoint point = new MapPoint();
 	private Perspectives perspectives = new Perspectives();
 	private double normal[] = new double[3];
@@ -122,6 +134,11 @@ public class TileRenderer extends InterruptibleProcess
 	private boolean interpolateData = true;
 	private boolean averageOverlappedData = true;
 	
+	private SolarCalculator solarCalculator;
+	private SolarPosition position;
+	private EarthDateTime datetime;
+	private Coordinate latitudeCoordinate;
+	private Coordinate longitudeCoordinate;
 	
 	
 	private double northLimit;
@@ -217,7 +234,50 @@ public class TileRenderer extends InterruptibleProcess
 			}
 		}
 		
-		setUpLightSource(modelContext.getLightingContext().getLightingElevation(), modelContext.getLightingContext().getLightingAzimuth());
+		
+		LightingContext lightingContext = modelContext.getLightingContext();
+		lightSourceType = lightingContext.getLightSourceSpecifyType();
+		lightOnDate = lightingContext.getLightingOnDate();
+		recalcLightOnEachPoint = lightingContext.getRecalcLightOnEachPoint();
+		
+		
+		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
+			setUpLightSource(0, 0, modelContext.getLightingContext().getLightingElevation(), modelContext.getLightingContext().getLightingAzimuth(), true);
+		}
+		
+		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME) {
+			
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(lightOnDate);
+			
+			int year = cal.get(Calendar.YEAR);
+			int month = cal.get(Calendar.MONTH) + 1;
+			int day = cal.get(Calendar.DAY_OF_MONTH);
+			int hour = cal.get(Calendar.HOUR_OF_DAY);
+			int minute = cal.get(Calendar.MINUTE);
+			int second = cal.get(Calendar.SECOND);
+			
+			log.info("Setting initial date/time to " + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
+			
+			position = new SolarPosition();
+			datetime = new EarthDateTime(year, month, day, hour, minute, second, 0, false);
+			latitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LATITUDE);
+			longitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LONGITUDE);
+			solarCalculator = new SolarCalculator();
+			solarCalculator.setDatetime(datetime);
+			
+		
+		
+			
+			if (!recalcLightOnEachPoint) {
+				
+				double latitude = (northLimit + southLimit) / 2.0;
+				double longitude = (eastLimit + westLimit) / 2.0;
+				
+				setUpLightSource(latitude, longitude, 0, 0, true);
+			}
+		}
+		
 		
 		//getStandardResolutionElevation = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.STANDARD_RESOLUTION_RETRIEVAL);
 		//interpolateData = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.INTERPOLATE_HIGHER_RESOLUTION);
@@ -473,11 +533,11 @@ public class TileRenderer extends InterruptibleProcess
 		modelColoring.getGradientColor(midElev, min, max, colorBufferA);
 		onGetPointColor(latitude, longitude, midElev, min, max, colorBufferA);
 		
-		/*
-		 * Ok, just trust me on these ones.... 
-		 */
+		
 		
 		if (lightingEnabled) {
+			
+			
 			double eElev = getRasterData(eLat, eLon);
 			double sElev = getRasterData(sLat, sLon);
 			double wElev = getRasterData(wLat, wLon);
@@ -494,7 +554,11 @@ public class TileRenderer extends InterruptibleProcess
 				nElev = midElev;
 			
 			resetBuffers(latitude, longitude);
+			setUpLightSource(latitude, longitude, 0, 0, recalcLightOnEachPoint);
 			
+			/*
+			 * Ok, just trust me on these ones.... 
+			 */
 			
 			// NW Normal
 			calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normal);
@@ -601,20 +665,50 @@ public class TileRenderer extends InterruptibleProcess
 	}
 	
 	
-	protected void setUpLightSource(double solarElevation, double solarAzimuth)
+	protected void setUpLightSource(double latitude, double longitude, double solarElevation, double solarAzimuth, boolean force)
 	{
-		
-		Vector sun = new Vector(0.0, 0.0, -1.0);
-		Vector angles = new Vector(solarElevation, -solarAzimuth, 0.0);
-		sun.rotate(angles);
 
-		sunsource[0] = sun.getX();
-		sunsource[1] = sun.getY();
-		sunsource[2] = sun.getZ();
+		if (force && lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
+			setUpLightSourceBasic(solarElevation, solarAzimuth);
+		} else if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME) {
+			setUpLightSourceOnDate(latitude, longitude);
+		}
+		
+		
 		
 	}
 	
+	protected void setUpLightSourceOnDate(double latitude, double longitude)
+	{
+		// This stuff in here probably can be vastly optimized...
+		
+		int timezone = (int) Math.floor((longitude / 180.0) * 12.0);
+
+		datetime.setTimezone(timezone);
+		
+		latitudeCoordinate.fromDecimal(latitude);
+		longitudeCoordinate.fromDecimal(longitude);
+
+		
+		solarCalculator.update();
+		solarCalculator.setLatitude(latitudeCoordinate);
+		solarCalculator.setLongitude(longitudeCoordinate);
+		double solarElevation = solarCalculator.solarElevationAngle();
+		double solarAzimuth = solarCalculator.solarAzimuthAngle();
+
+		setUpLightSourceBasic(solarElevation, solarAzimuth);
+		
+	}
 	
+	protected void setUpLightSourceBasic(double solarElevation, double solarAzimuth)
+	{
+		
+		sunsource[0] = 0.0;
+		sunsource[1] = 0.0;
+		sunsource[2] = -1.0;
+		Vector.rotate(solarElevation, -solarAzimuth, 0, sunsource);
+		
+	}
 	
 	
 	protected void loadRasterDataSubset(double north, double south, double east, double west) throws DataSourceException

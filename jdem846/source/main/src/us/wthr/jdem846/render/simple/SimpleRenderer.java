@@ -1,6 +1,7 @@
 package us.wthr.jdem846.render.simple;
 
 import java.awt.Color;
+import java.util.Calendar;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
@@ -18,10 +19,17 @@ import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.geom.Triangle;
 import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
+import us.wthr.jdem846.gis.Coordinate;
+import us.wthr.jdem846.gis.CoordinateTypeEnum;
+import us.wthr.jdem846.gis.datetime.EarthDateTime;
+import us.wthr.jdem846.gis.datetime.SolarCalculator;
+import us.wthr.jdem846.gis.datetime.SolarPosition;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
+import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
+import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -72,6 +80,7 @@ public class SimpleRenderer
 	private double lightingMultiple = 0;
 	private double lightAzimuth;
 	private double lightElevation;
+	private boolean paintGlobalBaseGrid = true;
 	
 	private RayTracing lightSourceRayTracer;
 	private boolean rayTraceShadows;
@@ -80,6 +89,15 @@ public class SimpleRenderer
 	private ModelColoring modelColoring;
 	private CanvasProjection projection;
 	private MapPoint point = new MapPoint();
+	
+	private LightSourceSpecifyTypeEnum lightSourceType;
+	private long lightOnDate;
+	private boolean recalcLightOnEachPoint;
+	private SolarCalculator solarCalculator;
+	private SolarPosition position;
+	private EarthDateTime datetime;
+	private Coordinate latitudeCoordinate;
+	private Coordinate longitudeCoordinate;
 	
 	private double latitudeSlices = 50;
 	private double longitudeSlices = 50;
@@ -140,8 +158,53 @@ public class SimpleRenderer
 			}
 		}
 		
-		setUpLightSource(modelContext.getLightingContext().getLightingElevation(), modelContext.getLightingContext().getLightingAzimuth());
+		LightingContext lightingContext = modelContext.getLightingContext();
+		lightSourceType = lightingContext.getLightSourceSpecifyType();
+		lightOnDate = lightingContext.getLightingOnDate();
 		
+		/* Force this to be false. This renderer needs to be fast and recalculating
+		 * adds way too much overhead. Should the recalc method be optimized enough,
+		 * perhaps this will again be configurable.
+		 */
+		recalcLightOnEachPoint = false;
+		
+		
+		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
+			setUpLightSource(0, 0, modelContext.getLightingContext().getLightingElevation(), modelContext.getLightingContext().getLightingAzimuth(), true);
+		}
+		
+		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME) {
+			
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(lightOnDate);
+			
+			int year = cal.get(Calendar.YEAR);
+			int month = cal.get(Calendar.MONTH) + 1;
+			int day = cal.get(Calendar.DAY_OF_MONTH);
+			int hour = cal.get(Calendar.HOUR_OF_DAY);
+			int minute = cal.get(Calendar.MINUTE);
+			int second = cal.get(Calendar.SECOND);
+			
+			log.info("Setting initial date/time to " + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
+			
+			position = new SolarPosition();
+			datetime = new EarthDateTime(year, month, day, hour, minute, second, 0, false);
+			latitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LATITUDE);
+			longitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LONGITUDE);
+			solarCalculator = new SolarCalculator();
+			solarCalculator.setDatetime(datetime);
+			
+		
+		
+			
+			if (!recalcLightOnEachPoint) {
+				
+				double latitude = (north + south) / 2.0;
+				double longitude = (east + west) / 2.0;
+				
+				setUpLightSource(latitude, longitude, 0, 0, true);
+			}
+		}
 		//getStandardResolutionElevation = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.STANDARD_RESOLUTION_RETRIEVAL);
 		//interpolateData = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.INTERPOLATE_HIGHER_RESOLUTION);
 		//averageOverlappedData = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.AVERAGE_OVERLAPPING_RASTER_DATA);
@@ -164,7 +227,7 @@ public class SimpleRenderer
 		modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
 		projection = modelContext.getModelCanvas().getCanvasProjection();
 		
-		
+		paintGlobalBaseGrid = modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintGlobalBaseGrid");
 		
 		modelContext.getModelDimensions().outputLatitudeResolution = latitudeResolution;
 		modelContext.getModelDimensions().outputLongitudeResolution = longitudeResolution;
@@ -297,6 +360,13 @@ public class SimpleRenderer
 		double east = modelContext.getEast();
 		double west = modelContext.getWest();
 		
+		if (paintGlobalBaseGrid) {
+			north = 90;
+			south = -90;
+			east = 180;
+			west = -180;
+		}
+		
 		Line line = new Line();
 
 		line.addEdge(createEdge(north, west, -1.0, south, west, -1.0));
@@ -316,8 +386,8 @@ public class SimpleRenderer
 		
 		double minElevation = modelContext.getRasterDataContext().getDataMinimumValue() - 10;
 		
-		for (double phi = south; phi < north - strip_step; phi +=strip_step) {
-            for (double theta = west; theta < east-slice_step; theta+=slice_step) {
+		for (double phi = south; phi < north/* - strip_step*/; phi +=strip_step) {
+            for (double theta = west; theta < east/*-slice_step*/; theta+=slice_step) {
             	
             	
             	Vertex v0 = createVertex(phi, theta, minElevation, baseGridColor);
@@ -586,17 +656,48 @@ public class SimpleRenderer
 		
 		return dot;
 	}
+	protected void setUpLightSource(double latitude, double longitude, double solarElevation, double solarAzimuth, boolean force)
+	{
+
+		if (force && lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
+			setUpLightSourceBasic(solarElevation, solarAzimuth);
+		} else if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME) {
+			setUpLightSourceOnDate(latitude, longitude);
+		}
+		
+		
+		
+	}
 	
-	protected void setUpLightSource(double solarElevation, double solarAzimuth)
+	protected void setUpLightSourceOnDate(double latitude, double longitude)
+	{
+		// This stuff in here probably can be vastly optimized...
+		
+		int timezone = (int) Math.floor((longitude / 180.0) * 12.0);
+
+		datetime.setTimezone(timezone);
+		
+		latitudeCoordinate.fromDecimal(latitude);
+		longitudeCoordinate.fromDecimal(longitude);
+
+		
+		solarCalculator.update();
+		solarCalculator.setLatitude(latitudeCoordinate);
+		solarCalculator.setLongitude(longitudeCoordinate);
+		double solarElevation = solarCalculator.solarElevationAngle();
+		double solarAzimuth = solarCalculator.solarAzimuthAngle();
+
+		setUpLightSourceBasic(solarElevation, solarAzimuth);
+		
+	}
+	
+	protected void setUpLightSourceBasic(double solarElevation, double solarAzimuth)
 	{
 		
-		Vector sun = new Vector(0.0, 0.0, -1.0);
-		Vector angles = new Vector(solarElevation, -solarAzimuth, 0.0);
-		sun.rotate(angles);
-
-		sunsource[0] = sun.getX();
-		sunsource[1] = sun.getY();
-		sunsource[2] = sun.getZ();
+		sunsource[0] = 0.0;
+		sunsource[1] = 0.0;
+		sunsource[2] = -1.0;
+		Vector.rotate(solarElevation, -solarAzimuth, 0, sunsource);
 		
 	}
 	
@@ -670,7 +771,8 @@ public class SimpleRenderer
     	
     	double x = point.column;
     	double y = point.row;
-    	double z = modelContext.getRasterDataContext().getDataMinimumValue();//point.z;
+    	double z = point.z;
+    	//double z = modelContext.getRasterDataContext().getDataMinimumValue();//point.z;
 		
     	Vertex v = new Vertex(x, y, z, rgba);
     	return v;

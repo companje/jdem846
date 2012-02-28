@@ -6,6 +6,7 @@ import java.util.List;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
+import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -85,6 +86,12 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		
 		LightingContext lightingContext = new LightingContext();
 		lightingContext.setLightingEnabled(true);
+		//lightingContext.setLightSourceSpecifyType(LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION);
+		lightingContext.setLightSourceSpecifyType(LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME);
+		lightingContext.setLightingMultiple(3);
+		lightingContext.setLightingOnDate(1330442235000l);
+		lightingContext.setRecalcLightOnEachPoint(true);
+		
 		ModelOptions modelOptions = new ModelOptions();
 		//modelOptions.setUserScript(script);
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
@@ -116,7 +123,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		dataProxy.calculateElevationMinMax(true);
 		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
 		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
-		dataProxy.fillBuffers();
+		//dataProxy.fillBuffers();
 		
 		//lightingContext.setRelativeLightIntensity(1.0);
 		//lightingContext.setLightingMultiple(0.5);
@@ -130,7 +137,7 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, shapeContext, lightingContext, modelOptions);
 		modelContext.updateContext();
 		
-		/*
+		
 		double startTime = System.currentTimeMillis();
 		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 		OutputProduct<ModelCanvas> product = dem2d.generate(false, false);
@@ -140,13 +147,15 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		
 		double renderSeconds = (endTime - startTime) / 1000;
 		log.info("Completed render in " + renderSeconds + " seconds");
-		*/
+		
+		
+		/*
 		Planet earth = PlanetsRegistry.getPlanet("Earth");
 		for (double lat = 90; lat >= -90; lat-=1.0) {
 			double res = RasterDataContext.getMetersResolution(earth.getMeanRadius(), lat, 0.0, dataProxy.getEffectiveLatitudeResolution(), dataProxy.getEffectiveLongitudeResolution());
 			
 			log.info("Resolution @ " + lat + ": " + res);
 		}
-		
+		*/
 	}
 }

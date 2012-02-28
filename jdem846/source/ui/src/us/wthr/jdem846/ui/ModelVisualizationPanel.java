@@ -48,6 +48,7 @@ import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.Canvas3d;
 import us.wthr.jdem846.render.CanvasProjection;
+import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.simple.SimpleRenderer;
@@ -98,6 +99,12 @@ public class ModelVisualizationPanel extends Panel
 	private List<ProjectionChangeListener> projectionChangeListeners = new LinkedList<ProjectionChangeListener>();
 	
 	private boolean ignoreUpdate = false;
+	
+	/*
+	 * Holy long variable names, Batman!
+	 */
+	private boolean lastRerenderCancelledButNeededDataRangeUpdate = false;
+	private boolean lastRerenderCancelledButNeededCacheReset = false;
 	
 	private SimpleRenderer renderer;
 	
@@ -298,8 +305,14 @@ public class ModelVisualizationPanel extends Panel
 		
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", true);
-		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
+		
+		
+		
+		
+		boolean paintLightSourceLines = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.paintLightSourceLines");
+		boolean paintBaseGrid = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.paintBaseGrid");
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", paintLightSourceLines);
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", paintBaseGrid);
 		
 		
 		
@@ -416,6 +429,14 @@ public class ModelVisualizationPanel extends Panel
 		
 		modelContextWorkingCopy.getModelOptions().getProjection().setZoom(zoom);
 		
+		boolean paintGlobalBaseGrid = false;
+		
+		if (modelContextWorkingCopy.getModelOptions().getModelProjection() == CanvasProjectionTypeEnum.PROJECT_SPHERE) {
+			paintGlobalBaseGrid = true;
+		}
+		
+		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintGlobalBaseGrid", paintGlobalBaseGrid);
+		
 		if (renderer == null) {
 			renderer = new SimpleRenderer(modelContextWorkingCopy);
 		} else {
@@ -429,10 +450,9 @@ public class ModelVisualizationPanel extends Panel
 			modelContextWorkingCopy.setWestLimit(-180);
 		}
 
-		renderer.prepare(dataModelChange || updateFromActual, dataModelChange || updateFromActual);
-
 		
-		renderModelVisualizationImage();
+		
+		renderModelVisualizationImage(dataModelChange || updateFromActual, dataModelChange || updateFromActual);
 		
 		repaint();
 		
@@ -442,24 +462,49 @@ public class ModelVisualizationPanel extends Panel
 	}
 	
 	
-	public void renderModelVisualizationImage()
+	public void renderModelVisualizationImage(boolean resetCache, boolean resetDataRange)
 	{
+		
 		if (getWidth() <= 20 || getHeight() <= 20) {
+			
+			if (resetDataRange) {
+				lastRerenderCancelledButNeededDataRangeUpdate = true;
+			}
+			if (resetCache) {
+				lastRerenderCancelledButNeededCacheReset = true;
+			}
+			
 			return;
 		}
+		if (lastRerenderCancelledButNeededCacheReset) {
+			resetCache = true;
+		}
+		if (lastRerenderCancelledButNeededDataRangeUpdate) {
+			resetDataRange = true;
+		}
+		lastRerenderCancelledButNeededCacheReset = false;
+		lastRerenderCancelledButNeededDataRangeUpdate = false;
 		
 		log.info("Rendering model visualization image");
 		
 		int dimension = (int) MathExt.min((double)pnlModelDisplay.getWidth(), (double)pnlModelDisplay.getHeight());
+		
+		
+		//log.info("Dimension: " + dimension);
 		modelContextWorkingCopy.getModelOptions().setWidth(dimension - 20);
 		modelContextWorkingCopy.getModelOptions().setHeight(dimension - 20);
 		
 		//modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
 		//modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
 		
+		
+		
 		modelContextWorkingCopy.updateContext();
 		modelContextWorkingCopy.resetModelCanvas();
 		//
+		renderer.prepare(resetCache, resetDataRange);
+
+		
 		
 		renderer.render();
 		
@@ -518,7 +563,7 @@ public class ModelVisualizationPanel extends Panel
 				int x = (int) ((getWidth() / 2.0) - (modelVisualizationImage.getWidth(null) / 2.0));
 				int y = (int) ((getHeight() / 2.0) - (modelVisualizationImage.getHeight(null) / 2.0));
 				
-				g2d.drawImage(modelVisualizationImage, x, y, null);
+				g2d.drawImage(modelVisualizationImage, x, y, modelVisualizationImage.getWidth(null), modelVisualizationImage.getHeight(null), null);
 			}
 			
 			if (downX != -1 && downY != -1 && buttonDown == 3) {
