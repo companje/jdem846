@@ -171,8 +171,17 @@ public class ModelRenderer extends InterruptibleProcess
 		
 		
 		if ( getRasterDataContext().getRasterDataListSize() > 0) {
+			TileRenderContainer tileRenderContainer = null;
+			tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, northLimit, southLimit, eastLimit, westLimit, (tileColumn + 1), (tileRow + 1));
+
+			if (renderPipeline != null) {
+				renderPipeline.submit(tileRenderContainer);
+			} else {
+				tileRenderContainer.render(null);
+			}
 			
 			
+			/*
 			// Latitude
 			for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
 				double tileSouth = (tileNorth - tileLatitudeHeight) - latitudeResolution;
@@ -237,7 +246,7 @@ public class ModelRenderer extends InterruptibleProcess
 				
 			}
 			
-			
+			*/
 		}
 		
 		

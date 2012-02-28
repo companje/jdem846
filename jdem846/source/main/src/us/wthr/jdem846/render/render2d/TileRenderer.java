@@ -147,6 +147,8 @@ public class TileRenderer extends InterruptibleProcess
 	private double eastLimit;
 	private double westLimit;
 	
+	private int tileHeight;
+	
 	private ElevationDataMap elevationMap;
 
 	public TileRenderer(ModelContext modelContext)
@@ -200,6 +202,8 @@ public class TileRenderer extends InterruptibleProcess
 		eastLimit = east;
 		westLimit = west;
 		
+		
+		tileHeight = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
 		
 		ColorSerializationUtil.stringToColor(modelContext.getModelOptions().getBackgroundColor(), backgroundColor);
 		
@@ -348,12 +352,14 @@ public class TileRenderer extends InterruptibleProcess
 		//RasterDataContext dataProxy = modelContext.getRasterDataContext();//.getSubSet(northLimit, southLimit, eastLimit, westLimit);
 
 		// TODO: If Buffered
+		/*
 		try {
 			loadDataBuffers(northLimit, southLimit-latitudeResolution, eastLimit+longitudeResolution, westLimit);
 		} catch (RenderEngineException ex) {
 			throw new RenderEngineException("Error loading data buffer: " + ex.getMessage(), ex);
 		}
-
+		*/
+		
 		onTileBefore(modelCanvas);
 		
 		//List<ModelPoint> points = new LinkedList<ModelPoint>();
@@ -398,7 +404,7 @@ public class TileRenderer extends InterruptibleProcess
 		//elevationMap = null;
 
 		onTileAfter(modelCanvas);
-		unloadDataBuffers();
+		//unloadDataBuffers();
 
 
 	}
@@ -427,20 +433,37 @@ public class TileRenderer extends InterruptibleProcess
 		
 		TriangleStrip strip = null;
 
-		
-		
+		//double cacheHeight = ((north - south) / 12.0);
+		double cacheHeight = rasterDataContext.getLatitudeResolution() * tileHeight;
+		double nextCachePoint = north;
 		
 		for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
 			//strip.reset();
 			double lastElevN = rasterDataContext.getDataMinimumValue();
 			double lastElevS = rasterDataContext.getDataMinimumValue();
 			
+			double nwLat = lat;
+			double swLat = lat - latitudeResolution;
+			
 			strip = new TriangleStrip();
 			
+			if (lat <= nextCachePoint && tiledPrecaching) {
+				
+				double southCache = lat - cacheHeight - latitudeResolution;
+				try {
+					unloadDataBuffers();
+					loadDataBuffers(nwLat, southCache, east, west);
+				} catch (RenderEngineException ex) {
+					throw new RenderEngineException("Error loading data buffer: " + ex.getMessage(), ex);
+				}
+				
+				nextCachePoint = lat - cacheHeight;
+			}
+			
 			for (double lon = west; lon <= maxLon; lon+=longitudeResolution) {
-				double nwLat = lat;
+				
 				double nwLon = lon;
-				double swLat = lat - latitudeResolution;
+				
 				double swLon = lon;
 
 				double elev = 0;
@@ -498,9 +521,12 @@ public class TileRenderer extends InterruptibleProcess
 				canvas.fillShape(strip);
 			}
 			
+			
 			//
 			
 		}
+		
+		unloadDataBuffers();
 		
 	}
 	
