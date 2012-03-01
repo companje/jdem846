@@ -673,40 +673,9 @@ public class SimpleRenderer
 	
 	protected double calculateSphericalDotProduct(double latitude, double longitude)
 	{
-		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
-		
-		if (planet != null) {
-			meanRadius = planet.getMeanRadius();
-		}
-		
+
 		calculateNormal(0, 0, 0, 0, CornerEnum.NORTHEAST, pointNormal);
-		
-		
-		//Spheres.getPoint3D(longitude, latitude, meanRadius, pointNormal);
-		
-		
-		//double resolutionMeters = RasterDataContext.getMetersResolution(meanRadius, latitude, longitude, latitudeResolution, longitudeResolution);
-		//double xzRes = (resolutionMeters / 2.0);
-		
-		//pointNormal[0] = 0.0;
-		//pointNormal[1] = meanRadius;
-		//pointNormal[2] = 0.0;
-		//Vector.rotate(x, y, z, pointNormal);
-		
-		
-		//perspectives.normalize(pointNormal, normal);
 		double dot = perspectives.dotProduct(pointNormal, sunsource);
-		
-		/*
-		
-		
-		if (dot > 0) {
-			dot *= relativeLightIntensity;
-		} else if (dot < 0) {
-			dot *= relativeDarkIntensity;
-		}
-		*/
-		
 		return dot;
 	}
 	
@@ -725,6 +694,8 @@ public class SimpleRenderer
 
 		return dot;
 	}
+	
+	
 	protected void setUpLightSource(double latitude, double longitude, double solarElevation, double solarAzimuth, boolean force)
 	{
 
