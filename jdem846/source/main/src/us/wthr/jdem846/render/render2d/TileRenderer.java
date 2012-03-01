@@ -670,12 +670,18 @@ public class TileRenderer extends InterruptibleProcess
 		
 		double dot = calculateTerrainDotProduct();
 		
+		/*
 		if (!sunIsUp) {
 			dot = dot - (2 * shadowIntensity);
 			if (dot < -1.0) {
 				dot = -1.0;
 			}
 		} 
+		*/
+		
+		if (this.solarElevation < 0) {
+			dot = -1;
+		}
 		
 		return dot;
 		/*
