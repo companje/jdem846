@@ -654,33 +654,12 @@ public class SimpleRenderer
 	{
 		
 		double dot = calculateTerrainDotProduct();
-		//double diffuse = 1.0;
-		//double ambient = 0.0;
 
-		//dot = ( ambient +  diffuse * dot );
-		/*
-		if (!sunIsUp) {
-			dot = dot - (2 * shadowIntensity);
-			if (dot < -1.0) {
-				dot = -1.0;
-			}
-		} 
-		*/
-	//	if (this.solarElevation < 0) {
-		//	dot = -1;
-		//}
-		
-		
-		//if (solarAzimuth > 108) {
-		//	dot = -1;
-		//}
-		
 		
 		double lower = 108;
 		double upper = 160;
 		
 		if (solarZenith > lower && solarZenith <= upper) {
-			//dot = dot - (2 * 0.1);
 			double range = (solarZenith - lower) / (upper - lower);
 			dot = dot - (2 * range);
 		} else if (solarZenith > upper) {
@@ -692,22 +671,7 @@ public class SimpleRenderer
 		
 		
 		return dot;
-		/*
-		double sphericalDotProduct = calculateSphericalDotProduct(latitude, longitude);
 		
-		
-		double dot = 0;
-		
-		if (!sunIsUp) {
-			dot = (terrainDotProduct + sphericalDotProduct) / 2;
-		} else {
-			dot = terrainDotProduct;
-		}
-		
-		
-		//
-		return dot;
-		*/
 		
 	}
 	
