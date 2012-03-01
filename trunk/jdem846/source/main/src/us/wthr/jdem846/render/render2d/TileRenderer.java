@@ -99,6 +99,7 @@ public class TileRenderer extends InterruptibleProcess
 	private double elevationMin;
 	private double solarElevation;
 	private double solarAzimuth;
+	private double solarZenith;
 	private double longitudeResolution;
 	private double latitudeGridSize;
 	private double longitudeGridSize; 
@@ -669,39 +670,26 @@ public class TileRenderer extends InterruptibleProcess
 	{
 		
 		double dot = calculateTerrainDotProduct();
+
 		
-		/*
-		if (!sunIsUp) {
-			dot = dot - (2 * shadowIntensity);
-			if (dot < -1.0) {
-				dot = -1.0;
-			}
-		} 
-		*/
+		double lower = 108;
+		double upper = 160;
 		
-		if (this.solarElevation < 0) {
-			dot = -1;
+		if (solarZenith > lower && solarZenith <= upper) {
+			double range = (solarZenith - lower) / (upper - lower);
+			dot = dot - (2 * range);
+		} else if (solarZenith > upper) {
+			dot = dot - (2 * 1.0);
 		}
-		
-		return dot;
-		/*
-		double sphericalDotProduct = calculateSphericalDotProduct(latitude, longitude);
-		
-		
-		double dot = 0;
-		
-		if (!sunIsUp) {
-			dot = (terrainDotProduct + sphericalDotProduct) / 2;
-		} else {
-			dot = terrainDotProduct;
+		if (dot < -1.0) {
+			dot = -1.0;
 		}
 		
 		
-		//
 		return dot;
-		*/
+		
+		
 	}
-	
 	
 	protected double calculateSphericalDotProduct(double latitude, double longitude)
 	{
@@ -774,7 +762,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		solarAzimuth = solarCalculator.solarAzimuthAngle();
 		solarElevation = solarCalculator.solarElevationAngle();
-		double solarZenith = solarCalculator.solarZenithAngle();
+		solarZenith = solarCalculator.solarZenithAngle();
 		
 		if (solarZenith > 130.0) {
 			sunIsUp = false;
