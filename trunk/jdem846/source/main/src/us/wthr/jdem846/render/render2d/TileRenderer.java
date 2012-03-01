@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -252,6 +253,8 @@ public class TileRenderer extends InterruptibleProcess
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME) {
 			
 			Calendar cal = Calendar.getInstance();
+			cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+			
 			cal.setTimeInMillis(lightOnDate);
 			
 			int year = cal.get(Calendar.YEAR);
@@ -613,7 +616,7 @@ public class TileRenderer extends InterruptibleProcess
 			normal[1] = pointNormal[1] / 4.0;
 			normal[2] = pointNormal[2] / 4.0;
 			
-			double dot = calculateDotProduct();
+			double dot = calculateDotProduct(latitude, longitude);
 			
 			if (this.rayTraceShadows) {
 				if (lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, midElev)) {
@@ -662,11 +665,38 @@ public class TileRenderer extends InterruptibleProcess
 		
 	}
 	
-	protected double calculateDotProduct()
+	protected double calculateDotProduct(double latitude, double longitude)
 	{
+		
+		double terrainDotProduct = calculateTerrainDotProduct();
+		double sphericalDotProduct = calculateSphericalDotProduct(latitude, longitude);
+		
+		
+		double dot = 0;
+		
 		if (!sunIsUp) {
-			return -1;
+			dot = (terrainDotProduct + sphericalDotProduct) / 2;
+		} else {
+			dot = terrainDotProduct;
 		}
+		
+		
+		//
+		return dot;
+		
+	}
+	
+	
+	protected double calculateSphericalDotProduct(double latitude, double longitude)
+	{
+
+		calculateNormal(0, 0, 0, 0, CornerEnum.NORTHEAST, pointNormal);
+		double dot = perspectives.dotProduct(pointNormal, sunsource);
+		return dot;
+	}
+	
+	protected double calculateTerrainDotProduct()
+	{
 		
 		
 		double dot = perspectives.dotProduct(normal, sunsource);
