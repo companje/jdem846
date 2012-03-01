@@ -26,6 +26,7 @@ import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
+@Deprecated
 public class RowRenderer extends InterruptibleProcess
 {
 	private static Log log = Logging.getLog(RowRenderer.class);
@@ -116,9 +117,7 @@ public class RowRenderer extends InterruptibleProcess
 		longitudeGridSize = gridSize * longitudeResolution; 
 		
 		if (rayTraceShadows) {
-			lightSourceRayTracer = new RayTracing(getLightingContext().getLightingAzimuth(),
-					getLightingContext().getLightingElevation(),
-					modelContext,
+			lightSourceRayTracer = new RayTracing(modelContext,
 					new RasterDataFetchHandler() {
 						public double getRasterData(double latitude, double longitude) throws Exception {
 							return _getRasterData(latitude, longitude);
@@ -294,7 +293,7 @@ public class RowRenderer extends InterruptibleProcess
 				//if (isRayBlocked(latitude, longitude, pointElevation)) {
 				
 				try {
-					if (lightSourceRayTracer.isRayBlocked(latitude, longitude, pointElevation)) {
+					if (lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, pointElevation)) {
 						// I'm not 100% happy with this method...
 						dot = dot - (2 * shadowIntensity);
 						if (dot < -1.0) {

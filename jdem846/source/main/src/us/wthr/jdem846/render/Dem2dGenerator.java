@@ -18,8 +18,10 @@ package us.wthr.jdem846.render;
 
 import java.util.List;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
@@ -109,6 +111,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 				}
 			});
 			
+			
+			updateCoordinateLimits();
 			//ModelCanvas canvas = null;
 			ModelCanvas canvas = getModelContext().getModelCanvas(true);
 			
@@ -193,6 +197,9 @@ public class Dem2dGenerator extends BasicRenderEngine
 				}
 			});
 			
+			
+			updateCoordinateLimits();
+			
 			//ModelCanvas canvas = null;
 			ModelCanvas canvas = getModelContext().getModelCanvas(true);
 			
@@ -233,6 +240,28 @@ public class Dem2dGenerator extends BasicRenderEngine
 		}
 		
 		return product;
+	}
+	
+	
+	protected void updateCoordinateLimits()
+	{
+		if (getModelOptions().getBooleanOption(ModelOptionNamesEnum.LIMIT_COORDINATES)) {
+			
+			double optNorthLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_NORTH);
+			double optSouthLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_SOUTH);
+			double optEastLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_EAST);
+			double optWestLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_WEST);
+			
+			if (optNorthLimit != DemConstants.ELEV_NO_DATA)
+				getModelContext().setNorthLimit(optNorthLimit);
+			if (optSouthLimit != DemConstants.ELEV_NO_DATA)
+				getModelContext().setSouthLimit(optSouthLimit);
+			if (optEastLimit != DemConstants.ELEV_NO_DATA)
+				getModelContext().setEastLimit(optEastLimit);
+			if (optWestLimit != DemConstants.ELEV_NO_DATA)
+				getModelContext().setWestLimit(optWestLimit);
+		}
+		getModelContext().updateContext();
 	}
 	
 	protected void startPipelineProcesses(RenderPipelineProcessContainer pipelineContainer, boolean waitForCompletion)

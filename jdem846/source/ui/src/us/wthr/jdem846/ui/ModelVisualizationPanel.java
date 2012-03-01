@@ -497,7 +497,22 @@ public class ModelVisualizationPanel extends Panel
 		//modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
 		//modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
 		
-		
+		if (modelContextWorkingCopy.getModelOptions().getBooleanOption(ModelOptionNamesEnum.LIMIT_COORDINATES)) {
+			
+			double optNorthLimit = modelContextWorkingCopy.getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_NORTH);
+			double optSouthLimit = modelContextWorkingCopy.getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_SOUTH);
+			double optEastLimit = modelContextWorkingCopy.getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_EAST);
+			double optWestLimit = modelContextWorkingCopy.getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_WEST);
+			
+			if (optNorthLimit != DemConstants.ELEV_NO_DATA)
+				modelContextWorkingCopy.setNorthLimit(optNorthLimit);
+			if (optSouthLimit != DemConstants.ELEV_NO_DATA)
+				modelContextWorkingCopy.setSouthLimit(optSouthLimit);
+			if (optEastLimit != DemConstants.ELEV_NO_DATA)
+				modelContextWorkingCopy.setEastLimit(optEastLimit);
+			if (optWestLimit != DemConstants.ELEV_NO_DATA)
+				modelContextWorkingCopy.setWestLimit(optWestLimit);
+		}
 		
 		modelContextWorkingCopy.updateContext();
 		modelContextWorkingCopy.resetModelCanvas();

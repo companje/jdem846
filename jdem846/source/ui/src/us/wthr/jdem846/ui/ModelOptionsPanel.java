@@ -63,6 +63,7 @@ import us.wthr.jdem846.ui.base.ComboBox;
 import us.wthr.jdem846.ui.base.JComboBoxModel;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Spinner;
+import us.wthr.jdem846.ui.base.TextField;
 import us.wthr.jdem846.ui.border.StandardTitledBorder;
 import us.wthr.jdem846.ui.coloring.ColoringValueControl;
 import us.wthr.jdem846.ui.lighting.LightingValueControl;
@@ -130,6 +131,13 @@ public class ModelOptionsPanel extends Panel
 	//private ProjectionConfigPanel projectionConfigPanel;
 	//private GradientConfigPanel gradientConfigPanel;
 	//private LightPositionConfigPanel lightPositionConfigPanel;
+	
+	private CheckBox chkLimitCoordinates;
+	private TextField txtLimitNorth;
+	private TextField txtLimitSouth;
+	private TextField txtLimitEast;
+	private TextField txtLimitWest;
+	
 	
 	private ModelOptions modelOptions;
 	
@@ -205,7 +213,13 @@ public class ModelOptionsPanel extends Panel
 		spnElevationMultiple = new Spinner(new SpinnerNumberModel(0, 0, 100000, 1));
 		//spnRelativeLightIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
 		//spnRelativeDarkIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
-
+		
+		chkLimitCoordinates = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.label"));
+		txtLimitNorth = new TextField();
+		txtLimitSouth = new TextField();
+		txtLimitEast = new TextField();
+		txtLimitWest = new TextField();
+		
 		// Set tool tips
 		
 		txtWidth.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.widthText.tooltip"));
@@ -231,6 +245,11 @@ public class ModelOptionsPanel extends Panel
 		//chkUseFastRender.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.useFastRender.tooltip"));
 		//chkProject3d.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.project3d.tooltip"));
 		chkMaintainAscpectRatio.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.maintainAspectRatio.tooltip"));
+		chkLimitCoordinates.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.tooltip"));
+		txtLimitNorth.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.north.tooltip"));
+		txtLimitSouth.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.south.tooltip"));
+		txtLimitEast.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.east.tooltip"));
+		txtLimitWest.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.west.tooltip"));
 		
 		// Add listeners
 		ActionListener textFieldActionListener = new ActionListener() {
@@ -265,6 +284,8 @@ public class ModelOptionsPanel extends Panel
 		txtHeight.addActionListener(modelSizeActionListener);
 		txtWidth.addFocusListener(modelSizeFocusListener);
 		txtHeight.addFocusListener(modelSizeFocusListener);
+		
+		
 		
 		//txtTileSize.addActionListener(textFieldActionListener);
 		//txtTileSize.addFocusListener(focusListener);
@@ -335,6 +356,14 @@ public class ModelOptionsPanel extends Panel
 		coloringControl.addChangeListener(basicChangeListener);
 		colorSelection.addChangeListener(basicChangeListener);
 		perspectiveControl.addChangeListener(basicChangeListener);
+		
+		chkLimitCoordinates.getModel().addActionListener(checkBoxActionListener);
+		txtLimitNorth.addFocusListener(focusListener);
+		txtLimitSouth.addFocusListener(focusListener);
+		txtLimitEast.addFocusListener(focusListener);
+		txtLimitWest.addFocusListener(focusListener);
+		
+		
 		//lightSourceControl.addChangeListener(basicChangeListener);
 
 		// Set Layout
@@ -360,6 +389,17 @@ public class ModelOptionsPanel extends Panel
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.planet.label") + ":"));
 		controlGrid.add(cmbPlanet);
+		
+		controlGrid.add(new JLabel());
+		controlGrid.add(chkLimitCoordinates);
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.north.label") + ":"));
+		controlGrid.add(txtLimitNorth);
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.south.label") + ":"));
+		controlGrid.add(txtLimitSouth);
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.east.label") + ":"));
+		controlGrid.add(txtLimitEast);
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.west.label") + ":"));
+		controlGrid.add(txtLimitWest);
 		
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.backgroundColorCombo.label") + ":"));
@@ -495,6 +535,31 @@ public class ModelOptionsPanel extends Panel
 		//						modelOptions.getProjection().getRotateZ());
 		
 		
+		chkLimitCoordinates.getModel().setSelected(modelOptions.getBooleanOption(ModelOptionNamesEnum.LIMIT_COORDINATES));
+		double limitNorth = modelOptions.getDoubleOption(ModelOptionNamesEnum.LIMITS_NORTH);
+		if (limitNorth != DemConstants.ELEV_NO_DATA)
+			txtLimitNorth.setText(""+limitNorth);
+		else
+			txtLimitNorth.setText("");
+		
+		double limitSouth = modelOptions.getDoubleOption(ModelOptionNamesEnum.LIMITS_SOUTH);
+		if (limitSouth != DemConstants.ELEV_NO_DATA)
+			txtLimitSouth.setText(""+limitSouth);
+		else
+			txtLimitSouth.setText("");
+		
+		double limitEast = modelOptions.getDoubleOption(ModelOptionNamesEnum.LIMITS_EAST);
+		if (limitEast != DemConstants.ELEV_NO_DATA)
+			txtLimitEast.setText(""+limitEast);
+		else
+			txtLimitEast.setText("");
+		
+		double limitWest = modelOptions.getDoubleOption(ModelOptionNamesEnum.LIMITS_WEST);
+		if (limitWest != DemConstants.ELEV_NO_DATA)
+			txtLimitWest.setText(""+limitWest);
+		else
+			txtLimitWest.setText("");
+		
 		onSizeChanged(txtWidth);
 		checkControlState();
 		
@@ -551,6 +616,36 @@ public class ModelOptionsPanel extends Panel
 		
 		modelOptions.setModelProjection(canvasProjectionListModel.getSelectedItemValue());
 		
+		/*
+		 * Temporary. Will add error checking.
+		 */
+		modelOptions.setOption(ModelOptionNamesEnum.LIMIT_COORDINATES, chkLimitCoordinates.getModel().isSelected());
+		if (txtLimitNorth.getText().length() > 0) {
+			modelOptions.setOption(ModelOptionNamesEnum.LIMITS_NORTH, Double.parseDouble(txtLimitNorth.getText()));
+		} else {
+			modelOptions.setOption(ModelOptionNamesEnum.LIMITS_NORTH, DemConstants.ELEV_NO_DATA);
+		}
+		
+		if (txtLimitSouth.getText().length() > 0) {
+			modelOptions.setOption(ModelOptionNamesEnum.LIMITS_SOUTH, Double.parseDouble(txtLimitSouth.getText()));
+		} else {
+			modelOptions.setOption(ModelOptionNamesEnum.LIMITS_SOUTH, DemConstants.ELEV_NO_DATA);
+		}
+		
+		if (txtLimitEast.getText().length() > 0) {
+			modelOptions.setOption(ModelOptionNamesEnum.LIMITS_EAST, Double.parseDouble(txtLimitEast.getText()));
+		} else {
+			modelOptions.setOption(ModelOptionNamesEnum.LIMITS_EAST, DemConstants.ELEV_NO_DATA);
+		}
+		
+		if (txtLimitWest.getText().length() > 0) {
+			modelOptions.setOption(ModelOptionNamesEnum.LIMITS_WEST, Double.parseDouble(txtLimitWest.getText()));
+		} else {
+			modelOptions.setOption(ModelOptionNamesEnum.LIMITS_WEST, DemConstants.ELEV_NO_DATA);
+		}
+		
+		
+		
 		//modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
 		//modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
 		//modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
@@ -596,6 +691,10 @@ public class ModelOptionsPanel extends Panel
 		perspectiveControl.setEnabled(canvasProjectionType != CanvasProjectionTypeEnum.PROJECT_FLAT);
 		spnElevationMultiple.setEnabled(canvasProjectionType != CanvasProjectionTypeEnum.PROJECT_FLAT);
 		
+		txtLimitNorth.setEnabled(chkLimitCoordinates.getModel().isSelected());
+		txtLimitSouth.setEnabled(chkLimitCoordinates.getModel().isSelected());
+		txtLimitEast.setEnabled(chkLimitCoordinates.getModel().isSelected());
+		txtLimitWest.setEnabled(chkLimitCoordinates.getModel().isSelected());
 		//spnLightMultiple.setEnabled(engineInstance.usesLightMultiple());
 		
 		

@@ -13,6 +13,7 @@ import java.util.concurrent.Future;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
@@ -63,7 +64,28 @@ public class ModelRenderer extends InterruptibleProcess
 	
 	public ModelCanvas renderModel() throws RenderEngineException
 	{
-		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
+		
+		
+		/*
+		if (getModelOptions().getBooleanOption(ModelOptionNamesEnum.LIMIT_COORDINATES)) {
+			
+			double optNorthLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_NORTH);
+			double optSouthLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_SOUTH);
+			double optEastLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_EAST);
+			double optWestLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_WEST);
+			
+			if (optNorthLimit != DemConstants.ELEV_NO_DATA)
+				modelContext.setNorthLimit(optNorthLimit);
+			if (optSouthLimit != DemConstants.ELEV_NO_DATA)
+				modelContext.setSouthLimit(optSouthLimit);
+			if (optEastLimit != DemConstants.ELEV_NO_DATA)
+				modelContext.setEastLimit(optEastLimit);
+			if (optWestLimit != DemConstants.ELEV_NO_DATA)
+				modelContext.setWestLimit(optWestLimit);
+		}
+		*/
+		
+		ModelDimensions2D modelDimensions = modelContext.getModelDimensions();//ModelDimensions2D.getModelDimensions(modelContext);
 
 		boolean fullCaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
 		//boolean fullCaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
@@ -73,11 +95,19 @@ public class ModelRenderer extends InterruptibleProcess
 		int tileSize = modelDimensions.getEffectiveTileSize();
 		long tileCount = modelDimensions.getTileCount();
 		
-		
+		/*
 		double northLimit = getRasterDataContext().getNorth();
 		double southLimit = getRasterDataContext().getSouth();
 		double eastLimit = getRasterDataContext().getEast();
 		double westLimit = getRasterDataContext().getWest();
+		*/
+		
+		double northLimit = modelContext.getNorth();
+		double southLimit = modelContext.getSouth();
+		double eastLimit = modelContext.getEast();
+		double westLimit = modelContext.getWest();
+		
+		
 		
 		log.info("Model North Limit: " + northLimit);
 		log.info("Model South Limit: " + southLimit);
