@@ -429,7 +429,7 @@ public class TileRenderer extends InterruptibleProcess
 		double west = westLimit;
 
 		double maxLon = east;
-		double minLat = south;
+		double minLat = south - latitudeResolution;
 		
 		TriangleStrip strip = null;
 
@@ -715,9 +715,9 @@ public class TileRenderer extends InterruptibleProcess
 	{
 		// This stuff in here probably can be vastly optimized...
 		
-		int timezone = (int) Math.floor((longitude / 180.0) * 12.0);
+		//int timezone = (int) Math.floor((longitude / 180.0) * 12.0);
 
-		datetime.setTimezone(timezone);
+		//datetime.setTimezone(timezone);
 		
 		latitudeCoordinate.fromDecimal(latitude);
 		longitudeCoordinate.fromDecimal(longitude);
@@ -730,12 +730,12 @@ public class TileRenderer extends InterruptibleProcess
 		double solarAzimuth = solarCalculator.solarAzimuthAngle();
 		double solarZenith = solarCalculator.solarZenithAngle();
 		
-		if (solarZenith > 108.0) {
+		if (solarZenith > 130.0) {
 			sunIsUp = false;
 		} else {
 			sunIsUp = true;
 		}
-		
+		sunIsUp = true;
 		setUpLightSourceBasic(solarElevation, solarAzimuth);
 		
 	}
@@ -745,7 +745,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		sunsource[0] = 0.0;
 		sunsource[1] = 0.0;
-		sunsource[2] = -1.0;
+		sunsource[2] = -149598000000.0;
 		Vector.rotate(solarElevation, -solarAzimuth, 0, sunsource);
 		
 	}
