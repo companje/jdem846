@@ -356,7 +356,7 @@ public class LightingOptionsPanel extends RoundedPanel
 		spnRelativeLightIntensity.setEnabled(enabled);
 		spnRelativeDarkIntensity.setEnabled(enabled);
 		chkRayTraceShadows.setEnabled(enabled);
-		spnShadowIntensity.setEnabled(enabled && rayTraceShadowsEnabled);
+		spnShadowIntensity.setEnabled(enabled);// && rayTraceShadowsEnabled);
 		//lightSourceControl.setEnabled(enabled);
 		
 		lightSourceControl.setEnabled(enabled && specType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION);

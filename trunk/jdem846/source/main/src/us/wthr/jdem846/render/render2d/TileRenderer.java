@@ -668,7 +668,17 @@ public class TileRenderer extends InterruptibleProcess
 	protected double calculateDotProduct(double latitude, double longitude)
 	{
 		
-		double terrainDotProduct = calculateTerrainDotProduct();
+		double dot = calculateTerrainDotProduct();
+		
+		if (!sunIsUp) {
+			dot = dot - (2 * shadowIntensity);
+			if (dot < -1.0) {
+				dot = -1.0;
+			}
+		} 
+		
+		return dot;
+		/*
 		double sphericalDotProduct = calculateSphericalDotProduct(latitude, longitude);
 		
 		
@@ -683,16 +693,18 @@ public class TileRenderer extends InterruptibleProcess
 		
 		//
 		return dot;
-		
+		*/
 	}
 	
 	
 	protected double calculateSphericalDotProduct(double latitude, double longitude)
 	{
-
+		return 0;
+		/*
 		calculateNormal(0, 0, 0, 0, CornerEnum.NORTHEAST, pointNormal);
 		double dot = perspectives.dotProduct(pointNormal, sunsource);
 		return dot;
+		*/
 	}
 	
 	protected double calculateTerrainDotProduct()
@@ -763,7 +775,7 @@ public class TileRenderer extends InterruptibleProcess
 		} else {
 			sunIsUp = true;
 		}
-		sunIsUp = true;
+		//sunIsUp = true;
 		setUpLightSourceBasic(solarElevation, solarAzimuth);
 		
 	}
