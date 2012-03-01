@@ -2,6 +2,7 @@ package us.wthr.jdem846.render.simple;
 
 import java.awt.Color;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
@@ -180,6 +181,9 @@ public class SimpleRenderer
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME) {
 			
 			Calendar cal = Calendar.getInstance();
+			cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+			//cal.set(Calendar.ZONE_OFFSET, 0);
+			//cal.setTimeZone(TimeZone.)
 			cal.setTimeInMillis(lightOnDate);
 			
 			int year = cal.get(Calendar.YEAR);
@@ -538,8 +542,8 @@ public class SimpleRenderer
 		
 		
 		if (midElev == DemConstants.ELEV_NO_DATA)
-		//	midElev = 0;
-			return DemConstants.ELEV_NO_DATA;
+			midElev = 0;
+		//	return DemConstants.ELEV_NO_DATA;
 		
 		
 		double min = modelContext.getRasterDataContext().getDataMinimumValue();
@@ -647,11 +651,21 @@ public class SimpleRenderer
 	
 	protected double calculateDotProduct(double latitude, double longitude)
 	{
-		double dot = 0;
+		
 		double terrainDotProduct = calculateTerrainDotProduct();
 		double sphericalDotProduct = calculateSphericalDotProduct(latitude, longitude);
 		
-		dot = (terrainDotProduct + sphericalDotProduct) / 2;
+		
+		double dot = 0;
+		
+		if (!sunIsUp) {
+			dot = (terrainDotProduct + sphericalDotProduct) / 2;
+		} else {
+			dot = terrainDotProduct;
+		}
+		
+		
+		//
 		return dot;
 		
 	}
@@ -665,8 +679,10 @@ public class SimpleRenderer
 			meanRadius = planet.getMeanRadius();
 		}
 		
+		calculateNormal(0, 0, 0, 0, CornerEnum.NORTHEAST, pointNormal);
 		
-		Spheres.getPoint3D(longitude+180, latitude, meanRadius, pointNormal);
+		
+		//Spheres.getPoint3D(longitude, latitude, meanRadius, pointNormal);
 		
 		
 		//double resolutionMeters = RasterDataContext.getMetersResolution(meanRadius, latitude, longitude, latitudeResolution, longitudeResolution);
@@ -678,24 +694,25 @@ public class SimpleRenderer
 		//Vector.rotate(x, y, z, pointNormal);
 		
 		
-		perspectives.normalize(pointNormal, normal);
+		//perspectives.normalize(pointNormal, normal);
 		double dot = perspectives.dotProduct(pointNormal, sunsource);
-		dot = Math.pow(dot, spotExponent);
+		
+		/*
+		
 		
 		if (dot > 0) {
 			dot *= relativeLightIntensity;
 		} else if (dot < 0) {
 			dot *= relativeDarkIntensity;
 		}
+		*/
 		
 		return dot;
 	}
 	
 	protected double calculateTerrainDotProduct()
 	{
-		if (!sunIsUp) {
-			return -1;
-		}
+		
 		
 		double dot = perspectives.dotProduct(normal, sunsource);
 		dot = Math.pow(dot, spotExponent);
@@ -739,15 +756,16 @@ public class SimpleRenderer
 		//double solarElevation = solarCalculator.solarElevationAngle();
 		//double solarAzimuth = solarCalculator.solarAzimuthAngle();
 		solarAzimuth = solarCalculator.solarAzimuthAngle();
+		//solarElevation = solarCalculator.correctedSolarElevation();
 		solarElevation = solarCalculator.solarElevationAngle();
 		double solarZenith = solarCalculator.solarZenithAngle();
 		
-		if (solarZenith > 130.0) {
+		if (solarZenith > 108.0) {
 			sunIsUp = false;
 		} else {
 			sunIsUp = true;
 		}
-		sunIsUp = true;
+		//sunIsUp = true;
 		setUpLightSourceBasic(solarElevation, solarAzimuth);
 		
 	}
