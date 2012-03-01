@@ -78,8 +78,6 @@ public class SimpleRenderer
 	private double relativeLightIntensity = 0;
 	private double relativeDarkIntensity = 0;
 	private double lightingMultiple = 0;
-	private double lightAzimuth;
-	private double lightElevation;
 	private boolean paintGlobalBaseGrid = true;
 	
 	private RayTracing lightSourceRayTracer;
@@ -90,6 +88,8 @@ public class SimpleRenderer
 	private CanvasProjection projection;
 	private MapPoint point = new MapPoint();
 	
+	private double solarElevation;
+	private double solarAzimuth;
 	private LightSourceSpecifyTypeEnum lightSourceType;
 	private long lightOnDate;
 	private boolean recalcLightOnEachPoint;
@@ -98,6 +98,7 @@ public class SimpleRenderer
 	private EarthDateTime datetime;
 	private Coordinate latitudeCoordinate;
 	private Coordinate longitudeCoordinate;
+	private Planet planet;
 	private boolean sunIsUp = false;
 	
 	private double latitudeSlices = 50;
@@ -159,6 +160,7 @@ public class SimpleRenderer
 			}
 		}
 		
+		planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
 		LightingContext lightingContext = modelContext.getLightingContext();
 		lightSourceType = lightingContext.getLightSourceSpecifyType();
 		lightOnDate = lightingContext.getLightingOnDate();
@@ -222,8 +224,8 @@ public class SimpleRenderer
 		relativeDarkIntensity = modelContext.getLightingContext().getRelativeDarkIntensity();
 		lightingMultiple = modelContext.getLightingContext().getLightingMultiple();
 		
-		lightAzimuth = modelContext.getLightingContext().getLightingAzimuth();
-		lightElevation = modelContext.getLightingContext().getLightingElevation();
+		solarAzimuth = modelContext.getLightingContext().getLightingAzimuth();
+		solarElevation = modelContext.getLightingContext().getLightingElevation();
 		
 		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		
@@ -238,9 +240,7 @@ public class SimpleRenderer
 		rayTraceShadows = modelContext.getLightingContext().getRayTraceShadows();
 		shadowIntensity = modelContext.getLightingContext().getShadowIntensity();
 		if (rayTraceShadows) {
-			lightSourceRayTracer = new RayTracing(lightAzimuth,
-					lightElevation,
-					modelContext,
+			lightSourceRayTracer = new RayTracing(modelContext,
 					new RasterDataFetchHandler() {
 						public double getRasterData(double latitude, double longitude) throws Exception {
 							return getElevation(latitude, longitude);
@@ -329,7 +329,7 @@ public class SimpleRenderer
 		double[] points = new double[3];
 		double radius = MathExt.sqrt(MathExt.sqr(north - south) + MathExt.sqr(east - west));
 				
-		Spheres.getPoint3D(lightAzimuth, lightElevation, radius, points);
+		Spheres.getPoint3D(solarAzimuth, solarElevation, radius, points);
 	
 		double latitude = centerLatitude + points[0];
 		double longitude = centerLongitude - points[2];
@@ -438,10 +438,10 @@ public class SimpleRenderer
 		}
 		
 		
-		double north = rasterDataContext.getNorth();
-		double south = rasterDataContext.getSouth();
-		double east = rasterDataContext.getEast();
-		double west = rasterDataContext.getWest();
+		double north = modelContext.getNorth();
+		double south = modelContext.getSouth();
+		double east = modelContext.getEast();
+		double west = modelContext.getWest();
 
 		double maxLon = east - longitudeResolution;
 		double minLat = south + latitudeResolution;
@@ -538,6 +538,7 @@ public class SimpleRenderer
 		
 		
 		if (midElev == DemConstants.ELEV_NO_DATA)
+		//	midElev = 0;
 			return DemConstants.ELEV_NO_DATA;
 		
 		
@@ -597,10 +598,10 @@ public class SimpleRenderer
 			normal[1] = pointNormal[1] / 4.0;
 			normal[2] = pointNormal[2] / 4.0;
 			
-			double dot = calculateDotProduct();
+			double dot = calculateDotProduct(latitude, longitude);
 			
 			if (this.rayTraceShadows) {
-				if (lightSourceRayTracer.isRayBlocked(latitude, longitude, midElev)) {
+				if (lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, midElev)) {
 					// I'm not 100% happy with this method...
 					dot = dot - (2 * shadowIntensity);
 					if (dot < -1.0) {
@@ -643,7 +644,54 @@ public class SimpleRenderer
 		
 	}
 	
-	protected double calculateDotProduct()
+	
+	protected double calculateDotProduct(double latitude, double longitude)
+	{
+		double dot = 0;
+		double terrainDotProduct = calculateTerrainDotProduct();
+		double sphericalDotProduct = calculateSphericalDotProduct(latitude, longitude);
+		
+		dot = (terrainDotProduct + sphericalDotProduct) / 2;
+		return dot;
+		
+	}
+	
+	
+	protected double calculateSphericalDotProduct(double latitude, double longitude)
+	{
+		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
+		
+		if (planet != null) {
+			meanRadius = planet.getMeanRadius();
+		}
+		
+		
+		Spheres.getPoint3D(longitude+180, latitude, meanRadius, pointNormal);
+		
+		
+		//double resolutionMeters = RasterDataContext.getMetersResolution(meanRadius, latitude, longitude, latitudeResolution, longitudeResolution);
+		//double xzRes = (resolutionMeters / 2.0);
+		
+		//pointNormal[0] = 0.0;
+		//pointNormal[1] = meanRadius;
+		//pointNormal[2] = 0.0;
+		//Vector.rotate(x, y, z, pointNormal);
+		
+		
+		perspectives.normalize(pointNormal, normal);
+		double dot = perspectives.dotProduct(pointNormal, sunsource);
+		dot = Math.pow(dot, spotExponent);
+		
+		if (dot > 0) {
+			dot *= relativeLightIntensity;
+		} else if (dot < 0) {
+			dot *= relativeDarkIntensity;
+		}
+		
+		return dot;
+	}
+	
+	protected double calculateTerrainDotProduct()
 	{
 		if (!sunIsUp) {
 			return -1;
@@ -657,11 +705,7 @@ public class SimpleRenderer
 		} else if (dot < 0) {
 			dot *= relativeDarkIntensity;
 		}
-		
-		
-		
-		
-		
+
 		return dot;
 	}
 	protected void setUpLightSource(double latitude, double longitude, double solarElevation, double solarAzimuth, boolean force)
@@ -692,9 +736,10 @@ public class SimpleRenderer
 		solarCalculator.update();
 		solarCalculator.setLatitude(latitudeCoordinate);
 		solarCalculator.setLongitude(longitudeCoordinate);
-		double solarElevation = solarCalculator.solarElevationAngle();
-		double solarAzimuth = solarCalculator.solarAzimuthAngle();
-		
+		//double solarElevation = solarCalculator.solarElevationAngle();
+		//double solarAzimuth = solarCalculator.solarAzimuthAngle();
+		solarAzimuth = solarCalculator.solarAzimuthAngle();
+		solarElevation = solarCalculator.solarElevationAngle();
 		double solarZenith = solarCalculator.solarZenithAngle();
 		
 		if (solarZenith > 130.0) {
@@ -722,7 +767,7 @@ public class SimpleRenderer
 		//double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
 		//double effLonRes = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
 		
-		Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
+		//Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
 		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
 		
 		if (planet != null) {

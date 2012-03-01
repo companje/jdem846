@@ -14,8 +14,8 @@ public class RayTracing
 	
 	
 	private RasterDataFetchHandler rasterDataFetchHandler;
-	private double remoteAzimuth;
-	private double remoteElevationAngle;
+	//private double remoteAzimuth;
+	//private double remoteElevationAngle;
 	
 	private double longitudeResolution;
 	private double latitudeResolution;
@@ -32,13 +32,11 @@ public class RayTracing
 	
 	private double[] points;
 	
-	public RayTracing(double remoteAzimuth, 
-			double remoteElevationAngle, 
+	public RayTracing(
 			ModelContext modelContext,
 			RasterDataFetchHandler rasterDataFetchHandler)
 		{
-			this(remoteAzimuth,
-				remoteElevationAngle,
+			this(
 				modelContext.getRasterDataContext().getEffectiveLatitudeResolution(),
 				modelContext.getRasterDataContext().getEffectiveLongitudeResolution(),
 				modelContext.getRasterDataContext().getMetersResolution(),
@@ -54,8 +52,7 @@ public class RayTracing
 		
 		}
 	
-	public RayTracing(double remoteAzimuth, 
-					double remoteElevationAngle, 
+	public RayTracing(
 					double latitudeResolution, 
 					double longitudeResolution, 
 					double metersResolution, 
@@ -67,8 +64,6 @@ public class RayTracing
 					RasterDataFetchHandler rasterDataFetchHandler)
 	{
 		this.rasterDataFetchHandler = rasterDataFetchHandler;
-		this.remoteAzimuth = remoteAzimuth;
-		this.remoteElevationAngle = remoteElevationAngle;
 		this.latitudeResolution = latitudeResolution;
 		this.longitudeResolution = longitudeResolution;
 		this.metersResolution = metersResolution;
@@ -97,7 +92,7 @@ public class RayTracing
 	 * @return
 	 * @throws RayTracingException
 	 */
-	public boolean isRayBlocked(double centerLatitude, double centerLongitude, double centerElevation) throws RayTracingException
+	public boolean isRayBlocked(double remoteElevationAngle, double remoteAzimuth, double centerLatitude, double centerLongitude, double centerElevation) throws RayTracingException
 	{
 		
 		int tryCount = 1;
@@ -109,7 +104,7 @@ public class RayTracing
 		
 		double radius = radiusInterval;
 		while (true) {
-			Spheres.getPoint3D(this.remoteAzimuth, this.remoteElevationAngle, radius, points);
+			Spheres.getPoint3D(remoteAzimuth, remoteElevationAngle, radius, points);
 			
 			latitude = centerLatitude + points[0];
 			longitude = centerLongitude - points[2];
@@ -257,26 +252,7 @@ public class RayTracing
 		this.metersResolution = metersResolution;
 	}
 
-	public double getRemoteAzimuth()
-	{
-		return remoteAzimuth;
-	}
 
-	public void setRemoteAzimuth(double remoteAzimuth)
-	{
-		this.remoteAzimuth = remoteAzimuth;
-	}
-
-	public double getRemoteElevationAngle()
-	{
-		return remoteElevationAngle;
-	}
-
-	public void setRemoteElevationAngle(double remoteElevationAngle)
-	{
-		this.remoteElevationAngle = remoteElevationAngle;
-	}
-	
 	
 	public interface RasterDataFetchHandler 
 	{

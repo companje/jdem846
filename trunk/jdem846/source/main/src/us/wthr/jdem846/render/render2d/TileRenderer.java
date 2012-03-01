@@ -105,8 +105,6 @@ public class TileRenderer extends InterruptibleProcess
 	private RayTracing lightSourceRayTracer;
 	private boolean rayTraceShadows;
 	private double shadowIntensity;
-	private double lightAzimuth;
-	private double lightElevation;
 	private boolean doubleBuffered;
 	private double elevationMultiple;
 	
@@ -300,8 +298,8 @@ public class TileRenderer extends InterruptibleProcess
 		relativeDarkIntensity = modelContext.getLightingContext().getRelativeDarkIntensity();
 		lightingMultiple = modelContext.getLightingContext().getLightingMultiple();
 		
-		lightAzimuth = modelContext.getLightingContext().getLightingAzimuth();
-		lightElevation = modelContext.getLightingContext().getLightingElevation();
+		solarAzimuth = modelContext.getLightingContext().getLightingAzimuth();
+		solarElevation = modelContext.getLightingContext().getLightingElevation();
 		
 		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		
@@ -316,8 +314,7 @@ public class TileRenderer extends InterruptibleProcess
 		rayTraceShadows = modelContext.getLightingContext().getRayTraceShadows();
 		shadowIntensity = modelContext.getLightingContext().getShadowIntensity();
 		if (rayTraceShadows) {
-			lightSourceRayTracer = new RayTracing(lightAzimuth,
-					lightElevation,
+			lightSourceRayTracer = new RayTracing(
 					modelContext,
 					new RasterDataFetchHandler() {
 						public double getRasterData(double latitude, double longitude) throws Exception {
@@ -619,7 +616,7 @@ public class TileRenderer extends InterruptibleProcess
 			double dot = calculateDotProduct();
 			
 			if (this.rayTraceShadows) {
-				if (lightSourceRayTracer.isRayBlocked(latitude, longitude, midElev)) {
+				if (lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, midElev)) {
 					// I'm not 100% happy with this method...
 					dot = dot - (2 * shadowIntensity);
 					if (dot < -1.0) {
@@ -726,8 +723,9 @@ public class TileRenderer extends InterruptibleProcess
 		solarCalculator.update();
 		solarCalculator.setLatitude(latitudeCoordinate);
 		solarCalculator.setLongitude(longitudeCoordinate);
-		double solarElevation = solarCalculator.solarElevationAngle();
-		double solarAzimuth = solarCalculator.solarAzimuthAngle();
+		
+		solarAzimuth = solarCalculator.solarAzimuthAngle();
+		solarElevation = solarCalculator.solarElevationAngle();
 		double solarZenith = solarCalculator.solarZenithAngle();
 		
 		if (solarZenith > 130.0) {

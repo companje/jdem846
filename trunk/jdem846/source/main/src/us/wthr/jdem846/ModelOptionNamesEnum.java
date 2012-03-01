@@ -47,8 +47,15 @@ public enum ModelOptionNamesEnum
 	//PIPELINE_RENDER("us.wthr.jdem846.performance.pipelineRender"),
 	//PROJECT_3D("us.wthr.jdem846.modelOptions.project3d"),
 	MODEL_PROJECTION("us.wthr.jdem846.modelOptions.modelProjection"),
-	MAINTAIN_ASPECT_RATIO_TO_DATA("us.wthr.jdem846.modelOptions.maintainAspectRatioWithData");
+	MAINTAIN_ASPECT_RATIO_TO_DATA("us.wthr.jdem846.modelOptions.maintainAspectRatioWithData"),
+	
+	LIMIT_COORDINATES("us.wthr.jdem846.modelOptions.limits.limitCoordinates"),
+	LIMITS_NORTH("us.wthr.jdem846.modelOptions.limits.north"),
+	LIMITS_SOUTH("us.wthr.jdem846.modelOptions.limits.south"),
+	LIMITS_EAST("us.wthr.jdem846.modelOptions.limits.east"),
+	LIMITS_WEST("us.wthr.jdem846.modelOptions.limits.west");
 
+	
 	//STANDARD_RESOLUTION_RETRIEVAL("us.wthr.jdem846.performance.standardResolutionRetrieval"),
 	//INTERPOLATE_HIGHER_RESOLUTION("us.wthr.jdem846.performance.interpolateToHigherResolution"),
 	//AVERAGE_OVERLAPPING_RASTER_DATA("us.wthr.jdem846.performance.averageOverlappedData");
