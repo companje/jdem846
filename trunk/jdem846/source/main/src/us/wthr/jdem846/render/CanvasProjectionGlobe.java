@@ -9,6 +9,7 @@ import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.render.gfx.Vector;
 
@@ -41,17 +42,20 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
 		
+		//double radius = MathExt.min(getWidth(), getHeight()) - 20;
+		
+		
 		double radius = (getWidth() / 3);
 		
 		double elev = 0;
-		elevation -= ((max + min) / 2.0);
+		//elevation -= ((max + min) / 2.0);
 		elev = (elevation / resolution) * elevationMultiple;
 		
 		
 		
 		//double earthMeanRadiusMeters = DemConstants.EARTH_MEAN_RADIUS * 1000;
 		
-		radius = (radius / meanRadius) * (meanRadius + elevation);
+		radius = (radius / meanRadius) * (meanRadius + elev);
 		
 		//double[] points = new double[3];
 		Spheres.getPoint3D(longitude+180, latitude, radius, pointVector);

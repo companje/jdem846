@@ -167,7 +167,7 @@ public class SimpleRenderer
 		 * adds way too much overhead. Should the recalc method be optimized enough,
 		 * perhaps this will again be configurable.
 		 */
-		recalcLightOnEachPoint = false;
+		recalcLightOnEachPoint = true;
 		
 		
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
@@ -566,6 +566,7 @@ public class SimpleRenderer
 			if (nElev == DemConstants.ELEV_NO_DATA)
 				nElev = midElev;
 			
+			setUpLightSource(latitude, longitude, 0.0, 0.0, recalcLightOnEachPoint);
 			resetBuffers(latitude, longitude);
 			
 			// NW Normal
@@ -680,9 +681,9 @@ public class SimpleRenderer
 	{
 		// This stuff in here probably can be vastly optimized...
 		
-		int timezone = (int) Math.floor((longitude / 180.0) * 12.0);
+		//int timezone = (int) Math.floor((longitude / 180.0) * 12.0);
 
-		datetime.setTimezone(timezone);
+		//datetime.setTimezone(timezone);
 		
 		latitudeCoordinate.fromDecimal(latitude);
 		longitudeCoordinate.fromDecimal(longitude);
@@ -696,12 +697,12 @@ public class SimpleRenderer
 		
 		double solarZenith = solarCalculator.solarZenithAngle();
 		
-		if (solarZenith > 108.0) {
+		if (solarZenith > 130.0) {
 			sunIsUp = false;
 		} else {
 			sunIsUp = true;
 		}
-		
+		sunIsUp = true;
 		setUpLightSourceBasic(solarElevation, solarAzimuth);
 		
 	}
@@ -711,7 +712,7 @@ public class SimpleRenderer
 		
 		sunsource[0] = 0.0;
 		sunsource[1] = 0.0;
-		sunsource[2] = -1.0;
+		sunsource[2] = -149598000000.0;
 		Vector.rotate(solarElevation, -solarAzimuth, 0, sunsource);
 		
 	}

@@ -202,7 +202,7 @@ public class ModelOptionsPanel extends Panel
 
 		//spnLightMultiple = new Spinner(new SpinnerNumberModel(50, 0, 100, 1));
 		//spnSpotExponent = new Spinner(new SpinnerNumberModel(1, 1, 5, 1));
-		spnElevationMultiple = new Spinner(new SpinnerNumberModel(0, 0, 100, 1));
+		spnElevationMultiple = new Spinner(new SpinnerNumberModel(0, 0, 100000, 1));
 		//spnRelativeLightIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
 		//spnRelativeDarkIntensity = new Spinner(new SpinnerNumberModel(1, 0, 100, 1));
 
