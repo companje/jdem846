@@ -764,7 +764,7 @@ public class TileRenderer extends InterruptibleProcess
 		solarElevation = solarCalculator.solarElevationAngle();
 		solarZenith = solarCalculator.solarZenithAngle();
 		
-		if (solarZenith > 130.0) {
+		if (solarZenith > 108.0) {
 			sunIsUp = false;
 		} else {
 			sunIsUp = true;

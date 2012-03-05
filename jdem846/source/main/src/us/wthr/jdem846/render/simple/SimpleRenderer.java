@@ -242,7 +242,7 @@ public class SimpleRenderer
 		modelContext.getModelDimensions().outputLatitudeResolution = latitudeResolution;
 		modelContext.getModelDimensions().outputLongitudeResolution = longitudeResolution;
 		
-		rayTraceShadows = modelContext.getLightingContext().getRayTraceShadows();
+		rayTraceShadows = false;//modelContext.getLightingContext().getRayTraceShadows();
 		shadowIntensity = modelContext.getLightingContext().getShadowIntensity();
 		if (rayTraceShadows) {
 			lightSourceRayTracer = new RayTracing(modelContext,
