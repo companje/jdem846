@@ -7,6 +7,7 @@ import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 
 public class CanvasProjection
 {
@@ -21,6 +22,12 @@ public class CanvasProjection
 	
 	private double width; 
 	private double height;
+	
+	private boolean usePointAdjustments = false;
+	private double minX;
+	private double maxX;
+	private double minY;
+	private double maxY;
 	
 	//protected ModelContext modelContext;
 	
@@ -72,8 +79,56 @@ public class CanvasProjection
 		this.west = west;
 		this.width = width;
 		this.height = height;
+		
+		determineXYAdjustments();
 	}
 	
+	private void determineXYAdjustments()
+	{
+		if (mapProjection != null) {
+			usePointAdjustments = true;
+			
+			minX = 180;
+			maxX = -180;
+			
+			minY = Double.MAX_VALUE;
+			maxY = Double.MIN_VALUE;
+			
+			MapPoint point = new MapPoint();
+			try {
+				mapProjection.getPoint(north, west, 0.0, point);
+				checkXYMinMax(point);
+				
+				mapProjection.getPoint(north, east, 0.0, point);
+				checkXYMinMax(point);
+				
+				mapProjection.getPoint(south, west, 0.0, point);
+				checkXYMinMax(point);
+				
+				mapProjection.getPoint(south, east, 0.0, point);
+				checkXYMinMax(point);
+				
+			} catch (MapProjectionException ex) {
+				ex.printStackTrace();
+			}
+		
+		}
+	}
+	
+	private void checkXYMinMax(MapPoint point)
+	{
+		if (point.column < minX)
+			minX = point.column;
+		if (point.column > maxX)
+			maxX = point.column;
+		
+		if (point.row < minY)
+			minY = point.row;
+		if (point.row > maxY)
+			maxY = point.row;
+
+	}
+
 	
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
@@ -81,6 +136,8 @@ public class CanvasProjection
 			mapProjection.getPoint(latitude, longitude, elevation, point);
 			point.row = latitudeToRow(point.row);
 			point.column = longitudeToColumn(point.column);
+			
+			
 			//point.z = elevation;
 			//int i = 0;
 			point.z = 0.0;
@@ -92,14 +149,24 @@ public class CanvasProjection
 	}
 	
 	
+	
+	
 	public double latitudeToRow(double latitude)
 	{
-		return ((double) height) * ((getNorth() - latitude) / (getNorth() - getSouth()));
+		if (usePointAdjustments) {
+			return ((double) height) * ((maxY - latitude) / (maxY - minY));
+		} else {
+			return ((double) height) * ((getNorth() - latitude) / (getNorth() - getSouth()));
+		}
 	}
 	
 	public double longitudeToColumn(double longitude)
 	{
-		return ((double)width) * ((longitude - getWest()) / (getEast() - getWest()));
+		if (usePointAdjustments) {
+			return ((double)width) * ((longitude - minX)) / (maxX - minX);
+		} else {
+			return ((double)width) * ((longitude - getWest()) / (getEast() - getWest()));
+		}
 	}
 
 	public MapProjection getMapProjection()
