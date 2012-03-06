@@ -110,13 +110,23 @@ public class CanvasProjection
 				mapProjection.getPoint(north, east, 0.0, point);
 				checkXYMinMax(point);
 				
+				mapProjection.getPoint(north, (west + east) / 2.0, 0.0, point);
+				checkXYMinMax(point);
+				
 				mapProjection.getPoint(south, west, 0.0, point);
 				checkXYMinMax(point);
 				
 				mapProjection.getPoint(south, east, 0.0, point);
 				checkXYMinMax(point);
-				
 
+				mapProjection.getPoint(south, (west + east) / 2.0, 0.0, point);
+				checkXYMinMax(point);
+				
+				mapProjection.getPoint((north + south) / 2.0, west, 0.0, point);
+				checkXYMinMax(point);
+				
+				mapProjection.getPoint((north + south) / 2.0, east, 0.0, point);
+				checkXYMinMax(point);
 				
 			} catch (MapProjectionException ex) {
 				ex.printStackTrace();
