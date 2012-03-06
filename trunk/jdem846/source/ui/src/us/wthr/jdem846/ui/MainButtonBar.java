@@ -22,6 +22,7 @@ import javax.swing.BorderFactory;
 
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ToolBar;
+import us.wthr.jdem846.ui.layouts.ModifiedFlowLayout;
 
 @SuppressWarnings("serial")
 public class MainButtonBar extends Panel
@@ -31,11 +32,15 @@ public class MainButtonBar extends Panel
 	
 	protected MainButtonBar()
 	{
+		/*
 		FlowLayout layout = new FlowLayout();
 		layout.setAlignment(FlowLayout.LEFT);
 		layout.setHgap(0);
 		layout.setVgap(0);
 		setLayout(layout);
+		*/
+		ModifiedFlowLayout mFlowLayout = new ModifiedFlowLayout(FlowLayout.LEFT, 1, 1);
+		setLayout(mFlowLayout);
 	}
 	
 	

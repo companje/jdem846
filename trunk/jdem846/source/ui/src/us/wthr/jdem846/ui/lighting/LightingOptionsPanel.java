@@ -34,13 +34,14 @@ import us.wthr.jdem846.ui.OptionsChangedListener;
 import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.ComboBox;
 import us.wthr.jdem846.ui.base.Label;
+import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Spinner;
 import us.wthr.jdem846.ui.optionModels.LightSourceSpecifyTypeListModel;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
 import us.wthr.jdem846.ui.panels.RoundedPanel;
 
 @SuppressWarnings("serial")
-public class LightingOptionsPanel extends RoundedPanel
+public class LightingOptionsPanel extends Panel
 {
 	private static Log log = Logging.getLog(LightingOptionsPanel.class);
 	

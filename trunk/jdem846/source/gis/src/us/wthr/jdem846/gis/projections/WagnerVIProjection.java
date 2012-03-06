@@ -19,8 +19,14 @@ public class WagnerVIProjection extends AbstractBaseProjection
 		super(north, south, east, west, width, height);
 	}
 
+	@Override
+	public void project(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
+	{
+		point.column = longitude * Math.sqrt(1 - 3 * Math.pow(latitude / Math.PI, 2));
+		point.row = latitude;
+	}
 	
-	
+	/*
 	@Override
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
@@ -36,5 +42,5 @@ public class WagnerVIProjection extends AbstractBaseProjection
 		point.column = x;
 		point.row = y;
 	}
-	
+	*/
 }

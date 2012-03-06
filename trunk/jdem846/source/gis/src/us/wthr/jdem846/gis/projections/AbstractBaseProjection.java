@@ -2,6 +2,7 @@ package us.wthr.jdem846.gis.projections;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.gis.Location;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.math.MathExt;
 
 public abstract class AbstractBaseProjection implements MapProjection
@@ -39,6 +40,8 @@ public abstract class AbstractBaseProjection implements MapProjection
 	private double height;
 	
 	private double scaleFactor = 1.0;
+	
+	private double meridian = 0.0;
 	
 	public AbstractBaseProjection()
 	{
@@ -131,7 +134,30 @@ public abstract class AbstractBaseProjection implements MapProjection
 		this.southEast = southEast;
 		this.width = width;
 		this.height = height;
+		
+		meridian = (getEast() + getWest()) / 2.0;
 	}
+	
+	
+	@Override
+	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
+	{
+		double a_longitude = longitude - getMeridian();
+		double a_latitude = latitude;// - equator;
+		
+		double r_latitude = Math.toRadians(a_latitude);
+		double r_longitude = Math.toRadians(a_longitude);
+		
+		project(r_latitude, r_longitude, elevation, point);
+		
+		point.column = Math.toDegrees(point.column);
+		point.row = Math.toDegrees(point.row);
+		
+	}
+	
+	public abstract void project(double latitudeRadians, double longitudeRadians, double elevation, MapPoint point) throws MapProjectionException;
+	
+	
 	
 	/*
 	public double latitudeToRow(double latitude)
@@ -291,5 +317,10 @@ public abstract class AbstractBaseProjection implements MapProjection
 	protected double getMinWest()
 	{
 		return MathExt.min(northWest.getLongitude().toDecimal(), southWest.getLongitude().toDecimal());
+	}
+	
+	protected double getMeridian()
+	{
+		return meridian;
 	}
 }

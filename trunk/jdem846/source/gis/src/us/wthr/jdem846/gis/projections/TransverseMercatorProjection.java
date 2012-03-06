@@ -56,6 +56,28 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 	}
 
 	
+	@Override
+	public void project(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
+	{
+		double phi = latitude;
+		double lam = longitude;
+		
+		if (lam < -HALFPI || lam > HALFPI) {
+			point.row = 0;
+			point.column = 0;
+			return;
+		}
+		
+		if (spherical) {
+			getPointSpherical(phi, lam, elevation, point);
+		} else {
+			getPointEllipse(phi, lam, elevation, point);
+		}
+		
+		
+	}
+	
+	/*
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
 		double phi = Math.toRadians(latitude);
@@ -75,6 +97,7 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 		
 		
 	}
+	*/
 	
 	public void getPointEllipse(double phi, double lam, double elevation, MapPoint point) throws MapProjectionException
 	{
@@ -103,8 +126,8 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 			))));
 		
 		
-		x = Math.toDegrees(x);
-		y = Math.toDegrees(y);
+		//x = Math.toDegrees(x);
+		//y = Math.toDegrees(y);
 		
 		//x = longitudeToColumn(x);
 		//y = latitudeToRow(y);
@@ -150,8 +173,8 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 		y = aks0 * (y - 0);
 
 		
-		x = Math.toDegrees(x);
-		y = Math.toDegrees(y);
+		//x = Math.toDegrees(x);
+		//y = Math.toDegrees(y);
 		
 		//x = longitudeToColumn(x);
 		//y = latitudeToRow(y);

@@ -88,6 +88,14 @@ public class CanvasProjection
 		if (mapProjection != null) {
 			usePointAdjustments = true;
 			
+			/*
+			minX = west;
+			maxX = east;
+			minY = south;
+			maxY = north;
+			*/
+			
+			
 			minX = 180;
 			maxX = -180;
 			
@@ -108,24 +116,21 @@ public class CanvasProjection
 				mapProjection.getPoint(south, east, 0.0, point);
 				checkXYMinMax(point);
 				
+
+				
 			} catch (MapProjectionException ex) {
 				ex.printStackTrace();
 			}
-		
+			
 		}
 	}
 	
 	private void checkXYMinMax(MapPoint point)
 	{
-		if (point.column < minX)
-			minX = point.column;
-		if (point.column > maxX)
-			maxX = point.column;
-		
-		if (point.row < minY)
-			minY = point.row;
-		if (point.row > maxY)
-			maxY = point.row;
+		minX = MathExt.min(minX, point.column);
+		maxX = MathExt.max(maxX, point.column);
+		minY = MathExt.min(minY, point.row);
+		maxY = MathExt.max(maxY, point.row);
 
 	}
 
@@ -134,9 +139,15 @@ public class CanvasProjection
 	{
 		if (mapProjection != null) {
 			mapProjection.getPoint(latitude, longitude, elevation, point);
+			
+			double orig_column = point.column;
+			
 			point.row = latitudeToRow(point.row);
 			point.column = longitudeToColumn(point.column);
 			
+			if (Double.isInfinite(point.column)) {
+				int i = 0;
+			}
 			
 			//point.z = elevation;
 			//int i = 0;

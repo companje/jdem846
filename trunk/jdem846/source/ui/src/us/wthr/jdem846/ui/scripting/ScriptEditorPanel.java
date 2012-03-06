@@ -17,6 +17,7 @@
 package us.wthr.jdem846.ui.scripting;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.InputMethodEvent;
 import java.awt.event.InputMethodListener;
 import java.io.BufferedInputStream;
@@ -35,10 +36,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.AttributeSet;
+
+import jsyntaxpane.DefaultSyntaxKit;
+import jsyntaxpane.SyntaxDocument;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.ComponentException;
@@ -69,6 +75,9 @@ public class ScriptEditorPanel extends Panel
 	
 	private ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.GROOVY;
 	
+	private DefaultSyntaxKit syntaxKit;
+	private SyntaxDocument syntaxDocument;
+	
 	static {
 		
 	}
@@ -79,31 +88,25 @@ public class ScriptEditorPanel extends Panel
 		
 		jsyntaxpane.DefaultSyntaxKit.initKit();
 		
-		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.scriptEditorPane.textAA")) {
-			jsyntaxpane.DefaultSyntaxKit.setProperty("TextAA", "ON");
-		} else {
-			jsyntaxpane.DefaultSyntaxKit.setProperty("TextAA", "OFF");
-		}
+		
 		
 		// Create Components
 		buttonBar = new ScriptEditorButtonBar(this);
 		buttonBar.addScriptEditorButtonClickedListener(new ScriptEditorButtonClickedListener() {
 			public void onButtonClicked(ScriptEditButtons button)
 			{
-				log.info("Button clicked: " + button);
-				JOptionPane.showMessageDialog(getRootPane(),
-						I18N.get("us.wthr.jdem846.ui.notYetImplemented.message"),
-					    I18N.get("us.wthr.jdem846.ui.notYetImplemented.title"),
-					    JOptionPane.INFORMATION_MESSAGE);
+				onToolbarButtonClicked(button);
+
 			}
 		});
+		
 		//MainButtonBar.addToolBar(buttonBar);
 		
 		
 		final JEditorPane editorPane = new JEditorPane();
 		this.editorPane = editorPane;
 		
-		log.info("Document: " + editorPane.getDocument());
+		//log.info("Document: " + editorPane.getDocument());
 		//Action[] actions = editorPane.getActions();
 		//for (Action action : actions) {
 		//	log.info("Action: " + action.toString());
@@ -113,19 +116,39 @@ public class ScriptEditorPanel extends Panel
 		
 		JScrollPane scrollPane = new JScrollPane(editorPane);
 		
-		// Set Layout
-		BorderLayout layout = new BorderLayout();
-		setLayout(layout);
-		add(scrollPane, BorderLayout.CENTER);
-		add(buttonBar, BorderLayout.NORTH);
 		
-		this.doLayout();
 		
 		if (this.scriptLanguage != null) {
 			editorPane.setContentType(scriptLanguage.mime());
 		}
 		
-		editorPane.getDocument().addDocumentListener(new DocumentListener() {
+		syntaxKit = (DefaultSyntaxKit) editorPane.getEditorKit();
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.scriptEditorPane.textAA")) {
+			syntaxKit.setProperty("TextAA", "ON");
+		} else {
+			syntaxKit.setProperty("TextAA", "OFF");
+		}
+		syntaxKit.setProperty("Toolbar.Buttons.Rollover", "true");
+		syntaxKit.setProperty("Toolbar.Buttons.BorderPainted", "true");
+		syntaxKit.setProperty("Toolbar.Buttons.Opaque", "true");
+		syntaxKit.setProperty("Toolbar.Buttons.BorderSize", "4");
+		
+		
+		syntaxDocument = (SyntaxDocument) editorPane.getDocument();
+		syntaxKit.addToolBarActions(editorPane, buttonBar);
+		buttonBar.addSeparator();
+		
+		
+		
+		syntaxDocument.addUndoableEditListener(new UndoableEditListener() {
+			public void undoableEditHappened(UndoableEditEvent e)
+			{
+				log.info("Undoable Edit Happened!");
+				
+			}
+		});
+		
+		syntaxDocument.addDocumentListener(new DocumentListener() {
 
 			@Override
 			public void insertUpdate(DocumentEvent e)
@@ -146,8 +169,23 @@ public class ScriptEditorPanel extends Panel
 			}
 			
 		});
+		
+		
+		// Set Layout
+		BorderLayout layout = new BorderLayout();
+		setLayout(layout);
+		add(scrollPane, BorderLayout.CENTER);
+		add(buttonBar, BorderLayout.NORTH);
+				
+		//this.doLayout();
 	}
 	
+	private void onToolbarButtonClicked(ScriptEditButtons button)
+	{
+		if (button == ScriptEditButtons.LANGUAGE) {
+			// Do nothing for now...
+		}
+	}
 	
 	@Override
 	public void dispose() throws ComponentException
@@ -187,8 +225,11 @@ public class ScriptEditorPanel extends Panel
 	
 	public void setScriptContent(String scriptContent)
 	{
+		log.info("Setting script content...");
 		editorPane.setText(scriptContent);
-		editorPane.setCaretPosition(0);
+		//syntaxDocument.clearUndos();
+		
+		//editorPane.setCaretPosition(0);
 	}
 	
 	public ScriptLanguageEnum getScriptLanguage()

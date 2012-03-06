@@ -27,7 +27,36 @@ public class WinkelTripelProjection extends AbstractBaseProjection
 		super(north, south, east, west, width, height);
 	}
 	
+	
+	@Override
+	public void project(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
+	{
+		double lpphi = latitude;
+		double lplam = longitude;
 
+		double c = 0.5 * lplam;
+		double cosO1 = 0.99993827224000145098735895662767;
+		double d = Math.acos(Math.cos(lpphi) * Math.cos(c));
+		
+		double sinca = (d == 0) ? 0 : (Math.sin(d) / d);
+		
+		double x = 0;
+		double y = 0;
+		
+		if (d != 0) {
+			x = (2.0 * Math.cos(lpphi) * Math.sin(c)) / sinca;
+			y = Math.sin(lpphi) / sinca;
+		}
+		
+		x = (x + lplam * cosO1) / 2.0;
+		y = (y + lpphi) / 2.0;
+		
+
+		point.column = x;
+		point.row = y;
+	}
+	
+	/*
 	@Override
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
@@ -58,7 +87,7 @@ public class WinkelTripelProjection extends AbstractBaseProjection
 		point.row = Math.toDegrees(y);
 
 	}
-
+	*/
 	
 	
 }
