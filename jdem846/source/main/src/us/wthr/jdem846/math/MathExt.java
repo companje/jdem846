@@ -114,20 +114,29 @@ public class MathExt
 	
 	public static double min(double...values)
 	{
-		double m = Double.MAX_VALUE;
+		double m = Double.NaN;
 		for (int i = 0; i < values.length; i++) {
-			if (values[i] < m)
+			
+			if (Double.isNaN(m)) {
 				m = values[i];
+			} else {
+				m = Math.min(m, values[i]);
+			}
 		}
 		return m;
 	}
 	
 	public static double max(double...values)
 	{
-		double m = Double.MIN_VALUE;
+		double m = Double.NaN;
 		for (int i = 0; i < values.length; i++) {
-			if (values[i] > m)
+			
+			if (Double.isNaN(m)) {
 				m = values[i];
+			} else {
+				m = Math.max(m, values[i]);
+			}
+
 		}
 		return m;
 	}

@@ -56,6 +56,7 @@ public class RobinsonProjection extends AbstractBaseProjection
 	{
 		double latitudeOrig = latitude;
 		latitude = Math.abs(latitude);
+		//longitude = longitude - getMeridian();
 		
 		double width = getWidth();
 		double height = getHeight();
@@ -91,6 +92,12 @@ public class RobinsonProjection extends AbstractBaseProjection
 			point.row = (height / 2.0) + (height * (pdfe * 0.5 /*0.5072*/)) - 1.0;
 		}
 
+	}
+	
+	@Override
+	public void project(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
+	{
+		// Does nothing.
 	}
 	
 	protected double interpolate(double s00, double s01, double frac)

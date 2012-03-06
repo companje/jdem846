@@ -57,13 +57,18 @@ public class EquirectangularProjection extends AbstractBaseProjection
 		super(northWest, northEast, southWest, southEast, width, height);
 	}
 
-	
+	@Override
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
 		point.row = latitude;
 		point.column = longitude;
 	}
 	
+	@Override
+	public void project(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
+	{
+		// Does nothing.
+	}
 	
 
 }
