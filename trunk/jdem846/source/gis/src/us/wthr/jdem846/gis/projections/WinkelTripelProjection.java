@@ -31,6 +31,24 @@ public class WinkelTripelProjection extends AbstractBaseProjection
 	@Override
 	public void project(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
+		/*
+		 * Borrowed from http://jmapprojlib.svn.sourceforge.net/viewvc/jmapprojlib/trunk/src/main/java/com/jhlabs/map/proj/WinkelTripelProjection.java?revision=29&view=markup
+		 */
+		double lpphi = latitude;
+		double lplam = longitude;
+		
+		double c = 0.5 * lplam;
+		double d = Math.acos(Math.cos(lpphi) * Math.cos(c));
+
+		if (d != 0) {
+			point.column = 2. * d * Math.cos(lpphi) * Math.sin(c) * (point.row = 1. / Math.sin(d));
+			point.row *= d * Math.sin(lpphi);
+		} else {
+			point.column = point.row = 0.0;
+		}
+		point.column = (point.column + lplam * 0.636619772367581343) * 0.5;
+		point.row = (point.row + lpphi) * 0.5;
+		/*
 		double lpphi = latitude;
 		double lplam = longitude;
 
@@ -54,6 +72,7 @@ public class WinkelTripelProjection extends AbstractBaseProjection
 
 		point.column = x;
 		point.row = y;
+		*/
 	}
 	
 	/*
