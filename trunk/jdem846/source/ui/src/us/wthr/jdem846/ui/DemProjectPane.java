@@ -54,6 +54,8 @@ import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.InvalidFileFormatException;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.image.ImageDataContext;
+import us.wthr.jdem846.image.SimpleGeoImage;
 //import us.wthr.jdem846.input.DataPackage;
 //import us.wthr.jdem846.input.DataSource;
 //import us.wthr.jdem846.input.DataSourceFactory;
@@ -127,6 +129,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	private ModelOptions modelOptions;
 	private RasterDataContext rasterDataContext;
 	private ShapeDataContext shapeDataContext;
+	private ImageDataContext imageDataContext;
 	private LightingContext lightingContext;
 	
 	private List<CreateModelListener> createModelListeners = new LinkedList<CreateModelListener>();
@@ -154,12 +157,13 @@ public class DemProjectPane extends JdemPanel implements Savable
 		rasterDataContext = new RasterDataContext();
 		modelOptions = new ModelOptions();
 		shapeDataContext = new ShapeDataContext();
+		imageDataContext = new ImageDataContext();
 		lightingContext = new LightingContext();
 		
 		
 		
 		
-		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, lightingContext, modelOptions);
+		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions);
 		
 		//this.projectModel = projectModel;
 		
@@ -175,7 +179,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 			for (ShapeFileRequest shapeFile : projectModel.getShapeFiles()) {
 				addShapeDataset(shapeFile.getPath(), shapeFile.getShapeDataDefinitionId(), false);
 			}
-
+			
+			for (SimpleGeoImage imageRef : projectModel.getImageFiles()) {
+				addImageryData(imageRef.getImageFile(), imageRef.getNorth(), imageRef.getSouth(), imageRef.getEast(), imageRef.getWest(), false);
+			}
 					
 			projectLoadedFrom = projectModel.getLoadedFrom();
 		}
@@ -593,6 +600,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 			projectModel.getShapeFiles().add(shapeFile);
 		}
 
+		for (SimpleGeoImage image : imageDataContext.getImageList()) {
+			projectModel.getImageFiles().add(image);
+		}
+		
 		return projectModel;
 	}
 	
@@ -630,11 +641,17 @@ public class DemProjectPane extends JdemPanel implements Savable
 			    		File file = selectedFiles[i];
 			    		if (file.exists()) {
 			    			
-			    			if (file.getName().substring(file.getName().lastIndexOf(".")+1).equalsIgnoreCase("shp")) {
+			    			String extension = file.getName().substring(file.getName().lastIndexOf(".")+1);
+			    			
+			    			if (extension != null && extension.equalsIgnoreCase("shp")) {
 			    				addShapeDataset(file.getAbsolutePath(), null, false);
+			    			} else if (extension != null && (extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("png"))) {
+			    				addImageryData(file.getAbsolutePath(), false);
 			    			} else {
 			    				addElevationDataset(file.getAbsolutePath(), false);
 			    			}
+			    			
+
 			    			
 			    			
 			    			double progress = (((double)i / (double)selectedFiles.length));
@@ -843,6 +860,32 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 	}
 	
+	protected void addImageryData(String filePath, boolean triggerModelChanged)
+	{
+		addImageryData(filePath, modelContext.getNorth(), modelContext.getSouth(), modelContext.getEast(), modelContext.getWest(), triggerModelChanged);
+	}
+	
+	protected void addImageryData(String filePath, double north, double south, double east, double west, boolean triggerModelChanged)
+	{
+		SimpleGeoImage image = null;
+		
+		try {
+			image = new SimpleGeoImage(modelContext, filePath, north, south, east, west);
+		} catch (DataSourceException ex) {
+			log.warn("Invalid file format: " + ex.getMessage(), ex);
+			JOptionPane.showMessageDialog(this.getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.add.image.loadFailed.message") + ": " + "", //ex.getExtension(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.add.image.loadFailed.title"),
+				    JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		imageDataContext.addImage(image);
+		
+		if (triggerModelChanged)
+			onDataModelChanged();
+	}
+	
 	
 	protected void addElevationDataset(String filePath, boolean triggerModelChanged)
 	{
@@ -967,7 +1010,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 			dsCount = rasterDataContext.getRasterDataListSize();
 		else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE)
 			dsCount = shapeDataContext.getShapeFiles().size();
-
+		else if (type == DataSetTypes.IMAGERY)
+			dsCount = imageDataContext.getImageListSize();
 		
 		orderingButtonBar.setButtonEnabled(OrderingButtonBar.BTN_MOVE_TOP, (index > 0));
 		orderingButtonBar.setButtonEnabled(OrderingButtonBar.BTN_MOVE_UP, (index > 0));
@@ -988,6 +1032,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 			updateRasterLayerOverview(index);
 		else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE)
 			updateShapeLayerOverview(index);
+		else if (type == DataSetTypes.IMAGERY)
+			updateImageLayerOverview(index);
 		
 		//
 	}
@@ -1040,6 +1086,24 @@ public class DemProjectPane extends JdemPanel implements Savable
 		layerOverviewPanel.repaint();
 	}
 	
+	public void updateImageLayerOverview(int index)
+	{
+		if (index < 0) {
+			return;
+		}
+		
+		SimpleGeoImage image = imageDataContext.getImageList().get(index);
+		layerOverviewPanel.setNorth(image.getNorth());
+		layerOverviewPanel.setSouth(image.getSouth());
+		layerOverviewPanel.setEast(image.getEast());
+		layerOverviewPanel.setWest(image.getWest());
+		layerOverviewPanel.setRows(image.getHeight());
+		layerOverviewPanel.setColumns(image.getWidth());
+		layerOverviewPanel.setLatitudeResolution(image.getLatitudeResolution());
+		layerOverviewPanel.setLongitudeResolution(image.getLongitudeResolution());
+		layerOverviewPanel.repaint();
+	}
+	
 	public void moveDataSetToPosition(int type, int fromIndex, int toIndex)
 	{
 		int dsCount = 0;
@@ -1051,6 +1115,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 			dsCount = rasterDataContext.getRasterDataListSize();
 		else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE)
 			dsCount = shapeDataContext.getShapeFiles().size();
+		else if (type == DataSetTypes.IMAGERY)
+			dsCount = imageDataContext.getImageListSize();
 		
 		// make sure index is valid (0 is already top, cannot move further)
 		if (fromIndex < 0 || fromIndex >= dsCount || toIndex < 0 ) 
@@ -1067,6 +1133,9 @@ public class DemProjectPane extends JdemPanel implements Savable
 			} else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE) {
 				ShapeFileRequest sfr = shapeDataContext.removeShapeFile(fromIndex);
 				shapeDataContext.getShapeFiles().add(toIndex, sfr);
+			} else if (type == DataSetTypes.IMAGERY) {
+				SimpleGeoImage image = imageDataContext.removeImage(fromIndex);
+				imageDataContext.getImageList().add(toIndex, image);
 			}
 		} catch (Exception ex) {
 			log.error("Failed to move data positions: " + ex.getMessage(), ex);
@@ -1117,6 +1186,18 @@ public class DemProjectPane extends JdemPanel implements Savable
 				    JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		
+		ImageDataContext imageDataContext;
+		try {
+			imageDataContext = this.imageDataContext.copy();
+		} catch (DataSourceException ex) {
+			log.error("Failed to copy image data: " + ex.getMessage(), ex);
+			JOptionPane.showMessageDialog(this.getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.onCreateModel.copyImageDataFailure.message") + ": " + ex.getMessage(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.onCreateModel.copyImageDataFailure.title"),
+				    JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
 		LightingContext lightingContext = this.lightingContext.copy();
 		
@@ -1139,7 +1220,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 			return;
 		}
 		
-		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, lightingContext, modelOptions, scriptProxy);
+		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions, scriptProxy);
 		fireCreateModelListeners(modelContext);
 	}
 	

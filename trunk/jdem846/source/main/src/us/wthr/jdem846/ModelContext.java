@@ -24,6 +24,7 @@ import us.wthr.jdem846.exception.ScriptCompilationFailedException;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
@@ -51,6 +52,7 @@ public class ModelContext
 	
 	private RasterDataContext rasterDataContext;
 	private ShapeDataContext shapeDataContext;
+	private ImageDataContext imageDataContext;
 	private ModelOptions modelOptions;
 	private ScriptProxy scriptProxy;
 	private LightingContext lightingContext;
@@ -65,10 +67,11 @@ public class ModelContext
 	private double eastLimit = NOT_SET;
 	private double westLimit = NOT_SET;
 	
-	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
+	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
 	{
 		this.rasterDataContext = rasterDataContext;
 		this.shapeDataContext = shapeDataContext;
+		this.imageDataContext = imageDataContext;
 		this.modelOptions = modelOptions;
 		this.scriptProxy = scriptProxy;
 		this.lightingContext = lightingContext;
@@ -140,13 +143,22 @@ public class ModelContext
 	{
 		return rasterDataContext;
 	}
-	
-
 
 	public ShapeDataContext getShapeDataContext()
 	{
 		return shapeDataContext;
 	}
+
+	public ImageDataContext getImageDataContext()
+	{
+		return imageDataContext;
+	}
+
+	public void setImageDataContext(ImageDataContext imageDataContext)
+	{
+		this.imageDataContext = imageDataContext;
+	}
+
 
 	public ModelOptions getModelOptions()
 	{
@@ -258,6 +270,8 @@ public class ModelContext
 		RasterDataContext rasterDataCopy = (rasterDataContext == null) ? null : rasterDataContext.copy();
 		ShapeDataContext shapeDataCopy = (shapeDataContext == null) ? null : shapeDataContext.copy();
 		ModelOptions modelOptionsCopy = (modelOptions == null) ? null : modelOptions.copy();
+		ImageDataContext imageDataCopy = (imageDataContext == null) ? null : imageDataContext.copy();
+		
 		LightingContext lightingContextCopy = (lightingContext == null) ? null : lightingContext.copy();
 		ModelCanvas modelCanvasCopy = null;
 		
@@ -282,7 +296,7 @@ public class ModelContext
 		}
 		
 		
-		ModelContext clone = ModelContext.createInstance(rasterDataCopy, shapeDataCopy, lightingContextCopy, modelOptionsCopy, scriptProxyCopy);
+		ModelContext clone = ModelContext.createInstance(rasterDataCopy, shapeDataCopy, imageDataCopy, lightingContextCopy, modelOptionsCopy, scriptProxyCopy);
 		clone.northLimit = this.northLimit;
 		clone.southLimit = this.southLimit;
 		clone.eastLimit = this.eastLimit;
@@ -297,33 +311,33 @@ public class ModelContext
 	
 	public static ModelContext createInstance(RasterDataContext rasterDataContext, ModelOptions modelOptions)
 	{
-		return ModelContext.createInstance(rasterDataContext, null, null, modelOptions, null);
+		return ModelContext.createInstance(rasterDataContext, null, null, null, modelOptions, null);
 	}
 	
 	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions)
 	{
-		return ModelContext.createInstance(rasterDataContext, null, lightingContext, modelOptions, null);
+		return ModelContext.createInstance(rasterDataContext, null, null, lightingContext, modelOptions, null);
 	}
 	
 	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy)
 	{
-		return ModelContext.createInstance(rasterDataContext, null, lightingContext, modelOptions, scriptProxy);
+		return ModelContext.createInstance(rasterDataContext, null, null, lightingContext, modelOptions, scriptProxy);
 	}
 	
 	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions)
 	{
-		return ModelContext.createInstance(rasterDataContext, shapeDataContext, null, modelOptions, null);
+		return ModelContext.createInstance(rasterDataContext, shapeDataContext, null, null, modelOptions, null);
 	}
 	
 	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, LightingContext lightingContext, ModelOptions modelOptions)
 	{
-		return ModelContext.createInstance(rasterDataContext, shapeDataContext, lightingContext, modelOptions, null);
+		return ModelContext.createInstance(rasterDataContext, shapeDataContext, null, lightingContext, modelOptions, null);
 	}
 	
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy)
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy)
 	{
 		String contextId = ModelContext.generateContextId();
-		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, lightingContext, modelOptions, scriptProxy, contextId);
+		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions, scriptProxy, contextId);
 		modelContext.updateContext();
 		return modelContext;
 	}
@@ -334,5 +348,21 @@ public class ModelContext
 	protected static String generateContextId()
 	{
 		return UniqueIdentifierUtil.getNewIdentifier();
+	}
+
+
+	public static ModelContext createInstance(
+			RasterDataContext rasterDataContext,
+			ShapeDataContext shapeDataContext,
+			ImageDataContext imageDataContext,
+			LightingContext lightingContext, 
+			ModelOptions modelOptions)
+	{
+		return createInstance(rasterDataContext, 
+								shapeDataContext, 
+								imageDataContext, 
+								lightingContext, 
+								modelOptions, 
+								null);
 	}
 }

@@ -18,6 +18,7 @@ package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
@@ -47,6 +48,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.ImageIcons;
+import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.logging.Log;
@@ -78,6 +80,7 @@ public class DataSetTree extends Panel
 	private Icon elevationIcon;
 	private Icon polylineIcon;
 	private Icon orthoImageryIcon;
+	private Icon noDataIcon;
 	
 	private Icon shapesCategoryIcon;
 	private Icon elevationCategoryIcon;
@@ -92,14 +95,16 @@ public class DataSetTree extends Panel
 		
 		// Load icons
     	try {
-    		polygonIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-shape-polygon.png");
-    		elevationIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-elevation.png");
-    		polylineIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-shape-line.png");
-    		orthoImageryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-orthoimagery.png");
+    		polygonIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.ui.dataSetTree.nodeIcon.polygon"));
+    		elevationIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.ui.dataSetTree.nodeIcon.elevation"));
+    		polylineIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.ui.dataSetTree.nodeIcon.polyline"));
+    		orthoImageryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.ui.dataSetTree.nodeIcon.imagery"));
     		
-    		elevationCategoryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-category-elevation.png");
-    		shapesCategoryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-category-shapes.png");
-    		imageryCategoryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/node-icon-category-imagery.png");
+    		noDataIcon = new ImageIcon(new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB));
+    		
+    		elevationCategoryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.ui.dataSetTree.categoryIcon.elevation"));
+    		shapesCategoryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.ui.dataSetTree.categoryIcon.shapes"));
+    		imageryCategoryIcon = ImageIcons.loadImageIcon(JDem846Properties.getProperty("us.wthr.jdem846.ui.dataSetTree.categoryIcon.imagery"));
     	} catch (IOException ex) {
 			ex.printStackTrace();
 			log.warn("Failed to load image icon for tree node: " + ex.getMessage(), ex);
@@ -192,43 +197,64 @@ public class DataSetTree extends Panel
 		shapeNode.removeAllChildren();
 		imageryNode.removeAllChildren();
 		
-		if (modelContext.getRasterDataContext().getRasterDataListSize() > 0) {
+		//if (modelContext.getRasterDataContext().getRasterDataListSize() > 0) {
 			top.add(elevationNode);
-		}
+		//}
 		
-		
-		//if (dataPackage.getShapeFiles().size() > 0) {
-		if (modelContext.getShapeDataContext().getShapeDataListSize() > 0) {
+		//if (modelContext.getShapeDataContext().getShapeDataListSize() > 0) {
 			top.add(shapeNode);
-		}
+		//}
+		
+		//if (modelContext.getImageDataContext().getImageListSize() > 0) {
+			top.add(imageryNode);
+		//}
 		
 		
 		
 		//elevationNode.removeFromParent();
 		
-		List<RasterData> rasterDataList = modelContext.getRasterDataContext().getRasterDataList();
-		for (int i = 0; i < rasterDataList.size(); i++) {
-			RasterData rasterData = rasterDataList.get(i);
-			log.info("Adding elevation data: " + rasterData.getFilePath());
-			elevationNode.add(new DatasetTreeNode(elevationIcon, rasterData, i));
+		if (modelContext.getRasterDataContext() != null && modelContext.getRasterDataContext().getRasterDataListSize() > 0) {
+			List<RasterData> rasterDataList = modelContext.getRasterDataContext().getRasterDataList();
+			for (int i = 0; i < rasterDataList.size(); i++) {
+				RasterData rasterData = rasterDataList.get(i);
+				log.info("Adding elevation data: " + rasterData.getFilePath());
+				elevationNode.add(new DatasetTreeNode(elevationIcon, rasterData, i));
+			}
+		} else {
+			elevationNode.add(new DatasetTreeNode(noDataIcon, I18N.get("us.wthr.jdem846.ui.dataSetTree.node.noData")));
+		}
+		
+		if (modelContext.getShapeDataContext() != null && modelContext.getShapeDataContext().getShapeDataListSize() > 0) {
+			List<ShapeFileRequest> shapeFileRequests = modelContext.getShapeDataContext().getShapeFiles();
+			for (int i = 0; i < shapeFileRequests.size(); i++) {
+				ShapeFileRequest shapeFileRequest = shapeFileRequests.get(i);
+				
+				Icon icon = null;
+				
+				if (shapeFileRequest.getDatasetType() == DataSetTypes.SHAPE_POLYGON)
+					icon = polygonIcon;
+				else if (shapeFileRequest.getDatasetType() == DataSetTypes.SHAPE_POLYLINE)
+					icon = polylineIcon;
+				
+				shapeNode.add(new DatasetTreeNode(icon, shapeFileRequest, i));
+			}
+		} else {
+			shapeNode.add(new DatasetTreeNode(noDataIcon, I18N.get("us.wthr.jdem846.ui.dataSetTree.node.noData")));
 		}
 		
 		
-		List<ShapeFileRequest> shapeFileRequests = modelContext.getShapeDataContext().getShapeFiles();
-		for (int i = 0; i < shapeFileRequests.size(); i++) {
-			ShapeFileRequest shapeFileRequest = shapeFileRequests.get(i);
-			
-			Icon icon = null;
-			
-			if (shapeFileRequest.getDatasetType() == DataSetTypes.SHAPE_POLYGON)
-				icon = polygonIcon;
-			else if (shapeFileRequest.getDatasetType() == DataSetTypes.SHAPE_POLYLINE)
-				icon = polylineIcon;
-			
-			shapeNode.add(new DatasetTreeNode(icon, shapeFileRequest, i));
+		if (modelContext.getImageDataContext() != null && modelContext.getImageDataContext().getImageListSize() > 0) {
+			List<SimpleGeoImage> imageFiles = modelContext.getImageDataContext().getImageList();
+			for (int i = 0; i < imageFiles.size(); i++) {
+				SimpleGeoImage image = imageFiles.get(i);
+				
+				Icon icon = this.orthoImageryIcon;
+				imageryNode.add(new DatasetTreeNode(icon, image, i));
+				
+			}
+		} else {
+			imageryNode.add(new DatasetTreeNode(noDataIcon, I18N.get("us.wthr.jdem846.ui.dataSetTree.node.noData")));
 		}
-		
-		// TODO: Add imagery files
 		
 		
 		treeModel.reload();
@@ -281,12 +307,20 @@ public class DataSetTree extends Panel
 		public static final int TYPE_SHAPES_POLYLINE = DataSetTypes.SHAPE_POLYLINE;
 		public static final int TYPE_IMAGERY = DataSetTypes.IMAGERY;
 		public static final int TYPE_CATEGORY = DataSetTypes.UNSUPPORTED;
+		public static final int TYPE_NODATA = DataSetTypes.UNSUPPORTED;
 		
 		
 		private int type = -1;
 		private int index = -1;
 		private Object dataObject;
 		private Icon icon;
+		
+		public DatasetTreeNode(String label)
+		{
+			super(label);
+			this.icon = null;
+			this.type = TYPE_NODATA;
+		}
 		
 		public DatasetTreeNode(Icon icon, String label)
 		{
@@ -311,6 +345,14 @@ public class DataSetTree extends Panel
 			this.index = index;
 			this.icon = icon;
 			this.type = shapeFileRequest.getDatasetType();
+		}
+		
+		public DatasetTreeNode(Icon icon, SimpleGeoImage image, int index)
+		{
+			super((new File(image.getImageFile()).getName()));
+			this.index = index;
+			this.icon = icon;
+			this.type = TYPE_IMAGERY;
 		}
 		
 		// TODO: Add imagery constructor
