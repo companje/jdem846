@@ -3,9 +3,12 @@ package us.wthr.jdem846.image;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
+import java.io.File;
 import java.io.IOException;
 
+import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
@@ -19,6 +22,8 @@ import us.wthr.jdem846.render.CanvasProjection;
 public class SimpleGeoImage 
 {
 	private static Log log = Logging.getLog(SimpleGeoImage.class);
+	
+	private String imageFile;
 	
 	private BufferedImage image;
 	private Raster raster;
@@ -43,9 +48,31 @@ public class SimpleGeoImage
 	private int[] rgbaBuffer10 = new int[4];
 	private int[] rgbaBuffer11 = new int[4];
 	
-	public SimpleGeoImage(ModelContext modelContext, String imagePath, double north, double south, double east, double west) throws IOException
+	public SimpleGeoImage()
 	{
-		image = (BufferedImage) ImageIcons.loadImage(imagePath);
+		
+	}
+	
+	public SimpleGeoImage(String imagePath, double north, double south, double east, double west) throws DataSourceException
+	{
+		this(null, imagePath, north, south, east, west);
+	}
+	
+	public SimpleGeoImage(ModelContext modelContext, String imagePath) throws DataSourceException
+	{
+		this(modelContext, imagePath, modelContext.getNorth(), modelContext.getSouth(), modelContext.getEast(), modelContext.getWest());
+	}
+	
+	public SimpleGeoImage(ModelContext modelContext, String imagePath, double north, double south, double east, double west) throws DataSourceException
+	{
+		imageFile = imagePath;
+		
+		try {
+			image = (BufferedImage) ImageIcons.loadImage(imagePath);
+		} catch (IOException ex) {
+			throw new DataSourceException("Failed to load image: " + ex.getMessage(), ex);
+		}
+		
 		raster = image.getRaster();
 		
 		this.north = north;
@@ -56,8 +83,12 @@ public class SimpleGeoImage
 		this.latitudeResolution = (north - south) / image.getHeight();
 		this.longitudeResolution = (east - west) / image.getWidth();
 		
+		
 		mapProjection = new EquirectangularProjection(north, south, east, west, image.getWidth(), image.getHeight());
-		canvasProjection = new CanvasProjection(modelContext, mapProjection, north, south, east, west, image.getWidth(), image.getHeight());
+		
+		if (modelContext != null) {
+			canvasProjection = new CanvasProjection(modelContext, mapProjection, north, south, east, west, image.getWidth(), image.getHeight());
+		}
 		
 	}
 	
@@ -174,8 +205,113 @@ public class SimpleGeoImage
 	{
 		rgba[0] = rgba[1] = rgba[2] = rgba[3] = 0x0;
 	}
+
 	
+
+	public String getImageFile()
+	{
+		return imageFile;
+	}
+
+	public double getNorth()
+	{
+		return north;
+	}
+
+
+
+	public void setNorth(double north)
+	{
+		this.north = north;
+	}
+
+
+
+	public double getSouth()
+	{
+		return south;
+	}
+
+
+
+	public void setSouth(double south)
+	{
+		this.south = south;
+	}
+
+
+
+	public double getEast()
+	{
+		return east;
+	}
+
+
+
+	public void setEast(double east)
+	{
+		this.east = east;
+	}
+
+
+
+	public double getWest()
+	{
+		return west;
+	}
+
+
+
+	public void setWest(double west)
+	{
+		this.west = west;
+	}
 	
+	public int getHeight()
+	{
+		return raster.getHeight();
+	}
 	
+	public int getWidth()
+	{
+		return raster.getWidth();
+	}
+	
+	public double getLatitudeResolution()
+	{
+		return latitudeResolution;
+	}
+
+	public double getLongitudeResolution()
+	{
+		return longitudeResolution;
+	}
+	
+	/** Creates copy. New instance retains reference to same image and raster
+	 * data (thus it's not _fully_ a copy...).
+	 * 
+	 * @return
+	 */
+	public SimpleGeoImage copy()
+	{
+		SimpleGeoImage copy = new SimpleGeoImage();
+		copy.imageFile = this.imageFile;
+		copy.image = this.image;
+		copy.raster = this.raster;
+		
+		copy.north = this.north;
+		copy.south = this.south;
+		copy.east = this.east;
+		copy.west = this.west;
+		
+		copy.longitudeResolution = this.longitudeResolution;
+		copy.latitudeResolution = this.latitudeResolution;
+		
+		copy.mapProjection = this.mapProjection;
+		copy.canvasProjection = this.canvasProjection;
+		
+		
+		return copy;
+	}
 
 }

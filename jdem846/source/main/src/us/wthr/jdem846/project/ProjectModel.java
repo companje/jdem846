@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import us.wthr.jdem846.ModelOptionNamesEnum;
+import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
@@ -34,6 +35,7 @@ public class ProjectModel
 	private Map<String, String> optionsMap = new HashMap<String, String>();
 	private List<String> inputFiles = new LinkedList<String>();
 	private List<ShapeFileRequest> shapeFiles = new LinkedList<ShapeFileRequest>();
+	private List<SimpleGeoImage> imageFiles = new LinkedList<SimpleGeoImage>();
 	
 	private String userScript = null;
 	private ScriptLanguageEnum scriptLanguage = null;
@@ -162,6 +164,16 @@ public class ProjectModel
 	public void setShapeFiles(List<ShapeFileRequest> shapeFiles)
 	{
 		this.shapeFiles = shapeFiles;
+	}
+	
+	public List<SimpleGeoImage> getImageFiles()
+	{
+		return imageFiles;
+	}
+
+	public void setImageFiles(List<SimpleGeoImage> imageFiles)
+	{
+		this.imageFiles = imageFiles;
 	}
 
 	public String getLoadedFrom() 

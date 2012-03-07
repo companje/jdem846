@@ -13,6 +13,7 @@ import net.sf.json.JSONObject;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDemResourceLoader;
+import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
@@ -51,6 +52,18 @@ public class JsonProjectFileWriter
 		return jsonObject;
 	}
 	
+	protected static JSONObject createImageObject(SimpleGeoImage image)
+	{
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.element("type", "image");
+		jsonObject.element("path", image.getImageFile());
+		jsonObject.element("north", image.getNorth());
+		jsonObject.element("south", image.getSouth());
+		jsonObject.element("east", image.getEast());
+		jsonObject.element("west", image.getWest());
+		return jsonObject;
+	}
+	
 	protected static JSONObject createShapeObject(ShapeFileRequest shapeFileReq)
 	{
 		JSONObject jsonObject = new JSONObject();
@@ -73,6 +86,11 @@ public class JsonProjectFileWriter
 		for (ShapeFileRequest shapeFileReq : projectModel.getShapeFiles()) {
 			JSONObject shapeObj = createShapeObject(shapeFileReq);
 			layersArray.add(shapeObj);
+		}
+		
+		for (SimpleGeoImage image : projectModel.getImageFiles()) {
+			JSONObject imageObj = createImageObject(image);
+			layersArray.add(imageObj);
 		}
 		
 		return layersArray;

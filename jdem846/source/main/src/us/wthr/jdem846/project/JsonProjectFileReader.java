@@ -19,7 +19,9 @@ import org.dom4j.io.SAXReader;
 
 
 import us.wthr.jdem846.JDemResourceLoader;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ProjectParseException;
+import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
@@ -80,6 +82,28 @@ public class JsonProjectFileReader
 		projectModel.getInputFiles().add(path);
 	}
 	
+	protected static void parseImageLayer(ProjectModel projectModel, JSONObject layerObj) throws ProjectParseException
+	{
+		
+		String path = layerObj.getString("path");
+		double north = layerObj.getDouble("north");
+		double south = layerObj.getDouble("south");
+		double east = layerObj.getDouble("east");
+		double west = layerObj.getDouble("west");
+		
+		SimpleGeoImage image = null;
+		
+		try {
+			image = new SimpleGeoImage(path, north, south, east, west);
+		} catch (DataSourceException ex) {
+			throw new ProjectParseException("Failed to load image: " + ex.getMessage(), ex);
+		}
+		
+		
+		projectModel.getImageFiles().add(image);
+		
+	}
+	
 	protected static void parseShapeLayer(ProjectModel projectModel, JSONObject layerObj) throws ProjectParseException
 	{
 		String path = layerObj.getString("path");
@@ -108,6 +132,8 @@ public class JsonProjectFileReader
 				JsonProjectFileReader.parseRasterLayer(projectModel, layersObj);
 			} else if (type.equalsIgnoreCase("shapefile")) {
 				JsonProjectFileReader.parseShapeLayer(projectModel, layersObj);
+			} else if (type.equalsIgnoreCase("image")) {
+				JsonProjectFileReader.parseImageLayer(projectModel, layersObj);
 			} else {
 				throw new ProjectParseException("Unrecognized layer type: " + type);
 			}

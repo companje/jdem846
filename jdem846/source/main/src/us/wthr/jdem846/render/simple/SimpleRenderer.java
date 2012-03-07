@@ -543,8 +543,8 @@ public class SimpleRenderer
 		
 		
 		if (midElev == DemConstants.ELEV_NO_DATA)
-			midElev = 0;
-		//	return DemConstants.ELEV_NO_DATA;
+		//	midElev = 0;
+			return DemConstants.ELEV_NO_DATA;
 		
 		
 		double min = modelContext.getRasterDataContext().getDataMinimumValue();
