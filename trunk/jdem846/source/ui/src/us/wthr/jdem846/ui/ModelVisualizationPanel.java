@@ -404,6 +404,17 @@ public class ModelVisualizationPanel extends Panel
 
 		if (updateFromActual) {
 			log.info("Model visualization: update working context from actual");
+			
+			if (modelContextWorkingCopy != null) {
+				log.info("Disposing of working copy of model context information...");
+				
+				try {
+					modelContextWorkingCopy.dispose(true);
+				} catch (DataSourceException ex) {
+					log.error("Error disposing of working copy of model context information: " + ex.getMessage(), ex);
+				}
+			}
+			
 			try {
 				modelContextWorkingCopy = modelContextActual.copy();
 				setWorkingCopyOptions();

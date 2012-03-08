@@ -318,6 +318,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		datasetOptionsPanel.addModelPreviewUpdateListener(new ModelPreviewUpdateListener() {
 			public void updateModelPreview(boolean updateRasterLayer, boolean updateShapeLayer)
 			{
+				log.info("Dataset preview update requested.");
 				onDataModelChanged(updateRasterLayer, updateShapeLayer);
 			}
 		});
@@ -334,6 +335,9 @@ public class DemProjectPane extends JdemPanel implements Savable
 					case DataSetTypes.SHAPE_POLYGON:
 					case DataSetTypes.SHAPE_POLYLINE:
 						datasetOptionsPanel.setShapeDataSet(shapeDataContext.getShapeFiles().get(index));
+						break;
+					case DataSetTypes.IMAGERY:
+						datasetOptionsPanel.setSimpleGeoImage(imageDataContext.getImageList().get(index));
 						break;
 					}
 					
@@ -798,6 +802,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 			} else if (type == DataSetTypes.SHAPE_POLYGON ||
 						type == DataSetTypes.SHAPE_POLYLINE) {
 				removeShapeData(index);
+			} else if (type == DataSetTypes.IMAGERY) {
+				removeImageData(index);
 			}
 		} catch (Exception ex) {
 			log.error("Failed to remove input data: " + ex.getMessage(), ex);
@@ -839,6 +845,25 @@ public class DemProjectPane extends JdemPanel implements Savable
 		onDataModelChanged();
 	}
 	
+	protected void removeImageData(int index) throws DataSourceException 
+	{
+		log.info("Removing image data #" + index);
+		if (index < 0) {
+			JOptionPane.showMessageDialog(getRootPane(),
+					I18N.get("us.wthr.jdem846.ui.projectPane.remove.nothingSelected.message"),
+					I18N.get("us.wthr.jdem846.ui.projectPane.remove.nothingSelected.title"),
+				    JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		SimpleGeoImage image = imageDataContext.removeImage(index);
+		if (image.isLoaded()) {
+			image.unload();
+		}
+		
+		onDataModelChanged();
+	}
+	
 	
 	protected void addShapeDataset(String filePath, String shapeDataDefinitionId, boolean triggerModelChanged)
 	{
@@ -870,7 +895,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 		SimpleGeoImage image = null;
 		
 		try {
-			image = new SimpleGeoImage(modelContext, filePath, north, south, east, west);
+			image = new SimpleGeoImage(filePath, north, south, east, west);
+			image.load();
 		} catch (DataSourceException ex) {
 			log.warn("Invalid file format: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(this.getRootPane(),

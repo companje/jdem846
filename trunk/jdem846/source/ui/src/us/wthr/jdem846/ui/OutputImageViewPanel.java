@@ -346,6 +346,9 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				SharedStatusBar.removeControl(prgProgress);
 				spinner.stop();
 				detachModelListeners(true);
+				
+				disposeModelingInformation();
+				
 				repaint();
 			}
 			public void taskFailed(RunnableTask task, Throwable thrown)
@@ -371,12 +374,16 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				spinner.stop();
 				detachModelListeners(true);
 				
+				disposeModelingInformation();
+				
 				if (thrown != null) {
 					JOptionPane.showMessageDialog(getRootPane(),
 						    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.message") + ": " + thrown.getMessage(),
 						    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.title"),
 						    JOptionPane.ERROR_MESSAGE);
 				}
+				
+				
 				repaint();
 			}
 			
@@ -399,6 +406,19 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 		};
 			
 
+	}
+	
+	protected void disposeModelingInformation()
+	{
+		if (!modelContext.isDisposed()) {
+			log.info("Disposing of model context information...");
+			
+			try {
+				modelContext.dispose(true);
+			} catch (DataSourceException ex) {
+				log.info("Error disposing of model context information: " + ex.getMessage(), ex);
+			}
+		}
 	}
 	
 	@Override

@@ -143,7 +143,7 @@ public class ScriptEditorPanel extends Panel
 		syntaxDocument.addUndoableEditListener(new UndoableEditListener() {
 			public void undoableEditHappened(UndoableEditEvent e)
 			{
-				log.info("Undoable Edit Happened!");
+				
 				
 			}
 		});

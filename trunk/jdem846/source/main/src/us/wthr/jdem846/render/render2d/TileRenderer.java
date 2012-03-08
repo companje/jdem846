@@ -109,7 +109,8 @@ public class TileRenderer extends InterruptibleProcess
 	private double shadowIntensity;
 	private boolean doubleBuffered;
 	private double elevationMultiple;
-	
+	private double minimumElevation;
+	private double maximumElevation;
 	
 	
 	private MapPoint point = new MapPoint();
@@ -239,6 +240,9 @@ public class TileRenderer extends InterruptibleProcess
 			}
 		}
 		
+		minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
+		maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
+		
 		
 		LightingContext lightingContext = modelContext.getLightingContext();
 		lightSourceType = lightingContext.getLightSourceSpecifyType();
@@ -334,8 +338,24 @@ public class TileRenderer extends InterruptibleProcess
 	
 	public void dispose()
 	{
+		log.info("Disposing tile renderer");
+		
 		elevationMap.clear();
 		elevationMap = null;
+		
+		
+		point = null;
+		perspectives = null;
+		normal = null;
+		backLeftPoints = null;
+		backRightPoints = null;
+		frontLeftPoints = null;
+		frontRightPoints = null;
+		sunsource = null;	
+		colorBufferA = null;
+		colorBufferB = null;
+		pointNormal = null;
+		backgroundColor = null;
 	}
 	
 	public void renderTile() throws RenderEngineException
@@ -557,10 +577,11 @@ public class TileRenderer extends InterruptibleProcess
 			return DemConstants.ELEV_NO_DATA;
 		
 		
-		double min = modelContext.getRasterDataContext().getDataMinimumValue();
-		double max = modelContext.getRasterDataContext().getDataMaximumValue();
-		modelColoring.getGradientColor(midElev, min, max, colorBufferA);
-		onGetPointColor(latitude, longitude, midElev, min, max, colorBufferA);
+		//double min = modelContext.getRasterDataContext().getDataMinimumValue();
+		//double max = modelContext.getRasterDataContext().getDataMaximumValue();
+		//modelColoring.getGradientColor(midElev, min, max, colorBufferA);
+		getPointColor(latitude, longitude, midElev, colorBufferA);
+		onGetPointColor(latitude, longitude, midElev, minimumElevation, maximumElevation, colorBufferA);
 		
 		
 		
@@ -644,7 +665,17 @@ public class TileRenderer extends InterruptibleProcess
 		return midElev;
 	}
 	
-	
+	protected void getPointColor(double latitude, double longitude, double elevation, int[] rgba) throws DataSourceException
+	{
+		
+		if (modelContext.getImageDataContext() != null
+				&& modelContext.getImageDataContext().getColor(latitude, longitude, rgba)) {
+			// All right, then
+		} else {
+			modelColoring.getGradientColor(elevation, minimumElevation, maximumElevation, rgba);
+		}
+
+	}
 	
 
 	protected void calculateNormal(double nw, double sw, double se, double ne, CornerEnum corner, double[] normal)

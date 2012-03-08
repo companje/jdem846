@@ -23,6 +23,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.annotations.DemEngine;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -40,6 +41,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 {
 	private static Log log = Logging.getLog(Dem2dGenerator.class);
 	
+	private ModelRenderer rasterRenderer = null;
+	private ShapeLayerRenderer shapeRenderer = null;
 	
 	public Dem2dGenerator()
 	{
@@ -59,15 +62,23 @@ public class Dem2dGenerator extends BasicRenderEngine
 	
 	public OutputProduct<ModelCanvas> generate(boolean skipElevation, boolean skipShapes) throws RenderEngineException
 	{
-		//boolean usePipelineRender = getModelContext().getModelOptions().usePipelineRender();
-		
 		boolean usePipelineRender = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.pipelineRender");
 		
+		fillRasterBuffers();
+		fillImageBuffers();
+		
+		OutputProduct<ModelCanvas> product = null;
+		
 		if (usePipelineRender) {
-			return generatePipelined(skipElevation, skipShapes);
+			product = generatePipelined(skipElevation, skipShapes);
 		} else {
-			return generateStandard(skipElevation, skipShapes);
+			product = generateStandard(skipElevation, skipShapes);
 		}
+		
+		clearRasterBuffers();
+		clearImageBuffers();
+		
+		return product;
 	}
 	
 	public OutputProduct<ModelCanvas> generateStandard(boolean skipElevation, boolean skipShapes) throws RenderEngineException
@@ -90,8 +101,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 		
 		try {
 			
-			final ModelRenderer rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
-			final ShapeLayerRenderer shapeRenderer = new ShapeLayerRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
+			rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
+			shapeRenderer = new ShapeLayerRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
 			
 			this.setProcessInterruptListener(new ProcessInterruptListener() {
 				public void onProcessCancelled()
@@ -113,7 +124,6 @@ public class Dem2dGenerator extends BasicRenderEngine
 			
 			
 			updateCoordinateLimits();
-			//ModelCanvas canvas = null;
 			ModelCanvas canvas = getModelContext().getModelCanvas(true);
 			
 			
@@ -121,6 +131,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 			
 			if (!skipElevation) {
 				rasterRenderer.renderModel();
+				rasterRenderer.dispose();
 			}
 			
 			
@@ -173,11 +184,14 @@ public class Dem2dGenerator extends BasicRenderEngine
 		RenderPipeline renderPipeline = new RenderPipeline(getModelContext());
 		RenderPipelineProcessContainer pipelineContainer = new RenderPipelineProcessContainer(renderPipeline, getModelContext());
 		
+		//ModelRenderer rasterRenderer = null;
+		//ShapeLayerRenderer shapeRenderer = null;
+		
 		
 		try {
 			
-			final ModelRenderer rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
-			final ShapeLayerRenderer shapeRenderer = new ShapeLayerRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
+			rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
+			shapeRenderer = new ShapeLayerRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
 			
 			this.setProcessInterruptListener(new ProcessInterruptListener() {
 				public void onProcessCancelled()
@@ -239,9 +253,73 @@ public class Dem2dGenerator extends BasicRenderEngine
 			throw new RenderEngineException("Exception thrown in user script", ex);
 		}
 		
+		
+		if (rasterRenderer != null) {
+			rasterRenderer.dispose();
+		}
+		
+		if (shapeRenderer != null) {
+			//shapeRenderer.dispose();
+		}
+		
+		
 		return product;
 	}
 	
+	
+	protected void fillImageBuffers() throws RenderEngineException
+	{
+		if (getModelContext().getImageDataContext() != null) {
+			log.info("Loading image context data");
+			
+			try {
+				getModelContext().getImageDataContext().loadImageData();
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Failed to load image data: " + ex.getMessage(), ex);
+			}
+		}
+	}
+	
+	protected void clearImageBuffers() throws RenderEngineException
+	{
+		if (getModelContext().getImageDataContext() != null) {
+			try {
+				getModelContext().getImageDataContext().unloadImageData();
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Failed to unload image data: " + ex.getMessage(), ex);
+			}
+		}
+	}
+	
+	protected void fillRasterBuffers() throws RenderEngineException
+	{
+		boolean fullCaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
+		
+		if (fullCaching) {
+			log.info("Loading Raster Buffers");
+			try {
+				getRasterDataContext().fillBuffers();
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Failed to prebuffer raster data: " + ex.getMessage(), ex);
+			}
+			log.info("Loaded Raster Buffers");
+		}
+	}
+	
+	protected void clearRasterBuffers() throws RenderEngineException
+	{
+		boolean fullCaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
+		
+		if (fullCaching) {
+			log.info("Clearing Raster Buffers");
+			try {
+				getRasterDataContext().clearBuffers();
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Failed to prebuffer raster data: " + ex.getMessage(), ex);
+			}
+			log.info("Raster Buffered Cleared");
+		}
+	}
 	
 	protected void updateCoordinateLimits()
 	{
