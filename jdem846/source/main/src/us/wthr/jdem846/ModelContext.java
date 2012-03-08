@@ -67,6 +67,8 @@ public class ModelContext
 	private double eastLimit = NOT_SET;
 	private double westLimit = NOT_SET;
 	
+	private boolean isDisposed = false;
+	
 	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
 	{
 		this.rasterDataContext = rasterDataContext;
@@ -97,6 +99,34 @@ public class ModelContext
 		
 		
 	}
+	
+	public boolean isDisposed()
+	{
+		return isDisposed;
+	}
+	
+	public void dispose(boolean disposeSubContexts) throws DataSourceException
+	{
+		log.info("Disposing model context");
+		
+		if (isDisposed()) {
+			throw new DataSourceException("Model context already disposed.");
+		}
+		
+		if (!rasterDataContext.isDisposed()) {
+			rasterDataContext.dispose();
+		}
+		
+		if (!imageDataContext.isDisposed()) {
+			imageDataContext.dispose();
+		}
+		
+		if (!shapeDataContext.isDisposed()) {
+			shapeDataContext.dispose();
+		}
+		
+	}
+	
 	
 	public MapProjection getMapProjection()
 	{

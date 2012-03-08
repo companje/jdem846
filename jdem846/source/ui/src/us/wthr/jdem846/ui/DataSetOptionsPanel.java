@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
@@ -34,6 +35,7 @@ import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.datasetoptions.ElevationDataSetOptions;
 import us.wthr.jdem846.ui.datasetoptions.ShapeDataSetOptions;
+import us.wthr.jdem846.ui.datasetoptions.SimpleGeoImageDataSetOptions;
 
 @SuppressWarnings("serial")
 public class DataSetOptionsPanel extends Panel
@@ -41,6 +43,7 @@ public class DataSetOptionsPanel extends Panel
 	//private DataSource dataSource;
 	private RasterData rasterData;
 	private ShapeFileRequest shapeFileRequest;
+	private SimpleGeoImage simpleGeoImage;
 	private Button btnUpdatePreview;
 	private Component currentConfigPanel = null;
 	
@@ -63,6 +66,8 @@ public class DataSetOptionsPanel extends Panel
 					fireModelPreviewUpdateListeners(true, false);
 				} else if (currentConfigPanel instanceof ShapeDataSetOptions) {
 					fireModelPreviewUpdateListeners(false, true);
+				} else if (currentConfigPanel instanceof SimpleGeoImageDataSetOptions) {
+					fireModelPreviewUpdateListeners(false, false);
 				}
 				
 				//fireActionListeners();
@@ -109,6 +114,19 @@ public class DataSetOptionsPanel extends Panel
 		currentConfigPanel = panel;
 		this.add(panel, BorderLayout.CENTER);
 		btnUpdatePreview.setVisible(true);
+	}
+	
+	public void setSimpleGeoImage(SimpleGeoImage simpleGeoImage)
+	{
+		SimpleGeoImageDataSetOptions panel = new SimpleGeoImageDataSetOptions(simpleGeoImage);
+		if (currentConfigPanel != null) {
+			this.remove(currentConfigPanel);
+		}
+		currentConfigPanel = panel;
+		this.add(panel, BorderLayout.CENTER);
+		btnUpdatePreview.setVisible(true);
+		
+		
 	}
 	
 	

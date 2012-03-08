@@ -62,6 +62,24 @@ public class CanvasProjection
 				height);
 	}
 	
+	public CanvasProjection(MapProjection mapProjection,
+			double north,
+			double south,
+			double east,
+			double west,
+			double width,
+			double height)
+	{
+		setUp(null,
+				mapProjection,
+				north, 
+				south,
+				east,
+				west,
+				width,
+				height);
+	}
+	
 	public void setUp(ModelContext modelContext,
 					MapProjection mapProjection,
 					double north,

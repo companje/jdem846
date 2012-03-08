@@ -46,6 +46,7 @@ public class ModelRenderer extends InterruptibleProcess
 	protected ModelContext modelContext;
 	private List<TileCompletionListener> tileCompletionListeners;
 	
+	private TileRenderer tileRenderer = null;
 	private RenderPipeline renderPipeline;
 	
 	public ModelRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
@@ -64,51 +65,19 @@ public class ModelRenderer extends InterruptibleProcess
 	
 	public ModelCanvas renderModel() throws RenderEngineException
 	{
-		
-		
-		/*
-		if (getModelOptions().getBooleanOption(ModelOptionNamesEnum.LIMIT_COORDINATES)) {
-			
-			double optNorthLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_NORTH);
-			double optSouthLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_SOUTH);
-			double optEastLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_EAST);
-			double optWestLimit = getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_WEST);
-			
-			if (optNorthLimit != DemConstants.ELEV_NO_DATA)
-				modelContext.setNorthLimit(optNorthLimit);
-			if (optSouthLimit != DemConstants.ELEV_NO_DATA)
-				modelContext.setSouthLimit(optSouthLimit);
-			if (optEastLimit != DemConstants.ELEV_NO_DATA)
-				modelContext.setEastLimit(optEastLimit);
-			if (optWestLimit != DemConstants.ELEV_NO_DATA)
-				modelContext.setWestLimit(optWestLimit);
-		}
-		*/
+
 		
 		ModelDimensions2D modelDimensions = modelContext.getModelDimensions();//ModelDimensions2D.getModelDimensions(modelContext);
 
-		boolean fullCaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
-		//boolean fullCaching = getModelOptions().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
-		int tileNumber = 0;
 		int tileRow = 0;
 		int tileColumn = 0;
 		int tileSize = modelDimensions.getEffectiveTileSize();
-		long tileCount = modelDimensions.getTileCount();
-		
-		/*
-		double northLimit = getRasterDataContext().getNorth();
-		double southLimit = getRasterDataContext().getSouth();
-		double eastLimit = getRasterDataContext().getEast();
-		double westLimit = getRasterDataContext().getWest();
-		*/
-		
+
 		double northLimit = modelContext.getNorth();
 		double southLimit = modelContext.getSouth();
 		double eastLimit = modelContext.getEast();
 		double westLimit = modelContext.getWest();
-		
-		
-		
+
 		log.info("Model North Limit: " + northLimit);
 		log.info("Model South Limit: " + southLimit);
 		log.info("Model East Limit: " + eastLimit);
@@ -116,21 +85,10 @@ public class ModelRenderer extends InterruptibleProcess
 		
 		double latitudeResolution = getRasterDataContext().getEffectiveLatitudeResolution();
 		double longitudeResolution = getRasterDataContext().getEffectiveLongitudeResolution();
-		
-		//double effectiveLatitudeResolution = getRasterDataContext().getEffectiveLatitudeResolution();
-		//double effectiveLongitudeResolution = getRasterDataContext().getEffectiveLongitudeResolution();
-		//double effectiveRows = (northLimit - southLimit - latitudeResolution) / effectiveLatitudeResolution;
-		//double effectiveColumns = (eastLimit - westLimit) / effectiveLongitudeResolution;
-		
-		
-		
+
 		double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
 		double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
-		
-		//double effectiveTileRows = tileLatitudeHeight / effectiveLatitudeResolution;
-		//double effectiveTileColumns = tileLongitudeWidth / effectiveLongitudeResolution;
-		//		
-		
+
 		log.info("Tile Size: " + tileSize);
 		log.info("Tile Latitude Height: " + tileLatitudeHeight);
 		log.info("Tile Longitude Width: " + tileLongitudeWidth);
@@ -142,8 +100,9 @@ public class ModelRenderer extends InterruptibleProcess
 		
 		on2DModelBefore(modelCanvas);
 		
-		double pctComplete = 0;
-		final TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas, renderPipeline);
+		
+		
+		tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas, renderPipeline);
 		
 		this.setProcessInterruptListener(new ProcessInterruptListener() {
 			public void onProcessCancelled()
@@ -161,45 +120,7 @@ public class ModelRenderer extends InterruptibleProcess
 			}
 		});
 		
-		
-		if (fullCaching) {
-			try {
-				getRasterDataContext().fillBuffers();
-			} catch (DataSourceException ex) {
-				throw new RenderEngineException("Failed to prebuffer raster data: " + ex.getMessage(), ex);
-			}
-		}
-		
-		
-		/*
-		double latStep = (northLimit - southLimit) / 6.0;
-		double lonStep = (eastLimit - westLimit) / 6.0;
-		
-		for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= latStep) {
-			
-			double tileSouth = tileNorth - latStep - tileLatitudeHeight;
-			
-			for (double tileWest = westLimit; tileWest < eastLimit; tileWest += lonStep ) {
-				
-				double tileEast = tileWest + lonStep + tileLongitudeWidth;
-				TileRenderContainer tileRenderContainer = null;
-				tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, tileNorth, tileSouth, tileEast, tileWest, (tileColumn + 1), (tileRow + 1));
 
-				if (renderPipeline != null) {
-					renderPipeline.submit(tileRenderContainer);
-				} else {
-					tileRenderContainer.render(null);
-				}
-				
-				//break;
-			}
-			//break;
-		}
-		*/
-		
-		
-		
-		
 		if ( getRasterDataContext().getRasterDataListSize() > 0) {
 			TileRenderContainer tileRenderContainer = null;
 			tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, northLimit, southLimit, eastLimit, westLimit, (tileColumn + 1), (tileRow + 1));
@@ -211,113 +132,25 @@ public class ModelRenderer extends InterruptibleProcess
 			}
 			
 			
-			/*
-			// Latitude
-			for (double tileNorth = northLimit; tileNorth > southLimit; tileNorth -= tileLatitudeHeight) {
-				double tileSouth = (tileNorth - tileLatitudeHeight) - latitudeResolution;
-				if (tileSouth <= southLimit) {
-					tileSouth = southLimit + latitudeResolution;
-				}
-				
-				tileColumn = 0;
-				
-				// Longitude
-				for (double tileWest = westLimit; tileWest < eastLimit; tileWest += tileLongitudeWidth) {
-					double tileEast = tileWest + tileLongitudeWidth + longitudeResolution;
-					
-					if (tileEast >= eastLimit) {
-						tileEast = eastLimit;
-					}
-
-					if (tileEast - tileWest < longitudeResolution) {
-						break;
-					}
-					
-					
-					
-					log.info("Tile #" + (tileNumber + 1) + " of " + tileCount + ", Row #" + (tileRow + 1) + ", Column #" + (tileColumn + 1));
-					log.info("    North: " + tileNorth);
-					log.info("    South: " + tileSouth);
-					log.info("    East: " + tileEast);
-					log.info("    West: " + tileWest);	
+		}
+		
 	
-					TileRenderContainer tileRenderContainer = null;
-					tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, tileNorth, tileSouth, tileEast, tileWest, (tileColumn + 1), (tileRow + 1));
-
-					if (renderPipeline != null) {
-						renderPipeline.submit(tileRenderContainer);
-					} else {
-						tileRenderContainer.render(null);
-					}
-
-					tileColumn++;
-					tileNumber++;
-
-					
-					
-					pctComplete = (double)tileNumber / (double)tileCount;
-					
-					if (renderPipeline == null) {
-						fireTileCompletionListeners(modelCanvas, pctComplete);
-					}
-					
-					if (isCancelled()) {
-						break;
-					}
-					//break;
-				}
-				
-				tileRow++;
-				
-				if (isCancelled()) {
-					break;
-				}
-				//break;
-				
-			}
-			
-			*/
-		}
-		
-		
-		/*
-		log.info("Starting pipeline container...");
-		pipelineContainer.start();
-		
-		while(true) {
-			
-			if (pipelineContainer.areQueuesEmpty()) {
-				log.info("Pipeline queues emptied. Stopping pipeline threads");
-				pipelineContainer.stop(true);
-				log.info("Pipeline threads exited. Cleaning up model render");
-				break;
-			}
-			
-			Thread.yield();
-			if (isCancelled()) {
-				break;
-			}
-		}
-		*/
-		
-		
-		
-		
-		
-		if (fullCaching) {
-			try {
-				getRasterDataContext().clearBuffers();
-			} catch (DataSourceException ex) {
-				throw new RenderEngineException("Failed to prebuffer raster data: " + ex.getMessage(), ex);
-			}
-		}
-		
 		
 		on2DModelAfter(modelCanvas);
 		
 		
 		
 		return modelCanvas;
+	}
+	
+	public void dispose()
+	{
+		log.info("Disposing model renderer");
+		
+		if (tileRenderer != null) {
+			tileRenderer.dispose();
+			tileRenderer = null;
+		}
 	}
 	
 	protected void fireTileCompletionListeners(ModelCanvas modelCanvas, double pctComplete)

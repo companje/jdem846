@@ -5,6 +5,7 @@ import java.util.List;
 
 import us.wthr.jdem846.DataContext;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -51,7 +52,43 @@ public class ImageDataContext implements DataContext
 			south = -90.0;
 		}
 	}
-
+	
+	public void loadImageData() throws DataSourceException
+	{
+		for (SimpleGeoImage image : imageList) {
+			if (!image.isLoaded()) {
+				image.load();
+			}
+		}
+	}
+	
+	public void unloadImageData() throws DataSourceException
+	{
+		for (SimpleGeoImage image : imageList) {
+			if (image.isLoaded()) {
+				image.unload();
+			}
+		}
+	}
+	
+	public boolean getColor(double latitude, double longitude, int[] rgba) throws DataSourceException
+	{
+		
+		for (SimpleGeoImage image : imageList) {
+			if (image.contains(latitude, longitude)) {
+				try {
+					image.getColor(latitude, longitude, rgba);
+				} catch (DataSourceException ex) {
+					throw new DataSourceException("Error retrieving color values: " + ex.getMessage(), ex);
+				}
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
 	public void addImage(SimpleGeoImage image)
 	{
 		imageList.add(image);
@@ -81,12 +118,18 @@ public class ImageDataContext implements DataContext
 	@Override
 	public void dispose() throws DataSourceException
 	{
+		log.info("Disposing image data context");
+		
 		if (isDisposed()) {
 			throw new DataSourceException("Already disposed");
 		}
 		
+		
 		// TODO: Dispose of stuff
-		 
+		
+		this.unloadImageData();
+		imageList.clear();
+		
 		isDisposed = true;
 	}
 

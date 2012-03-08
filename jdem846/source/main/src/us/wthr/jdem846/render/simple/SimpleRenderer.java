@@ -113,6 +113,9 @@ public class SimpleRenderer
 	private int[] sourceLineColor = {Color.RED.getRed(), Color.RED.getGreen(), Color.RED.getBlue(), 255};
 	private int[] baseGridColor = {Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue(), 255};
 	
+	private double minimumElevation;
+	private double maximumElevation;
+	
 	public SimpleRenderer(ModelContext modelContext)
 	{
 		this.modelContext = modelContext;
@@ -161,6 +164,9 @@ public class SimpleRenderer
 				log.error("Error determining elevation min & max: " + ex.getMessage(), ex);
 			}
 		}
+		
+		minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
+		maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
 		
 		planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
 		LightingContext lightingContext = modelContext.getLightingContext();
@@ -547,9 +553,8 @@ public class SimpleRenderer
 			return DemConstants.ELEV_NO_DATA;
 		
 		
-		double min = modelContext.getRasterDataContext().getDataMinimumValue();
-		double max = modelContext.getRasterDataContext().getDataMaximumValue();
-		modelColoring.getGradientColor(midElev, min, max, colorBufferA);
+		getPointColor(latitude, longitude, midElev, colorBufferA);
+		
 		
 		
 		/*
@@ -628,6 +633,18 @@ public class SimpleRenderer
 		rgba[3] = 255;
 		
 		return midElev;
+	}
+	
+	protected void getPointColor(double latitude, double longitude, double elevation, int[] rgba) throws DataSourceException
+	{
+		
+		if (modelContext.getImageDataContext() != null
+				&& modelContext.getImageDataContext().getColor(latitude, longitude, rgba)) {
+			// All right, then
+		} else {
+			modelColoring.getGradientColor(elevation, minimumElevation, maximumElevation, rgba);
+		}
+
 	}
 	
 	protected void calculateNormal(double nw, double sw, double se, double ne, CornerEnum corner, double[] normal)

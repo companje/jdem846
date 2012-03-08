@@ -112,9 +112,13 @@ public class RasterDataContext implements DataContext
 	
 	public void dispose() throws DataSourceException
 	{
+		log.info("Disposing raster data context");
+		
 		if (isDisposed()) {
 			throw new DataSourceException("Raster data proxy already disposed.");
 		}
+		
+		clearBuffers();
 		
 		for (RasterData rasterData : rasterDataList) {
 			if (!rasterData.isDisposed()) {
@@ -122,6 +126,7 @@ public class RasterDataContext implements DataContext
 			}
 		}
 		
+		rasterDataRowColumnBoxes.clear();
 		
 		// TODO: Finish
 		isDisposed = true;

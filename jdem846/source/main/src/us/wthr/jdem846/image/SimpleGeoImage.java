@@ -1,10 +1,16 @@
 package us.wthr.jdem846.image;
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.ModelContext;
@@ -25,8 +31,11 @@ public class SimpleGeoImage
 	
 	private String imageFile;
 	
-	private BufferedImage image;
-	private Raster raster;
+	private BufferedImage image = null;
+	private Raster raster = null;
+	
+	private int height;
+	private int width;
 	
 	private double north;
 	private double south;
@@ -53,55 +62,119 @@ public class SimpleGeoImage
 		
 	}
 	
+
+	
 	public SimpleGeoImage(String imagePath, double north, double south, double east, double west) throws DataSourceException
-	{
-		this(null, imagePath, north, south, east, west);
-	}
-	
-	public SimpleGeoImage(ModelContext modelContext, String imagePath) throws DataSourceException
-	{
-		this(modelContext, imagePath, modelContext.getNorth(), modelContext.getSouth(), modelContext.getEast(), modelContext.getWest());
-	}
-	
-	public SimpleGeoImage(ModelContext modelContext, String imagePath, double north, double south, double east, double west) throws DataSourceException
 	{
 		imageFile = imagePath;
 		
+		Dimension dimensions = null;
+		
 		try {
-			image = (BufferedImage) ImageIcons.loadImage(imagePath);
+			dimensions = fetchImageDimensions();
 		} catch (IOException ex) {
-			throw new DataSourceException("Failed to load image: " + ex.getMessage(), ex);
+			throw new DataSourceException("Error determining image dimensions: " + ex.getMessage(), ex);
 		}
 		
-		raster = image.getRaster();
+		height = dimensions.height;
+		width = dimensions.width;
 		
 		this.north = north;
 		this.south = south;
 		this.east = east;
 		this.west = west;
 		
-		this.latitudeResolution = (north - south) / image.getHeight();
-		this.longitudeResolution = (east - west) / image.getWidth();
+		
+		update();
+	}
+	
+	public void update()
+	{
+		this.latitudeResolution = (north - south) / height;
+		this.longitudeResolution = (east - west) / width;
 		
 		
-		mapProjection = new EquirectangularProjection(north, south, east, west, image.getWidth(), image.getHeight());
-		
-		if (modelContext != null) {
-			canvasProjection = new CanvasProjection(modelContext, mapProjection, north, south, east, west, image.getWidth(), image.getHeight());
-		}
+		mapProjection = new EquirectangularProjection(north, south, east, west, width, height);
+		canvasProjection = new CanvasProjection(mapProjection, north, south, east, west, width, height);
 		
 	}
 	
-	
-	
-	public boolean getColor(double latitude, double longitude, int[] rgba) throws ImageException
+	public boolean isLoaded()
 	{
+		return (image != null);
+	}
+	
+	public void load() throws DataSourceException
+	{
+		if (isLoaded()) {
+			throw new DataSourceException("Image data already loaded");
+		}
+		
+		try {
+			image = (BufferedImage) ImageIcons.loadImage(this.imageFile);
+		} catch (IOException ex) {
+			throw new DataSourceException("Failed to load image: " + ex.getMessage(), ex);
+		}
+		
+		raster = image.getRaster();
+	}
+	
+	public void unload() throws DataSourceException
+	{
+		if (!isLoaded()) {
+			throw new DataSourceException("Image data not loaded");
+		}
+		
+		image = null;
+		raster = null;
+	}
+	
+	public boolean contains(double latitude, double longitude)
+	{
+		return (latitude <= north 
+				&& latitude >= south
+				&& longitude >= west
+				&& longitude <= east);
+	}
+	
+	protected Dimension fetchImageDimensions() throws IOException
+	{
+		ImageInputStream in = ImageIO.createImageInputStream(new File(this.imageFile));
+		
+		try {
+			final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+			if (readers.hasNext()) {
+				ImageReader reader = readers.next();
+				try {
+					reader.setInput(in);
+					return new Dimension(reader.getWidth(0), reader.getHeight(0));
+				} finally {
+					reader.dispose();
+				}
+			}
+		} finally {
+			if (in != null)
+				in.close();
+		}
+		
+		return null;
+	}
+	
+	public boolean getColor(double latitude, double longitude, int[] rgba) throws DataSourceException
+	{
+		if (!isLoaded()) {
+			throw new DataSourceException("Image data not loaded");
+		}
 		return getColor(latitude, longitude, latitudeResolution, longitudeResolution, rgba);
 	}
 	
 	
-	public boolean getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba) throws ImageException
+	public boolean getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba) throws DataSourceException
 	{
+		if (!isLoaded()) {
+			throw new DataSourceException("Image data not loaded");
+		}
+		
 		if (latitude >= south && latitude <= north && longitude >= west && longitude <= east) {
 			
 			double north = latitude + (effectiveLatitudeResolution / 2.0);
@@ -140,15 +213,19 @@ public class SimpleGeoImage
 		}
 	}
 	
-	public boolean getColorBilinear(double latitude, double longitude, int[] rgba) throws ImageException
+	public boolean getColorBilinear(double latitude, double longitude, int[] rgba) throws DataSourceException
 	{
+		if (!isLoaded()) {
+			throw new DataSourceException("Image data not loaded");
+		}
+		
 		double x00, y00;
 		double x01, y01;
 		
 		try {
 			canvasProjection.getPoint(latitude, longitude, 0.0, mapPoint);
 		} catch (MapProjectionException ex) {
-			throw new ImageException("Error getting x/y point from coordinates: " + ex.getMessage(), ex);
+			throw new DataSourceException("Error getting x/y point from coordinates: " + ex.getMessage(), ex);
 		}
 		
 		x00 = (int) mapPoint.column;
@@ -159,10 +236,10 @@ public class SimpleGeoImage
 		double xFrac = x01 - x00;
 		double yFrac = y01 - y00;
 		
-		raster.getPixel((int) x00, (int) y00, rgbaBuffer00);
-		raster.getPixel((int) x00 + 1, (int) y00, rgbaBuffer01);
-		raster.getPixel((int) x00, (int) y00 + 1, rgbaBuffer10);
-		raster.getPixel((int) x00 + 1, (int) y00 + 1, rgbaBuffer11);
+		getPixel((int) x00, (int) y00, rgbaBuffer00);
+		getPixel((int) x00 + 1, (int) y00, rgbaBuffer01);
+		getPixel((int) x00, (int) y00 + 1, rgbaBuffer10);
+		getPixel((int) x00 + 1, (int) y00 + 1, rgbaBuffer11);
 		
 		rgba[0] = MathExt.interpolate(rgbaBuffer00[0], rgbaBuffer01[0], rgbaBuffer10[0], rgbaBuffer11[0], xFrac, yFrac);
 		rgba[1] = MathExt.interpolate(rgbaBuffer00[1], rgbaBuffer01[1], rgbaBuffer10[1], rgbaBuffer11[1], xFrac, yFrac);
@@ -172,13 +249,16 @@ public class SimpleGeoImage
 		return true;
 	}
 	
-	public boolean getColorNearestNeighbor(double latitude, double longitude, int[] rgba) throws ImageException
+	public boolean getColorNearestNeighbor(double latitude, double longitude, int[] rgba) throws DataSourceException
 	{
+		if (!isLoaded()) {
+			throw new DataSourceException("Image data not loaded");
+		}
 		if (latitude >= south && latitude <= north && longitude >= west && longitude <= east) {
 			try {
 				canvasProjection.getPoint(latitude, longitude, 0.0, mapPoint);
 			} catch (MapProjectionException ex) {
-				throw new ImageException("Error getting x/y point from coordinates: " + ex.getMessage(), ex);
+				throw new DataSourceException("Error getting x/y point from coordinates: " + ex.getMessage(), ex);
 			}
 			
 			getPixel((int) Math.round(mapPoint.column), (int) Math.round(mapPoint.row), rgba);
@@ -189,8 +269,12 @@ public class SimpleGeoImage
 		}
 	}
 	
-	public boolean getPixel(int x, int y, int[] rgba)
+	public boolean getPixel(int x, int y, int[] rgba) throws DataSourceException
 	{
+		if (!isLoaded()) {
+			throw new DataSourceException("Image data not loaded");
+		}
+		
 		if (x < 0 || x >= raster.getWidth() || y < 0 || y >= raster.getHeight()) {
 			return false;
 		}
@@ -223,6 +307,7 @@ public class SimpleGeoImage
 	public void setNorth(double north)
 	{
 		this.north = north;
+		update();
 	}
 
 
@@ -237,6 +322,7 @@ public class SimpleGeoImage
 	public void setSouth(double south)
 	{
 		this.south = south;
+		update();
 	}
 
 
@@ -251,6 +337,7 @@ public class SimpleGeoImage
 	public void setEast(double east)
 	{
 		this.east = east;
+		update();
 	}
 
 
@@ -265,16 +352,17 @@ public class SimpleGeoImage
 	public void setWest(double west)
 	{
 		this.west = west;
+		update();
 	}
 	
 	public int getHeight()
 	{
-		return raster.getHeight();
+		return height;
 	}
 	
 	public int getWidth()
 	{
-		return raster.getWidth();
+		return width;
 	}
 	
 	public double getLatitudeResolution()
@@ -287,29 +375,18 @@ public class SimpleGeoImage
 		return longitudeResolution;
 	}
 	
-	/** Creates copy. New instance retains reference to same image and raster
-	 * data (thus it's not _fully_ a copy...).
+	/** Creates copy.
 	 * 
 	 * @return
 	 */
-	public SimpleGeoImage copy()
+	public SimpleGeoImage copy() throws DataSourceException
 	{
-		SimpleGeoImage copy = new SimpleGeoImage();
-		copy.imageFile = this.imageFile;
-		copy.image = this.image;
-		copy.raster = this.raster;
+		SimpleGeoImage copy = new SimpleGeoImage(imageFile, north, south, east, west);
 		
-		copy.north = this.north;
-		copy.south = this.south;
-		copy.east = this.east;
-		copy.west = this.west;
-		
-		copy.longitudeResolution = this.longitudeResolution;
-		copy.latitudeResolution = this.latitudeResolution;
-		
-		copy.mapProjection = this.mapProjection;
-		copy.canvasProjection = this.canvasProjection;
-		
+		if (this.isLoaded()) {
+			copy.image = this.image;
+			copy.raster = this.raster;
+		}
 		
 		return copy;
 	}
