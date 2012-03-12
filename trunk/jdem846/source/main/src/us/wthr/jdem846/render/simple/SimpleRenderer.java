@@ -182,7 +182,11 @@ public class SimpleRenderer
 		
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
 			sunIsUp = true;
-			setUpLightSource(0, 0, modelContext.getLightingContext().getLightingElevation(), modelContext.getLightingContext().getLightingAzimuth(), true);
+			
+			solarElevation = modelContext.getLightingContext().getLightingElevation();
+			solarAzimuth = modelContext.getLightingContext().getLightingAzimuth();
+			
+			setUpLightSource(0, 0, solarElevation, solarAzimuth, true);
 		}
 		
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME) {
@@ -577,7 +581,7 @@ public class SimpleRenderer
 			if (nElev == DemConstants.ELEV_NO_DATA)
 				nElev = midElev;
 			
-			setUpLightSource(latitude, longitude, 0.0, 0.0, recalcLightOnEachPoint);
+			setUpLightSource(latitude, longitude, solarElevation, solarAzimuth, recalcLightOnEachPoint);
 			resetBuffers(latitude, longitude);
 			
 			// NW Normal
@@ -770,7 +774,7 @@ public class SimpleRenderer
 		
 		sunsource[0] = 0.0;
 		sunsource[1] = 0.0;
-		sunsource[2] = -149598000000.0;
+		sunsource[2] = -1.0;
 		Vector.rotate(solarElevation, -solarAzimuth, 0, sunsource);
 		
 	}
