@@ -3,6 +3,8 @@ package us.wthr.jdem846.gis.projections;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.gis.Location;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
+import us.wthr.jdem846.gis.planets.Planet;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.math.MathExt;
 
 public abstract class AbstractBaseProjection implements MapProjection
@@ -42,6 +44,8 @@ public abstract class AbstractBaseProjection implements MapProjection
 	private double scaleFactor = 1.0;
 	
 	private double meridian = 0.0;
+	
+	private Planet planet = null;
 	
 	public AbstractBaseProjection()
 	{
@@ -136,6 +140,8 @@ public abstract class AbstractBaseProjection implements MapProjection
 		this.height = height;
 		
 		meridian = (getEast() + getWest()) / 2.0;
+		
+		planet = PlanetsRegistry.getPlanet("Earth");
 	}
 	
 	
@@ -145,11 +151,14 @@ public abstract class AbstractBaseProjection implements MapProjection
 		double a_longitude = longitude - getMeridian();
 		double a_latitude = latitude;// - equator;
 		
-		double r_latitude = Math.toRadians(a_latitude);
-		double r_longitude = Math.toRadians(a_longitude);
+		double phi = Math.toRadians(a_latitude);
+		double lam = Math.toRadians(a_longitude);
 		
-		project(r_latitude, r_longitude, elevation, point);
-		
+		try {
+			project(phi, lam, elevation, point);
+		} catch (MapProjectionException ex) {
+			throw new MapProjectionException("Error projecting coordinates " + latitude + "/" + longitude, ex);
+		}
 		point.column = Math.toDegrees(point.column);
 		point.row = Math.toDegrees(point.row);
 		
@@ -256,8 +265,8 @@ public abstract class AbstractBaseProjection implements MapProjection
 	protected double tsfn(double phi, double sinphi, double e)
 	{
 		sinphi *= e;
-		return (Math.tan (.5 * (HALFPI - phi)) /
-				Math.pow((1. - sinphi) / (1. + sinphi), .5 * e));
+		return (MathExt.tan (.5 * (HALFPI - phi)) /
+				MathExt.pow((1. - sinphi) / (1. + sinphi), .5 * e));
 	}
 	
 	protected static double msfn(double sinphi, double cosphi, double es) 
@@ -323,4 +332,16 @@ public abstract class AbstractBaseProjection implements MapProjection
 	{
 		return meridian;
 	}
+
+	public Planet getPlanet()
+	{
+		return planet;
+	}
+
+	public void setPlanet(Planet planet)
+	{
+		this.planet = planet;
+	}
+	
+	
 }
