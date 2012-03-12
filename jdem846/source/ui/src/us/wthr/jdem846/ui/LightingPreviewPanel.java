@@ -148,6 +148,7 @@ public class LightingPreviewPanel extends Panel
 			lightingContext.setRelativeLightIntensity(0.75);
 			lightingContext.setRelativeDarkIntensity(1.0);
 			lightingContext.setRayTraceShadows(false);
+			lightingContext.setLightingMultiple(5.0);
 			//modelOptions.setDoublePrecisionHillshading(false);
 			//modelOptions.setTileSize(1000);
 			modelOptions.setGridSize(2);
