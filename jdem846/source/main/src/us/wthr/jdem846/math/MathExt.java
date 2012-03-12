@@ -5,6 +5,21 @@ public class MathExt
 	public static final double PI = Math.PI;
 	
 	
+	public static double log(double a)
+	{
+		return Math.log(a);
+	}
+	
+	public static double log10(double a)
+	{
+		return Math.log10(a);
+	}
+	
+	public static double log1p(double a)
+	{
+		return Math.log1p(a);
+	}
+	
 	public static double abs(double a)
 	{
 		return Math.abs(a);

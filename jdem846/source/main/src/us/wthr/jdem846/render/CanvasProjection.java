@@ -146,6 +146,7 @@ public class CanvasProjection
 				mapProjection.getPoint((north + south) / 2.0, east, 0.0, point);
 				checkXYMinMax(point);
 				
+				int i = 0;
 			} catch (MapProjectionException ex) {
 				ex.printStackTrace();
 			}
