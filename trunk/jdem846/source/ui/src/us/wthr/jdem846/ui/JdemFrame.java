@@ -97,7 +97,14 @@ public class JdemFrame extends Frame
 		// Set Properties
 		this.setTitle(null);
 		this.setSize(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.windowWidth"), JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.windowHeight"));
-		this.setLocationRelativeTo(null);
+		
+		int topLeftX = JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.topLeftX");
+		int topLeftY = JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.topLeftY");
+		if (topLeftX == -9999 || topLeftY == -9999) {
+			this.setLocationRelativeTo(null);
+		} else {
+			this.setLocation(topLeftX, topLeftY);
+		}
 		
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
@@ -181,7 +188,8 @@ public class JdemFrame extends Frame
 			}
 			public void componentMoved(ComponentEvent e)
 			{
-				
+				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.topLeftX", ""+getX());
+				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.topLeftY", ""+getY());
 			}
 			public void componentResized(ComponentEvent e)
 			{

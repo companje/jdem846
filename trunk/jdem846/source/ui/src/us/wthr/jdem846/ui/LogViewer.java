@@ -36,12 +36,15 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.LogConsole.ConsoleUpdateListener;
+import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.TextArea;
@@ -63,6 +66,9 @@ public class LogViewer extends JdemPanel
 	private LogConsole console;
 	private ToolBar toolBar;
 	private ToolbarButton btnClear;
+	private CheckBox chkScrollLock;
+	
+	private boolean scrollLock = false;
 	
 	private JMenu logMenu;
 	
@@ -75,6 +81,16 @@ public class LogViewer extends JdemPanel
 		scrollPane = new ScrollPane(console);
 		
 		toolBar = new ToolBar();
+		chkScrollLock = new CheckBox(I18N.get("us.wthr.jdem846.ui.logViewerPanel.scrollLock.label"));
+		chkScrollLock.setToolTipText(I18N.get("us.wthr.jdem846.ui.logViewerPanel.scrollLock.tooltip"));
+		chkScrollLock.getModel().addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0)
+			{
+				onScrollLockToggled();
+			}
+		});
+		
+		
 		btnClear = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.logViewerPanel.clearButton.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/edit-clear.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				clear();
@@ -99,54 +115,24 @@ public class LogViewer extends JdemPanel
 			}
 		});
 		
-		/*
-		txtLog.addCaretListener(new CaretListener() {
-			public void caretUpdate(CaretEvent e)
-			{
-				scrollToBotton();
-			}
-		});
-		*/
-		// Add Listeners
-		
-		
-		
-		/*
-		Logging.addHandler(new Handler() {
-			public void close() throws SecurityException
-			{
-				
-			}
-			public void flush()
-			{
-				
-			}
-			public void publish(LogRecord record)
-			{
-				String formatted = this.getFormatter().format(record);
-				append(formatted);
-				
-			}
-		});
-		*/
+
 		
 		// Set Layout
 		toolBar.add(btnClear);
+		toolBar.add(chkScrollLock);
 		setLayout(new BorderLayout());
 		add(toolBar, BorderLayout.NORTH);
 		add(scrollPane, BorderLayout.CENTER);
-		
-		/*
-		Timer timer = new Timer(200, new ActionListener() {
-			public void actionPerformed(ActionEvent e)
-			{
-				Date date = new Date();
-				log.info("Test Entry -- " + date);
-			}
-		});
-		timer.start();
-		*/
-		
+
+		scrollLock = JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.state.scrollLock");
+		chkScrollLock.getModel().setSelected(scrollLock);
+	}
+	
+	
+	protected void onScrollLockToggled()
+	{
+		scrollLock = chkScrollLock.getModel().isSelected();
+		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.state.scrollLock", ""+chkScrollLock.getModel().isSelected());
 	}
 	
 	protected void clear()
@@ -158,7 +144,9 @@ public class LogViewer extends JdemPanel
 	
 	protected void scrollToBotton()
 	{
-		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+		if (!scrollLock) {
+			scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+		}
 	}
 	
 
