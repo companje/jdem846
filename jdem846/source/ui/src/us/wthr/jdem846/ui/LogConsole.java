@@ -104,6 +104,9 @@ public class LogConsole extends TextArea
 	public void clear()
 	{
 		buffer.delete(0, buffer.length() - 1);
+		checkBufferLength();
+		super.setText(buffer.toString());
+		fireConsoleUpdateListeners();
 	}
 	
 	public void fireConsoleUpdateListeners()
