@@ -9,6 +9,7 @@ import javax.swing.event.CaretListener;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.LogConsole.ConsoleUpdateListener;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.TextArea;
@@ -18,38 +19,23 @@ public class LogOutputPanel extends ScrollPane
 {
 	private static Log log = Logging.getLog(LogOutputPanel.class);
 	
-	private ScrollPane scrollPane;
-	private TextArea txtLog;
+	//private ScrollPane scrollPane;
+	private LogConsole console;
+	//private TextArea txtLog;
 	
 	public LogOutputPanel()
 	{
-		txtLog = new TextArea();
-		txtLog.setEditable(false);
+		//txtLog = new TextArea();
+		//txtLog.setEditable(false);
 		//scrollPane = new ScrollPane(txtLog);
 		//this.setvi
-		this.getViewport().add(txtLog);
+		console = new LogConsole();
+		this.getViewport().add(console);
 		
-		txtLog.addCaretListener(new CaretListener() {
-			public void caretUpdate(CaretEvent e)
+		console.addConsoleUpdateListener(new ConsoleUpdateListener() {
+			public void onUpdate()
 			{
 				scrollToBotton();
-			}
-		});
-		
-		Logging.addHandler(new Handler() {
-			public void close() throws SecurityException
-			{
-				
-			}
-			public void flush()
-			{
-				
-			}
-			public void publish(LogRecord record)
-			{
-				String formatted = this.getFormatter().format(record);
-				append(formatted);
-				
 			}
 		});
 		
@@ -61,14 +47,10 @@ public class LogOutputPanel extends ScrollPane
 	
 	public void clear()
 	{
-		txtLog.setText("");
+		console.clear();
 	}
 	
-	protected void append(String record)
-	{
-		txtLog.setText(txtLog.getText() + record);
-		txtLog.setCaretPosition(txtLog.getText().length());
-	}
+
 	
 	
 	protected void scrollToBotton()
