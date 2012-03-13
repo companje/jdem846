@@ -41,6 +41,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.LogConsole.ConsoleUpdateListener;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.TextArea;
@@ -58,7 +59,8 @@ public class LogViewer extends JdemPanel
 	private static Log log = Logging.getLog(LogViewer.class);
 	
 	private ScrollPane scrollPane;
-	private TextArea txtLog;
+	//private TextArea txtLog;
+	private LogConsole console;
 	private ToolBar toolBar;
 	private ToolbarButton btnClear;
 	
@@ -67,9 +69,10 @@ public class LogViewer extends JdemPanel
 	public LogViewer()
 	{
 		// Create Components
-		txtLog = new TextArea();
-		txtLog.setEditable(false);
-		scrollPane = new ScrollPane(txtLog);
+		////txtLog = new TextArea();
+		//txtLog.setEditable(false);
+		console = new LogConsole();
+		scrollPane = new ScrollPane(console);
 		
 		toolBar = new ToolBar();
 		btnClear = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.logViewerPanel.clearButton.label"), JDem846Properties.getProperty("us.wthr.jdem846.icons.16x16") + "/edit-clear.png", new ActionListener() {
@@ -89,19 +92,26 @@ public class LogViewer extends JdemPanel
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK | ActionEvent.CTRL_MASK)));
 		
+		console.addConsoleUpdateListener(new ConsoleUpdateListener() {
+			public void onUpdate()
+			{
+				scrollToBotton();
+			}
+		});
 		
+		/*
 		txtLog.addCaretListener(new CaretListener() {
 			public void caretUpdate(CaretEvent e)
 			{
 				scrollToBotton();
 			}
 		});
-		
+		*/
 		// Add Listeners
 		
 		
 		
-		
+		/*
 		Logging.addHandler(new Handler() {
 			public void close() throws SecurityException
 			{
@@ -118,7 +128,7 @@ public class LogViewer extends JdemPanel
 				
 			}
 		});
-		
+		*/
 		
 		// Set Layout
 		toolBar.add(btnClear);
@@ -141,14 +151,9 @@ public class LogViewer extends JdemPanel
 	
 	protected void clear()
 	{
-		txtLog.setText("");
+		console.clear();
 	}
 	
-	protected void append(String record)
-	{
-		txtLog.setText(txtLog.getText() + record);
-		txtLog.setCaretPosition(txtLog.getText().length());
-	}
 	
 	
 	protected void scrollToBotton()
