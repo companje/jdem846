@@ -19,6 +19,7 @@ import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Slider;
 import us.wthr.jdem846.ui.base.TabPane;
+import us.wthr.jdem846.ui.base.TextField;
 import us.wthr.jdem846.ui.optionModels.JGoodiesColorThemeListModel;
 import us.wthr.jdem846.ui.optionModels.LanguageListModel;
 import us.wthr.jdem846.ui.optionModels.PrecacheStrategyOptionsListModel;
@@ -47,7 +48,9 @@ public class PreferencesDialog extends Dialog
 	private CheckBox chkGeneralAntialiasedScriptEditorText;
 	private CheckBox chkGeneralDisplayMemoryMonitor;
 	private CheckBox chkGeneralDisplayLogPanel;
-	private CheckBox chkGeneralPreviewModelDuringRender;
+	private CheckBox chkGeneralPreviewModelDuringRender;	
+	private CheckBox chkGeneralLimitConsoleOutput;
+	private NumberTextField txtGeneralConsoleBufferSize;
 	
 	
 	private Slider sldPreviewingPreviewQuality;
@@ -83,6 +86,10 @@ public class PreferencesDialog extends Dialog
 		chkGeneralDisplayMemoryMonitor = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.displayMemoryMonitor"));
 		chkGeneralDisplayLogPanel = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.displayLogPanel"));
 		chkGeneralPreviewModelDuringRender = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.previewModelDuringRender"));
+		chkGeneralLimitConsoleOutput = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.limitConsoleOutput"));
+		txtGeneralConsoleBufferSize = new NumberTextField(false);
+		
+		
 		
 		sldPreviewingPreviewQuality = new Slider(1, 100);
 		chkPreviewingIncludeRasterDataInPreview = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.includeRasterDataInPreview"));
@@ -147,10 +154,16 @@ public class PreferencesDialog extends Dialog
 		generalPanel.add(chkGeneralDisplayMemoryMonitor);
 		
 		generalPanel.add(new Label(""));
+		generalPanel.add(chkGeneralPreviewModelDuringRender);
+		
+		generalPanel.add(new Label(""));
 		generalPanel.add(chkGeneralDisplayLogPanel);
 		
 		generalPanel.add(new Label(""));
-		generalPanel.add(chkGeneralPreviewModelDuringRender);
+		generalPanel.add(chkGeneralLimitConsoleOutput);
+		
+		generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.consoleBufferSize") + ":"));
+		generalPanel.add(txtGeneralConsoleBufferSize);
 		
 		
 		
@@ -209,6 +222,10 @@ public class PreferencesDialog extends Dialog
 		chkGeneralDisplayLogPanel.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.displayLogViewPanel"));
 		chkGeneralPreviewModelDuringRender.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.renderInProcessPreviewing"));
 	
+		chkGeneralLimitConsoleOutput.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.console.limitOuput"));
+		txtGeneralConsoleBufferSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.console.bufferSize"));
+		
+		
 		sldPreviewingPreviewQuality.setValue((int)(JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewQuality") * 100.0));
 		chkPreviewingIncludeRasterDataInPreview.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.rasterPreview"));
 
@@ -233,7 +250,11 @@ public class PreferencesDialog extends Dialog
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.jdemFrame.displayMemoryMonitor", ""+chkGeneralDisplayMemoryMonitor.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.displayLogViewPanel", ""+chkGeneralDisplayLogPanel.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.renderInProcessPreviewing", ""+chkGeneralPreviewModelDuringRender.getModel().isSelected());
-
+		
+		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.console.limitOuput", ""+chkGeneralLimitConsoleOutput.getModel().isSelected());
+		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.console.bufferSize", ""+txtGeneralConsoleBufferSize.getInteger());
+		
+		
 		double quality = (double)sldPreviewingPreviewQuality.getValue() / 100.0;
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewQuality", ""+quality);
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.rasterPreview", ""+chkPreviewingIncludeRasterDataInPreview.getModel().isSelected()); 
