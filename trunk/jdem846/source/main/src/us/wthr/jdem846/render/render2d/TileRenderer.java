@@ -452,7 +452,7 @@ public class TileRenderer extends InterruptibleProcess
 		//double maxLon = east;
 		//double minLat = south;
 		
-		double maxLon = east - longitudeResolution;
+		double maxLon = east;
 		double minLat = south + latitudeResolution;
 		
 		TriangleStrip strip = null;
