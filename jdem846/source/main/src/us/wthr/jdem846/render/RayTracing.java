@@ -14,9 +14,7 @@ public class RayTracing
 	
 	
 	private RasterDataFetchHandler rasterDataFetchHandler;
-	//private double remoteAzimuth;
-	//private double remoteElevationAngle;
-	
+
 	private double longitudeResolution;
 	private double latitudeResolution;
 	private double radiusInterval;
@@ -47,9 +45,6 @@ public class RayTracing
 				modelContext.getRasterDataContext().getDataMaximumValue(),
 				rasterDataFetchHandler
 				);
-		
-
-		
 		}
 	
 	public RayTracing(
@@ -74,8 +69,7 @@ public class RayTracing
 		this.maxDataValue = maxDataValue;
 		this.points = new double[3];
 		
-		
-		radiusInterval = MathExt.sqrt(MathExt.sqr(latitudeResolution) + MathExt.sqr(longitudeResolution));
+		radiusInterval = Math.sqrt(Math.pow(latitudeResolution, 2) + Math.pow(longitudeResolution, 2));
 	}
 	
 	
@@ -86,30 +80,32 @@ public class RayTracing
 	 * and the loop continues on. Note: This initial implementation
 	 * assumes a flat Earth and is therefore not technically accurate.
 	 * 
-	 * @param centerLatitude
-	 * @param centerLongitude
-	 * @param centerElevation
-	 * @return
-	 * @throws RayTracingException
+	 * @param centerLatitude Geographic latitude of the point being tested for shadow
+	 * @param centerLongitude Geographic longitude of the point being tested for shadow
+	 * @param centerElevation Elevation of the test point.
+	 * @return True if the ray's path is blocked, otherwise returns false.
+	 * @throws RayTracingException Thrown if an error is detected when fetching an elevation along the ray path.
 	 */
 	public boolean isRayBlocked(double remoteElevationAngle, double remoteAzimuth, double centerLatitude, double centerLongitude, double centerElevation) throws RayTracingException
 	{
-		
-		int tryCount = 1;
 		boolean isBlocked = false;
-		double latitude = 0;
-		double longitude = 0;
 		
-		
-		
+		// Variables for use during each pass
 		double radius = radiusInterval;
+
 		while (true) {
+			
+			// Fetch points in space following the path of the azimuth and elevation angles
+			// at the current radius.
 			Spheres.getPoint3D(remoteAzimuth, remoteElevationAngle, radius, points);
 			
-			latitude = centerLatitude + points[0];
-			longitude = centerLongitude - points[2];
+			// Latitude/Longitude pair for the path at the current radius
+			double latitude = centerLatitude + points[0];
+			double longitude = centerLongitude - points[2];
 			
-			
+			// Check if the latitude/longitude point is outside of the dataset.
+			// If we get to this point, we assume that the ray is not blocked because
+			// we are unable to prove otherwise.
 			if (latitude > northLimit ||
 					latitude < southLimit ||
 					longitude > eastLimit ||
@@ -118,44 +114,44 @@ public class RayTracing
 				break;
 			}
 			
+			// Calculate the elevation of the path at the current radius.
 			double resolution = (points[1] / radiusInterval);
 			double rayElevation = centerElevation + (resolution * metersResolution);
+			
+			// Fetch the elevation value
 			double pointElevation = 0;
-			//log.info("Radius: " + radius + ", X/Y/Z: " + points[0] + "/" + points[1] + "/" + points[2] + ", Center Elevation: " + centerElevation + ", Ray Elevation: " + rayElevation);;
 			try {
 				pointElevation = rasterDataFetchHandler.getRasterData(latitude, longitude);
 			} catch (Exception ex) {
 				throw new RayTracingException("Failed to get elevation for point: " + ex.getMessage(), ex);
 			}
 			
+			// Increment for the next pass radius
 			radius += radiusInterval;
 			
+			// If the elevation at the current point is invalid, we skip it and continue. Given this condition
+			// we assume the path to not be blocked since we cannot prove otherwise.
 			if (pointElevation == DemConstants.ELEV_NO_DATA) {
 				continue;
 			}
 			
+			// If the elevation at the current point exceeds the elevation of the ray path
+			// then the ray is blocked. 
 			if (pointElevation > rayElevation) {
 				isBlocked = true;
 				break;
 			}
 			
+			// If the elevation of the ray path at the current radius exceeds the maximum dataset
+			// elevation then we can safely assume that the ray is not blocked.
 			if (rayElevation > this.maxDataValue) {
 				isBlocked = false;
 				break;
 			}
 			
-
-			tryCount++;
-			
 		}
 		
-		//if (isBlocked) {
-			
-		//	double a = longitude - centerLongitude;
-			//double b = 
-			
-		//	log.info("Lat/Lon: " + centerLatitude + "/" + centerLongitude +  " At Lat/Lon: " + latitude + "/" + longitude + ", Tries: " + tryCount + ", Lon Res: " + longitudeResolution + ", R-Step: " + radiusInterval);
-		//}
+		
 		return isBlocked;
 		
 	}
@@ -211,17 +207,6 @@ public class RayTracing
 		this.westLimit = westLimit;
 	}
 
-	public RasterDataFetchHandler getRasterDataFetchHandler()
-	{
-		return rasterDataFetchHandler;
-	}
-
-	public void setRasterDataFetchHandler(
-			RasterDataFetchHandler rasterDataFetchHandler)
-	{
-		this.rasterDataFetchHandler = rasterDataFetchHandler;
-	}
-
 	public double getLongitudeResolution()
 	{
 		return longitudeResolution;
@@ -253,6 +238,16 @@ public class RayTracing
 	}
 
 
+	public RasterDataFetchHandler getRasterDataFetchHandler()
+	{
+		return rasterDataFetchHandler;
+	}
+
+	public void setRasterDataFetchHandler(
+			RasterDataFetchHandler rasterDataFetchHandler)
+	{
+		this.rasterDataFetchHandler = rasterDataFetchHandler;
+	}
 	
 	public interface RasterDataFetchHandler 
 	{
