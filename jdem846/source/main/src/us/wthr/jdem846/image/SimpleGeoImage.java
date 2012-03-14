@@ -131,10 +131,21 @@ public class SimpleGeoImage
 	
 	public boolean contains(double latitude, double longitude)
 	{
-		return (latitude <= north 
+		// If point falls within stated bounds
+		if (latitude <= north 
 				&& latitude >= south
 				&& longitude >= west
-				&& longitude <= east);
+				&& longitude <= east)
+			return true;
+		
+		if (longitude < west && east > 180) {
+			return contains(latitude, longitude+360);
+		} else if (longitude > east && west < -180) {
+			return contains(latitude, longitude-360);
+		}
+		
+		
+		return false;
 	}
 	
 	protected Dimension fetchImageDimensions() throws IOException
@@ -174,6 +185,12 @@ public class SimpleGeoImage
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
 		}
+		
+		
+		if (longitude < west && east > 180) {
+			longitude+= 360;
+		}
+		
 		
 		if (latitude >= south && latitude <= north && longitude >= west && longitude <= east) {
 			
