@@ -48,10 +48,13 @@ public class ToolbarButton extends Button
 	public ToolbarButton(String text, String iconPath, ActionListener actionListener)
 	{
 		super(text);
-		try {
-			setIcon(ImageIcons.loadImageIcon(iconPath));
-		} catch (IOException ex) {
-			log.warn("Failed to load icon: " + ex.getMessage(), ex);
+		
+		if (iconPath != null) {
+			try {
+				setIcon(ImageIcons.loadImageIcon(iconPath));
+			} catch (IOException ex) {
+				log.warn("Failed to load icon: " + ex.getMessage(), ex);
+			}
 		}
 		
 		this.addActionListener(actionListener);

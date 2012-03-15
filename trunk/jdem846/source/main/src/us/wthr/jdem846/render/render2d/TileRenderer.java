@@ -196,7 +196,7 @@ public class TileRenderer extends InterruptibleProcess
 	
 	public void prepare(double north, double south, double east, double west, boolean resetCache, boolean resetDataRange)
 	{
-		log.info("Resetting simple renderer cache");
+		log.info("Preparing tile renderer properties");
 		
 		northLimit = north;
 		southLimit = south;
@@ -340,8 +340,10 @@ public class TileRenderer extends InterruptibleProcess
 	{
 		log.info("Disposing tile renderer");
 		
-		elevationMap.clear();
-		elevationMap = null;
+		if (elevationMap != null) {
+			elevationMap.clear();
+			elevationMap = null;
+		}
 		
 		
 		point = null;
@@ -492,6 +494,7 @@ public class TileRenderer extends InterruptibleProcess
 
 				double elev = 0;
 				
+				
 				// NW
 				elev = calculateShadedColor(nwLat, nwLon, rgba);
 				if (elev == DemConstants.ELEV_NO_DATA) {
@@ -506,6 +509,7 @@ public class TileRenderer extends InterruptibleProcess
 				}
 				Vertex nwVtx = createVertex(nwLat, nwLon, elev, rgba);
 				
+				
 				// SW
 				elev = calculateShadedColor(swLat, swLon, rgba);
 				if (elev == DemConstants.ELEV_NO_DATA) {
@@ -519,17 +523,6 @@ public class TileRenderer extends InterruptibleProcess
 					lastElevS = elev;
 				}
 				Vertex swVtx = createVertex(swLat, swLon, elev, rgba);
-				/*
-				// NW
-				if ((elev = calculateShadedColor(nwLat, nwLon, rgba)) == DemConstants.ELEV_NO_DATA) 
-					continue;
-				Vertex nwVtx = createVertex(nwLat, nwLon, elev, rgba);
-				
-				// SW
-				if ((elev = calculateShadedColor(swLat, swLon, rgba)) == DemConstants.ELEV_NO_DATA)
-					continue;
-				Vertex swVtx = createVertex(swLat, swLon, elev, rgba);
-				*/
 				
 				
 				strip.addVertex(nwVtx);

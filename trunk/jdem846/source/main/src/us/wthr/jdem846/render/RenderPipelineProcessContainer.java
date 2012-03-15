@@ -17,6 +17,7 @@ public class RenderPipelineProcessContainer
 	private ScanlinePathRenderPipe scanlinePathRenderingPipe;
 	private ShapeFillPipe shapeFillPipe;
 	
+	private ThreadGroup pipelineThreadGroup;
 	private Thread tileProcessThread;
 	private Thread triangleStripFillRenderThread;
 	private Thread scanlinePathRenderingThread;
@@ -40,7 +41,9 @@ public class RenderPipelineProcessContainer
 	
 	public void start()
 	{
-		tileProcessThread = new Thread()
+		
+		pipelineThreadGroup = new ThreadGroup(Thread.currentThread().getThreadGroup(), "pipeline.group." + modelContext.getContextId());
+		tileProcessThread = new Thread(pipelineThreadGroup, "pipeline.pipe.tileProcess." + modelContext.getContextId())
 		{
 			public void run()
 			{
@@ -48,7 +51,7 @@ public class RenderPipelineProcessContainer
 			}
 		};
 		
-		triangleStripFillRenderThread = new Thread()
+		triangleStripFillRenderThread = new Thread(pipelineThreadGroup, "pipeline.pipe.triangleStripFillRender." + modelContext.getContextId())
 		{
 			public void run()
 			{
@@ -56,7 +59,7 @@ public class RenderPipelineProcessContainer
 			}
 		};
 		
-		scanlinePathRenderingThread = new Thread()
+		scanlinePathRenderingThread = new Thread(pipelineThreadGroup, "pipeline.pipe.scanlinePathRender." + modelContext.getContextId())
 		{
 			public void run()
 			{
@@ -64,7 +67,7 @@ public class RenderPipelineProcessContainer
 			}
 		};
 		
-		shapeFillThread = new Thread()
+		shapeFillThread = new Thread(pipelineThreadGroup, "pipeline.pipe.shapeFill." + modelContext.getContextId())
 		{
 			public void run()
 			{

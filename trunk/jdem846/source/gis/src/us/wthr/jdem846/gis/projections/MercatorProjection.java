@@ -18,8 +18,8 @@ public class MercatorProjection extends AbstractBaseProjection
 {
 	private static Log log = Logging.getLog(MercatorProjection.class);
 	
-	private double minLatitude = MathExt.radians(-85);
-	private double maxLatitude = MathExt.radians(85);
+	private double minLatitude = MathExt.radians(-89);
+	private double maxLatitude = MathExt.radians(89);
 	
 
 	private boolean spheriod = true;

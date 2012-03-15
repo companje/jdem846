@@ -5,7 +5,7 @@ import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
-public class TriangleStripFillRenderPipe extends InterruptibleProcess implements RenderPipe
+public class TriangleStripFillRenderPipe extends AbstractPipe
 {
 	private static Log log = Logging.getLog(TriangleStripFillRenderPipe.class);
 	
@@ -39,16 +39,10 @@ public class TriangleStripFillRenderPipe extends InterruptibleProcess implements
 				}
 			}
 			
-			Thread.yield();
-			/*
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
-			this.checkPause();
+			//Thread.yield();
+			
+			sleep();
+			checkPause();
 			if (isCancelled()) {
 				doLoop = false;
 			}

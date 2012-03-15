@@ -77,6 +77,8 @@ public class ModelContext
 		this.modelOptions = modelOptions;
 		this.scriptProxy = scriptProxy;
 		this.lightingContext = lightingContext;
+		
+		this.contextId = contextId;
 	}
 
 	

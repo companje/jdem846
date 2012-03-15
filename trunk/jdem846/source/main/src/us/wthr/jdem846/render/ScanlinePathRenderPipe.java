@@ -5,7 +5,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.render2d.ScanlinePath;
 
-public class ScanlinePathRenderPipe extends InterruptibleProcess implements RenderPipe
+public class ScanlinePathRenderPipe extends AbstractPipe
 {
 	private static Log log = Logging.getLog(ScanlinePathRenderPipe.class);
 
@@ -35,17 +35,10 @@ public class ScanlinePathRenderPipe extends InterruptibleProcess implements Rend
 				modelCanvas.fillScanLine(scanlinePathInstance);
 			}
 			
-			Thread.yield();
-			/*
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
+			//Thread.yield();
 			
-			this.checkPause();
+			sleep();
+			checkPause();
 			if (isCancelled()) {
 				doLoop = false;
 			}
