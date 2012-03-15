@@ -7,7 +7,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.render2d.TileRenderContainer;
 import us.wthr.jdem846.render.render2d.TileRenderRunnable;
 
-public class TileProcessPipe extends InterruptibleProcess implements RenderPipe
+public class TileProcessPipe extends AbstractPipe
 {
 	private static Log log = Logging.getLog(TileProcessPipe.class);
 
@@ -41,18 +41,11 @@ public class TileProcessPipe extends InterruptibleProcess implements RenderPipe
 				break;
 			}
 			
-			Thread.yield();
+			//Thread.yield();
 			
-			/*
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
 			
-			this.checkPause();
+			sleep();
+			checkPause();
 			if (isCancelled()) {
 				doLoop = false;
 			}

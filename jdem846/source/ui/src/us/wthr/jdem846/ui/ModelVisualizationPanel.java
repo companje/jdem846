@@ -52,6 +52,7 @@ import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.simple.SimpleRenderer;
+import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
@@ -70,6 +71,8 @@ public class ModelVisualizationPanel extends Panel
 	private ModelDisplayPanel pnlModelDisplay;
 	private Slider sldQuality;
 	private CheckBox chkPreviewRaster;
+	private ToolbarButton btnUpdate;
+	private CheckBox chkAutoUpdate;
 	
 	int buttonDown = -1;
 	int downX = -1;
@@ -99,6 +102,7 @@ public class ModelVisualizationPanel extends Panel
 	private List<ProjectionChangeListener> projectionChangeListeners = new LinkedList<ProjectionChangeListener>();
 	
 	private boolean ignoreUpdate = false;
+	private boolean autoUpdate = true;
 	
 	/*
 	 * Holy long variable names, Batman!
@@ -121,7 +125,8 @@ public class ModelVisualizationPanel extends Panel
 		minPreviewSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.modelVisualizationPanel.minPreviewSlices");
 		previewQuality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewQuality");
 		rasterPreview = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.rasterPreview");
-				
+		autoUpdate = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.autoUpdate");
+	
 		rotateX = modelContextActual.getModelOptions().getProjection().getRotateX();
 		rotateY = modelContextActual.getModelOptions().getProjection().getRotateY();
 		rotateZ = modelContextActual.getModelOptions().getProjection().getRotateZ();
@@ -143,12 +148,24 @@ public class ModelVisualizationPanel extends Panel
 		this.pnlModelDisplay = new ModelDisplayPanel();
 		sldQuality = new Slider(1, 100);
 		chkPreviewRaster = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.previewRaster.label"));
+		chkAutoUpdate = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.autoUpdate.label"));
+		btnUpdate = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.update.label"), JDem846Properties.getProperty("us.wthr.jdem846.ui.preview.refresh"), new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				update(true, true, true);
+			}
+		});
+		
+		chkPreviewRaster.setOpaque(false);
+		chkAutoUpdate.setOpaque(false);
+		sldQuality.setOpaque(false);
 		
 		// Set Tooltips
 		
 		sldQuality.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.quality.tooltip"));
 		chkPreviewRaster.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.previewRaster.tooltip"));
-		
+		chkAutoUpdate.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.autoUpdate.tooltip"));
+		btnUpdate.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.update.tooltip"));
 		
 		// Add listeners
 		
@@ -228,6 +245,13 @@ public class ModelVisualizationPanel extends Panel
 				onRasterPreviewCheckChanged();
 			}
 		});
+		chkAutoUpdate.getModel().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				onAutoUpdateCheckChanged();
+			}
+		});
+
 		
 		JDem846Properties.addPropertiesChangeListener(new PropertiesChangeListener() {
 			public void onPropertyChanged(String property, String oldValue, String newValue)
@@ -240,6 +264,9 @@ public class ModelVisualizationPanel extends Panel
 					previewQuality = Double.parseDouble(newValue);
 					update(false, false);
 					setControlState();
+				} else if (property.equals("us.wthr.jdem846.previewing.ui.autoUpdate")) {
+					autoUpdate = Boolean.parseBoolean(newValue);
+					setControlState();
 				}
 				
 			}
@@ -248,14 +275,24 @@ public class ModelVisualizationPanel extends Panel
 		Panel pnlControls = new Panel();
 		pnlControls.setLayout(new FlowLayout());
 		
-		pnlControls.add(new Label(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.quality.label") + ":"));
-		pnlControls.add(sldQuality);
-		pnlControls.add(chkPreviewRaster);
+		ComponentButtonBar buttonBar = new ComponentButtonBar(null);
+		
+		
+		
+		
+		buttonBar.add(new Label(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.quality.label") + ":"));
+		buttonBar.add(sldQuality);
+		buttonBar.addSeparator();
+		buttonBar.add(chkPreviewRaster);
+		buttonBar.addSeparator();
+		buttonBar.add(chkAutoUpdate);
+		buttonBar.add(btnUpdate);
+		
 		
 		// Set Layout
 		setLayout(new BorderLayout());
 		add(pnlModelDisplay, BorderLayout.CENTER);
-		add(pnlControls, BorderLayout.SOUTH);
+		add(buttonBar, BorderLayout.SOUTH);
 		
 		setControlState();
 	}
@@ -267,9 +304,15 @@ public class ModelVisualizationPanel extends Panel
 		sldQuality.setValue(value);
 		
 		chkPreviewRaster.setSelected(rasterPreview);
+		chkAutoUpdate.setSelected(autoUpdate);
 		
 	}
 
+	protected void onAutoUpdateCheckChanged()
+	{
+		autoUpdate = chkAutoUpdate.getModel().isSelected();
+		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.autoUpdate", ""+autoUpdate);
+	}
 	
 	protected void onRasterPreviewCheckChanged()
 	{
@@ -394,11 +437,18 @@ public class ModelVisualizationPanel extends Panel
 		update(false, false);
 	}
 	
-	
-	
 	public void update(boolean dataModelChange, boolean updateFromActual)
 	{
+		update(dataModelChange, updateFromActual, false);
+	}
+	
+	public void update(boolean dataModelChange, boolean updateFromActual, boolean force)
+	{
 		if (ignoreUpdate) {
+			return;
+		}
+		
+		if (!autoUpdate && !force) {
 			return;
 		}
 
