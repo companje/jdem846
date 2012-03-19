@@ -134,6 +134,8 @@ public class TileRenderer extends InterruptibleProcess
 	private boolean interpolateData = true;
 	private boolean averageOverlappedData = true;
 	
+	private double lightZenith;
+	private double darkZenith;
 	private LightSourceSpecifyTypeEnum lightSourceType;
 	private long lightOnDate;
 	private boolean recalcLightOnEachPoint;
@@ -212,8 +214,11 @@ public class TileRenderer extends InterruptibleProcess
 		tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		
 		
-		latitudeResolution = modelContext.getLatitudeResolution();
-		longitudeResolution = modelContext.getLongitudeResolution();
+		//latitudeResolution = modelContext.getLatitudeResolution();
+		//longitudeResolution = modelContext.getLongitudeResolution();
+		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
+		longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
+		
 		//latitudeResolution = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
 		//longitudeResolution = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
 		
@@ -251,6 +256,8 @@ public class TileRenderer extends InterruptibleProcess
 		lightSourceType = lightingContext.getLightSourceSpecifyType();
 		lightOnDate = lightingContext.getLightingOnDate();
 		recalcLightOnEachPoint = lightingContext.getRecalcLightOnEachPoint();
+		lightZenith = lightingContext.getLightZenith();
+		darkZenith = lightingContext.getDarkZenith();
 		
 		
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
@@ -707,8 +714,8 @@ public class TileRenderer extends InterruptibleProcess
 		
 		double dot = calculateTerrainDotProduct();
 
-		double lower = 90;
-		double upper = 108;
+		double lower = lightZenith;
+		double upper = darkZenith;
 		
 		if (solarZenith > lower && solarZenith <= upper) {
 			double range = (solarZenith - lower) / (upper - lower);
@@ -720,6 +727,14 @@ public class TileRenderer extends InterruptibleProcess
 			dot = -1.0;
 		}
 		
+		dot = Math.pow(dot, spotExponent);
+		
+		if (dot > 0) {
+			dot *= relativeLightIntensity;
+		} else if (dot < 0) {
+			dot *= relativeDarkIntensity;
+		}
+
 		
 		return dot;
 		
@@ -741,14 +756,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		
 		double dot = perspectives.dotProduct(normal, sunsource);
-		dot = Math.pow(dot, spotExponent);
 		
-		if (dot > 0) {
-			dot *= relativeLightIntensity;
-		} else if (dot < 0) {
-			dot *= relativeDarkIntensity;
-		}
-
 		return dot;
 	}
 	
@@ -799,7 +807,7 @@ public class TileRenderer extends InterruptibleProcess
 		solarElevation = solarCalculator.solarElevationAngle();
 		solarZenith = solarCalculator.solarZenithAngle();
 		
-		if (solarZenith > 108.0) {
+		if (solarZenith > darkZenith) {
 			sunIsUp = false;
 		} else {
 			sunIsUp = true;
@@ -859,11 +867,17 @@ public class TileRenderer extends InterruptibleProcess
 		double data = DemConstants.ELEV_NO_DATA;
 		
 		RasterDataContext dataContext = (dataRasterContextSubset != null) ? dataRasterContextSubset :  getRasterDataContext();
-
-		if (getStandardResolutionElevation) {
-			data = dataContext.getDataStandardResolution(latitude, longitude, averageOverlappedData, interpolateData);
+		
+		if (dataContext.getRasterDataListSize() > 0) {
+			if (getStandardResolutionElevation) {
+				data = dataContext.getDataStandardResolution(latitude, longitude, averageOverlappedData, interpolateData);
+			} else {
+				data = dataContext.getDataAtEffectiveResolution(latitude, longitude, averageOverlappedData, interpolateData);
+			}
+		} else if (getImageDataContext().getImageListSize() > 0) {
+			data = 0;
 		} else {
-			data = dataContext.getDataAtEffectiveResolution(latitude, longitude, averageOverlappedData, interpolateData);
+			data = DemConstants.ELEV_NO_DATA;
 		}
 		
 		return data;
@@ -1110,6 +1124,10 @@ public class TileRenderer extends InterruptibleProcess
 		return modelContext.getRasterDataContext();
 	}
 	
+	protected ImageDataContext getImageDataContext()
+	{
+		return modelContext.getImageDataContext();
+	}
 
 	protected ModelOptions getModelOptions()
 	{

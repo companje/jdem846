@@ -3,6 +3,8 @@ package us.wthr.jdem846.ui.lighting;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
@@ -30,6 +32,7 @@ import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.lighting.LightingOptionNamesEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.NumberTextField;
 import us.wthr.jdem846.ui.OptionsChangedListener;
 import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.ComboBox;
@@ -63,6 +66,8 @@ public class LightingOptionsPanel extends Panel
 	private LightSourceSpecifyTypeListModel lightSourceSpecifyTypeModel;
 	private ComboBox cmbLightSourceSpecifyType;
 	
+	private NumberTextField txtLightZenith;
+	private NumberTextField txtDarkZenith;
 	
 	
 	
@@ -108,6 +113,10 @@ public class LightingOptionsPanel extends Panel
 		lightSourceSpecifyTypeModel = new LightSourceSpecifyTypeListModel();
 		cmbLightSourceSpecifyType = new ComboBox(lightSourceSpecifyTypeModel);
 		
+		txtLightZenith = new NumberTextField(true);
+		txtDarkZenith = new NumberTextField(true);
+		
+		
 		chkLightingEnabled.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.lightingEnabled.tooltip"));
 		spnLightMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.lightMultipleSlider.tooltip"));
 		spnSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
@@ -119,6 +128,9 @@ public class LightingOptionsPanel extends Panel
 		chkRayTraceShadows.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.rayTraceShadows.tooltip"));
 		spnShadowIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.shadowIntensity.tooltip"));
 		chkRecalcLightOnEachPoint.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.recalcLightOnEachPoint.tooltip"));
+		txtLightZenith.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.lightZenith.tooltip"));
+		txtDarkZenith.setToolTipText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.darkZenith.tooltip"));
+		
 		
 		// Add listeners
 		ActionListener textFieldActionListener = new ActionListener() {
@@ -178,6 +190,13 @@ public class LightingOptionsPanel extends Panel
 				fireOptionsChangedListeners();
 			}
 		};
+		FocusListener focusListener = new FocusListener() {
+			public void focusGained(FocusEvent arg0) { }
+			public void focusLost(FocusEvent arg0) {
+				checkControlState();
+				fireOptionsChangedListeners();
+			}
+		};
 		
 		cmbLightSourceSpecifyType.addItemListener(lightSourceSpecifyTypeItemListener);
 		//chkLightingEnabled.addChangeListener(lightingEnabledChangeListener);
@@ -193,6 +212,8 @@ public class LightingOptionsPanel extends Panel
 		chkRayTraceShadows.getModel().addActionListener(checkBoxActionListener);
 		spnShadowIntensity.addChangeListener(spinnerChangeListener);
 		chkRecalcLightOnEachPoint.getModel().addActionListener(checkBoxActionListener);
+		txtLightZenith.addFocusListener(focusListener);
+		txtDarkZenith.addFocusListener(focusListener);
 		
 		//jdtLightOnDate.get
 		//jdtLightOnDate.
@@ -215,6 +236,11 @@ public class LightingOptionsPanel extends Panel
 		
 		controlGrid.add(new Label(""));
 		controlGrid.add(chkRecalcLightOnEachPoint);
+		
+		controlGrid.add(new Label(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.lightZenith.label") + ":"));
+		controlGrid.add(txtLightZenith);
+		controlGrid.add(new Label(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.darkZenith.label") + ":"));
+		controlGrid.add(txtDarkZenith);
 		
 		
 		controlGrid.add(new Label(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.lightMultipleSlider.label") + ":"));
@@ -272,6 +298,9 @@ public class LightingOptionsPanel extends Panel
 		chkRayTraceShadows.setSelected(lightingContext.getRayTraceShadows());
 		spnShadowIntensity.setValue((int)Math.round(lightingContext.getShadowIntensity() * 100));
 		
+		txtLightZenith.setText(""+lightingContext.getLightZenith());
+		txtDarkZenith.setText(""+lightingContext.getDarkZenith());
+		
 		if (lightingContext.getLightingOnDate() != -1) {
 			
 			Calendar cal = Calendar.getInstance();
@@ -319,7 +348,8 @@ public class LightingOptionsPanel extends Panel
 		lightingContext.setRayTraceShadows(chkRayTraceShadows.getModel().isSelected());
 		lightingContext.setShadowIntensity((double)((Integer)spnShadowIntensity.getValue()) / 100.0);
 		lightingContext.setSpotExponent((Integer)spnSpotExponent.getValue());
-		
+		lightingContext.setLightZenith(txtLightZenith.getDouble());
+		lightingContext.setDarkZenith(txtDarkZenith.getDouble());
 		
 		Calendar cal = Calendar.getInstance();
 		int offset = cal.get(Calendar.ZONE_OFFSET);

@@ -991,14 +991,16 @@ public class DemProjectPane extends JdemPanel implements Savable
 		updatePreviewPane(updateRaster, updateShape);
 		//previewPanel.update();
 		
-		regionOverviewPanel.setRows(rasterDataContext.getDataRows());
-		regionOverviewPanel.setColumns(rasterDataContext.getDataColumns());
-		regionOverviewPanel.setNorth(rasterDataContext.getNorth());
-		regionOverviewPanel.setSouth(rasterDataContext.getSouth());
-		regionOverviewPanel.setEast(rasterDataContext.getEast());
-		regionOverviewPanel.setWest(rasterDataContext.getWest());
-		regionOverviewPanel.setLatitudeResolution(rasterDataContext.getLatitudeResolution());
-		regionOverviewPanel.setLongitudeResolution(rasterDataContext.getLongitudeResolution());
+		modelContext.updateContext();
+		
+		regionOverviewPanel.setRows(modelContext.getModelDimensions().getDataRows());
+		regionOverviewPanel.setColumns(modelContext.getModelDimensions().getDataColumns());
+		regionOverviewPanel.setNorth(modelContext.getModelDimensions().getNorth());
+		regionOverviewPanel.setSouth(modelContext.getModelDimensions().getSouth());
+		regionOverviewPanel.setEast(modelContext.getModelDimensions().getEast());
+		regionOverviewPanel.setWest(modelContext.getModelDimensions().getWest());
+		regionOverviewPanel.setLatitudeResolution(modelContext.getModelDimensions().getLatitudeResolution());
+		regionOverviewPanel.setLongitudeResolution(modelContext.getModelDimensions().getLongitudeResolution());
 		//overviewPanel.setMaxElevation(dataPackage.getMaxElevation());
 		//overviewPanel.setMinElevation(dataPackage.getMinElevation());
 		

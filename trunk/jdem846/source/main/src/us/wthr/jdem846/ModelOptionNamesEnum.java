@@ -54,8 +54,10 @@ public enum ModelOptionNamesEnum
 	LIMITS_SOUTH("us.wthr.jdem846.modelOptions.limits.south"),
 	LIMITS_EAST("us.wthr.jdem846.modelOptions.limits.east"),
 	LIMITS_WEST("us.wthr.jdem846.modelOptions.limits.west");
-
 	
+	
+
+			
 	//STANDARD_RESOLUTION_RETRIEVAL("us.wthr.jdem846.performance.standardResolutionRetrieval"),
 	//INTERPOLATE_HIGHER_RESOLUTION("us.wthr.jdem846.performance.interpolateToHigherResolution"),
 	//AVERAGE_OVERLAPPING_RASTER_DATA("us.wthr.jdem846.performance.averageOverlappedData");

@@ -13,7 +13,9 @@ public enum LightingOptionNamesEnum
 	RELATIVE_DARK_INTENSITY("us.wthr.jdem846.lightingContext.relativeDarkIntensity"),
 	SPOT_EXPONENT("us.wthr.jdem846.lightingContext.spotExponent"),
 	RAY_TRACE_SHADOWS("us.wthr.jdem846.lightingContext.rayTraceShadows"),
-	SHADOW_INTENSITY("us.wthr.jdem846.lightingContext.shadowIntensity");
+	SHADOW_INTENSITY("us.wthr.jdem846.lightingContext.shadowIntensity"),
+	LIGHT_ZENITH("us.wthr.jdem846.lightingContext.lightZenith"),
+	DARK_ZENITH("us.wthr.jdem846.lightingContext.darkZenith");
 	
 	private final String optionName;
 	

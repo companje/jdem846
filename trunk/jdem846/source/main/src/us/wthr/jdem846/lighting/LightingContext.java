@@ -179,6 +179,25 @@ public class LightingContext extends MappedOptions
 		setOption(LightingOptionNamesEnum.LIGHTING_ELEVATION, lightingElevation);
 	}
 
+	public double getLightZenith()
+	{
+		return getDoubleOption(LightingOptionNamesEnum.LIGHT_ZENITH);
+	}
+
+	public void setLightZenith(double lightZenith)
+	{
+		setOption(LightingOptionNamesEnum.LIGHT_ZENITH, lightZenith);
+	}
+	
+	public double getDarkZenith()
+	{
+		return getDoubleOption(LightingOptionNamesEnum.DARK_ZENITH);
+	}
+
+	public void setDarkZenith(double darkZenith)
+	{
+		setOption(LightingOptionNamesEnum.DARK_ZENITH, darkZenith);
+	}
 	
 	public long getLightingOnDate()
 	{

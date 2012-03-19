@@ -5,99 +5,169 @@ import java.awt.Color;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.image.ImageDataContext;
+import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 
 public class ModelDimensions2D
 {
 	private static Log log = Logging.getLog(ModelDimensions2D.class);
 	
-	public int tileSize;
-	public int effectiveTileSize;
+	public double north;
+	public double south;
+	public double east;
+	public double west;
+	
 	public int dataRows;
 	public int dataColumns;
-	public double sizeRatio;
+	public double latitudeResolution;
+	public double longitudeResolution;
+	
 	public int outputWidth;
 	public int outputHeight;
 	public double outputLongitudeResolution;
 	public double outputLatitudeResolution;
-	public double numTilesHorizontal;
-	public double numTilesVertical;
-	public long tileOutputWidth;
-	public long tileOutputHeight;
-	public long tileCount;
+	
 	
 	protected ModelDimensions2D()
 	{
 		
 	}
+
 	
-	
-	public static ModelDimensions2D getModelDimensions(ModelContext modelContext)
+	public ModelDimensions2D(ModelContext modelContext)
 	{
-		RasterDataContext dataContext = modelContext.getRasterDataContext();
+		init(modelContext);
+	}
+	
+	
+	public void init(ModelContext modelContext)
+	{
+		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
+		ImageDataContext imageDataContext = modelContext.getImageDataContext();
 		ModelOptions modelOptions = modelContext.getModelOptions();
 		
-		ModelDimensions2D modelDimensions = new ModelDimensions2D();
+		/*
+		north = modelContext.getNorth();
+		south = modelContext.getSouth();
+		east = modelContext.getEast();
+		west = modelContext.getWest();
+		*/
+		north = Double.MIN_VALUE;
+		south = Double.MAX_VALUE;
+		east = Double.MIN_VALUE;
+		west = Double.MAX_VALUE;
 		
-		modelDimensions.tileSize = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
-		modelDimensions.dataRows = dataContext.getDataRows(modelContext.getNorth(), modelContext.getSouth());
-		modelDimensions.dataColumns = dataContext.getDataColumns(modelContext.getEast(), modelContext.getWest());
+		latitudeResolution = Double.MAX_VALUE;
+		longitudeResolution = Double.MAX_VALUE;
 		
+		if (rasterDataContext != null) {
+			for (RasterData rasterData : rasterDataContext.getRasterDataList()) {
+				latitudeResolution = MathExt.min(latitudeResolution, rasterData.getLatitudeResolution());
+				longitudeResolution = MathExt.min(longitudeResolution, rasterData.getLongitudeResolution());
+				
+				north = MathExt.max(north, rasterData.getNorth());
+				south = MathExt.min(south, rasterData.getSouth());
+				east = MathExt.max(east, rasterData.getEast());
+				west = MathExt.min(west, rasterData.getWest());
+			}
+		}
 		
-		if (modelDimensions.tileSize > modelDimensions.dataRows && modelDimensions.dataRows > modelDimensions.dataColumns)
-			modelDimensions.tileSize = modelDimensions.dataRows;
-		
-		if (modelDimensions.tileSize > modelDimensions.dataColumns && modelDimensions.dataColumns > modelDimensions.dataRows)
-			modelDimensions.tileSize = modelDimensions.dataColumns;
-
-	
-		modelDimensions.sizeRatio = 1.0f;
-		modelDimensions.outputWidth = modelOptions.getWidth();
-		modelDimensions.outputHeight = modelOptions.getHeight();
-
-		if (modelDimensions.dataRows > modelDimensions.dataColumns) {
-			modelDimensions.sizeRatio = (double)modelDimensions.dataColumns / (double)modelDimensions.dataRows;
-			//modelDimensions.outputWidth = (int) Math.round(((double) modelDimensions.outputHeight) * modelDimensions.sizeRatio);
-		} else if (modelDimensions.dataColumns > modelDimensions.dataRows) {
-			modelDimensions.sizeRatio = (double)modelDimensions.dataRows / (double)modelDimensions.dataColumns;
-			//modelDimensions.outputHeight = (int) Math.round(((double)modelDimensions.outputWidth) * modelDimensions.sizeRatio);
+		if (imageDataContext != null) {
+			for (SimpleGeoImage image : imageDataContext.getImageList()) {
+				latitudeResolution = MathExt.min(latitudeResolution, image.getLatitudeResolution());
+				longitudeResolution = MathExt.min(longitudeResolution, image.getLongitudeResolution());
+			
+				north = MathExt.max(north, image.getNorth());
+				south = MathExt.min(south, image.getSouth());
+				east = MathExt.max(east, image.getEast());
+				west = MathExt.min(west, image.getWest());
+			}
 		}
 		
 		
+		dataRows = (int) MathExt.round((north - south) / latitudeResolution);
+		dataColumns = (int) MathExt.round((east - west) / longitudeResolution);
 		
-		//log.info("Output width/height: " + modelDimensions.outputWidth + "/" + modelDimensions.outputHeight);
+		outputHeight = modelOptions.getHeight();
+		outputWidth = modelOptions.getWidth();
 		
-		double xdimRatio = (double)modelDimensions.outputWidth / (double)modelDimensions.dataColumns;
-		double ydimRatio = (double)modelDimensions.outputHeight / (double)modelDimensions.dataRows;
+		double xdimRatio = (double)outputWidth / (double)dataColumns;
+		double ydimRatio = (double)outputHeight / (double)dataRows;
 		
-		modelDimensions.outputLongitudeResolution = dataContext.getLongitudeResolution() / xdimRatio;
-		modelDimensions.outputLatitudeResolution = dataContext.getLatitudeResolution() / ydimRatio;
+		outputLongitudeResolution = longitudeResolution / xdimRatio;
+		outputLatitudeResolution = latitudeResolution / ydimRatio;
 
-		modelDimensions.effectiveTileSize = (int) Math.round(((double) modelDimensions.tileSize) * xdimRatio);
-
-		modelDimensions.numTilesHorizontal = ((double)modelDimensions.dataColumns) / ((double)modelDimensions.tileSize);
-		modelDimensions.numTilesVertical = ((double)modelDimensions.dataRows) / ((double)modelDimensions.tileSize);
 		
-		modelDimensions.tileOutputWidth = Math.round(((double)modelDimensions.outputWidth) / modelDimensions.numTilesHorizontal);
-		modelDimensions.tileOutputHeight = Math.round(((double)modelDimensions.outputHeight) / modelDimensions.numTilesVertical);
+	}
+	
+	public static ModelDimensions2D getModelDimensions(ModelContext modelContext)
+	{
 		
-		modelDimensions.tileCount = (int) (Math.ceil(((double)modelDimensions.dataRows / (double)modelDimensions.tileSize)) * Math.ceil(((double)modelDimensions.dataColumns / (double)modelDimensions.tileSize)));
-		
+		ModelDimensions2D modelDimensions = new ModelDimensions2D(modelContext);
 		return modelDimensions;
 	}
 	
-	public int getTileSize()
+	public double getMetersResolution(double meanRadius)
 	{
-		return tileSize;
+		
+		double lat = (getNorth() - getSouth()) / 2.0;
+		double lon = (getEast() - getWest()) / 2.0;
+		return getMetersResolution(meanRadius, lat, lon, getLatitudeResolution(), getLongitudeResolution());
+
 	}
 	
-	public int getEffectiveTileSize()
+	public double getMetersResolution(double meanRadius, double latitude, double longitude)
 	{
-		return effectiveTileSize;
+		return ModelDimensions2D.getMetersResolution(meanRadius, latitude, longitude, getLatitudeResolution(), getLongitudeResolution());
 	}
+	
+	public static double getMetersResolution(double meanRadius, double latitude, double longitude, double latitudeResolution, double longitudeResolution)
+	{
+		double lat1 = latitude;
+		double lon1 = longitude;
+		double lat2 = lat1 + latitudeResolution;
+		double lon2 = lon1 + longitudeResolution;
+		double R = meanRadius;
+		double dLat = Math.toRadians(lat2 - lat1);
+		double dLon = Math.toRadians(lon2 - lon1);
+		
+
+		double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+		double d = R * c * 1000;
+		return d;
+	}
+
+
+	public double getNorth()
+	{
+		return north;
+	}
+
+
+	public double getSouth()
+	{
+		return south;
+	}
+
+
+	public double getEast()
+	{
+		return east;
+	}
+
+
+	public double getWest()
+	{
+		return west;
+	}
+
 
 	public int getDataRows()
 	{
@@ -111,9 +181,15 @@ public class ModelDimensions2D
 	}
 
 
-	public double getSizeRatio()
+	public double getLatitudeResolution()
 	{
-		return sizeRatio;
+		return latitudeResolution;
+	}
+
+
+	public double getLongitudeResolution()
+	{
+		return longitudeResolution;
 	}
 
 
@@ -128,45 +204,36 @@ public class ModelDimensions2D
 		return outputHeight;
 	}
 
+
 	public double getOutputLongitudeResolution()
 	{
 		return outputLongitudeResolution;
 	}
 
+
 	public double getOutputLatitudeResolution()
 	{
 		return outputLatitudeResolution;
 	}
-
-	public double getNumTilesHorizontal()
-	{
-		return numTilesHorizontal;
-	}
-
-
-	public double getNumTilesVertical()
-	{
-		return numTilesVertical;
-	}
-
-
-	public long getTileOutputWidth()
-	{
-		return tileOutputWidth;
-	}
-
-
-	public long getTileOutputHeight()
-	{
-		return tileOutputHeight;
-	}
-
-
-	public long getTileCount()
-	{
-		return tileCount;
-	}
 	
 	
+	public ModelDimensions2D copy()
+	{
+		ModelDimensions2D copy = new ModelDimensions2D();
+		copy.dataColumns = this.dataColumns;
+		copy.dataRows = this.dataRows;
+		copy.north = this.north;
+		copy.south = this.south;
+		copy.east = this.east;
+		copy.west = this.west;
+		copy.latitudeResolution = this.latitudeResolution;
+		copy.longitudeResolution = this.longitudeResolution;
+		copy.outputHeight = this.outputHeight;
+		copy.outputWidth = this.outputWidth;
+		copy.outputLatitudeResolution = this.outputLatitudeResolution;
+		copy.outputLongitudeResolution = this.outputLongitudeResolution;
+
+		return copy;
+	}
 	
 }

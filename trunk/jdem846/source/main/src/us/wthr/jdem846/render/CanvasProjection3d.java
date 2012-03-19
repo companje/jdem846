@@ -79,8 +79,8 @@ public class CanvasProjection3d extends CanvasProjection
 		min = modelContext.getRasterDataContext().getDataMinimumValue();
 		max = modelContext.getRasterDataContext().getDataMaximumValue();
 		
-		double latRes = modelContext.getRasterDataContext().getLatitudeResolution();
-		double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
+		double latRes = modelContext.getModelDimensions().getLatitudeResolution();
+		double effLatRes = modelContext.getModelDimensions().getOutputLatitudeResolution();
 		
 		Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
 		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
@@ -89,7 +89,8 @@ public class CanvasProjection3d extends CanvasProjection
 			meanRadius = planet.getMeanRadius();
 		}
 		
-		resolution = modelContext.getRasterDataContext().getMetersResolution(meanRadius);
+		//resolution = modelContext.getRasterDataContext().getMetersResolution(meanRadius);
+		resolution = modelContext.getModelDimensions().getMetersResolution(meanRadius);
 		resolution = resolution / (latRes / effLatRes);
 		
 		if (Double.isNaN(resolution) || resolution == 0.0) {

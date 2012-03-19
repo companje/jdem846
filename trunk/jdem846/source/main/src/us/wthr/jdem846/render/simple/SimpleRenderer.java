@@ -89,6 +89,8 @@ public class SimpleRenderer
 	private CanvasProjection projection;
 	private MapPoint point = new MapPoint();
 	
+	private double lightZenith;
+	private double darkZenith;
 	private double solarElevation;
 	private double solarAzimuth;
 	private double solarZenith;
@@ -140,8 +142,8 @@ public class SimpleRenderer
 		latitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
 		longitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices");
 		
-		latitudeResolution = modelContext.getLatitudeResolution();
-		longitudeResolution = modelContext.getLongitudeResolution();
+		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
+		longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
 		
 		latitudeResolution = (north - south - latitudeResolution) / latitudeSlices;
 		longitudeResolution = (east - west - longitudeResolution) / longitudeSlices;
@@ -180,6 +182,9 @@ public class SimpleRenderer
 		LightingContext lightingContext = modelContext.getLightingContext();
 		lightSourceType = lightingContext.getLightSourceSpecifyType();
 		lightOnDate = lightingContext.getLightingOnDate();
+		
+		lightZenith = lightingContext.getLightZenith();
+		darkZenith = lightingContext.getDarkZenith();
 		
 		/* Force this to be false. This renderer needs to be fast and recalculating
 		 * adds way too much overhead. Should the recalc method be optimized enough,
@@ -564,8 +569,8 @@ public class SimpleRenderer
 		
 		
 		if (midElev == DemConstants.ELEV_NO_DATA)
-			midElev = 0;
-		//	return DemConstants.ELEV_NO_DATA;
+		//	midElev = 0;
+			return DemConstants.ELEV_NO_DATA;
 		
 		
 		getPointColor(latitude, longitude, midElev, colorBufferA);
@@ -688,8 +693,8 @@ public class SimpleRenderer
 		double dot = calculateTerrainDotProduct();
 
 		
-		double lower = 90;
-		double upper = 108;
+		double lower = lightZenith;
+		double upper = darkZenith;
 		
 		
 		if (solarZenith > lower && solarZenith <= upper) {
@@ -771,7 +776,7 @@ public class SimpleRenderer
 		solarElevation = solarCalculator.solarElevationAngle();
 		solarZenith = solarCalculator.solarZenithAngle();
 		
-		if (solarZenith > 108.0) {
+		if (solarZenith > darkZenith) {
 			sunIsUp = false;
 		} else {
 			sunIsUp = true;
@@ -831,10 +836,16 @@ public class SimpleRenderer
 		if (elevation != DemConstants.ELEV_NO_DATA)
 			return elevation;
 	
-		if (getStandardResolutionElevation) {
-			elevation = modelContext.getRasterDataContext().getDataStandardResolution(latitude, longitude, averageOverlappedData, interpolateData);
+		if (modelContext.getRasterDataContext().getRasterDataListSize() > 0) {
+			if (getStandardResolutionElevation) {
+				elevation = modelContext.getRasterDataContext().getDataStandardResolution(latitude, longitude, averageOverlappedData, interpolateData);
+			} else {
+				elevation = modelContext.getRasterDataContext().getDataAtEffectiveResolution(latitude, longitude, averageOverlappedData, interpolateData);
+			} 
+		} else if (modelContext.getImageDataContext().getImageListSize() > 0) {
+			elevation = 0;
 		} else {
-			elevation = modelContext.getRasterDataContext().getDataAtEffectiveResolution(latitude, longitude, averageOverlappedData, interpolateData);
+			elevation = DemConstants.ELEV_NO_DATA;
 		}
 		
 		elevationMap.put(latitude, longitude, elevation);
