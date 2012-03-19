@@ -3,6 +3,8 @@ package us.wthr.jdem846.rasterdata;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.gis.CoordinateSpaceAdjuster;
+import us.wthr.jdem846.gis.exceptions.CoordinateSpaceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -27,22 +29,27 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	private int columns;
 
 	private RasterDataLatLongBox dataLatLongBox;
-	
+	private CoordinateSpaceAdjuster coordinateSpaceAdjuster;
 	
 	protected void prepare()
 	{
 		dataLatLongBox = new RasterDataLatLongBox(getNorth(), getSouth() + latitudeResolution, getEast(), getWest() - longitudeResolution);
+		
+		coordinateSpaceAdjuster = new CoordinateSpaceAdjuster(getNorth(), getSouth(), getEast(), getWest());
+		
 	}
 	
 	public boolean contains(double latitude, double longitude)
 	{
 		// TODO: This is overly simplistic. Make this a bit more robust.
-		
+		return coordinateSpaceAdjuster.contains(latitude, longitude);
+		/*
 		if (latitude > south && latitude <= north && longitude >= west && longitude < east) {
 			return true;
 		} else {
 			return false;
 		}
+		*/
 	}
 	
 	public boolean intersects(RasterDataLatLongBox otherBox)
@@ -173,8 +180,25 @@ public abstract class AbstractRasterDataProvider implements RasterData
 		return getData(latitude, longitude, false);
 	}
 	
+	
+	
 	@Override
 	public double getData(double latitude, double longitude, boolean interpolate) throws DataSourceException
+	{
+		double adjLatitude = 0;
+		double adjLongitude = 0;
+		try {
+			adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude);
+			adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude);
+		} catch (CoordinateSpaceException ex) {
+			return DemConstants.ELEV_NO_DATA;
+		}
+		
+		return _getData(adjLatitude, adjLongitude, interpolate);
+	}
+	
+	
+	protected double _getData(double latitude, double longitude, boolean interpolate) throws DataSourceException
 	{
 		double fetchRow = this.latitudeToRow(latitude);
 		double fetchColumn = this.longitudeToColumn(longitude);

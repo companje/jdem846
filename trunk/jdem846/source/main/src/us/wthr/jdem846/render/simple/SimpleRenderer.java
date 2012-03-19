@@ -140,9 +140,17 @@ public class SimpleRenderer
 		latitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
 		longitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices");
 		
+		latitudeResolution = modelContext.getLatitudeResolution();
+		longitudeResolution = modelContext.getLongitudeResolution();
 		
-		latitudeResolution = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
-		longitudeResolution = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
+		latitudeResolution = (north - south - latitudeResolution) / latitudeSlices;
+		longitudeResolution = (east - west - longitudeResolution) / longitudeSlices;
+		
+		//latitudeResolution = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
+		//longitudeResolution = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
+		
+		
+		
 		
 		////latitudeResolution = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
 		//longitudeResolution = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
@@ -448,9 +456,9 @@ public class SimpleRenderer
 
 		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
 		
-		if (rasterDataContext.getRasterDataListSize() == 0) {
-			return;
-		}
+		//if (rasterDataContext.getRasterDataListSize() == 0) {
+		//	return;
+		//}
 		
 		
 		double north = modelContext.getNorth();
@@ -458,8 +466,8 @@ public class SimpleRenderer
 		double east = modelContext.getEast();
 		double west = modelContext.getWest();
 
-		double maxLon = east - longitudeResolution;
-		double minLat = south + latitudeResolution;
+		double maxLon = east + longitudeResolution;
+		double minLat = south;
 		
 		TriangleStrip strip = new TriangleStrip();
 		
@@ -468,7 +476,10 @@ public class SimpleRenderer
 		double lastElevN = rasterDataContext.getDataMinimumValue();
 		double lastElevS = rasterDataContext.getDataMinimumValue();	
 		
-		
+		if (lastElevN == DemConstants.ELEV_NO_DATA && lastElevS == DemConstants.ELEV_NO_DATA) {
+			lastElevN = 0;
+			lastElevS = 0;
+		}
 		
 		for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
 			strip.reset();
@@ -553,8 +564,8 @@ public class SimpleRenderer
 		
 		
 		if (midElev == DemConstants.ELEV_NO_DATA)
-		//	midElev = 0;
-			return DemConstants.ELEV_NO_DATA;
+			midElev = 0;
+		//	return DemConstants.ELEV_NO_DATA;
 		
 		
 		getPointColor(latitude, longitude, midElev, colorBufferA);
@@ -677,8 +688,9 @@ public class SimpleRenderer
 		double dot = calculateTerrainDotProduct();
 
 		
-		double lower = 108;
-		double upper = 160;
+		double lower = 90;
+		double upper = 108;
+		
 		
 		if (solarZenith > lower && solarZenith <= upper) {
 			double range = (solarZenith - lower) / (upper - lower);

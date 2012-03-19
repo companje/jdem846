@@ -40,6 +40,7 @@ import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
+import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
@@ -211,8 +212,10 @@ public class TileRenderer extends InterruptibleProcess
 		tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		
 		
-		latitudeResolution = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
-		longitudeResolution = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
+		latitudeResolution = modelContext.getLatitudeResolution();
+		longitudeResolution = modelContext.getLongitudeResolution();
+		//latitudeResolution = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
+		//longitudeResolution = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
 		
 		//latitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.latitudeSlices");
 		//longitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.longitudeSlices");
@@ -440,8 +443,9 @@ public class TileRenderer extends InterruptibleProcess
 		
 
 		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
+		ImageDataContext imageDataContext = modelContext.getImageDataContext();
 		
-		if (rasterDataContext.getRasterDataListSize() == 0) {
+		if (rasterDataContext.getRasterDataListSize() == 0 && imageDataContext.getImageListSize() == 0) {
 			return;
 		}
 		
@@ -454,8 +458,8 @@ public class TileRenderer extends InterruptibleProcess
 		//double maxLon = east;
 		//double minLat = south;
 		
-		double maxLon = east;
-		double minLat = south + latitudeResolution;
+		double maxLon = east + longitudeResolution;
+		double minLat = south - latitudeResolution;
 		
 		TriangleStrip strip = null;
 
@@ -467,6 +471,11 @@ public class TileRenderer extends InterruptibleProcess
 			//strip.reset();
 			double lastElevN = rasterDataContext.getDataMinimumValue();
 			double lastElevS = rasterDataContext.getDataMinimumValue();
+			
+			if (lastElevN == DemConstants.ELEV_NO_DATA && lastElevS == DemConstants.ELEV_NO_DATA) {
+				lastElevN = 0;
+				lastElevS = 0;
+			}
 			
 			double nwLat = lat;
 			double swLat = lat - latitudeResolution;
@@ -636,7 +645,7 @@ public class TileRenderer extends InterruptibleProcess
 			
 			double dot = calculateDotProduct(latitude, longitude);
 			
-			if (this.rayTraceShadows) {
+			if (this.rayTraceShadows && this.solarZenith < 108.0) {
 				if (lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, midElev)) {
 					// I'm not 100% happy with this method...
 					dot = dot - (2 * shadowIntensity);
@@ -698,9 +707,8 @@ public class TileRenderer extends InterruptibleProcess
 		
 		double dot = calculateTerrainDotProduct();
 
-		
-		double lower = 108;
-		double upper = 160;
+		double lower = 90;
+		double upper = 108;
 		
 		if (solarZenith > lower && solarZenith <= upper) {
 			double range = (solarZenith - lower) / (upper - lower);

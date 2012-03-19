@@ -21,6 +21,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -121,7 +122,7 @@ public class ModelRenderer extends InterruptibleProcess
 		});
 		
 
-		if ( getRasterDataContext().getRasterDataListSize() > 0) {
+		if ( getRasterDataContext().getRasterDataListSize() > 0 || (getImageDataContext() != null && getImageDataContext().getImageListSize() > 0)) {
 			TileRenderContainer tileRenderContainer = null;
 			tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, northLimit, southLimit, eastLimit, westLimit, (tileColumn + 1), (tileRow + 1));
 
@@ -167,6 +168,11 @@ public class ModelRenderer extends InterruptibleProcess
 		return modelContext.getRasterDataContext();
 	}
 
+	
+	protected ImageDataContext getImageDataContext()
+	{
+		return modelContext.getImageDataContext();
+	}
 	
 	protected ModelOptions getModelOptions()
 	{
