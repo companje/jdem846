@@ -70,9 +70,9 @@ public class ModelRenderer extends InterruptibleProcess
 		
 		ModelDimensions2D modelDimensions = modelContext.getModelDimensions();//ModelDimensions2D.getModelDimensions(modelContext);
 
-		int tileRow = 0;
-		int tileColumn = 0;
-		int tileSize = modelDimensions.getEffectiveTileSize();
+		//int tileRow = 0;
+		//int tileColumn = 0;
+		//int tileSize = modelDimensions.getEffectiveTileSize();
 
 		double northLimit = modelContext.getNorth();
 		double southLimit = modelContext.getSouth();
@@ -84,15 +84,19 @@ public class ModelRenderer extends InterruptibleProcess
 		log.info("Model East Limit: " + eastLimit);
 		log.info("Model West Limit: " + westLimit);
 		
-		double latitudeResolution = getRasterDataContext().getEffectiveLatitudeResolution();
-		double longitudeResolution = getRasterDataContext().getEffectiveLongitudeResolution();
+		double latitudeResolution = modelDimensions.getOutputLatitudeResolution();
+		double longitudeResolution = modelDimensions.getOutputLongitudeResolution();
 
-		double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
-		double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
+		
+		//double latitudeResolution = getRasterDataContext().getEffectiveLatitudeResolution();
+		//double longitudeResolution = getRasterDataContext().getEffectiveLongitudeResolution();
 
-		log.info("Tile Size: " + tileSize);
-		log.info("Tile Latitude Height: " + tileLatitudeHeight);
-		log.info("Tile Longitude Width: " + tileLongitudeWidth);
+		//double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
+		//double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
+
+		//log.info("Tile Size: " + tileSize);
+		//log.info("Tile Latitude Height: " + tileLatitudeHeight);
+		//log.info("Tile Longitude Width: " + tileLongitudeWidth);
 		
 		ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
 
@@ -124,7 +128,7 @@ public class ModelRenderer extends InterruptibleProcess
 
 		if ( getRasterDataContext().getRasterDataListSize() > 0 || (getImageDataContext() != null && getImageDataContext().getImageListSize() > 0)) {
 			TileRenderContainer tileRenderContainer = null;
-			tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, northLimit, southLimit, eastLimit, westLimit, (tileColumn + 1), (tileRow + 1));
+			tileRenderContainer = new TileRenderContainer(modelContext, tileRenderer, northLimit, southLimit, eastLimit, westLimit, 0, 0);
 
 			if (renderPipeline != null) {
 				renderPipeline.submit(tileRenderContainer);

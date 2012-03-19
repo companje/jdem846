@@ -177,6 +177,8 @@ public class Canvas3d
 		
 		if (Math.abs(x1 - x0) >= Math.abs(y1 - y0)) {
 			// Long
+			
+			
 			for (int x = xMn; x <= xMx; x++) {
 				int y = (int) ((isValidSlope) ? ((s * (x - mxX)) + mxY) + 1 : mxY);
 				double f = (double)(x - xMn) / (double)(xMx - xMn);

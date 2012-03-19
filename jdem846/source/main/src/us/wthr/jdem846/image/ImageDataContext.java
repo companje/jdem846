@@ -26,6 +26,9 @@ public class ImageDataContext implements DataContext
 	private double latitudeResolution = DemConstants.ELEV_NO_DATA;
 	private double longitudeResolution = DemConstants.ELEV_NO_DATA;
 	
+	private int columns;
+	private int rows;
+	
 	private List<SimpleGeoImage> imageList = new ArrayList<SimpleGeoImage>();
 	
 	public ImageDataContext()
@@ -62,6 +65,10 @@ public class ImageDataContext implements DataContext
 			north = 90.0;
 			south = -90.0;
 		}
+		
+		columns = (int) MathExt.round((east - west) / longitudeResolution);
+		rows = (int) MathExt.round((north - south) / latitudeResolution);
+		
 	}
 	
 	public void loadImageData() throws DataSourceException
@@ -202,6 +209,16 @@ public class ImageDataContext implements DataContext
 	public double getLongitudeResolution() 
 	{
 		return longitudeResolution;
+	}
+
+	public int getColumns()
+	{
+		return columns;
+	}
+
+	public int getRows()
+	{
+		return rows;
 	}
 	
 	

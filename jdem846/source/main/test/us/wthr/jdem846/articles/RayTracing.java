@@ -1,17 +1,11 @@
-package us.wthr.jdem846.render;
+package us.wthr.jdem846.articles;
 
-import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.exception.RayTracingException;
-import us.wthr.jdem846.logging.Log;
-import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.MathExt;
+
 import us.wthr.jdem846.math.Spheres;
 
 public class RayTracing
 {
-	private static Log log = Logging.getLog(RayTracing.class);
-	
+	protected static final double ELEV_NO_DATA = -9999.99;
 	
 	private RasterDataFetchHandler rasterDataFetchHandler;
 
@@ -26,27 +20,11 @@ public class RayTracing
 	private double eastLimit;
 	private double westLimit;
 	
-	private double maxDataValue;
+	private double maxElevationValue;
 	
-	private double[] points;
+	private double[] points = new double[3];
 	
-	public RayTracing(
-			ModelContext modelContext,
-			RasterDataFetchHandler rasterDataFetchHandler)
-		{
-			this(
-				modelContext.getRasterDataContext().getEffectiveLatitudeResolution(),
-				modelContext.getRasterDataContext().getEffectiveLongitudeResolution(),
-				modelContext.getRasterDataContext().getMetersResolution(),
-				modelContext.getNorth(),
-				modelContext.getSouth(),
-				modelContext.getEast(),
-				modelContext.getWest(),
-				modelContext.getRasterDataContext().getDataMaximumValue(),
-				rasterDataFetchHandler
-				);
-		}
-	
+
 	public RayTracing(
 					double latitudeResolution, 
 					double longitudeResolution, 
@@ -55,21 +33,23 @@ public class RayTracing
 					double southLimit,
 					double eastLimit,
 					double westLimit,
-					double maxDataValue,
+					double maxElevationValue,
 					RasterDataFetchHandler rasterDataFetchHandler)
 	{
-		this.rasterDataFetchHandler = rasterDataFetchHandler;
-		this.latitudeResolution = latitudeResolution;
-		this.longitudeResolution = longitudeResolution;
-		this.metersResolution = metersResolution;
-		this.northLimit = northLimit;
-		this.southLimit = southLimit;
-		this.eastLimit = eastLimit;
-		this.westLimit = westLimit;
-		this.maxDataValue = maxDataValue;
-		this.points = new double[3];
+		setRasterDataFetchHandler(rasterDataFetchHandler);
+		setLatitudeResolution(latitudeResolution);
+		setLongitudeResolution(longitudeResolution);
+		setMetersResolution(metersResolution);
+		setNorthLimit(northLimit);
+		setSouthLimit(southLimit);
+		setEastLimit(eastLimit);
+		setWestLimit(westLimit);
+		setMaxElevationValue(maxElevationValue);
 		
-		radiusInterval = MathExt.sqrt(MathExt.sqr(latitudeResolution) + MathExt.sqr(longitudeResolution));
+		// Calculate a default radius interval as the
+		// hypotenuse of a right triangle with the latitude
+		// and longitude resolutions as the legs.
+		setRadiusInterval(Math.sqrt(Math.pow(getLatitudeResolution(), 2) + Math.pow(getLongitudeResolution(), 2)));
 	}
 	
 	
@@ -131,7 +111,7 @@ public class RayTracing
 			
 			// If the elevation at the current point is invalid, we skip it and continue. Given this condition
 			// we assume the path to not be blocked since we cannot prove otherwise.
-			if (pointElevation == DemConstants.ELEV_NO_DATA) {
+			if (pointElevation == ELEV_NO_DATA) {
 				continue;
 			}
 			
@@ -144,7 +124,7 @@ public class RayTracing
 			
 			// If the elevation of the ray path at the current radius exceeds the maximum dataset
 			// elevation then we can safely assume that the ray is not blocked.
-			if (rayElevation > this.maxDataValue) {
+			if (rayElevation > maxElevationValue) {
 				isBlocked = false;
 				break;
 			}
@@ -155,16 +135,15 @@ public class RayTracing
 		return isBlocked;
 		
 	}
-	
-	
-	public double getMaxDataValue()
+
+	public double getMaxElevationValue()
 	{
-		return maxDataValue;
+		return maxElevationValue;
 	}
 
-	public void setMaxDataValue(double maxDataValue)
+	public void setMaxElevationValue(double maxElevationValue)
 	{
-		this.maxDataValue = maxDataValue;
+		this.maxElevationValue = maxElevationValue;
 	}
 
 	public double getNorthLimit()
@@ -237,6 +216,15 @@ public class RayTracing
 		this.metersResolution = metersResolution;
 	}
 
+	public double getRadiusInterval()
+	{
+		return radiusInterval;
+	}
+
+	public void setRadiusInterval(double radiusInterval)
+	{
+		this.radiusInterval = radiusInterval;
+	}
 
 	public RasterDataFetchHandler getRasterDataFetchHandler()
 	{
@@ -248,11 +236,6 @@ public class RayTracing
 	{
 		this.rasterDataFetchHandler = rasterDataFetchHandler;
 	}
-	
-	public interface RasterDataFetchHandler 
-	{
-		public double getRasterData(double latitude, double longitude) throws Exception;
-	}
-	
+
 	
 }

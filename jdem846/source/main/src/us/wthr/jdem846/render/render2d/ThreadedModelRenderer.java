@@ -23,6 +23,7 @@ import us.wthr.jdem846.render.ProcessInterruptListener;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
+@Deprecated
 public class ThreadedModelRenderer extends ModelRenderer
 {
 	private static Log log = Logging.getLog(ThreadedModelRenderer.class);
@@ -61,8 +62,8 @@ public class ThreadedModelRenderer extends ModelRenderer
 		int tileNumber = 0;
 		int tileRow = 0;
 		int tileColumn = 0;
-		int tileSize = modelDimensions.getTileSize();
-		long tileCount = modelDimensions.getTileCount();
+		//int tileSize = modelDimensions.getTileSize();
+		//long tileCount = modelDimensions.getTileCount();
 		
 		
 		//int tileOutputWidth = (int) modelDimensions.getTileOutputWidth();
@@ -80,12 +81,12 @@ public class ThreadedModelRenderer extends ModelRenderer
 		
 		//double tileSize = modelContext.getModelOptions().getTileSize();
 		
-		double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
-		double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
+		//double tileLatitudeHeight = latitudeResolution * tileSize - latitudeResolution;
+	//double tileLongitudeWidth = longitudeResolution * tileSize - longitudeResolution;
 		
-		log.info("Tile Size: " + tileSize);
-		log.info("Tile Latitude Height: " + tileLatitudeHeight);
-		log.info("Tile Longitude Width: " + tileLongitudeWidth);
+		//log.info("Tile Size: " + tileSize);
+		//log.info("Tile Latitude Height: " + tileLatitudeHeight);
+		//log.info("Tile Longitude Width: " + tileLongitudeWidth);
 		
 		ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
 		
@@ -143,7 +144,7 @@ public class ThreadedModelRenderer extends ModelRenderer
 			}
 		}
 		
-		
+		/*
 		if ( getRasterDataContext().getRasterDataListSize() > 0) {
 			
 			ExecutorService exec = Executors.newFixedThreadPool(getModelOptions().getConcurrentRenderPoolSize());
@@ -214,6 +215,7 @@ public class ThreadedModelRenderer extends ModelRenderer
 				}
 				
 			}
+			*/
 			
 			/*
 			try {
@@ -225,6 +227,7 @@ public class ThreadedModelRenderer extends ModelRenderer
 			}
 			*/
 			
+		/*
 			try {
 				log.info("Beginning Threaded Rendering...");
 				
@@ -235,6 +238,8 @@ public class ThreadedModelRenderer extends ModelRenderer
 				//System.gc();
 				
 				//List<Future<RenderedTile>> futureRenderedTiles = new LinkedList<Future<RenderedTile>>();
+				
+				
 				List<Future<RenderedTile>> processedTiles = new LinkedList<Future<RenderedTile>>();
 				
 				log.info(" Future tile list size: " + futureRenderedTiles.size());
@@ -249,26 +254,7 @@ public class ThreadedModelRenderer extends ModelRenderer
 							continue;
 						}
 						
-						/*
-						RenderedTile renderedTile = futureRenderedTile.get();
-						
-						ModelCanvas tileCanvas = renderedTile.getModelCanvas();
-						BufferedImage subImage = (BufferedImage) tileCanvas.getSubImage(renderedTile.getNorthLimit(),
-								renderedTile.getSouthLimit(), 
-								renderedTile.getEastLimit(), 
-								renderedTile.getWestLimit());
-						
 
-						modelCanvas.drawImage(subImage, 
-								renderedTile.getNorthLimit(), 
-								renderedTile.getSouthLimit(), 
-								renderedTile.getEastLimit(), 
-								renderedTile.getWestLimit());
-						
-						tileCanvas.dispose();
-						subImage = null;
-						*/
-						
 						tileNumber++;
 						pctComplete = (double)tileNumber / (double)tileCount;
 						log.info("Percent Complete: " + (pctComplete * 100));
@@ -292,9 +278,9 @@ public class ThreadedModelRenderer extends ModelRenderer
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-		
+			
 		}
-		
+		*/
 		if (fullCaching) {
 			try {
 				getRasterDataContext().clearBuffers();

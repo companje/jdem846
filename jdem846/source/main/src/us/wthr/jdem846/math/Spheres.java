@@ -5,9 +5,9 @@ package us.wthr.jdem846.math;
 public class Spheres
 {
 	
-	private static final double RAD_90 = Math.toRadians(90.0);
-	private static final double RAD_180 = Math.toRadians(180.0);
-	private static final double RAD_270 = Math.toRadians(270.0);
+	private static final double RAD_90 = MathExt.radians(90.0);
+	private static final double RAD_180 = MathExt.radians(180.0);
+	private static final double RAD_270 = MathExt.radians(270.0);
 	
 	
 	public static void getPoint3D(double theta, 
@@ -15,15 +15,15 @@ public class Spheres
 									double radius, 
 									double[] points)
 	{
-		theta = Math.toRadians(theta);
-		phi = Math.toRadians(phi);
+		theta = MathExt.radians(theta);
+		phi = MathExt.radians(phi);
 		
-		double _y = Math.sqrt(Math.pow(radius, 2) - Math.pow(radius * Math.cos(phi), 2));
-        double r0 = Math.sqrt(Math.pow(radius, 2) - Math.pow(_y, 2));
+		double _y = MathExt.sqrt(MathExt.sqr(radius) - MathExt.sqr(radius * MathExt.cos(phi)));
+        double r0 = MathExt.sqrt(MathExt.sqr(radius) - MathExt.sqr(_y));
 
-        double _b = r0 * Math.cos(theta );
-        double _z = Math.sqrt(Math.pow(r0, 2) - Math.pow(_b, 2));
-        double _x = Math.sqrt(Math.pow(r0, 2) - Math.pow(_z, 2));
+        double _b = r0 * MathExt.cos(theta );
+        double _z = MathExt.sqrt(MathExt.sqr(r0) - MathExt.sqr(_b));
+        double _x = MathExt.sqrt(MathExt.sqr(r0) - MathExt.sqr(_z));
 
 		
         if (theta <= RAD_90) {
@@ -36,9 +36,9 @@ public class Spheres
 	    }
 	
 	    if (phi >= 0) { 
-	            _y = Math.abs(_y);
+	            _y = MathExt.abs(_y);
 	    } else {
-	            _y = Math.abs(_y) * -1;
+	            _y = MathExt.abs(_y) * -1;
 	    }
 
         points[0] = _x;

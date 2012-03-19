@@ -74,9 +74,10 @@ public class GriddedModelGenerator
 		int tileNum = 0;
 		int dataRows = modelDimensions.getDataRows();
 		int dataCols = modelDimensions.getDataColumns();
-		int tileSize = modelDimensions.getTileSize();
+		int tileSize = 0;//modelDimensions.getTileSize();
+		// TODO: This is broken...
 		
-		DemCanvas tileCanvas = new DemCanvas(new Color(0x0, 0x0, 0x0, 0x0), (int)modelDimensions.getTileSize(), (int)modelDimensions.getTileSize());
+		DemCanvas tileCanvas = new DemCanvas(new Color(0x0, 0x0, 0x0, 0x0), tileSize, tileSize);
 
 		//double latResolution = tileSize * modelDimensions.getyDim();
 		//double lonResolution = tileSize * modelDimensions.getxDim();
