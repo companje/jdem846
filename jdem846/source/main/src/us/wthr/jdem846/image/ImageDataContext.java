@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import us.wthr.jdem846.DataContext;
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.logging.Log;
@@ -22,6 +23,9 @@ public class ImageDataContext implements DataContext
 	private double north = 90.0;
 	private double south = -90.0;
 	
+	private double latitudeResolution = DemConstants.ELEV_NO_DATA;
+	private double longitudeResolution = DemConstants.ELEV_NO_DATA;
+	
 	private List<SimpleGeoImage> imageList = new ArrayList<SimpleGeoImage>();
 	
 	public ImageDataContext()
@@ -32,6 +36,10 @@ public class ImageDataContext implements DataContext
 	@Override
 	public void prepare() throws DataSourceException
 	{
+		
+		latitudeResolution = Double.MAX_VALUE;
+		longitudeResolution = Double.MAX_VALUE;
+		
 		if (getImageListSize() > 0) {
 			east = -180.0;
 			west = 180.0;
@@ -43,6 +51,9 @@ public class ImageDataContext implements DataContext
 				west = MathExt.min(west, image.getWest());
 				north = MathExt.max(north, image.getNorth());
 				south = MathExt.min(south, image.getSouth());
+				
+				latitudeResolution = MathExt.min(image.getLatitudeResolution(), latitudeResolution);
+				longitudeResolution = MathExt.min(image.getLongitudeResolution(), longitudeResolution);
 			}
 			
 		} else {
@@ -182,5 +193,17 @@ public class ImageDataContext implements DataContext
 	{
 		return west;
 	}
+
+	public double getLatitudeResolution()
+	{
+		return latitudeResolution;
+	}
+
+	public double getLongitudeResolution() 
+	{
+		return longitudeResolution;
+	}
+	
+	
 	
 }

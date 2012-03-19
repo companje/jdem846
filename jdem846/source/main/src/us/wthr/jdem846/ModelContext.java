@@ -29,6 +29,7 @@ import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
@@ -67,6 +68,10 @@ public class ModelContext
 	private double eastLimit = NOT_SET;
 	private double westLimit = NOT_SET;
 	
+	
+	private double latitudeResolution = DemConstants.ELEV_NO_DATA;
+	private double longitudeResolution = DemConstants.ELEV_NO_DATA;
+	
 	private boolean isDisposed = false;
 	
 	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
@@ -86,10 +91,40 @@ public class ModelContext
 	{
 		modelDimensions = ModelDimensions2D.getModelDimensions(this);
 		
+		latitudeResolution = Double.MAX_VALUE;
+		longitudeResolution = Double.MAX_VALUE;
+		
+		
+		
+		
 		if (this.rasterDataContext != null) {
+			
+			try {
+				rasterDataContext.prepare();
+			} catch (DataSourceException ex) {
+				ex.printStackTrace();
+			}
+			
 			rasterDataContext.setEffectiveLatitudeResolution(modelDimensions.getOutputLatitudeResolution());
 			rasterDataContext.setEffectiveLongitudeResolution(modelDimensions.getOutputLongitudeResolution());
+			
+			latitudeResolution = MathExt.min(latitudeResolution, rasterDataContext.getLatitudeResolution());
+			longitudeResolution = MathExt.min(longitudeResolution, rasterDataContext.getLongitudeResolution());
 		}
+		
+		if (imageDataContext != null) {
+			
+			try {
+				imageDataContext.prepare();
+			} catch (DataSourceException ex) {
+				ex.printStackTrace();
+			}
+			
+			latitudeResolution = MathExt.min(latitudeResolution, imageDataContext.getLatitudeResolution());
+			longitudeResolution = MathExt.min(longitudeResolution, imageDataContext.getLongitudeResolution());
+		}
+		
+		
 		
 		try {
 			
@@ -290,6 +325,20 @@ public class ModelContext
 		}
 	}
 	
+	
+	
+	public double getLatitudeResolution() 
+	{
+		return latitudeResolution;
+	}
+
+
+	public double getLongitudeResolution() 
+	{
+		return longitudeResolution;
+	}
+
+
 	public ModelContext copy() throws DataSourceException
 	{
 		return copy(false);
@@ -333,6 +382,8 @@ public class ModelContext
 		clone.southLimit = this.southLimit;
 		clone.eastLimit = this.eastLimit;
 		clone.westLimit = this.westLimit;
+		clone.latitudeResolution = this.latitudeResolution;
+		clone.longitudeResolution = this.longitudeResolution;
 		clone.modelCanvas = modelCanvasCopy;
 		return clone;
 

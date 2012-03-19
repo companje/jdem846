@@ -16,6 +16,8 @@ import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ImageException;
+import us.wthr.jdem846.gis.CoordinateSpaceAdjuster;
+import us.wthr.jdem846.gis.exceptions.CoordinateSpaceException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
@@ -47,6 +49,8 @@ public class SimpleGeoImage
 	
 	private MapProjection mapProjection;
 	private CanvasProjection canvasProjection;
+	
+	private CoordinateSpaceAdjuster coordinateSpaceAdjuster;
 	
 	private MapPoint mapPoint = new MapPoint();
 	
@@ -97,6 +101,8 @@ public class SimpleGeoImage
 		mapProjection = new EquirectangularProjection(north, south, east, west, width, height);
 		canvasProjection = new CanvasProjection(mapProjection, north, south, east, west, width, height);
 		
+		coordinateSpaceAdjuster = new CoordinateSpaceAdjuster(north, south, east, west);
+		
 	}
 	
 	public boolean isLoaded()
@@ -131,6 +137,8 @@ public class SimpleGeoImage
 	
 	public boolean contains(double latitude, double longitude)
 	{
+		return coordinateSpaceAdjuster.contains(latitude, longitude);
+		/*
 		// If point falls within stated bounds
 		if (latitude <= north 
 				&& latitude >= south
@@ -146,6 +154,7 @@ public class SimpleGeoImage
 		
 		
 		return false;
+		*/
 	}
 	
 	protected Dimension fetchImageDimensions() throws IOException
@@ -171,6 +180,7 @@ public class SimpleGeoImage
 		return null;
 	}
 	
+	
 	public boolean getColor(double latitude, double longitude, int[] rgba) throws DataSourceException
 	{
 		if (!isLoaded()) {
@@ -179,16 +189,31 @@ public class SimpleGeoImage
 		return getColor(latitude, longitude, latitudeResolution, longitudeResolution, rgba);
 	}
 	
-	
 	public boolean getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba) throws DataSourceException
+	{
+		
+		double adjLatitude = 0;//coordinateSpaceAdjuster.adjustLatitude(latitude);
+		double adjLongitude = 0;//coordinateSpaceAdjuster.adjustLongitude(longitude);
+		
+		try {
+			adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude);
+			adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude);
+		} catch (CoordinateSpaceException ex) {
+			return false;
+		}
+		
+		return _getColor(adjLatitude, adjLongitude, effectiveLatitudeResolution, effectiveLongitudeResolution, rgba);
+		
+	}
+	
+	
+	
+	
+	
+	protected boolean _getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba) throws DataSourceException
 	{
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
-		}
-		
-		
-		if (longitude < west && east > 180) {
-			longitude+= 360;
 		}
 		
 		
