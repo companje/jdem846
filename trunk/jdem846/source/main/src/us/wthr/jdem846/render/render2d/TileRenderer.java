@@ -654,7 +654,7 @@ public class TileRenderer extends InterruptibleProcess
 			
 			double dot = calculateDotProduct(latitude, longitude);
 			
-			if (this.rayTraceShadows && this.solarZenith < 108.0) {
+			if (this.rayTraceShadows) {
 				if (lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, midElev)) {
 					// I'm not 100% happy with this method...
 					dot = dot - (2 * shadowIntensity);
@@ -663,7 +663,16 @@ public class TileRenderer extends InterruptibleProcess
 					}
 				}
 			}
-		
+			
+			if (dot > 0) {
+				dot *= relativeLightIntensity;
+			} else if (dot < 0) {
+				dot *= relativeDarkIntensity;
+			}
+			
+			dot = Math.pow(dot, spotExponent);
+			
+			
 			copyRgba(colorBufferA, rgba);
 			ColorAdjustments.adjustBrightness(rgba, dot);
 			//ColorAdjustments.adjustBrightness(colorBufferB, dot);
@@ -729,14 +738,9 @@ public class TileRenderer extends InterruptibleProcess
 			dot = -1.0;
 		}
 		
-		dot = Math.pow(dot, spotExponent);
 		
-		if (dot > 0) {
-			dot *= relativeLightIntensity;
-		} else if (dot < 0) {
-			dot *= relativeDarkIntensity;
-		}
-
+		
+		
 		
 		return dot;
 		

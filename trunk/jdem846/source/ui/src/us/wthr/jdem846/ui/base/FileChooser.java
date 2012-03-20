@@ -21,13 +21,20 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 
+import us.wthr.jdem846.JDem846Properties;
+
 @SuppressWarnings("serial")
 public class FileChooser extends JFileChooser
 {
+	private static String UI_STATE_PATH_PROPERTY = "us.wthr.jdem846.state.ui.fileChooser.path";
+	
 	private static String lastPath;
 	
 	static {
-		lastPath = System.getProperty("user.home");
+		
+		String uiStateProp = JDem846Properties.getProperty(UI_STATE_PATH_PROPERTY);
+		uiStateProp = uiStateProp.replace("{user.home}", System.getProperty("user.home"));
+		lastPath = uiStateProp;
 	}
 	
 	public FileChooser()
@@ -63,6 +70,7 @@ public class FileChooser extends JFileChooser
 	public static void setLastPath(String lastPath)
 	{
 		FileChooser.lastPath = lastPath;
+		JDem846Properties.setProperty(UI_STATE_PATH_PROPERTY, lastPath);
 	}
 	
 	public static String getLastPath()

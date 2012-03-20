@@ -31,6 +31,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -66,6 +67,7 @@ import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.render.RenderEngine;
+import us.wthr.jdem846.ui.RecentProjectTracker.ProjectListListener;
 import us.wthr.jdem846.ui.TopButtonBar.ButtonClickedListener;
 import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Frame;
@@ -87,6 +89,8 @@ public class JdemFrame extends Frame
 	private MainMenuBar menuBar;
 	private MainButtonBar mainButtonBar;
 	private SharedStatusBar statusBar;
+	
+	private Menu recentProjectsMenu;
 	
 	private static JdemFrame instance = null;
 	
@@ -294,6 +298,20 @@ public class JdemFrame extends Frame
 		
 		fileMenu.addSeparator();
 		
+		// Recent Projects
+		recentProjectsMenu = new Menu(I18N.get("us.wthr.jdem846.ui.menu.file.recentProjects"));
+		fileMenu.add(recentProjectsMenu);
+		rebuildRecentProjectsMenu();
+		
+		RecentProjectTracker.addProjectListListener(new ProjectListListener() {
+			public void onRecentProjectListChanged(List<String> projectList)
+			{
+				rebuildRecentProjectsMenu();
+			}
+		});
+		
+		fileMenu.addSeparator();
+		
 		fileMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.menu.file.exit"), JDem846Properties.getProperty("us.wthr.jdem846.ui.exit"), KeyEvent.VK_X, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
@@ -326,6 +344,27 @@ public class JdemFrame extends Frame
 		
 		MainMenuBar.setInsertIndex(2);
 	}
+	
+	
+	protected void rebuildRecentProjectsMenu()
+	{
+		
+		List<String> projectList = RecentProjectTracker.getProjectList();
+		
+		recentProjectsMenu.removeAll();
+		
+		for (String projectPath : projectList) {
+			
+			File projectFile = new File(projectPath);
+			
+			recentProjectsMenu.add(new MenuItem(projectFile.getName(), new RecentProjectMenuActionListener(projectPath), true));
+			
+			
+		}
+		
+	}
+	
+	
 	
 	public void onAbout()
 	{
@@ -436,6 +475,8 @@ public class JdemFrame extends Frame
 
 		try {
 			projectModel = ProjectFiles.read(filePath);
+			
+			RecentProjectTracker.addProject(filePath);
 		} catch (FileNotFoundException ex) {
 			log.warn("Project file not found: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(getRootPane(),
@@ -653,5 +694,22 @@ public class JdemFrame extends Frame
 		}
 		return JdemFrame.instance;
 	}
-
+	
+	
+	
+	class RecentProjectMenuActionListener implements ActionListener
+	{
+		
+		private String projectPath;
+		
+		public RecentProjectMenuActionListener(String projectPath)
+		{
+			this.projectPath = projectPath;
+		}
+		
+		public void actionPerformed(ActionEvent e)
+		{
+			openProject(projectPath);
+		}
+	}
 }
