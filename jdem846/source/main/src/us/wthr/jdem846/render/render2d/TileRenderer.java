@@ -201,6 +201,8 @@ public class TileRenderer extends InterruptibleProcess
 	{
 		log.info("Preparing tile renderer properties");
 		
+		modelContext.updateContext();
+		
 		northLimit = north;
 		southLimit = south;
 		eastLimit = east;
@@ -236,8 +238,8 @@ public class TileRenderer extends InterruptibleProcess
 					southLimit - latitudeResolution, 
 					eastLimit + longitudeResolution, 
 					westLimit, 
-					modelContext.getRasterDataContext().getEffectiveLatitudeResolution(), 
-					modelContext.getRasterDataContext().getEffectiveLongitudeResolution());
+					modelContext.getModelDimensions().getOutputLatitudeResolution(),
+					modelContext.getModelDimensions().getOutputLongitudeResolution());
 		}
 		
 		if (resetDataRange) {
@@ -326,8 +328,8 @@ public class TileRenderer extends InterruptibleProcess
 		
 		
 		
-		modelContext.getModelDimensions().outputLatitudeResolution = latitudeResolution;
-		modelContext.getModelDimensions().outputLongitudeResolution = longitudeResolution;
+		//modelContext.getModelDimensions().outputLatitudeResolution = latitudeResolution;
+		//modelContext.getModelDimensions().outputLongitudeResolution = longitudeResolution;
 		
 		rayTraceShadows = modelContext.getLightingContext().getRayTraceShadows();
 		shadowIntensity = modelContext.getLightingContext().getShadowIntensity();
