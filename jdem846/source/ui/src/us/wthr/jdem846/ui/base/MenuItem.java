@@ -87,9 +87,16 @@ public class MenuItem extends JMenuItem
 	
 	public MenuItem(String text, ActionListener actionListener)
 	{
+		this(text, actionListener, false);
+	}
+	
+	public MenuItem(String text, ActionListener actionListener, boolean dynamicSize)
+	{
 		super(text);
 		this.addActionListener(actionListener);
-		setPreferredSize();
+		if (!dynamicSize) {
+			setPreferredSize();
+		}
 	}
 	
 	protected void setPreferredSize()
