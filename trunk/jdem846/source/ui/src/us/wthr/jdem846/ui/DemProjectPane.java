@@ -988,10 +988,12 @@ public class DemProjectPane extends JdemPanel implements Savable
 		boolean updateRaster = forceRasterUpdate || lastRasterDataCount != rasterDataContext.getRasterDataListSize();
 		boolean updateShape = forceShapeUpdate || lastShapeDataCount != shapeDataContext.getShapeFiles().size();
 		
+		modelContext.updateContext();
+		
 		updatePreviewPane(updateRaster, updateShape);
 		//previewPanel.update();
 		
-		modelContext.updateContext();
+		
 		
 		regionOverviewPanel.setRows(modelContext.getModelDimensions().getDataRows());
 		regionOverviewPanel.setColumns(modelContext.getModelDimensions().getDataColumns());

@@ -2,6 +2,7 @@ package us.wthr.jdem846.render;
 
 import java.awt.Color;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
@@ -58,10 +59,10 @@ public class ModelDimensions2D
 		east = modelContext.getEast();
 		west = modelContext.getWest();
 		*/
-		north = Double.MIN_VALUE;
-		south = Double.MAX_VALUE;
-		east = Double.MIN_VALUE;
-		west = Double.MAX_VALUE;
+		north = -90;
+		south = 90;
+		east = -180;
+		west = 180;
 		
 		latitudeResolution = Double.MAX_VALUE;
 		longitudeResolution = Double.MAX_VALUE;
@@ -88,6 +89,22 @@ public class ModelDimensions2D
 				east = MathExt.max(east, image.getEast());
 				west = MathExt.min(west, image.getWest());
 			}
+		}
+		
+		if (north > 90) {
+			north = 90;
+		}
+		
+		if (south < -90) {
+			south = -90;
+		}
+		
+		if (east > 180) {
+			east = 180;
+		}
+		
+		if (west < -180) {
+			west = -180;
 		}
 		
 		

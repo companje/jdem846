@@ -29,6 +29,7 @@ import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
+import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
@@ -163,8 +164,8 @@ public class SimpleRenderer
 					modelContext.getSouth(), 
 					modelContext.getEast(), 
 					modelContext.getWest(), 
-					modelContext.getRasterDataContext().getEffectiveLatitudeResolution(), 
-					modelContext.getRasterDataContext().getEffectiveLongitudeResolution());
+					modelContext.getModelDimensions().getOutputLatitudeResolution(),
+					modelContext.getModelDimensions().getOutputLongitudeResolution());
 		}
 		
 		if (resetDataRange) {
@@ -325,6 +326,12 @@ public class SimpleRenderer
 	protected void paintLightSourceLines(ModelCanvas canvas) throws Exception
 	{
 		
+		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
+		ImageDataContext imageDataContext = modelContext.getImageDataContext();
+		
+		if (rasterDataContext.getRasterDataListSize() == 0 && imageDataContext.getImageListSize() == 0) {
+			return;
+		}
 		
 		if (modelContext.getLightingContext() == null || !modelContext.getLightingContext().isLightingEnabled()) {
 			log.info("Lighting not enabled, skipping light source lines");
@@ -385,6 +392,12 @@ public class SimpleRenderer
 	protected void paintBasicGrid(ModelCanvas canvas) throws Exception
 	{
 		
+		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
+		ImageDataContext imageDataContext = modelContext.getImageDataContext();
+		
+		if (rasterDataContext.getRasterDataListSize() == 0 && imageDataContext.getImageListSize() == 0) {
+			return;
+		}
 		
 		double north = modelContext.getNorth();
 		double south = modelContext.getSouth();
@@ -460,10 +473,11 @@ public class SimpleRenderer
 		
 
 		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
+		ImageDataContext imageDataContext = modelContext.getImageDataContext();
 		
-		//if (rasterDataContext.getRasterDataListSize() == 0) {
-		//	return;
-		//}
+		if (rasterDataContext.getRasterDataListSize() == 0 && imageDataContext.getImageListSize() == 0) {
+			return;
+		}
 		
 		
 		double north = modelContext.getNorth();
