@@ -409,8 +409,8 @@ public class ModelVisualizationPanel extends Panel
 			int deltaY = y - lastY;
 			
 			//shiftZ += (deltaY * 5);
-			shiftX += (deltaX * 5);
-			shiftY -= (deltaY * 5);
+			shiftX += (deltaX * .01);
+			shiftY -= (deltaY * .01);
 			
 		}
 		
@@ -610,7 +610,7 @@ public class ModelVisualizationPanel extends Panel
 	protected void fireProjectionChangeListeners()
 	{
 		for (ProjectionChangeListener listener : projectionChangeListeners) {
-			listener.onProjectionChanged(rotateX, rotateY, rotateZ, shiftX, 0.0, shiftZ, zoom);
+			listener.onProjectionChanged(rotateX, rotateY, rotateZ, shiftX, shiftY, shiftZ, zoom);
 		}
 	}
 	

@@ -78,7 +78,13 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		Vector.rotate(0, rotateY, 0, pointVector);
 		Vector.rotate(rotateX, 0, 0, pointVector);
 		//Vector.translate(shiftX, shiftY, shiftZ, pointVector);
-		Vector.translate(shiftX, shiftY, 0.0, pointVector);
+		
+		
+		double shiftPixelsX = shiftX * radius;
+		double shiftPixelsY = shiftY * radius;
+		double shiftPixelsZ = shiftZ * radius;
+		
+		Vector.translate(shiftPixelsX, shiftPixelsY, shiftPixelsZ, pointVector);
 		//Vector.scale(scaleX, scaleY, scaleZ, pointVector);
 		
 		
