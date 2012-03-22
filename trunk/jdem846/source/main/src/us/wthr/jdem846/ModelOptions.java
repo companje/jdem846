@@ -26,6 +26,7 @@ import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
+import us.wthr.jdem846.render.scaling.ElevationScalerEnum;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 import us.wthr.jdem846.util.NumberFormattingUtil;
@@ -411,8 +412,25 @@ public class ModelOptions extends MappedOptions
 	{
 		setOption(ModelOptionNamesEnum.ELEVATION_MULTIPLE, elevationMultiple);
 	}
+	
+	
+	public ElevationScalerEnum getElevationScaler()
+	{
+		return ElevationScalerEnum.getElevationScalerEnumFromIdentifier(getOption(ModelOptionNamesEnum.ELEVATION_SCALER));
+	}
 
-
+	public void setElevationScaler(String elevationScaler)
+	{
+		setOption(ModelOptionNamesEnum.ELEVATION_SCALER, elevationScaler);
+	}
+	
+	public void setElevationScaler(ElevationScalerEnum elevationScaler)
+	{
+		setElevationScaler(elevationScaler.identifier());
+	}
+	
+	
+	
 
 	public String getGradientLevels()
 	{

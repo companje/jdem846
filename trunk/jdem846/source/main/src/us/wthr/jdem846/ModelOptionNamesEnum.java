@@ -21,6 +21,7 @@ public enum ModelOptionNamesEnum
 	//LIGHTING_MULTIPLE("us.wthr.jdem846.modelOptions.lightingMultiple"),
 	//SPOT_EXPONENT("us.wthr.jdem846.modelOptions.spotExponent"),
 	ELEVATION_MULTIPLE("us.wthr.jdem846.modelOptions.elevationMultiple"),
+	ELEVATION_SCALER("us.wthr.jdem846.modelOptions.elevationScaler"),
 	//USE_SIMPLE_CANVAS_FILL("us.wthr.jdem846.modelOptions.useSimpleCanvasFill"),
 	
 	CONCURRENT_RENDER_POOL_SIZE("us.wthr.jdem846.modelOptions.concurrentRenderPoolSize"),
