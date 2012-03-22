@@ -67,6 +67,19 @@ public class Dem2dGenerator extends BasicRenderEngine
 		fillRasterBuffers();
 		fillImageBuffers();
 		
+
+		try {
+			
+			ElevationMinMaxCalculator minMaxCalc = new ElevationMinMaxCalculator(getModelContext());
+			ElevationMinMax minMax = minMaxCalc.calculateMinAndMax();
+			
+			getModelContext().getRasterDataContext().setDataMaximumValue(minMax.maximum);
+			getModelContext().getRasterDataContext().setDataMinimumValue(minMax.minimum);
+			
+		} catch (DataSourceException ex) {
+			log.error("Error determining elevation min & max: " + ex.getMessage(), ex);
+		}
+		
 		OutputProduct<ModelCanvas> product = null;
 		
 		if (usePipelineRender) {

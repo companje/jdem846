@@ -271,8 +271,8 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				long start = 0;
 				long elapsed = 0;
 				
+				/*
 				start = System.currentTimeMillis();
-				
 				boolean requiresMinMaxElevation = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).requiresMinMaxElevation();
 				try {
 					if (requiresMinMaxElevation) {
@@ -283,7 +283,7 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				}
 				elapsed = (System.currentTimeMillis() - start) / 1000;
 				log.info("Completed elevation min/max task in " + elapsed + " seconds");
-				
+				*/
 
 				start = System.currentTimeMillis();
 				OutputProduct<ModelCanvas> product = engine.generate(false, false);
