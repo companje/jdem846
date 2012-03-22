@@ -108,15 +108,14 @@ public class CanvasProjection3d extends CanvasProjection
 		super.getPoint(latitude, longitude, elevation, point);
 		
 
-		double elev = 0;
-		
 		
 		double maxMultiplied = max * elevationMultiple;
 		double ratio = (elevation - min) / (max - min);
-		elevation = min + (maxMultiplied - min) * ratio;
 		
-		elevation -= ((maxMultiplied + min) / 2.0);
-		elev = (elevation / resolution);
+		
+		double elev = elevation = min + (maxMultiplied - min) * ratio;
+		elev -= ((maxMultiplied + min) / 2.0);
+		elev = (elev / resolution);
 
 
 		pointVector[0] = point.column - (getWidth() / 2.0);

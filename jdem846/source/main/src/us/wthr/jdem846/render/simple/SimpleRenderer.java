@@ -39,6 +39,8 @@ import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.rasterdata.ElevationDataMap;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.CanvasProjection;
+import us.wthr.jdem846.render.ElevationMinMax;
+import us.wthr.jdem846.render.ElevationMinMaxCalculator;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RayTracing;
 import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
@@ -169,8 +171,15 @@ public class SimpleRenderer
 		}
 		
 		if (resetDataRange) {
+
 			try {
-				determineDataRangeLowRes();
+				
+				ElevationMinMaxCalculator minMaxCalc = new ElevationMinMaxCalculator(modelContext);
+				ElevationMinMax minMax = minMaxCalc.calculateMinAndMax();
+				
+				modelContext.getRasterDataContext().setDataMaximumValue(minMax.maximum);
+				modelContext.getRasterDataContext().setDataMinimumValue(minMax.minimum);
+				
 			} catch (DataSourceException ex) {
 				log.error("Error determining elevation min & max: " + ex.getMessage(), ex);
 			}
@@ -893,6 +902,8 @@ public class SimpleRenderer
     	return v;
 	}
 	
+	
+	/*
 	public void determineDataRangeLowRes() throws DataSourceException
 	{
 		
@@ -938,6 +949,7 @@ public class SimpleRenderer
 		
 		
 	}
+	*/
 	
 	protected void copyRgba(int[] rgba0, int[] rgba1)
 	{

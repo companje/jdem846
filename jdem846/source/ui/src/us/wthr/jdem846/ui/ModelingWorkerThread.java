@@ -70,15 +70,17 @@ public class ModelingWorkerThread extends Thread
 			
 			start = System.currentTimeMillis();
 			
+			/*
 			try {
 				rasterDataContext.calculateElevationMinMax(true);
 			} catch (Exception ex) {
 				fireModelFailedListeners(ex);
 				return;
 			}
+			*/
 			
-			elapsed = (System.currentTimeMillis() - start) / 1000;
-			log.info("Completed elevation min/max task in " + elapsed + " seconds");
+			//elapsed = (System.currentTimeMillis() - start) / 1000;
+			//log.info("Completed elevation min/max task in " + elapsed + " seconds");
 			
 			try {
 				start = System.currentTimeMillis();
