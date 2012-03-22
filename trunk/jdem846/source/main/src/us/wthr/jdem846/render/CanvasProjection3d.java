@@ -109,8 +109,13 @@ public class CanvasProjection3d extends CanvasProjection
 		
 
 		double elev = 0;
-
-		elevation -= ((max + min) / 2.0);
+		
+		
+		double maxMultiplied = max * elevationMultiple;
+		double ratio = (elevation - min) / (max - min);
+		elevation = min + (maxMultiplied - min) * ratio;
+		
+		elevation -= ((maxMultiplied + min) / 2.0);
 		elev = (elevation / resolution);
 
 
@@ -127,11 +132,14 @@ public class CanvasProjection3d extends CanvasProjection
 		*/
 		
 		
+		double shiftPixelsX = shiftX * getWidth();
+		double shiftPixelsY = shiftY * getHeight();
+		//double shiftPixelsZ = shiftZ * radius;
 		
-		Vector.scale(1.0, elevationMultiple, 1.0, pointVector);
+		//Vector.scale(1.0, elevationMultiple, 1.0, pointVector);
 		Vector.rotate(0, rotateY, 0, pointVector);
 		Vector.rotate(rotateX, 0, 0, pointVector);
-		Vector.translate(shiftX, shiftY, 0.0, pointVector);
+		Vector.translate(shiftPixelsX, shiftPixelsY, 0.0, pointVector);
 		Vector.scale(scaleX, scaleY, scaleZ, pointVector);
 		
 		

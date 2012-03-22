@@ -50,13 +50,18 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		
 		double elev = 0;
 		//elevation -= ((max + min) / 2.0);
-		elev = (elevation / resolution) * elevationMultiple;
+		//elev = (elevation / resolution) * elevationMultiple;
+		double maxMultiplied = max * elevationMultiple;
+		double ratio = (elevation - min) / (max - min);
+		elevation = min + (maxMultiplied - min) * ratio;
 		
+		elevation -= ((maxMultiplied + min) / 2.0);
+		elev = (elevation / resolution);
 		
 		
 		//double earthMeanRadiusMeters = DemConstants.EARTH_MEAN_RADIUS * 1000;
 		
-		//radius = (radius / meanRadius) * (meanRadius + elev);
+		radius = (radius / meanRadius) * (meanRadius + elev);
 		
 		//double[] points = new double[3];
 		Spheres.getPoint3D(longitude+180, latitude, radius, pointVector);
