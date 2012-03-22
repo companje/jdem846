@@ -58,6 +58,8 @@ public class CanvasFillRenderPipe extends InterruptibleProcess implements Render
 		
 		completed = true;
 	}
+	
+
 
 	@Override
 	public boolean isCompleted()

@@ -188,7 +188,8 @@ public class ModelOptions extends MappedOptions
 		if (projectModel.hasOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Z))
 			this.projection.setShiftZ(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_SHIFT_Z));
 		
-		
+		if (projectModel.hasOption(ModelOptionNamesEnum.PROJECTION_ZOOM))
+			this.projection.setZoom(projectModel.getDoubleOption(ModelOptionNamesEnum.PROJECTION_ZOOM));
 	}
 	
 	
