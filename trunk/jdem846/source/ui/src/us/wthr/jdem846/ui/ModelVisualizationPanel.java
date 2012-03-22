@@ -87,6 +87,7 @@ public class ModelVisualizationPanel extends Panel
 	
 	double shiftZ;
 	double shiftX;
+	double shiftY;
 	
 	double zoom;
 	
@@ -133,6 +134,7 @@ public class ModelVisualizationPanel extends Panel
 		rotateZ = modelContextActual.getModelOptions().getProjection().getRotateZ();
 		shiftZ = modelContextActual.getModelOptions().getProjection().getShiftZ();
 		shiftX = modelContextActual.getModelOptions().getProjection().getShiftX();
+		shiftY = modelContextActual.getModelOptions().getProjection().getShiftY();
 		zoom = modelContextActual.getModelOptions().getProjection().getZoom();
 		
 		try {
@@ -406,8 +408,9 @@ public class ModelVisualizationPanel extends Panel
 			int deltaX = x - lastX;
 			int deltaY = y - lastY;
 			
-			shiftZ += (deltaY * 5);
+			//shiftZ += (deltaY * 5);
 			shiftX += (deltaX * 5);
+			shiftY -= (deltaY * 5);
 			
 		}
 		
@@ -487,7 +490,8 @@ public class ModelVisualizationPanel extends Panel
 		modelContextWorkingCopy.getModelOptions().getProjection().setRotateZ(rotateZ);
 		
 		modelContextWorkingCopy.getModelOptions().getProjection().setShiftX(shiftX);
-		modelContextWorkingCopy.getModelOptions().getProjection().setShiftZ(shiftZ);
+		modelContextWorkingCopy.getModelOptions().getProjection().setShiftY(shiftY);
+		//modelContextWorkingCopy.getModelOptions().getProjection().setShiftZ(shiftZ);
 		
 		modelContextWorkingCopy.getModelOptions().getProjection().setZoom(zoom);
 		

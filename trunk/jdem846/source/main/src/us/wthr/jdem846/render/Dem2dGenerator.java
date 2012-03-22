@@ -181,8 +181,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 		}
 		
 		
-		RenderPipeline renderPipeline = new RenderPipeline(getModelContext());
-		RenderPipelineProcessContainer pipelineContainer = new RenderPipelineProcessContainer(renderPipeline, getModelContext());
+		final RenderPipeline renderPipeline = new RenderPipeline(getModelContext());
+		final RenderPipelineProcessContainer pipelineContainer = new RenderPipelineProcessContainer(renderPipeline, getModelContext());
 		
 		//ModelRenderer rasterRenderer = null;
 		//ShapeLayerRenderer shapeRenderer = null;
@@ -196,8 +196,15 @@ public class Dem2dGenerator extends BasicRenderEngine
 			this.setProcessInterruptListener(new ProcessInterruptListener() {
 				public void onProcessCancelled()
 				{
+					
+					// Expect a NullPointerException or two when these are called. Should probably fix those...
+					
 					rasterRenderer.cancel();
 					shapeRenderer.cancel();
+					
+					
+					renderPipeline.closeQueues();
+					renderPipeline.flushQueues();
 				}
 				public void onProcessPaused()
 				{

@@ -17,10 +17,10 @@ public class RenderPipeline
 {
 	private static Log log = Logging.getLog(RenderPipeline.class);
 	
-	private Queue<TileRenderContainer> tileRenderQueue;
-	private Queue<TriangleStripFill> triangleStripFillQueue;
-	private Queue<ShapeFill> shapeFillQueue;
-	private Queue<ScanlinePath> scanlinePathQueue;
+	private PipelineQueue<TileRenderContainer> tileRenderQueue;
+	private PipelineQueue<TriangleStripFill> triangleStripFillQueue;
+	private PipelineQueue<ShapeFill> shapeFillQueue;
+	private PipelineQueue<ScanlinePath> scanlinePathQueue;
 	
 	
 	
@@ -33,10 +33,10 @@ public class RenderPipeline
 		//List list = Collections.synchronizedList(new LinkedList(...));
 		this.modelContext = modelContext;
 		
-		tileRenderQueue = new ConcurrentLinkedQueue<TileRenderContainer>();
-		triangleStripFillQueue = new ConcurrentLinkedQueue<TriangleStripFill>();
-		scanlinePathQueue = new ConcurrentLinkedQueue<ScanlinePath>();
-		shapeFillQueue = new ConcurrentLinkedQueue<ShapeFill>();
+		tileRenderQueue = new PipelineQueue<TileRenderContainer>();
+		triangleStripFillQueue = new PipelineQueue<TriangleStripFill>();
+		scanlinePathQueue = new PipelineQueue<ScanlinePath>();
+		shapeFillQueue = new PipelineQueue<ShapeFill>();
 	}
 	
 	public void submit(TileRenderContainer tileRenderRunnableInstance)
@@ -99,6 +99,75 @@ public class RenderPipeline
 	{
 		return (shapeFillQueue.size() > 0);
 	}
+	
+	
+	public void flushQueues()
+	{
+		flushTileRenderQueue();
+		flushTriangleStripFillQueue();
+		flushShapeFillQueue();
+		flushScanlinePathQueue();
+	}
+	
+	public void flushTileRenderQueue()
+	{
+		tileRenderQueue.clear();
+
+	}
+	
+	public void flushTriangleStripFillQueue()
+	{
+		triangleStripFillQueue.clear();
+	}
+	
+	public void flushShapeFillQueue()
+	{
+		shapeFillQueue.clear();
+	}
+	
+	public void flushScanlinePathQueue()
+	{
+		scanlinePathQueue.clear();
+	}
+	
+	
+	public void closeQueues()
+	{
+		
+		closeTitleRenderQueue();
+		closeTriangleStripFillQueue();
+		closeShapeFillQueue();
+		closeScanlinePathQueue();
+	}
+	
+	public void closeTitleRenderQueue()
+	{
+		tileRenderQueue.close();
+	}
+	
+	public void closeTriangleStripFillQueue()
+	{
+		triangleStripFillQueue.close();
+	}
+	
+	public void closeShapeFillQueue()
+	{
+		shapeFillQueue.close();
+	}
+	
+	public void closeScanlinePathQueue()
+	{
+		scanlinePathQueue.close();
+	}
+	
+	
+
+	/*
+	private Queue<TileRenderContainer> tileRenderQueue;
+	private Queue<TriangleStripFill> triangleStripFillQueue;
+	private Queue<ShapeFill> shapeFillQueue;
+	private Queue<ScanlinePath> scanlinePathQueue;
+	*/
 	
 	protected void setCompleted(boolean completed)
 	{

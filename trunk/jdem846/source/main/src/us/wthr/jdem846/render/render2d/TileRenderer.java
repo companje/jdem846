@@ -358,7 +358,6 @@ public class TileRenderer extends InterruptibleProcess
 		}
 		
 		
-		point = null;
 		perspectives = null;
 		normal = null;
 		backLeftPoints = null;
