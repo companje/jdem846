@@ -32,6 +32,7 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Line;
 import us.wthr.jdem846.geom.Polygon;
@@ -195,7 +196,12 @@ public class ModelVisualizationPanel extends Panel
 			public void componentResized(ComponentEvent arg0)
 			{
 				if (renderer != null) {
-					renderer.prepare(true, false);
+					try {
+						renderer.prepare(true, false);
+					} catch (RenderEngineException ex) {
+						log.warn("Error preparing renderer: " + ex.getMessage(), ex);
+						// TODO Display error message
+					}
 				}
 				update(false, false);
 			}
@@ -583,7 +589,12 @@ public class ModelVisualizationPanel extends Panel
 		modelContextWorkingCopy.updateContext();
 		modelContextWorkingCopy.resetModelCanvas();
 		//
-		renderer.prepare(resetCache, resetDataRange);
+		try {
+			renderer.prepare(resetCache, resetDataRange);
+		} catch (RenderEngineException ex) {
+			log.warn("Error preparing renderer: " + ex.getMessage(), ex);
+			// TODO Display error message
+		}
 
 		
 		

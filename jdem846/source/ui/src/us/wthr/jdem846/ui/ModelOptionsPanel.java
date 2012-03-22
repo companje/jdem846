@@ -69,6 +69,7 @@ import us.wthr.jdem846.ui.coloring.ColoringValueControl;
 import us.wthr.jdem846.ui.lighting.LightingValueControl;
 import us.wthr.jdem846.ui.optionModels.AntialiasingOptionsListModel;
 import us.wthr.jdem846.ui.optionModels.CanvasProjectionListModel;
+import us.wthr.jdem846.ui.optionModels.ElevationScalerListModel;
 import us.wthr.jdem846.ui.optionModels.EngineListModel;
 import us.wthr.jdem846.ui.optionModels.HillShadingOptionsListModel;
 import us.wthr.jdem846.ui.optionModels.MapProjectionListModel;
@@ -122,6 +123,9 @@ public class ModelOptionsPanel extends Panel
 	
 	private ComboBox cmbAntialiasing;
 	private AntialiasingOptionsListModel antialiasingModel;
+	
+	private ComboBox cmbElevationScaling;
+	private ElevationScalerListModel elevationScalerListModel;
 	
 	//private ComboBox cmbPrecacheStrategy;
 	//private PrecacheStrategyOptionsListModel precacheStrategyModel;
@@ -180,7 +184,11 @@ public class ModelOptionsPanel extends Panel
 		
 		planetListModel = new PlanetListModel();
 		cmbPlanet = new ComboBox(planetListModel);
-
+		
+		
+		elevationScalerListModel = new ElevationScalerListModel();
+		cmbElevationScaling = new ComboBox(elevationScalerListModel);
+		
 		
 		coloringControl = new ColoringValueControl();
 		//lightSourceControl = new LightingValueControl();
@@ -234,6 +242,8 @@ public class ModelOptionsPanel extends Panel
 		//jsldSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
 		//spnSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
 		spnElevationMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.tooltip"));
+		cmbElevationScaling.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationScaler.tooltip"));
+		
 		//spnRelativeLightIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeLightIntensity.tooltip"));
 		//spnRelativeDarkIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeDarkIntensity.tooltip"));
 		cmbAntialiasing.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.antialiasingCombo.tooltip"));
@@ -304,6 +314,7 @@ public class ModelOptionsPanel extends Panel
 		//cmbHillshading.addItemListener(comboBoxItemListener);
 		cmbMapProjection.addItemListener(comboBoxItemListener);
 		cmbCanvasProjection.addItemListener(comboBoxItemListener);
+		cmbElevationScaling.addItemListener(comboBoxItemListener);
 		
 		ChangeListener sliderChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -445,6 +456,11 @@ public class ModelOptionsPanel extends Panel
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.label") + ":"));
 		controlGrid.add(spnElevationMultiple);
 		
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationScaler.label") + ":"));
+		controlGrid.add(cmbElevationScaling);
+		
+		
+		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.perspectiveValueControl.label") + ":"));
 		controlGrid.add(perspectiveControl);
 		
@@ -517,6 +533,7 @@ public class ModelOptionsPanel extends Panel
 		//spnRelativeDarkIntensity.setValue((int)Math.round(modelOptions.getRelativeDarkIntensity() * 100));
 		
 		spnElevationMultiple.setValue((int)Math.round(modelOptions.getElevationMultiple()));
+		elevationScalerListModel.setSelectedItemByValue(modelOptions.getElevationScaler().identifier());
 		
 		perspectiveControl.setRotateX(modelOptions.getProjection().getRotateX());
 		perspectiveControl.setRotateY(modelOptions.getProjection().getRotateY());
@@ -586,6 +603,7 @@ public class ModelOptionsPanel extends Panel
 		
 		double elevationMultiple = (double)((Integer)spnElevationMultiple.getValue());
 		modelOptions.setElevationMultiple(elevationMultiple);
+		modelOptions.setElevationScaler(elevationScalerListModel.getSelectedItemValue());
 		
 		//modelOptions.setRelativeLightIntensity((double)((Integer)spnRelativeLightIntensity.getValue()) / 100.0);
 		//modelOptions.setRelativeDarkIntensity((double)((Integer)spnRelativeDarkIntensity.getValue()) / 100.0);
@@ -690,6 +708,7 @@ public class ModelOptionsPanel extends Panel
 		CanvasProjectionTypeEnum canvasProjectionType = CanvasProjectionTypeEnum.getCanvasProjectionEnumFromIdentifier(canvasProjectionListModel.getSelectedItemValue());
 		perspectiveControl.setEnabled(canvasProjectionType != CanvasProjectionTypeEnum.PROJECT_FLAT);
 		spnElevationMultiple.setEnabled(canvasProjectionType != CanvasProjectionTypeEnum.PROJECT_FLAT);
+		//cmbElevationScaling.setEnabled(canvasProjectionType != CanvasProjectionTypeEnum.PROJECT_FLAT);
 		
 		txtLimitNorth.setEnabled(chkLimitCoordinates.getModel().isSelected());
 		txtLimitSouth.setEnabled(chkLimitCoordinates.getModel().isSelected());

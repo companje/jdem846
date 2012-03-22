@@ -14,6 +14,7 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RayTracingException;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Line;
 import us.wthr.jdem846.geom.Polygon;
@@ -45,6 +46,8 @@ import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RayTracing;
 import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.render.gfx.Vector;
+import us.wthr.jdem846.render.scaling.ElevationScaler;
+import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
 
 public class SimpleRenderer
 {
@@ -121,6 +124,8 @@ public class SimpleRenderer
 	private double minimumElevation;
 	private double maximumElevation;
 	
+	private ElevationScaler elevationScaler;
+	
 	public SimpleRenderer(ModelContext modelContext)
 	{
 		this.modelContext = modelContext;
@@ -133,7 +138,7 @@ public class SimpleRenderer
 		this.modelContext = modelContext;
 	}
 	
-	public void prepare(boolean resetCache, boolean resetDataRange)
+	public void prepare(boolean resetCache, boolean resetDataRange) throws RenderEngineException
 	{
 		log.info("Resetting simple renderer cache");
 		
@@ -154,7 +159,11 @@ public class SimpleRenderer
 		//latitudeResolution = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
 		//longitudeResolution = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
 		
-		
+		try {
+			elevationScaler = ElevationScalerFactory.createElevationScaler(modelContext.getModelOptions().getElevationScaler());
+		} catch (Exception ex) {
+			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
+		}
 		
 		
 		////latitudeResolution = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
@@ -281,7 +290,7 @@ public class SimpleRenderer
 			lightSourceRayTracer = new RayTracing(modelContext,
 					new RasterDataFetchHandler() {
 						public double getRasterData(double latitude, double longitude) throws Exception {
-							return getElevation(latitude, longitude);
+							return getElevation(latitude, longitude, true);
 						}
 			});
 		} else {
@@ -587,7 +596,7 @@ public class SimpleRenderer
 		double nLon = longitude;
 		
 		
-		double midElev = getElevation(latitude, longitude);
+		double midElev = getElevation(latitude, longitude, true);
 		
 		
 		
@@ -605,10 +614,10 @@ public class SimpleRenderer
 		 */
 		
 		if (lightingEnabled) {
-			double eElev = getElevation(eLat, eLon);
-			double sElev = getElevation(sLat, sLon);
-			double wElev = getElevation(wLat, wLon);
-			double nElev = getElevation(nLat, nLon);
+			double eElev = getElevation(eLat, eLon, true);
+			double sElev = getElevation(sLat, sLon, true);
+			double wElev = getElevation(wLat, wLon, true);
+			double nElev = getElevation(nLat, nLon, true);
 			
 			
 			if (eElev == DemConstants.ELEV_NO_DATA)
@@ -852,7 +861,20 @@ public class SimpleRenderer
 		
 	}
 	
-	protected double getElevation(double latitude, double longitude) throws DataSourceException
+	
+	protected double getElevation(double latitude, double longitude, boolean scaled) throws DataSourceException
+	{
+		double elevation = _getElevation(latitude, longitude);
+		
+		if (scaled && elevation != DemConstants.ELEV_NO_DATA) {
+			elevation = elevationScaler.scale(elevation, minimumElevation, maximumElevation);
+		} 
+		
+		return elevation;
+		
+	}
+	
+	protected double _getElevation(double latitude, double longitude) throws DataSourceException
 	{
 		
 		double elevation = elevationMap.get(latitude, longitude, DemConstants.ELEV_NO_DATA);

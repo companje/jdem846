@@ -52,6 +52,8 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.BasicRenderEngine;
 import us.wthr.jdem846.render.CanvasProjection;
 import us.wthr.jdem846.render.CanvasRectangleFill;
+import us.wthr.jdem846.render.ElevationMinMax;
+import us.wthr.jdem846.render.ElevationMinMaxCalculator;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.MatrixBuffer;
 import us.wthr.jdem846.render.ModelCanvas;
@@ -61,6 +63,8 @@ import us.wthr.jdem846.render.RenderPipeline;
 import us.wthr.jdem846.render.ShadowBuffer;
 import us.wthr.jdem846.render.TriangleStripFill;
 import us.wthr.jdem846.render.gfx.Vector;
+import us.wthr.jdem846.render.scaling.ElevationScaler;
+import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
@@ -109,10 +113,12 @@ public class TileRenderer extends InterruptibleProcess
 	private boolean rayTraceShadows;
 	private double shadowIntensity;
 	private boolean doubleBuffered;
+	
+	
 	private double elevationMultiple;
 	private double minimumElevation;
 	private double maximumElevation;
-	
+	private ElevationScaler elevationScaler;
 	
 	private MapPoint point = new MapPoint();
 	private Perspectives perspectives = new Perspectives();
@@ -197,7 +203,7 @@ public class TileRenderer extends InterruptibleProcess
 		//rowRenderer = new RowRenderer(modelContext, modelColoring, modelCanvas);
 	}
 	
-	public void prepare(double north, double south, double east, double west, boolean resetCache, boolean resetDataRange)
+	public void prepare(double north, double south, double east, double west, boolean resetCache, boolean resetDataRange) throws RenderEngineException
 	{
 		log.info("Preparing tile renderer properties");
 		
@@ -242,17 +248,30 @@ public class TileRenderer extends InterruptibleProcess
 					modelContext.getModelDimensions().getOutputLongitudeResolution());
 		}
 		
+		
 		if (resetDataRange) {
 			try {
-				determineDataRangeLowRes();
+				ElevationMinMaxCalculator minMaxCalc = new ElevationMinMaxCalculator(modelContext);
+				ElevationMinMax minMax = minMaxCalc.calculateMinAndMax();
+				
+				modelContext.getRasterDataContext().setDataMaximumValue(minMax.maximum);
+				modelContext.getRasterDataContext().setDataMinimumValue(minMax.minimum);
+				
+				//determineDataRangeLowRes();
 			} catch (Exception ex) {
 				log.error("Error determining elevation min & max: " + ex.getMessage(), ex);
 			}
 		}
 		
+		
 		minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
 		maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
 		
+		try {
+			elevationScaler = ElevationScalerFactory.createElevationScaler(modelContext.getModelOptions().getElevationScaler());
+		} catch (Exception ex) {
+			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
+		}
 		
 		LightingContext lightingContext = modelContext.getLightingContext();
 		lightSourceType = lightingContext.getLightSourceSpecifyType();
@@ -338,7 +357,7 @@ public class TileRenderer extends InterruptibleProcess
 					modelContext,
 					new RasterDataFetchHandler() {
 						public double getRasterData(double latitude, double longitude) throws Exception {
-							return _getRasterData(latitude, longitude);
+							return getElevation(latitude, longitude, true, true);
 						}
 			});
 		} else {
@@ -582,7 +601,7 @@ public class TileRenderer extends InterruptibleProcess
 		double nLon = longitude;
 		
 		
-		double midElev = getRasterData(latitude, longitude);
+		double midElev = getElevation(latitude, longitude, true, true);
 		
 		
 		
@@ -601,10 +620,10 @@ public class TileRenderer extends InterruptibleProcess
 		if (lightingEnabled) {
 			
 			
-			double eElev = getRasterData(eLat, eLon);
-			double sElev = getRasterData(sLat, sLon);
-			double wElev = getRasterData(wLat, wLon);
-			double nElev = getRasterData(nLat, nLon);
+			double eElev = getElevation(eLat, eLon, true, true);
+			double sElev = getElevation(sLat, sLon, true, true);
+			double wElev = getElevation(wLat, wLon, true, true);
+			double nElev = getElevation(nLat, nLon, true, true);
 			
 			
 			if (eElev == DemConstants.ELEV_NO_DATA)
@@ -888,18 +907,28 @@ public class TileRenderer extends InterruptibleProcess
 		return data;
 	}
 	
-	protected double _getRasterData(double latitude, double longitude) throws DataSourceException, RenderEngineException
-	{
-		
-		return getRasterData(latitude, longitude);
-	}
+
 	
+	/*
 	protected double getRasterData(double latitude, double longitude) throws DataSourceException, RenderEngineException
 	{
-		return getRasterData(latitude, longitude, true);
+		return _getRasterData(latitude, longitude, true);
+	}
+	*/
+	
+	protected double getElevation(double latitude, double longitude, boolean cache, boolean scaled) throws DataSourceException, RenderEngineException
+	{
+		double elevation = _getElevation(latitude, longitude, cache);
+		
+		if (scaled && elevation != DemConstants.ELEV_NO_DATA) {
+			elevation = elevationScaler.scale(elevation, minimumElevation, maximumElevation);
+		} 
+		
+		return elevation;
+		
 	}
 	
-	protected double getRasterData(double latitude, double longitude, boolean cache) throws DataSourceException, RenderEngineException
+	protected double _getElevation(double latitude, double longitude, boolean cache) throws DataSourceException, RenderEngineException
 	{
 		
 		//ModelPoint modelPoint = getModelPoint(latitude, longitude);
@@ -987,6 +1016,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 	}
 	
+	/*
 	public void determineDataRangeLowRes() throws DataSourceException, RenderEngineException
 	{
 		log.info("Redetermining elevation minimum & maximum...");
@@ -1030,6 +1060,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		
 	}
+	*/
 	
 	protected void copyRgba(int[] rgba0, int[] rgba1)
 	{
