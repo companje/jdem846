@@ -58,6 +58,7 @@ import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Slider;
 import us.wthr.jdem846.ui.panels.RoundedPanel;
+import us.wthr.jdem846.util.ColorSerializationUtil;
 
 @SuppressWarnings("serial")
 public class ModelVisualizationPanel extends Panel
@@ -334,7 +335,7 @@ public class ModelVisualizationPanel extends Panel
 	
 	protected void setWorkingCopyOptions()
 	{
-		modelContextWorkingCopy.getModelOptions().setBackgroundColor("0;0;0;0");
+		//modelContextWorkingCopy.getModelOptions().setBackgroundColor("0;0;0;0");
 		//modelContextWorkingCopy.getModelOptions().setColoringType("hypsometric-tint");
 		modelContextWorkingCopy.getModelOptions().setAntialiased(false);
 		modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
@@ -585,6 +586,7 @@ public class ModelVisualizationPanel extends Panel
 		renderer.render();
 		
 		ModelCanvas modelCanvas = modelContextWorkingCopy.getModelCanvas();
+		pnlModelDisplay.backgroundColor = ColorSerializationUtil.stringToColor(modelContextWorkingCopy.getModelOptions().getBackgroundColor());
 		pnlModelDisplay.modelVisualizationImage = modelCanvas.getImage();
 
 	}
@@ -620,17 +622,21 @@ public class ModelVisualizationPanel extends Panel
 	private class ModelDisplayPanel extends RoundedPanel
 	{
 		public Image modelVisualizationImage = null;
+		public Color backgroundColor = Color.WHITE;
 		
 		public ModelDisplayPanel()
 		{
 			this.setOpaque(false);
-			setBackground(Color.WHITE);
+			
 		}
 		
 		@Override
 		public void paint(Graphics g)
 		{
 			Graphics2D g2d = (Graphics2D) g;
+			
+			setBackground(backgroundColor);
+			
 			super.paint(g2d);
 			
 			
