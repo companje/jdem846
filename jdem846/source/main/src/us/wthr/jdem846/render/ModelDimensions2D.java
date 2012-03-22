@@ -108,6 +108,8 @@ public class ModelDimensions2D
 		}
 		
 		
+		//double scale = modelContext.getModelOptions().getProjection().getZoom();
+		
 		dataRows = (int) MathExt.round((north - south) / latitudeResolution);
 		dataColumns = (int) MathExt.round((east - west) / longitudeResolution);
 		

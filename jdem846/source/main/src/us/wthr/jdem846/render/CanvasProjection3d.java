@@ -60,9 +60,13 @@ public class CanvasProjection3d extends CanvasProjection
 		cameraVector[0] = 0; cameraVector[1] = 0;
 		eyeVector[0] = 0; eyeVector[1] = 0;
 		
+		double minSideLength = MathExt.min(getWidth(), getHeight()) - 20;
 		
-		cameraVector[2] = getWidth();			// Camera position
-		eyeVector[2] = (getWidth()/2.0f);	// Viewer's position relative to the display surface
+		//cameraVector[2] = getWidth();			// Camera position
+		//eyeVector[2] = (getWidth()/2.0f);	// Viewer's position relative to the display surface
+		
+		cameraVector[2] = minSideLength;			// Camera position
+		eyeVector[2] = (minSideLength/2.0f);	// Viewer's position relative to the display surface
 		
 		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		rotateX = modelContext.getModelOptions().getProjection().getRotateX();

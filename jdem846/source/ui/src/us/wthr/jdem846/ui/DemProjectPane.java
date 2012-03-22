@@ -1320,6 +1320,9 @@ public class DemProjectPane extends JdemPanel implements Savable
 			ProjectFiles.write(projectModel, saveTo);
 			
 			setSavedPath(saveTo);
+			
+			RecentProjectTracker.addProject(saveTo);
+			
 			log.info("Project file saved to " + saveTo);
 			//File file = new File(saveTo);
 			//setComponentTabTitle(tabPane.getSelectedIndex(), file.getName());
