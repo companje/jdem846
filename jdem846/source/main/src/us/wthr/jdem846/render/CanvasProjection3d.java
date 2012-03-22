@@ -118,12 +118,22 @@ public class CanvasProjection3d extends CanvasProjection
 		pointVector[1] = elev;
 		pointVector[2] = point.row - (getHeight() / 2.0);
 		
-		
+		/*
 		Vector.scale(1.0, elevationMultiple, 1.0, pointVector);
 		Vector.rotate(0, rotateY, 0, pointVector);
 		Vector.rotate(rotateX, 0, 0, pointVector);
 		Vector.translate(shiftX, shiftY, shiftZ, pointVector);
 		Vector.scale(scaleX, scaleY , scaleZ, pointVector);
+		*/
+		
+		
+		
+		Vector.scale(1.0, elevationMultiple, 1.0, pointVector);
+		Vector.rotate(0, rotateY, 0, pointVector);
+		Vector.rotate(rotateX, 0, 0, pointVector);
+		Vector.translate(shiftX, shiftY, 0.0, pointVector);
+		Vector.scale(scaleX, scaleY, scaleZ, pointVector);
+		
 		
 		projectTo(pointVector);
 		
