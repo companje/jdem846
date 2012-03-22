@@ -342,7 +342,7 @@ public class ModelVisualizationPanel extends Panel
 		modelContextWorkingCopy.getModelOptions().setAntialiased(false);
 		modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
 		modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
-		modelContextWorkingCopy.getModelOptions().setElevationMultiple(1.0);
+		//modelContextWorkingCopy.getModelOptions().setElevationMultiple(1.0);
 		modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA, false);
 
 		//modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.STANDARD_RESOLUTION_RETRIEVAL, JDem846Properties.getProperty("us.wthr.jdem846.ui.modelVisualizationPanel.data.standardResolutionRetrieval"));
