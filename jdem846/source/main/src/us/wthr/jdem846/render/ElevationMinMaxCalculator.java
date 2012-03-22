@@ -41,7 +41,8 @@ public class ElevationMinMaxCalculator
 	
 	public ElevationMinMax calculateMinAndMax() throws DataSourceException
 	{
-
+		log.info("Calculating elevation min/max");
+		
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
 		
