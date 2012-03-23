@@ -32,6 +32,7 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Line;
@@ -195,14 +196,6 @@ public class ModelVisualizationPanel extends Panel
 			}
 			public void componentResized(ComponentEvent arg0)
 			{
-				if (renderer != null) {
-					try {
-						renderer.prepare(true, false);
-					} catch (RenderEngineException ex) {
-						log.warn("Error preparing renderer: " + ex.getMessage(), ex);
-						// TODO Display error message
-					}
-				}
 				update(false, false);
 			}
 			public void componentShown(ComponentEvent arg0)
@@ -368,7 +361,12 @@ public class ModelVisualizationPanel extends Panel
 		
 		
 		
-		modelContextWorkingCopy.updateContext();
+		try {
+			modelContextWorkingCopy.updateContext();
+		} catch (ModelContextException ex) {
+			// TODO Display error message dialog
+			log.error("Exception updating model context: " + ex.getMessage(), ex);
+		}
 	}
 	
 	protected void onMouseWheelMoved(MouseWheelEvent e)
@@ -447,12 +445,12 @@ public class ModelVisualizationPanel extends Panel
 		update(false, false);
 	}
 	
-	public void update(boolean dataModelChange, boolean updateFromActual)
+	public void update(boolean dataModelChange, boolean optionsChanged)
 	{
-		update(dataModelChange, updateFromActual, false);
+		update(dataModelChange, optionsChanged, false);
 	}
 	
-	public void update(boolean dataModelChange, boolean updateFromActual, boolean force)
+	public void update(boolean dataModelChange, boolean optionsChanged, boolean force)
 	{
 		if (ignoreUpdate) {
 			return;
@@ -462,7 +460,7 @@ public class ModelVisualizationPanel extends Panel
 			return;
 		}
 
-		if (updateFromActual) {
+		if (optionsChanged) {
 			log.info("Model visualization: update working context from actual");
 			
 			if (modelContextWorkingCopy != null) {
@@ -524,7 +522,7 @@ public class ModelVisualizationPanel extends Panel
 
 		
 		
-		renderModelVisualizationImage(dataModelChange || updateFromActual, dataModelChange || updateFromActual);
+		renderModelVisualizationImage(dataModelChange);
 		
 		repaint();
 		
@@ -534,8 +532,10 @@ public class ModelVisualizationPanel extends Panel
 	}
 	
 	
-	public void renderModelVisualizationImage(boolean resetCache, boolean resetDataRange)
+	public void renderModelVisualizationImage(boolean dataModelChange)
 	{
+		boolean resetCache = dataModelChange;
+		boolean resetDataRange = dataModelChange;
 		
 		if (getWidth() <= 20 || getHeight() <= 20) {
 			
@@ -586,11 +586,17 @@ public class ModelVisualizationPanel extends Panel
 				modelContextWorkingCopy.setWestLimit(optWestLimit);
 		}
 		
-		modelContextWorkingCopy.updateContext();
+		try {
+			modelContextWorkingCopy.updateContext();
+		} catch (ModelContextException ex) {
+			// TODO Display error message dialog
+			log.error("Exception updating model context: " + ex.getMessage(), ex);
+		}
+		
 		modelContextWorkingCopy.resetModelCanvas();
 		//
 		try {
-			renderer.prepare(resetCache, resetDataRange);
+			renderer.prepare(resetCache);
 		} catch (RenderEngineException ex) {
 			log.warn("Error preparing renderer: " + ex.getMessage(), ex);
 			// TODO Display error message

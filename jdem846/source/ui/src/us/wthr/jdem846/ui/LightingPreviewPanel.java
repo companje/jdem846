@@ -178,15 +178,19 @@ public class LightingPreviewPanel extends Panel
 			rasterDataContext.addRasterData(rasterData);
 			rasterDataContext.prepare();
 			rasterDataContext.fillBuffers();
+			
+			/*
 			rasterDataContext.calculateElevationMinMax(true);
-			
+			// TODO: Replace
+			 * 
+			 */
 			modelContext = ModelContext.createInstance(rasterDataContext, lightingContext, modelOptions);
-			
+			modelContext.updateContext(true);
 			//dem2d = new Dem2dGenerator(modelContext);
 			
 			
 			renderer = new SimpleRenderer(modelContext);
-			renderer.prepare(true, false);
+			renderer.prepare(true);
 			
 		} catch (Exception e1) {
 			
@@ -250,7 +254,7 @@ public class LightingPreviewPanel extends Panel
 				log.info("****************************************");
 				modelContext.resetModelCanvas();
 				
-				renderer.prepare(false, false);
+				renderer.prepare(false);
 				renderer.render();
 				
 				prerendered = (BufferedImage) modelContext.getModelCanvas().getFinalizedImage(false);

@@ -26,6 +26,9 @@ public class RayTracing
 	private double eastLimit;
 	private double westLimit;
 	
+	private double elevationMultiple;
+	private double minDataValue;
+	private double maxDataValueTrue;
 	private double maxDataValue;
 	
 	private double[] points;
@@ -42,7 +45,9 @@ public class RayTracing
 				modelContext.getSouth(),
 				modelContext.getEast(),
 				modelContext.getWest(),
+				modelContext.getRasterDataContext().getDataMinimumValue(),
 				modelContext.getRasterDataContext().getDataMaximumValue(),
+				modelContext.getModelOptions().getElevationMultiple(),
 				rasterDataFetchHandler
 				);
 		}
@@ -55,7 +60,9 @@ public class RayTracing
 					double southLimit,
 					double eastLimit,
 					double westLimit,
+					double minDataValue,
 					double maxDataValue,
+					double elevationMultiple,
 					RasterDataFetchHandler rasterDataFetchHandler)
 	{
 		this.rasterDataFetchHandler = rasterDataFetchHandler;
@@ -66,7 +73,11 @@ public class RayTracing
 		this.southLimit = southLimit;
 		this.eastLimit = eastLimit;
 		this.westLimit = westLimit;
-		this.maxDataValue = maxDataValue;
+		this.elevationMultiple = elevationMultiple;
+		this.minDataValue = minDataValue;
+		this.maxDataValueTrue = maxDataValue;
+		this.maxDataValue = maxDataValue * elevationMultiple;
+		
 		this.points = new double[3];
 		
 		radiusInterval = MathExt.sqrt(MathExt.sqr(latitudeResolution) + MathExt.sqr(longitudeResolution));
@@ -116,7 +127,9 @@ public class RayTracing
 			
 			// Calculate the elevation of the path at the current radius.
 			double resolution = (points[1] / radiusInterval);
-			double rayElevation = centerElevation + (resolution * metersResolution);
+			double _rayElevation = centerElevation + (resolution * metersResolution);
+			double rayElevation = _rayElevation;//getElevationMultiplied(_rayElevation);
+			
 			
 			// Fetch the elevation value
 			double pointElevation = 0;
@@ -125,6 +138,7 @@ public class RayTracing
 			} catch (Exception ex) {
 				throw new RayTracingException("Failed to get elevation for point: " + ex.getMessage(), ex);
 			}
+			//pointElevation = getElevationMultiplied(pointElevation);
 			
 			// Increment for the next pass radius
 			radius += radiusInterval;
@@ -156,6 +170,15 @@ public class RayTracing
 		
 	}
 	
+	
+	protected double getElevationMultiplied(double elevation)
+	{
+
+		double ratio = (elevation - minDataValue) / (maxDataValueTrue - minDataValue);
+		elevation = minDataValue + (maxDataValue - minDataValue) * ratio;
+		
+		return elevation;
+	}
 	
 	public double getMaxDataValue()
 	{

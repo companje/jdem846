@@ -72,12 +72,15 @@ public class NewRender2DProcessTesting
 		//modelOptions.setHeight((int)dataPackage.getRows());
 		//modelOptions.setWidth((int)dataPackage.getColumns());
 		
+		/*
 		try {
 			rasterDataContext.calculateElevationMinMax(true);
+			// TODO: Replace
 		} catch (Exception ex) {
 			log.error("Failed to calculate elevation min/max: " + ex.getMessage(), ex);
 			return;
 		} 
+		*/
 		
 		
 		ModelContext modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);

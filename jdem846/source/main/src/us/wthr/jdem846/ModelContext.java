@@ -20,6 +20,7 @@ import java.util.UUID;
 
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.ScriptCompilationFailedException;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
@@ -31,6 +32,9 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.render.CancelIndicator;
+import us.wthr.jdem846.render.ElevationMinMax;
+import us.wthr.jdem846.render.ElevationMinMaxCalculator;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.gis.projections.MapProjection;
@@ -83,8 +87,18 @@ public class ModelContext
 		this.contextId = contextId;
 	}
 
+	public void updateContext() throws ModelContextException
+	{
+		updateContext(false, null);
+	}
 	
-	public void updateContext()
+	
+	public void updateContext(boolean updateDataMinMax) throws ModelContextException
+	{
+		updateContext(updateDataMinMax, null);
+	}
+	
+	public void updateContext(boolean updateDataMinMax, CancelIndicator cancelIndicator) throws ModelContextException
 	{
 		modelDimensions = ModelDimensions2D.getModelDimensions(this);
 		
@@ -96,6 +110,19 @@ public class ModelContext
 			log.error("Failed to create map projection: " + ex.getMessage(), ex);
 		}
 		
+		if (updateDataMinMax) {
+			try {
+				
+				ElevationMinMaxCalculator minMaxCalc = new ElevationMinMaxCalculator(this, cancelIndicator);
+				ElevationMinMax minMax = minMaxCalc.calculateMinAndMax();
+				
+				getRasterDataContext().setDataMaximumValue(minMax.maximum);
+				getRasterDataContext().setDataMinimumValue(minMax.minimum);
+				
+			} catch (DataSourceException ex) {
+				log.error("Error determining elevation min & max: " + ex.getMessage(), ex);
+			}
+		}
 		
 	}
 	
@@ -329,7 +356,17 @@ public class ModelContext
 		}
 		
 		
-		ModelContext clone = ModelContext.createInstance(rasterDataCopy, shapeDataCopy, imageDataCopy, lightingContextCopy, modelOptionsCopy, scriptProxyCopy);
+		ModelContext clone = null;
+		
+		
+		try {
+			clone = ModelContext.createInstance(rasterDataCopy, shapeDataCopy, imageDataCopy, lightingContextCopy, modelOptionsCopy, scriptProxyCopy);
+		} catch (ModelContextException ex) {
+			throw new DataSourceException("Error creating model context: " + ex.getMessage(), ex);
+		}
+		
+		
+		
 		clone.northLimit = this.northLimit;
 		clone.southLimit = this.southLimit;
 		clone.eastLimit = this.eastLimit;
@@ -345,32 +382,32 @@ public class ModelContext
 	
 
 	
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ModelOptions modelOptions)
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ModelOptions modelOptions) throws ModelContextException
 	{
 		return ModelContext.createInstance(rasterDataContext, null, null, null, modelOptions, null);
 	}
 	
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions)
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions) throws ModelContextException
 	{
 		return ModelContext.createInstance(rasterDataContext, null, null, lightingContext, modelOptions, null);
 	}
 	
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy)
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy) throws ModelContextException
 	{
 		return ModelContext.createInstance(rasterDataContext, null, null, lightingContext, modelOptions, scriptProxy);
 	}
 	
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions)
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions) throws ModelContextException
 	{
 		return ModelContext.createInstance(rasterDataContext, shapeDataContext, null, null, modelOptions, null);
 	}
 	
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, LightingContext lightingContext, ModelOptions modelOptions)
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, LightingContext lightingContext, ModelOptions modelOptions) throws ModelContextException
 	{
 		return ModelContext.createInstance(rasterDataContext, shapeDataContext, null, lightingContext, modelOptions, null);
 	}
 	
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy)
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy) throws ModelContextException
 	{
 		String contextId = ModelContext.generateContextId();
 		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions, scriptProxy, contextId);
@@ -392,7 +429,7 @@ public class ModelContext
 			ShapeDataContext shapeDataContext,
 			ImageDataContext imageDataContext,
 			LightingContext lightingContext, 
-			ModelOptions modelOptions)
+			ModelOptions modelOptions) throws ModelContextException
 	{
 		return createInstance(rasterDataContext, 
 								shapeDataContext, 

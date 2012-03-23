@@ -36,6 +36,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
@@ -249,7 +250,12 @@ public class ModelPreviewPane extends RoundedPanel
 			modelContext.getRasterDataContext().setDataMinimumValue(-10971);
 		}
 		
-		modelContext.updateContext();
+		try {
+			modelContext.updateContext();
+		} catch (ModelContextException ex) {
+			// TODO Display error message
+			log.error("Exception updating model context: " + ex.getMessage(), ex);
+		}
 		ModelCanvas canvas = modelContext.getModelCanvas(true);
 		
 		if (useSimpleRasterPreview && rasterPreviewEnabled) {// && renderShapes) {
@@ -314,7 +320,16 @@ public class ModelPreviewPane extends RoundedPanel
 		modelContext.getModelOptions().setAntialiased(true);
 		modelContext.getModelOptions().setWidth(1000);
 		modelContext.getModelOptions().setHeight(1000);
-		modelContext.updateContext();
+		
+		try {
+			modelContext.updateContext();
+		} catch (ModelContextException ex) {
+			// TODO Display error message dialog
+			log.error("Exception updating model context: " + ex.getMessage(), ex);
+		}
+		
+		
+		
 		ModelCanvas canvas = modelContext.getModelCanvas(true);
 		
 		//ModelCanvas canvas = modelContext.createModelCanvas();

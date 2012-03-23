@@ -119,10 +119,12 @@ public class ParallelRenderTestMain extends AbstractTestMain
 		//modelOptions.setOption("us.wthr.jdem846.modelOptions.latitudeSlices", modelOptions.getHeight());//dataProxy.getDataRows());
 		//modelOptions.setOption("us.wthr.jdem846.modelOptions.longitudeSlices", modelOptions.getWidth());//dataProxy.getDataColumns());
 		
-		
+		/*
 		dataProxy.calculateElevationMinMax(true);
+		// TODO: Replace
 		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
 		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
+		*/
 		//dataProxy.fillBuffers();
 		
 		//lightingContext.setRelativeLightIntensity(1.0);

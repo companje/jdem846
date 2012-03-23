@@ -96,10 +96,14 @@ public class RayTracedShadowTestMain extends AbstractTestMain
 			dataProxy.addRasterData(rasterData);
 			
 		}
+		
+		/*
 		dataProxy.calculateElevationMinMax(true);
+		// TODO: Replace
 		dataProxy.fillBuffers();
 		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
 		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
+		*/
 		
 		LightingContext lightingContext = new LightingContext();
 		lightingContext.setRayTraceShadows(true);

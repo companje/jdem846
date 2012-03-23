@@ -23,10 +23,22 @@ public class ElevationMinMaxCalculator
 	private boolean interpolateData = true;
 	private boolean averageOverlappedData = true;
 	
+	private CancelIndicator cancelIndicator;
 	
 	public ElevationMinMaxCalculator(ModelContext modelContext)
 	{
+		this(modelContext, null);
+	}
+	
+	public ElevationMinMaxCalculator(ModelContext modelContext, CancelIndicator cancelIndicator)
+	{
 		this.modelContext = modelContext;
+		
+		if (cancelIndicator != null) {
+			this.cancelIndicator = cancelIndicator;
+		} else {
+			this.cancelIndicator = new CancelIndicator();
+		}
 		
 		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
 		longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
@@ -43,6 +55,8 @@ public class ElevationMinMaxCalculator
 	public ElevationMinMax calculateMinAndMax() throws DataSourceException
 	{
 		log.info("Calculating elevation min/max");
+		
+		
 		
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
@@ -91,25 +105,16 @@ public class ElevationMinMaxCalculator
 						min = MathExt.min(elevation, min);
 						max = MathExt.max(elevation, max);
 					}
-				}
-				
-				
-			}
-			
-			/*
-			for (double lon = west; lon < east - modelContext.getRasterDataContext().getLongitudeResolution(); lon+=longitudeResolution) {
-				for (double lat = north; lat > south + modelContext.getRasterDataContext().getLatitudeResolution(); lat-=latitudeResolution) {
-					double elevation = getElevation(lat, lon);
-
-					if (!Double.isNaN(elevation) && elevation != DemConstants.ELEV_NO_DATA) {
-						min = MathExt.min(elevation, min);
-						max = MathExt.max(elevation, max);
-					}
 					
+					if (cancelIndicator != null && cancelIndicator.isCancelled()) {
+						break;
+					}
 				}
 				
+				if (cancelIndicator != null && cancelIndicator.isCancelled()) {
+					break;
+				}
 			}
-			*/
 			
 			
 			if (tiledPrecaching) {
@@ -131,11 +136,15 @@ public class ElevationMinMaxCalculator
 		
 		ElevationMinMax minMax = new ElevationMinMax(min, max);
 		return minMax;
-		//rasterDataContext.setDataMaximumValue(max);
-		//rasterDataContext.setDataMinimumValue(min);
+
 		
-		
-		
+	}
+	
+	public void cancel()
+	{
+		if (this.cancelIndicator != null) {
+			this.cancelIndicator.cancel(); 
+		}
 	}
 	
 	

@@ -63,11 +63,11 @@ public class DataSetOptionsPanel extends Panel
 				if (currentConfigPanel == null) {
 					return;
 				} else if (currentConfigPanel instanceof ElevationDataSetOptions) {
-					fireModelPreviewUpdateListeners(true, false);
+					fireModelPreviewUpdateListeners(true, false, false);
 				} else if (currentConfigPanel instanceof ShapeDataSetOptions) {
-					fireModelPreviewUpdateListeners(false, true);
+					fireModelPreviewUpdateListeners(false, true, false);
 				} else if (currentConfigPanel instanceof SimpleGeoImageDataSetOptions) {
-					fireModelPreviewUpdateListeners(false, false);
+					fireModelPreviewUpdateListeners(false, false, true);
 				}
 				
 				//fireActionListeners();
@@ -141,10 +141,10 @@ public class DataSetOptionsPanel extends Panel
 	}
 	
 	
-	protected void fireModelPreviewUpdateListeners(boolean updateRasterLayer, boolean updateShapeLayer)
+	protected void fireModelPreviewUpdateListeners(boolean updateRasterLayer, boolean updateShapeLayer, boolean updateImageLayer)
 	{
 		for (ModelPreviewUpdateListener listener : updatePreviewListeners) {
-			listener.updateModelPreview(updateRasterLayer, updateShapeLayer);
+			listener.updateModelPreview(updateRasterLayer, updateShapeLayer, updateImageLayer);
 		}
 	}
 	

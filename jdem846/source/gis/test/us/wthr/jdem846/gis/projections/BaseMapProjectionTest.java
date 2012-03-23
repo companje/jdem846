@@ -10,6 +10,7 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.ImageException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
@@ -81,7 +82,14 @@ public class BaseMapProjectionTest extends TestCase
 		modelOptions.setAntialiased(false);
 		//modelOptions.setUseSimpleCanvasFill(false);
 		RasterDataContext rasterDataContext = new RasterDataContext();
-		ModelContext modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
+		ModelContext modelContext = null;
+		
+		try {
+			modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		ModelCanvas modelCanvas = modelContext.getModelCanvas(true);
 		
