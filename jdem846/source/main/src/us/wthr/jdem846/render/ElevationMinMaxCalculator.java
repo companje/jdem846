@@ -4,6 +4,7 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -46,17 +47,56 @@ public class ElevationMinMaxCalculator
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
 		
-
-		if (modelContext.getRasterDataContext().getRasterDataListSize() > 0) {
+		double north = modelContext.getNorth();
+		double south = modelContext.getSouth();
+		double east = modelContext.getEast();
+		double west = modelContext.getWest();
 		
-			double north = modelContext.getNorth();
-			double south = modelContext.getSouth();
-			double east = modelContext.getEast();
-			double west = modelContext.getWest();
+		
+		boolean tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);;
+		double tileHeight = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
+		
+		double cacheHeight = modelContext.getRasterDataContext().getLatitudeResolution() * tileHeight;
+		double nextCachePoint = north;
+		
+		double maxLon = east + longitudeResolution;
+		double minLat = south - latitudeResolution;
+		
+		if (modelContext.getRasterDataContext().getRasterDataListSize() > 0) {
+
 			
+			for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
+				
+				double nwLat = lat;
+				double swLat = lat - latitudeResolution;
+				
+				if (lat <= nextCachePoint && tiledPrecaching) {
+					
+					double southCache = lat - cacheHeight - latitudeResolution;
+					try {
+						unloadDataBuffers();
+						loadDataBuffers(nwLat, southCache, east, west);
+					} catch (RenderEngineException ex) {
+						throw new DataSourceException("Error loading data buffer: " + ex.getMessage(), ex);
+					}
+					
+					nextCachePoint = lat - cacheHeight;
+				}
+				
+				
+				for (double lon = west; lon <= maxLon; lon+=longitudeResolution) {
+					double elevation = getElevation(lat, lon);
+
+					if (!Double.isNaN(elevation) && elevation != DemConstants.ELEV_NO_DATA) {
+						min = MathExt.min(elevation, min);
+						max = MathExt.max(elevation, max);
+					}
+				}
+				
+				
+			}
 			
-			
-			
+			/*
 			for (double lon = west; lon < east - modelContext.getRasterDataContext().getLongitudeResolution(); lon+=longitudeResolution) {
 				for (double lat = north; lat > south + modelContext.getRasterDataContext().getLatitudeResolution(); lat-=latitudeResolution) {
 					double elevation = getElevation(lat, lon);
@@ -69,6 +109,17 @@ public class ElevationMinMaxCalculator
 				}
 				
 			}
+			*/
+			
+			
+			if (tiledPrecaching) {
+				try {
+					unloadDataBuffers();
+				} catch (RenderEngineException ex) {
+					throw new DataSourceException("Error unloading data buffer: " + ex.getMessage(), ex);
+				}
+			}
+			
 		} else {
 			max = 0;
 			min = 0;
@@ -88,6 +139,32 @@ public class ElevationMinMaxCalculator
 	}
 	
 	
+	protected void loadDataBuffers(double north, double south, double east, double west) throws RenderEngineException
+	{
+		
+		RasterDataContext dataContext = modelContext.getRasterDataContext();
+		
+		//if (tiledPrecaching) {
+			try {
+				dataContext.fillBuffers(north, south, east, west);
+			} catch (Exception ex) {
+				throw new RenderEngineException("Failed to buffer data: " + ex.getMessage(), ex);
+			}
+		//}
+	}
+	
+	
+	protected void unloadDataBuffers() throws RenderEngineException
+	{
+		RasterDataContext dataContext =  modelContext.getRasterDataContext();
+		//if (tiledPrecaching) {
+			try {
+				dataContext.clearBuffers();
+			} catch (Exception ex) {
+				throw new RenderEngineException("Failed to clear buffer data: " + ex.getMessage(), ex);
+			}
+		//}
+	}
 	
 	protected double getElevation(double latitude, double longitude) throws DataSourceException
 	{
