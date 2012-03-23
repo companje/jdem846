@@ -110,10 +110,10 @@ public class CanvasProjection3d extends CanvasProjection
 
 		
 		double maxMultiplied = max * elevationMultiple;
-		double ratio = (elevation - min) / (max - min);
+		//double ratio = (elevation - min) / (max - min);
 		
 		
-		double elev = elevation = min + (maxMultiplied - min) * ratio;
+		double elev = elevation;// = min + (maxMultiplied - min) * ratio;
 		elev -= ((maxMultiplied + min) / 2.0);
 		elev = (elev / resolution);
 

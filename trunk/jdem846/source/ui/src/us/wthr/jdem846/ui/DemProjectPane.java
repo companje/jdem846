@@ -53,6 +53,7 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.InvalidFileFormatException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.image.SimpleGeoImage;
@@ -139,6 +140,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	
 	private int lastRasterDataCount = 0;
 	private int lastShapeDataCount = 0;
+	private int lastImageDataCount = 0;
 	
 	public DemProjectPane()
 	{
@@ -163,7 +165,12 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		
 		
-		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions);
+		try {
+			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions);
+		} catch (ModelContextException ex) {
+			// TODO: Display error message dialog
+			log.error("Exception creating model context: " + ex.getMessage(), ex);
+		}
 		
 		//this.projectModel = projectModel;
 		
@@ -312,14 +319,14 @@ public class DemProjectPane extends JdemPanel implements Savable
 		datasetOptionsPanel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				onDataModelChanged(false, false);
+				onDataModelChanged(false, false, false, true);
 			}
 		});
 		datasetOptionsPanel.addModelPreviewUpdateListener(new ModelPreviewUpdateListener() {
-			public void updateModelPreview(boolean updateRasterLayer, boolean updateShapeLayer)
+			public void updateModelPreview(boolean updateRasterLayer, boolean updateShapeLayer, boolean updateImageLayer)
 			{
 				log.info("Dataset preview update requested.");
-				onDataModelChanged(updateRasterLayer, updateShapeLayer);
+				onDataModelChanged(updateRasterLayer, updateShapeLayer, updateImageLayer, true);
 			}
 		});
 		
@@ -399,7 +406,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 				applyOptionsToUI();
 				//applyEngineSelectionConfiguration();
 				
-				onDataModelChanged(true, true);
+				onDataModelChanged(false, false, false, true);
 				
 			}
 		});
@@ -494,7 +501,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		//onConfigurationChanged();
 		applyOptionsToUI();
 		applyEngineSelectionConfiguration();
-		onDataModelChanged(true, true);
+		onDataModelChanged(true, true, true, true);
 	}
 	
 	
@@ -719,7 +726,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		applyOptionsToUI();
 		applyEngineSelectionConfiguration();
 		
-		onDataModelChanged(true, true);
+		onDataModelChanged(false, false, false, true);
 	}
 
 	
@@ -947,10 +954,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 	
 	public void onDataModelChanged()
 	{
-		onDataModelChanged(false, false);
+		onDataModelChanged(false, false, false, false);
 	}
 	
-	public void onDataModelChanged(boolean forceRasterUpdate, boolean forceShapeUpdate)
+	public void onDataModelChanged(boolean forceRasterUpdate, boolean forceShapeUpdate, boolean forceImageUpdate, boolean optionsChanged)
 	{
 		
 		if (rasterDataContext.getRasterDataListSize() + shapeDataContext.getShapeFiles().size() > 0) {
@@ -978,19 +985,28 @@ public class DemProjectPane extends JdemPanel implements Savable
 			log.warn("Failed to prepare raster data proxy: " + ex.getMessage(), ex);
 		}
 		
+		/*
 		try {
 			rasterDataContext.calculateElevationMinMax(false);
+			// TODO: Replace
 		} catch (DataSourceException ex) {
 			log.warn("Failed to calculate elevation min/max: " + ex.getMessage(), ex);
 		}
+		*/
 		//layoutPane.update();
 		
 		boolean updateRaster = forceRasterUpdate || lastRasterDataCount != rasterDataContext.getRasterDataListSize();
 		boolean updateShape = forceShapeUpdate || lastShapeDataCount != shapeDataContext.getShapeFiles().size();
+		boolean updateImage = forceImageUpdate || lastImageDataCount != imageDataContext.getImageListSize();
 		
-		modelContext.updateContext();
+		try {
+			modelContext.updateContext(updateRaster);
+		} catch (ModelContextException ex) {
+			// TODO: Display error dialog
+			log.warn("Exception updating model context: " + ex.getMessage(), ex);
+		}
 		
-		updatePreviewPane(updateRaster, updateShape);
+		updatePreviewPane(updateRaster, updateShape, updateImage, optionsChanged);
 		//previewPanel.update();
 		
 		
@@ -1015,10 +1031,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 	}
 	
 	
-	protected void updatePreviewPane(boolean updateRaster, boolean updateShape)
+	protected void updatePreviewPane(boolean updateRaster, boolean updateShape, boolean updateImage, boolean optionsChanged)
 	{
 		//previewPane.update(updateRaster, updateShape);
-		visualizationPanel.update(updateRaster, true);
+		visualizationPanel.update(updateRaster || updateShape || updateImage, optionsChanged);
 	}
 	
 	
@@ -1250,7 +1266,14 @@ public class DemProjectPane extends JdemPanel implements Savable
 			return;
 		}
 		
-		modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions, scriptProxy);
+		try {
+			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions, scriptProxy);
+		} catch (ModelContextException ex) {
+			// TODO: Display error dialog
+			log.error("Exception updating model context: " + ex.getMessage(), ex);
+		}
+		
+		
 		fireCreateModelListeners(modelContext);
 	}
 	

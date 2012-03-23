@@ -12,6 +12,7 @@ import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.CanvasException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.gis.CardinalDirectionEnum;
 import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
@@ -120,7 +121,14 @@ public class SolarUtilTest extends AbstractTestCase
 		modelOptions.setAntialiased(false);
 		//modelOptions.setUseSimpleCanvasFill(false);
 		RasterDataContext rasterDataContext = new RasterDataContext();
-		ModelContext modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
+		ModelContext modelContext = null;
+		
+		try {
+			modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
+		} catch (ModelContextException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
 		
 		
 		ModelCanvas modelCanvas = modelContext.getModelCanvas(true);

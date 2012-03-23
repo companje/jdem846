@@ -49,7 +49,7 @@ public class TileRenderContainer
 			tileRenderer = new TileRenderer(modelContext, pipeline);
 		}
 		
-		tileRenderer.prepare(northLimit, southLimit, eastLimit, westLimit, true, false);
+		tileRenderer.prepare(northLimit, southLimit, eastLimit, westLimit, true);
 		tileRenderer.renderTile();
 
 		tileRenderer = null;

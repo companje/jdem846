@@ -41,6 +41,7 @@ import us.wthr.jdem846.annotations.ServiceRuntime;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.InvalidFileFormatException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.input.DataSourceFactory;
@@ -167,16 +168,26 @@ public class ShapefileTestService extends AbstractLockableService
 		//modelOptions.setHillShadeType(DemConstants.HILLSHADING_DARKEN);
 		modelOptions.setBackgroundColor("Blue");
 		
-		ModelContext modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, modelOptions);
+		ModelContext modelContext = null;
+		
+		try {
+			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, modelOptions);
+		} catch (ModelContextException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
 		
 		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 		
+		/*
 		log.info("Calculating elevation min/max");
 		try {
 			rasterDataContext.calculateElevationMinMax(true);
+			// TODO: Replace
 		} catch (DataSourceException e) {
 			e.printStackTrace();
 		}
+		*/
 		
 		log.info("Generating DEM2D image");
 		OutputProduct<ModelCanvas> output = null;

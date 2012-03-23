@@ -131,13 +131,16 @@ public class KmlTesting
 		}
 		
 		rasterDataContext.prepare();
-
+		
+		/*
 		try {
 			rasterDataContext.calculateElevationMinMax(true);
+			// TODO: Replace
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return;
 		} 
+		*/
 		
 		modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
 		

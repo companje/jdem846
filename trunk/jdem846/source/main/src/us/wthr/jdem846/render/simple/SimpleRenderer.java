@@ -48,6 +48,7 @@ import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.scaling.ElevationScaler;
 import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
+import us.wthr.jdem846.util.ColorSerializationUtil;
 
 public class SimpleRenderer
 {
@@ -74,6 +75,7 @@ public class SimpleRenderer
 	private int colorBufferA[] = new int[4];
 	private int colorBufferB[] = new int[4];
 	private double[] pointNormal = new double[3];
+	private int[] backgroundColor = new int[4];
 	
 	private double longitudeResolution;
 	private double latitudeResolution;
@@ -123,6 +125,7 @@ public class SimpleRenderer
 	
 	private double minimumElevation;
 	private double maximumElevation;
+	private double maximumElevationTrue;
 	
 	private ElevationScaler elevationScaler;
 	
@@ -138,7 +141,7 @@ public class SimpleRenderer
 		this.modelContext = modelContext;
 	}
 	
-	public void prepare(boolean resetCache, boolean resetDataRange) throws RenderEngineException
+	public void prepare(boolean resetCache) throws RenderEngineException
 	{
 		log.info("Resetting simple renderer cache");
 		
@@ -179,23 +182,15 @@ public class SimpleRenderer
 					modelContext.getModelDimensions().getOutputLongitudeResolution());
 		}
 		
-		if (resetDataRange) {
-
-			try {
-				
-				ElevationMinMaxCalculator minMaxCalc = new ElevationMinMaxCalculator(modelContext);
-				ElevationMinMax minMax = minMaxCalc.calculateMinAndMax();
-				
-				modelContext.getRasterDataContext().setDataMaximumValue(minMax.maximum);
-				modelContext.getRasterDataContext().setDataMinimumValue(minMax.minimum);
-				
-			} catch (DataSourceException ex) {
-				log.error("Error determining elevation min & max: " + ex.getMessage(), ex);
-			}
-		}
+		ColorSerializationUtil.stringToColor(modelContext.getModelOptions().getBackgroundColor(), backgroundColor);
+		
+		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		
 		minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
-		maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
+		maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValue();
+		maximumElevation = maximumElevationTrue * elevationMultiple;
+		
+		
 		
 		planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
 		LightingContext lightingContext = modelContext.getLightingContext();
@@ -209,7 +204,7 @@ public class SimpleRenderer
 		 * adds way too much overhead. Should the recalc method be optimized enough,
 		 * perhaps this will again be configurable.
 		 */
-		recalcLightOnEachPoint = true;
+		recalcLightOnEachPoint = false;
 		
 		
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
@@ -274,7 +269,7 @@ public class SimpleRenderer
 		solarAzimuth = modelContext.getLightingContext().getLightingAzimuth();
 		solarElevation = modelContext.getLightingContext().getLightingElevation();
 		
-		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
+		
 		
 		modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
 		projection = modelContext.getModelCanvas().getCanvasProjection();
@@ -510,16 +505,19 @@ public class SimpleRenderer
 		
 		
 			
-		double lastElevN = rasterDataContext.getDataMinimumValue();
-		double lastElevS = rasterDataContext.getDataMinimumValue();	
 		
-		if (lastElevN == DemConstants.ELEV_NO_DATA && lastElevS == DemConstants.ELEV_NO_DATA) {
-			lastElevN = 0;
-			lastElevS = 0;
-		}
 		
-		for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
+		for (double lat = north; lat > minLat; lat-=latitudeResolution) {
 			strip.reset();
+			
+			double lastElevN = minimumElevation;
+			double lastElevS = minimumElevation;	
+			
+			if (lastElevN == DemConstants.ELEV_NO_DATA && lastElevS == DemConstants.ELEV_NO_DATA) {
+				lastElevN = 0;
+				lastElevS = 0;
+			}
+			
 			
 			for (double lon = west; lon <= maxLon; lon+=longitudeResolution) {
 				double nwLat = lat;
@@ -532,11 +530,11 @@ public class SimpleRenderer
 				
 				// NW
 				elev = calculateShadedColor(nwLat, nwLon, rgba);
-				if (elev == DemConstants.ELEV_NO_DATA) {
-					rgba[0] = 255;
-					rgba[1] = 255;
-					rgba[2] = 255;
-					rgba[3] = 255;
+				if (elev == DemConstants.ELEV_NO_DATA || elev < minimumElevation) {
+					rgba[0] = backgroundColor[0];
+					rgba[1] = backgroundColor[1];
+					rgba[2] = backgroundColor[2];
+					rgba[3] = backgroundColor[3];
 					elev = lastElevN;
 				} else {
 					lastElevN = elev;
@@ -545,11 +543,11 @@ public class SimpleRenderer
 				
 				// SW
 				elev = calculateShadedColor(swLat, swLon, rgba);
-				if (elev == DemConstants.ELEV_NO_DATA) {
-					rgba[0] = 255;
-					rgba[1] = 255;
-					rgba[2] = 255;
-					rgba[3] = 255;
+				if (elev == DemConstants.ELEV_NO_DATA || elev < minimumElevation) {
+					rgba[0] = backgroundColor[0];
+					rgba[1] = backgroundColor[1];
+					rgba[2] = backgroundColor[2];
+					rgba[3] = backgroundColor[3];
 					elev = lastElevS;
 				} else {
 					lastElevS = elev;
@@ -866,10 +864,14 @@ public class SimpleRenderer
 	{
 		double elevation = _getElevation(latitude, longitude);
 		
+		double ratio = (elevation - minimumElevation) / (maximumElevationTrue - minimumElevation);
+		elevation = minimumElevation + (maximumElevation - minimumElevation) * ratio;
+		
+		
 		if (scaled && elevation != DemConstants.ELEV_NO_DATA) {
 			elevation = elevationScaler.scale(elevation, minimumElevation, maximumElevation);
 		} 
-		
+
 		return elevation;
 		
 	}

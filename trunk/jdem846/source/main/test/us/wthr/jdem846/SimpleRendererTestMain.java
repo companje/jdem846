@@ -118,9 +118,12 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		modelOptions.setColoringType("hypsometric-tint-global");
 		modelOptions.setElevationMultiple(1.0);
 		
+		/*
+		 * // TODO: Replace
 		dataProxy.calculateElevationMinMax(true);
 		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
 		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
+		*/
 		dataProxy.fillBuffers();
 
 		//dataProxy.setDataMaximumValue(8685.0);
@@ -160,7 +163,7 @@ public class SimpleRendererTestMain extends AbstractTestMain
 		//Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
 		//OutputProduct<ModelCanvas> product = dem2d.generate(false, false);
 		SimpleRenderer renderer = new SimpleRenderer(modelContext);
-		renderer.prepare(true, false);
+		renderer.prepare(true);
 		renderer.render();
 		double endTime = System.currentTimeMillis();
 		

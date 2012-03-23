@@ -110,10 +110,13 @@ public class RasterDataTesting
 			dataProxy.addRasterData(rasterData);
 			
 		}
+		
+		/*
 		dataProxy.calculateElevationMinMax(true);
+		// TODO: Replace
 		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
 		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
-		
+		*/
 		
 		ModelOptions modelOptions = new ModelOptions();
 		

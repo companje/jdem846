@@ -143,6 +143,7 @@ public class RasterDataContext implements DataContext
 		return isDisposed;
 	}
 	
+	/*
 	public void calculateElevationMinMax(boolean full) throws DataSourceException
 	{
 		log.info("Calculating elevation minimums & Maximums");
@@ -182,7 +183,7 @@ public class RasterDataContext implements DataContext
 			dataMaximumValue = DemConstants.ELEV_NO_DATA;
 		}
 	}
-	
+	*/
 
 	public double  getMetersResolution()
 	{

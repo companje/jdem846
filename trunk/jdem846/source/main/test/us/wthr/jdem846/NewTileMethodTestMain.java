@@ -61,9 +61,13 @@ public class NewTileMethodTestMain extends AbstractTestMain
 			
 		}
 		
+		/*
 		dataProxy.calculateElevationMinMax(true);
+		// TODO: Replace
 		log.info("Raster Data Maximum Value: " + dataProxy.getDataMaximumValue());
 		log.info("Raster Data Minimum Value: " + dataProxy.getDataMinimumValue());
+		*
+		*/
 		
 		LightingContext lightingContext = new LightingContext();
 		lightingContext.setLightingEnabled(true);

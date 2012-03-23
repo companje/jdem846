@@ -26,6 +26,7 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.TriangleStrip;
@@ -116,6 +117,7 @@ public class TileRenderer extends InterruptibleProcess
 	
 	
 	private double elevationMultiple;
+	private double maximumElevationTrue;
 	private double minimumElevation;
 	private double maximumElevation;
 	private ElevationScaler elevationScaler;
@@ -203,11 +205,15 @@ public class TileRenderer extends InterruptibleProcess
 		//rowRenderer = new RowRenderer(modelContext, modelColoring, modelCanvas);
 	}
 	
-	public void prepare(double north, double south, double east, double west, boolean resetCache, boolean resetDataRange) throws RenderEngineException
+	public void prepare(double north, double south, double east, double west, boolean resetCache) throws RenderEngineException
 	{
 		log.info("Preparing tile renderer properties");
 		
-		modelContext.updateContext();
+		try {
+			modelContext.updateContext();
+		} catch (ModelContextException ex) {
+			throw new RenderEngineException("Exception updating model context: " + ex.getMessage(), ex);
+		}
 		
 		northLimit = north;
 		southLimit = south;
@@ -248,24 +254,12 @@ public class TileRenderer extends InterruptibleProcess
 					modelContext.getModelDimensions().getOutputLongitudeResolution());
 		}
 		
-		
-		if (resetDataRange) {
-			try {
-				ElevationMinMaxCalculator minMaxCalc = new ElevationMinMaxCalculator(modelContext);
-				ElevationMinMax minMax = minMaxCalc.calculateMinAndMax();
-				
-				modelContext.getRasterDataContext().setDataMaximumValue(minMax.maximum);
-				modelContext.getRasterDataContext().setDataMinimumValue(minMax.minimum);
-				
-				//determineDataRangeLowRes();
-			} catch (Exception ex) {
-				log.error("Error determining elevation min & max: " + ex.getMessage(), ex);
-			}
-		}
-		
+
+		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		
 		minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
-		maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
+		maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValue();
+		maximumElevation = maximumElevationTrue * elevationMultiple;
 		
 		try {
 			elevationScaler = ElevationScalerFactory.createElevationScaler(modelContext.getModelOptions().getElevationScaler());
@@ -339,8 +333,6 @@ public class TileRenderer extends InterruptibleProcess
 		
 		solarAzimuth = modelContext.getLightingContext().getLightingAzimuth();
 		solarElevation = modelContext.getLightingContext().getLightingElevation();
-		
-		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		
 		modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
 		projection = modelContext.getModelCanvas().getCanvasProjection();
@@ -496,8 +488,9 @@ public class TileRenderer extends InterruptibleProcess
 		
 		for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
 			//strip.reset();
-			double lastElevN = rasterDataContext.getDataMinimumValue();
-			double lastElevS = rasterDataContext.getDataMinimumValue();
+			
+			double lastElevN = minimumElevation;
+			double lastElevS = minimumElevation;	
 			
 			if (lastElevN == DemConstants.ELEV_NO_DATA && lastElevS == DemConstants.ELEV_NO_DATA) {
 				lastElevN = 0;
@@ -533,7 +526,7 @@ public class TileRenderer extends InterruptibleProcess
 				
 				// NW
 				elev = calculateShadedColor(nwLat, nwLon, rgba);
-				if (elev == DemConstants.ELEV_NO_DATA) {
+				if (elev == DemConstants.ELEV_NO_DATA || elev < minimumElevation) {
 					rgba[0] = backgroundColor[0];
 					rgba[1] = backgroundColor[1];
 					rgba[2] = backgroundColor[2];
@@ -548,7 +541,7 @@ public class TileRenderer extends InterruptibleProcess
 				
 				// SW
 				elev = calculateShadedColor(swLat, swLon, rgba);
-				if (elev == DemConstants.ELEV_NO_DATA) {
+				if (elev == DemConstants.ELEV_NO_DATA || elev < minimumElevation) {
 					rgba[0] = backgroundColor[0];
 					rgba[1] = backgroundColor[1];
 					rgba[2] = backgroundColor[2];
@@ -920,12 +913,14 @@ public class TileRenderer extends InterruptibleProcess
 	{
 		double elevation = _getElevation(latitude, longitude, cache);
 		
+		double ratio = (elevation - minimumElevation) / (maximumElevationTrue - minimumElevation);
+		elevation = minimumElevation + (maximumElevation - minimumElevation) * ratio;
+		
 		if (scaled && elevation != DemConstants.ELEV_NO_DATA) {
 			elevation = elevationScaler.scale(elevation, minimumElevation, maximumElevation);
 		} 
 		
 		return elevation;
-		
 	}
 	
 	protected double _getElevation(double latitude, double longitude, boolean cache) throws DataSourceException, RenderEngineException
@@ -1015,52 +1010,6 @@ public class TileRenderer extends InterruptibleProcess
 		frontRightPoints[2] = xzRes;
 		
 	}
-	
-	/*
-	public void determineDataRangeLowRes() throws DataSourceException, RenderEngineException
-	{
-		log.info("Redetermining elevation minimum & maximum...");
-		
-		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
-		
-		double min = Double.MAX_VALUE;
-		double max = Double.MIN_VALUE;
-		
-		if (rasterDataContext.getRasterDataListSize() > 0) {
-		
-			double north = rasterDataContext.getNorth();
-			double south = rasterDataContext.getSouth();
-			double east = rasterDataContext.getEast();
-			double west = rasterDataContext.getWest();
-			
-			//double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
-			//double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
-			
-			
-			
-			for (double lon = west; lon < east - rasterDataContext.getLongitudeResolution(); lon+=longitudeResolution) {
-				for (double lat = north; lat > south + rasterDataContext.getLatitudeResolution(); lat-=latitudeResolution) {
-					double elevation = getRasterData(lat, lon);
-					
-					if (!Double.isNaN(elevation) && elevation != DemConstants.ELEV_NO_DATA) {
-						min = MathExt.min(elevation, min);
-						max = MathExt.max(elevation, max);
-					}
-					
-				}
-				
-			}
-		} else {
-			max = 0;
-			min = 0;
-		}
-		
-		rasterDataContext.setDataMaximumValue(max);
-		rasterDataContext.setDataMinimumValue(min);
-		
-		
-	}
-	*/
 	
 	protected void copyRgba(int[] rgba0, int[] rgba1)
 	{

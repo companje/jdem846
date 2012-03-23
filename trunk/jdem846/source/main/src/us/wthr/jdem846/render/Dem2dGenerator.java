@@ -24,6 +24,7 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -43,6 +44,9 @@ public class Dem2dGenerator extends BasicRenderEngine
 	
 	private ModelRenderer rasterRenderer = null;
 	private ShapeLayerRenderer shapeRenderer = null;
+	
+	private RenderPipeline renderPipeline = null;
+	private RenderPipelineProcessContainer pipelineContainer = null;
 	
 	public Dem2dGenerator()
 	{
@@ -67,25 +71,57 @@ public class Dem2dGenerator extends BasicRenderEngine
 		fillRasterBuffers();
 		fillImageBuffers();
 		
-
+		final CancelIndicator cancelIndicator = new CancelIndicator();
+		
+		this.setProcessInterruptListener(new ProcessInterruptListener() {
+			public void onProcessCancelled()
+			{
+				
+				// Expect a NullPointerException or two when these are called. Should probably fix those...
+				
+				cancelIndicator.cancel();
+				
+				rasterRenderer.cancel();
+				shapeRenderer.cancel();
+				
+				if (renderPipeline != null) {
+					renderPipeline.closeQueues();
+				}
+				
+				if (renderPipeline != null) {
+					renderPipeline.flushQueues();
+				}
+			}
+			public void onProcessPaused()
+			{
+				rasterRenderer.pause();
+				shapeRenderer.pause();
+			}
+			public void onProcessResumed()
+			{
+				rasterRenderer.resume();
+				shapeRenderer.resume();
+			}
+		});
+		
+		
 		try {
-			
-			ElevationMinMaxCalculator minMaxCalc = new ElevationMinMaxCalculator(getModelContext());
-			ElevationMinMax minMax = minMaxCalc.calculateMinAndMax();
-			
-			getModelContext().getRasterDataContext().setDataMaximumValue(minMax.maximum);
-			getModelContext().getRasterDataContext().setDataMinimumValue(minMax.minimum);
-			
-		} catch (DataSourceException ex) {
-			log.error("Error determining elevation min & max: " + ex.getMessage(), ex);
+			getModelContext().updateContext(true, cancelIndicator);
+		} catch (ModelContextException ex) {
+			throw new RenderEngineException("Exception updating model context: " + ex.getMessage(), ex);
 		}
+		
+		
+		
 		
 		OutputProduct<ModelCanvas> product = null;
 		
-		if (usePipelineRender) {
-			product = generatePipelined(skipElevation, skipShapes);
-		} else {
-			product = generateStandard(skipElevation, skipShapes);
+		if (!cancelIndicator.isCancelled()) {
+			if (usePipelineRender) {
+				product = generatePipelined(skipElevation, skipShapes);
+			} else {
+				product = generateStandard(skipElevation, skipShapes);
+			}
 		}
 		
 		clearRasterBuffers();
@@ -108,32 +144,11 @@ public class Dem2dGenerator extends BasicRenderEngine
 		}
 		
 		
-		RenderPipeline renderPipeline = null;
-		RenderPipelineProcessContainer pipelineContainer = null;
-		
 		
 		try {
 			
 			rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
 			shapeRenderer = new ShapeLayerRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
-			
-			this.setProcessInterruptListener(new ProcessInterruptListener() {
-				public void onProcessCancelled()
-				{
-					rasterRenderer.cancel();
-					shapeRenderer.cancel();
-				}
-				public void onProcessPaused()
-				{
-					rasterRenderer.pause();
-					shapeRenderer.pause();
-				}
-				public void onProcessResumed()
-				{
-					rasterRenderer.resume();
-					shapeRenderer.resume();
-				}
-			});
 			
 			
 			updateCoordinateLimits();
@@ -206,30 +221,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 			rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
 			shapeRenderer = new ShapeLayerRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
 			
-			this.setProcessInterruptListener(new ProcessInterruptListener() {
-				public void onProcessCancelled()
-				{
-					
-					// Expect a NullPointerException or two when these are called. Should probably fix those...
-					
-					rasterRenderer.cancel();
-					shapeRenderer.cancel();
-					
-					
-					renderPipeline.closeQueues();
-					renderPipeline.flushQueues();
-				}
-				public void onProcessPaused()
-				{
-					rasterRenderer.pause();
-					shapeRenderer.pause();
-				}
-				public void onProcessResumed()
-				{
-					rasterRenderer.resume();
-					shapeRenderer.resume();
-				}
-			});
+			
 			
 			
 			updateCoordinateLimits();
@@ -341,7 +333,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		}
 	}
 	
-	protected void updateCoordinateLimits()
+	protected void updateCoordinateLimits() throws RenderEngineException
 	{
 		if (getModelOptions().getBooleanOption(ModelOptionNamesEnum.LIMIT_COORDINATES)) {
 			
@@ -359,7 +351,11 @@ public class Dem2dGenerator extends BasicRenderEngine
 			if (optWestLimit != DemConstants.ELEV_NO_DATA)
 				getModelContext().setWestLimit(optWestLimit);
 		}
-		getModelContext().updateContext();
+		try {
+			getModelContext().updateContext();
+		} catch (ModelContextException ex) {
+			throw new RenderEngineException("Error updating model context: " + ex.getMessage(), ex);
+		}
 	}
 	
 	protected void startPipelineProcesses(RenderPipelineProcessContainer pipelineContainer, boolean waitForCompletion)

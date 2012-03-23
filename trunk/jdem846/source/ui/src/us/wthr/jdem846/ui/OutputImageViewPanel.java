@@ -270,33 +270,23 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				
 				long start = 0;
 				long elapsed = 0;
-				
-				/*
-				start = System.currentTimeMillis();
-				boolean requiresMinMaxElevation = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).requiresMinMaxElevation();
-				try {
-					if (requiresMinMaxElevation) {
-						modelContext.getRasterDataContext().calculateElevationMinMax(true);
-					}
-				} catch (Exception ex) {
-					throw new RenderEngineException("Error calculating elevation min/max: " + ex.getMessage(), ex);
-				}
-				elapsed = (System.currentTimeMillis() - start) / 1000;
-				log.info("Completed elevation min/max task in " + elapsed + " seconds");
-				*/
 
 				start = System.currentTimeMillis();
 				OutputProduct<ModelCanvas> product = engine.generate(false, false);
 				elapsed = (System.currentTimeMillis() - start) / 1000;
-				ModelCanvas demCanvas = product.getProduct();
-				synchronized(imageDisplay) {
-					imageDisplay.setImage(demCanvas.getFinalizedImage());
+				
+				if (product != null) {
+					ModelCanvas demCanvas = product.getProduct();
+					synchronized(imageDisplay) {
+						imageDisplay.setImage(demCanvas.getFinalizedImage());
+					}
+	
+					canvas = demCanvas;
+				} else {
+					// TODO: Message or whatever
 				}
-				//if (demCanvas != null) {
-				//	synchronized(canvas) {
-						canvas = demCanvas;
-				//	}
-				//}
+				
+				
 				log.info("Completed render task in " + elapsed + " seconds");
 
 			}
