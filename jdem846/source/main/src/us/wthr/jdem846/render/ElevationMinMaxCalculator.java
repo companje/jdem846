@@ -58,8 +58,12 @@ public class ElevationMinMaxCalculator
 		
 		
 		
-		double min = Double.MAX_VALUE;
-		double max = Double.MIN_VALUE;
+		double min = Double.NaN;
+		double max = Double.NaN;
+		double mean = 0.0;
+		double median = 0.0;
+		
+		double samples = 0.0;
 		
 		double north = modelContext.getNorth();
 		double south = modelContext.getSouth();
@@ -102,8 +106,21 @@ public class ElevationMinMaxCalculator
 					double elevation = getElevation(lat, lon);
 
 					if (!Double.isNaN(elevation) && elevation != DemConstants.ELEV_NO_DATA) {
-						min = MathExt.min(elevation, min);
-						max = MathExt.max(elevation, max);
+						
+						if (Double.isNaN(min)) {
+							min = elevation;
+						} else {
+							min = MathExt.min(elevation, min);
+						}
+						
+						if (Double.isNaN(max)) {
+							max = elevation;
+						} else {
+							max =  MathExt.max(elevation, max);
+						}
+						
+						mean += elevation;
+						samples += 1.0;
 					}
 					
 					if (cancelIndicator != null && cancelIndicator.isCancelled()) {
@@ -134,7 +151,11 @@ public class ElevationMinMaxCalculator
 		log.info("Elevation data minimum: " + min);
 		
 		
-		ElevationMinMax minMax = new ElevationMinMax(min, max);
+		if (samples > 0) {
+			mean = mean / samples;
+		}
+		
+		ElevationMinMax minMax = new ElevationMinMax(min, max, mean, median);
 		return minMax;
 
 		
