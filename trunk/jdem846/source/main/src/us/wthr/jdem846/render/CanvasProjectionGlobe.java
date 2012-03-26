@@ -46,9 +46,9 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		double radius = (minSideLength / 2.0)  * scaleX;
 
 
-		double maxMultiplied = max * elevationMultiple;
-		double ratio = (elevation - min) / (max - min);
-		elevation = min + (maxMultiplied - min) * ratio;
+		//double maxMultiplied = max * elevationMultiple;
+		//double ratio = (elevation - min) / (max - min);
+		//elevation = min + (maxMultiplied - min) * ratio;
 
 		double radiusAdjusted = (radius / meanRadius) * (meanRadius + elevation);
 		

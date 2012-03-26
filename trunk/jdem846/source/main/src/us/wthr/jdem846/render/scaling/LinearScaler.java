@@ -11,7 +11,10 @@ public class LinearScaler extends AbstractElevationScaler
 		
 		double maxMulitiplied = maxTrue * getElevationMultiple();
 		
-		double ratio = (elevation - min) / (maxTrue - min);
+		double ratio = 1.0;
+		if (maxTrue - min != 0) {
+			ratio = (elevation - min) / (maxTrue - min);
+		}
 		elevation = min + (maxMulitiplied - min) * ratio;
 		
 		return elevation;
