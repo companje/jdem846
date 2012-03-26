@@ -12,15 +12,16 @@ import us.wthr.jdem846.ui.base.Dialog;
 import us.wthr.jdem846.ui.base.Frame;
 
 @SuppressWarnings("serial")
-public class LogViewerDialog extends Frame
+public class LogViewerDialog extends Dialog
 {
 	private static Log log = Logging.getLog(LogViewerDialog.class);
 	
 	private LogViewer logViewer;
 	
-	public LogViewerDialog()
+	public LogViewerDialog(Frame owner)
 	{
-		this.setTitle(I18N.get("us.wthr.jdem846.ui.logViewerDialog.title"));
+		super(owner, I18N.get("us.wthr.jdem846.ui.logViewerDialog.title"), false);
+
 		//this.setSize(700, 300);
 		//this.setLocationRelativeTo(null);
 		int frameWidth = JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.logViewerDialog.windowWidth");

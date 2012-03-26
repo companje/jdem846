@@ -25,6 +25,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -89,6 +91,7 @@ public class JdemFrame extends Frame
 	private MainMenuBar menuBar;
 	private MainButtonBar mainButtonBar;
 	private SharedStatusBar statusBar;
+	private LogViewerDialog logViewer = null;
 	
 	private Menu recentProjectsMenu;
 	
@@ -167,6 +170,20 @@ public class JdemFrame extends Frame
 			}
 		});
 		
+		
+		this.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e)
+			{
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent arg0)
+			{
+				
+			}
+		});
+		
 		addWindowListener(new WindowListener() {
 			public void windowActivated(WindowEvent event) { }
 			public void windowClosing(WindowEvent event) 
@@ -174,9 +191,18 @@ public class JdemFrame extends Frame
 				log.info("JdemFrame.windowClosing()");
 				exitApplication();
 			}
-			public void windowDeactivated(WindowEvent event) { }
-			public void windowDeiconified(WindowEvent event) { }
-			public void windowIconified(WindowEvent event) { }
+			public void windowDeactivated(WindowEvent event) 
+			{
+
+			}
+			public void windowDeiconified(WindowEvent event) 
+			{ 
+
+			}
+			public void windowIconified(WindowEvent event) 
+			{
+
+			}
 			public void windowOpened(WindowEvent event) { }
 			
 			public void windowClosed(WindowEvent event)
@@ -220,7 +246,7 @@ public class JdemFrame extends Frame
 		
 		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.displayLogViewPanel")) {
 			log.info("Log viewer panel is enabled");
-			LogViewerDialog logViewer = new LogViewerDialog();
+			logViewer = new LogViewerDialog(this);
 			logViewer.setVisible(true);
 		}
 		
