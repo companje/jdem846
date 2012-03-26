@@ -203,9 +203,9 @@ public class ElevationMinMaxCalculator
 
 		if (modelContext.getRasterDataContext().getRasterDataListSize() > 0) {
 			if (getStandardResolutionElevation) {
-				elevation = modelContext.getRasterDataContext().getDataStandardResolution(latitude, longitude, averageOverlappedData, interpolateData);
+				elevation = modelContext.getRasterDataContext().getDataStandardResolution(latitude, longitude, averageOverlappedData, interpolateData, false);
 			} else {
-				elevation = modelContext.getRasterDataContext().getDataAtEffectiveResolution(latitude, longitude, averageOverlappedData, interpolateData);
+				elevation = modelContext.getRasterDataContext().getDataAtEffectiveResolution(latitude, longitude, averageOverlappedData, interpolateData, false);
 			} 
 		} 
 		

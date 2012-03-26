@@ -258,14 +258,20 @@ public class TileRenderer extends InterruptibleProcess
 		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		
 		minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
-		maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValue();
-		maximumElevation = maximumElevationTrue * elevationMultiple;
+		maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
+		
 		
 		try {
-			elevationScaler = ElevationScalerFactory.createElevationScaler(modelContext.getModelOptions().getElevationScaler());
+			elevationScaler = ElevationScalerFactory.createElevationScaler(modelContext.getModelOptions().getElevationScaler(), elevationMultiple, minimumElevation, maximumElevationTrue);
 		} catch (Exception ex) {
 			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
 		}
+		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
+		maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
+		
+
+		modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
+		modelColoring.setElevationScaler(elevationScaler);
 		
 		LightingContext lightingContext = modelContext.getLightingContext();
 		lightSourceType = lightingContext.getLightSourceSpecifyType();
@@ -334,7 +340,7 @@ public class TileRenderer extends InterruptibleProcess
 		solarAzimuth = modelContext.getLightingContext().getLightingAzimuth();
 		solarElevation = modelContext.getLightingContext().getLightingElevation();
 		
-		modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
+		//modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
 		projection = modelContext.getModelCanvas().getCanvasProjection();
 		
 		
@@ -913,12 +919,14 @@ public class TileRenderer extends InterruptibleProcess
 	{
 		double elevation = _getElevation(latitude, longitude, cache);
 		
+		/*
 		double ratio = (elevation - minimumElevation) / (maximumElevationTrue - minimumElevation);
 		elevation = minimumElevation + (maximumElevation - minimumElevation) * ratio;
 		
 		if (scaled && elevation != DemConstants.ELEV_NO_DATA) {
-			elevation = elevationScaler.scale(elevation, minimumElevation, maximumElevation);
+			elevation = elevationScaler.scale(elevation);
 		} 
+		*/
 		
 		return elevation;
 	}

@@ -2,15 +2,25 @@ package us.wthr.jdem846.render.scaling;
 
 import us.wthr.jdem846.math.MathExt;
 
-public class ExponentialScaler implements ElevationScaler
+public class ExponentialScaler extends AbstractElevationScaler
 {
 	private double exponentDivisor = 10000.0;
 	
 	
 	@Override
-	public double scale(double elevation, double min, double max)
+	public double scale(double elevation)
 	{
-		double range = max - min;
+		double min = this.getElevationMinimum();
+		double maxTrue = this.getElevationMaximum();
+		
+		
+		double maxMulitiplied = maxTrue * getElevationMultiple();
+		
+		double ratio = (elevation - min) / (maxTrue - min);
+		elevation = min + (maxMulitiplied - min) * ratio;
+			
+		
+		double range = maxMulitiplied - min;
 		double rangeExp = MathExt.pow(2, range/exponentDivisor);
 		
 		double elevExp = MathExt.pow(2, (elevation - min)/exponentDivisor);

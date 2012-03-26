@@ -10,6 +10,7 @@ import us.wthr.jdem846.gis.CoordinateSpaceAdjuster;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.render.scaling.ElevationScaler;
 
 public class RasterDataContext implements DataContext
 {
@@ -39,6 +40,8 @@ public class RasterDataContext implements DataContext
 	private boolean isDisposed = false;
 	
 	private CoordinateSpaceAdjuster coordinateSpaceAdjuster;
+	
+	private ElevationScaler elevationScaler;
 	
 	public RasterDataContext()
 	{
@@ -287,41 +290,58 @@ public class RasterDataContext implements DataContext
 		}
 	}
 	
-	
 	public double getData(double latitude, double longitude) throws DataSourceException
 	{
-		return getData(latitude, longitude, false, false);
+		return getData(latitude, longitude, true);
 	}
+	
+	public double getData(double latitude, double longitude, boolean scaled) throws DataSourceException
+	{
+		return getData(latitude, longitude, false, false, scaled);
+	}
+	
 	
 	public double getData(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
 	{
+		return getData(latitude, longitude, avgOfAllRasterValues, interpolate, true);
+	}
+	
+	public double getData(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate, boolean scaled) throws DataSourceException
+	{
 		if (effectiveLatitudeResolution == NOT_SET && effectiveLongitudeResolution == NOT_SET) {
-			return getDataStandardResolution(latitude, longitude, avgOfAllRasterValues, interpolate);
+			return getDataStandardResolution(latitude, longitude, avgOfAllRasterValues, interpolate, scaled);
 		} else {
-			return getDataAtEffectiveResolution(latitude, longitude, avgOfAllRasterValues, interpolate);
+			return getDataAtEffectiveResolution(latitude, longitude, avgOfAllRasterValues, interpolate, scaled);
 		}
 	}
 	
 	public double getDataStandardResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
 	{
+		return getDataStandardResolution(latitude, longitude, avgOfAllRasterValues, interpolate, true);
+	}
+	
+	public double getDataStandardResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate, boolean scaled) throws DataSourceException
+	{
 		double value = 0;
 		double dataMatches = 0;
-		double dataAttempts = 0;
 		
 		for (RasterData rasterData : rasterDataList) {
 			if (rasterData.contains(latitude, longitude)) {
 				double rasterValue = rasterData.getData(latitude, longitude, interpolate);
 				
 				if (!avgOfAllRasterValues) {
-					return rasterValue;
+					if (scaled) {
+						return getScaledDataValue(rasterValue);
+					} else {
+						return rasterValue;
+					}
 				}
 				
 				if (rasterValue != DemConstants.ELEV_NO_DATA && !Double.isNaN(rasterValue)) {
 					value += rasterValue;
 					dataMatches++;
 				}
-				
-				dataAttempts++;
+
 			}
 		}
 		
@@ -331,11 +351,22 @@ public class RasterDataContext implements DataContext
 			data = (value / dataMatches);
 		}
 
-
-		return data;
+		
+		if (scaled) {
+			return getScaledDataValue(data);
+		} else {
+			return data;
+		}
 	}
 	
+	
+	
 	public double getDataAtEffectiveResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
+	{
+		return getDataAtEffectiveResolution(latitude, longitude, avgOfAllRasterValues, interpolate, true);
+	}
+	
+	public double getDataAtEffectiveResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate, boolean scaled) throws DataSourceException
 	{
 		
 		double north = latitude + (effectiveLatitudeResolution / 2.0);
@@ -365,9 +396,23 @@ public class RasterDataContext implements DataContext
 		if (samples > 0) {
 			finalValue = data / samples;
 		}
-		return finalValue;
+		
+
+		if (scaled) {
+			return getScaledDataValue(finalValue);
+		} else {
+			return finalValue;
+		}
 	}
 	
+	protected double getScaledDataValue(double data)
+	{
+		if (elevationScaler != null) {
+			return elevationScaler.scale(data);
+		} else {
+			return data;
+		}
+	}
 
 	
 	public RasterDataContext getSubSet(double north, double south, double east, double west) throws DataSourceException
@@ -488,6 +533,11 @@ public class RasterDataContext implements DataContext
 	
 	public double getDataMaximumValue()
 	{
+		return this.getScaledDataValue(dataMaximumValue);
+	}
+	
+	public double getDataMaximumValueTrue()
+	{
 		return dataMaximumValue;
 	}
 	
@@ -522,6 +572,18 @@ public class RasterDataContext implements DataContext
 	public void setEffectiveLongitudeResolution(double effectiveLongitudeResolution)
 	{
 		this.effectiveLongitudeResolution = effectiveLongitudeResolution;
+	}
+	
+	
+
+	public ElevationScaler getElevationScaler() 
+	{
+		return elevationScaler;
+	}
+
+	public void setElevationScaler(ElevationScaler elevationScaler) 
+	{
+		this.elevationScaler = elevationScaler;
 	}
 
 	public RasterDataContext copy() throws DataSourceException

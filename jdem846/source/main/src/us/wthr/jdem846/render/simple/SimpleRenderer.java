@@ -64,6 +64,7 @@ public class SimpleRenderer
 	
 	private ModelContext modelContext;
 	private ElevationDataMap elevationMap;
+	private boolean doubleBuffered;
 	
 	private Perspectives perspectives = new Perspectives();
 	private double normal[] = new double[3];
@@ -162,18 +163,13 @@ public class SimpleRenderer
 		//latitudeResolution = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
 		//longitudeResolution = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
 		
-		try {
-			elevationScaler = ElevationScalerFactory.createElevationScaler(modelContext.getModelOptions().getElevationScaler());
-		} catch (Exception ex) {
-			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
-		}
 		
 		
 		////latitudeResolution = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
 		//longitudeResolution = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
 		
-		
-		if (resetCache) {
+		doubleBuffered = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.doubleBuffered");
+		if (doubleBuffered && resetCache) {
 			elevationMap = ElevationDataMap.create(modelContext.getNorth(), 
 					modelContext.getSouth(), 
 					modelContext.getEast(), 
@@ -187,9 +183,18 @@ public class SimpleRenderer
 		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		
 		minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
-		maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValue();
-		maximumElevation = maximumElevationTrue * elevationMultiple;
+		maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
+		try {
+			elevationScaler = ElevationScalerFactory.createElevationScaler(modelContext.getModelOptions().getElevationScaler(), this.elevationMultiple, minimumElevation, maximumElevationTrue);
+		} catch (Exception ex) {
+			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
+		}
+		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
 		
+		
+		maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
+		modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
+		modelColoring.setElevationScaler(elevationScaler);
 		
 		
 		planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
@@ -271,7 +276,7 @@ public class SimpleRenderer
 		
 		
 		
-		modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
+		
 		projection = modelContext.getModelCanvas().getCanvasProjection();
 		
 		paintGlobalBaseGrid = modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintGlobalBaseGrid");
@@ -862,8 +867,9 @@ public class SimpleRenderer
 	
 	protected double getElevation(double latitude, double longitude, boolean scaled) throws DataSourceException
 	{
-		double elevation = _getElevation(latitude, longitude);
+		double elevation = _getElevation(latitude, longitude, scaled);
 		
+		/*
 		double ratio = (elevation - minimumElevation) / (maximumElevationTrue - minimumElevation);
 		elevation = minimumElevation + (maximumElevation - minimumElevation) * ratio;
 		
@@ -871,23 +877,27 @@ public class SimpleRenderer
 		if (scaled && elevation != DemConstants.ELEV_NO_DATA) {
 			elevation = elevationScaler.scale(elevation, minimumElevation, maximumElevation);
 		} 
-
+		*/
+		
 		return elevation;
 		
 	}
 	
-	protected double _getElevation(double latitude, double longitude) throws DataSourceException
+	protected double _getElevation(double latitude, double longitude, boolean scaled) throws DataSourceException
 	{
 		
-		double elevation = elevationMap.get(latitude, longitude, DemConstants.ELEV_NO_DATA);
-		if (elevation != DemConstants.ELEV_NO_DATA)
-			return elevation;
+		double elevation = DemConstants.ELEV_NO_DATA;
+		if (doubleBuffered) {
+			elevation = elevationMap.get(latitude, longitude, DemConstants.ELEV_NO_DATA);
+			if (elevation != DemConstants.ELEV_NO_DATA)
+				return elevation;
+		}
 	
 		if (modelContext.getRasterDataContext().getRasterDataListSize() > 0) {
 			if (getStandardResolutionElevation) {
-				elevation = modelContext.getRasterDataContext().getDataStandardResolution(latitude, longitude, averageOverlappedData, interpolateData);
+				elevation = modelContext.getRasterDataContext().getDataStandardResolution(latitude, longitude, averageOverlappedData, interpolateData, scaled);
 			} else {
-				elevation = modelContext.getRasterDataContext().getDataAtEffectiveResolution(latitude, longitude, averageOverlappedData, interpolateData);
+				elevation = modelContext.getRasterDataContext().getDataAtEffectiveResolution(latitude, longitude, averageOverlappedData, interpolateData, scaled);
 			} 
 		} else if (modelContext.getImageDataContext().getImageListSize() > 0) {
 			elevation = 0;
@@ -895,7 +905,9 @@ public class SimpleRenderer
 			elevation = DemConstants.ELEV_NO_DATA;
 		}
 		
-		elevationMap.put(latitude, longitude, elevation);
+		if (doubleBuffered) {
+			elevationMap.put(latitude, longitude, elevation);
+		}
 		return elevation;
 	}
 	

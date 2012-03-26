@@ -37,10 +37,10 @@ public class ElevationScalerTestMain extends AbstractTestMain
 		double range = max - min;
 		double step = range / 20;
 		
-		ElevationScaler elevationScaler = ElevationScalerFactory.createElevationScaler(ElevationScalerEnum.CUBIC);
+		ElevationScaler elevationScaler = ElevationScalerFactory.createElevationScaler(ElevationScalerEnum.CUBIC, 1.0, min, max);
 		
 		for (double elev = min; elev <= max; elev += step) {
-			double scaled = elevationScaler.scale(elev, min, max);
+			double scaled = elevationScaler.scale(elev);
 			
 			log.info("" + min + ", " + max + ", " + elev + ", " + scaled);
 			

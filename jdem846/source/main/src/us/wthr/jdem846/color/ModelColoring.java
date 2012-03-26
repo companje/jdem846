@@ -16,14 +16,22 @@
 
 package us.wthr.jdem846.color;
 
+import us.wthr.jdem846.render.scaling.ElevationScaler;
+
 public interface ModelColoring 
 {
 	public void reset() throws Exception;
 	public GradientLoader getGradientLoader();
+	
+	public void setElevationScaler(ElevationScaler elevationScaler);
+	
 	public void getColorByPercent(double ratio, int[] color);
 	public void getColorByMeters(double meters, int[] color);
 	public void getGradientColor(double elevation, double min_elevation, double max_elevation, int[] color);
 
+	
+	
+	
 	public double getMinimumSupported();
 	public double getMaximumSupported();
 }
