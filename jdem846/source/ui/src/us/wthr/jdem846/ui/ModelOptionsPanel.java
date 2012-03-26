@@ -101,6 +101,7 @@ public class ModelOptionsPanel extends Panel
 	//private Spinner spnRelativeDarkIntensity;
 	
 	private CheckBox chkMaintainAscpectRatio;
+	private CheckBox chkEstimatedElevationMinMax;
 	//private CheckBox chkProject3d;
 	//private CheckBox chkDoubleSampling;
 	//private CheckBox chkUseFastRender;
@@ -186,6 +187,8 @@ public class ModelOptionsPanel extends Panel
 		cmbPlanet = new ComboBox(planetListModel);
 		
 		
+		
+		
 		elevationScalerListModel = new ElevationScalerListModel();
 		cmbElevationScaling = new ComboBox(elevationScalerListModel);
 		
@@ -213,6 +216,8 @@ public class ModelOptionsPanel extends Panel
 		//chkDoubleSampling = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.doubleSampling.label"));
 		//chkUseFastRender = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.useFastRender.label"));
 		chkMaintainAscpectRatio = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.maintainAspectRatio.label"));
+		chkEstimatedElevationMinMax = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.estimatedElevationMinMax.label"));
+		
 		
 		colorSelection = new ColorSelection();
 
@@ -255,6 +260,7 @@ public class ModelOptionsPanel extends Panel
 		//chkUseFastRender.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.useFastRender.tooltip"));
 		//chkProject3d.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.project3d.tooltip"));
 		chkMaintainAscpectRatio.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.maintainAspectRatio.tooltip"));
+		chkEstimatedElevationMinMax.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.estimatedElevationMinMax.tooltip"));
 		chkLimitCoordinates.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.tooltip"));
 		txtLimitNorth.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.north.tooltip"));
 		txtLimitSouth.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.limitCoordinates.south.tooltip"));
@@ -359,6 +365,7 @@ public class ModelOptionsPanel extends Panel
 	//	/chkDoubleSampling.getModel().addActionListener(checkBoxActionListener);
 		//chkUseFastRender.getModel().addActionListener(checkBoxActionListener);
 		chkMaintainAscpectRatio.getModel().addActionListener(checkBoxActionListener);
+		chkEstimatedElevationMinMax.getModel().addActionListener(checkBoxActionListener);
 		//chkDoubleSampling.addChangeListener(basicChangeListener);
 		//chkUseFastRender.addChangeListener(basicChangeListener);
 		//chkProject3d.addChangeListener(basicChangeListener);
@@ -400,6 +407,10 @@ public class ModelOptionsPanel extends Panel
 		
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.planet.label") + ":"));
 		controlGrid.add(cmbPlanet);
+		
+		
+		controlGrid.add(new JLabel());
+		controlGrid.add(chkEstimatedElevationMinMax);
 		
 		controlGrid.add(new JLabel());
 		controlGrid.add(chkLimitCoordinates);
@@ -506,6 +517,7 @@ public class ModelOptionsPanel extends Panel
 		txtWidth.setText(""+width);
 		txtHeight.setText(""+height);
 		chkMaintainAscpectRatio.setSelected(modelOptions.getBooleanOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA));
+		chkEstimatedElevationMinMax.setSelected(modelOptions.getBooleanOption(ModelOptionNamesEnum.ESTIMATE_ELEVATION_MIN_MAX));
 		
 		//backgroundModel.setSelectedItemByValue(modelOptions.getBackgroundColor());
 		///coloringModel.setSelectedItemByValue(modelOptions.getColoringType());
@@ -591,6 +603,9 @@ public class ModelOptionsPanel extends Panel
 		modelOptions.setOption(ModelOptionNamesEnum.PLANET, planetListModel.getSelectedItemValue());
 		
 		modelOptions.setOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA, chkMaintainAscpectRatio.getModel().isSelected());
+		
+		modelOptions.setOption(ModelOptionNamesEnum.ESTIMATE_ELEVATION_MIN_MAX, chkEstimatedElevationMinMax.getModel().isSelected());
+		
 		//modelOptions.setBackgroundColor(backgroundModel.getSelectedItemValue());
 		modelOptions.setBackgroundColor(colorSelection.getValueString());
 		

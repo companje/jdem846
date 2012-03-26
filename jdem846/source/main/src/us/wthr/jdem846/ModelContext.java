@@ -23,6 +23,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.ScriptCompilationFailedException;
 import us.wthr.jdem846.exception.ScriptingException;
+import us.wthr.jdem846.gis.elevation.ElevationMinMaxEstimation;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageDataContext;
@@ -33,10 +34,12 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.CancelIndicator;
-import us.wthr.jdem846.render.ElevationMinMax;
+import us.wthr.jdem846.gis.elevation.ElevationMinMax;
 import us.wthr.jdem846.render.ElevationMinMaxCalculator;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
+import us.wthr.jdem846.gis.planets.Planet;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
@@ -111,16 +114,47 @@ public class ModelContext
 		}
 		
 		if (updateDataMinMax) {
-			try {
+			
+			boolean estimate = modelOptions.getBooleanOption(ModelOptionNamesEnum.ESTIMATE_ELEVATION_MIN_MAX);
+			Planet planet = PlanetsRegistry.getPlanet(modelOptions.getOption(ModelOptionNamesEnum.PLANET));
+			
+			
+			if (estimate && planet.getElevationSamplesPath() != null) {
 				
-				ElevationMinMaxCalculator minMaxCalc = new ElevationMinMaxCalculator(this, cancelIndicator);
-				ElevationMinMax minMax = minMaxCalc.calculateMinAndMax();
+				log.info("Fetching estimated elevation min/max");
+				try {
+					ElevationMinMaxEstimation est = ElevationMinMaxEstimation.load(planet);
+					ElevationMinMax minMax = est.getMinMax(getNorth(), getSouth(), getEast(), getWest());
+					
+					getRasterDataContext().setDataMaximumValue(minMax.getMaximumElevation());
+					getRasterDataContext().setDataMinimumValue(minMax.getMinimumElevation());
+					
+					log.info("Maximum: " + minMax.getMaximumElevation());
+					log.info("Minimum: " + minMax.getMinimumElevation());
+					
+					
+				} catch (Exception ex) {
+					throw new ModelContextException("Error with elevation min/max estimation: " + ex.getMessage(), ex);
+				}
 				
-				getRasterDataContext().setDataMaximumValue(minMax.maximum);
-				getRasterDataContext().setDataMinimumValue(minMax.minimum);
 				
-			} catch (DataSourceException ex) {
-				log.error("Error determining elevation min & max: " + ex.getMessage(), ex);
+				
+				
+			} else {
+				
+				log.info("Fetching calculated elevation min/max");
+				
+				try {
+					
+					ElevationMinMaxCalculator minMaxCalc = new ElevationMinMaxCalculator(this, cancelIndicator);
+					ElevationMinMax minMax = minMaxCalc.calculateMinAndMax();
+					
+					getRasterDataContext().setDataMaximumValue(minMax.getMaximumElevation());
+					getRasterDataContext().setDataMinimumValue(minMax.getMinimumElevation());
+					
+				} catch (DataSourceException ex) {
+					log.error("Error determining elevation min & max: " + ex.getMessage(), ex);
+				}
 			}
 		}
 		

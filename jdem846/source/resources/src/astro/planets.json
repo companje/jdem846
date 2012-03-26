@@ -2,6 +2,7 @@
 	planets : [
 		{
 			name : "Earth",
+			elevationSamples : "resources://gis/elevation-minmax-samples-earth.csv",
 			
 			// Orbital characteristics
 			aphelion : 152098232.0, // km
@@ -41,6 +42,7 @@
 		},
 		{
 			name : "Mars",
+			elevationSamples : "resources://gis/elevation-minmax-samples-mars.csv",
 			
 			// Orbital characteristics
 			aphelion : 249209300, // km
@@ -80,6 +82,7 @@
 		},
 		{
 			name : "Moon",
+			elevationSamples : "resources://gis/elevation-minmax-samples-moon.csv",
 			
 			// Orbital characteristics
 			aphelion : 0.00, // km
@@ -123,6 +126,7 @@
 		/*
 		{
 			name : "",
+			elevationSamples : null,
 			
 			// Orbital characteristics
 			aphelion : 0.00, // km
