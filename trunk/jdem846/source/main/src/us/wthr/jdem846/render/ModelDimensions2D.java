@@ -116,12 +116,27 @@ public class ModelDimensions2D
 		outputHeight = modelOptions.getHeight();
 		outputWidth = modelOptions.getWidth();
 		
-		double xdimRatio = (double)outputWidth / (double)dataColumns;
-		double ydimRatio = (double)outputHeight / (double)dataRows;
+		//double xdimRatio = (double)outputWidth / (double)dataColumns;
+		//double ydimRatio = (double)outputHeight / (double)dataRows;
+		
+		double scaleX = modelContext.getModelOptions().getProjection().getZoom();
+		double minSideLength = MathExt.min(outputWidth, outputHeight) - 20;
+		double radius = (minSideLength / 2.0)  * scaleX;
+		
+		double circumference = 2 * MathExt.PI * radius;
+		
+		double xdimRatio = (double)circumference / (double)dataColumns;
+		double ydimRatio = (double)circumference / (double)dataRows;
+		
 		
 		outputLongitudeResolution = longitudeResolution / xdimRatio;
 		outputLatitudeResolution = latitudeResolution / ydimRatio;
 
+		if (outputLongitudeResolution < longitudeResolution)
+			outputLongitudeResolution = longitudeResolution;
+		
+		if (outputLatitudeResolution < latitudeResolution)
+			outputLatitudeResolution = latitudeResolution;
 		
 	}
 	

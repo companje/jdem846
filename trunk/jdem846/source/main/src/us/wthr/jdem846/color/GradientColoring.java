@@ -23,6 +23,7 @@ import java.net.URL;
 import us.wthr.jdem846.exception.GradientLoadException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.render.scaling.ElevationScaler;
 
 public class GradientColoring implements ModelColoring
 {
@@ -41,7 +42,9 @@ public class GradientColoring implements ModelColoring
 	private GradientLoader gradient;
 	private String configFile = null;
 	private GradientColorStop[] colorStops = null;
-	                                       
+	
+	private ElevationScaler elevationScaler;
+	
 	public GradientColoring(String configFile) throws GradientLoadException
 	{
 		this.configFile = configFile;
@@ -49,6 +52,8 @@ public class GradientColoring implements ModelColoring
 	}
 	
 
+	
+	
 	@Override
 	public void reset() throws GradientLoadException
 	{
@@ -111,11 +116,13 @@ public class GradientColoring implements ModelColoring
 		GradientColorStop lower = null;
 		GradientColorStop upper = null;
 		
+		
+		
 		for (GradientColorStop stop : colorStops) {
-			if (stop.getPosition() <= meters) {
+			if (getAdjustedElevation(stop.getPosition()) <= meters) {
 				lower = stop;
 			}
-			if (stop.getPosition() >= meters) {
+			if (getAdjustedElevation(stop.getPosition()) >= meters) {
 				upper = stop;
 				break;
 			}
@@ -133,7 +140,7 @@ public class GradientColoring implements ModelColoring
 		}
 			
 		
-		double color_ratio = (meters - lower.getPosition()) / (upper.getPosition() - lower.getPosition());
+		double color_ratio = (meters - getAdjustedElevation(lower.getPosition())) / (getAdjustedElevation(upper.getPosition()) - getAdjustedElevation(lower.getPosition()));
 		if (Double.isNaN(color_ratio))
 			color_ratio = 1.0;
 
@@ -197,6 +204,15 @@ public class GradientColoring implements ModelColoring
 		//return new DemColor(red, green, blue, 0xFF);
 	}
 
+	protected double getAdjustedElevation(double elevation)
+	{
+		if (elevationScaler != null) {
+			return elevationScaler.scale(elevation);
+		} else {
+			return elevation;
+		}
+	}
+	
 	@Override
 	public void getGradientColor(double elevation, double minElevation, double maxElevation, int[] color) 
 	{
@@ -237,5 +253,16 @@ public class GradientColoring implements ModelColoring
 			return 0;
 		}
 	}
+
+
+
+
+	@Override
+	public void setElevationScaler(ElevationScaler elevationScaler) 
+	{
+		this.elevationScaler = elevationScaler;
+	}
+
+
 	
 }

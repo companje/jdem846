@@ -1,6 +1,7 @@
 package us.wthr.jdem846.color;
 
 import us.wthr.jdem846.annotations.DemColoring;
+import us.wthr.jdem846.render.scaling.ElevationScaler;
 
 
 @DemColoring(name="Black", identifier="black-tint", allowGradientConfig=false, needsMinMaxElevation=false)
@@ -55,5 +56,11 @@ public class BlackTint implements ModelColoring
 	public double getMaximumSupported()
 	{
 		return 1.0;
+	}
+	
+	@Override
+	public void setElevationScaler(ElevationScaler elevationScaler) 
+	{
+		
 	}
 }

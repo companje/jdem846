@@ -45,9 +45,9 @@ public class ElevationEstimationDatasetTestMain extends AbstractTestMain
 	{
 		List<String> inputDataList = new LinkedList<String>();
 		
-		inputDataList.add("C:\\srv\\elevation\\GEBCO08\\gebco_08.flt");
-		
-		String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/elevation-minmax-samples.csv";
+		inputDataList.add("F:\\GEBCO_08\\gebco_08.flt");
+		String saveOutputTo = "F:\\GEBCO_08\\elevation-minmax-samples.csv";
+		//String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/elevation-minmax-samples.csv";
 		
 		File csvFile = new File(saveOutputTo);
 		PrintWriter out = new PrintWriter(csvFile);
@@ -105,7 +105,7 @@ public class ElevationEstimationDatasetTestMain extends AbstractTestMain
 				//break;
 			}
 			
-			break;
+			//break;
 		}
 
 		

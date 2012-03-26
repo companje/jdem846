@@ -2,14 +2,24 @@ package us.wthr.jdem846.render.scaling;
 
 import us.wthr.jdem846.math.MathExt;
 
-public class LogarithmicScaler implements ElevationScaler
+public class LogarithmicScaler extends AbstractElevationScaler
 {
 
 	@Override
-	public double scale(double elevation, double min, double max)
+	public double scale(double elevation)
 	{
+		double min = this.getElevationMinimum();
+		double maxTrue = this.getElevationMaximum();
 		
-		double range = max - min;
+		
+		double maxMulitiplied = maxTrue * getElevationMultiple();
+		
+		double ratio = (elevation - min) / (maxTrue - min);
+		elevation = min + (maxMulitiplied - min) * ratio;
+		
+		
+		
+		double range = maxMulitiplied - min;
 		double rangeLog = MathExt.log(range);
 		
 		double elevAdjusted = elevation - min;

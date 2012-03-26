@@ -3,7 +3,10 @@ package us.wthr.jdem846.render.scaling;
 public interface ElevationScaler
 {
 	
-	public double scale(double elevation, double min, double max);
+	public void setElevationMultiple(double elevationMultiple);
+	public void setElevationMinimum(double elevationMinimum);
+	public void setElevationMaximum(double elevationMaximum);
+	public double scale(double elevation);
 	
 	
 }
