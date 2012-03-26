@@ -53,7 +53,7 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.BasicRenderEngine;
 import us.wthr.jdem846.render.CanvasProjection;
 import us.wthr.jdem846.render.CanvasRectangleFill;
-import us.wthr.jdem846.render.ElevationMinMax;
+import us.wthr.jdem846.gis.elevation.ElevationMinMax;
 import us.wthr.jdem846.render.ElevationMinMaxCalculator;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.MatrixBuffer;
@@ -71,7 +71,7 @@ import us.wthr.jdem846.util.ColorSerializationUtil;
 
 public class TileRenderer extends InterruptibleProcess
 {
-	private enum CornerEnum {
+	protected enum CornerEnum {
 		NORTHEAST,
 		NORTHWEST,
 		SOUTHEAST,
@@ -80,88 +80,88 @@ public class TileRenderer extends InterruptibleProcess
 	
 	private static Log log = Logging.getLog(TileRenderer.class);
 
-	private ModelContext modelContext;
-	private ModelColoring modelColoring;
-	private ModelCanvas modelCanvas;
-	private RenderPipeline renderPipeline;
-	private CanvasProjection projection;
+	protected ModelContext modelContext;
+	protected ModelColoring modelColoring;
+	protected ModelCanvas modelCanvas;
+	protected RenderPipeline renderPipeline;
+	protected CanvasProjection projection;
 	
 	
 	protected RasterDataContext dataRasterContextSubset;
 
-	private boolean tiledPrecaching;
-	private double latitudeResolution;
+	protected boolean tiledPrecaching;
+	protected double latitudeResolution;
 	
 	
-	private double gridSize;
-	private boolean doublePrecisionHillshading;
-	private boolean lightingEnabled;
-	private double relativeLightIntensity;
-	private double relativeDarkIntensity;
-	private double metersResolution;
-	private int spotExponent;
-	private double lightingMultiple;
-	private double elevationMax;
-	private double elevationMin;
-	private double solarElevation;
-	private double solarAzimuth;
-	private double solarZenith;
-	private double longitudeResolution;
-	private double latitudeGridSize;
-	private double longitudeGridSize; 
-	private boolean useSimpleCanvasFill;
-	private RayTracing lightSourceRayTracer;
-	private boolean rayTraceShadows;
-	private double shadowIntensity;
-	private boolean doubleBuffered;
+	protected double gridSize;
+	protected boolean doublePrecisionHillshading;
+	protected boolean lightingEnabled;
+	protected double relativeLightIntensity;
+	protected double relativeDarkIntensity;
+	protected double metersResolution;
+	protected int spotExponent;
+	protected double lightingMultiple;
+	protected double elevationMax;
+	protected double elevationMin;
+	protected double solarElevation;
+	protected double solarAzimuth;
+	protected double solarZenith;
+	protected double longitudeResolution;
+	protected double latitudeGridSize;
+	protected double longitudeGridSize; 
+	protected boolean useSimpleCanvasFill;
+	protected RayTracing lightSourceRayTracer;
+	protected boolean rayTraceShadows;
+	protected double shadowIntensity;
+	protected boolean doubleBuffered;
 	
 	
-	private double elevationMultiple;
-	private double maximumElevationTrue;
-	private double minimumElevation;
-	private double maximumElevation;
-	private ElevationScaler elevationScaler;
+	protected double elevationMultiple;
+	protected double maximumElevationTrue;
+	protected double minimumElevation;
+	protected double maximumElevation;
+	protected ElevationScaler elevationScaler;
 	
-	private MapPoint point = new MapPoint();
-	private Perspectives perspectives = new Perspectives();
-	private double normal[] = new double[3];
-	private double backLeftPoints[] = new double[3];
-	private double backRightPoints[] = new double[3];
-	private double frontLeftPoints[] = new double[3];
-	private double frontRightPoints[] = new double[3];
-	private double sunsource[] = new double[3];	
-	private int colorBufferA[] = new int[4];
-	private int colorBufferB[] = new int[4];
-	private double[] pointNormal = new double[3];
-	private int[] backgroundColor = new int[4];
+	protected MapPoint point = new MapPoint();
+	protected Perspectives perspectives = new Perspectives();
+	protected double normal[] = new double[3];
+	protected double backLeftPoints[] = new double[3];
+	protected double backRightPoints[] = new double[3];
+	protected double frontLeftPoints[] = new double[3];
+	protected double frontRightPoints[] = new double[3];
+	protected double sunsource[] = new double[3];	
+	protected int colorBufferA[] = new int[4];
+	protected int colorBufferB[] = new int[4];
+	protected double[] pointNormal = new double[3];
+	protected int[] backgroundColor = new int[4];
 	
-	private double latitudeSlices = 50;
-	private double longitudeSlices = 50;
+
 	
-	private boolean getStandardResolutionElevation = true;
-	private boolean interpolateData = true;
-	private boolean averageOverlappedData = true;
+	protected boolean getStandardResolutionElevation = true;
+	protected boolean interpolateData = true;
+	protected boolean averageOverlappedData = true;
 	
-	private double lightZenith;
-	private double darkZenith;
-	private LightSourceSpecifyTypeEnum lightSourceType;
-	private long lightOnDate;
-	private boolean recalcLightOnEachPoint;
-	private SolarCalculator solarCalculator;
-	private SolarPosition position;
-	private EarthDateTime datetime;
-	private Coordinate latitudeCoordinate;
-	private Coordinate longitudeCoordinate;
-	private boolean sunIsUp = false;
+	protected double lightZenith;
+	protected double darkZenith;
+	protected LightSourceSpecifyTypeEnum lightSourceType;
+	protected long lightOnDate;
+	protected boolean recalcLightOnEachPoint;
+	protected SolarCalculator solarCalculator;
+	protected SolarPosition position;
+	protected EarthDateTime datetime;
+	protected Coordinate latitudeCoordinate;
+	protected Coordinate longitudeCoordinate;
+	protected Planet planet;
+	protected boolean sunIsUp = false;
 	
-	private double northLimit;
-	private double southLimit;
-	private double eastLimit;
-	private double westLimit;
+	protected double northLimit;
+	protected double southLimit;
+	protected double eastLimit;
+	protected double westLimit;
 	
-	private int tileHeight;
+	protected int tileHeight;
 	
-	private ElevationDataMap elevationMap;
+	protected ElevationDataMap elevationMap;
 
 	public TileRenderer(ModelContext modelContext)
 	{
@@ -227,6 +227,13 @@ public class TileRenderer extends InterruptibleProcess
 		
 		tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		
+		/*
+		try {
+			loadRasterDataSubset(northLimit, southLimit, eastLimit, westLimit);
+		} catch (DataSourceException ex) {
+			throw new RenderEngineException("Error loading data subset: " + ex.getMessage(), ex);
+		}
+		*/
 		
 		//latitudeResolution = modelContext.getLatitudeResolution();
 		//longitudeResolution = modelContext.getLongitudeResolution();
@@ -391,72 +398,22 @@ public class TileRenderer extends InterruptibleProcess
 	public void renderTile() throws RenderEngineException
 	{
 		
-		
-		
-		try {
-			loadRasterDataSubset(northLimit, southLimit, eastLimit, westLimit);
-		} catch (DataSourceException ex) {
-			throw new RenderEngineException("Error loading data subset: " + ex.getMessage(), ex);
-		}
-		
-		
-		//RasterDataContext dataProxy = modelContext.getRasterDataContext();//.getSubSet(northLimit, southLimit, eastLimit, westLimit);
 
-		// TODO: If Buffered
-		/*
-		try {
-			loadDataBuffers(northLimit, southLimit-latitudeResolution, eastLimit+longitudeResolution, westLimit);
-		} catch (RenderEngineException ex) {
-			throw new RenderEngineException("Error loading data buffer: " + ex.getMessage(), ex);
-		}
-		*/
 		
 		onTileBefore(modelCanvas);
-		
-		//List<ModelPoint> points = new LinkedList<ModelPoint>();
-		
-		
-		//log.info("Initializing model point buffer...");
-		//elevationMap = ElevationDataMap.create(northLimit, southLimit-latitudeResolution, eastLimit+longitudeResolution, westLimit, latitudeResolution, longitudeResolution);
-		
+
 
 		log.info("Processing data points...");
 		
 		ModelCanvas modelCanvas = modelContext.getModelCanvas();
-		
 
-		
-		//if (modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview")) {
-			try {
-				paintRasterPlot(modelCanvas);
-			} catch (Exception ex) {
-				log.error("Error painting raster grid: " + ex.getMessage(), ex);
-			}
-		//}
-		/*
-		for (double latitude = northLimit; latitude > southLimit; latitude-=latitudeResolution) {
-			for (double longitude = westLimit; longitude < eastLimit; longitude+=longitudeResolution) {
-		
-		//for (double latitude = southLimit; latitude <= northLimit + latitudeResolution; latitude+=latitudeResolution) {
-		//	for (double longitude = eastLimit; longitude >= westLimit - longitudeResolution; longitude-=longitudeResolution) {
-				doElevation(latitude, longitude);
-				
-				this.checkPause();
-				if (isCancelled()) {
-					break;
-				}
-			}
-			
+		try {
+			paintRasterPlot(modelCanvas);
+		} catch (Exception ex) {
+			log.error("Error painting raster grid: " + ex.getMessage(), ex);
 		}
-		*/
 		
-		
-		//elevationMap.clear();
-		//elevationMap = null;
-
 		onTileAfter(modelCanvas);
-		//unloadDataBuffers();
-
 
 	}
 	
@@ -480,15 +437,12 @@ public class TileRenderer extends InterruptibleProcess
 		double east = eastLimit;
 		double west = westLimit;
 
-		//double maxLon = east;
-		//double minLat = south;
 		
 		double maxLon = east + longitudeResolution;
 		double minLat = south - latitudeResolution;
 		
 		TriangleStrip strip = null;
 
-		//double cacheHeight = ((north - south) / 12.0);
 		double cacheHeight = rasterDataContext.getLatitudeResolution() * tileHeight;
 		double nextCachePoint = north;
 		
@@ -524,9 +478,7 @@ public class TileRenderer extends InterruptibleProcess
 			for (double lon = west; lon <= maxLon; lon+=longitudeResolution) {
 				
 				double nwLon = lon;
-				
 				double swLon = lon;
-
 				double elev = 0;
 				
 				
@@ -578,7 +530,9 @@ public class TileRenderer extends InterruptibleProcess
 			
 		}
 		
-		unloadDataBuffers();
+		if (this.tiledPrecaching) {
+			unloadDataBuffers();
+		}
 		
 	}
 	

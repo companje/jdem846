@@ -603,8 +603,13 @@ public class ModelVisualizationPanel extends Panel
 		}
 
 		
-		
-		renderer.render();
+		log.info("Rendering simple model...");
+		try {
+			renderer.render();
+		} catch (RenderEngineException ex) {
+			log.error("Error rendering preview model: " + ex.getMessage(), ex);
+		}
+		log.info("Done rendering simple model");
 		
 		ModelCanvas modelCanvas = modelContextWorkingCopy.getModelCanvas();
 		pnlModelDisplay.backgroundColor = ColorSerializationUtil.stringToColor(modelContextWorkingCopy.getModelOptions().getBackgroundColor());

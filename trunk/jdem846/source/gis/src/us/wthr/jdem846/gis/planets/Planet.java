@@ -3,6 +3,7 @@ package us.wthr.jdem846.gis.planets;
 public class Planet
 {
 	private String name;
+	private String elevationSamplesPath;
 	
 	// Orbital characteristics
 	private double aphelion; // km
@@ -53,6 +54,16 @@ public class Planet
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	public String getElevationSamplesPath()
+	{
+		return elevationSamplesPath;
+	}
+
+	public void setElevationSamplesPath(String elevationSamplesPath)
+	{
+		this.elevationSamplesPath = elevationSamplesPath;
 	}
 
 	public double getAphelion()

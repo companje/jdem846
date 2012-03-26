@@ -69,7 +69,7 @@ public class PlanetsRegistry implements AppRegistry
 	protected static void loadPlanet(JSONObject planetObj)  throws Exception
 	{
 		String name = planetObj.getString("name");
-		
+		String elevationSamplesPath = planetObj.getString("elevationSamples");
 		
 		double aphelion = planetObj.getDouble("aphelion");
 		double perihelion = planetObj.getDouble("perihelion");
@@ -106,6 +106,7 @@ public class PlanetsRegistry implements AppRegistry
 		
 		Planet planet = new Planet();
 		planet.setName(name);
+		planet.setElevationSamplesPath(elevationSamplesPath);
 		planet.setAphelion(aphelion);
 		planet.setPerihelion(perihelion);
 		planet.setSemiMajorAxis(semiMajorAxis);

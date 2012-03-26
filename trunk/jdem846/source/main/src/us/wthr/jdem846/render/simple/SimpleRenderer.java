@@ -40,28 +40,23 @@ import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.rasterdata.ElevationDataMap;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.CanvasProjection;
-import us.wthr.jdem846.render.ElevationMinMax;
+import us.wthr.jdem846.gis.elevation.ElevationMinMax;
 import us.wthr.jdem846.render.ElevationMinMaxCalculator;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RayTracing;
 import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.render.gfx.Vector;
+import us.wthr.jdem846.render.render2d.TileRenderer;
 import us.wthr.jdem846.render.scaling.ElevationScaler;
 import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
-public class SimpleRenderer
+public class SimpleRenderer extends TileRenderer
 {
-	
-	private enum CornerEnum {
-		NORTHEAST,
-		NORTHWEST,
-		SOUTHEAST,
-		SOUTHWEST
-	};
-	
+
 	private static Log log = Logging.getLog(SimpleRenderer.class);
 	
+	/*
 	private ModelContext modelContext;
 	private ElevationDataMap elevationMap;
 	private boolean doubleBuffered;
@@ -130,11 +125,19 @@ public class SimpleRenderer
 	
 	private ElevationScaler elevationScaler;
 	
+	*
+	*/
+	
+	protected double latitudeSlices = 50;
+	protected double longitudeSlices = 50;
+	
+	private int[] sourceLineColor = {Color.RED.getRed(), Color.RED.getGreen(), Color.RED.getBlue(), 255};
+	private int[] baseGridColor = {Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue(), 255};
+	private boolean paintGlobalBaseGrid = true;
+	
 	public SimpleRenderer(ModelContext modelContext)
 	{
-		this.modelContext = modelContext;
-		
-
+		super(modelContext);
 	}
 	
 	public void setModelContext(ModelContext modelContext)
@@ -146,64 +149,26 @@ public class SimpleRenderer
 	{
 		log.info("Resetting simple renderer cache");
 		
+		
+		
 		double north = modelContext.getNorth();
 		double south = modelContext.getSouth();
 		double east = modelContext.getEast();
 		double west = modelContext.getWest();
-
+		
+		super.prepare(north, south, east, west, resetCache);
+		
+		
+		// Apply overrides to simplify the output...
+		
+		tiledPrecaching = false;
+		
 		latitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
 		longitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices");
 		
-		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
-		longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
 		
 		latitudeResolution = (north - south - latitudeResolution) / latitudeSlices;
 		longitudeResolution = (east - west - longitudeResolution) / longitudeSlices;
-		
-		//latitudeResolution = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
-		//longitudeResolution = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
-		
-		
-		
-		////latitudeResolution = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
-		//longitudeResolution = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
-		
-		doubleBuffered = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.doubleBuffered");
-		if (doubleBuffered && resetCache) {
-			elevationMap = ElevationDataMap.create(modelContext.getNorth(), 
-					modelContext.getSouth(), 
-					modelContext.getEast(), 
-					modelContext.getWest(), 
-					modelContext.getModelDimensions().getOutputLatitudeResolution(),
-					modelContext.getModelDimensions().getOutputLongitudeResolution());
-		}
-		
-		ColorSerializationUtil.stringToColor(modelContext.getModelOptions().getBackgroundColor(), backgroundColor);
-		
-		elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
-		
-		minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
-		maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
-		try {
-			elevationScaler = ElevationScalerFactory.createElevationScaler(modelContext.getModelOptions().getElevationScaler(), this.elevationMultiple, minimumElevation, maximumElevationTrue);
-		} catch (Exception ex) {
-			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
-		}
-		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
-		
-		
-		maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
-		modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
-		modelColoring.setElevationScaler(elevationScaler);
-		
-		
-		planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
-		LightingContext lightingContext = modelContext.getLightingContext();
-		lightSourceType = lightingContext.getLightSourceSpecifyType();
-		lightOnDate = lightingContext.getLightingOnDate();
-		
-		lightZenith = lightingContext.getLightZenith();
-		darkZenith = lightingContext.getDarkZenith();
 		
 		/* Force this to be false. This renderer needs to be fast and recalculating
 		 * adds way too much overhead. Should the recalc method be optimized enough,
@@ -212,96 +177,22 @@ public class SimpleRenderer
 		recalcLightOnEachPoint = false;
 		
 		
-		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
-			sunIsUp = true;
-			
-			solarElevation = modelContext.getLightingContext().getLightingElevation();
-			solarAzimuth = modelContext.getLightingContext().getLightingAzimuth();
-			
-			setUpLightSource(0, 0, solarElevation, solarAzimuth, true);
-		}
-		
-		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME) {
-			
-			Calendar cal = Calendar.getInstance();
-			cal.setTimeZone(TimeZone.getTimeZone("GMT"));
-			//cal.set(Calendar.ZONE_OFFSET, 0);
-			//cal.setTimeZone(TimeZone.)
-			cal.setTimeInMillis(lightOnDate);
-			
-			int year = cal.get(Calendar.YEAR);
-			int month = cal.get(Calendar.MONTH) + 1;
-			int day = cal.get(Calendar.DAY_OF_MONTH);
-			int hour = cal.get(Calendar.HOUR_OF_DAY);
-			int minute = cal.get(Calendar.MINUTE);
-			int second = cal.get(Calendar.SECOND);
-			
-			log.info("Setting initial date/time to " + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
-			
-			
-			position = new SolarPosition();
-			datetime = new EarthDateTime(year, month, day, hour, minute, second, 0, false);
-			latitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LATITUDE);
-			longitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LONGITUDE);
-			solarCalculator = new SolarCalculator();
-			solarCalculator.setDatetime(datetime);
-			
-		
-		
-			
-			if (!recalcLightOnEachPoint) {
-				
-				double latitude = (north + south) / 2.0;
-				double longitude = (east + west) / 2.0;
-				
-				setUpLightSource(latitude, longitude, 0, 0, true);
-			}
-		}
-		//getStandardResolutionElevation = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.STANDARD_RESOLUTION_RETRIEVAL);
-		//interpolateData = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.INTERPOLATE_HIGHER_RESOLUTION);
-		//averageOverlappedData = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.AVERAGE_OVERLAPPING_RASTER_DATA);
-		
 		getStandardResolutionElevation = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.standardResolutionRetrieval");
 		interpolateData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.interpolateToHigherResolution");
 		averageOverlappedData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.averageOverlappedData");
-		
-		lightingEnabled = modelContext.getLightingContext().isLightingEnabled();
-		spotExponent = modelContext.getLightingContext().getSpotExponent();
-		relativeLightIntensity = modelContext.getLightingContext().getRelativeLightIntensity();
-		relativeDarkIntensity = modelContext.getLightingContext().getRelativeDarkIntensity();
-		lightingMultiple = modelContext.getLightingContext().getLightingMultiple();
-		
-		solarAzimuth = modelContext.getLightingContext().getLightingAzimuth();
-		solarElevation = modelContext.getLightingContext().getLightingElevation();
-		
-		
-		
-		
-		projection = modelContext.getModelCanvas().getCanvasProjection();
 		
 		paintGlobalBaseGrid = modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintGlobalBaseGrid");
 		
 		modelContext.getModelDimensions().outputLatitudeResolution = latitudeResolution;
 		modelContext.getModelDimensions().outputLongitudeResolution = longitudeResolution;
 		
-		rayTraceShadows = false;//modelContext.getLightingContext().getRayTraceShadows();
-		shadowIntensity = modelContext.getLightingContext().getShadowIntensity();
-		if (rayTraceShadows) {
-			lightSourceRayTracer = new RayTracing(modelContext,
-					new RasterDataFetchHandler() {
-						public double getRasterData(double latitude, double longitude) throws Exception {
-							return getElevation(latitude, longitude, true);
-						}
-			});
-		} else {
-			lightSourceRayTracer = null;
-		}
+		this.rayTraceShadows = false;
+		this.lightSourceRayTracer = null;
 		
-
 	}
 	
 	
-	public void render()
+	public void render() throws RenderEngineException
 	{
 
 		log.info("Rendering model simple image");
@@ -329,12 +220,12 @@ public class SimpleRenderer
 		
 		
 		if (modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview")) {
-			try {
-				paintRasterPlot(modelCanvas);
-			} catch (Exception ex) {
-				log.error("Error painting raster grid: " + ex.getMessage(), ex);
-			}
+			super.renderTile();
 		}
+		
+		
+		
+		
 		
 	}
 	
@@ -484,432 +375,14 @@ public class SimpleRenderer
 	}
 	
 	
-	protected void paintRasterPlot(ModelCanvas canvas) throws Exception
-	{
-		int[] rgba = new int[4];
-		rgba[3] = 255;
-		
+	
 
-		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
-		ImageDataContext imageDataContext = modelContext.getImageDataContext();
-		
-		if (rasterDataContext.getRasterDataListSize() == 0 && imageDataContext.getImageListSize() == 0) {
-			return;
-		}
-		
-		
-		double north = modelContext.getNorth();
-		double south = modelContext.getSouth();
-		double east = modelContext.getEast();
-		double west = modelContext.getWest();
-
-		double maxLon = east + longitudeResolution;
-		double minLat = south;
-		
-		TriangleStrip strip = new TriangleStrip();
-		
-		
-			
-		
-		
-		for (double lat = north; lat > minLat; lat-=latitudeResolution) {
-			strip.reset();
-			
-			double lastElevN = minimumElevation;
-			double lastElevS = minimumElevation;	
-			
-			if (lastElevN == DemConstants.ELEV_NO_DATA && lastElevS == DemConstants.ELEV_NO_DATA) {
-				lastElevN = 0;
-				lastElevS = 0;
-			}
-			
-			
-			for (double lon = west; lon <= maxLon; lon+=longitudeResolution) {
-				double nwLat = lat;
-				double nwLon = lon;
-
-				double swLat = lat - latitudeResolution;
-				double swLon = lon;
-
-				double elev = 0;
-				
-				// NW
-				elev = calculateShadedColor(nwLat, nwLon, rgba);
-				if (elev == DemConstants.ELEV_NO_DATA || elev < minimumElevation) {
-					rgba[0] = backgroundColor[0];
-					rgba[1] = backgroundColor[1];
-					rgba[2] = backgroundColor[2];
-					rgba[3] = backgroundColor[3];
-					elev = lastElevN;
-				} else {
-					lastElevN = elev;
-				}
-				Vertex nwVtx = createVertex(nwLat, nwLon, elev, rgba);
-				
-				// SW
-				elev = calculateShadedColor(swLat, swLon, rgba);
-				if (elev == DemConstants.ELEV_NO_DATA || elev < minimumElevation) {
-					rgba[0] = backgroundColor[0];
-					rgba[1] = backgroundColor[1];
-					rgba[2] = backgroundColor[2];
-					rgba[3] = backgroundColor[3];
-					elev = lastElevS;
-				} else {
-					lastElevS = elev;
-				}
-				Vertex swVtx = createVertex(swLat, swLon, elev, rgba);
-				
-				/*
-				// NW
-				if ((elev = calculateShadedColor(nwLat, nwLon, rgba)) == DemConstants.ELEV_NO_DATA) 
-					continue;
-				Vertex nwVtx = createVertex(nwLat, nwLon, elev, rgba);
-				
-				// SW
-				if ((elev = calculateShadedColor(swLat, swLon, rgba)) == DemConstants.ELEV_NO_DATA)
-					continue;
-				Vertex swVtx = createVertex(swLat, swLon, elev, rgba);
-				*/
-				
-				
-				strip.addVertex(nwVtx);
-				strip.addVertex(swVtx);
-				
-				
-			}
-			//log.info("Filling " + strip.getTriangleCount() + " triangles with " + strip.getVertexCount() + " vertecies");
-			canvas.fillShape(strip);
-			
-		}
-		
-	}
-	
-	protected double calculateShadedColor(double latitude, double longitude, int[] rgba) throws DataSourceException, RayTracingException
-	{
-		double eLat = latitude;
-		double eLon = longitude + longitudeResolution;
-		
-		double sLat = latitude - latitudeResolution;
-		double sLon = longitude;
-		
-		double wLat = latitude;
-		double wLon = longitude - longitudeResolution;
-		
-		double nLat = latitude + latitudeResolution;
-		double nLon = longitude;
-		
-		
-		double midElev = getElevation(latitude, longitude, true);
-		
-		
-		
-		if (midElev == DemConstants.ELEV_NO_DATA)
-		//	midElev = 0;
-			return DemConstants.ELEV_NO_DATA;
-		
-		
-		getPointColor(latitude, longitude, midElev, colorBufferA);
-		
-		
-		
-		/*
-		 * Ok, just trust me on these ones.... 
-		 */
-		
-		if (lightingEnabled) {
-			double eElev = getElevation(eLat, eLon, true);
-			double sElev = getElevation(sLat, sLon, true);
-			double wElev = getElevation(wLat, wLon, true);
-			double nElev = getElevation(nLat, nLon, true);
-			
-			
-			if (eElev == DemConstants.ELEV_NO_DATA)
-				eElev = midElev;
-			if (sElev == DemConstants.ELEV_NO_DATA)
-				sElev = midElev;
-			if (wElev == DemConstants.ELEV_NO_DATA)
-				wElev = midElev;
-			if (nElev == DemConstants.ELEV_NO_DATA)
-				nElev = midElev;
-			
-			setUpLightSource(latitude, longitude, solarElevation, solarAzimuth, recalcLightOnEachPoint);
-			resetBuffers(latitude, longitude);
-			
-			// NW Normal
-			calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normal);
-			pointNormal[0] = normal[0];
-			pointNormal[1] = normal[1];
-			pointNormal[2] = normal[2];
-			
-			// SW Normal
-			calculateNormal(wElev, 0.0, sElev, midElev, CornerEnum.NORTHEAST, normal);
-			pointNormal[0] += normal[0];
-			pointNormal[1] += normal[1];
-			pointNormal[2] += normal[2];
-			
-			// SE Normal
-			calculateNormal(midElev, sElev, 0.0, eElev, CornerEnum.NORTHWEST, normal);
-			pointNormal[0] += normal[0];
-			pointNormal[1] += normal[1];
-			pointNormal[2] += normal[2];
-			
-			// NE Normal
-			calculateNormal(nElev, midElev, eElev, 0.0, CornerEnum.SOUTHWEST, normal);
-			pointNormal[0] += normal[0];
-			pointNormal[1] += normal[1];
-			pointNormal[2] += normal[2];
-			
-			normal[0] = pointNormal[0] / 4.0;
-			normal[1] = pointNormal[1] / 4.0;
-			normal[2] = pointNormal[2] / 4.0;
-			
-			double dot = calculateDotProduct(latitude, longitude);
-			
-			if (this.rayTraceShadows) {
-				if (lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, midElev)) {
-					// I'm not 100% happy with this method...
-					dot = dot - (2 * shadowIntensity);
-					if (dot < -1.0) {
-						dot = -1.0;
-					}
-				}
-			}
-			
-			copyRgba(colorBufferA, rgba);
-			ColorAdjustments.adjustBrightness(rgba, dot);
-			
-			//copyRgba(colorBufferA, colorBufferB);
-			//ColorAdjustments.adjustBrightness(colorBufferB, dot);
-			//ColorAdjustments.interpolateColor(colorBufferA, colorBufferB, rgba, lightingMultiple);
-		
-		} else {
-			copyRgba(colorBufferA, rgba);
-		}
-		rgba[3] = 255;
-		
-		return midElev;
-	}
-	
-	protected void getPointColor(double latitude, double longitude, double elevation, int[] rgba) throws DataSourceException
-	{
-		
-		if (modelContext.getImageDataContext() != null
-				&& modelContext.getImageDataContext().getColor(latitude, longitude, rgba)) {
-			// All right, then
-		} else {
-			modelColoring.getGradientColor(elevation, minimumElevation, maximumElevation, rgba);
-		}
-
-	}
-	
-	protected void calculateNormal(double nw, double sw, double se, double ne, CornerEnum corner, double[] normal)
-	{
-		backLeftPoints[1] = nw * lightingMultiple;
-		backRightPoints[1] = ne * lightingMultiple;
-		frontLeftPoints[1] = sw * lightingMultiple;
-		frontRightPoints[1] = se * lightingMultiple;
-		
-		if (corner == CornerEnum.NORTHWEST) {
-			perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
-		} else if (corner == CornerEnum.SOUTHWEST) {
-			perspectives.calcNormal(backLeftPoints, frontLeftPoints, frontRightPoints, normal);
-		} else if (corner == CornerEnum.SOUTHEAST) {
-			perspectives.calcNormal(frontLeftPoints, frontRightPoints, backRightPoints, normal);
-		} else if (corner == CornerEnum.NORTHEAST) {
-			perspectives.calcNormal(backLeftPoints, frontRightPoints, backRightPoints, normal);
-		}
-		
-	}
 	
 	
-	protected double calculateDotProduct(double latitude, double longitude)
-	{
-		
-		double dot = calculateTerrainDotProduct();
-
-		
-		double lower = lightZenith;
-		double upper = darkZenith;
-		
-		
-		if (solarZenith > lower && solarZenith <= upper) {
-			double range = (solarZenith - lower) / (upper - lower);
-			dot = dot - (2 * range);
-		} else if (solarZenith > upper) {
-			dot = dot - (2 * 1.0);
-		}
-		if (dot < -1.0) {
-			dot = -1.0;
-		}
-		
-		
-		return dot;
-		
-		
-	}
 	
 	
-	protected double calculateSphericalDotProduct(double latitude, double longitude)
-	{
-		return 0;
-		/*
-		calculateNormal(0, 0, 0, 0, CornerEnum.NORTHEAST, pointNormal);
-		double dot = perspectives.dotProduct(pointNormal, sunsource);
-		return dot;
-		*/
-	}
-	
-	protected double calculateTerrainDotProduct()
-	{
-		
-		
-		double dot = perspectives.dotProduct(normal, sunsource);
-		dot = Math.pow(dot, spotExponent);
-		
-		if (dot > 0) {
-			dot *= relativeLightIntensity;
-		} else if (dot < 0) {
-			dot *= relativeDarkIntensity;
-		}
-
-		return dot;
-	}
 	
 	
-	protected void setUpLightSource(double latitude, double longitude, double solarElevation, double solarAzimuth, boolean force)
-	{
-
-		if (force && lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
-			setUpLightSourceBasic(solarElevation, solarAzimuth);
-		} else if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME) {
-			setUpLightSourceOnDate(latitude, longitude);
-		}
-		
-		
-		
-	}
-	
-	protected void setUpLightSourceOnDate(double latitude, double longitude)
-	{
-		// This stuff in here probably can be vastly optimized...
-		
-		//int timezone = (int) Math.floor((longitude / 180.0) * 12.0);
-
-		//datetime.setTimezone(timezone);
-		
-		latitudeCoordinate.fromDecimal(latitude);
-		longitudeCoordinate.fromDecimal(longitude);
-
-		
-		solarCalculator.update();
-		solarCalculator.setLatitude(latitudeCoordinate);
-		solarCalculator.setLongitude(longitudeCoordinate);
-		//double solarElevation = solarCalculator.solarElevationAngle();
-		//double solarAzimuth = solarCalculator.solarAzimuthAngle();
-		solarAzimuth = solarCalculator.solarAzimuthAngle();
-		//solarElevation = solarCalculator.correctedSolarElevation();
-		solarElevation = solarCalculator.solarElevationAngle();
-		solarZenith = solarCalculator.solarZenithAngle();
-		
-		if (solarZenith > darkZenith) {
-			sunIsUp = false;
-		} else {
-			sunIsUp = true;
-		}
-		//sunIsUp = true;
-		setUpLightSourceBasic(solarElevation, solarAzimuth);
-		
-	}
-	
-	protected void setUpLightSourceBasic(double solarElevation, double solarAzimuth)
-	{
-		
-		sunsource[0] = 0.0;
-		sunsource[1] = 0.0;
-		sunsource[2] = -1.0;
-		Vector.rotate(solarElevation, -solarAzimuth, 0, sunsource);
-		
-	}
-	
-	protected void resetBuffers(double latitude, double longitude)
-	{
-		//double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
-		//double effLonRes = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
-		
-		//Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
-		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
-		
-		if (planet != null) {
-			meanRadius = planet.getMeanRadius();
-		}
-		
-		double resolutionMeters = RasterDataContext.getMetersResolution(meanRadius, latitude, longitude, latitudeResolution, longitudeResolution);
-		double xzRes = (resolutionMeters / 2.0);
-		
-		backLeftPoints[0] = -xzRes;
-		backLeftPoints[1] = 0.0;
-		backLeftPoints[2] = -xzRes;
-		
-		backRightPoints[0] = xzRes;
-		backRightPoints[1] = 0.0;
-		backRightPoints[2] = -xzRes;
-		
-		frontLeftPoints[0] = -xzRes;
-		frontLeftPoints[1] = 0.0;
-		frontLeftPoints[2] = xzRes;
-		
-		frontRightPoints[0] = xzRes;
-		frontRightPoints[1] = 0.0;
-		frontRightPoints[2] = xzRes;
-		
-	}
-	
-	
-	protected double getElevation(double latitude, double longitude, boolean scaled) throws DataSourceException
-	{
-		double elevation = _getElevation(latitude, longitude, scaled);
-		
-		/*
-		double ratio = (elevation - minimumElevation) / (maximumElevationTrue - minimumElevation);
-		elevation = minimumElevation + (maximumElevation - minimumElevation) * ratio;
-		
-		
-		if (scaled && elevation != DemConstants.ELEV_NO_DATA) {
-			elevation = elevationScaler.scale(elevation, minimumElevation, maximumElevation);
-		} 
-		*/
-		
-		return elevation;
-		
-	}
-	
-	protected double _getElevation(double latitude, double longitude, boolean scaled) throws DataSourceException
-	{
-		
-		double elevation = DemConstants.ELEV_NO_DATA;
-		if (doubleBuffered) {
-			elevation = elevationMap.get(latitude, longitude, DemConstants.ELEV_NO_DATA);
-			if (elevation != DemConstants.ELEV_NO_DATA)
-				return elevation;
-		}
-	
-		if (modelContext.getRasterDataContext().getRasterDataListSize() > 0) {
-			if (getStandardResolutionElevation) {
-				elevation = modelContext.getRasterDataContext().getDataStandardResolution(latitude, longitude, averageOverlappedData, interpolateData, scaled);
-			} else {
-				elevation = modelContext.getRasterDataContext().getDataAtEffectiveResolution(latitude, longitude, averageOverlappedData, interpolateData, scaled);
-			} 
-		} else if (modelContext.getImageDataContext().getImageListSize() > 0) {
-			elevation = 0;
-		} else {
-			elevation = DemConstants.ELEV_NO_DATA;
-		}
-		
-		if (doubleBuffered) {
-			elevationMap.put(latitude, longitude, elevation);
-		}
-		return elevation;
-	}
 	
 	protected Edge createEdge(double lat0, double lon0, double elev0, double lat1, double lon1, double elev1) throws MapProjectionException
     {
@@ -938,62 +411,6 @@ public class SimpleRenderer
     	return v;
 	}
 	
-	
-	/*
-	public void determineDataRangeLowRes() throws DataSourceException
-	{
-		
-		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
-		
-		double min = Double.MAX_VALUE;
-		double max = Double.MIN_VALUE;
-		
-		if (rasterDataContext.getRasterDataListSize() > 0) {
-		
-			double north = rasterDataContext.getNorth();
-			double south = rasterDataContext.getSouth();
-			double east = rasterDataContext.getEast();
-			double west = rasterDataContext.getWest();
-			
-			//double latStep = (north - south - modelContext.getRasterDataContext().getEffectiveLatitudeResolution()) / latitudeSlices;
-			//double lonStep = (east - west - modelContext.getRasterDataContext().getEffectiveLongitudeResolution()) / longitudeSlices;
-			
-			
-			
-			for (double lon = west; lon < east - rasterDataContext.getLongitudeResolution(); lon+=longitudeResolution) {
-				for (double lat = north; lat > south + rasterDataContext.getLatitudeResolution(); lat-=latitudeResolution) {
-					double elevation = getElevation(lat, lon);
-					
-					if (!Double.isNaN(elevation) && elevation != DemConstants.ELEV_NO_DATA) {
-						min = MathExt.min(elevation, min);
-						max = MathExt.max(elevation, max);
-					}
-					
-				}
-				
-			}
-		} else {
-			max = 0;
-			min = 0;
-		}
-		
-		log.info("Simple renderer data maximum: " + max);
-		log.info("Simple renderer data minimum: " + min);
-		
-		rasterDataContext.setDataMaximumValue(max);
-		rasterDataContext.setDataMinimumValue(min);
-		
-		
-	}
-	*/
-	
-	protected void copyRgba(int[] rgba0, int[] rgba1)
-	{
-		rgba1[0] = rgba0[0];
-		rgba1[1] = rgba0[1];
-		rgba1[2] = rgba0[2];
-		rgba1[3] = rgba0[3];
-		
-	}
+
 	
 }

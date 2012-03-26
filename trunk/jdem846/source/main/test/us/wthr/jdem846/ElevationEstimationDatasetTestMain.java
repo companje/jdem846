@@ -5,15 +5,16 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
+import us.wthr.jdem846.gis.elevation.ElevationMinMaxEstimation;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
-import us.wthr.jdem846.render.ElevationMinMax;
 import us.wthr.jdem846.render.ElevationMinMaxCalculator;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
+import us.wthr.jdem846.gis.elevation.ElevationMinMax;
 
 public class ElevationEstimationDatasetTestMain extends AbstractTestMain
 {
@@ -93,10 +94,10 @@ public class ElevationEstimationDatasetTestMain extends AbstractTestMain
 				ElevationMinMaxCalculator minMaxCalc = new ElevationMinMaxCalculator(modelContext);
 				ElevationMinMax minMax = minMaxCalc.calculateMinAndMax();
 				
-				double min = minMax.minimum;
-				double max = minMax.maximum;
-				double mean = minMax.mean;
-				double median = minMax.median;
+				double min = minMax.getMinimumElevation();
+				double max = minMax.getMaximumElevation();
+				double mean = minMax.getMeanElevation();
+				double median = minMax.getMedianElevation();
 				
 				
 				out.printf("%f, %f, %f, %f, %f, %f\n", latitude, longitude, min, max, mean, median);
