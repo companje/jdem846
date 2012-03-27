@@ -21,9 +21,9 @@ public class ExponentialScaler extends AbstractElevationScaler
 			
 		
 		double range = maxMulitiplied - min;
-		double rangeExp = MathExt.pow(2, range/exponentDivisor);
+		double rangeExp = MathExt.pow(2, range/exponentDivisor) - 1;
 		
-		double elevExp = MathExt.pow(2, (elevation - min)/exponentDivisor);
+		double elevExp = MathExt.pow(2, (elevation - min)/exponentDivisor) - 1;
 		
 		double elevationScaled = min + (range * elevExp / rangeExp);
 		return elevationScaled;
