@@ -120,6 +120,8 @@ public class ModelDimensions2D
 		//double ydimRatio = (double)outputHeight / (double)dataRows;
 		
 		double scaleX = modelContext.getModelOptions().getProjection().getZoom();
+		
+		/*
 		double minSideLength = MathExt.min(outputWidth, outputHeight) - 20;
 		double radius = (minSideLength / 2.0)  * scaleX;
 		
@@ -131,7 +133,39 @@ public class ModelDimensions2D
 		
 		outputLongitudeResolution = longitudeResolution / xdimRatio;
 		outputLatitudeResolution = latitudeResolution / ydimRatio;
-
+		*/
+		
+		LatLonResolution latLonOutputRes = null;
+		CanvasProjectionTypeEnum canvasProjectionType = modelOptions.getModelProjection();
+		if (canvasProjectionType == CanvasProjectionTypeEnum.PROJECT_3D) {
+			latLonOutputRes = CanvasProjection3d.calculateOutputResolutions(outputWidth,
+															outputHeight,
+															dataColumns,
+															dataRows,
+															latitudeResolution,
+															longitudeResolution,
+															scaleX);
+		} else if (canvasProjectionType == CanvasProjectionTypeEnum.PROJECT_SPHERE) {
+			latLonOutputRes = CanvasProjectionGlobe.calculateOutputResolutions(outputWidth,
+															outputHeight,
+															dataColumns,
+															dataRows,
+															latitudeResolution,
+															longitudeResolution,
+															scaleX);
+		} else  {
+			latLonOutputRes = CanvasProjection.calculateOutputResolutions(outputWidth,
+															outputHeight,
+															dataColumns,
+															dataRows,
+															latitudeResolution,
+															longitudeResolution,
+															scaleX);
+		}
+		
+		outputLatitudeResolution = latLonOutputRes.latitudeResolution;
+		outputLongitudeResolution = latLonOutputRes.longitudeResolution;
+		
 		if (outputLongitudeResolution < longitudeResolution)
 			outputLongitudeResolution = longitudeResolution;
 		

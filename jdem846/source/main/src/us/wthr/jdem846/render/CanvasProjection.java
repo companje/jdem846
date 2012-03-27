@@ -280,4 +280,22 @@ public class CanvasProjection
 	}
 	
 	
+	public static LatLonResolution calculateOutputResolutions(double outputWidth,
+													double outputHeight,
+													double dataColumns,
+													double dataRows,
+													double latitudeResolution,
+													double longitudeResolution,
+													double scaleFactor)
+	{
+		
+		double xdimRatio = (double)outputWidth / (double)dataColumns;
+		double ydimRatio = (double)outputHeight / (double)dataRows;
+		
+		double outputLongitudeResolution = longitudeResolution / xdimRatio;
+		double outputLatitudeResolution = latitudeResolution / ydimRatio;
+		
+		LatLonResolution latLonRes = new LatLonResolution(outputLatitudeResolution, outputLongitudeResolution);
+		return latLonRes;
+	}
 }

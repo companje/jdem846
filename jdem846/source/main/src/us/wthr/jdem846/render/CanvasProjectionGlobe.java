@@ -77,4 +77,28 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		
 	}
 	
+	public static LatLonResolution calculateOutputResolutions(double outputWidth,
+			double outputHeight,
+			double dataColumns,
+			double dataRows,
+			double latitudeResolution,
+			double longitudeResolution,
+			double scaleFactor)
+	{
+		double minSideLength = MathExt.min(outputWidth, outputHeight) - 20;
+		double radius = (minSideLength / 2.0)  * scaleFactor;
+		
+		double circumference = 2 * MathExt.PI * radius;
+		
+		double xdimRatio = (double)circumference / (double)dataColumns;
+		double ydimRatio = (double)circumference / (double)dataRows;
+		
+		
+		double outputLongitudeResolution = longitudeResolution / xdimRatio;
+		double outputLatitudeResolution = latitudeResolution / ydimRatio;
+		
+		LatLonResolution latLonRes = new LatLonResolution(outputLatitudeResolution, outputLongitudeResolution);
+		return latLonRes;
+	}
+	
 }
