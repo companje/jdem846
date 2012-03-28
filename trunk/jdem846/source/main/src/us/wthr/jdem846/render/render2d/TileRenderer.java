@@ -115,6 +115,7 @@ public class TileRenderer extends InterruptibleProcess
 	protected double shadowIntensity;
 	protected boolean doubleBuffered;
 	
+	protected boolean useScripting = true;
 	
 	protected double elevationMultiple;
 	protected double maximumElevationTrue;
@@ -362,7 +363,7 @@ public class TileRenderer extends InterruptibleProcess
 					modelContext,
 					new RasterDataFetchHandler() {
 						public double getRasterData(double latitude, double longitude) throws Exception {
-							return getElevation(latitude, longitude, true, true);
+							return getElevation(latitude, longitude, true);
 						}
 			});
 		} else {
@@ -377,7 +378,8 @@ public class TileRenderer extends InterruptibleProcess
 		log.info("Disposing tile renderer");
 		
 		if (elevationMap != null) {
-			elevationMap.clear();
+			elevationMap.dispose();
+			//elevationMap.clear();
 			elevationMap = null;
 		}
 		
@@ -399,9 +401,9 @@ public class TileRenderer extends InterruptibleProcess
 	{
 		
 
-		
-		onTileBefore(modelCanvas);
-
+		if (useScripting) {
+			onTileBefore(modelCanvas);
+		}
 
 		log.info("Processing data points...");
 		
@@ -413,8 +415,9 @@ public class TileRenderer extends InterruptibleProcess
 			log.error("Error painting raster grid: " + ex.getMessage(), ex);
 		}
 		
-		onTileAfter(modelCanvas);
-
+		if (useScripting) {
+			onTileAfter(modelCanvas);
+		}
 	}
 	
 
@@ -554,7 +557,7 @@ public class TileRenderer extends InterruptibleProcess
 		double nLon = longitude;
 		
 		
-		double midElev = getElevation(latitude, longitude, true, true);
+		double midElev = getElevation(latitude, longitude, true);
 		
 		
 		
@@ -565,18 +568,20 @@ public class TileRenderer extends InterruptibleProcess
 		//double min = modelContext.getRasterDataContext().getDataMinimumValue();
 		//double max = modelContext.getRasterDataContext().getDataMaximumValue();
 		//modelColoring.getGradientColor(midElev, min, max, colorBufferA);
-		getPointColor(latitude, longitude, midElev, colorBufferA);
-		onGetPointColor(latitude, longitude, midElev, minimumElevation, maximumElevation, colorBufferA);
+		getPointColor(latitude, longitude, midElev, rgba);
 		
+		if (useScripting) {
+			onGetPointColor(latitude, longitude, midElev, minimumElevation, maximumElevation, colorBufferA);
+		}
 		
 		
 		if (lightingEnabled) {
 			
 			
-			double eElev = getElevation(eLat, eLon, true, true);
-			double sElev = getElevation(sLat, sLon, true, true);
-			double wElev = getElevation(wLat, wLon, true, true);
-			double nElev = getElevation(nLat, nLon, true, true);
+			double eElev = getElevation(eLat, eLon, true);
+			double sElev = getElevation(sLat, sLon, true);
+			double wElev = getElevation(wLat, wLon, true);
+			double nElev = getElevation(nLat, nLon, true);
 			
 			
 			if (eElev == DemConstants.ELEV_NO_DATA)
@@ -641,10 +646,11 @@ public class TileRenderer extends InterruptibleProcess
 				dot *= relativeDarkIntensity;
 			}
 			
-			dot = Math.pow(dot, spotExponent);
+			if (spotExponent != 1) {
+				dot = MathExt.pow(dot, spotExponent);
+			}
 			
-			
-			copyRgba(colorBufferA, rgba);
+			//copyRgba(colorBufferA, rgba);
 			ColorAdjustments.adjustBrightness(rgba, dot);
 			//ColorAdjustments.adjustBrightness(colorBufferB, dot);
 			//ColorAdjustments.interpolateColor(colorBufferA, colorBufferB, rgba, lightingMultiple);
@@ -652,7 +658,7 @@ public class TileRenderer extends InterruptibleProcess
 			
 			
 		} else {
-			copyRgba(colorBufferA, rgba);
+			//copyRgba(colorBufferA, rgba);
 		}
 		rgba[3] = 255;
 		
@@ -869,23 +875,13 @@ public class TileRenderer extends InterruptibleProcess
 	}
 	*/
 	
-	protected double getElevation(double latitude, double longitude, boolean cache, boolean scaled) throws DataSourceException, RenderEngineException
+	protected double _getElevation(double latitude, double longitude, boolean cache) throws DataSourceException, RenderEngineException
 	{
-		double elevation = _getElevation(latitude, longitude, cache);
-		
-		/*
-		double ratio = (elevation - minimumElevation) / (maximumElevationTrue - minimumElevation);
-		elevation = minimumElevation + (maximumElevation - minimumElevation) * ratio;
-		
-		if (scaled && elevation != DemConstants.ELEV_NO_DATA) {
-			elevation = elevationScaler.scale(elevation);
-		} 
-		*/
-		
+		double elevation = getElevation(latitude, longitude, cache);
 		return elevation;
 	}
 	
-	protected double _getElevation(double latitude, double longitude, boolean cache) throws DataSourceException, RenderEngineException
+	protected double getElevation(double latitude, double longitude, boolean cache) throws DataSourceException, RenderEngineException
 	{
 		
 		//ModelPoint modelPoint = getModelPoint(latitude, longitude);
@@ -900,37 +896,40 @@ public class TileRenderer extends InterruptibleProcess
 				return elevation;
 		}
 		
-		
-		try {
-			Object before = onGetElevationBefore(latitude, longitude);
-			
-			if (before instanceof Double) {
-				return (Double) before;
-			} else if (before instanceof BigDecimal) {
-				return ((BigDecimal)before).doubleValue();
-			} else if (before instanceof Integer) {
-				return ((Integer)before).doubleValue();
+		if (useScripting) {
+			try {
+				Object before = onGetElevationBefore(latitude, longitude);
+				
+				if (before instanceof Double) {
+					return (Double) before;
+				} else if (before instanceof BigDecimal) {
+					return ((BigDecimal)before).doubleValue();
+				} else if (before instanceof Integer) {
+					return ((Integer)before).doubleValue();
+				}
+				
+			} catch (Exception ex) {
+				throw new RenderEngineException("Error executing onGetElevationBefore(" + latitude + ", " + longitude + ")", ex);
 			}
-			
-		} catch (Exception ex) {
-			throw new RenderEngineException("Error executing onGetElevationBefore(" + latitude + ", " + longitude + ")", ex);
 		}
 		
 		elevation = getRasterDataRaw(latitude, longitude);
-
-		try {
-			Object after = onGetElevationAfter(latitude, longitude, elevation);
-			
-			if (after instanceof Double) {
-				elevation = (Double) after;
-			} else if (after instanceof BigDecimal) {
-				elevation = ((BigDecimal)after).doubleValue();
-			} else if (after instanceof Integer) {
-				elevation = ((Integer)after).doubleValue();
+		
+		if (useScripting) {
+			try {
+				Object after = onGetElevationAfter(latitude, longitude, elevation);
+				
+				if (after instanceof Double) {
+					elevation = (Double) after;
+				} else if (after instanceof BigDecimal) {
+					elevation = ((BigDecimal)after).doubleValue();
+				} else if (after instanceof Integer) {
+					elevation = ((Integer)after).doubleValue();
+				}
+				
+			} catch (Exception ex) {
+				throw new RenderEngineException("Error executing onGetElevationAfter(" + latitude + ", " + longitude + ", " + elevation + ")", ex);
 			}
-			
-		} catch (Exception ex) {
-			throw new RenderEngineException("Error executing onGetElevationAfter(" + latitude + ", " + longitude + ", " + elevation + ")", ex);
 		}
 		
 		if (doubleBuffered && cache) {
@@ -942,17 +941,19 @@ public class TileRenderer extends InterruptibleProcess
 	
 	protected void resetBuffers(double latitude, double longitude)
 	{
-		double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
-		double effLonRes = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
+		//double effLatRes = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
+		//double effLonRes = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
 		
-		Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
+		//double effLatRes = this.lo
+		
+		//Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
 		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
 		
 		if (planet != null) {
 			meanRadius = planet.getMeanRadius();
 		}
 		
-		double resolutionMeters = RasterDataContext.getMetersResolution(meanRadius, latitude, longitude, effLatRes, effLonRes);
+		double resolutionMeters = RasterDataContext.getMetersResolution(meanRadius, latitude, longitude, latitudeResolution, longitudeResolution);
 		double xzRes = (resolutionMeters / 2.0);
 		
 		backLeftPoints[0] = -xzRes;

@@ -53,7 +53,8 @@ public class MathExt
     
     public static double atan2(double y, double x)
     {
-    	return Math.atan2(y, x);
+    	//return Math.atan2(y, x);
+    	return FastTrig.atan2(y, x);
     }
     
     public static double pow(double a, double b)
@@ -68,7 +69,7 @@ public class MathExt
      */
     public static double sqr(double a)
     {
-    	return MathExt.pow(a, 2);
+    	return a * a;//MathExt.pow(a, 2);
     }
     
     /** Compute the cube of a value. (a^3)

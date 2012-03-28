@@ -56,77 +56,6 @@ public class SimpleRenderer extends TileRenderer
 
 	private static Log log = Logging.getLog(SimpleRenderer.class);
 	
-	/*
-	private ModelContext modelContext;
-	private ElevationDataMap elevationMap;
-	private boolean doubleBuffered;
-	
-	private Perspectives perspectives = new Perspectives();
-	private double normal[] = new double[3];
-	private double backLeftPoints[] = new double[3];
-	private double backRightPoints[] = new double[3];
-	private double frontLeftPoints[] = new double[3];
-	private double frontRightPoints[] = new double[3];
-	private double sunsource[] = new double[3];	
-	private int colorBufferA[] = new int[4];
-	private int colorBufferB[] = new int[4];
-	private double[] pointNormal = new double[3];
-	private int[] backgroundColor = new int[4];
-	
-	private double longitudeResolution;
-	private double latitudeResolution;
-	
-	private double elevationMultiple;
-	
-	private boolean lightingEnabled = true;
-	private double spotExponent = 0;
-	private double relativeLightIntensity = 0;
-	private double relativeDarkIntensity = 0;
-	private double lightingMultiple = 0;
-	private boolean paintGlobalBaseGrid = true;
-	
-	private RayTracing lightSourceRayTracer;
-	private boolean rayTraceShadows;
-	private double shadowIntensity;
-	
-	private ModelColoring modelColoring;
-	private CanvasProjection projection;
-	private MapPoint point = new MapPoint();
-	
-	private double lightZenith;
-	private double darkZenith;
-	private double solarElevation;
-	private double solarAzimuth;
-	private double solarZenith;
-	private LightSourceSpecifyTypeEnum lightSourceType;
-	private long lightOnDate;
-	private boolean recalcLightOnEachPoint;
-	private SolarCalculator solarCalculator;
-	private SolarPosition position;
-	private EarthDateTime datetime;
-	private Coordinate latitudeCoordinate;
-	private Coordinate longitudeCoordinate;
-	private Planet planet;
-	private boolean sunIsUp = false;
-	
-	private double latitudeSlices = 50;
-	private double longitudeSlices = 50;
-	
-	private boolean getStandardResolutionElevation = true;
-	private boolean interpolateData = true;
-	private boolean averageOverlappedData = true;
-	
-	private int[] sourceLineColor = {Color.RED.getRed(), Color.RED.getGreen(), Color.RED.getBlue(), 255};
-	private int[] baseGridColor = {Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue(), 255};
-	
-	private double minimumElevation;
-	private double maximumElevation;
-	private double maximumElevationTrue;
-	
-	private ElevationScaler elevationScaler;
-	
-	*
-	*/
 	
 	protected double latitudeSlices = 50;
 	protected double longitudeSlices = 50;
@@ -160,7 +89,7 @@ public class SimpleRenderer extends TileRenderer
 		
 		
 		// Apply overrides to simplify the output...
-		
+		useScripting = false;
 		tiledPrecaching = false;
 		
 		latitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
@@ -200,7 +129,7 @@ public class SimpleRenderer extends TileRenderer
 		ModelCanvas modelCanvas = modelContext.getModelCanvas();
 		
 		
-		
+		/*
 		if (modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines")) {
 			try {
 				paintLightSourceLines(modelCanvas);
@@ -216,6 +145,7 @@ public class SimpleRenderer extends TileRenderer
 				log.error("Error painting base grid: " + ex.getMessage(), ex);
 			}
 		}
+		*/
 		
 		
 		

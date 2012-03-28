@@ -2,11 +2,13 @@ package us.wthr.jdem846.rasterdata;
 
 import java.util.Hashtable;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.gis.CoordinateSpaceAdjuster;
+import us.wthr.jdem846.gis.elevation.ElevationSample;
 import us.wthr.jdem846.gis.exceptions.CoordinateSpaceException;
 
 @SuppressWarnings("serial")
-public class ElevationDataMap extends Hashtable<Integer, Double>
+public class ElevationDataMap
 {
 	
 	private double north;
@@ -15,15 +17,18 @@ public class ElevationDataMap extends Hashtable<Integer, Double>
 	private double west;
 	
 	private int columns;
+	private int rows;
 	
 	private double latitudeResolution;
 	private double longitudeResolution;
 	
 	private CoordinateSpaceAdjuster coordinateSpaceAdjuster;
 	
+	private double[] values;
+	
 	public ElevationDataMap(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, int initialCapacity, float loadFactor)
 	{
-		super(initialCapacity, loadFactor);
+		//super(initialCapacity, loadFactor);
 		
 		this.north = north;
 		this.south = south;
@@ -37,24 +42,63 @@ public class ElevationDataMap extends Hashtable<Integer, Double>
 		columns = (int) Math.ceil((east - west) / longitudeResolution);
 		this.west = east + (longitudeResolution * columns);
 		
+		rows = (int) Math.round((north - south) / latitudeResolution);
+		columns = (int) Math.round((east - west) / longitudeResolution);
+		
+		values = new double[rows * columns];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = DemConstants.ELEV_NO_DATA;
+		}
+		
 		coordinateSpaceAdjuster = new CoordinateSpaceAdjuster(north, south, east, west);
 	}
 	
-	public Double put(double latitude, double longitude, double elevation)
+	public void dispose()
+	{
+		values = null;
+	}
+	
+	
+	protected int getIndex(double latitude, double longitude)
+	{
+		int column = (int) Math.floor((longitude - west) / longitudeResolution);
+		int row = (int) Math.floor((north - latitude) / latitudeResolution);
+		
+		int index = row * columns + column;
+		return index;
+	}
+	
+	public double put(double latitude, double longitude, double elevation)
 	{
 		double adjLatitude = 0;
 		double adjLongitude = 0;
 		
+		if ((adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude)) == DemConstants.ELEV_NO_DATA) {
+			return elevation;
+		}
+		
+		if ((adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude)) == DemConstants.ELEV_NO_DATA) {
+			return elevation;
+		}
+		
+		/*
 		try {
 			adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude);
 			adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude);
 		} catch (CoordinateSpaceException ex) {
 			return elevation;
 		}
+		*/
 		
+		int index = getIndex(adjLatitude, adjLongitude);
+		if (index < 0 || index >= values.length) {
+			return elevation;
+		}
 		
-		int key = getHashKey(adjLatitude, adjLongitude);
-		return super.put(key, elevation);
+		values[index] = elevation;
+		return elevation;
+		//int key = getHashKey(adjLatitude, adjLongitude);
+		//return super.put(key, elevation);
 	}
 	
 	public Double get(Double latitude, double longitude, double ifNull)
@@ -63,13 +107,26 @@ public class ElevationDataMap extends Hashtable<Integer, Double>
 		double adjLatitude = 0;
 		double adjLongitude = 0;
 		
-		try {
-			adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude);
-			adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude);
-		} catch (CoordinateSpaceException ex) {
+		if ((adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude)) == DemConstants.ELEV_NO_DATA) {
 			return ifNull;
 		}
 		
+		if ((adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude)) == DemConstants.ELEV_NO_DATA) {
+			return ifNull;
+		}
+		
+		int index = getIndex(adjLatitude, adjLongitude);
+		if (index < 0 || index >= values.length) {
+			return ifNull;
+		}
+		
+		double value = values[index];
+		if (value != DemConstants.ELEV_NO_DATA)
+			return value;
+		else
+			return ifNull;
+		
+		/*
 		int key = getHashKey(adjLatitude, adjLongitude);
 		Double value = super.get(key);
 		if (value != null) {
@@ -77,6 +134,7 @@ public class ElevationDataMap extends Hashtable<Integer, Double>
 		} else {
 			return ifNull;
 		}
+		*/
 		
 	}
 	
