@@ -1,5 +1,6 @@
 package us.wthr.jdem846.gis;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.gis.exceptions.CoordinateSpaceException;
 
 public class CoordinateSpaceAdjuster {
@@ -19,7 +20,7 @@ public class CoordinateSpaceAdjuster {
 	}
 	
 	
-	public double adjustLatitude(double latitude) throws CoordinateSpaceException
+	public double adjustLatitude(double latitude)
 	{
 		if (latitude > north) {
 			return adjustLatitudeDown(latitude);
@@ -31,34 +32,36 @@ public class CoordinateSpaceAdjuster {
 	}
 	
 	
-	protected double adjustLatitudeDown(double latitude) throws CoordinateSpaceException
+	protected double adjustLatitudeDown(double latitude)
 	{
 		while (latitude > north) {
 			latitude -= 180.0;
 		}
 		
 		if (latitude < south) {
-			throw new CoordinateSpaceException("Coordinate does not adjust into bounds.");
+			return DemConstants.ELEV_NO_DATA;
+			//throw new CoordinateSpaceException("Coordinate does not adjust into bounds.");
 		} else {
 			return latitude;
 		}
 	}
 	
-	protected double adjustLatitudeUp(double latitude) throws CoordinateSpaceException
+	protected double adjustLatitudeUp(double latitude) 
 	{
 		while (latitude < south) {
 			latitude += 180.0;
 		}
 		
 		if (latitude > north) {
-			throw new CoordinateSpaceException("Coordinate does not adjust into bounds.");
+			return DemConstants.ELEV_NO_DATA;
+			//throw new CoordinateSpaceException("Coordinate does not adjust into bounds.");
 		} else {
 			return latitude;
 		}
 	}
 	
 	
-	public double adjustLongitude(double longitude) throws CoordinateSpaceException
+	public double adjustLongitude(double longitude)
 	{
 		
 		if (longitude < west) {
@@ -72,14 +75,15 @@ public class CoordinateSpaceAdjuster {
 	}
 	
 	
-	protected double adjustLongitudeLeft(double longitude) throws CoordinateSpaceException
+	protected double adjustLongitudeLeft(double longitude)
 	{
 		while (longitude > east) {
 			longitude -= 360.0;
 		}
 		
 		if (longitude < west) {
-			throw new CoordinateSpaceException("Coordinate does not adjust into bounds.");
+			return DemConstants.ELEV_NO_DATA;
+			//throw new CoordinateSpaceException("Coordinate does not adjust into bounds.");
 		} else {
 			return longitude;
 		}
@@ -87,7 +91,7 @@ public class CoordinateSpaceAdjuster {
 		
 	}
 	
-	protected double adjustLongitudeRight(double longitude) throws CoordinateSpaceException
+	protected double adjustLongitudeRight(double longitude)
 	{
 		
 		while (longitude < west) {
@@ -95,7 +99,8 @@ public class CoordinateSpaceAdjuster {
 		}
 		
 		if (longitude > east) {
-			throw new CoordinateSpaceException("Coordinate does not adjust into bounds.");
+			return DemConstants.ELEV_NO_DATA;
+			//throw new CoordinateSpaceException("Coordinate does not adjust into bounds.");
 		} else {
 			return longitude;
 		}
@@ -106,6 +111,15 @@ public class CoordinateSpaceAdjuster {
 	
 	public boolean contains(double latitude, double longitude)
 	{
+		
+		if (adjustLatitude(latitude) != DemConstants.ELEV_NO_DATA 
+				&& adjustLongitude(longitude) != DemConstants.ELEV_NO_DATA) {
+			return true;
+		} else {
+			return false;
+		}
+		
+		/*
 		try {
 			adjustLatitude(latitude);
 			adjustLongitude(longitude);
@@ -113,6 +127,7 @@ public class CoordinateSpaceAdjuster {
 		} catch (CoordinateSpaceException ex) {
 			return false;
 		}
+		*/
 	}
 	
 

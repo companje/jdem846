@@ -47,7 +47,7 @@ class JDemScript {
 	}
 	
 	
-	def onGetPointColor(modelContext, latitude, longitude, elevation, elevationMinimum, elevationMaximum, int[] color)
+	def onGetPointColor(modelContext, latitude, longitude, elevation, elevationMinimum, elevationMaximum, color)
 	{
 		
 	}

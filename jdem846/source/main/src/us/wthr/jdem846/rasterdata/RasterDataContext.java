@@ -204,18 +204,26 @@ public class RasterDataContext implements DataContext
 	
 	public static double getMetersResolution(double meanRadius, double latitude, double longitude, double latitudeResolution, double longitudeResolution)
 	{
-		double lat1 = latitude;
-		double lon1 = longitude;
-		double lat2 = lat1 + latitudeResolution;
-		double lon2 = lon1 + longitudeResolution;
-		double R = meanRadius;
-		double dLat = Math.toRadians(lat2 - lat1);
-		double dLon = Math.toRadians(lon2 - lon1);
-		
+		//double lat1 = latitude;
+		//double lon1 = longitude;
+		//double lat2 = lat1 + latitudeResolution;
+		//double lon2 = lon1 + longitudeResolution;
+		//double R = meanRadius;
+		//double dLat = Math.toRadians(lat2 - lat1);
+		//double dLon = Math.toRadians(lon2 - lon1);
+		//double dLat = MathExt.radians(latitudeResolution);
+		//double dLon = MathExt.radians(longitudeResolution);
 
+		
+		
+		double a = MathExt.sqr(Math.sin(MathExt.radians(latitudeResolution)/2)) + MathExt.cos(MathExt.radians(latitude)) * MathExt.cos(MathExt.radians(latitude + latitudeResolution)) * MathExt.sqr(Math.sin(MathExt.radians(longitudeResolution)/2)); 
+		double d = meanRadius * (2 * MathExt.atan2(MathExt.sqrt(a), MathExt.sqrt(1-a))) * 1000;
+		
+		/*
 		double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 		double d = R * c * 1000;
+		*/
 		return d;
 	}
 	

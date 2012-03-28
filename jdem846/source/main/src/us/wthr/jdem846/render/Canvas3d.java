@@ -353,16 +353,7 @@ public class Canvas3d
 					
 					double z = tri.getInterpolatedZ(x, y);
 					tri.getInterpolatedColor(x, y, rgba);
-					
-					if (y < 1) {
-						int i = 0;
-					}
-					
-					//rgba[0] = 255;
-					//rgba[1] = 0;
-				//	rgba[2] = 0;
-					//rgba[3] = 255;
-					
+
 					set(x, y, z, rgba);
 					
 				}

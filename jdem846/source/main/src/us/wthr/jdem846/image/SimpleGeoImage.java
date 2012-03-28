@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.DataSourceException;
@@ -195,12 +196,22 @@ public class SimpleGeoImage
 		double adjLatitude = 0;//coordinateSpaceAdjuster.adjustLatitude(latitude);
 		double adjLongitude = 0;//coordinateSpaceAdjuster.adjustLongitude(longitude);
 		
+		if ((adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude)) == DemConstants.ELEV_NO_DATA) {
+			return false;
+		}
+		
+		if ((adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude)) == DemConstants.ELEV_NO_DATA) {
+			return false;
+		}
+		
+		/*
 		try {
 			adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude);
 			adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude);
 		} catch (CoordinateSpaceException ex) {
 			return false;
 		}
+		*/
 		
 		return _getColor(adjLatitude, adjLongitude, effectiveLatitudeResolution, effectiveLongitudeResolution, rgba);
 		

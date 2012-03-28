@@ -187,12 +187,23 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	{
 		double adjLatitude = 0;
 		double adjLongitude = 0;
+		
+		if ((adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude)) == DemConstants.ELEV_NO_DATA) {
+			return DemConstants.ELEV_NO_DATA;
+		}
+		
+		if ((adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude)) == DemConstants.ELEV_NO_DATA) {
+			return DemConstants.ELEV_NO_DATA;
+		}
+		
+		/*
 		try {
 			adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude);
 			adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude);
 		} catch (CoordinateSpaceException ex) {
 			return DemConstants.ELEV_NO_DATA;
 		}
+		*/
 		
 		return _getData(adjLatitude, adjLongitude, interpolate);
 	}
