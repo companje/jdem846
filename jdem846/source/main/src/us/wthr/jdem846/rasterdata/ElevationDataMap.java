@@ -37,7 +37,7 @@ public class ElevationDataMap
 		
 		
 		columns = (int) Math.ceil((east - west) / longitudeResolution);
-		this.west = east + (longitudeResolution * columns);
+		this.west = east - (longitudeResolution * columns);
 		
 		rows = (int) Math.round((north - south) / latitudeResolution);
 		columns = (int) Math.round((east - west) / longitudeResolution);
@@ -60,6 +60,15 @@ public class ElevationDataMap
 	{
 		int column = (int) Math.floor((longitude - west) / longitudeResolution);
 		int row = (int) Math.floor((north - latitude) / latitudeResolution);
+		
+		if (column < 0 || column >= this.columns) {
+			return -1;
+		}
+		
+		if (row < 0 || row >= this.rows) {
+			return -1;
+		}
+		
 		
 		int index = row * columns + column;
 		return index;
