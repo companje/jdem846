@@ -442,14 +442,14 @@ public class TileRenderer extends InterruptibleProcess
 
 		
 		double maxLon = east + longitudeResolution;
-		double minLat = south - latitudeResolution;
+		double minLat = south + latitudeResolution;
 		
 		TriangleStrip strip = null;
 
 		double cacheHeight = rasterDataContext.getLatitudeResolution() * tileHeight;
 		double nextCachePoint = north;
 		
-		for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
+		for (double lat = north; lat > minLat; lat-=latitudeResolution) {
 			//strip.reset();
 			
 			double lastElevN = minimumElevation;
