@@ -97,9 +97,11 @@ public class RayTracing
 	 * @return True if the ray's path is blocked, otherwise returns false.
 	 * @throws RayTracingException Thrown if an error is detected when fetching an elevation along the ray path.
 	 */
-	public boolean isRayBlocked(double remoteElevationAngle, double remoteAzimuth, double centerLatitude, double centerLongitude, double centerElevation) throws RayTracingException
+	public double isRayBlocked(double remoteElevationAngle, double remoteAzimuth, double centerLatitude, double centerLongitude, double centerElevation) throws RayTracingException
 	{
-		boolean isBlocked = false;
+		//boolean isBlocked = false;
+		
+		double isBlocked = 0.0;
 		
 		// Variables for use during each pass
 		double radius = radiusInterval;
@@ -121,7 +123,7 @@ public class RayTracing
 					latitude < southLimit ||
 					longitude > eastLimit ||
 					longitude < westLimit) {
-				isBlocked = false;
+				isBlocked = 0.0;
 				break;
 			}
 			
@@ -152,14 +154,25 @@ public class RayTracing
 			// If the elevation at the current point exceeds the elevation of the ray path
 			// then the ray is blocked. 
 			if (pointElevation > rayElevation) {
-				isBlocked = true;
+				isBlocked = 1.0;
+				
+				// TODO: Find a good method for edge detecting the shadows...
+				/*
+				double d = pointElevation - rayElevation;
+				if (d > 1.0) {
+					isBlocked = 1.0;
+				} else {
+					isBlocked = d;
+				}
+				*/
+				
 				break;
 			}
 			
 			// If the elevation of the ray path at the current radius exceeds the maximum dataset
 			// elevation then we can safely assume that the ray is not blocked.
 			if (rayElevation > this.maxDataValue) {
-				isBlocked = false;
+				isBlocked = 0.0;
 				break;
 			}
 			
