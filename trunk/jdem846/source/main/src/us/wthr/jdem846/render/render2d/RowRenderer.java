@@ -291,7 +291,7 @@ public class RowRenderer extends InterruptibleProcess
 			
 			if (rayTraceShadows) {
 				//if (isRayBlocked(latitude, longitude, pointElevation)) {
-				
+				/*
 				try {
 					if (lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, pointElevation)) {
 						// I'm not 100% happy with this method...
@@ -303,6 +303,7 @@ public class RowRenderer extends InterruptibleProcess
 				} catch (RayTracingException ex) {
 					throw new RenderEngineException("Failure testing ray traced shadow: " + ex.getMessage(), ex);
 				}
+				*/
 			}
 			
 			

@@ -253,7 +253,7 @@ public class TileRenderer extends InterruptibleProcess
 		
 		doubleBuffered = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.doubleBuffered");
 		
-		if (doubleBuffered && resetCache) {
+		if (doubleBuffered && (resetCache || elevationMap == null)) {
 			elevationMap = ElevationDataMap.create(northLimit, 
 					southLimit - latitudeResolution, 
 					eastLimit + longitudeResolution, 
@@ -631,20 +631,33 @@ public class TileRenderer extends InterruptibleProcess
 			double dot = calculateDotProduct(latitude, longitude);
 			
 			if (this.rayTraceShadows) {
-				if (lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, midElev)) {
-					// I'm not 100% happy with this method...
-					dot = dot - (2 * shadowIntensity);
+				
+				double blockAmt = lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, midElev);
+				if (blockAmt > 0.0) {
+
+					/*
+					dot = ((dot + -blockAmt) / 2.0) * relativeDarkIntensity;
+					
+					double blockFactor = 2 * shadowIntensity * shadowBlock;
+					double a = (-1 + dot) / 2;
+					double b = a + (a * blockFactor);
+					double c = b * relativeDarkIntensity;
+					
+					dot = MathExt.max(c, -1.0);
+					*/
+					dot = dot - (2 * shadowIntensity * blockAmt);
 					if (dot < -1.0) {
 						dot = -1.0;
 					}
-				}
-			}
+				} 
+
+			} 
 			
-			if (dot > 0) {
-				dot *= relativeLightIntensity;
-			} else if (dot < 0) {
-				dot *= relativeDarkIntensity;
-			}
+				if (dot > 0) {
+					dot *= relativeLightIntensity;
+				} else if (dot < 0) {
+					dot *= relativeDarkIntensity;
+				}
 			
 			if (spotExponent != 1) {
 				dot = MathExt.pow(dot, spotExponent);
@@ -890,7 +903,7 @@ public class TileRenderer extends InterruptibleProcess
 		//}
 		
 		double elevation = DemConstants.ELEV_NO_DATA;
-		if (doubleBuffered && cache) {
+		if (doubleBuffered && cache && elevationMap != null) {
 			elevation = elevationMap.get(latitude, longitude, DemConstants.ELEV_NO_DATA);
 			if (elevation != DemConstants.ELEV_NO_DATA)
 				return elevation;
@@ -932,7 +945,7 @@ public class TileRenderer extends InterruptibleProcess
 			}
 		}
 		
-		if (doubleBuffered && cache) {
+		if (doubleBuffered && cache && elevationMap != null) {
 			elevationMap.put(latitude, longitude, elevation);
 		}
 		

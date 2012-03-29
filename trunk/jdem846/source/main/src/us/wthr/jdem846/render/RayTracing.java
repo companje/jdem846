@@ -123,7 +123,7 @@ public class RayTracing
 					latitude < southLimit ||
 					longitude > eastLimit ||
 					longitude < westLimit) {
-				isBlocked = 0.0;
+				//isBlocked = 0.0;
 				break;
 			}
 			
@@ -155,30 +155,32 @@ public class RayTracing
 			// then the ray is blocked. 
 			if (pointElevation > rayElevation) {
 				isBlocked = 1.0;
-				
+				break;
 				// TODO: Find a good method for edge detecting the shadows...
 				/*
 				double d = pointElevation - rayElevation;
-				if (d > 1.0) {
+				if (d >= 10.0) {
 					isBlocked = 1.0;
+					break;
 				} else {
-					isBlocked = d;
+					isBlocked = d / 10.0;
+					break;
 				}
 				*/
 				
-				break;
+				//break;
 			}
 			
 			// If the elevation of the ray path at the current radius exceeds the maximum dataset
 			// elevation then we can safely assume that the ray is not blocked.
 			if (rayElevation > this.maxDataValue) {
-				isBlocked = 0.0;
+				//isBlocked = 0.0;
 				break;
 			}
 			
 		}
 		
-		
+
 		return isBlocked;
 		
 	}
