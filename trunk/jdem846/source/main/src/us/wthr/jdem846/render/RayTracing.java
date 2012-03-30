@@ -103,6 +103,7 @@ public class RayTracing
 		
 		double isBlocked = 0.0;
 		
+		
 		// Variables for use during each pass
 		double radius = radiusInterval;
 

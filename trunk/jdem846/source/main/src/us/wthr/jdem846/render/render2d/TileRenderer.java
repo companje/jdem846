@@ -363,7 +363,7 @@ public class TileRenderer extends InterruptibleProcess
 					modelContext,
 					new RasterDataFetchHandler() {
 						public double getRasterData(double latitude, double longitude) throws Exception {
-							return getElevation(latitude, longitude, true);
+							return getElevation(latitude, longitude, false);
 						}
 			});
 		} else {
@@ -480,6 +480,9 @@ public class TileRenderer extends InterruptibleProcess
 			
 			for (double lon = west; lon <= maxLon; lon+=longitudeResolution) {
 				
+				if (lon > east)
+					lon = east;
+				
 				double nwLon = lon;
 				double swLon = lon;
 				double elev = 0;
@@ -519,7 +522,8 @@ public class TileRenderer extends InterruptibleProcess
 				strip.addVertex(swVtx);
 
 				
-				
+				if (lon == east)
+					break;
 			}
 			
 			if (renderPipeline != null) {
