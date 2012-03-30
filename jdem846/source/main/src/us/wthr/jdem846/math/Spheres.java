@@ -10,11 +10,17 @@ public class Spheres
 	private static final double RAD_270 = MathExt.radians(270.0);
 	
 	
-	public static void getPoint3D(double theta, 
-									double phi, 
+	public static void getPoint3D(double theta, // Longitude, in degrees
+									double phi, // Latitude, in degrees
 									double radius, 
 									double[] points)
 	{
+		if (theta < 0)
+			theta += 360;
+		if (theta >= 360)
+			theta -= 360;
+		
+		
 		theta = MathExt.radians(theta);
 		phi = MathExt.radians(phi);
 		
