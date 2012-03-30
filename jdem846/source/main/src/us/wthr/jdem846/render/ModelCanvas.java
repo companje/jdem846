@@ -91,7 +91,10 @@ public class ModelCanvas
 		double clipNearZ = modelContext.getModelDimensions().getOutputWidth() * 5;
 		double clipFarZ = -modelContext.getModelDimensions().getOutputWidth();
 		
-		canvas = new Canvas3d(width, height, clipNearZ, clipFarZ);
+		boolean subpixelRendering = modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.SUBPIXEL_RENDERING);
+		int subpixelWidth = modelContext.getModelOptions().getIntegerOption(ModelOptionNamesEnum.SUBPIXEL_WIDTH);
+		
+		canvas = new Canvas3d(width, height, clipNearZ, clipFarZ, subpixelWidth);
 		
 		/*
 		if (masterImage != null) {

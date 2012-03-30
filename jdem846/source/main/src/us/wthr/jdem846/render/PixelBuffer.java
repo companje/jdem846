@@ -1,10 +1,10 @@
 package us.wthr.jdem846.render;
 
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.render.util.ColorUtil;
 
-public class ZBuffer
+public class PixelBuffer
 {
-	private final static double NO_VALUE = Double.NaN;
 	
 	private int width;
 	private int height;
@@ -12,9 +12,10 @@ public class ZBuffer
 	private int subpixelWidth;
 	
 	private int bufferLength;
-	private double[] buffer;
+	private int[] buffer;
 	
-	public ZBuffer(int width, int height, int subpixelWidth)
+	
+	public PixelBuffer(int width, int height, int subpixelWidth)
 	{
 		this.width = width;
 		this.height = height;
@@ -22,7 +23,7 @@ public class ZBuffer
 		
 		
 		bufferLength = width * height * (int) MathExt.sqr(subpixelWidth);
-		buffer = new double[bufferLength];
+		buffer = new int[bufferLength];
 		
 		reset();
 	}
@@ -34,14 +35,13 @@ public class ZBuffer
 		}
 		
 		for (int i = 0; i < bufferLength; i++) {
-			buffer[i] = NO_VALUE;
+			buffer[i] = 0x0;
 		}
 	}
 	
+
 	
-	
-	
-	public void set(double x, double y, double z)
+	public void set(double x, double y, int rgba)
 	{
 		double f = 1.0 / this.subpixelWidth;
 		x = MathExt.round(x / f) * f;
@@ -56,13 +56,13 @@ public class ZBuffer
 		int index = ((_y * this.width) * this.subpixelWidth) + _ySub + (_x * this.subpixelWidth + _xSub);
 		
 		if (index >= 0 && index < this.bufferLength) {
-			buffer[index] = z;
+			buffer[index] = rgba;
 		} else {
 			// TODO: Throw
 		}
 	}
 	
-	public double get(double x, double y)
+	public int get(double x, double y)
 	{
 		double f = 1.0 / this.subpixelWidth;
 		x = MathExt.round(x / f) * f;
@@ -79,10 +79,11 @@ public class ZBuffer
 		if (index >= 0 && index < this.bufferLength) {
 			return buffer[index];
 		} else {
-			return Double.NaN;
+			return 0x0;
 			// TODO: Throw
 		}
 	}
+	
 	
 	
 	public int getWidth()
@@ -99,16 +100,6 @@ public class ZBuffer
 	{
 		return subpixelWidth;
 	}
-	
-	
-	public boolean isVisible(double x, double y, double z)
-	{
-		double _z = get(x, y);
-		if (Double.isNaN(_z) || (z > _z && !Double.isNaN(_z))) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 
+	
 }
