@@ -32,6 +32,7 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.render.gfx.NumberUtil;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.render2d.ScanlinePath;
+import us.wthr.jdem846.render.util.ColorUtil;
 import us.wthr.jdem846.shapefile.ShapePath;
 
 public class Canvas3d
@@ -45,35 +46,44 @@ public class Canvas3d
 	private double clipNearZ;
 	private double clipFarZ;
 	
-	private MatrixBuffer<Integer> pixelBuffer;
-	private MatrixBuffer<Double> zBuffer;
+	//private MatrixBuffer<Integer> pixelBuffer;
+	//private MatrixBuffer<Double> zBuffer;
+	
+	private RasterBuffer3d rasterBuffer;
 	
 	private RenderPipeline pipeline;
 	
-	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ)
+	private int subpixelWidth = 8;
+	
+	private int[] rgbaBuffer = new int[4];
+	
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth)
 	{
-		this(width, height, clipNearZ, clipFarZ, null);
+		this(width, height, clipNearZ, clipFarZ, subpixelWidth, null);
 	}
 	
-	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, RenderPipeline pipeline)
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth, RenderPipeline pipeline)
 	{
 		this.pipeline = pipeline;
 		this.width = width;
 		this.height = height;
 		this.clipNearZ = clipNearZ;
 		this.clipFarZ = clipFarZ;
+		this.subpixelWidth = subpixelWidth;
 		
-		pixelBuffer = new MatrixBuffer<Integer>(width, height);
-		zBuffer = new MatrixBuffer<Double>(width, height);
+		rasterBuffer = new RasterBuffer3d(width, height, this.subpixelWidth);
 		
-		pixelBuffer.fill(0x0);
-		zBuffer.fill(Canvas3d.Z_VALUE_NOT_SET);
+		//pixelBuffer = new MatrixBuffer<Integer>(width, height);
+		//zBuffer = new MatrixBuffer<Double>(width, height);
+		
+		//pixelBuffer.fill(0x0);
+		//zBuffer.fill(Canvas3d.Z_VALUE_NOT_SET);
 
 	}
 	
 	public void draw(Geometric shape, int[] rgba)
 	{
-		draw(shape, rgbaToInt(rgba));
+		draw(shape, ColorUtil.rgbaToInt(rgba));
 	}
 	
 	public void draw(Geometric shape, int rgba)
@@ -90,7 +100,7 @@ public class Canvas3d
 	
 	public void drawLine(int x0, int y0, double z0, int x1, int y1, double z1, int[] rgba)
 	{
-		drawLine(x0, y0, z0, x1, y1, z1, rgbaToInt(rgba));
+		drawLine(x0, y0, z0, x1, y1, z1, ColorUtil.rgbaToInt(rgba));
 	}
 	
 	public void drawLine(int x0, int y0, double z0, int x1, int y1, double z1, int rgba)
@@ -114,8 +124,8 @@ public class Canvas3d
 			rgba0 = new int[4];
 			rgba1 = new int[4];
 			
-			intToRGBA(rgba, rgba0);
-			intToRGBA(rgba, rgba1);
+			ColorUtil.intToRGBA(rgba, rgba0);
+			ColorUtil.intToRGBA(rgba, rgba1);
 			
 		} else {
 			//rgba0 = edge.p0.rgba;
@@ -207,7 +217,7 @@ public class Canvas3d
 	
 	public void draw(Shape shape, int[] rgba)
 	{
-		draw(shape, rgbaToInt(rgba));
+		draw(shape, ColorUtil.rgbaToInt(rgba));
 	}
 	
 	public void draw(Shape shape, int rgba)
@@ -226,7 +236,7 @@ public class Canvas3d
 	
 	public void fill(Quadrangle3d quad, int[] rgba)
 	{
-		fill(quad, rgbaToInt(rgba));
+		fill(quad, ColorUtil.rgbaToInt(rgba));
 
 	}
 	
@@ -285,12 +295,12 @@ public class Canvas3d
 	
 	public void fill(Geometric shape, int[] rgba)
 	{
-		fill(shape,  rgbaToInt(rgba));
+		fill(shape,  ColorUtil.rgbaToInt(rgba));
 	}
 	
 	public void fill(Shape shape, int[] rgba)
 	{
-		fill(shape, rgbaToInt(rgba));
+		fill(shape, ColorUtil.rgbaToInt(rgba));
 		
 	}
 	
@@ -346,8 +356,10 @@ public class Canvas3d
 		
 		int[] rgba = {0, 0, 0, 255};
 		
-		for (double y = minY; y <= maxY; y++) {
-			for (double x = minX; x <= maxX; x++) {
+		double f = 1.0 / this.subpixelWidth;
+		
+		for (double y = minY; y <= maxY; y+=f) {
+			for (double x = minX; x <= maxX; x+=f) {
 				
 				if (tri.contains(x, y)) {
 					
@@ -524,7 +536,7 @@ public class Canvas3d
 	
 	public void fillScanLine(double leftX, double rightX, double y, double z, int[] rgba)
 	{
-		_fillScanLine(leftX, rightX, y, z,  rgbaToInt(rgba));
+		_fillScanLine(leftX, rightX, y, z,  ColorUtil.rgbaToInt(rgba));
 	}
 	
 	public void fillScanLine(double leftX, double rightX, double y, double z, int rgba)
@@ -538,7 +550,7 @@ public class Canvas3d
 	
 	public void fillScanLine(int leftX, int rightX, int y, double z, int[] rgba)
 	{
-		fillScanLine(leftX, rightX, y, z, rgbaToInt(rgba));
+		fillScanLine(leftX, rightX, y, z, ColorUtil.rgbaToInt(rgba));
 	}
 	
 	public void fillScanLine(int leftX, int rightX, int y, double z, int rgba)
@@ -584,14 +596,25 @@ public class Canvas3d
 		}
 	}
 	
+	public void set(double x, double y, double z, int[] rgba)
+	{
+		set(x, y, z, ColorUtil.rgbaToInt(rgba));
+	}
+	
+	public void set(double x, double y, double z, int rgba)
+	{
+		this.rasterBuffer.set(x, y, z, rgba);
+	}
+	
+	/*
 	public void set(int x, int y, double z, int[] rgb)
 	{
-		set(x, y, z, rgbaToInt(rgb));
+		set(x, y, z, ColorUtil.rgbaToInt(rgb));
 	}
 	
 	public void set(int x, int y, double z, int r, int g, int b)
 	{
-		set(x, y, z, rgbaToInt(r, g, b));
+		set(x, y, z, ColorUtil.rgbaToInt(r, g, b));
 	}
 	
 	public void set(int x, int y, double z, int rgb)
@@ -616,7 +639,7 @@ public class Canvas3d
 	public void set(double x, double y, double z, int rgba)
 	{
 		int[] _rgba = new int[4];
-		intToRGBA(rgba, _rgba);
+		ColorUtil.intToRGBA(rgba, _rgba);
 		set(x, y, z, _rgba);
 	}
 	
@@ -637,30 +660,10 @@ public class Canvas3d
 		double _z = zBuffer.get(_x, _y);
 		if (_z == DemConstants.ELEV_NO_DATA || z >= _z) {
 			set(_x, _y, z, rgba);
-		} /*else {
-			int[] pixel = new int[4];
-		
-			get(_x, _y, pixel);
-			
-			double xFrac = x - _x;
-			double yFrac = y - _y;
-			
-			if (xFrac == 0) {
-				xFrac = 1.0;
-			}
-			
-			if (yFrac == 0) {
-				yFrac = 1.0;
-			}
-			
-			double pct = xFrac * yFrac;
-			
-			ColorAdjustments.interpolateColor(pixel, rgba, pixel, pct);
-			
-			set(_x, _y, z, pixel);
-		}*/
+		}
 		
 	}
+	*/
 	
 	private boolean isValidZCoordinate(double z)
 	{
@@ -673,17 +676,17 @@ public class Canvas3d
 	
 	public int get(int x, int y)
 	{
-		if (x >= 0 && x < getWidth() && y >= 0 && y < getHeight()) {
-			return pixelBuffer.get(x, y);
-		} else {
-			return 0x0;
-		}
+		this.get(x, y, rgbaBuffer);
+		return ColorUtil.rgbaToInt(rgbaBuffer);
 	}
 	
-	public void get(int x, int y, int[] rgb)
+	public void get(int x, int y, int[] rgba)
 	{
-		int c = get(x, y);
-		intToRGBA(c, rgb);
+		if (x >= 0 && x < getWidth() && y >= 0 && y < getHeight()) {
+			this.rasterBuffer.get(x, y, rgba);
+		} else {
+			// TODO: Throw
+		}
 	}
 	
 	
@@ -767,8 +770,7 @@ public class Canvas3d
 	
 	public void dispose()
 	{
-		pixelBuffer.dispose();
-		zBuffer.dispose();
+		this.rasterBuffer.dispose();
 	}
 	
 	public void setRenderPipeline(RenderPipeline pipeline)
@@ -776,41 +778,7 @@ public class Canvas3d
 		this.pipeline = pipeline;
 	}
 	
-	protected static int rgbaToInt(int[] rgb)
-	{
-		int r = rgb[0];
-		int g = rgb[1];
-		int b = rgb[2];
-		int a = 0xFF;
-		if (rgb.length >= 4) {
-			a = rgb[3];
-		}
-		return rgbaToInt(r, g, b, a);
-	}
 	
-	protected static int rgbaToInt(int r, int g, int b)
-	{	
-		return rgbaToInt(r, g, b, 0xFF);
-	}
-	
-	protected static int rgbaToInt(int r, int g, int b, int a)
-	{	
-		int v = (a << 24) |
-				((r & 0xff) << 16) |
-				((g & 0xff) << 8) |
-				(b & 0xff);
-		return v;
-	}
-	
-	protected static void intToRGBA(int c, int[] rgba)
-	{
-		rgba[0] = 0xFF & (c >>> 16);
-		rgba[1] = 0xFF & (c >>> 8);
-		rgba[2] = 0xFF & c;
-		if (rgba.length >= 4) {
-			rgba[3] = 0xFF & (c >>> 24);
-		}
-	}
 	
 	
 	protected Edge[] getEdges(Shape path, boolean sort)

@@ -103,11 +103,13 @@ public class GridFloatRasterDataProvider extends AbstractRasterDataProvider
 		}
 		
 		if (row >= this.getRows()) {
-			throw new DataSourceException("Specified row exceeds data limits: " + row);
+			return DemConstants.ELEV_NO_DATA;
+			//throw new DataSourceException("Specified row exceeds data limits: " + row);
 		}
 		
 		if (column >= this.getColumns()) {
-			throw new DataSourceException("Specified column exceeds data limits: " + column);
+			return DemConstants.ELEV_NO_DATA;
+			//throw new DataSourceException("Specified column exceeds data limits: " + column);
 		}
 		
 		

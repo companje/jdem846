@@ -57,10 +57,10 @@ public enum ModelOptionNamesEnum
 	LIMITS_NORTH("us.wthr.jdem846.modelOptions.limits.north"),
 	LIMITS_SOUTH("us.wthr.jdem846.modelOptions.limits.south"),
 	LIMITS_EAST("us.wthr.jdem846.modelOptions.limits.east"),
-	LIMITS_WEST("us.wthr.jdem846.modelOptions.limits.west");
+	LIMITS_WEST("us.wthr.jdem846.modelOptions.limits.west"),
 	
-	
-
+	SUBPIXEL_RENDERING("us.wthr.jdem846.modelOptions.subpixelRendering"),
+	SUBPIXEL_WIDTH("us.wthr.jdem846.modelOptions.subpixelWidth");
 			
 	//STANDARD_RESOLUTION_RETRIEVAL("us.wthr.jdem846.performance.standardResolutionRetrieval"),
 	//INTERPOLATE_HIGHER_RESOLUTION("us.wthr.jdem846.performance.interpolateToHigherResolution"),
