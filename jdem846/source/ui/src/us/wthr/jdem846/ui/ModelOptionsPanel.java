@@ -75,6 +75,7 @@ import us.wthr.jdem846.ui.optionModels.HillShadingOptionsListModel;
 import us.wthr.jdem846.ui.optionModels.MapProjectionListModel;
 import us.wthr.jdem846.ui.optionModels.PlanetListModel;
 import us.wthr.jdem846.ui.optionModels.PrecacheStrategyOptionsListModel;
+import us.wthr.jdem846.ui.optionModels.SubpixelGridSizeListModel;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
 import us.wthr.jdem846.ui.panels.RoundedPanel;
 import us.wthr.jdem846.ui.perspective.PerspectiveValueControl;
@@ -127,6 +128,9 @@ public class ModelOptionsPanel extends Panel
 	
 	private ComboBox cmbElevationScaling;
 	private ElevationScalerListModel elevationScalerListModel;
+	
+	private ComboBox cmbSubpixelGridSize;
+	private SubpixelGridSizeListModel subpixelGridSizeListModel;
 	
 	//private ComboBox cmbPrecacheStrategy;
 	//private PrecacheStrategyOptionsListModel precacheStrategyModel;
@@ -186,7 +190,9 @@ public class ModelOptionsPanel extends Panel
 		planetListModel = new PlanetListModel();
 		cmbPlanet = new ComboBox(planetListModel);
 		
-		
+		subpixelGridSizeListModel = new SubpixelGridSizeListModel();
+		cmbSubpixelGridSize = new ComboBox(subpixelGridSizeListModel);
+
 		
 		
 		elevationScalerListModel = new ElevationScalerListModel();
@@ -248,7 +254,7 @@ public class ModelOptionsPanel extends Panel
 		//spnSpotExponent.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.spotExponentSlider.tooltip"));
 		spnElevationMultiple.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationMultipleSlider.tooltip"));
 		cmbElevationScaling.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.elevationScaler.tooltip"));
-		
+		cmbSubpixelGridSize.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.subpixelGridSize.tooltip"));
 		//spnRelativeLightIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeLightIntensity.tooltip"));
 		//spnRelativeDarkIntensity.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.relativeDarkIntensity.tooltip"));
 		cmbAntialiasing.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.antialiasingCombo.tooltip"));
@@ -321,6 +327,7 @@ public class ModelOptionsPanel extends Panel
 		cmbMapProjection.addItemListener(comboBoxItemListener);
 		cmbCanvasProjection.addItemListener(comboBoxItemListener);
 		cmbElevationScaling.addItemListener(comboBoxItemListener);
+		cmbSubpixelGridSize.addItemListener(comboBoxItemListener);
 		
 		ChangeListener sliderChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -475,6 +482,9 @@ public class ModelOptionsPanel extends Panel
 		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.perspectiveValueControl.label") + ":"));
 		controlGrid.add(perspectiveControl);
 		
+		controlGrid.add(new JLabel(I18N.get("us.wthr.jdem846.ui.modelOptionsPanel.subpixelGridSize.label") + ":"));
+		controlGrid.add(cmbSubpixelGridSize);
+		
 		//controlGrid.add(new JLabel());
 		//controlGrid.add(chkDoubleSampling);
 		
@@ -550,6 +560,7 @@ public class ModelOptionsPanel extends Panel
 		perspectiveControl.setRotateX(modelOptions.getProjection().getRotateX());
 		perspectiveControl.setRotateY(modelOptions.getProjection().getRotateY());
 		
+		subpixelGridSizeListModel.setSelectedItemByValue(modelOptions.getIntegerOption(ModelOptionNamesEnum.SUBPIXEL_WIDTH));
 		//chkDoubleSampling.setSelected(modelOptions.getDoublePrecisionHillshading());
 		//chkUseFastRender.setSelected(modelOptions.getUseSimpleCanvasFill());
 		//chkProject3d.setSelected(modelOptions.getProject3d());
@@ -648,6 +659,9 @@ public class ModelOptionsPanel extends Panel
 		//modelOptions.setProject3d(chkProject3d.getModel().isSelected());
 		
 		modelOptions.setModelProjection(canvasProjectionListModel.getSelectedItemValue());
+		
+		
+		modelOptions.setOption(ModelOptionNamesEnum.SUBPIXEL_WIDTH, subpixelGridSizeListModel.getSelectedItemValue());
 		
 		/*
 		 * Temporary. Will add error checking.

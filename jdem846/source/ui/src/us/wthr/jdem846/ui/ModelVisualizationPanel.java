@@ -359,8 +359,8 @@ public class ModelVisualizationPanel extends Panel
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", paintLightSourceLines);
 		modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", paintBaseGrid);
 		
-		
-		
+		modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.SUBPIXEL_RENDERING, false);
+		modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.SUBPIXEL_WIDTH, 1);
 		try {
 			modelContextWorkingCopy.updateContext();
 		} catch (ModelContextException ex) {
