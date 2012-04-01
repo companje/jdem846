@@ -215,7 +215,7 @@ public class CanvasProjection3d extends CanvasProjection
 		double outputLongitudeResolution = longitudeResolution / xdimRatio;
 		double outputLatitudeResolution = latitudeResolution / ydimRatio;
 		
-		LatLonResolution latLonRes = new LatLonResolution(outputLatitudeResolution, outputLongitudeResolution);
+		LatLonResolution latLonRes = new LatLonResolution(outputLatitudeResolution/4.0, outputLongitudeResolution/4.0);
 		return latLonRes;
 	}
 
