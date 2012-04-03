@@ -373,9 +373,9 @@ public class GridHillshadeProcessor extends AbstractGridProcessor implements Gri
 	{
 		double dot = modelPoint.getDotProduct();
 		
-		modelPoint.getRgba(rgbaBuffer);
+		modelPoint.getRgba(rgbaBuffer, false);
 		ColorAdjustments.adjustBrightness(rgbaBuffer, dot);
-		modelPoint.setRgba(rgbaBuffer);
+		modelPoint.setRgba(rgbaBuffer, true);
 	}
 	
 
@@ -473,6 +473,29 @@ public class GridHillshadeProcessor extends AbstractGridProcessor implements Gri
 		frontRightPoints[2] = xzRes;
 		
 	}
-	
 
+	public boolean rayTraceShadows()
+	{
+		return rayTraceShadows;
+	}
+
+	public void setRayTraceShadows(boolean rayTraceShadows)
+	{
+		this.rayTraceShadows = rayTraceShadows;
+	}
+
+	public boolean recalcLightOnEachPoint()
+	{
+		return recalcLightOnEachPoint;
+	}
+
+	public void setRecalcLightOnEachPoint(boolean recalcLightOnEachPoint)
+	{
+		this.recalcLightOnEachPoint = recalcLightOnEachPoint;
+	}
+	
+	
+	
+	
+	
 }

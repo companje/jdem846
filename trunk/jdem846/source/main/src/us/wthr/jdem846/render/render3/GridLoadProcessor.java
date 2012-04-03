@@ -256,4 +256,58 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 		return result;
 	}
 	
+	
+	
+	public boolean tiledPrecaching()
+	{
+		return tiledPrecaching;
+	}
+
+	public void setTiledPrecaching(boolean tiledPrecaching)
+	{
+		this.tiledPrecaching = tiledPrecaching;
+	}
+
+	public boolean useScripting()
+	{
+		return useScripting;
+	}
+
+	public void setUseScripting(boolean useScripting)
+	{
+		this.useScripting = useScripting;
+	}
+
+	public boolean isGetStandardResolutionElevation()
+	{
+		return getStandardResolutionElevation;
+	}
+
+	public void setGetStandardResolutionElevation(
+			boolean getStandardResolutionElevation)
+	{
+		this.getStandardResolutionElevation = getStandardResolutionElevation;
+	}
+
+	public boolean interpolateData()
+	{
+		return interpolateData;
+	}
+
+	public void setInterpolateData(boolean interpolateData)
+	{
+		this.interpolateData = interpolateData;
+	}
+
+	public boolean averageOverlappedData()
+	{
+		return averageOverlappedData;
+	}
+
+	public void setAverageOverlappedData(boolean averageOverlappedData)
+	{
+		this.averageOverlappedData = averageOverlappedData;
+	}
+	
+	
 }

@@ -29,8 +29,9 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
-import us.wthr.jdem846.render.render2d.ModelRenderer;
-import us.wthr.jdem846.render.render2d.ThreadedModelRenderer;
+import us.wthr.jdem846.render.render3.ModelBuilder;
+import us.wthr.jdem846.render.render3.ModelGrid;
+import us.wthr.jdem846.render.render3.ModelRenderer;
 import us.wthr.jdem846.render.shapelayer.ShapeLayerRenderer;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
@@ -42,7 +43,12 @@ public class Dem2dGenerator extends BasicRenderEngine
 {
 	private static Log log = Logging.getLog(Dem2dGenerator.class);
 	
-	private ModelRenderer rasterRenderer = null;
+	//private ModelRenderer rasterRenderer = null;
+	
+	private ModelBuilder modelBuilder;
+	private ModelGrid modelGrid;
+	private ModelRenderer modelRenderer;
+	
 	private ShapeLayerRenderer shapeRenderer = null;
 	
 	private RenderPipeline renderPipeline = null;
@@ -81,7 +87,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 				
 				cancelIndicator.cancel();
 				
-				rasterRenderer.cancel();
+				modelBuilder.cancel();
+				modelRenderer.cancel();
 				shapeRenderer.cancel();
 				
 				if (renderPipeline != null) {
@@ -94,12 +101,14 @@ public class Dem2dGenerator extends BasicRenderEngine
 			}
 			public void onProcessPaused()
 			{
-				rasterRenderer.pause();
+				modelBuilder.cancel();
+				modelRenderer.cancel();
 				shapeRenderer.pause();
 			}
 			public void onProcessResumed()
 			{
-				rasterRenderer.resume();
+				modelBuilder.cancel();
+				modelRenderer.cancel();
 				shapeRenderer.resume();
 			}
 		});
@@ -112,6 +121,18 @@ public class Dem2dGenerator extends BasicRenderEngine
 		}
 		
 		
+		modelGrid = new ModelGrid(getModelContext().getNorth(), 
+				getModelContext().getSouth(), 
+				getModelContext().getEast(), 
+				getModelContext().getWest(), 
+				getModelContext().getModelDimensions().getOutputLatitudeResolution(), 
+				getModelContext().getModelDimensions().getOutputLongitudeResolution());
+		modelBuilder = new ModelBuilder(getModelContext(), modelGrid);
+		modelBuilder.prepare();
+		
+		modelRenderer = new ModelRenderer(getModelContext(), modelGrid);
+		modelRenderer.prepare();
+		
 		
 		
 		OutputProduct<ModelCanvas> product = null;
@@ -122,6 +143,18 @@ public class Dem2dGenerator extends BasicRenderEngine
 			} else {
 				product = generateStandard(skipElevation, skipShapes);
 			}
+		}
+		
+		if (modelBuilder != null) {
+			modelBuilder.dispose();
+		}
+		
+		if (modelRenderer != null) {
+			modelRenderer.dispose();
+		}
+		
+		if (modelGrid != null) {
+			modelGrid.dispose();
 		}
 		
 		clearRasterBuffers();
@@ -147,7 +180,10 @@ public class Dem2dGenerator extends BasicRenderEngine
 		
 		try {
 			
-			rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
+			//rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
+			
+			
+			
 			shapeRenderer = new ShapeLayerRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
 			
 			
@@ -158,8 +194,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 			
 			
 			if (!skipElevation) {
-				rasterRenderer.renderModel();
-				rasterRenderer.dispose();
+				modelBuilder.process();
+				modelRenderer.process();
 			}
 			
 			
@@ -218,7 +254,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		
 		try {
 			
-			rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
+			//rasterRenderer = getModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
 			shapeRenderer = new ShapeLayerRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
 			
 			
@@ -233,7 +269,9 @@ public class Dem2dGenerator extends BasicRenderEngine
 			
 			
 			if (!skipElevation) {
-				rasterRenderer.renderModel();
+				modelBuilder.process();
+				modelRenderer.process();
+				//rasterRenderer.renderModel();
 			}
 			
 			
@@ -265,10 +303,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 			throw new RenderEngineException("Exception thrown in user script", ex);
 		}
 		
+
 		
-		if (rasterRenderer != null) {
-			rasterRenderer.dispose();
-		}
 		
 		if (shapeRenderer != null) {
 			//shapeRenderer.dispose();
@@ -398,15 +434,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 	}
 	
 	
-	protected ModelRenderer getModelRenderer(ModelContext modelContext, RenderPipeline renderPipeline, List<TileCompletionListener> tileCompletionListeners)
-	{
-		if (modelContext.getModelOptions().getConcurrentRenderPoolSize() == 1) {
-			return new ModelRenderer(getModelContext(), renderPipeline, tileCompletionListeners);
-		} else {
-			return new ThreadedModelRenderer(getModelContext(), tileCompletionListeners);
-		}
-	}
-	
+
 	
 	protected void fireTileCompletionListeners()
 	{

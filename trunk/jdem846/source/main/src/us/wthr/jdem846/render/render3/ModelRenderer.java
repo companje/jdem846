@@ -9,14 +9,12 @@ import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.CanvasProjection;
+import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
 
-public class ModelRenderer
+public class ModelRenderer extends AbstractGridProcessor implements GridProcessor
 {
 	private static Log log = Logging.getLog(ModelRenderer.class);
-	
-	private ModelContext modelContext;
-	private ModelGrid modelGrid;
 	
 	private double latitudeResolution;
 	private double longitudeResolution;
@@ -28,17 +26,23 @@ public class ModelRenderer
 	
 	public ModelRenderer(ModelContext modelContext, ModelGrid modelGrid)
 	{
-		this.modelContext = modelContext;
-		this.modelGrid = modelGrid;
+		super(modelContext, modelGrid);
+
+	}
+	
+	public void dispose()
+	{
 		
+	}
+	
+	@Override
+	public void prepare() throws RenderEngineException
+	{
 		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
 		longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
 		
-		
 		projection = modelContext.getModelCanvas().getCanvasProjection();
 	}
-	
-	
 	
 	public void process() throws RenderEngineException
 	{
@@ -87,7 +91,7 @@ public class ModelRenderer
 		double nwElev = 0;
 		if (nwPoint != null) {
 			nwElev = nwPoint.getElevation();
-			nwPoint.getRgba(rgbaBuffer);
+			nwPoint.getRgba(rgbaBuffer, true);
 		} else {
 			nwElev = lastElevation;
 		}
@@ -98,7 +102,7 @@ public class ModelRenderer
 		double swElev = 0;
 		if (swPoint != null) {
 			swElev = swPoint.getElevation();
-			swPoint.getRgba(rgbaBuffer);
+			swPoint.getRgba(rgbaBuffer, true);
 		} else {
 			swElev = lastElevation;
 		}
@@ -122,6 +126,14 @@ public class ModelRenderer
     	Vertex v = new Vertex(x, y, z, rgba);
     	return v;
 	}
+
+
+
+	
+
+
+
+
 	
 	
 }

@@ -20,9 +20,13 @@ public class ModelBuilder extends InterruptibleProcess implements GridProcessor
 	private GridColorProcessor gridColorProcessor;
 	private GridHillshadeProcessor gridHillshadeProcessor;
 	
+	private boolean runLoadProcessor = true;
+	private boolean runColorProcessor = true;
+	private boolean runHillshadeProcessor = true;
+	
 	private boolean prepared = false;
 	private boolean isProcessing = false;
-	
+	private boolean useScripting = true;
 	
 	public ModelBuilder(ModelContext modelContext, ModelGrid modelGrid)
 	{
@@ -30,6 +34,11 @@ public class ModelBuilder extends InterruptibleProcess implements GridProcessor
 		this.modelGrid = modelGrid;
 		
 		
+		
+	}
+	
+	public void dispose()
+	{
 		
 	}
 	
@@ -105,10 +114,14 @@ public class ModelBuilder extends InterruptibleProcess implements GridProcessor
 		
 		setProcessing(true);
 		
-		onTileBefore(modelContext.getModelCanvas());
+		if (useScripting) {
+			onTileBefore(modelContext.getModelCanvas());
+		}
 		
-		log.info("Filling model grid...");
-		gridLoadProcessor.process();
+		if (runLoadProcessor()) {
+			log.info("Filling model grid...");
+			gridLoadProcessor.process();
+		}
 		
 		this.checkPause();
 		if (this.isCancelled()) {
@@ -117,8 +130,10 @@ public class ModelBuilder extends InterruptibleProcess implements GridProcessor
 			return;
 		}
 		
-		log.info("Calculating grid colors...");
-		gridColorProcessor.process();
+		if (runColorProcessor()) {
+			log.info("Calculating grid colors...");
+			gridColorProcessor.process();
+		}
 		
 		this.checkPause();
 		if (this.isCancelled()) {
@@ -127,7 +142,7 @@ public class ModelBuilder extends InterruptibleProcess implements GridProcessor
 			return;
 		}
 		
-		if (modelContext.getLightingContext().isLightingEnabled()) {
+		if (runHillshadeProcessor() && modelContext.getLightingContext().isLightingEnabled()) {
 			log.info("Generating hill shading...");
 			gridHillshadeProcessor.process();
 		}
@@ -139,7 +154,9 @@ public class ModelBuilder extends InterruptibleProcess implements GridProcessor
 			return;
 		}
 		
-		onTileAfter(modelContext.getModelCanvas());
+		if (useScripting) {
+			onTileAfter(modelContext.getModelCanvas());
+		}
 		
 		setProcessing(false);
 	}
@@ -184,8 +201,61 @@ public class ModelBuilder extends InterruptibleProcess implements GridProcessor
 		}
 		
 	}
+
+	public GridLoadProcessor getGridLoadProcessor()
+	{
+		return gridLoadProcessor;
+	}
+
+	public GridColorProcessor getGridColorProcessor()
+	{
+		return gridColorProcessor;
+	}
+
+	public GridHillshadeProcessor getGridHillshadeProcessor()
+	{
+		return gridHillshadeProcessor;
+	}
+
+	public boolean runLoadProcessor()
+	{
+		return runLoadProcessor;
+	}
+
+	public void setRunLoadProcessor(boolean runLoadProcessor)
+	{
+		this.runLoadProcessor = runLoadProcessor;
+	}
+
+	public boolean runColorProcessor()
+	{
+		return runColorProcessor;
+	}
+
+	public void setRunColorProcessor(boolean runColorProcessor)
+	{
+		this.runColorProcessor = runColorProcessor;
+	}
+
+	public boolean runHillshadeProcessor()
+	{
+		return runHillshadeProcessor;
+	}
+
+	public void setRunHillshadeProcessor(boolean runHillshadeProcessor)
+	{
+		this.runHillshadeProcessor = runHillshadeProcessor;
+	}
 	
 	
-	
+	public boolean useScripting()
+	{
+		return useScripting;
+	}
+
+	public void setUseScripting(boolean useScripting)
+	{
+		this.useScripting = useScripting;
+	}
 	
 }
