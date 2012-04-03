@@ -1,6 +1,7 @@
 package us.wthr.jdem846.render.render3;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
@@ -39,14 +40,14 @@ public class ModelRenderer
 	
 	
 	
-	public void process()
+	public void process() throws RenderEngineException
 	{
 		ModelPointCycler pointCycler = new ModelPointCycler(modelContext);
 		
 		final ModelCanvas canvas = modelContext.getModelCanvas();
 		
 		
-		pointCycler.forEachModelPoint(false, new ModelPointHandler() {
+		pointCycler.forEachModelPoint(new ModelPointAdapter() {
 			
 			TriangleStrip strip = null;
 			double lastElevation = 0;
