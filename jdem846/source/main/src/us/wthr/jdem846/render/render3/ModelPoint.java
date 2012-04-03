@@ -1,11 +1,12 @@
 package us.wthr.jdem846.render.render3;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.render.util.ColorUtil;
 
 public class ModelPoint
 {
 	
-	private double elevation;
+	private double elevation = DemConstants.ELEV_NO_DATA;
 	private double[] normal = new double[3];
 	private double dotProduct;
 	private int rgba;

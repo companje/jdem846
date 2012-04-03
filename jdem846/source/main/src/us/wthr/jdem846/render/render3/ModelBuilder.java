@@ -7,14 +7,13 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ProcessInterruptListener;
+import us.wthr.jdem846.render.scaling.ElevationScaler;
+import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
-public class ModelBuilder extends InterruptibleProcess implements GridProcessor
+public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 {
 	private static Log log = Logging.getLog(ModelBuilder.class);
-	
-	private ModelContext modelContext;
-	private ModelGrid modelGrid;
 
 	private GridLoadProcessor gridLoadProcessor;
 	private GridColorProcessor gridColorProcessor;
@@ -25,15 +24,13 @@ public class ModelBuilder extends InterruptibleProcess implements GridProcessor
 	private boolean runHillshadeProcessor = true;
 	
 	private boolean prepared = false;
-	private boolean isProcessing = false;
 	private boolean useScripting = true;
 	
 	public ModelBuilder(ModelContext modelContext, ModelGrid modelGrid)
 	{
-		this.modelContext = modelContext;
-		this.modelGrid = modelGrid;
+		super(modelContext, modelGrid);
 		
-		
+
 		
 	}
 	
@@ -44,7 +41,20 @@ public class ModelBuilder extends InterruptibleProcess implements GridProcessor
 	
 	public void prepare() throws RenderEngineException
 	{
-
+		
+		double minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
+		double maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
+		
+		
+		ElevationScaler elevationScaler = null;
+		try {
+			elevationScaler = ElevationScalerFactory.createElevationScaler(modelContext.getModelOptions().getElevationScaler(), modelContext.getModelOptions().getElevationMultiple(), minimumElevation, maximumElevationTrue);
+		} catch (Exception ex) {
+			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
+		}
+		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
+		double maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
+		
 		gridLoadProcessor = new GridLoadProcessor(modelContext, modelGrid);
 		gridLoadProcessor.prepare();
 		
@@ -66,6 +76,10 @@ public class ModelBuilder extends InterruptibleProcess implements GridProcessor
 			throw new RenderEngineException("Model builder not yet prepared!");
 		}
 		
+		if (!modelContainsData()) {
+			log.info("Model contains no data. Skipping model build process");
+			return;
+		}
 		
 		this.setProcessInterruptListener(new ProcessInterruptListener() {
 			public void onProcessCancelled()
@@ -161,16 +175,8 @@ public class ModelBuilder extends InterruptibleProcess implements GridProcessor
 		setProcessing(false);
 	}
 	
-	protected void setProcessing(boolean isProcessing)
-	{
-		this.isProcessing = isProcessing;
-	}
-	
-	public boolean isProcessing()
-	{
-		return isProcessing;
-	}
-	
+
+
 	public boolean isPrepared()
 	{
 		return prepared;

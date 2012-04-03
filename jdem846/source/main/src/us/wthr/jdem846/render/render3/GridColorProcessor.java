@@ -16,7 +16,7 @@ public class GridColorProcessor extends AbstractGridProcessor implements GridPro
 	private static Log log = Logging.getLog(GridColorProcessor.class);
 	
 	private ModelColoring modelColoring;
-	private ElevationScaler elevationScaler;
+	//private ElevationScaler elevationScaler;
 	
 	protected double north;
 	protected double south;
@@ -52,16 +52,9 @@ public class GridColorProcessor extends AbstractGridProcessor implements GridPro
 		maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
 		
 		
-		try {
-			elevationScaler = ElevationScalerFactory.createElevationScaler(modelContext.getModelOptions().getElevationScaler(), modelContext.getModelOptions().getElevationMultiple(), minimumElevation, maximumElevationTrue);
-		} catch (Exception ex) {
-			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
-		}
-		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
-		maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
-		
 		modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
-		modelColoring.setElevationScaler(elevationScaler);
+		modelColoring.setElevationScaler(modelContext.getRasterDataContext().getElevationScaler());
+		
 		
 	}
 
