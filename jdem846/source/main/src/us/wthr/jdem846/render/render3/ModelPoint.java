@@ -9,6 +9,7 @@ public class ModelPoint
 	private double[] normal = new double[3];
 	private double dotProduct;
 	private int rgba;
+	private int shadedRgba;
 	
 	public ModelPoint()
 	{
@@ -55,29 +56,37 @@ public class ModelPoint
 	}
 
 	
-	public void getRgba(int[] fill) 
+	public void getRgba(int[] fill, boolean shaded) 
 	{
-		ColorUtil.intToRGBA(rgba, fill);
+		ColorUtil.intToRGBA(getRgba(shaded), fill);
 	}
 	
-	public int getRgba()
+	public int getRgba(boolean shaded)
 	{
-		return rgba;
+		if (shaded) {
+			return this.shadedRgba;
+		} else {
+			return rgba;
+		}
 	}
 
-	public void setRgba(int rgba)
+	public void setRgba(int rgba, boolean shaded)
 	{
-		this.rgba = rgba;
+		if (shaded) {
+			this.shadedRgba = rgba;
+		} else {
+			this.rgba = rgba;
+		}
 	}
 	
-	public void setRgba(int[] rgba)
+	public void setRgba(int[] rgba, boolean shaded)
 	{
-		this.rgba = ColorUtil.rgbaToInt(rgba);
+		this.setRgba(ColorUtil.rgbaToInt(rgba), shaded);
 	}
 	
-	public void setRgba(int r, int g, int b, int a)
+	public void setRgba(int r, int g, int b, int a, boolean shaded)
 	{
-		this.rgba = ColorUtil.rgbaToInt(r, g, b, a);
+		this.setRgba(ColorUtil.rgbaToInt(r, g, b, a), shaded);
 	}
 	
 	

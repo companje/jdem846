@@ -61,4 +61,50 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 	{
 		return isProcessing;
 	}
+
+
+	@Override
+	public void onCycleStart() throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onModelLatitudeStart(double latitude)
+			throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onModelPoint(double latitude, double longitude)
+			throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onModelLatitudeEnd(double latitude)
+			throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onCycleEnd() throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
 }

@@ -99,7 +99,7 @@ public class GridColorProcessor extends AbstractGridProcessor implements GridPro
 			throw new RenderEngineException("Error getting point color: " + ex.getMessage(), ex);
 		}
 		
-		modelPoint.setRgba(rgbaBuffer);
+		modelPoint.setRgba(rgbaBuffer, false);
 
 	}
 
@@ -143,5 +143,17 @@ public class GridColorProcessor extends AbstractGridProcessor implements GridPro
 		}
 
 	}
+
+	public boolean useScripting()
+	{
+		return useScripting;
+	}
+
+	public void setUseScripting(boolean useScripting)
+	{
+		this.useScripting = useScripting;
+	}
+	
+	
 	
 }

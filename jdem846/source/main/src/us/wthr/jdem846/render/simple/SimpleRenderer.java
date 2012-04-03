@@ -47,26 +47,39 @@ import us.wthr.jdem846.render.RayTracing;
 import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.render2d.TileRenderer;
+import us.wthr.jdem846.render.render3.ModelBuilder;
+import us.wthr.jdem846.render.render3.ModelGrid;
+import us.wthr.jdem846.render.render3.ModelRenderer;
 import us.wthr.jdem846.render.scaling.ElevationScaler;
 import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
-public class SimpleRenderer extends TileRenderer
+public class SimpleRenderer 
 {
 
 	private static Log log = Logging.getLog(SimpleRenderer.class);
 	
 	
-	protected double latitudeSlices = 50;
-	protected double longitudeSlices = 50;
+	private double latitudeSlices = 50;
+	private double longitudeSlices = 50;
 	
 	private int[] sourceLineColor = {Color.RED.getRed(), Color.RED.getGreen(), Color.RED.getBlue(), 255};
 	private int[] baseGridColor = {Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue(), 255};
 	private boolean paintGlobalBaseGrid = true;
 	
+	
+	private ModelContext modelContext;
+	private ModelBuilder modelBuilder;
+	private ModelGrid modelGrid;
+	private ModelRenderer modelRenderer;
+	
+	private MapPoint point = new MapPoint();
+	private CanvasProjection projection;
+	
 	public SimpleRenderer(ModelContext modelContext)
 	{
-		super(modelContext);
+		this.modelContext = modelContext;
+		
 	}
 	
 	public void setModelContext(ModelContext modelContext)
@@ -85,38 +98,70 @@ public class SimpleRenderer extends TileRenderer
 		double east = modelContext.getEast();
 		double west = modelContext.getWest();
 		
-		super.prepare(north, south, east, west, resetCache);
+		double latitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
+		double longitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices");
 		
-		
-		// Apply overrides to simplify the output...
-		useScripting = false;
-		tiledPrecaching = false;
-		
-		latitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
-		longitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices");
-		
+		double latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
+		double longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
 		
 		latitudeResolution = (north - south - latitudeResolution) / latitudeSlices;
 		longitudeResolution = (east - west - longitudeResolution) / longitudeSlices;
 		
-		/* Force this to be false. This renderer needs to be fast and recalculating
-		 * adds way too much overhead. Should the recalc method be optimized enough,
-		 * perhaps this will again be configurable.
-		 */
-		recalcLightOnEachPoint = false;
-		
-		
-		getStandardResolutionElevation = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.standardResolutionRetrieval");
-		interpolateData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.interpolateToHigherResolution");
-		averageOverlappedData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.averageOverlappedData");
-		
-		paintGlobalBaseGrid = modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintGlobalBaseGrid");
-		
 		modelContext.getModelDimensions().outputLatitudeResolution = latitudeResolution;
 		modelContext.getModelDimensions().outputLongitudeResolution = longitudeResolution;
 		
-		this.rayTraceShadows = false;
-		this.lightSourceRayTracer = null;
+		
+		
+		if (resetCache || modelGrid == null) {
+			
+			if (modelGrid != null) {
+				modelGrid.dispose();
+			}
+			
+			modelGrid = new ModelGrid(modelContext.getNorth(), 
+					modelContext.getSouth(), 
+					modelContext.getEast(), 
+					modelContext.getWest(), 
+					modelContext.getModelDimensions().getOutputLatitudeResolution(), 
+					modelContext.getModelDimensions().getOutputLongitudeResolution());
+		}
+		
+		
+		
+		if (modelBuilder != null) {
+			modelBuilder.dispose();
+		}
+		modelBuilder = new ModelBuilder(modelContext, modelGrid);
+		modelBuilder.prepare();
+		
+		
+		if (resetCache || modelRenderer == null) {
+			
+			if (modelRenderer != null) {
+				modelRenderer.dispose();
+			}
+			
+			modelRenderer = new ModelRenderer(modelContext, modelGrid);
+		}
+		modelRenderer.prepare();
+		
+		
+		modelBuilder.setUseScripting(false);
+		modelBuilder.setRunLoadProcessor(resetCache);
+		modelBuilder.setRunColorProcessor(resetCache);
+		modelBuilder.getGridLoadProcessor().setUseScripting(false);
+		modelBuilder.getGridLoadProcessor().setTiledPrecaching(false);
+		modelBuilder.getGridLoadProcessor().setAverageOverlappedData(false);
+		modelBuilder.getGridLoadProcessor().setGetStandardResolutionElevation(true);
+		modelBuilder.getGridLoadProcessor().setInterpolateData(false);
+		modelBuilder.getGridColorProcessor().setUseScripting(false);
+		modelBuilder.getGridHillshadeProcessor().setRayTraceShadows(false);
+		modelBuilder.getGridHillshadeProcessor().setRecalcLightOnEachPoint(false);
+	
+		projection = modelContext.getModelCanvas().getCanvasProjection();
+		
+		paintGlobalBaseGrid = modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintGlobalBaseGrid");
+
 		
 	}
 	
@@ -126,7 +171,7 @@ public class SimpleRenderer extends TileRenderer
 
 		log.info("Rendering model simple image");
 		
-		ModelCanvas modelCanvas = modelContext.getModelCanvas();
+		//ModelCanvas modelCanvas = modelContext.getModelCanvas();
 		
 		
 		/*
@@ -150,7 +195,10 @@ public class SimpleRenderer extends TileRenderer
 		
 		
 		if (modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview")) {
-			super.renderTile();
+			
+			modelBuilder.process();
+			modelRenderer.process();
+			
 		}
 		
 		
@@ -202,7 +250,10 @@ public class SimpleRenderer extends TileRenderer
 		
 		double[] points = new double[3];
 		double radius = MathExt.sqrt(MathExt.sqr(north - south) + MathExt.sqr(east - west));
-				
+			
+		double solarAzimuth = modelContext.getLightingContext().getLightingAzimuth();
+		double solarElevation = modelContext.getLightingContext().getLightingElevation();
+		
 		Spheres.getPoint3D(solarAzimuth, solarElevation, radius, points);
 	
 		double latitude = centerLatitude + points[0];
