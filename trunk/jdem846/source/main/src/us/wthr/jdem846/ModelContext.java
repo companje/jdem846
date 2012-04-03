@@ -104,6 +104,8 @@ public class ModelContext
 	public void updateContext(boolean updateDataMinMax, CancelIndicator cancelIndicator) throws ModelContextException
 	{
 		modelDimensions = ModelDimensions2D.getModelDimensions(this);
+		rasterDataContext.setEffectiveLatitudeResolution(modelDimensions.outputLatitudeResolution);
+		rasterDataContext.setEffectiveLongitudeResolution(modelDimensions.outputLongitudeResolution);
 		
 		try {
 			

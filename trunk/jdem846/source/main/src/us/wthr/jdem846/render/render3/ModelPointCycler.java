@@ -2,10 +2,12 @@ package us.wthr.jdem846.render.render3;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.render.InterruptibleProcess;
 
-public class ModelPointCycler
+public class ModelPointCycler extends InterruptibleProcess 
 {
 	private static Log log = Logging.getLog(ModelPointCycler.class);
 	
@@ -33,7 +35,7 @@ public class ModelPointCycler
 	
 	
 
-	public void forEachModelPoint(boolean cached, ModelPointHandler pointHandler)
+	public void forEachModelPoint(ModelPointHandler pointHandler) throws RenderEngineException
 	{
 		double maxLon = east + longitudeResolution;
 		double minLat = south + latitudeResolution;
@@ -53,6 +55,12 @@ public class ModelPointCycler
 				pointHandler.onModelPoint(lat, lon);
 				
 				pointsProcessed++;
+				
+				this.checkPause();
+				if (this.isCancelled()) {
+					log.info("Model point cycler cancelled after " + pointsProcessed + " points were processed.");
+					return;
+				}
 				
 				if (lon == east)
 					break;

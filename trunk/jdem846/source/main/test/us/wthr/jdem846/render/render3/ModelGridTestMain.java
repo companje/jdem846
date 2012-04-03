@@ -73,7 +73,7 @@ public class ModelGridTestMain extends AbstractTestMain
 		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1as.flt");
 		
 		inputDataList.add("C:/srv/elevation/Presidential Range/Elevation 1-3as.flt");
-		orthoImageDataList.add("C:/srv/elevation/Presidential Range/CombinedNaip4Band.jpg");
+		//orthoImageDataList.add("C:/srv/elevation/Presidential Range/CombinedNaip4Band.jpg");
 		
 		String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/render-test.png";
 		
@@ -87,7 +87,7 @@ public class ModelGridTestMain extends AbstractTestMain
 			
 		}
 		dataProxy.prepare();
-		dataProxy.fillBuffers();
+		//dataProxy.fillBuffers();
 		
 		ImageDataContext imageDataContext = new ImageDataContext();
 		for (String orthoImageDataPath : orthoImageDataList) {
@@ -101,7 +101,8 @@ public class ModelGridTestMain extends AbstractTestMain
 		lightingContext.setLightSourceSpecifyType(LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION);
 		lightingContext.setLightingMultiple(3);
 		//lightingContext.setLightingOnDate(1330442235000l);
-		//lightingContext.setRecalcLightOnEachPoint(true);
+		lightingContext.setRecalcLightOnEachPoint(true);
+		lightingContext.setRayTraceShadows(true);
 		
 		ModelOptions modelOptions = new ModelOptions();
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
@@ -118,7 +119,7 @@ public class ModelGridTestMain extends AbstractTestMain
 		modelOptions.setElevationMultiple(1.0);
 		modelOptions.setColoringType("hypsometric-tint");
 		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_FLAT);
-		modelOptions.setOption(ModelOptionNamesEnum.ESTIMATE_ELEVATION_MIN_MAX, ""+true);
+		modelOptions.setOption(ModelOptionNamesEnum.ESTIMATE_ELEVATION_MIN_MAX, ""+false);
 		modelOptions.setOption(ModelOptionNamesEnum.SUBPIXEL_WIDTH, ""+1);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, null, imageDataContext, lightingContext, modelOptions);
