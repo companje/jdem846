@@ -353,18 +353,22 @@ public class RasterDataContext implements DataContext
 			}
 		}
 		
-		double data = DemConstants.ELEV_NO_DATA;
-		
+
 		if (dataMatches > 0) {
-			data = (value / dataMatches);
+			double data = (value / dataMatches);
+			
+			if (scaled) {
+				return getScaledDataValue(data);
+			} else {
+				return data;
+			}
+			
+		} else {
+			return DemConstants.ELEV_NO_DATA;
 		}
 
 		
-		if (scaled) {
-			return getScaledDataValue(data);
-		} else {
-			return data;
-		}
+		
 	}
 	
 	
@@ -390,7 +394,7 @@ public class RasterDataContext implements DataContext
 		// Still not quite as I would like it, but works for now...
 		for (double x = west; x <= east; x+=longitudeResolution) {
 			for (double y = north; y >= south; y-=latitudeResolution) {
-				double _data = getDataStandardResolution(y, x, avgOfAllRasterValues, interpolate);
+				double _data = getDataStandardResolution(y, x, avgOfAllRasterValues, interpolate, false);
 				
 				if (_data != DemConstants.ELEV_NO_DATA) {
 					data += _data;
@@ -400,26 +404,28 @@ public class RasterDataContext implements DataContext
 			}
 		}
 		
-		double finalValue = DemConstants.ELEV_NO_DATA;
 		if (samples > 0) {
-			finalValue = data / samples;
+			data = (data / samples);
+			
+			if (scaled) {
+				return getScaledDataValue(data);
+			} else {
+				return data;
+			}
+			
+		} else {
+			return DemConstants.ELEV_NO_DATA;
 		}
 		
-
-		if (scaled) {
-			return getScaledDataValue(finalValue);
-		} else {
-			return finalValue;
-		}
 	}
 	
 	protected double getScaledDataValue(double data)
 	{
-		if (elevationScaler != null) {
-			return elevationScaler.scale(data);
-		} else {
-			return data;
+		double _scaled = data;
+		if (elevationScaler != null && data != DemConstants.ELEV_NO_DATA) {
+			_scaled = elevationScaler.scale(data);
 		}
+		return _scaled;
 	}
 
 	

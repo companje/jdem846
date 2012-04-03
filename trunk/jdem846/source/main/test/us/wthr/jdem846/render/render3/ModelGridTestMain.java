@@ -102,7 +102,7 @@ public class ModelGridTestMain extends AbstractTestMain
 		lightingContext.setLightingMultiple(3);
 		//lightingContext.setLightingOnDate(1330442235000l);
 		lightingContext.setRecalcLightOnEachPoint(true);
-		lightingContext.setRayTraceShadows(true);
+		lightingContext.setRayTraceShadows(false);
 		
 		ModelOptions modelOptions = new ModelOptions();
 		modelOptions.setScriptLanguage(ScriptLanguageEnum.GROOVY);
@@ -116,9 +116,9 @@ public class ModelGridTestMain extends AbstractTestMain
 		modelOptions.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR);
 		//modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
 		modelOptions.setBackgroundColor("255;255;255;255");
-		modelOptions.setElevationMultiple(1.0);
+		modelOptions.setElevationMultiple(2.0);
 		modelOptions.setColoringType("hypsometric-tint");
-		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_FLAT);
+		modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_3D);
 		modelOptions.setOption(ModelOptionNamesEnum.ESTIMATE_ELEVATION_MIN_MAX, ""+false);
 		modelOptions.setOption(ModelOptionNamesEnum.SUBPIXEL_WIDTH, ""+1);
 		
@@ -139,6 +139,8 @@ public class ModelGridTestMain extends AbstractTestMain
 		log.info("Building in-memory model...");
 		ModelBuilder modelBuilder = new ModelBuilder(modelContext, modelGrid);
 		modelBuilder.prepare();
+		modelBuilder.setUseScripting(false);
+		modelBuilder.getGridLoadProcessor().setUseScripting(false);
 		modelBuilder.process();
 		
 		dataProxy.clearBuffers();
@@ -146,6 +148,7 @@ public class ModelGridTestMain extends AbstractTestMain
 		
 		log.info("Rendering model to image...");
 		ModelRenderer modelRenderer = new ModelRenderer(modelContext, modelGrid);
+		modelRenderer.prepare();
 		modelRenderer.process();
 		
 		modelGrid.dispose();

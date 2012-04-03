@@ -1,5 +1,6 @@
 package us.wthr.jdem846.render.render3;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.TriangleStrip;
@@ -18,6 +19,8 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	
 	private double latitudeResolution;
 	private double longitudeResolution;
+	
+	private double south;
 	
 	protected CanvasProjection projection;
 	protected MapPoint point = new MapPoint();
@@ -42,10 +45,16 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
 		
 		projection = modelContext.getModelCanvas().getCanvasProjection();
+		south = modelContext.getSouth();
 	}
 	
 	public void process() throws RenderEngineException
 	{
+		if (!this.modelContainsData()) {
+			log.info("Model contains no data. Skipping render process.");
+			return;
+		}
+		
 		ModelPointCycler pointCycler = new ModelPointCycler(modelContext);
 		
 		final ModelCanvas canvas = modelContext.getModelCanvas();
@@ -56,6 +65,14 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 			TriangleStrip strip = null;
 			double lastElevation = 0;
 			
+			
+			
+			@Override
+			public void onCycleStart() throws RenderEngineException
+			{
+				lastElevation = modelContext.getRasterDataContext().getDataMaximumValue();
+			}
+
 			@Override
 			public void onModelLatitudeStart(double latitude)
 			{
@@ -88,24 +105,35 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	protected double createPointVertexes(TriangleStrip strip, double latitude, double longitude, double lastElevation) throws Exception
 	{
 		ModelPoint nwPoint = modelGrid.get(latitude, longitude);
-		double nwElev = 0;
+		double nwElev = DemConstants.ELEV_NO_DATA;
 		if (nwPoint != null) {
 			nwElev = nwPoint.getElevation();
 			nwPoint.getRgba(rgbaBuffer, true);
-		} else {
+		}
+		
+		if (nwElev == DemConstants.ELEV_NO_DATA){
 			nwElev = lastElevation;
 		}
+
 		Vertex nwVtx = createVertex(latitude, longitude, nwElev, rgbaBuffer);
 		
 		
-		ModelPoint swPoint = modelGrid.get(latitude - latitudeResolution, longitude);
-		double swElev = 0;
+		double swLat = latitude - latitudeResolution;
+		if (swLat < south)
+			swLat = south;
+		
+		ModelPoint swPoint = modelGrid.get(swLat, longitude);
+		double swElev = DemConstants.ELEV_NO_DATA;
 		if (swPoint != null) {
 			swElev = swPoint.getElevation();
 			swPoint.getRgba(rgbaBuffer, true);
-		} else {
+		} 
+		
+		if (swElev == DemConstants.ELEV_NO_DATA){
 			swElev = lastElevation;
 		}
+
+		
 		Vertex swVtx = createVertex(latitude - latitudeResolution, longitude, swElev, rgbaBuffer);
 		
 		strip.addVertex(nwVtx);

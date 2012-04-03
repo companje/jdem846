@@ -9,6 +9,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
@@ -36,6 +37,10 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	protected double cacheHeight;
 	protected double nextCachePoint;
 	
+	protected double minimumElevation = Double.NaN;
+	protected double maximumElevation = Double.NaN;
+	
+	
 	public GridLoadProcessor(ModelContext modelContext, ModelGrid modelGrid)
 	{
 		super(modelContext, modelGrid);
@@ -59,12 +64,19 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 		tileHeight = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
 		cacheHeight = latitudeResolution * tileHeight;
 		nextCachePoint = north;
+		
+		minimumElevation = Double.NaN;
+		maximumElevation = Double.NaN;
 	}
 
 	@Override
 	public void process() throws RenderEngineException
 	{
 		super.process();
+		
+		log.info("Found Minimum Elevation: " + minimumElevation);
+		log.info("Found Maximum Elevation: " + maximumElevation);
+		
 	}
 	
 	public void onCycleStart() throws RenderEngineException
@@ -96,6 +108,19 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 			double elev = getElevation(latitude, longitude);
 			if (elev != DemConstants.ELEV_NO_DATA) {
 				modelGrid.get(latitude, longitude).setElevation(elev);
+				
+				if (Double.isNaN(minimumElevation)) {
+					minimumElevation = elev;
+				} else {
+					minimumElevation = MathExt.min(minimumElevation, elev);
+				}
+				
+				if (Double.isNaN(maximumElevation)) {
+					maximumElevation = elev;
+				} else {
+					maximumElevation = MathExt.max(maximumElevation, elev);
+				}
+				
 			}
 			
 		} catch (Exception ex) {
