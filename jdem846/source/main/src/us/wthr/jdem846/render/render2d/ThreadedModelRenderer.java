@@ -1,31 +1,21 @@
 package us.wthr.jdem846.render.render2d;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.color.ColoringRegistry;
-import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.ModelCanvas;
-import us.wthr.jdem846.render.ModelDimensions2D;
-import us.wthr.jdem846.render.ProcessInterruptListener;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
-import us.wthr.jdem846.util.ColorSerializationUtil;
 
 @Deprecated
 public class ThreadedModelRenderer extends ModelRenderer
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ThreadedModelRenderer.class);
 	
 	public ThreadedModelRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
@@ -38,11 +28,11 @@ public class ThreadedModelRenderer extends ModelRenderer
 	public ModelCanvas renderModel() throws RenderEngineException
 	{
 		//ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(getDataPackage(), getModelOptions());
-		ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
+		//ModelDimensions2D modelDimensions = ModelDimensions2D.getModelDimensions(modelContext);
 		//getDataPackage().setAvgXDim(modelDimensions.getxDim());
 		//getDataPackage().setAvgYDim(modelDimensions.getyDim());
 		
-		Color backgroundColor = ColorSerializationUtil.stringToColor(getModelOptions().getBackgroundColor());
+		//Color backgroundColor = ColorSerializationUtil.stringToColor(getModelOptions().getBackgroundColor());
 		
 		boolean fullCaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
 		
@@ -59,9 +49,9 @@ public class ThreadedModelRenderer extends ModelRenderer
 		//int tileNum = 0;
 		//int dataRows = modelDimensions.getDataRows();
 		//int dataCols = modelDimensions.getDataColumns();
-		int tileNumber = 0;
-		int tileRow = 0;
-		int tileColumn = 0;
+		//int tileNumber = 0;
+		//int tileRow = 0;
+		//int tileColumn = 0;
 		//int tileSize = modelDimensions.getTileSize();
 		//long tileCount = modelDimensions.getTileCount();
 		
@@ -71,13 +61,13 @@ public class ThreadedModelRenderer extends ModelRenderer
 		
 		//double scaledWidthPercent = (double) modelDimensions.getOutputWidth() / (double) dataCols;
 		//double scaledHeightPercent = (double) modelDimensions.getOutputHeight() / (double) dataRows;
-		double northLimit = getRasterDataContext().getNorth();
-		double southLimit = getRasterDataContext().getSouth();
-		double eastLimit = getRasterDataContext().getEast();
-		double westLimit = getRasterDataContext().getWest();
+		//double northLimit = getRasterDataContext().getNorth();
+		//double southLimit = getRasterDataContext().getSouth();
+		//double eastLimit = getRasterDataContext().getEast();
+		//double westLimit = getRasterDataContext().getWest();
 		
-		double latitudeResolution = getRasterDataContext().getLatitudeResolution();
-		double longitudeResolution = getRasterDataContext().getLongitudeResolution();
+		//double latitudeResolution = getRasterDataContext().getLatitudeResolution();
+		//double longitudeResolution = getRasterDataContext().getLongitudeResolution();
 		
 		//double tileSize = modelContext.getModelOptions().getTileSize();
 		
@@ -88,7 +78,7 @@ public class ThreadedModelRenderer extends ModelRenderer
 		//log.info("Tile Latitude Height: " + tileLatitudeHeight);
 		//log.info("Tile Longitude Width: " + tileLongitudeWidth);
 		
-		ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
+		//ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
 		
 		
 		/*
@@ -115,7 +105,7 @@ public class ThreadedModelRenderer extends ModelRenderer
 		
 		on2DModelBefore(modelCanvas);
 		
-		double pctComplete = 0;
+		//double pctComplete = 0;
 		/*
 		final TileRenderer tileRenderer = new TileRenderer(modelContext, modelColoring, modelCanvas);
 		

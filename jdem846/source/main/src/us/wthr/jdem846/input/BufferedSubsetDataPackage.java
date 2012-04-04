@@ -11,13 +11,17 @@ import us.wthr.jdem846.logging.Logging;
 public class BufferedSubsetDataPackage extends SubsetDataPackage
 {
 	
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(BufferedSubsetDataPackage.class);
 	
 	private int rows = 0;
 	private int columns = 0;
 	private int topRow = 0;
 	private int leftColumn = 0;
+	
+	@SuppressWarnings("unused")
 	private int totalRows = 0;
+	
 	private int totalColumns = 0;
 	
 	private double[][] buffer = null;
@@ -68,8 +72,7 @@ public class BufferedSubsetDataPackage extends SubsetDataPackage
 	{
 
 		int halfColumns = (int) Math.round((double)totalColumns / 2.0);
-		int halfRows = (int) Math.round((double)totalRows / 2.0);
-		
+
 		
 		double[] floatBuffer = new double[columns];
 		for (int row = 0; row < rows; row++) {
@@ -101,9 +104,6 @@ public class BufferedSubsetDataPackage extends SubsetDataPackage
 
 					
 					for (int c = lastColumn; c < lastColumn + columnsRead && c < columns; c++) {
-						if (lastColumn > 0) {
-							int v = 0;
-						}
 						if (floatBuffer[c] != noData) {
 							if (columnsRead > columns) {
 								buffer[row][c] = floatBuffer[c - (columnsRead - columns)];

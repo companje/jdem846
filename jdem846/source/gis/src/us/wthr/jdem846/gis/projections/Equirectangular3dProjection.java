@@ -10,6 +10,7 @@ import us.wthr.jdem846.render.gfx.Vector;
 @Deprecated
 public class Equirectangular3dProjection extends EquirectangularProjection
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Equirectangular3dProjection.class);
 	
 	double[] eyeVector = {0, 0, 0};

@@ -15,11 +15,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
-import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.exception.ComponentException;
-import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.exception.ScriptCompilationFailedException;
 import us.wthr.jdem846.exception.ScriptingException;
@@ -29,13 +26,9 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
-import us.wthr.jdem846.rasterdata.RasterData;
-import us.wthr.jdem846.render.ModelCanvas;
-import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.scripting.ScriptShell;
 import us.wthr.jdem846.scripting.ScriptShellFactory;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.tasks.RunnableTask;
 import us.wthr.jdem846.tasks.TaskControllerService;
 import us.wthr.jdem846.tasks.TaskStatusListener;
@@ -43,7 +36,6 @@ import us.wthr.jdem846.ui.ScriptProjectButtonBar.ButtonClickedListener;
 import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
-import us.wthr.jdem846.ui.base.ProgressBar;
 import us.wthr.jdem846.ui.scripting.ScriptEditorPanel;
 
 @SuppressWarnings("serial")

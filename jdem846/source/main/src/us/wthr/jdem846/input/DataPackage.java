@@ -194,7 +194,6 @@ public class DataPackage
 				avgYDim = this.latitudeHeight / rows;
 	
 				averageResolution = (avgXDim + avgYDim) / 2.0f;
-				int blah = 0;
 			}
 			
 			

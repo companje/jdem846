@@ -1,14 +1,10 @@
 package us.wthr.jdem846.render;
 
-import java.awt.Color;
 
-import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.image.SimpleGeoImage;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -17,6 +13,7 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 
 public class ModelDimensions2D
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ModelDimensions2D.class);
 	
 	public double north;

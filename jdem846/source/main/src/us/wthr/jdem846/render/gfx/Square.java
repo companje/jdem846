@@ -16,7 +16,6 @@
 
 package us.wthr.jdem846.render.gfx;
 
-import java.awt.Color;
 import java.awt.geom.Path2D;
 
 import us.wthr.jdem846.Perspectives;
@@ -29,6 +28,7 @@ import us.wthr.jdem846.logging.Logging;
  * @author Kevin M. Gill
  *
  */
+@Deprecated
 public class Square implements Renderable
 {
 	private static Log log = Logging.getLog(Square.class);

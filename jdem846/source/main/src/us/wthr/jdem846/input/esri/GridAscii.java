@@ -22,7 +22,6 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.input.DataSource;
-import us.wthr.jdem846.input.bil.BilInt16;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 

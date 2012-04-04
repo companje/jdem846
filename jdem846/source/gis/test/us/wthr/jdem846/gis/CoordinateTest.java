@@ -1,8 +1,5 @@
 package us.wthr.jdem846.gis;
 
-import us.wthr.jdem846.gis.CardinalDirectionEnum;
-import us.wthr.jdem846.gis.Coordinate;
-import us.wthr.jdem846.gis.CoordinateTypeEnum;
 import junit.framework.TestCase;
 
 public class CoordinateTest extends TestCase

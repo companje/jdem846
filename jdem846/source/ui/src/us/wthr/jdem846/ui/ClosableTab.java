@@ -26,10 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.ComponentException;

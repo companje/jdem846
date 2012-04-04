@@ -16,7 +16,6 @@
 
 package us.wthr.jdem846.shapefile;
 
-import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,6 +28,7 @@ import us.wthr.jdem846.shapefile.modeling.FeatureType;
 
 public abstract class Shape
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Shape.class);
 	
 	private int recordNumber;

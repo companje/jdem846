@@ -20,8 +20,6 @@ import java.awt.Component;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-import javax.swing.JMenu;
-
 import us.wthr.jdem846.ui.base.Menu;
 
 @SuppressWarnings("serial")

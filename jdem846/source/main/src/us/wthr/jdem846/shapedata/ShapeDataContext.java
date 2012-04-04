@@ -7,13 +7,13 @@ import us.wthr.jdem846.DataContext;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 
 
 public class ShapeDataContext implements DataContext
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ShapeDataContext.class);
 	
 	private double east = 180.0;

@@ -15,6 +15,7 @@ import us.wthr.jdem846.ui.base.Panel;
 @SuppressWarnings("serial")
 public class SimpleImagePanel extends Panel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(SimpleImagePanel.class);
 	
 	private BufferedImage image;

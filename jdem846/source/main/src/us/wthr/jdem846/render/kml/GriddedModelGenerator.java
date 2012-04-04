@@ -24,32 +24,25 @@ import java.io.File;
 import java.util.List;
 
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.image.ImageWriter;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
-import us.wthr.jdem846.render.render2d.TileRenderer;
 
 public class GriddedModelGenerator
 {
 	private static Log log = Logging.getLog(GriddedModelGenerator.class);
 	
 	private ModelContext modelContext;
-	//private DataPackage dataPackage;
 	private RasterDataContext rasterDataContext;
-	private ModelOptions modelOptions;
 	private String tempPath;
 	private ImageTypeEnum imageType;
 	private List<TileCompletionListener> tileCompletionListeners;
@@ -59,7 +52,6 @@ public class GriddedModelGenerator
 	{
 		this.modelContext = modelContext;
 		this.rasterDataContext = modelContext.getRasterDataContext();
-		this.modelOptions = modelContext.getModelOptions();
 		this.tempPath = tempPath;
 		this.imageType = imageType;
 		this.tileCompletionListeners = tileCompletionListeners;

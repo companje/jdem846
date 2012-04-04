@@ -1,21 +1,10 @@
 package us.wthr.jdem846.annotation;
 
-import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.scannotation.AnnotationDB;
-import org.scannotation.ClasspathUrlFinder;
-
-import us.wthr.jdem846.AnnotatedClassMap;
 import us.wthr.jdem846.DiscoverableAnnotationIndexer;
 import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.ServiceKernel;
-import us.wthr.jdem846.annotations.Discoverable;
 import us.wthr.jdem846.annotations.ElevationDataLoader;
 import us.wthr.jdem846.exception.AnnotationIndexerException;
 import us.wthr.jdem846.exception.ServiceException;

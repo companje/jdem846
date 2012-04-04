@@ -24,12 +24,11 @@ import javax.swing.JDialog;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.ui.AboutDialog;
-import us.wthr.jdem846.ui.Disposable;
 
 @SuppressWarnings("serial")
 public class Dialog extends JDialog
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Dialog.class);
 
 	public Dialog()

@@ -35,7 +35,6 @@ import us.wthr.jdem846.logging.Logging;
  * @author Kevin M. Gill
  *
  */
-@SuppressWarnings("serial")
 public class JDem846Properties 
 {
 

@@ -18,9 +18,7 @@ package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -38,34 +36,23 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.dbase.ClassLoadException;
 import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.ImageIcons;
-//import us.wthr.jdem846.input.DataPackage;
-//import us.wthr.jdem846.input.ElevationDataLoaderInstance;
-import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectFiles;
-import us.wthr.jdem846.project.ProjectTypeEnum;
-import us.wthr.jdem846.project.XmlProjectFileReader;
-import us.wthr.jdem846.project.XmlProjectFileWriter;
 import us.wthr.jdem846.project.ProjectModel;
+import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.render.RenderEngine;
@@ -73,13 +60,10 @@ import us.wthr.jdem846.ui.RecentProjectTracker.ProjectListListener;
 import us.wthr.jdem846.ui.TopButtonBar.ButtonClickedListener;
 import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Frame;
-import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.TabPane;
-import us.wthr.jdem846.ui.base.ToolBar;
 import us.wthr.jdem846.ui.preferences.PreferencesDialog;
-import us.wthr.jdem846.util.TempFiles;
 
 @SuppressWarnings("serial")
 public class JdemFrame extends Frame
@@ -283,8 +267,8 @@ public class JdemFrame extends Frame
 	
 	protected void buildJMenuBar()
 	{
-		Menu menu;
-		MenuItem menuItem;
+		//Menu menu;
+		//MenuItem menuItem;
 		
 		menuBar = MainMenuBar.getInstance();
 

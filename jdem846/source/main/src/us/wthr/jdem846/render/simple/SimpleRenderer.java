@@ -1,67 +1,30 @@
 package us.wthr.jdem846.render.simple;
 
 import java.awt.Color;
-import java.util.Calendar;
-import java.util.TimeZone;
 
-import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptionNamesEnum;
-import us.wthr.jdem846.Perspectives;
-import us.wthr.jdem846.color.ColorAdjustments;
-import us.wthr.jdem846.color.ColoringRegistry;
-import us.wthr.jdem846.color.ModelColoring;
-import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Line;
-import us.wthr.jdem846.geom.Polygon;
-import us.wthr.jdem846.geom.Triangle;
-import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
-import us.wthr.jdem846.gis.Coordinate;
-import us.wthr.jdem846.gis.CoordinateTypeEnum;
-import us.wthr.jdem846.gis.datetime.EarthDateTime;
-import us.wthr.jdem846.gis.datetime.SolarCalculator;
-import us.wthr.jdem846.gis.datetime.SolarPosition;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
-import us.wthr.jdem846.gis.planets.Planet;
-import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.image.ImageDataContext;
-import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
-import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
-import us.wthr.jdem846.rasterdata.ElevationDataMap;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.CanvasProjection;
-import us.wthr.jdem846.gis.elevation.ElevationMinMax;
-import us.wthr.jdem846.render.ElevationMinMaxCalculator;
 import us.wthr.jdem846.render.ModelCanvas;
-import us.wthr.jdem846.render.RayTracing;
-import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
-import us.wthr.jdem846.render.gfx.Vector;
-import us.wthr.jdem846.render.render2d.TileRenderer;
 import us.wthr.jdem846.render.render3.ModelBuilder;
 import us.wthr.jdem846.render.render3.ModelGrid;
 import us.wthr.jdem846.render.render3.ModelRenderer;
-import us.wthr.jdem846.render.scaling.ElevationScaler;
-import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
-import us.wthr.jdem846.util.ColorSerializationUtil;
 
 public class SimpleRenderer 
 {
 
 	private static Log log = Logging.getLog(SimpleRenderer.class);
-	
-	
-	private double latitudeSlices = 50;
-	private double longitudeSlices = 50;
 	
 	private int[] sourceLineColor = {Color.RED.getRed(), Color.RED.getGreen(), Color.RED.getBlue(), 255};
 	private int[] baseGridColor = {Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue(), 255};

@@ -17,12 +17,10 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -48,38 +46,26 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.OptionChangeListener;
-import us.wthr.jdem846.color.ColoringInstance;
-import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.exception.InvalidFileFormatException;
 import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.image.SimpleGeoImage;
-//import us.wthr.jdem846.input.DataPackage;
-//import us.wthr.jdem846.input.DataSource;
-//import us.wthr.jdem846.input.DataSourceFactory;
-//import us.wthr.jdem846.input.ElevationDataLoaderInstance;
-//import us.wthr.jdem846.input.ElevationDataLoaderRegistry;
-import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
-import us.wthr.jdem846.rasterdata.RasterData;
-
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
-import us.wthr.jdem846.render.EngineInstance;
-import us.wthr.jdem846.render.EngineRegistry;
+import us.wthr.jdem846.rasterdata.RasterData;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.scripting.ScriptProxyFactory;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
-import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 import us.wthr.jdem846.ui.DataSetTree.DatasetSelectionListener;
 import us.wthr.jdem846.ui.ModelOptionsPanel.GetAspectRatioHandler;
 import us.wthr.jdem846.ui.ModelVisualizationPanel.ProjectionChangeListener;
@@ -87,7 +73,6 @@ import us.wthr.jdem846.ui.MonitoredThread.ProgressListener;
 import us.wthr.jdem846.ui.OrderingButtonBar.OrderingButtonClickedListener;
 import us.wthr.jdem846.ui.ProjectButtonBar.ButtonClickedListener;
 import us.wthr.jdem846.ui.base.FileChooser;
-import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.Panel;
@@ -95,7 +80,6 @@ import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.SplitPane;
 import us.wthr.jdem846.ui.lighting.LightingOptionsPanel;
 import us.wthr.jdem846.ui.panels.EmbeddedTabbedPane;
-import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 import us.wthr.jdem846.ui.scripting.ScriptEditorPanel;
 
 @SuppressWarnings("serial")
@@ -412,6 +396,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		});
 		
 		
+		@SuppressWarnings("unused")
 		ChangeListener basicChangeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
 			{
@@ -760,10 +745,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 	protected void applyEngineSelectionConfiguration()
 	{
 		
-		String engineSelection = modelOptions.getEngine();
+		//String engineSelection = modelOptions.getEngine();
 		//String coloringSelection = modelOptions.getColoringType();
 		
-		EngineInstance engineInstance = EngineRegistry.getInstance(engineSelection);
+		//EngineInstance engineInstance = EngineRegistry.getInstance(engineSelection);
 		//ColoringInstance coloringInstance = ColoringRegistry.getInstance(coloringSelection);
 		
 		//gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());
@@ -1120,7 +1105,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 			return;
 		}
 		
-		ShapeFileRequest shapeData = shapeDataContext.getShapeFiles().get(index);
+		//ShapeFileRequest shapeData = shapeDataContext.getShapeFiles().get(index);
 		layerOverviewPanel.setNorth(0);
 		layerOverviewPanel.setSouth(0);
 		layerOverviewPanel.setEast(0);

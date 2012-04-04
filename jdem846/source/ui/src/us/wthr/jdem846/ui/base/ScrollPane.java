@@ -28,6 +28,7 @@ import us.wthr.jdem846.ui.Disposable;
 @SuppressWarnings("serial")
 public class ScrollPane extends JScrollPane implements Disposable
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ScrollPane.class);
 	private boolean disposed = false;
 	

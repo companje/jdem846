@@ -1,22 +1,14 @@
 package us.wthr.jdem846.ui;
 
-import java.awt.BorderLayout;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
-
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.LogConsole.ConsoleUpdateListener;
-import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
-import us.wthr.jdem846.ui.base.TextArea;
 
 @SuppressWarnings("serial")
 public class LogOutputPanel extends ScrollPane
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(LogOutputPanel.class);
 	
 	//private ScrollPane scrollPane;

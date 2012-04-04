@@ -24,6 +24,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class ToolBar extends JToolBar
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ToolBar.class);
 	
 	

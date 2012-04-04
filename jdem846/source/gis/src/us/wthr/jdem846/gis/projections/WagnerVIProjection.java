@@ -6,6 +6,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class WagnerVIProjection extends AbstractBaseProjection
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(WagnerVIProjection.class);
 	
 	

@@ -1,10 +1,6 @@
 package us.wthr.jdem846.input.netcdf;
 
-import java.io.IOException;
-
-import ucar.ma2.Array;
 import ucar.nc2.NetcdfFile;
-import ucar.nc2.Variable;
 import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.input.DataSourceHeader;
 import us.wthr.jdem846.logging.Log;
@@ -13,8 +9,10 @@ import us.wthr.jdem846.logging.Logging;
 @Deprecated
 public class NetCdfHeader implements DataSourceHeader 
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(NetCdfHeader.class);
 	
+	@SuppressWarnings("unused")
 	private NetcdfFile ncfile = null;
 	
 	public NetCdfHeader(NetcdfFile ncfile)

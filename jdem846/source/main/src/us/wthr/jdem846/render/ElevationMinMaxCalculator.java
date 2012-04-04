@@ -87,7 +87,7 @@ public class ElevationMinMaxCalculator
 			for (double lat = north; lat >= minLat; lat-=latitudeResolution) {
 				
 				double nwLat = lat;
-				double swLat = lat - latitudeResolution;
+				//double swLat = lat - latitudeResolution;
 				
 				if (lat <= nextCachePoint && tiledPrecaching) {
 					

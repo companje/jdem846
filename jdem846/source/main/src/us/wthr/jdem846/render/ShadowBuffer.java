@@ -3,13 +3,12 @@ package us.wthr.jdem846.render;
 import java.awt.geom.Rectangle2D;
 
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.Equirectangular3dProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
-import us.wthr.jdem846.gis.projections.MapProjection;
 
+@Deprecated
 public class ShadowBuffer  {
 	
 	private static final double Z_VALUE_NOT_SET = Double.NaN;

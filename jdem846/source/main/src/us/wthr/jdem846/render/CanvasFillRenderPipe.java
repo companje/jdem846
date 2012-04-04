@@ -4,7 +4,6 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.render2d.ModelPoint;
 
 public class CanvasFillRenderPipe extends InterruptibleProcess implements RenderPipe
 {

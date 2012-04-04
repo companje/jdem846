@@ -1,7 +1,5 @@
 package us.wthr.jdem846.geom;
 
-import java.util.Comparator;
-
 public class Vertex implements Comparable<Vertex>
 {
 	public double x;

@@ -1,7 +1,6 @@
 package us.wthr.jdem846.render.render3;
 
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.render.AbstractBuffer;
 
 public class ModelGrid 
 {

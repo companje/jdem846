@@ -7,13 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Button;
@@ -27,8 +25,10 @@ import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.TextField;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
 
+@SuppressWarnings("serial")
 public class DataExportDialog extends Dialog
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(DataExportDialog.class);
 	
 	private ComboBox cmbExportFormat;

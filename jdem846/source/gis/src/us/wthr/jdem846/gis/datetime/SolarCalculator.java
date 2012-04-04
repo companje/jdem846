@@ -3,6 +3,7 @@ package us.wthr.jdem846.gis.datetime;
 import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
 import us.wthr.jdem846.gis.Location;
+import us.wthr.jdem846.math.MathExt;
 
 /** Collection of solar equations. Based on solar calculator at http://www.esrl.noaa.gov/gmd/grad/solcalc/
  * 
@@ -125,8 +126,8 @@ public class SolarCalculator
     
     public double sunEqOfCenter(double t)
     {
-    	double mrad = radians(geomMeanAnomalySun());
-    	return sin(mrad) * (1.914602 - t * (0.004817 + 0.000014 * t)) + sin(mrad+mrad) * (0.019993 - 0.000101 * t) + sin(mrad+mrad+mrad) * 0.000289;
+    	double mrad = MathExt.radians(geomMeanAnomalySun());
+    	return MathExt.sin(mrad) * (1.914602 - t * (0.004817 + 0.000014 * t)) + MathExt.sin(mrad+mrad) * (0.019993 - 0.000101 * t) + MathExt.sin(mrad+mrad+mrad) * 0.000289;
     }
     
     public double sunTrueLong()
@@ -156,7 +157,7 @@ public class SolarCalculator
     
     public double sunApparentLong(double t)
     {
-    	return sunTrueLong(t) - 0.00569 - 0.00478 * sin(radians(125.04 - 1934.136 * t));
+    	return sunTrueLong(t) - 0.00569 - 0.00478 * MathExt.sin(MathExt.radians(125.04 - 1934.136 * t));
     }
     
     public double sunRadVector()
@@ -167,7 +168,7 @@ public class SolarCalculator
     public double sunRadVector(double t)
     {
     	double e = eccentricityEarthOrbit(t);
-        return (1.000001018 * (1.0 - e * e)) / (1.0 + e * cos(radians(sunTrueAnomaly(t))));
+        return (1.000001018 * (1.0 - e * e)) / (1.0 + e * MathExt.cos(MathExt.radians(sunTrueAnomaly(t))));
     }
     
     public double sunRtAscension()
@@ -177,8 +178,8 @@ public class SolarCalculator
     
     public double sunRtAscension(double t)
     {
-    	double _l = radians(sunApparentLong(t));
-        return degrees(atan2(cos(_l), (cos(radians(obliquityCorrection(t))) * sin(_l))));
+    	double _l = MathExt.radians(sunApparentLong(t));
+        return MathExt.degrees(MathExt.atan2(MathExt.cos(_l), (MathExt.cos(MathExt.radians(obliquityCorrection(t))) * MathExt.sin(_l))));
     }
     
     public double varY()
@@ -189,7 +190,7 @@ public class SolarCalculator
     public double varY(double t)
     {
     	double e = obliquityCorrection(t);
-        return tan(radians(e / 2)) * tan(radians(e / 2));
+        return MathExt.tan(MathExt.radians(e / 2)) * MathExt.tan(MathExt.radians(e / 2));
     }
     
     public double equationOfTime()
@@ -199,13 +200,13 @@ public class SolarCalculator
     
     public double equationOfTime(double t)
     {
-    	double l0 = radians(geomMeanLongSun(t));
+    	double l0 = MathExt.radians(geomMeanLongSun(t));
         double e = eccentricityEarthOrbit(t);
-        double m = radians(geomMeanAnomalySun(t));
+        double m = MathExt.radians(geomMeanAnomalySun(t));
  
-        double y = pow(tan(radians(obliquityCorrection(t))/2.0), 2);
+        double y = MathExt.pow(MathExt.tan(MathExt.radians(obliquityCorrection(t))/2.0), 2);
      
-        return degrees(y * sin(2.0 * l0) - 2.0 * e * sin(m) + 4.0 * e * y * sin(m) * cos(2.0 * l0) - 0.5 * y * y * sin(4.0 * l0) - 1.25 * e * e * sin(2.0 * m)) * 4.0;    // in minutes of time
+        return MathExt.degrees(y * MathExt.sin(2.0 * l0) - 2.0 * e * MathExt.sin(m) + 4.0 * e * y * MathExt.sin(m) * MathExt.cos(2.0 * l0) - 0.5 * y * y * MathExt.sin(4.0 * l0) - 1.25 * e * e * MathExt.sin(2.0 * m)) * 4.0;    // in minutes of time
     }
     
     public double declinationOfSun()
@@ -215,7 +216,7 @@ public class SolarCalculator
     
     public double declinationOfSun(double t)
     {
-    	return degrees(asin(sin(radians(obliquityCorrection(t))) * sin(radians(sunApparentLong(t)))));
+    	return MathExt.degrees(MathExt.asin(MathExt.sin(MathExt.radians(obliquityCorrection(t))) * MathExt.sin(MathExt.radians(sunApparentLong(t)))));
     }
     
     public double hourAngleSunrise()
@@ -225,9 +226,9 @@ public class SolarCalculator
     
     public double hourAngleSunrise(double decl)
     {
-    	double latRad = radians(latitude.toDecimal());
-        double sdRad  = radians(decl);
-        return degrees(acos((cos(radians(90.833))/(cos(latRad)*cos(sdRad))-tan(latRad) * tan(sdRad))));
+    	double latRad = MathExt.radians(latitude.toDecimal());
+        double sdRad  = MathExt.radians(decl);
+        return MathExt.degrees(MathExt.acos((MathExt.cos(MathExt.radians(90.833))/(MathExt.cos(latRad)*MathExt.cos(sdRad))-MathExt.tan(latRad) * MathExt.tan(sdRad))));
     }
     
     public double trueSolarTime()
@@ -262,13 +263,13 @@ public class SolarCalculator
     public double solarZenithAngle(double decl, double ha)
     {
     	double latitude = this.latitude.toDecimal();
-    	double csz = sin(radians(latitude)) * Math.sin(radians(decl)) + cos(radians(latitude)) * cos(radians(decl)) * cos(radians(ha));
+    	double csz = MathExt.sin(MathExt.radians(latitude)) * MathExt.sin(MathExt.radians(decl)) + MathExt.cos(MathExt.radians(latitude)) * MathExt.cos(MathExt.radians(decl)) * MathExt.cos(MathExt.radians(ha));
     	if (csz > 1.0) {
     		csz = 1.0;
     	} else if (csz < -1.0) { 
     		csz = -1.0;
     	}
-    	double zenith = degrees(acos(csz));
+    	double zenith = MathExt.degrees(MathExt.acos(csz));
     	
     	
     	double exoatmElevation = 90.0 - zenith;
@@ -277,7 +278,7 @@ public class SolarCalculator
     	if (exoatmElevation > 85.0) {
     		refractionCorrection = 0.0;
     	} else {
-    		double te = Math.tan (radians(exoatmElevation));
+    		double te = MathExt.tan (MathExt.radians(exoatmElevation));
     		if (exoatmElevation > 5.0) {
     			refractionCorrection = 58.1 / te - 0.07 / (te*te*te) + 0.000086 / (te*te*te*te*te);
     		} else if (exoatmElevation > -0.575) {
@@ -316,11 +317,11 @@ public class SolarCalculator
     	if (sol_elev > 85)
             refr = 0;
     	else if (sol_elev > 5)
-            refr = 58.1 / tan(radians(sol_elev)) - 0.07 / (pow(tan(radians(sol_elev)),3)) + 0.000086 / (pow(tan(radians(sol_elev)),5));
+            refr = 58.1 / MathExt.tan(MathExt.radians(sol_elev)) - 0.07 / (MathExt.pow(MathExt.tan(MathExt.radians(sol_elev)),3)) + 0.000086 / (MathExt.pow(MathExt.tan(MathExt.radians(sol_elev)),5));
     	else if (sol_elev > -0.575)
             refr = 1735.0 + sol_elev *(-518.2 + sol_elev * (103.4 + sol_elev * (-12.79+sol_elev*0.711)));
     	else
-            refr = -20.772/tan(radians(sol_elev));
+            refr = -20.772/MathExt.tan(MathExt.radians(sol_elev));
     	return refr / 3600.0;
     }
     
@@ -348,18 +349,18 @@ public class SolarCalculator
     {
     	double latitude = this.latitude.toDecimal();
     	double azimuth;
-    	double azDenom = ( Math.cos(radians(latitude)) * Math.sin(radians(zenith)) );
+    	double azDenom = ( MathExt.cos(MathExt.radians(latitude)) * MathExt.sin(MathExt.radians(zenith)) );
     	
     	if (Math.abs(azDenom) > 0.001) {
-    		double azRad = (( Math.sin(radians(latitude)) * Math.cos(radians(zenith)) ) - Math.sin(radians(decl))) / azDenom;
-    		if (Math.abs(azRad) > 1.0) {
+    		double azRad = (( MathExt.sin(MathExt.radians(latitude)) * MathExt.cos(MathExt.radians(zenith)) ) - MathExt.sin(MathExt.radians(decl))) / azDenom;
+    		if (MathExt.abs(azRad) > 1.0) {
     			if (azRad < 0) {
     				azRad = -1.0;
     			} else {
     				azRad = 1.0;
     			}
     		}
-    		azimuth = 180.0 - degrees(Math.acos(azRad));
+    		azimuth = 180.0 - MathExt.degrees(MathExt.acos(azRad));
     		if (ha > 0.0) {
     			azimuth = -azimuth;
     		}
@@ -404,9 +405,9 @@ public class SolarCalculator
     
     public EarthDateTime minutesToTod(double minutes)
     {
-    	int hour = (int) floor(minutes / 60.0);
-        int minute = (int)floor(minutes - (hour * 60.0));
-        int second = (int) floor(60.0 * (minutes - (hour * 60.0) - minute));
+    	int hour = (int) MathExt.floor(minutes / 60.0);
+        int minute = (int)MathExt.floor(minutes - (hour * 60.0));
+        int second = (int) MathExt.floor(60.0 * (minutes - (hour * 60.0) - minute));
 
         EarthDateTime tod = datetime.clone();
         tod.setHour(hour);
@@ -481,7 +482,7 @@ public class SolarCalculator
     {
         double JD = julianDay;
         double timezone = datetime.getTimezone();
-        boolean dst = datetime.isDst();
+        //boolean dst = datetime.isDst();
        
         EarthDateTime timeUTC_obj = sunriseSetUTC(rise);
         double timeUTC = todToMinutes(timeUTC_obj.getHour(), timeUTC_obj.getMinute(), timeUTC_obj.getSecond());
@@ -495,11 +496,11 @@ public class SolarCalculator
         if ((timeLocal >= 0.0) && (timeLocal < 1440.0)) {
         	return minutesToTod(timeLocal);
         } else {
-        	double jday = JD;
+        	//double jday = JD;
         	double increment = (timeLocal < 0) ? 1 : -1;
         	while ((timeLocal < 0.0) || (timeLocal >= 1440.0)) {
         		timeLocal += increment * 1440.0;
-        		jday -= increment;
+        		//jday -= increment;
         	}
         	return minutesToTod(timeLocal);
         }
@@ -566,68 +567,7 @@ public class SolarCalculator
 	}
 
     
-    private double tan(double a)
-    {
-    	return Math.tan(a);
-    }
-    
-    
-    private double sin(double a)
-    {
-    	return Math.sin(a);
-    }
-    
-    private double cos(double a)
-    {
-    	return Math.cos(a);
-    }
-    
-    private double radians(double a)
-    {
-    	return Math.toRadians(a);
-    }
-    
-    private double degrees(double a)
-    {
-    	return Math.toDegrees(a);
-    }
-    
-    private double atan2(double y, double x)
-    {
-    	return Math.atan2(y, x);
-    }
-    
-    private double pow(double a, double b)
-    {
-    	return Math.pow(a, b);
-    }
-    
-    
-    private double asin(double a)
-    {
-    	return Math.asin(a);
-    }
-    
-    private double acos(double a)
-    {
-    	return Math.acos(a);
-    }
-    
-    private double floor(double a)
-    {
-    	return Math.floor(a);
-    }
-    
-    private double ceil(double a)
-    {
-    	return Math.ceil(a);
-    }
-    
-    private double round(double a)
-    {
-    	return Math.round(a);
-    }
-    
+
     
     
     

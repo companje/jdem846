@@ -6,6 +6,7 @@ import us.wthr.jdem846.logging.Logging;
 public class WinkelTripelProjectionTest extends BaseMapProjectionTest
 {
 	
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(WinkelTripelProjectionTest.class);
 	
 

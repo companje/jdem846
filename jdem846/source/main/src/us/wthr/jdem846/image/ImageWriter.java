@@ -20,6 +20,7 @@ import us.wthr.jdem846.logging.Logging;
  */
 public class ImageWriter
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ImageWriter.class);
 
 	

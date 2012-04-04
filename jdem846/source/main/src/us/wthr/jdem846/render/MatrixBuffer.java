@@ -8,6 +8,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class MatrixBuffer<E>
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(MatrixBuffer.class);
 	
 	private List<E> buffer;

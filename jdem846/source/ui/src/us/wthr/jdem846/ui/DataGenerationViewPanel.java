@@ -20,13 +20,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.input.DataPackage;
-import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RenderEngine;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;

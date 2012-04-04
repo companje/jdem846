@@ -3,6 +3,7 @@ package us.wthr.jdem846.gis.projections;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 
 /** http://svn.osgeo.org/metacrs/proj/trunk/proj/src/PJ_tmerc.c
  * NOTE: Not even close to being correct.
@@ -12,6 +13,7 @@ import us.wthr.jdem846.logging.Logging;
  */
 public class TransverseMercatorProjection extends AbstractBaseProjection
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(TransverseMercatorProjection.class);
 	
 	private final static double FC1 = 1.0;
@@ -49,8 +51,8 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 			esp = getScaleFactor();
 			ml0 = .5 * esp;
 		} else {
-			en = enfn(es);
-			ml0 = mlfn(0, Math.sin(0), Math.cos(0), en);
+			en = MathExt.enfn(es);
+			ml0 = MathExt.mlfn(0, MathExt.sin(0), MathExt.cos(0), en);
 			esp = es / (1. - es);
 		}
 	}
@@ -62,7 +64,7 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 		double phi = latitude;
 		double lam = longitude;
 		
-		if (lam < -HALFPI || lam > HALFPI) {
+		if (lam < -MathExt.HALFPI || lam > MathExt.HALFPI) {
 			point.row = 0;
 			point.column = 0;
 			return;
@@ -101,15 +103,15 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 	
 	public void getPointEllipse(double phi, double lam, double elevation, MapPoint point) throws MapProjectionException
 	{
-		double sinphi = Math.sin(phi); 
-		double cosphi = Math.cos(phi);
+		double sinphi = MathExt.sin(phi); 
+		double cosphi = MathExt.cos(phi);
 		
-		double t = Math.abs(cosphi) > 1e-10 ? sinphi/cosphi : 0.;
+		double t = MathExt.abs(cosphi) > 1e-10 ? sinphi/cosphi : 0.;
 		t *= t;
 		
 		double al = cosphi * lam;
 		double als = al * al;
-		al /= Math.sqrt(1. - es * sinphi * sinphi);
+		al /= MathExt.sqrt(1. - es * sinphi * sinphi);
 		
 		double n = esp * cosphi * cosphi;
 		
@@ -118,7 +120,7 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 			FC5 * als * (5. + t * (t - 18.) + n * (14. - 58. * t)
 			+ FC7 * als * (61. + t * ( t * (179. - t) - 479. ) )
 			)));
-		double y = getScaleFactor() * (mlfn(phi, sinphi, cosphi, en) - ml0 +
+		double y = getScaleFactor() * (MathExt.mlfn(phi, sinphi, cosphi, en) - ml0 +
 			sinphi * al * lam * FC2 * ( 1. +
 			FC4 * als * (5. - t + n * (9. + 4. * n) +
 			FC6 * als * (61. + t * (t - 58.) + n * (270. - 330 * t)
@@ -139,31 +141,31 @@ public class TransverseMercatorProjection extends AbstractBaseProjection
 	public void getPointSpherical(double phi, double lam, double elevation, MapPoint point) throws MapProjectionException
 	{
 	 
-		double cosphi = Math.cos(phi);
-		double b = cosphi * Math.sin(lam);
+		double cosphi = MathExt.cos(phi);
+		double b = cosphi * MathExt.sin(lam);
 		double aks0 = esp;
 		double aks5 = ml0;
 		double x, y = 0;
 		
 		
 		
-		if (Math.abs(Math.abs(b) - 1.0) <= EPS10) {
+		if (MathExt.abs(MathExt.abs(b) - 1.0) <= MathExt.EPS10) {
 			point.row = 0;
 			point.column = 0;
 			return;
 		}
 		
-		x = aks5 * Math.log((1.0 + b) / (1.0 - b));
-		y = cosphi * Math.cos(lam) / Math.sqrt(1.0 - b * b);
-		b = Math.abs(y);
+		x = aks5 * MathExt.log((1.0 + b) / (1.0 - b));
+		y = cosphi * MathExt.cos(lam) / MathExt.sqrt(1.0 - b * b);
+		b = MathExt.abs(y);
 		if (b >= 1.0) {
-			if (b - 1.0 > EPS10) {
+			if (b - 1.0 > MathExt.EPS10) {
 				// Throw!!!
 			} else {
 				y = 0.0;
 			}
 		} else {
-			y = acos(y);
+			y = MathExt.acos(y);
 		}
 		
 		if (phi < 0) {

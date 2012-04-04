@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
@@ -22,14 +21,10 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
-
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.lighting.LightingContext;
-import us.wthr.jdem846.lighting.LightingOptionNamesEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.NumberTextField;
@@ -41,7 +36,9 @@ import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Spinner;
 import us.wthr.jdem846.ui.optionModels.LightSourceSpecifyTypeListModel;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
-import us.wthr.jdem846.ui.panels.RoundedPanel;
+
+import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 
 @SuppressWarnings("serial")
 public class LightingOptionsPanel extends Panel

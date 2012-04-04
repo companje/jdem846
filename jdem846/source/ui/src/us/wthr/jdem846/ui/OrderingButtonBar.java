@@ -16,17 +16,13 @@
 
 package us.wthr.jdem846.ui;
 
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JToolBar;
-
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
 public class OrderingButtonBar extends ComponentButtonBar

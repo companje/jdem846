@@ -8,6 +8,7 @@ import us.wthr.jdem846.scripting.groovy.GroovyScriptLoader;
 
 public class ScriptProxyFactory
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ScriptProxyFactory.class);
 	
 	public static ScriptProxy createScriptProxy(ScriptLanguageEnum language, String scriptContent) throws ScriptingException, ScriptCompilationFailedException

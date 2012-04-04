@@ -16,17 +16,9 @@
 
 package us.wthr.jdem846.ui.panels;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Rectangle;
 
-import javax.swing.JTabbedPane;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
-
-import com.jgoodies.looks.Options;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ui.base.TabPane;

@@ -7,6 +7,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RenderPipeline;
 
+@Deprecated
 public class TileRenderContainer
 {
 	private static Log log = Logging.getLog(TileRenderContainer.class);

@@ -4,12 +4,12 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.gis.CoordinateSpaceAdjuster;
-import us.wthr.jdem846.gis.exceptions.CoordinateSpaceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
 public abstract class AbstractRasterDataProvider implements RasterData
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(AbstractRasterDataProvider.class);
 	
 	

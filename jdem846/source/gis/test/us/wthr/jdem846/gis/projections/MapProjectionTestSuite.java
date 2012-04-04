@@ -1,8 +1,8 @@
 package us.wthr.jdem846.gis.projections;
 
-import us.wthr.jdem846.JDem846Properties;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import us.wthr.jdem846.JDem846Properties;
 
 public class MapProjectionTestSuite extends TestSuite
 {

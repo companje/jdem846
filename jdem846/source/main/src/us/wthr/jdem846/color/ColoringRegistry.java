@@ -20,15 +20,10 @@ package us.wthr.jdem846.color;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.scannotation.AnnotationDB;
-import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.AppRegistry;
 import us.wthr.jdem846.DiscoverableAnnotationIndexer;

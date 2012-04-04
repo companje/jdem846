@@ -16,11 +16,6 @@
 
 package us.wthr.jdem846.logging;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

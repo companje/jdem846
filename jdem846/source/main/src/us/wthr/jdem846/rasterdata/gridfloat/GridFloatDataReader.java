@@ -24,7 +24,7 @@ public class GridFloatDataReader
 	private RandomAccessFile dataReader = null;
 	
 	private byte[] buffer4 = {0, 0, 0, 0};
-	private long size;
+
 	
 	public GridFloatDataReader(File dataFile, int rows, int columns, ByteOrder byteOrder)
 	{
@@ -32,8 +32,7 @@ public class GridFloatDataReader
 		this.rows = rows;
 		this.columns = columns;
 		this.byteOrder = byteOrder;
-		
-		size = dataFile.length();
+
 	}
 	
 	

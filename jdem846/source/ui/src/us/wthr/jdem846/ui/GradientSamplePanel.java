@@ -19,8 +19,6 @@ package us.wthr.jdem846.ui;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import javax.swing.JPanel;
-
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
@@ -31,6 +29,7 @@ import us.wthr.jdem846.ui.base.Panel;
 @SuppressWarnings("serial")
 public class GradientSamplePanel extends Panel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(GradientSamplePanel.class);
 	
 	private String gradientIdentifier = null;

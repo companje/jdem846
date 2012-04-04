@@ -14,6 +14,7 @@ import us.wthr.jdem846.scripting.ScriptShell;
 
 public class GroovyScriptShell implements ScriptShell
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(GroovyScriptShell.class);
 	
 	private CompilerConfiguration compiler;

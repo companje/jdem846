@@ -1,24 +1,17 @@
 package us.wthr.jdem846.gis;
 
-import java.io.FileReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-import net.sf.json.JsonConfig;
 
 import org.apache.commons.io.IOUtils;
 
 import us.wthr.jdem846.AbstractTestMain;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
-import us.wthr.jdem846.gis.input.proj4.Proj4GridSpecification;
 import us.wthr.jdem846.gis.input.proj4.Proj4GridParser;
-import us.wthr.jdem846.gis.projections.ProjectionsTestMain;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -83,7 +76,7 @@ public class GisSandboxMain extends AbstractTestMain
 		 for (int i = 0; i < ellipsoids.size(); i++) {
 			 JSONObject ellipsoid = ellipsoids.getJSONObject(i);
 			 
-			 String name = ellipsoid.getString("name");
+			 //String name = ellipsoid.getString("name");
 			 String shortName = ellipsoid.getString("shortName");
 			 double equatorRadius = ellipsoid.getDouble("equatorRadius");
 			 double poleRadius = ellipsoid.getDouble("poleRadius");

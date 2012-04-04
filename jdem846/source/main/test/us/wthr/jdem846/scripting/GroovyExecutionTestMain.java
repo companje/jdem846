@@ -1,12 +1,7 @@
 package us.wthr.jdem846.scripting;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
-
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-
-import org.codehaus.groovy.control.CompilerConfiguration;
 
 import us.wthr.jdem846.AbstractTestMain;
 import us.wthr.jdem846.JDem846Properties;
@@ -16,6 +11,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class GroovyExecutionTestMain extends AbstractTestMain
 {
+	@SuppressWarnings("unused")
 	private static Log log = null;
 	
 	public static void main(String[] args)

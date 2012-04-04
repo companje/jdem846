@@ -7,14 +7,15 @@ import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
-import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.render.gfx.Vector;
+import us.wthr.jdem846.math.Vectors;
+
 
 public class CanvasProjection3d extends CanvasProjection
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(CanvasProjection3d.class);
 	
 	protected double[] cameraVector;
@@ -136,10 +137,10 @@ public class CanvasProjection3d extends CanvasProjection
 		//double shiftPixelsZ = shiftZ * radius;
 		
 		//Vector.scale(1.0, elevationMultiple, 1.0, pointVector);
-		Vector.rotate(0, rotateY, 0, pointVector);
-		Vector.rotate(rotateX, 0, 0, pointVector);
-		Vector.translate(shiftPixelsX, shiftPixelsY, 0.0, pointVector);
-		Vector.scale(scaleX, scaleY, scaleZ, pointVector);
+		Vectors.rotate(0, rotateY, 0, pointVector);
+		Vectors.rotate(rotateX, 0, 0, pointVector);
+		Vectors.translate(shiftPixelsX, shiftPixelsY, 0.0, pointVector);
+		Vectors.scale(scaleX, scaleY, scaleZ, pointVector);
 		
 		
 		projectTo(pointVector);

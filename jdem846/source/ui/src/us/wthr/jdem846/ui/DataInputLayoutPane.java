@@ -24,19 +24,15 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import sun.util.logging.resources.logging;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.logging.Log;
-import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.rasterdata.RasterData;
-import us.wthr.jdem846.rasterdata.RasterDataRowColumnBox;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
-import us.wthr.jdem846.ui.border.StandardBorder;
+import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterData;
 
 @SuppressWarnings("serial")
 public class DataInputLayoutPane extends TitledRoundedPanel

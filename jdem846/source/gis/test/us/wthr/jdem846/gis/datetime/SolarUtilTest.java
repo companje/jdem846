@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 
 import us.wthr.jdem846.AbstractTestCase;
 import us.wthr.jdem846.ModelContext;
@@ -16,11 +15,9 @@ import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.gis.CardinalDirectionEnum;
 import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
-import us.wthr.jdem846.gis.Location;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.ModelCanvas;
-import us.wthr.jdem846.render.gfx.Vector;
 
 public class SolarUtilTest extends AbstractTestCase
 {
@@ -28,7 +25,7 @@ public class SolarUtilTest extends AbstractTestCase
 	private double sunsource[] = {0.0, 0.0, 0.0};	
 	private double normal[] = {0.0, 0.0, 0.0};
 	private double p0[] = {0.0, 0.0, 0.0};
-	private double p1[] = {0.0, 0.0, 0.0};
+	//private double p1[] = {0.0, 0.0, 0.0};
 	private int[] color = {0, 0, 0, 0};
 	private int[] baseColor = {0, 0, 0, 0};
 	private Perspectives perspectives;
@@ -59,7 +56,7 @@ public class SolarUtilTest extends AbstractTestCase
 		Coordinate latitude = new Coordinate(42, 45, 27, CardinalDirectionEnum.NORTH, CoordinateTypeEnum.LATITUDE);
 		Coordinate longitude = new Coordinate(71, 27, 52, CardinalDirectionEnum.WEST, CoordinateTypeEnum.LONGITUDE);
 		
-		Location location = new Location("Boire Field, Nashua NH", latitude, longitude, -5, false);
+		//Location location = new Location("Boire Field, Nashua NH", latitude, longitude, -5, false);
 		SolarPosition position = new SolarPosition();
 		
 		tableWriter.printf("Time,Hour,Minute,Eq. Of Time,Sol Decl.,App. Sunrise,Solar Noon,App. Sunset,Azimuth,Elevation,Zenith Angle\n");
@@ -169,7 +166,7 @@ public class SolarUtilTest extends AbstractTestCase
 		
 		log.info("Position X/Y/Z: " + p0[0] + "/" + p0[1] + "/" + p0[2]);
 		
-		double elevation = 0.0;
+		//double elevation = 0.0;
 		
 		// Phi
 		for (double latitude = 90.0; latitude >= -90.0 - latStep; latitude -= latStep) {

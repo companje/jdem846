@@ -16,9 +16,6 @@
 
 package us.wthr.jdem846.kml;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.dom4j.Element;
 
 public class Folder extends Container

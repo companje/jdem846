@@ -10,9 +10,8 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Spheres;
+import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.render.Canvas3d;
-import us.wthr.jdem846.render.RenderPipeline;
-import us.wthr.jdem846.render.gfx.Vector;
 
 
 public class GeomRenderTestMain extends AbstractTestMain
@@ -181,7 +180,7 @@ public class GeomRenderTestMain extends AbstractTestMain
 		
 		
 		Polygon poly3 = new Polygon();
-		Polygon poly4 = new Polygon();
+		//Polygon poly4 = new Polygon();
 		vector0[0] = 0; // X
 		vector0[1] = 0; // Z (in this 2d space)
 		vector0[2] = 0; // Y (in this 2d space)
@@ -204,21 +203,21 @@ public class GeomRenderTestMain extends AbstractTestMain
 			vector1[1] = 0;
 			vector1[2] = edgePoints[3];
 			
-			Vector.translate(-300, 0, -300, vector0);
-			Vector.rotate(0, 20, 0, vector0);
-			Vector.rotate(30, 0, 0, vector0);
+			Vectors.translate(-300, 0, -300, vector0);
+			Vectors.rotate(0, 20, 0, vector0);
+			Vectors.rotate(30, 0, 0, vector0);
 			
-			Vector.translate(-300, 0, -300, vector1);
-			Vector.rotate(0, 20, 0, vector1);
-			Vector.rotate(30, 0, 0, vector1);
+			Vectors.translate(-300, 0, -300, vector1);
+			Vectors.rotate(0, 20, 0, vector1);
+			Vectors.rotate(30, 0, 0, vector1);
 			
 			projectTo(vector0, eyeVector, nearVector);
 			projectTo(vector1, eyeVector, nearVector);
 			//log.info("Edge X/Y: " + vector0[0] + "/" + vector0[1] + ", X/Y: " + vector1[0] + "/" + vector1[1]);
 			
 			
-			Vector.translate(300, 300, 0, vector0);
-			Vector.translate(300, 300, 0, vector1);
+			Vectors.translate(300, 300, 0, vector0);
+			Vectors.translate(300, 300, 0, vector1);
 			
 			double x0 = (int) vector0[0];
 			double y0 = (int) vector0[1];

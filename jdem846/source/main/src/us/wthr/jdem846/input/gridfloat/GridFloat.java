@@ -24,12 +24,12 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.util.ResourceLoader;
 
 @Deprecated
 @ElevationDataLoader(name="us.wthr.jdem846.input.gridFloat.name", identifier="gridfloat", extension="flt")
 public class GridFloat extends DataSource
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(GridFloat.class);
 	
 	private GridFloatHeader header = null;

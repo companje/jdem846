@@ -1,10 +1,9 @@
 package us.wthr.jdem846.gis.projections;
 
-import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.gfx.NumberUtil;
+import us.wthr.jdem846.math.MathExt;
 
 /** Implements the Winkel Tripel map projection (Winkel III), a modified azimuthal map projection.
  * 
@@ -13,6 +12,7 @@ import us.wthr.jdem846.render.gfx.NumberUtil;
  */
 public class WinkelTripelProjection extends AbstractBaseProjection
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(WinkelTripelProjection.class);
 
 
@@ -38,11 +38,11 @@ public class WinkelTripelProjection extends AbstractBaseProjection
 		double lplam = longitude;
 		
 		double c = 0.5 * lplam;
-		double d = Math.acos(Math.cos(lpphi) * Math.cos(c));
+		double d = MathExt.acos(MathExt.cos(lpphi) * MathExt.cos(c));
 
 		if (d != 0) {
-			point.column = 2. * d * Math.cos(lpphi) * Math.sin(c) * (point.row = 1. / Math.sin(d));
-			point.row *= d * Math.sin(lpphi);
+			point.column = 2. * d * MathExt.cos(lpphi) * MathExt.sin(c) * (point.row = 1. / MathExt.sin(d));
+			point.row *= d * MathExt.sin(lpphi);
 		} else {
 			point.column = point.row = 0.0;
 		}

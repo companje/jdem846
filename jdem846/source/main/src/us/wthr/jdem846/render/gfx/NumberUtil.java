@@ -16,7 +16,7 @@
 
 package us.wthr.jdem846.render.gfx;
 
-
+@Deprecated
 public class NumberUtil
 {
 	public static boolean isValidNumber(double n)

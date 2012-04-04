@@ -19,7 +19,6 @@ package us.wthr.jdem846.image;
 import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -35,6 +34,7 @@ import us.wthr.jdem846.logging.Logging;
  */
 public class ImageIcons
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ImageIcons.class);
 	
 	private ImageIcons()

@@ -17,14 +17,9 @@
 package us.wthr.jdem846;
 
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.scannotation.AnnotationDB;
-import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.annotations.Initialize;

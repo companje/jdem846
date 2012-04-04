@@ -3,8 +3,10 @@ package us.wthr.jdem846.render.render2d;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+@Deprecated
 public class ScanlinePath
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ScanlinePath.class);
 	
 	private double leftX;

@@ -19,10 +19,7 @@ package us.wthr.jdem846.ui;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
-import javax.swing.JPanel;
-
 import us.wthr.jdem846.exception.ComponentException;
-import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.panels.DockingContainerPanel;
 
 @SuppressWarnings("serial")

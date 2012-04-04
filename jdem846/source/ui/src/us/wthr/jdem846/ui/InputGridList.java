@@ -26,6 +26,7 @@ import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.ui.base.Table;
 
 @SuppressWarnings("serial")
+@Deprecated
 public class InputGridList extends Table {
 
 	private InputTableModel tableModel;

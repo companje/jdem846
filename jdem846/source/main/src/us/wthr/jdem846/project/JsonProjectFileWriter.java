@@ -3,15 +3,11 @@ package us.wthr.jdem846.project;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
-import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;

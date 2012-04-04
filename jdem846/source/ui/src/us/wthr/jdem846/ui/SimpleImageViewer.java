@@ -20,7 +20,6 @@ import java.awt.Image;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 import us.wthr.jdem846.ui.base.Frame;
 import us.wthr.jdem846.ui.base.Label;

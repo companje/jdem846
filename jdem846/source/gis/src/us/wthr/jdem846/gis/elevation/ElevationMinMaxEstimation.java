@@ -6,7 +6,6 @@ import java.io.LineNumberReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import us.wthr.jdem846.ElevationEstimationDatasetTestMain;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.logging.Log;

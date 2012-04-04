@@ -11,11 +11,12 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
-import us.wthr.jdem846.render.gfx.Vector;
+import us.wthr.jdem846.math.Vectors;
 
 public class CanvasProjectionGlobe extends CanvasProjection3d
 {
 	
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(CanvasProjectionGlobe.class);
 	
 	
@@ -56,8 +57,8 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		Spheres.getPoint3D(longitude+180, latitude, radiusAdjusted, pointVector);
 
 
-		Vector.rotate(0, rotateY, 0, pointVector);
-		Vector.rotate(rotateX, 0, 0, pointVector);
+		Vectors.rotate(0, rotateY, 0, pointVector);
+		Vectors.rotate(rotateX, 0, 0, pointVector);
 		//Vector.translate(shiftX, shiftY, shiftZ, pointVector);
 		
 		
@@ -65,7 +66,7 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		double shiftPixelsY = shiftY * radius;
 		double shiftPixelsZ = shiftZ * radius;
 		
-		Vector.translate(shiftPixelsX, shiftPixelsY, shiftPixelsZ, pointVector);
+		Vectors.translate(shiftPixelsX, shiftPixelsY, shiftPixelsZ, pointVector);
 
 		
 		projectTo(pointVector);

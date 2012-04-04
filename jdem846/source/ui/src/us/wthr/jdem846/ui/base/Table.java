@@ -16,8 +16,6 @@
 
 package us.wthr.jdem846.ui.base;
 
-import java.util.Vector;
-
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
@@ -29,6 +27,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class Table extends JTable
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Table.class);
 
 	public Table()
@@ -67,11 +66,6 @@ public class Table extends JTable
 		
 	}
 
-	public Table(Vector rowData, Vector columnNames)
-	{
-		super(rowData, columnNames);
-		
-	}
 	
 	
 }

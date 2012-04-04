@@ -16,20 +16,14 @@
 
 package us.wthr.jdem846.render;
 
-import java.net.URL;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.scannotation.AnnotationDB;
-import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.AppRegistry;
 import us.wthr.jdem846.DiscoverableAnnotationIndexer;
-import us.wthr.jdem846.JDem846Properties;
-import us.wthr.jdem846.annotations.DemColoring;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;

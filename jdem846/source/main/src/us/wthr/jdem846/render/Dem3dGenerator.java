@@ -16,7 +16,6 @@
 
 package us.wthr.jdem846.render;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -25,36 +24,21 @@ import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
 
-import javax.imageio.ImageIO;
-
-import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.annotations.DemEngine;
-import us.wthr.jdem846.color.ColorRegistry;
-import us.wthr.jdem846.color.ColoringRegistry;
-import us.wthr.jdem846.color.ModelColoring;
-import us.wthr.jdem846.dbase.ClassLoadException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.gfx.Line;
-import us.wthr.jdem846.render.gfx.Renderable;
-import us.wthr.jdem846.render.gfx.Square;
-import us.wthr.jdem846.render.gfx.StaticPolygonList;
-import us.wthr.jdem846.render.gfx.Vector;
-import us.wthr.jdem846.render.gfx.ViewportBuffer;
+
 
 @DemEngine(name="us.wthr.jdem846.render.demEngine3D.name", identifier="dem3d-gen", usesProjection=true, enabled=false)
+@Deprecated
 public class Dem3dGenerator extends BasicRenderEngine
 {
 	private static Log log = Logging.getLog(Dem3dGenerator.class);
@@ -126,7 +110,7 @@ public class Dem3dGenerator extends BasicRenderEngine
 		double elevationMultiple = modelOptions.getElevationMultiple();
 		double elevationMax = rasterDataContext.getDataMaximumValue() * elevationMultiple;//dataPackage.getMaxElevation() * elevationMultiple;
 		double elevationMin = rasterDataContext.getDataMinimumValue() * elevationMultiple;
-		double elevationDelta = elevationMax - elevationMin;
+		//double elevationDelta = elevationMax - elevationMin;
 		double resolution = (rasterDataContext.getLatitudeResolution() + rasterDataContext.getLongitudeResolution()) / 2.0;
 		
 		
@@ -205,17 +189,17 @@ public class Dem3dGenerator extends BasicRenderEngine
 					vectorBackRight[1] = yBR;
 					vectorBackRight[2] = z;
 					
-					Vector.rotate(0, rotateY, 0, vectorBackLeft);
-					Vector.rotate(rotateX, 0, 0, vectorBackLeft);
+					Vectors.rotate(0, rotateY, 0, vectorBackLeft);
+					Vectors.rotate(rotateX, 0, 0, vectorBackLeft);
 					
-					Vector.rotate(0, rotateY, 0, vectorBackRight);
-					Vector.rotate(rotateX, 0, 0, vectorBackRight);
+					Vectors.rotate(0, rotateY, 0, vectorBackRight);
+					Vectors.rotate(rotateX, 0, 0, vectorBackRight);
 					
-					Vector.rotate(0, rotateY, 0, vectorFrontLeft);
-					Vector.rotate(rotateX, 0, 0, vectorFrontLeft);
+					Vectors.rotate(0, rotateY, 0, vectorFrontLeft);
+					Vectors.rotate(rotateX, 0, 0, vectorFrontLeft);
 					
-					Vector.rotate(0, rotateY, 0, vectorFrontRight);
-					Vector.rotate(rotateX, 0, 0, vectorFrontRight);
+					Vectors.rotate(0, rotateY, 0, vectorFrontRight);
+					Vectors.rotate(rotateX, 0, 0, vectorFrontRight);
 					
 					
 					projectTo(vectorBackLeft, eyeVector, nearVector);

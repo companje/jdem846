@@ -3,8 +3,6 @@ package us.wthr.jdem846;
 import java.util.LinkedList;
 import java.util.List;
 
-import us.wthr.jdem846.gis.planets.Planet;
-import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.lighting.LightingContext;

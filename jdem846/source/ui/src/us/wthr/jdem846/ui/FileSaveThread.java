@@ -28,7 +28,6 @@ import javax.imageio.ImageIO;
 import us.wthr.jdem846.exception.InvalidFileFormatException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.DemCanvas;
 
 public class FileSaveThread extends Thread
 {
@@ -44,20 +43,7 @@ public class FileSaveThread extends Thread
 	
 	private List<SaveCompletedListener> saveCompletedListeners = new LinkedList<SaveCompletedListener>();
 	
-	public FileSaveThread(DemCanvas canvas, String path)
-	{
-		image = canvas.getImage();
-		this.path = path;
-		this.type = TYPE_JPEG;
-	}
-	
-	public FileSaveThread(DemCanvas canvas, String path, int type)
-	{
-		image = canvas.getImage();
-		this.path = path;
-		this.type = type;
-	}
-	
+
 	public FileSaveThread(Image image, String path)
 	{
 		this.image = image;
@@ -86,10 +72,10 @@ public class FileSaveThread extends Thread
 			return;
 		}
 		log.info("Saving image to " + path);
-		String extension = null;
+		//String extension = null;
 		
 		if (path.lastIndexOf(".") >= 0) {
-			extension = path.substring(path.lastIndexOf(".")+1);
+		//	extension = path.substring(path.lastIndexOf(".")+1);
 		}
 		
 		

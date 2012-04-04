@@ -7,6 +7,7 @@ import us.wthr.jdem846.logging.Logging;
 public abstract class AbstractPipe extends InterruptibleProcess implements RenderPipe
 {
 	
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(AbstractPipe.class);
 	
 	private int pollDelay = 100;

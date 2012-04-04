@@ -23,7 +23,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;
 
 
-public class JComboBoxModel<E> implements ComboBoxModel
+public class JComboBoxModel<E> implements ComboBoxModel<Object>
 {
 	
 	private List<ComboBoxItem<E>> itemList = new LinkedList<ComboBoxItem<E>>();

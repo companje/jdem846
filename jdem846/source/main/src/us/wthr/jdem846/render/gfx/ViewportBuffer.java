@@ -16,7 +16,6 @@
 
 package us.wthr.jdem846.render.gfx;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -24,6 +23,7 @@ import java.awt.image.BufferedImage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+@Deprecated
 public class ViewportBuffer
 {
 	private static Log log = Logging.getLog(ViewportBuffer.class);

@@ -24,6 +24,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class MenuBar extends JMenuBar
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(MenuBar.class);
 
 	public MenuBar()

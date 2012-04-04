@@ -6,7 +6,6 @@ import java.util.List;
 import us.wthr.jdem846.DataContext;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;

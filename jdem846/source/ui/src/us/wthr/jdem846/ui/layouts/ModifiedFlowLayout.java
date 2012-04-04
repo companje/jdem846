@@ -1,6 +1,10 @@
 package us.wthr.jdem846.ui.layouts;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Insets;
 
 /**
  * A modified version of FlowLayout that allows containers using this Layout to
@@ -9,6 +13,7 @@ import java.awt.*;
  * 
  * @author Babu Kalakrishnan Modifications by greearb and jzd
  */
+@SuppressWarnings("serial")
 public class ModifiedFlowLayout extends FlowLayout
 {
 	public ModifiedFlowLayout()

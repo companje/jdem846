@@ -19,8 +19,6 @@ package us.wthr.jdem846.ui;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JTextField;
-
 import us.wthr.jdem846.ui.base.TextField;
 
 @SuppressWarnings("serial")

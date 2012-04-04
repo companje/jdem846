@@ -1,7 +1,6 @@
 package us.wthr.jdem846.image;
 
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
@@ -13,12 +12,8 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.JDemResourceLoader;
-import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.gis.CoordinateSpaceAdjuster;
-import us.wthr.jdem846.gis.exceptions.CoordinateSpaceException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
@@ -30,6 +25,7 @@ import us.wthr.jdem846.render.CanvasProjection;
 
 public class SimpleGeoImage 
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(SimpleGeoImage.class);
 	
 	private String imageFile;

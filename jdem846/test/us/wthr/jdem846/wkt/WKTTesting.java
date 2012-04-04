@@ -1,16 +1,7 @@
 package us.wthr.jdem846.wkt;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-
-import us.wthr.jdem846.JDem846Properties;
-import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.exception.RegistryException;
-import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.InstanceIdentifier;

@@ -16,22 +16,15 @@
 
 package us.wthr.jdem846;
 
-import java.util.UUID;
-
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ModelContextException;
-import us.wthr.jdem846.exception.ScriptCompilationFailedException;
-import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.gis.elevation.ElevationMinMaxEstimation;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
-import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageDataContext;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.CancelIndicator;
 import us.wthr.jdem846.gis.elevation.ElevationMinMax;
@@ -42,7 +35,6 @@ import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
-import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.scripting.ScriptProxyFactory;
 import us.wthr.jdem846.shapedata.ShapeDataContext;

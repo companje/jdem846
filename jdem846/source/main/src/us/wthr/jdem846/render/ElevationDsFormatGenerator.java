@@ -22,17 +22,11 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.DemEngine;
-import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.input.DataBounds;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.input.edef.ElevationDatasetExchange;
-import us.wthr.jdem846.input.edef.ElevationDatasetExchangeHeader;
-import us.wthr.jdem846.input.edef.ElevationDatasetExchangeWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.rasterdata.RasterDataLatLongBox;
 import us.wthr.jdem846.rasterdata.RasterDataRowColumnBox;
 import us.wthr.jdem846.scaling.FloatRaster;
 import us.wthr.jdem846.scaling.RasterScale;
@@ -58,6 +52,7 @@ import us.wthr.jdem846.scaling.ResizeDimensions;
 			enabled=false,
 			usesMapProjection=false,
 			needsOutputFileOfType=ElevationDatasetExchange.class)
+@Deprecated
 public class ElevationDsFormatGenerator extends RenderEngine
 {
 	

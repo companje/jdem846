@@ -1,16 +1,11 @@
 package us.wthr.jdem846.gis.planets;
 
-import java.io.FileReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.util.List;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-import net.sf.json.JsonConfig;
 
 import org.apache.commons.io.IOUtils;
 
@@ -69,7 +64,7 @@ public class PlanetTestMain extends AbstractTestMain
 		
 		JSONArray planets = json.getJSONArray("planets");
 		
-		int count = 0;
+		//int count = 0;
 		
 		for (int i = 0; i < planets.size(); i++) {
 			JSONObject planetObj = planets.getJSONObject(i);

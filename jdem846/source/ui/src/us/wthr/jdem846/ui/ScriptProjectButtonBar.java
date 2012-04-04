@@ -8,7 +8,6 @@ import java.util.List;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.ui.ProjectButtonBar.ButtonClickedListener;
 
 @SuppressWarnings("serial")
 public class ScriptProjectButtonBar extends ComponentButtonBar

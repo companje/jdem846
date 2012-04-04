@@ -18,8 +18,6 @@ package us.wthr.jdem846.ui;
 
 import java.awt.FlowLayout;
 
-import javax.swing.BorderFactory;
-
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ToolBar;
 import us.wthr.jdem846.ui.layouts.ModifiedFlowLayout;

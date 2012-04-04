@@ -17,7 +17,6 @@
 package us.wthr.jdem846.color;
 
 import us.wthr.jdem846.annotations.DemColoring;
-import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.render.scaling.ElevationScaler;
 
 @DemColoring(name="us.wthr.jdem846.color.grayTint.name", identifier="gray-tint", allowGradientConfig=false, needsMinMaxElevation=false)

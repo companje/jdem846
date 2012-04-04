@@ -5,7 +5,6 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.render2d.TileRenderContainer;
-import us.wthr.jdem846.render.render2d.TileRenderRunnable;
 
 public class TileProcessPipe extends AbstractPipe
 {

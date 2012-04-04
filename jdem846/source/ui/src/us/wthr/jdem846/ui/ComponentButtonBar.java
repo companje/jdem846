@@ -17,7 +17,6 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.Component;
-import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 

@@ -24,7 +24,6 @@ import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -33,7 +32,6 @@ import javax.swing.event.ChangeListener;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.ui.TitledRoundedPanel;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Slider;
 import us.wthr.jdem846.ui.panels.RoundedPanel;
@@ -41,6 +39,7 @@ import us.wthr.jdem846.ui.panels.RoundedPanel;
 @SuppressWarnings("serial")
 public class ProjectionConfigPanel extends RoundedPanel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ProjectionConfigPanel.class);
 	
 	private ProjectionPreview projectionPreview;

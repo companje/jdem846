@@ -17,37 +17,25 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.color.ColoringInstance;
-import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
@@ -55,31 +43,21 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
-import us.wthr.jdem846.gis.projections.MapProjectionEnum;
-import us.wthr.jdem846.ui.MonitoredSlider.MonitoredValueListener;
-import us.wthr.jdem846.ui.base.BoxContainer;
 import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.ComboBox;
-import us.wthr.jdem846.ui.base.JComboBoxModel;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Spinner;
 import us.wthr.jdem846.ui.base.TextField;
-import us.wthr.jdem846.ui.border.StandardTitledBorder;
 import us.wthr.jdem846.ui.coloring.ColoringValueControl;
-import us.wthr.jdem846.ui.lighting.LightingValueControl;
 import us.wthr.jdem846.ui.optionModels.AntialiasingOptionsListModel;
 import us.wthr.jdem846.ui.optionModels.CanvasProjectionListModel;
 import us.wthr.jdem846.ui.optionModels.ElevationScalerListModel;
 import us.wthr.jdem846.ui.optionModels.EngineListModel;
-import us.wthr.jdem846.ui.optionModels.HillShadingOptionsListModel;
 import us.wthr.jdem846.ui.optionModels.MapProjectionListModel;
 import us.wthr.jdem846.ui.optionModels.PlanetListModel;
-import us.wthr.jdem846.ui.optionModels.PrecacheStrategyOptionsListModel;
 import us.wthr.jdem846.ui.optionModels.SubpixelGridSizeListModel;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
-import us.wthr.jdem846.ui.panels.RoundedPanel;
 import us.wthr.jdem846.ui.perspective.PerspectiveValueControl;
-import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 
 @SuppressWarnings("serial")
 public class ModelOptionsPanel extends Panel
@@ -703,7 +681,7 @@ public class ModelOptionsPanel extends Panel
 	{
 		String engineSelection = engineModel.getSelectedItemValue();
 		EngineInstance engineInstance = EngineRegistry.getInstance(engineSelection);
-		ColoringInstance coloringInstance = ColoringRegistry.getInstance(coloringControl.getColoringSelection());
+		//ColoringInstance coloringInstance = ColoringRegistry.getInstance(coloringControl.getColoringSelection());
 		
 		txtWidth.setEnabled(engineInstance.usesWidth());
 		txtHeight.setEnabled(engineInstance.usesHeight());

@@ -19,19 +19,15 @@ package us.wthr.jdem846.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import us.wthr.jdem846.logging.Log;
@@ -41,6 +37,7 @@ import us.wthr.jdem846.ui.base.Panel;
 @SuppressWarnings("serial")
 public class WorkingGlassPane extends Panel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(WorkingGlassPane.class);
 
 	private String text;

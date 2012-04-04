@@ -3,7 +3,6 @@ package us.wthr.jdem846.geom;
 
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.render.gfx.NumberUtil;
 
 
 /**

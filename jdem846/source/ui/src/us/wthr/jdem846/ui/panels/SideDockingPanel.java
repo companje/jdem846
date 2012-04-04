@@ -28,6 +28,7 @@ import us.wthr.jdem846.ui.base.Panel;
 @SuppressWarnings("serial")
 public class SideDockingPanel extends Panel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(SideDockingPanel.class);
 	
 	

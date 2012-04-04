@@ -13,7 +13,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,36 +24,17 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.PropertiesChangeListener;
-import us.wthr.jdem846.color.ColorAdjustments;
-import us.wthr.jdem846.color.ColoringRegistry;
-import us.wthr.jdem846.color.ModelColoring;
-import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.geom.Edge;
-import us.wthr.jdem846.geom.Line;
-import us.wthr.jdem846.geom.Polygon;
-import us.wthr.jdem846.geom.Vertex;
-import us.wthr.jdem846.gis.exceptions.MapProjectionException;
-import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.math.Spheres;
-import us.wthr.jdem846.rasterdata.ElevationDataMap;
-import us.wthr.jdem846.rasterdata.RasterData;
-import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.Canvas3d;
-import us.wthr.jdem846.render.CanvasProjection;
 import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.render.ModelCanvas;
-import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.simple.SimpleRenderer;
-import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
@@ -101,7 +81,7 @@ public class ModelVisualizationPanel extends Panel
 	double latitudeSlices;
 	double longitudeSlices;
 	
-	private boolean useElevationOnDataGrids = true;
+	//private boolean useElevationOnDataGrids = true;
 
 	private List<ProjectionChangeListener> projectionChangeListeners = new LinkedList<ProjectionChangeListener>();
 	

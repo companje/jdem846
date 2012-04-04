@@ -28,16 +28,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.image.ImageWriter;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.kml.GroundOverlay;
 import us.wthr.jdem846.kml.Icon;
 import us.wthr.jdem846.kml.Kml;

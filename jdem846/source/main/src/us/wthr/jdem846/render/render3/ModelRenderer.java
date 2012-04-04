@@ -10,7 +10,6 @@ import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.CanvasProjection;
-import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
 
 public class ModelRenderer extends AbstractGridProcessor implements GridProcessor
@@ -18,7 +17,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	private static Log log = Logging.getLog(ModelRenderer.class);
 	
 	private double latitudeResolution;
-	private double longitudeResolution;
+
 	
 	private double south;
 	
@@ -42,8 +41,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	public void prepare() throws RenderEngineException
 	{
 		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
-		longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
-		
+
 		projection = modelContext.getModelCanvas().getCanvasProjection();
 		south = modelContext.getSouth();
 	}
@@ -54,6 +52,8 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 			log.info("Model contains no data. Skipping render process.");
 			return;
 		}
+		
+		log.info("Starting model render process");
 		
 		ModelPointCycler pointCycler = new ModelPointCycler(modelContext);
 		

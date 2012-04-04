@@ -22,8 +22,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.JPanel;
-
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -32,10 +30,11 @@ import us.wthr.jdem846.ui.base.Panel;
 @SuppressWarnings("serial")
 public class FlexGridPanel extends Panel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(FlexGridPanel.class);
 	
 	private int columns = 1;
-	private int row = 0;
+	//private int row = 0;
 	private int addColumn = 0;
 	private GridBagLayout gridbag;
 	
@@ -70,7 +69,7 @@ public class FlexGridPanel extends Panel
 		if (addColumn >= columns) {
 			constraints.gridwidth  = GridBagConstraints.REMAINDER;
 			addColumn = 0;	
-			row++;
+			//row++;
 		} else {
 			constraints.gridwidth  = 1;
 		}

@@ -20,12 +20,6 @@ import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -36,7 +30,6 @@ import us.wthr.jdem846.ui.TitledRoundedPanel;
 import us.wthr.jdem846.ui.base.ComboBox;
 import us.wthr.jdem846.ui.base.JComboBoxModel;
 import us.wthr.jdem846.ui.base.Label;
-import us.wthr.jdem846.ui.border.StandardTitledBorder;
 
 @SuppressWarnings("serial")
 public class ShapeDataSetOptions extends TitledRoundedPanel

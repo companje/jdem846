@@ -1,7 +1,7 @@
 package us.wthr.jdem846.render.render2d;
 
-import us.wthr.jdem846.ByteOrder;
 
+@Deprecated
 public class ModelPoint
 {
 	

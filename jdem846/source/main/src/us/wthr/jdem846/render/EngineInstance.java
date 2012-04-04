@@ -16,7 +16,6 @@
 
 package us.wthr.jdem846.render;
 
-import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.dbase.ClassLoadException;
 import us.wthr.jdem846.i18n.I18N;
@@ -188,7 +187,7 @@ public class EngineInstance {
 	}
 
 
-	@SuppressWarnings("unchecked")
+	
 	public Class getNeedsOutputFileOfType()
 	{
 		return annotation.needsOutputFileOfType();

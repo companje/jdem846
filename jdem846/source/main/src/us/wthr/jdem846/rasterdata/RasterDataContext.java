@@ -6,7 +6,6 @@ import java.util.List;
 import us.wthr.jdem846.DataContext;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.gis.CoordinateSpaceAdjuster;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -39,8 +38,7 @@ public class RasterDataContext implements DataContext
 	
 	private boolean isDisposed = false;
 	
-	private CoordinateSpaceAdjuster coordinateSpaceAdjuster;
-	
+
 	private ElevationScaler elevationScaler;
 	
 	public RasterDataContext()
@@ -92,8 +90,6 @@ public class RasterDataContext implements DataContext
 		south = validateLatitude(south);
 		west = validateLongitude(west);
 		east = validateLongitude(east);
-		
-		coordinateSpaceAdjuster = new CoordinateSpaceAdjuster(north, south, east, west);
 		
 		log.info("Prepared RasterDataProxy to region N/S/E/W: " + north + "/" + south + "/" + east + "/" + west);
 		log.info("Prepared RasterDataProxy to lat/long resolutions: " + latitudeResolution + "/" + longitudeResolution);

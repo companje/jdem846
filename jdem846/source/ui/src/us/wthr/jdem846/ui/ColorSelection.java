@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.JColorChooser;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -29,6 +28,7 @@ import us.wthr.jdem846.util.ColorSerializationUtil;
 @SuppressWarnings("serial")
 public class ColorSelection extends Panel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ColorSelection.class);
 	
 	private Color value = Color.BLUE;

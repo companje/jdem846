@@ -62,11 +62,11 @@ public class XmlProjectFileReader
         return document;
 	}
 	
-	@SuppressWarnings("unchecked")
+	
+	@SuppressWarnings("rawtypes")
 	public static ProjectModel parseProject(Document doc) throws ProjectParseException
 	{
 		ProjectModel projectModel = new ProjectModel();
-		Node node = null;
 		
 		Node projectTypeNode = doc.selectSingleNode("//jdem846/project/type");
 		if (projectTypeNode != null) {

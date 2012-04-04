@@ -5,6 +5,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class MollweideProjectionTest extends BaseMapProjectionTest
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(MollweideProjectionTest.class);
 	
 	

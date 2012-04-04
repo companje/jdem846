@@ -30,6 +30,7 @@ import us.wthr.jdem846.util.ByteConversions;
 @Deprecated
 public class ElevationDatasetExchangeWriter
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ElevationDatasetExchangeWriter.class);
 	
 	private ElevationDatasetExchangeHeader header;

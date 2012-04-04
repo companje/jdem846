@@ -2,8 +2,6 @@ package us.wthr.jdem846.gis.projections;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
-import us.wthr.jdem846.logging.Log;
-import us.wthr.jdem846.logging.Logging;
 
 /** Specifies a map projection class for plotting coordinates onto a mapping canvas.
  * 

@@ -1,5 +1,6 @@
 package us.wthr.jdem846.gis.exceptions;
 
+@SuppressWarnings("serial")
 public class ParseException extends Exception
 {
 	

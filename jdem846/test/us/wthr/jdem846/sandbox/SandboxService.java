@@ -38,13 +38,13 @@ import javax.swing.JFrame;
 import javax.swing.Timer;
 
 import us.wthr.jdem846.AbstractLockableService;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.annotations.Destroy;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Service;
 import us.wthr.jdem846.annotations.ServiceRuntime;
-
-import us.wthr.jdem846.render.gfx.*;
+import us.wthr.jdem846.render.gfx.Renderable;
+import us.wthr.jdem846.render.gfx.Vector;
+import us.wthr.jdem846.render.gfx.ViewportBuffer;
 
 /*
 sun.java2d.SunGraphics2D
@@ -60,6 +60,7 @@ Line: 521
  */
 
 
+@SuppressWarnings("deprecation")
 @Service(name="us.wthr.jdem846.sandbox", enabled=false)
 public class SandboxService extends AbstractLockableService
 {
@@ -72,6 +73,7 @@ public class SandboxService extends AbstractLockableService
 		
 	}
 	
+	@SuppressWarnings("unused")
 	@Initialize
 	public void init()
 	{
@@ -302,6 +304,7 @@ public class SandboxService extends AbstractLockableService
 	
 
 	
+	@SuppressWarnings("serial")
 	class ProjectionTesting extends JFrame 
 	{
 		
@@ -311,8 +314,13 @@ public class SandboxService extends AbstractLockableService
 		private double rotateX = 0;
 		private double rotateY = 0;
 		
+		@SuppressWarnings("unused")
 		private double translateX = 0;
+		
+		@SuppressWarnings("unused")
 		private double translateY = 0;
+		
+		@SuppressWarnings("unused")
 		private double translateZ = 0;
 		
 		double solarAzimuth = 183.0;
@@ -498,6 +506,7 @@ public class SandboxService extends AbstractLockableService
 			
 		}
 		
+		@SuppressWarnings("unused")
 		public void preRender(List<Renderable> rotated)
 		{
 			

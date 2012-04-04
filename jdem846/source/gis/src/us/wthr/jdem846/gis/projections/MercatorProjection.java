@@ -1,8 +1,6 @@
 package us.wthr.jdem846.gis.projections;
 
-import java.awt.geom.Point2D;
 
-import us.wthr.jdem846.gis.Location;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -16,6 +14,7 @@ import us.wthr.jdem846.math.MathExt;
  */
 public class MercatorProjection extends AbstractBaseProjection
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(MercatorProjection.class);
 	
 	private double minLatitude = MathExt.radians(-89);
@@ -49,18 +48,18 @@ public class MercatorProjection extends AbstractBaseProjection
 		} else if (phi > maxLatitude) {
 			point.row = maxLatitude;
 		} else if (spheriod) {
-			if (Math.abs(Math.abs(phi) - HALFPI) <= EPS10) {
+			if (Math.abs(Math.abs(phi) - MathExt.HALFPI) <= MathExt.EPS10) {
 				throw new MapProjectionException("Invalid coordinates for Mercator projection");
 			}
 			
-			point.row = getScaleFactor() * MathExt.log(MathExt.tan(FORTPI + 0.5 * phi));
+			point.row = getScaleFactor() * MathExt.log(MathExt.tan(MathExt.FORTPI + 0.5 * phi));
 		} else { // Ellipsoid
-			if (Math.abs(Math.abs(phi) - HALFPI) <= EPS10) {
+			if (MathExt.abs(MathExt.abs(phi) - MathExt.HALFPI) <= MathExt.EPS10) {
 				throw new MapProjectionException("Invalid coordinates for Mercator projection");
 			}
 			
 			point.column = getScaleFactor() * lam;
-			point.row = -getScaleFactor() * MathExt.log(this.tsfn(phi, MathExt.sin(phi), e));
+			point.row = -getScaleFactor() * MathExt.log(MathExt.tsfn(phi, MathExt.sin(phi), e));
 		}
 		
 	}

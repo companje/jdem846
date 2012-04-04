@@ -21,14 +21,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 
 import us.wthr.jdem846.ByteOrder;
-import us.wthr.jdem846.exception.ResourceLoaderException;
 import us.wthr.jdem846.input.DataSourceHeader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.util.ResourceLoader;
 
 @Deprecated
 public class GridFloatHeader implements DataSourceHeader 

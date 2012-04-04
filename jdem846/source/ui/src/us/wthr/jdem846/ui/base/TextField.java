@@ -25,6 +25,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class TextField extends JTextField
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(TextField.class);
 
 	public TextField()

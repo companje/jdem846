@@ -1,11 +1,10 @@
 package us.wthr.jdem846.scripting.groovy;
 
-import java.lang.reflect.Field;
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyObject;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyObject;
 import us.wthr.jdem846.exception.ScriptCompilationFailedException;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.logging.Log;

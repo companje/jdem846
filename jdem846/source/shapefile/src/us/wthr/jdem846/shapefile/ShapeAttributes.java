@@ -16,7 +16,6 @@
 
 package us.wthr.jdem846.shapefile;
 
-import us.wthr.jdem846.shapefile.modeling.FeatureType;
 
 public class ShapeAttributes
 {

@@ -19,9 +19,6 @@ package us.wthr.jdem846.ui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-
 import us.wthr.jdem846.AbstractLockableService;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ServiceKernel;

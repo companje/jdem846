@@ -1,15 +1,7 @@
 package us.wthr.jdem846.render;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
@@ -19,24 +11,20 @@ import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.color.ColorAdjustments;
-import us.wthr.jdem846.geom.Bounds;
 import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Geometric;
 import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.geom.Triangle;
 import us.wthr.jdem846.geom.TriangleStrip;
-import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.render.gfx.NumberUtil;
-import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.render2d.ScanlinePath;
 import us.wthr.jdem846.render.util.ColorUtil;
-import us.wthr.jdem846.shapefile.ShapePath;
 
 public class Canvas3d
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Canvas3d.class);
 	
 	private static final double Z_VALUE_NOT_SET = DemConstants.ELEV_NO_DATA;
@@ -175,15 +163,13 @@ public class Canvas3d
 		int mxX = (int) x1;
 		int mxY = (int) y1;
 
-		int mnX = (int) x0;
-		int mnY = (int) y0;
-		
+
 		if (xMx < 0 || xMn >= getWidth() || yMx < 0 || yMn >= getHeight()) {
 			return;
 		}
 		
 		double s = edge.m;//(double)(mnY - mxY) / (double)(mnX - mxX);
-		boolean isValidSlope = NumberUtil.isValidNumber(s);
+		boolean isValidSlope = MathExt.isValidNumber(s);
 		
 		if (Math.abs(x1 - x0) >= Math.abs(y1 - y0)) {
 			// Long
@@ -697,7 +683,7 @@ public class Canvas3d
 		
     	double value = 0;
 		
-		if (!NumberUtil.isValidNumber(frac)) {
+		if (!MathExt.isValidNumber(frac)) {
 			value = z0;
 		} else {
 			value = (z1 - z0)*frac + z0;

@@ -34,9 +34,10 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.modeling.FeatureType;
 
-@SuppressWarnings("serial")
+
 public class ShapePath extends Geometric //java.awt.Shape // Path2D.Double
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ShapePath.class);
 	
 	private List<ShapePath> subParts = new LinkedList<ShapePath>();

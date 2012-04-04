@@ -19,23 +19,10 @@ package us.wthr.jdem846.ui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
-import java.util.Date;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -47,7 +34,6 @@ import us.wthr.jdem846.ui.LogConsole.ConsoleUpdateListener;
 import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.ScrollPane;
-import us.wthr.jdem846.ui.base.TextArea;
 import us.wthr.jdem846.ui.base.ToolBar;
 
 /** A really simple log listing panel
@@ -59,6 +45,7 @@ import us.wthr.jdem846.ui.base.ToolBar;
 public class LogViewer extends JdemPanel
 {
 	
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(LogViewer.class);
 	
 	private ScrollPane scrollPane;

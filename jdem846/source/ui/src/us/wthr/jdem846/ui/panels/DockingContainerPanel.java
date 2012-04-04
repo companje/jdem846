@@ -18,29 +18,22 @@ package us.wthr.jdem846.ui.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.SplitPane;
-import us.wthr.jdem846.ui.base.TabPane;
 
 @SuppressWarnings("serial")
 public class DockingContainerPanel extends Panel
 {
 	
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(DockingContainerPanel.class);
 	
 	private SideDockingPanel leftPanel = null;

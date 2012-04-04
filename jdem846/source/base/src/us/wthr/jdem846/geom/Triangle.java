@@ -1,9 +1,6 @@
 package us.wthr.jdem846.geom;
 
-import java.awt.geom.Path2D;
 
-import us.wthr.jdem846.Perspectives;
-import us.wthr.jdem846.geom.util.BarycentricTrianglePointTest;
 import us.wthr.jdem846.geom.util.PointTest;
 import us.wthr.jdem846.geom.util.SameSideTrianglePointTest;
 import us.wthr.jdem846.math.MathExt;

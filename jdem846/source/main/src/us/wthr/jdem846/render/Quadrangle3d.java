@@ -6,6 +6,7 @@ import java.awt.geom.Rectangle2D;
 
 import us.wthr.jdem846.math.MathExt;
 
+@Deprecated
 public class Quadrangle3d
 {
 	private double[] p0;

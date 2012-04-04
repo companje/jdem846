@@ -16,7 +16,6 @@
 
 package us.wthr.jdem846.shapefile;
 
-import java.awt.geom.PathIterator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;

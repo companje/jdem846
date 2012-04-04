@@ -31,6 +31,7 @@ public class AbstractTestMain
 		
 		JDem846Properties.initializeApplicationProperties();
 		
+		@SuppressWarnings("unused")
 		Log log = Logging.getLog(AbstractTestMain.class);
 
 		if (initRegistry) {

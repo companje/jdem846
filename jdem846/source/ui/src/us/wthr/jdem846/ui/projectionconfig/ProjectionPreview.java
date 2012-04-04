@@ -22,15 +22,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.swing.JPanel;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.gfx.Line;
-import us.wthr.jdem846.render.gfx.Renderable;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.gfx.ViewportBuffer;
 import us.wthr.jdem846.ui.base.Panel;
@@ -38,6 +33,7 @@ import us.wthr.jdem846.ui.base.Panel;
 @SuppressWarnings("serial")
 public class ProjectionPreview extends Panel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ProjectionPreview.class);
 	
 	private Dimension dimension;

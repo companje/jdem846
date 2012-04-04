@@ -17,7 +17,6 @@
 package us.wthr.jdem846.ui;
 
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ui.base.MenuBar;

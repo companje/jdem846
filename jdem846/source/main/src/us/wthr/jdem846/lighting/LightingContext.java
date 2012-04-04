@@ -4,7 +4,6 @@ import java.util.Date;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.MappedOptions;
-import us.wthr.jdem846.ModelOptionNamesEnum;
 
 public class LightingContext extends MappedOptions
 {

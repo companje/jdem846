@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
-import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
@@ -13,7 +12,6 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
@@ -21,14 +19,13 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
-import us.wthr.jdem846.render.RayTracing;
-import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
 @Deprecated
 public class RowRenderer extends InterruptibleProcess
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(RowRenderer.class);
 	
 	
@@ -44,23 +41,23 @@ public class RowRenderer extends InterruptibleProcess
 	private boolean lightingEnabled;
 	private double relativeLightIntensity;
 	private double relativeDarkIntensity;
-	private double metersResolution;
+	//private double metersResolution;
 	private int spotExponent;
 	private double lightingMultiple;
 	private double elevationMax;
 	private double elevationMin;
 	private double solarElevation;
 	private double solarAzimuth;
-	private boolean tiledPrecaching;
+	//private boolean tiledPrecaching;
 	private double latitudeResolution;
 	private double longitudeResolution;
 	private double latitudeGridSize;
 	private double longitudeGridSize; 
 	private boolean useSimpleCanvasFill;
 	
-	private RayTracing lightSourceRayTracer;
+	//private RayTracing lightSourceRayTracer;
 	private boolean rayTraceShadows;
-	private double shadowIntensity;
+	//private double shadowIntensity;
 	
 	private int[] triangleColorNW;
 	private int[] triangleColorSE;
@@ -92,6 +89,7 @@ public class RowRenderer extends InterruptibleProcess
 			this.modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
 		}
 		
+		/*
 		gridSize = getModelOptions().getGridSize();
 		metersResolution = getRasterDataContext().getMetersResolution();
 		lightingEnabled = getLightingContext().isLightingEnabled();
@@ -99,7 +97,7 @@ public class RowRenderer extends InterruptibleProcess
 		doublePrecisionHillshading = false;//getModelOptions().getDoublePrecisionHillshading();
 		relativeLightIntensity = getLightingContext().getRelativeLightIntensity();
 		relativeDarkIntensity = getLightingContext().getRelativeDarkIntensity();
-		//hillShadeType = getModelOptions().getHillShadeType();
+		hillShadeType = getModelOptions().getHillShadeType();
 		spotExponent = getLightingContext().getSpotExponent();
 		lightingMultiple = getLightingContext().getLightingMultiple();
 		elevationMax = getRasterDataContext().getDataMaximumValue();
@@ -129,6 +127,7 @@ public class RowRenderer extends InterruptibleProcess
 		
 		resetBuffers();
 		setUpLightSource();
+		*/
 	}
 	
 	

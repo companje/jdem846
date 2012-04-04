@@ -1,6 +1,5 @@
 package us.wthr.jdem846.scripting;
 
-import us.wthr.jdem846.exception.ScriptCompilationFailedException;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -8,6 +7,7 @@ import us.wthr.jdem846.scripting.groovy.GroovyScriptShell;
 
 public class ScriptShellFactory
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ScriptShellFactory.class);
 	
 	public static ScriptShell getScriptShell(ScriptLanguageEnum language) throws ScriptingException

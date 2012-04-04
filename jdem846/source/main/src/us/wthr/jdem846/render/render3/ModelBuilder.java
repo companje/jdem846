@@ -4,7 +4,6 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ProcessInterruptListener;
 import us.wthr.jdem846.render.scaling.ElevationScaler;
@@ -53,8 +52,7 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
 		}
 		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
-		double maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
-		
+
 		gridLoadProcessor = new GridLoadProcessor(modelContext, modelGrid);
 		gridLoadProcessor.prepare();
 		
