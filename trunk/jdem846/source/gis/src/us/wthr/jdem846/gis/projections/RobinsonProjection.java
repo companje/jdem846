@@ -1,17 +1,17 @@
 package us.wthr.jdem846.gis.projections;
 
-import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
-/** Implements the Robinsopn map projection
+/** Implements the Robinson map projection
  * 
  * @author Kevin M. Gill
  * @see http://en.wikipedia.org/wiki/Robinson_projection
  */
 public class RobinsonProjection extends AbstractBaseProjection
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(RobinsonProjection.class);
 	
 	private static final double[][] projectionTable = {

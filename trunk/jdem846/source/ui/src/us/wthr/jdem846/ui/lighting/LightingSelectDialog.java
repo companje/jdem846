@@ -12,7 +12,6 @@ import us.wthr.jdem846.ui.LightPositionConfigPanel;
 import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.ui.base.Dialog;
 import us.wthr.jdem846.ui.base.Panel;
-import us.wthr.jdem846.ui.perspective.PerspectiveSelectionListener;
 
 @SuppressWarnings("serial")
 public class LightingSelectDialog extends Dialog

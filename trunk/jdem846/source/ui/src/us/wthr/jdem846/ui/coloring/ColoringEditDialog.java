@@ -11,11 +11,11 @@ import us.wthr.jdem846.ui.GradientConfigPanel;
 import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.ui.base.Dialog;
 import us.wthr.jdem846.ui.base.Panel;
-import us.wthr.jdem846.ui.perspective.PerspectiveSelectionListener;
 
 @SuppressWarnings("serial")
 public class ColoringEditDialog extends Dialog
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ColoringEditDialog.class);
 	
 	private GradientConfigPanel gradientConfigPanel;

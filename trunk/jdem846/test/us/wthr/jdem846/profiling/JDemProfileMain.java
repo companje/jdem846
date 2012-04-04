@@ -1,25 +1,15 @@
 package us.wthr.jdem846.profiling;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.JDem846Properties;
-import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.RegistryKernel;
-import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.input.DataPackage;
-import us.wthr.jdem846.input.gridfloat.GridFloat;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.Dem2dGenerator;
-import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
-import us.wthr.jdem846.util.TempFiles;
 
 public class JDemProfileMain
 {
@@ -115,7 +105,7 @@ public class JDemProfileMain
 			int tileSizeInterval = 100;
 			int tileSizeRepetitions = 1;
 			
-			int tile = 0;
+			//int tile = 0;
 			
 			List<TileSizeTest> testList = new LinkedList<TileSizeTest>();
 			

@@ -8,11 +8,7 @@ public class CanvasProjectionFactory
 	
 	public static CanvasProjection create(ModelContext modelContext)
 	{
-		/*
-		 * Kinda simplistic for now since there's only two canvas projections
-		 * and one option switching between the two...
-		 */
-		
+
 		CanvasProjection canvasProjection = null;
 		
 		

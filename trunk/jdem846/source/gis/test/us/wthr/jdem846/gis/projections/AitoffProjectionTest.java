@@ -1,17 +1,11 @@
 package us.wthr.jdem846.gis.projections;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
-import us.wthr.jdem846.exception.ImageException;
-import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import junit.framework.TestCase;
 
 public class AitoffProjectionTest extends BaseMapProjectionTest
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(AitoffProjectionTest.class);
 	
 	

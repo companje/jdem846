@@ -24,17 +24,14 @@ import java.awt.event.ItemListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.RadioButton;
 
 @SuppressWarnings("serial")
+@Deprecated
 public class VisualPreviewPanel extends Panel
 {
 	//protected final static String NAME_PREVIEW = "Preview";

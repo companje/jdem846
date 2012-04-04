@@ -68,7 +68,7 @@ public class ProjectFileReadWriteTesting extends AbstractTestMain
 	public void doTesting(ProjectModel projectModel, String projectTestPath) throws Exception
 	{
 		doWriteTesting(projectModel, projectTestPath);
-		ProjectModel readProjectModel = doReadTesting(projectTestPath);
+		doReadTesting(projectTestPath);
 	}
 	
 	public void doWriteTesting(ProjectModel projectModel, String projectTestPath) throws Exception
@@ -116,7 +116,7 @@ public class ProjectFileReadWriteTesting extends AbstractTestMain
 	public void doZipTesting(ProjectModel projectModel, String zipTestPath) throws Exception
 	{
 		doZipWriteTesting(projectModel, zipTestPath);
-		ProjectModel readProjectModel = doZipReadTesting(zipTestPath);
+		doZipReadTesting(zipTestPath);
 	}
 	
 	public void doZipWriteTesting(ProjectModel projectModel, String zipTestPath) throws Exception
@@ -152,7 +152,7 @@ public class ProjectFileReadWriteTesting extends AbstractTestMain
 	public void doJsonTesting(ProjectModel projectModel, String jsonTestPath) throws Exception
 	{
 		doJsonWriteTesting(projectModel, jsonTestPath);
-		ProjectModel readProjectModel = doJsonReadTesting(jsonTestPath);
+		doJsonReadTesting(jsonTestPath);
 	}
 	
 	

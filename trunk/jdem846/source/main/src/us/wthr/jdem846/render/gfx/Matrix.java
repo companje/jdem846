@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.render.gfx;
 
+@Deprecated
 public abstract class Matrix
 {
 	

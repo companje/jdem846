@@ -14,6 +14,7 @@ import us.wthr.jdem846.ui.base.Frame;
 @SuppressWarnings("serial")
 public class LogViewerDialog extends Dialog
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(LogViewerDialog.class);
 	
 	private LogViewer logViewer;

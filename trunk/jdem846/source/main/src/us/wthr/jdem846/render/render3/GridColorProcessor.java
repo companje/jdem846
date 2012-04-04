@@ -7,12 +7,11 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.scaling.ElevationScaler;
-import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
 public class GridColorProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(GridColorProcessor.class);
 	
 	private ModelColoring modelColoring;

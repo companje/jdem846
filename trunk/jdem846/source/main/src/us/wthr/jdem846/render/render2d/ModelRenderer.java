@@ -1,49 +1,28 @@
 package us.wthr.jdem846.render.render2d;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
-import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.exception.ImageException;
-import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageDataContext;
-import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ModelCanvas;
-import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.render.ProcessInterruptListener;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.RenderPipeline;
-import us.wthr.jdem846.render.RenderPipelineProcessContainer;
-import us.wthr.jdem846.gis.projections.MapProjection;
-import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
-import us.wthr.jdem846.util.ColorSerializationUtil;
 
+@Deprecated
 public class ModelRenderer extends InterruptibleProcess
 {
 	private static Log log = Logging.getLog(ModelRenderer.class);
-	private static Color DEFAULT_BACKGROUND = new Color(0, 0, 0, 0);
-	
+
 	protected ModelContext modelContext;
 	private List<TileCompletionListener> tileCompletionListeners;
 	
@@ -68,7 +47,7 @@ public class ModelRenderer extends InterruptibleProcess
 	{
 
 		
-		ModelDimensions2D modelDimensions = modelContext.getModelDimensions();//ModelDimensions2D.getModelDimensions(modelContext);
+		//ModelDimensions2D modelDimensions = modelContext.getModelDimensions();//ModelDimensions2D.getModelDimensions(modelContext);
 
 		//int tileRow = 0;
 		//int tileColumn = 0;
@@ -84,8 +63,8 @@ public class ModelRenderer extends InterruptibleProcess
 		log.info("Model East Limit: " + eastLimit);
 		log.info("Model West Limit: " + westLimit);
 		
-		double latitudeResolution = modelDimensions.getOutputLatitudeResolution();
-		double longitudeResolution = modelDimensions.getOutputLongitudeResolution();
+		//double latitudeResolution = modelDimensions.getOutputLatitudeResolution();
+		//double longitudeResolution = modelDimensions.getOutputLongitudeResolution();
 
 		
 		//double latitudeResolution = getRasterDataContext().getEffectiveLatitudeResolution();

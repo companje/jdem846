@@ -26,6 +26,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class RadioButton extends JRadioButton
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(RadioButton.class);
 
 	public RadioButton()

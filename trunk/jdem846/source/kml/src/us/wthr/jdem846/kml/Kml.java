@@ -1,6 +1,5 @@
 package us.wthr.jdem846.kml;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 

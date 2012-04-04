@@ -26,6 +26,7 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.input.DataSource;
 
 @SuppressWarnings("serial")
+@Deprecated
 public class InputTableModel extends AbstractTableModel
 {
 	

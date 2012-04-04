@@ -27,6 +27,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class ButtonBorder extends EtchedBorder
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ButtonBorder.class);
 	
 	private int borderPadding = 5;

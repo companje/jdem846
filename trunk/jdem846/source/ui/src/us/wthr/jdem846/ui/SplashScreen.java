@@ -22,12 +22,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.JWindow;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.image.ImageIcons;

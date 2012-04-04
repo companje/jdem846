@@ -3,8 +3,6 @@ package us.wthr.jdem846.ui.scripting;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.swing.text.EditorKit;
-
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.EditorPane;
@@ -18,6 +16,7 @@ import us.wthr.jdem846.ui.base.EditorPane;
 @SuppressWarnings("serial")
 public class ScriptEditorPane extends EditorPane
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ScriptEditorPane.class);
 
 	public ScriptEditorPane()

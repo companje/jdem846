@@ -1,7 +1,5 @@
 package us.wthr.jdem846.render;
 
-import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.render.util.ColorUtil;
 
 public class PixelBuffer extends AbstractBuffer
 {

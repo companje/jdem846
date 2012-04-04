@@ -25,8 +25,7 @@ public class Bil16IntDataReader
 	private RandomAccessFile dataReader = null;
 	
 	private byte[] buffer2 = new byte[4];
-	private byte[] buffer4 = new byte[4];
-	private long size;
+
 	
 	public Bil16IntDataReader(File dataFile, int rows, int columns, int skipBytes, ByteOrder byteOrder)
 	{
@@ -35,8 +34,7 @@ public class Bil16IntDataReader
 		this.columns = columns;
 		this.skipBytes = skipBytes;
 		this.byteOrder = byteOrder;
-		
-		size = dataFile.length();
+
 	}
 	
 	

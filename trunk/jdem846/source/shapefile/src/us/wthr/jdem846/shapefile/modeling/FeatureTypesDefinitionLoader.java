@@ -16,11 +16,7 @@
 
 package us.wthr.jdem846.shapefile.modeling;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,7 +26,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
@@ -82,7 +77,7 @@ public class FeatureTypesDefinitionLoader
 		Document doc = loadDocument(DEFAULT_XML_FILE);
 		
 		FeatureTypesDefinition featureTypeDefinition = null;
-		Node node = null;
+		//Node node = null;
 		
 		List featureTypeDefinitionList = doc.selectNodes( "//jdem846/feature-types/feature-type-definition" );
 		for (Iterator iter = featureTypeDefinitionList.iterator(); iter.hasNext(); ) {

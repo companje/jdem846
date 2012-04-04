@@ -7,6 +7,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class OrthoimageryContext implements DataContext
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(OrthoimageryContext.class);
 	
 	private double east = 180.0;
@@ -14,7 +15,10 @@ public class OrthoimageryContext implements DataContext
 	private double north = 90.0;
 	private double south = -90.0;
 	
+	@SuppressWarnings("unused")
 	private double latitudeResolution;
+	
+	@SuppressWarnings("unused")
 	private double longitudeResolution;
 	
 	private boolean isDisposed = false;

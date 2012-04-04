@@ -7,6 +7,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class MapProjectionProviderFactory
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(MapProjectionProviderFactory.class);
 	
 	protected MapProjectionProviderFactory()

@@ -29,6 +29,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class Tree extends JTree
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Tree.class);
 
 	public Tree()

@@ -1,24 +1,11 @@
 package us.wthr.jdem846.shapefile;
 
-import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.AbstractTestMain;
-import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.exception.CanvasException;
-import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.geom.Edge;
-import us.wthr.jdem846.geom.Vertex;
-import us.wthr.jdem846.gis.exceptions.MapProjectionException;
-import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
@@ -29,12 +16,8 @@ import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
-import us.wthr.jdem846.render.shapelayer.ShapeFill;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
-import us.wthr.jdem846.shapefile.exception.ShapeFileException;
-import us.wthr.jdem846.shapefile.modeling.FeatureTypeStroke;
-import us.wthr.jdem846.shapefile.modeling.LineStroke;
 
 public class PolygonFillTestMain extends AbstractTestMain
 {
@@ -125,7 +108,10 @@ public class PolygonFillTestMain extends AbstractTestMain
 		
 		double startTime = System.currentTimeMillis();
 		Dem2dGenerator dem2d = new Dem2dGenerator(modelContext);
+		
+		@SuppressWarnings("unused")
 		OutputProduct<ModelCanvas> product = dem2d.generate(true, false);
+		
 		//testIntersectsPerformance(shapeContext, modelCanvas);
 		double endTime = System.currentTimeMillis();
 		//ModelCanvas modelCanvas = product.getProduct();

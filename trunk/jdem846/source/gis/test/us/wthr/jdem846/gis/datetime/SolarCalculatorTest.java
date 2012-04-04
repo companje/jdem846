@@ -1,16 +1,10 @@
 package us.wthr.jdem846.gis.datetime;
 
 import us.wthr.jdem846.AbstractTestCase;
-import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.gis.CardinalDirectionEnum;
 import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
 import us.wthr.jdem846.gis.Location;
-import us.wthr.jdem846.gis.projections.MapProjectionEnum;
-import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.ModelCanvas;
-import junit.framework.TestCase;
 
 public class SolarCalculatorTest extends AbstractTestCase
 {

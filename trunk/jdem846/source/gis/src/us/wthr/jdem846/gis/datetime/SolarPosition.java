@@ -1,6 +1,5 @@
 package us.wthr.jdem846.gis.datetime;
 
-import java.util.Date;
 
 public class SolarPosition
 {

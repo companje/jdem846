@@ -1,15 +1,10 @@
 package us.wthr.jdem846;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-
-import us.wthr.jdem846.exception.ResourceLoaderException;
 
 public class JDemResourceLoader
 {

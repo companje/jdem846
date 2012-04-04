@@ -1,21 +1,17 @@
 package us.wthr.jdem846.render;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFrame;
 
-import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageWriter;
-import us.wthr.jdem846.input.DataPackage;
-import us.wthr.jdem846.input.gridfloat.GridFloat;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;

@@ -1,6 +1,5 @@
 package us.wthr.jdem846.geom.util;
 
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.geom.Vertex;
 
 

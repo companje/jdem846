@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
-import us.wthr.jdem846.gis.elevation.ElevationMinMaxEstimation;
+import us.wthr.jdem846.gis.elevation.ElevationMinMax;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -14,7 +14,6 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.render.ElevationMinMaxCalculator;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
-import us.wthr.jdem846.gis.elevation.ElevationMinMax;
 
 public class ElevationEstimationDatasetTestMain extends AbstractTestMain
 {

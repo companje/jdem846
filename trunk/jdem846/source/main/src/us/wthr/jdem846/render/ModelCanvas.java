@@ -1,29 +1,21 @@
 package us.wthr.jdem846.render;
 
-import java.awt.AlphaComposite;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfigTemplate;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.Transparency;
-import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.awt.image.VolatileImage;
 import java.awt.image.WritableRaster;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.ImageException;
-import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -32,7 +24,6 @@ import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.geom.Triangle;
 import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
-import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.render.render2d.ScanlinePath;

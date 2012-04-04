@@ -20,15 +20,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
-import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.RenderEngine;
+import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 
 @Deprecated
 public class ModelingWorkerThread extends Thread

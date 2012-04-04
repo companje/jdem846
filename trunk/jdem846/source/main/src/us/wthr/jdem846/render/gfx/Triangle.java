@@ -16,12 +16,13 @@
 
 package us.wthr.jdem846.render.gfx;
 
-import java.awt.Color;
+
 import java.awt.geom.Path2D;
 
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 
+@Deprecated
 public class Triangle implements Renderable
 {
 	

@@ -10,6 +10,7 @@ import us.wthr.jdem846.math.Spheres;
 
 public class RayTracing
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(RayTracing.class);
 	
 	

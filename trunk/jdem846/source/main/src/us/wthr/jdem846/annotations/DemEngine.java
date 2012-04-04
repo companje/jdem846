@@ -145,6 +145,6 @@ public @interface DemEngine {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	Class needsOutputFileOfType() default Object.class;
 }

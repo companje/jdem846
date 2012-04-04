@@ -2,7 +2,6 @@ package us.wthr.jdem846.utilities.converter;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.ui.BaseUIMain;
-import us.wthr.jdem846.ui.JDemUiMain;
 
 public class RasterFormatConverterMain extends BaseUIMain
 {

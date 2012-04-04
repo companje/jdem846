@@ -3,7 +3,23 @@ package us.wthr.jdem846.math;
 public class MathExt
 {
 	public static final double PI = Math.PI;
+	public static final double TWOPI = MathExt.PI * 2.0; 
+	public static final double HALFPI = (MathExt.PI / 2.0);
+	public static final double FORTPI = (MathExt.PI / 4.0);
+	public static final double EPS10 = 1.e-10;
 	
+	protected final static double C00 = 1.0;
+	protected final static double C02 = .25;
+	protected final static double C04 = .046875;
+	protected final static double C06 = .01953125;
+	protected final static double C08 = .01068115234375;
+	protected final static double C22 = .75;
+	protected final static double C44 = .46875;
+	protected final static double C46 = .01302083333333333333;
+	protected final static double C48 = .00712076822916666666;
+	protected final static double C66 = .36458333333333333333;
+	protected final static double C68 = .00569661458333333333;
+	protected final static double C88 = .3076171875;
 	
 	public static double log(double a)
 	{
@@ -174,6 +190,60 @@ public class MathExt
         return (s1 - s0)*yFrac + s0;
 	}
 	
+	public static boolean isValidNumber(double n)
+	{
+		return ((!Double.isNaN(n)) && (!Double.isInfinite(n)));
+	}
+	
+	/** Normalized sinc function
+	 * 
+	 * @param x
+	 * @return
+	 */
+	public static double sinc(double x)
+	{
+		return (MathExt.sin(MathExt.PI * x) / (MathExt.PI * x));
+	}
+	
+	/** Unnormalized sinc function
+	 * 
+	 * @param x
+	 * @return
+	 */
+	public static double sincu(double x)
+	{
+		return (MathExt.sin(x) / x);
+	}
+	
+	public static double tsfn(double phi, double sinphi, double e)
+	{
+		sinphi *= e;
+		return (MathExt.tan (.5 * (HALFPI - phi)) /
+				MathExt.pow((1. - sinphi) / (1. + sinphi), .5 * e));
+	}
+	
+	public static double msfn(double sinphi, double cosphi, double es) 
+	{
+		return cosphi / MathExt.sqrt(1.0 - es * sinphi * sinphi);
+	}
+	
+	public static double[] enfn(double es) 
+	{
+		double t;
+		double[] en = new double[5];
+		en[0] = C00 - es * (C02 + es * (C04 + es * (C06 + es * C08)));
+		en[1] = es * (C22 - es * (C04 + es * (C06 + es * C08)));
+		en[2] = (t = es * es) * (C44 - es * (C46 + es * C48));
+		en[3] = (t *= es) * (C66 - es * C68);
+		en[4] = t * es * C88;
+		return en;
+	}
 	
 	
+	public static double mlfn(double phi, double sphi, double cphi, double[] en) 
+	{
+		cphi *= sphi;
+		sphi *= sphi;
+		return en[0] * phi - cphi * (en[1] + sphi*(en[2] + sphi*(en[3] + sphi*en[4])));
+	}
 }

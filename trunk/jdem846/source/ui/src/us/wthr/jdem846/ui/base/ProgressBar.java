@@ -25,6 +25,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class ProgressBar extends JProgressBar
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ProgressBar.class);
 
 	public ProgressBar()

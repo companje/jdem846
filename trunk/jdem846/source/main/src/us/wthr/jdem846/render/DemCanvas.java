@@ -16,21 +16,14 @@
 
 package us.wthr.jdem846.render;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.Transparency;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import us.wthr.jdem846.color.DemColor;
 import us.wthr.jdem846.exception.CanvasException;

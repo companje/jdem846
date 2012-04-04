@@ -1,6 +1,5 @@
 package us.wthr.jdem846.gis.datetime;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 

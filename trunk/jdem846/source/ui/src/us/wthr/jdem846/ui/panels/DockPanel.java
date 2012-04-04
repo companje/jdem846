@@ -17,11 +17,7 @@
 package us.wthr.jdem846.ui.panels;
 
 import java.awt.Component;
-import java.awt.Dimension;
 
-import javax.swing.ScrollPaneConstants;
-
-import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 
 

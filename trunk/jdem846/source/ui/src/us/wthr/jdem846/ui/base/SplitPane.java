@@ -29,6 +29,7 @@ import us.wthr.jdem846.ui.Disposable;
 @SuppressWarnings("serial")
 public class SplitPane extends JSplitPane implements Disposable
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(SplitPane.class);
 	private boolean disposed = false;
 

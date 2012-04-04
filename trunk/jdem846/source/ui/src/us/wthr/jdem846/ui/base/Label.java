@@ -25,6 +25,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class Label extends JLabel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Label.class);
 
 	public Label()

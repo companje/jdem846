@@ -8,6 +8,7 @@ import us.wthr.jdem846.math.MathExt;
 
 public class AnimationSpecification
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(AnimationSpecification.class);
 
 	public static final AnimationSpecification STANDARD_16_9_1080p = new AnimationSpecification(1920, 1080, 30, 1.0);

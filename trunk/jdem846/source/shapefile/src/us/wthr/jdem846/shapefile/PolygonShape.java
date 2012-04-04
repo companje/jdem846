@@ -16,9 +16,6 @@
 
 package us.wthr.jdem846.shapefile;
 
-import java.awt.Polygon;
-import java.awt.geom.Path2D;
-
 import us.wthr.jdem846.geom.Edge;
 
 public class PolygonShape extends Shape

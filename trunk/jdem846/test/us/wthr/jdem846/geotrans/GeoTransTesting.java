@@ -29,6 +29,7 @@ public class GeoTransTesting extends AbstractTestMain
 	}
 	
 	
+	@SuppressWarnings("unused")
 	public void doTesting(String[] args)
 	{
 		log.info("Hello");
@@ -110,6 +111,7 @@ public class GeoTransTesting extends AbstractTestMain
     }
 
 	
+	@SuppressWarnings("unused")
 	public void mapLatLonToXY(double phi, double lambda, double lambda0, double[] xy)
     {
         double N, nu2, ep2, t, t2, l;

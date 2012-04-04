@@ -1,13 +1,6 @@
 package us.wthr.jdem846.rasterdata.gridfloat;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
 import us.wthr.jdem846.ByteOrder;
-import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.gis.exceptions.ParseException;
 import us.wthr.jdem846.gis.input.esri.EsriHeader;
@@ -17,6 +10,7 @@ import us.wthr.jdem846.logging.Logging;
 public class GridFloatHeader
 {
 		
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(GridFloatHeader.class);
 	
 	private int columns = 0;
@@ -92,8 +86,7 @@ public class GridFloatHeader
 			byteOrder = ByteOrder.INTEL_BYTE_ORDER;
 		else if (_bo != null && _bo.equalsIgnoreCase("M"))
 			byteOrder = ByteOrder.INTEL_OR_MOTOROLA;
-		
-		int i = 0;
+
 	}
 
 

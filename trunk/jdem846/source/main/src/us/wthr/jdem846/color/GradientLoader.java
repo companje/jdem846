@@ -20,15 +20,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-
-import java.io.InputStream;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;

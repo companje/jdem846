@@ -24,10 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageTypeEnum;
-import us.wthr.jdem846.input.DataPackage;
 import us.wthr.jdem846.kml.Folder;
 import us.wthr.jdem846.kml.Kml;
 import us.wthr.jdem846.kml.KmlDocument;

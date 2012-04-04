@@ -14,6 +14,7 @@ import us.wthr.jdem846.ui.base.TextArea;
 @SuppressWarnings("serial")
 public class LogConsole extends TextArea
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(LogConsole.class);
 	
 	private boolean fixedWidth = false;

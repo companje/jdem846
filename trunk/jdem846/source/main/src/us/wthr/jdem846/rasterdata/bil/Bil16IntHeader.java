@@ -1,11 +1,5 @@
 package us.wthr.jdem846.rasterdata.bil;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
 import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
@@ -16,6 +10,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class Bil16IntHeader
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Bil16IntHeader.class);
 	
 	private int columns = 0;
@@ -83,7 +78,6 @@ public class Bil16IntHeader
 			pixelType = DemConstants.PIXELTYPE_UNSIGNED_INT;
 		
 		correctBounds();
-		int i = 0;
 	}
 	
 	private void correctBounds()

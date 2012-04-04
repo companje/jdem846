@@ -16,8 +16,6 @@
 
 package us.wthr.jdem846.render;
 
-import java.util.List;
-
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
@@ -28,7 +26,6 @@ import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.render3.ModelBuilder;
 import us.wthr.jdem846.render.render3.ModelGrid;
 import us.wthr.jdem846.render.render3.ModelRenderer;

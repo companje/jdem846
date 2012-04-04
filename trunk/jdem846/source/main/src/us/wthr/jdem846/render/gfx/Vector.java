@@ -16,13 +16,13 @@
 
 package us.wthr.jdem846.render.gfx;
 
-import java.awt.Color;
 
 /** Defines a point in three dimensional space.
  * 
  * @author Kevin M. Gill
  *
  */
+@Deprecated
 public class Vector
 {
 	public static final int X_AXIS = 0;

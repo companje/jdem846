@@ -25,7 +25,6 @@ import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 
 import javax.swing.JTabbedPane;
-import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import us.wthr.jdem846.exception.ComponentException;
@@ -33,7 +32,6 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.ClosableTab;
 import us.wthr.jdem846.ui.Disposable;
-import us.wthr.jdem846.ui.panels.EmbeddedTabbedPane;
 
 
 /** Implements a tabbed pane with the first tab being the project form and cannot be closed. The

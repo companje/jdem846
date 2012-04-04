@@ -32,7 +32,7 @@ public class ShapeIndexFile
 	private static Log log = Logging.getLog(ShapeIndexFile.class);
 	
 	
-	@SuppressWarnings("unused")
+	
 	private File indexFile;
 	private RandomAccessFile rndAccessFile = null;
 	

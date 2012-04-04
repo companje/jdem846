@@ -23,12 +23,8 @@ import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.SimpleGeoImage;
-import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.ui.base.Button;

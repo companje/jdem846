@@ -17,14 +17,11 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -34,21 +31,15 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
-import us.wthr.jdem846.ui.base.ScrollPane;
 
 @SuppressWarnings("serial")
 public class ImageDisplayPanel extends Panel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ImageDisplayPanel.class);
 	
 	private Image trueImage;

@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.render.gfx;
 
+@Deprecated
 public class BoundedArea
 {
 	

@@ -4,19 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.LineNumberReader;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.io.IOUtils;
-
 import us.wthr.jdem846.AbstractTestMain;
-import us.wthr.jdem846.ElevationEstimationDatasetTestMain;
 import us.wthr.jdem846.JDemResourceLoader;
-import us.wthr.jdem846.gis.elevation.ElevationMinMax;
 import us.wthr.jdem846.gis.elevation.ElevationMinMaxEstimation;
 import us.wthr.jdem846.gis.elevation.ElevationSample;
 import us.wthr.jdem846.gis.elevation.ElevationSampleMap;
@@ -24,7 +13,6 @@ import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.project.JsonProjectFileReader;
 
 public class ElevationMinMaxEstimationTestMain extends AbstractTestMain
 {
@@ -120,7 +108,7 @@ public class ElevationMinMaxEstimationTestMain extends AbstractTestMain
 	public void doTestingViaClass() throws Exception
 	{
 		String samplesPath = "resources://gis/elevation-minmax-samples-earth.csv";
-		ElevationMinMaxEstimation minMaxEst = ElevationMinMaxEstimation.load(samplesPath);
+		ElevationMinMaxEstimation.load(samplesPath);
 		
 	}
 	

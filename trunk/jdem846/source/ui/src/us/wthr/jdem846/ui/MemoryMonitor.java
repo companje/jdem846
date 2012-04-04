@@ -32,15 +32,12 @@ import java.lang.management.MemoryUsage;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.Timer;
 
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Label;
-import us.wthr.jdem846.ui.border.ButtonBorder;
 
 /** A really quick and dirty memory monitor histogram
  * 
@@ -50,6 +47,7 @@ import us.wthr.jdem846.ui.border.ButtonBorder;
 @SuppressWarnings("serial")
 public class MemoryMonitor extends Label
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(MemoryMonitor.class);
 	
 	
@@ -173,7 +171,7 @@ public class MemoryMonitor extends Label
 		Graphics2D g2d = (Graphics2D) g;
 		
 		
-		Stroke origStroke = g2d.getStroke(); 
+		//Stroke origStroke = g2d.getStroke(); 
 
 		int width = this.getWidth();
 		int height = this.getHeight();

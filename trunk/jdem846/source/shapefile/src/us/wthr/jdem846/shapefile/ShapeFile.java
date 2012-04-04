@@ -17,18 +17,11 @@
 package us.wthr.jdem846.shapefile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import us.wthr.jdem846.ByteOrder;
-import us.wthr.jdem846.dbase.DBaseFieldDescriptor;
-import us.wthr.jdem846.dbase.DBaseFile;
-import us.wthr.jdem846.dbase.DBaseRecord;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;

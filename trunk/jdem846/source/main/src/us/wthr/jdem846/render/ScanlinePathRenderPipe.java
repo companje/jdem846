@@ -7,6 +7,7 @@ import us.wthr.jdem846.render.render2d.ScanlinePath;
 
 public class ScanlinePathRenderPipe extends AbstractPipe
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ScanlinePathRenderPipe.class);
 
 	private RenderPipeline pipeline;

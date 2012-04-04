@@ -6,8 +6,10 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+@Deprecated
 public class RowRenderRunnable implements Runnable, Callable<Boolean> 
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(RowRenderRunnable.class);
 	
 	private RowRenderer renderer;

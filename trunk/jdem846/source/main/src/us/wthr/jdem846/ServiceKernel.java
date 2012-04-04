@@ -17,24 +17,18 @@
 package us.wthr.jdem846;
 
 import java.lang.reflect.Method;
-import java.net.URL;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.scannotation.AnnotationDB;
-import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.annotations.Destroy;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.OnShutdown;
-import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.annotations.Service;
 import us.wthr.jdem846.annotations.ServiceRuntime;
 import us.wthr.jdem846.exception.AnnotationIndexerException;
-import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.exception.ServiceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;

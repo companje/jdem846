@@ -9,9 +9,13 @@ import us.wthr.jdem846.logging.Logging;
 @Deprecated
 public class NetCdfDataCache extends DataCache
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(NetCdfDataCache.class);
 	
+	@SuppressWarnings("unused")
 	private boolean isDisposed = false;
+	
+	@SuppressWarnings("unused")
 	private NetcdfFile ncfile = null;
 	
 	

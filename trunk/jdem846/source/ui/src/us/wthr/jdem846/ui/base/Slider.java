@@ -25,6 +25,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class Slider extends JSlider
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Slider.class);
 
 	public Slider()

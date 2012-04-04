@@ -16,7 +16,6 @@
 
 package us.wthr.jdem846.render.kml;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +27,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class Tile
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Tile.class);
 	
 	private File file;

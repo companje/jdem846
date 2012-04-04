@@ -17,7 +17,6 @@
 package us.wthr.jdem846.render.kml;
 
 import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
 
 @SuppressWarnings("serial")
 public class CoordinateSpace extends Path2D.Double

@@ -2,6 +2,7 @@ package us.wthr.jdem846.render.render2d;
 
 import us.wthr.jdem846.render.ModelCanvas;
 
+@Deprecated
 public class RenderedTile 
 {
 	private ModelCanvas modelCanvas;

@@ -16,8 +16,6 @@
 
 package us.wthr.jdem846.ui.base;
 
-import java.awt.Component;
-
 import javax.swing.Box;
 
 import us.wthr.jdem846.exception.ComponentException;
@@ -29,6 +27,7 @@ import us.wthr.jdem846.ui.Disposable;
 @SuppressWarnings("serial")
 public class BoxContainer extends Box implements Disposable
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(BoxContainer.class);
 	private boolean disposed = false;
 	

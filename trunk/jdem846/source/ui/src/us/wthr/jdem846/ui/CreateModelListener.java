@@ -17,8 +17,6 @@
 package us.wthr.jdem846.ui;
 
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.input.DataPackage;
 
 public interface CreateModelListener
 {

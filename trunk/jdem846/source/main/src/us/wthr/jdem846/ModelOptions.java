@@ -17,19 +17,13 @@
 package us.wthr.jdem846;
 
 import java.awt.Color;
-import java.security.InvalidParameterException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import us.wthr.jdem846.project.ProjectModel;
-import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.render.scaling.ElevationScalerEnum;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.util.ColorSerializationUtil;
-import us.wthr.jdem846.util.NumberFormattingUtil;
 
 /** Options for model processing.
  * 

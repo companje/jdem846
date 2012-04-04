@@ -25,6 +25,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class Menu extends JMenu
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Menu.class);
 
 	public Menu()

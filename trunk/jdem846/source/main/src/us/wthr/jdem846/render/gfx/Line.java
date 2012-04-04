@@ -16,8 +16,6 @@
 
 package us.wthr.jdem846.render.gfx;
 
-import java.awt.Color;
-
 
 
 /** Defines a line existing in three-dimensional space
@@ -25,6 +23,7 @@ import java.awt.Color;
  * @author Kevin M. Gill
  *
  */
+@Deprecated
 public class Line implements Renderable
 {
 	private Vector p0;

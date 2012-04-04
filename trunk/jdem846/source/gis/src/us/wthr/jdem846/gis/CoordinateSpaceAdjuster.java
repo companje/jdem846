@@ -1,7 +1,6 @@
 package us.wthr.jdem846.gis;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.gis.exceptions.CoordinateSpaceException;
 
 public class CoordinateSpaceAdjuster {
 	

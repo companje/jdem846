@@ -16,21 +16,13 @@
 
 package us.wthr.jdem846.color;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import us.wthr.jdem846.AppRegistry;
-import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
-import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -38,8 +30,10 @@ import us.wthr.jdem846.logging.Logging;
 @Deprecated
 public class ColorRegistry implements AppRegistry 
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ColorRegistry.class);
 	
+	@SuppressWarnings("unused")
 	private static Map<String, ColorInstance> instances = new HashMap<String, ColorInstance>();
 	
 	

@@ -4,13 +4,10 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
-import us.wthr.jdem846.color.ColoringRegistry;
-import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.Coordinate;
@@ -24,20 +21,15 @@ import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.RayTracing;
 import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
-import us.wthr.jdem846.render.gfx.Vector;
-import us.wthr.jdem846.render.scaling.ElevationScaler;
-import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
 
 public class GridHillshadeProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
 {
 	private static Log log = Logging.getLog(GridHillshadeProcessor.class);
-	
-	
-	private ElevationScaler elevationScaler;
-	
+
 	protected double relativeLightIntensity;
 	protected double relativeDarkIntensity;
 	protected int spotExponent;
@@ -439,8 +431,8 @@ public class GridHillshadeProcessor extends AbstractGridProcessor implements Gri
 		
 		sunsource[0] = 0.0;
 		sunsource[1] = 0.0;
-		sunsource[2] = -149598000000.0;
-		Vector.rotate(solarElevation, -solarAzimuth, 0, sunsource);
+		sunsource[2] = -149598000000.0; // One AU in meters
+		Vectors.rotate(solarElevation, -solarAzimuth, 0, sunsource);
 		
 	}
 	

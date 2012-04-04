@@ -7,6 +7,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class PdsLabel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(PdsLabel.class);
 	
 	

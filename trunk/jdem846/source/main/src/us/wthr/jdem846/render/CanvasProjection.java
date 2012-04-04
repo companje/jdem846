@@ -1,7 +1,6 @@
 package us.wthr.jdem846.render;
 
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.gis.Location;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
@@ -11,6 +10,7 @@ import us.wthr.jdem846.math.MathExt;
 
 public class CanvasProjection
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(CanvasProjection.class);
 	
 	private MapProjection mapProjection;
@@ -146,7 +146,6 @@ public class CanvasProjection
 				mapProjection.getPoint((north + south) / 2.0, east, 0.0, point);
 				checkXYMinMax(point);
 				
-				int i = 0;
 			} catch (MapProjectionException ex) {
 				ex.printStackTrace();
 			}
@@ -169,17 +168,9 @@ public class CanvasProjection
 		if (mapProjection != null) {
 			mapProjection.getPoint(latitude, longitude, elevation, point);
 			
-			double orig_column = point.column;
-			
 			point.row = latitudeToRow(point.row);
 			point.column = longitudeToColumn(point.column);
-			
-			if (Double.isInfinite(point.column)) {
-				int i = 0;
-			}
-			
-			//point.z = elevation;
-			//int i = 0;
+
 			point.z = 0.0;
 		} else {
 			point.row = latitudeToRow(latitude);

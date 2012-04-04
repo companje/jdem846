@@ -4,18 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.AbstractTestMain;
-import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.Perspectives;
-import us.wthr.jdem846.color.ColorAdjustments;
-import us.wthr.jdem846.color.ColoringRegistry;
-import us.wthr.jdem846.color.ModelColoring;
-import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.image.SimpleGeoImage;
@@ -23,19 +15,12 @@ import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
-import us.wthr.jdem846.render.Dem2dGenerator;
 import us.wthr.jdem846.render.ModelCanvas;
-import us.wthr.jdem846.render.OutputProduct;
-import us.wthr.jdem846.render.gfx.Vector;
-import us.wthr.jdem846.render.scaling.ElevationScaler;
-import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
 public class ModelGridTestMain extends AbstractTestMain
 {
@@ -66,7 +51,7 @@ public class ModelGridTestMain extends AbstractTestMain
 	public void doTesting() throws Exception
 	{
 		List<String> inputDataList = new LinkedList<String>();
-		List<ShapeFileRequest> inputShapeList = new LinkedList<ShapeFileRequest>();
+		//List<ShapeFileRequest> inputShapeList = new LinkedList<ShapeFileRequest>();
 		List<String> orthoImageDataList = new LinkedList<String>();
 		
 		//inputDataList.add("C:/srv/elevation/DataRaster-Testing/PresRange_1-3as.flt");

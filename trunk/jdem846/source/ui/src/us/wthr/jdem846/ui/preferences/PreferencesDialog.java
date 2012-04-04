@@ -19,7 +19,6 @@ import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Slider;
 import us.wthr.jdem846.ui.base.TabPane;
-import us.wthr.jdem846.ui.base.TextField;
 import us.wthr.jdem846.ui.optionModels.JGoodiesColorThemeListModel;
 import us.wthr.jdem846.ui.optionModels.LanguageListModel;
 import us.wthr.jdem846.ui.optionModels.PrecacheStrategyOptionsListModel;

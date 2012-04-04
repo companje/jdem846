@@ -16,9 +16,6 @@
 
 package us.wthr.jdem846.ui.datasetoptions;
 
-import javax.swing.JPanel;
-
-import us.wthr.jdem846.input.DataSource;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.ui.base.Panel;
 

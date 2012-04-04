@@ -9,6 +9,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class ProjectFiles
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ProjectFiles.class);
 	
 	

@@ -16,13 +16,12 @@
 
 package us.wthr.jdem846.render.gfx;
 
-import java.awt.Color;
-
 /** Defines an object that which can be rendered in three-dimensional space
  * 
  * @author Kevin M. Gill
  *
  */
+@Deprecated
 public interface Renderable
 {
 	public static final int COUNTERCLOCKWISE = -1;

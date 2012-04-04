@@ -27,6 +27,7 @@ import us.wthr.jdem846.logging.Logging;
 @SuppressWarnings("serial")
 public class ComboBox extends JComboBox
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ComboBox.class);
 
 	public ComboBox()

@@ -5,10 +5,11 @@ import us.wthr.jdem846.logging.Logging;
 
 public class EquirectangularProjectionTest extends BaseMapProjectionTest
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(EquirectangularProjectionTest.class);
 	
 
-	private String saveImagesTo;
+	//private String saveImagesTo;
 
 	
 	

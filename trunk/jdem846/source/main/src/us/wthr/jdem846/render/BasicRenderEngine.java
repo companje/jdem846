@@ -1,28 +1,21 @@
 package us.wthr.jdem846.render;
 
 import java.awt.Color;
-import java.awt.image.ImageObserver;
 import java.math.BigDecimal;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.color.ColorRegistry;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.input.DataBounds;
-import us.wthr.jdem846.input.DataPackage;
-import us.wthr.jdem846.input.SubsetDataPackage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
 public abstract class BasicRenderEngine extends RenderEngine
 {
-	private static Log log = Logging.getLog(Dem3dGenerator.class);
+	private static Log log = Logging.getLog(BasicRenderEngine.class);
 	
 	
 	//protected DataPackage dataPackage;

@@ -2,10 +2,10 @@ package us.wthr.jdem846.gis.projections;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
+import junit.framework.TestCase;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.CanvasException;
@@ -17,7 +17,6 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.ModelCanvas;
-import junit.framework.TestCase;
 
 public class BaseMapProjectionTest extends TestCase
 {
@@ -174,8 +173,8 @@ public class BaseMapProjectionTest extends TestCase
 		//g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		//g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		int pixelWidth = (int) Math.ceil((double)width / (Math.abs(east) + Math.abs(west)));
-		int pixelHeight = (int) Math.ceil((double)height / (Math.abs(north) + Math.abs(south)));
+		//int pixelWidth = (int) Math.ceil((double)width / (Math.abs(east) + Math.abs(west)));
+		//int pixelHeight = (int) Math.ceil((double)height / (Math.abs(north) + Math.abs(south)));
 		
 		Path2D.Double shape = new Path2D.Double();
 		g2d.setColor(Color.BLACK);

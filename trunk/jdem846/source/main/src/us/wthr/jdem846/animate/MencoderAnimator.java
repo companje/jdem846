@@ -1,6 +1,5 @@
 package us.wthr.jdem846.animate;
 
-import java.awt.Dimension;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;

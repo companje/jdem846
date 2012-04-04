@@ -5,6 +5,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class HammerProjectionTest extends BaseMapProjectionTest
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(HammerProjectionTest.class);
 	
 	

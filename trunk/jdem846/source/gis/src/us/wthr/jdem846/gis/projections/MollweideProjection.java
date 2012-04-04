@@ -11,6 +11,7 @@ import us.wthr.jdem846.logging.Logging;
  */
 public class MollweideProjection extends AbstractBaseProjection
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(MollweideProjection.class);
 	
 

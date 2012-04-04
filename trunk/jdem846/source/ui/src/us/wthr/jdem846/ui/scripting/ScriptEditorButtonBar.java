@@ -1,11 +1,6 @@
 package us.wthr.jdem846.ui.scripting;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.LinkedList;
@@ -13,13 +8,9 @@ import java.util.List;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.ui.ComponentButtonBar;
-import us.wthr.jdem846.ui.ToolbarButton;
 import us.wthr.jdem846.ui.base.ComboBox;
-import us.wthr.jdem846.ui.base.JComboBoxModel;
 import us.wthr.jdem846.ui.base.Label;
-import us.wthr.jdem846.ui.base.ToolBar;
 import us.wthr.jdem846.ui.optionModels.ScriptLanguageListModel;
 
 @SuppressWarnings("serial")

@@ -17,8 +17,6 @@
 package us.wthr.jdem846.color;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import us.wthr.jdem846.exception.GradientLoadException;
 import us.wthr.jdem846.logging.Log;
@@ -27,6 +25,7 @@ import us.wthr.jdem846.render.scaling.ElevationScaler;
 
 public class GradientColoring implements ModelColoring
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(GradientColoring.class);
 	
 	

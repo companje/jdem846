@@ -15,6 +15,7 @@ import us.wthr.jdem846.ui.projectionconfig.ProjectionConfigPanel;
 @SuppressWarnings("serial")
 public class PerspectiveSelectDialog extends Dialog
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(PerspectiveSelectDialog.class);
 	
 	private ProjectionConfigPanel projectionConfigPanel;

@@ -10,6 +10,7 @@ import us.wthr.jdem846.render.ProcessInterruptListener;
 public abstract class AbstractGridProcessor extends InterruptibleProcess implements GridProcessor, ModelPointHandler
 {
 	
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(AbstractGridProcessor.class);
 	
 	protected ModelContext modelContext;

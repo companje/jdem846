@@ -13,11 +13,10 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.DemCanvas;
 import us.wthr.jdem846.render.ModelCanvas;
-import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.render.render2d.ModelRenderer;
 
+@SuppressWarnings("deprecation")
 public class RasterDataTesting
 {
 	private static Log log = Logging.getLog(RasterDataTesting.class);

@@ -17,15 +17,10 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
 import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.ui.base.Label;
-import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.Table;
 import us.wthr.jdem846.ui.panels.RoundedPanel;

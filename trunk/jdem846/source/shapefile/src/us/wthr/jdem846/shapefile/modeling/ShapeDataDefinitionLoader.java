@@ -16,11 +16,7 @@
 
 package us.wthr.jdem846.shapefile.modeling;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,7 +26,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
@@ -79,7 +74,7 @@ public class ShapeDataDefinitionLoader
 		Document doc = loadDocument(DEFAULT_XML_FILE);
 		
 		ShapeDataDefinition shapeDataDefinition = null;
-		Node node = null;
+		
 		
 		List shapeDataDefinitionList = doc.selectNodes( "//jdem846/shape-types/shape-type" );
 		for (Iterator iter = shapeDataDefinitionList.iterator(); iter.hasNext(); ) {

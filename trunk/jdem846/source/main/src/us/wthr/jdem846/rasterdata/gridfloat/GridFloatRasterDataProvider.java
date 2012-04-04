@@ -2,7 +2,6 @@ package us.wthr.jdem846.rasterdata.gridfloat;
 
 import java.io.File;
 
-import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;

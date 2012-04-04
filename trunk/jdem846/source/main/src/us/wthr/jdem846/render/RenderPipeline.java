@@ -1,20 +1,16 @@
 package us.wthr.jdem846.render;
 
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.render2d.ModelPoint;
 import us.wthr.jdem846.render.render2d.ScanlinePath;
 import us.wthr.jdem846.render.render2d.TileRenderContainer;
-import us.wthr.jdem846.render.render2d.TileRenderRunnable;
 import us.wthr.jdem846.render.shapelayer.ShapeFill;
 
 public class RenderPipeline
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(RenderPipeline.class);
 	
 	private PipelineQueue<TileRenderContainer> tileRenderQueue;

@@ -1,16 +1,11 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.Component;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.SpringLayout;
-import javax.swing.border.BevelBorder;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -20,6 +15,7 @@ import us.wthr.jdem846.ui.base.Panel;
 @SuppressWarnings("serial")
 public class SharedStatusBar extends Panel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(SharedStatusBar.class);
 	
 	private static SharedStatusBar instance = null;

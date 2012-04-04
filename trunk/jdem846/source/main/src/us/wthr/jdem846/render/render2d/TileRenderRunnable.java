@@ -3,17 +3,14 @@ package us.wthr.jdem846.render.render2d;
 import java.util.concurrent.Callable;
 
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.color.ColoringRegistry;
-import us.wthr.jdem846.color.ModelColoring;
-import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.ModelCanvas;
-import us.wthr.jdem846.render.ProcessInterruptListener;
 
+@Deprecated
 public class TileRenderRunnable implements  Callable<RenderedTile> 
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(TileRenderRunnable.class);
 	
 	private TileRenderContainer tileRenderContainer;

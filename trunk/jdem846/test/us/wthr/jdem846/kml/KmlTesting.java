@@ -21,21 +21,14 @@ package us.wthr.jdem846.kml;
  * 
  */
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageTypeEnum;
-import us.wthr.jdem846.input.DataPackage;
-import us.wthr.jdem846.input.gridfloat.GridFloat;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
@@ -43,10 +36,6 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.render.KmlDemGenerator;
 import us.wthr.jdem846.render.OutputProduct;
-import us.wthr.jdem846.render.kml.GriddedModel;
-import us.wthr.jdem846.render.kml.GriddedModelGenerator;
-import us.wthr.jdem846.render.kml.KmlLayerGenerator;
-import us.wthr.jdem846.render.kml.KmlModelGenerator;
 
 /**
  * http://code.google.com/apis/kml/documentation/kmlreference.html
@@ -60,7 +49,7 @@ public class KmlTesting
 	private ModelContext modelContext;
 	private RasterDataContext rasterDataContext;
 	private ModelOptions modelOptions;
-	private GriddedModel griddedModel;
+	//private GriddedModel griddedModel;
 	private String outputPath = "C:/srv/kml/dist";
 	private String tempPath = "C:/srv/kml/temp";
 	private int overlayTileSize = 256;
@@ -78,6 +67,7 @@ public class KmlTesting
 		
 	}
 	
+	@SuppressWarnings("unused")
 	public void doTesting() throws Exception
 	{
 		List<String> inputDataList = new LinkedList<String>();

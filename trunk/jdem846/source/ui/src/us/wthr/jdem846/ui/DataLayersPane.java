@@ -2,9 +2,6 @@ package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Panel;
@@ -12,6 +9,7 @@ import us.wthr.jdem846.ui.base.Panel;
 @SuppressWarnings("serial")
 public class DataLayersPane extends Panel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(DataLayersPane.class);
 	
 	private DataSetTree datasetTree;

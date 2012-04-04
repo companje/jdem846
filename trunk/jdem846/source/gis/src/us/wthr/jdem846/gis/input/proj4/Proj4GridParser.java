@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
-import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -12,6 +11,7 @@ import us.wthr.jdem846.logging.Logging;
 public class Proj4GridParser
 {
 	
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(Proj4GridParser.class);
 	
 	public Object parseFile(String url) throws Exception

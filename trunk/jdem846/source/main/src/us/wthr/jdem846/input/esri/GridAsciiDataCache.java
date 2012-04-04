@@ -29,7 +29,6 @@ import java.util.Arrays;
 import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.input.DataCache;
-import us.wthr.jdem846.input.gridfloat.GridFloatDataCache;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ByteConversions;

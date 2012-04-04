@@ -17,48 +17,27 @@
 package us.wthr.jdem846.ui.scripting;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.Action;
 import javax.swing.JEditorPane;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
-import javax.swing.text.AttributeSet;
 
 import jsyntaxpane.DefaultSyntaxKit;
 import jsyntaxpane.SyntaxDocument;
-
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.ComponentException;
-import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.ui.MainButtonBar;
-import us.wthr.jdem846.ui.MainMenuBar;
-import us.wthr.jdem846.ui.TitledRoundedPanel;
-import us.wthr.jdem846.ui.base.EditorPane;
 import us.wthr.jdem846.ui.base.Panel;
-import us.wthr.jdem846.ui.base.ScrollPane;
-import us.wthr.jdem846.ui.panels.RoundedPanel;
 import us.wthr.jdem846.ui.scripting.ScriptEditorButtonBar.ScriptEditButtons;
 import us.wthr.jdem846.ui.scripting.ScriptEditorButtonBar.ScriptEditorButtonClickedListener;
 

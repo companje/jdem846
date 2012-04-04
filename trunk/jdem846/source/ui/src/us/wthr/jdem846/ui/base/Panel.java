@@ -16,7 +16,6 @@
 
 package us.wthr.jdem846.ui.base;
 
-import java.awt.Component;
 import java.awt.LayoutManager;
 
 import javax.swing.JPanel;

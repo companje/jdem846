@@ -9,9 +9,6 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.AbstractRasterDataProvider;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataLatLongBox;
-import us.wthr.jdem846.rasterdata.gridfloat.CachingGridFloatDataReader;
-import us.wthr.jdem846.rasterdata.gridfloat.GridFloatHeader;
-import us.wthr.jdem846.rasterdata.gridfloat.GridFloatRasterDataProvider;
 
 public class Bil16IntRasterDataProvider extends AbstractRasterDataProvider
 {

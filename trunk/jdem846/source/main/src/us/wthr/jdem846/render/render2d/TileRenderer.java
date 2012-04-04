@@ -1,30 +1,17 @@
 package us.wthr.jdem846.render.render2d;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Path2D;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.DemPoint;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
-import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RayTracingException;
@@ -36,10 +23,8 @@ import us.wthr.jdem846.gis.CoordinateTypeEnum;
 import us.wthr.jdem846.gis.datetime.EarthDateTime;
 import us.wthr.jdem846.gis.datetime.SolarCalculator;
 import us.wthr.jdem846.gis.datetime.SolarPosition;
-import us.wthr.jdem846.gis.datetime.SolarUtil;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
-import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
@@ -47,21 +32,14 @@ import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.rasterdata.ElevationDataMap;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.BasicRenderEngine;
 import us.wthr.jdem846.render.CanvasProjection;
-import us.wthr.jdem846.render.CanvasRectangleFill;
-import us.wthr.jdem846.gis.elevation.ElevationMinMax;
-import us.wthr.jdem846.render.ElevationMinMaxCalculator;
 import us.wthr.jdem846.render.InterruptibleProcess;
-import us.wthr.jdem846.render.MatrixBuffer;
 import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.RayTracing;
 import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.render.RenderPipeline;
-import us.wthr.jdem846.render.ShadowBuffer;
 import us.wthr.jdem846.render.TriangleStripFill;
 import us.wthr.jdem846.render.gfx.Vector;
 import us.wthr.jdem846.render.scaling.ElevationScaler;
@@ -69,6 +47,7 @@ import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
+@Deprecated
 public class TileRenderer extends InterruptibleProcess
 {
 	protected enum CornerEnum {
