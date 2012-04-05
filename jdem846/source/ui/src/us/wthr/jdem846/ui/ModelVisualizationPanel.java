@@ -440,7 +440,7 @@ public class ModelVisualizationPanel extends Panel
 			return;
 		}
 
-		if (optionsChanged) {
+		if (optionsChanged || dataModelChange) {
 			log.info("Model visualization: update working context from actual");
 			
 			if (modelContextWorkingCopy != null) {

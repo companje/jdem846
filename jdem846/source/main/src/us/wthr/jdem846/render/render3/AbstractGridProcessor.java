@@ -53,6 +53,11 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 	}
 	
 	
+	public void setModelContext(ModelContext modelContext)
+	{
+		this.modelContext = modelContext;
+	}
+	
 	protected boolean modelContainsData()
 	{
 		return (modelContext.getRasterDataContext().getRasterDataListSize() > 0 ||

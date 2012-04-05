@@ -65,7 +65,7 @@ public class ModelGrid
 	{
 		int index = getIndex(latitude, longitude);
 		
-		if (index >= 0 && index < this.gridLength) {
+		if (grid != null && index >= 0 && index < this.gridLength) {
 			return grid[index];
 		} else {
 			// TODO: Throw
