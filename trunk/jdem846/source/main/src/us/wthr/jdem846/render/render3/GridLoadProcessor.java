@@ -49,6 +49,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	@Override
 	public void prepare() throws RenderEngineException
 	{
+		useScripting = modelContext.getModelOptions().useScripting();
 		tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		
 		north = modelContext.getNorth();
@@ -169,7 +170,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 
 	protected double getElevation(double latitude, double longitude) throws DataSourceException, RenderEngineException
 	{
-
+		
 		
 		double elevation = DemConstants.ELEV_NO_DATA;
 

@@ -318,6 +318,8 @@ public class ModelVisualizationPanel extends Panel
 	{
 		//modelContextWorkingCopy.getModelOptions().setBackgroundColor("0;0;0;0");
 		//modelContextWorkingCopy.getModelOptions().setColoringType("hypsometric-tint");
+		
+		modelContextWorkingCopy.getModelOptions().setUseScripting(false);
 		modelContextWorkingCopy.getModelOptions().setAntialiased(false);
 		modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
 		modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);

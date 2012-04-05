@@ -586,6 +586,16 @@ public class ModelOptions extends MappedOptions
 		setMapProjection(projectionEnum.identifier());
 	}
 	
+	public void setUseScripting(boolean useScripting)
+	{
+		setOption(ModelOptionNamesEnum.USE_SCRIPTING, useScripting);
+	}
+	
+	public boolean useScripting()
+	{
+		return getBooleanOption(ModelOptionNamesEnum.USE_SCRIPTING);
+	}
+	
 	
 	
 	/** Creates a value-by-value copy of this object.
