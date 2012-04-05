@@ -53,13 +53,18 @@ public class Vectors
 	
 	public static void rotate(double x, double y, double z, double[] xyz) 
 	{
-		double sinAX = MathExt.sin(-x);
-		double sinAY = MathExt.sin(-y);
-		double sinAZ = MathExt.sin(-z);
 		
-		double cosAX = MathExt.cos(-x);
-		double cosAY = MathExt.cos(-y);
-		double cosAZ = MathExt.cos(-z);
+		double _x = MathExt.radians(x);
+		double _y = MathExt.radians(y);
+		double _z = MathExt.radians(z);
+		
+		double sinAX = MathExt.sin(-_x);
+		double sinAY = MathExt.sin(-_y);
+		double sinAZ = MathExt.sin(-_z);
+		
+		double cosAX = MathExt.cos(-_x);
+		double cosAY = MathExt.cos(-_y);
+		double cosAZ = MathExt.cos(-_z);
 		
 		double rX = ((cosAY * cosAZ) * xyz[0]) + ((-sinAX*-sinAY*cosAZ+cosAX*sinAZ) * xyz[1]) + ((cosAX*-sinAY*cosAZ+sinAX*sinAZ) * xyz[2]);
 		double rY = ((cosAY * -sinAZ) * xyz[0]) + ((-sinAX*-sinAY*-sinAZ+cosAX*cosAZ) * xyz[1]) + ((cosAX*-sinAY*-sinAZ+sinAX*cosAZ) * xyz[2]);

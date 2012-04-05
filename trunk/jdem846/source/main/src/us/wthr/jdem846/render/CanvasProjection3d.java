@@ -11,6 +11,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Vectors;
+import us.wthr.jdem846.render.gfx.Vector;
 
 
 public class CanvasProjection3d extends CanvasProjection

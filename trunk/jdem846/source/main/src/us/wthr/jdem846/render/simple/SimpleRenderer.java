@@ -106,6 +106,7 @@ public class SimpleRenderer
 			
 			modelRenderer = new ModelRenderer(modelContext, modelGrid);
 		}
+		modelRenderer.setModelContext(modelContext);
 		modelRenderer.prepare();
 		
 		
