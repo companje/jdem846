@@ -38,7 +38,9 @@ public class GridColorProcessor extends AbstractGridProcessor implements GridPro
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-
+		useScripting = modelContext.getModelOptions().useScripting();
+		
+		
 		north = modelContext.getNorth();
 		south = modelContext.getSouth();
 		east = modelContext.getEast();

@@ -41,6 +41,8 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 	public void prepare() throws RenderEngineException
 	{
 		
+		useScripting = modelContext.getModelOptions().useScripting();
+		
 		double minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
 		double maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
 		
