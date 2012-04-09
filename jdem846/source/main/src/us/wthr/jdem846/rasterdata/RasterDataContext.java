@@ -9,7 +9,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.render.scaling.ElevationScaler;
+import us.wthr.jdem846.scaling.ElevationScaler;
 
 public class RasterDataContext implements DataContext
 {

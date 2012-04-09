@@ -32,8 +32,8 @@ import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.DemCanvas;
-import us.wthr.jdem846.render.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 

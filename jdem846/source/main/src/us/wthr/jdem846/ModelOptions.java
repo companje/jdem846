@@ -20,8 +20,8 @@ import java.awt.Color;
 
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
-import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
-import us.wthr.jdem846.render.scaling.ElevationScalerEnum;
+import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
+import us.wthr.jdem846.scaling.ElevationScalerEnum;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 

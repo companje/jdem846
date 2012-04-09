@@ -1,12 +1,14 @@
 package us.wthr.jdem846.model.annotations;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import us.wthr.jdem846.annotations.Discoverable;
-import us.wthr.jdem846.model.OptionListModel;
 
 @Discoverable
+@Target(value={ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ProcessOption
 {
@@ -16,9 +18,14 @@ public @interface ProcessOption
 	String label();
 	
 	String tooltip();
+	
+	String optionGroup() default "General";
 
-	Class<OptionListModel<?>> listModel();
+	Class<?> listModel() default Object.class;
+	
+	Class<?> validator() default Object.class;
 	
 	boolean enabled() default true;
+	
 	
 }

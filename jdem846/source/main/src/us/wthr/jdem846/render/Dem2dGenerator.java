@@ -21,6 +21,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.annotations.DemEngine;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -112,7 +113,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 		
 		
 		try {
-			getModelContext().updateContext(true, cancelIndicator);
+			boolean estimate = getModelContext().getModelOptions().getBooleanOption(ModelOptionNamesEnum.ESTIMATE_ELEVATION_MIN_MAX);
+			getModelContext().updateContext(true, estimate, cancelIndicator);
 		} catch (ModelContextException ex) {
 			throw new RenderEngineException("Exception updating model context: " + ex.getMessage(), ex);
 		}

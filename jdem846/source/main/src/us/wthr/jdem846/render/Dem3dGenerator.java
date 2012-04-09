@@ -29,6 +29,7 @@ import us.wthr.jdem846.DemPoint;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.annotations.DemEngine;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;

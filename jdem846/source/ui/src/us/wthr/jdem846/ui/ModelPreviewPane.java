@@ -41,7 +41,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.render.Dem2dGenerator;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.tasks.RunnableTask;
 import us.wthr.jdem846.tasks.TaskControllerService;
@@ -344,7 +344,7 @@ public class ModelPreviewPane extends RoundedPanel
 		if (rasterLayerCanvas != null && rasterPreviewEnabled) {
 			
 			// The following is WRONG!
-			canvas.drawImage(rasterLayerCanvas.getImage(), 0, 0, rasterLayerCanvas.getWidth(), rasterLayerCanvas.getHeight());
+			//canvas.drawImage(rasterLayerCanvas.getImage(), 0, 0, rasterLayerCanvas.getWidth(), rasterLayerCanvas.getHeight());
 		}
 		
 		
@@ -353,7 +353,7 @@ public class ModelPreviewPane extends RoundedPanel
 		if (shapeLayerCanvas != null && shapePreviewEnabled) {
 
 			// The following is WRONG!
-			canvas.drawImage(shapeLayerCanvas.getImage(), 0, 0, shapeLayerCanvas.getWidth(), shapeLayerCanvas.getHeight());
+			//canvas.drawImage(shapeLayerCanvas.getImage(), 0, 0, shapeLayerCanvas.getWidth(), shapeLayerCanvas.getHeight());
 		}
 
 		imagePanel.setImage((BufferedImage)canvas.getFinalizedImage());
@@ -433,8 +433,8 @@ public class ModelPreviewPane extends RoundedPanel
 				
 				path.closePath();
 				
-				canvas.fillShape(path, i_fillColor);
-				canvas.drawShape(path, i_strokeColor);
+				//canvas.fillShape(path, i_fillColor);
+				//canvas.drawShape(path, i_strokeColor);
 				
 				
 				

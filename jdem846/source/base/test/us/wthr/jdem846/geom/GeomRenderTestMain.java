@@ -11,7 +11,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vectors;
-import us.wthr.jdem846.render.Canvas3d;
+import us.wthr.jdem846.canvas.Canvas3d;
 
 
 public class GeomRenderTestMain extends AbstractTestMain

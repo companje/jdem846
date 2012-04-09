@@ -1,6 +1,6 @@
 package us.wthr.jdem846.render.render2d;
 
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 
 @Deprecated
 public class RenderedTile 

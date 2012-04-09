@@ -17,7 +17,7 @@ import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 
 public class SolarUtilTest extends AbstractTestCase
 {

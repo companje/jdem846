@@ -17,7 +17,7 @@
 package us.wthr.jdem846.scripting;
 
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 
 /** Describes a proxy interface for modeling engines to call user-provided scripts
  * 

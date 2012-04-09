@@ -1,6 +1,7 @@
 package us.wthr.jdem846.render;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.render.render2d.ScanlinePath;
@@ -33,7 +34,7 @@ public class ScanlinePathRenderPipe extends AbstractPipe
 			ScanlinePath scanlinePathInstance = pipeline.fetchNextScanlinePath();
 			
 			if (scanlinePathInstance != null) {
-				modelCanvas.fillScanLine(scanlinePathInstance);
+			//	modelCanvas.fillScanLine(scanlinePathInstance);
 			}
 			
 			//Thread.yield();

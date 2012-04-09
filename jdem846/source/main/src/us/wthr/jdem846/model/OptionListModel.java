@@ -6,8 +6,8 @@ import java.util.List;
 
 public class OptionListModel<E>
 {
-	private List<OptionModelItem<E>> itemList = new LinkedList<OptionModelItem<E>>();
-	private OptionModelItem<E> selectedItem = null;
+	private List<OptionListModelItem<E>> itemList = new LinkedList<OptionListModelItem<E>>();
+	private OptionListModelItem<E> selectedItem = null;
 	private List<ModelDataListener> listDataListeners = new LinkedList<ModelDataListener>();
 	
 	
@@ -17,14 +17,14 @@ public class OptionListModel<E>
 		
 	}
 	
-	public void addItem(OptionModelItem<E> item)
+	public void addItem(OptionListModelItem<E> item)
 	{
 		itemList.add(item);
 	}
 	
 	public void addItem(String label, E value)
 	{
-		itemList.add(new OptionModelItem<E>(label, value));
+		itemList.add(new OptionListModelItem<E>(label, value));
 	}
 	
 	
@@ -36,12 +36,12 @@ public class OptionListModel<E>
 
 	public void setSelectedItem(Object anItem) 
 	{
-		selectedItem = (OptionModelItem<E>) anItem;
+		selectedItem = (OptionListModelItem<E>) anItem;
 	}
 
 	public void setSelectedItemByValue(E value)
 	{
-		for (OptionModelItem<E> item : itemList) {
+		for (OptionListModelItem<E> item : itemList) {
 			if (item.getValue().equals(value)) {
 				setSelectedItem(item);
 				break;

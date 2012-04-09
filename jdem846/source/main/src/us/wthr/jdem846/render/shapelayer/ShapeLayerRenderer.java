@@ -13,7 +13,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.render.RenderPipeline;
 import us.wthr.jdem846.shapedata.ShapeDataContext;

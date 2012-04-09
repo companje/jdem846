@@ -2,7 +2,7 @@ package us.wthr.jdem846.render.shapelayer;
 
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.shapefile.ShapeConstants;
 import us.wthr.jdem846.shapefile.ShapePath;
 import us.wthr.jdem846.shapefile.modeling.LineStroke;

@@ -39,7 +39,7 @@ import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.render.Dem2dGenerator;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.PointTranslateHandler;

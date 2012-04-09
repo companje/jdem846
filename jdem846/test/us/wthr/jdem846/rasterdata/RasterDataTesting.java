@@ -13,7 +13,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.render2d.ModelRenderer;
 
 @SuppressWarnings("deprecation")

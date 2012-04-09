@@ -22,7 +22,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.annotations.DemColoring;
 import us.wthr.jdem846.exception.GradientLoadException;
-import us.wthr.jdem846.render.scaling.ElevationScaler;
+import us.wthr.jdem846.scaling.ElevationScaler;
 
 @DemColoring(name="us.wthr.jdem846.color.standardModelColoring.name", identifier="standard-coloring",allowGradientConfig=false, needsMinMaxElevation=true)
 public class StandardModelColoring implements ModelColoring

@@ -2,10 +2,13 @@ package us.wthr.jdem846.model.processing.render;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelDimensions;
+import us.wthr.jdem846.Projection;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -13,11 +16,23 @@ import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ModelPointAdapter;
 import us.wthr.jdem846.model.ModelPointCycler;
+import us.wthr.jdem846.model.OptionModel;
+import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
+import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
-import us.wthr.jdem846.render.CanvasProjection;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.CanvasProjection;
+import us.wthr.jdem846.canvas.CanvasProjectionFactory;
+import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
+import us.wthr.jdem846.canvas.ModelCanvas;
 
+
+@GridProcessing(id="us.wthr.jdem846.model.processing.render.ModelRenderer",
+				name="Rendering Process",
+				type=GridProcessingTypesEnum.RENDER,
+				optionModel=ModelRenderOptionModel.class,
+				enabled=true
+				)
 public class ModelRenderer extends AbstractGridProcessor implements GridProcessor
 {
 	private static Log log = Logging.getLog(ModelRenderer.class);
@@ -31,6 +46,16 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	protected MapPoint point = new MapPoint();
 	
 	private int[] rgbaBuffer = new int[4];
+	
+	TriangleStrip strip = null;
+	double lastElevation = 0;
+	ModelCanvas canvas;
+	
+	public ModelRenderer()
+	{
+		
+	}
+	
 	
 	public ModelRenderer(ModelContext modelContext, ModelGrid modelGrid)
 	{
@@ -46,10 +71,29 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
-
-		projection = modelContext.getModelCanvas().getCanvasProjection();
-		south = modelContext.getSouth();
+		ModelRenderOptionModel optionModel = (ModelRenderOptionModel) this.getProcessOptionModel();
+		
+		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
+		
+		projection = CanvasProjectionFactory.create( 
+				CanvasProjectionTypeEnum.getCanvasProjectionEnumFromIdentifier(globalOptionModel.getRenderProjection()),
+				modelContext.getMapProjection(),
+				modelContext.getNorth(),
+				modelContext.getSouth(),
+				modelContext.getEast(),
+				modelContext.getWest(),
+				modelDimensions.getOutputWidth(),
+				modelDimensions.getOutputHeight(),
+				PlanetsRegistry.getPlanet(globalOptionModel.getPlanet()),
+				getGlobalOptionModel().getElevationMultiple(),
+				modelContext.getRasterDataContext().getDataMinimumValue(),
+				modelContext.getRasterDataContext().getDataMaximumValue(),
+				(ModelDimensions) modelDimensions,
+				optionModel.getViewAngle());
+		
+		modelContext.getModelCanvas().setCanvasProjection(projection);
+		//projection = modelContext.getModelCanvas().getCanvasProjection();
+		south = getGlobalOptionModel().getSouthLimit();
 	}
 	
 	public void process() throws RenderEngineException
@@ -59,54 +103,44 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 			return;
 		}
 		
-		log.info("Starting model render process");
+		canvas = modelContext.getModelCanvas();
 		
-		ModelPointCycler pointCycler = new ModelPointCycler(modelContext);
-		
-		final ModelCanvas canvas = modelContext.getModelCanvas();
-		
-		
-		pointCycler.forEachModelPoint(new ModelPointAdapter() {
-			
-			TriangleStrip strip = null;
-			double lastElevation = 0;
-			
-			
-			
-			@Override
-			public void onCycleStart() throws RenderEngineException
-			{
-				lastElevation = modelContext.getRasterDataContext().getDataMaximumValue();
-			}
-
-			@Override
-			public void onModelLatitudeStart(double latitude)
-			{
-				strip = new TriangleStrip();
-			}
-
-			@Override
-			public void onModelPoint(double latitude, double longitude)
-			{
-				
-				try {
-					lastElevation = createPointVertexes(strip, latitude, longitude, lastElevation);
-				} catch (Exception ex) {
-					log.error("Error creating vertexes: " + ex.getMessage(), ex);
-				}
-
-			}
-
-			@Override
-			public void onModelLatitudeEnd(double latitude)
-			{
-				canvas.fillShape(strip);
-			}
-			
-		});
+		super.process();
 		
 	}
 	
+		
+	@Override
+	public void onCycleStart() throws RenderEngineException
+	{
+		lastElevation = modelContext.getRasterDataContext().getDataMaximumValue();
+	}
+
+	@Override
+	public void onModelLatitudeStart(double latitude)
+	{
+		strip = new TriangleStrip();
+	}
+
+	@Override
+	public void onModelPoint(double latitude, double longitude)
+	{
+		
+		try {
+			lastElevation = createPointVertexes(strip, latitude, longitude, lastElevation);
+		} catch (Exception ex) {
+			log.error("Error creating vertexes: " + ex.getMessage(), ex);
+		}
+
+	}
+
+	@Override
+	public void onModelLatitudeEnd(double latitude)
+	{
+		canvas.fillShape(strip);
+	}
+		
+
 	
 	protected double createPointVertexes(TriangleStrip strip, double latitude, double longitude, double lastElevation) throws Exception
 	{

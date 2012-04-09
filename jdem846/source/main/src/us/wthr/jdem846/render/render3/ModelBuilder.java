@@ -4,10 +4,10 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.ProcessInterruptListener;
-import us.wthr.jdem846.render.scaling.ElevationScaler;
-import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
+import us.wthr.jdem846.scaling.ElevationScaler;
+import us.wthr.jdem846.scaling.ElevationScalerFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
 public class ModelBuilder extends AbstractGridProcessor implements GridProcessor

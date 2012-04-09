@@ -29,7 +29,7 @@ import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.CancelIndicator;
 import us.wthr.jdem846.gis.elevation.ElevationMinMax;
 import us.wthr.jdem846.render.ElevationMinMaxCalculator;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.ModelDimensions2D;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
@@ -84,16 +84,16 @@ public class ModelContext
 
 	public void updateContext() throws ModelContextException
 	{
-		updateContext(false, null);
+		updateContext(false, false, null);
 	}
 	
 	
-	public void updateContext(boolean updateDataMinMax) throws ModelContextException
+	public void updateContext(boolean updateDataMinMax, boolean estimateMinMax) throws ModelContextException
 	{
-		updateContext(updateDataMinMax, null);
+		updateContext(updateDataMinMax, estimateMinMax, null);
 	}
 	
-	public void updateContext(boolean updateDataMinMax, CancelIndicator cancelIndicator) throws ModelContextException
+	public void updateContext(boolean updateDataMinMax, boolean estimateMinMax, CancelIndicator cancelIndicator) throws ModelContextException
 	{
 		modelDimensions = ModelDimensions2D.getModelDimensions(this);
 		rasterDataContext.setEffectiveLatitudeResolution(modelDimensions.outputLatitudeResolution);
@@ -109,11 +109,11 @@ public class ModelContext
 		
 		if (updateDataMinMax) {
 			
-			boolean estimate = modelOptions.getBooleanOption(ModelOptionNamesEnum.ESTIMATE_ELEVATION_MIN_MAX);
+			
 			Planet planet = PlanetsRegistry.getPlanet(modelOptions.getOption(ModelOptionNamesEnum.PLANET));
 			
 			
-			if (estimate && planet.getElevationSamplesPath() != null) {
+			if (estimateMinMax && planet.getElevationSamplesPath() != null) {
 				
 				log.info("Fetching estimated elevation min/max");
 				try {
@@ -211,6 +211,11 @@ public class ModelContext
 			this.modelCanvas = createModelCanvas();
 		}
 		return this.modelCanvas;
+	}
+	
+	public void setModelCanvas(ModelCanvas modelCanvas)
+	{
+		this.modelCanvas = modelCanvas;
 	}
 	
 	public void resetModelCanvas()
@@ -363,13 +368,15 @@ public class ModelContext
 		LightingContext lightingContextCopy = (lightingContext == null) ? null : lightingContext.copy();
 		ModelCanvas modelCanvasCopy = null;
 		
+		/*
 		try {
 			if (withDependentCanvas) {
-				modelCanvasCopy = getModelCanvas(true).getDependentHandle();
+				//modelCanvasCopy = getModelCanvas(true).getDependentHandle();
 			}
 		} catch (CanvasException ex) {
 			throw new DataSourceException("Error creating dependent canvas handle: " + ex.getMessage(), ex);
 		}
+		*/
 		
 		// TODO: Implement script proxy copy
 		//ScriptProxy scriptProxyCopy = null;//(scriptProxy == null) ? null : scriptProxy.copy();

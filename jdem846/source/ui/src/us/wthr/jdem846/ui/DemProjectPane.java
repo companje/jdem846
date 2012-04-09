@@ -985,7 +985,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 		boolean updateImage = forceImageUpdate || lastImageDataCount != imageDataContext.getImageListSize();
 		
 		try {
-			modelContext.updateContext(updateRaster);
+			boolean estimate = modelOptions.getBooleanOption(ModelOptionNamesEnum.ESTIMATE_ELEVATION_MIN_MAX);
+			modelContext.updateContext(updateRaster, estimate);
 		} catch (ModelContextException ex) {
 			// TODO: Display error dialog
 			log.warn("Exception updating model context: " + ex.getMessage(), ex);

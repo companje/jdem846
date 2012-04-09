@@ -5,7 +5,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import us.wthr.jdem846.annotations.Discoverable;
 
-import us.wthr.jdem846.model.processing.GridProcessingTypes;
+import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 
 @Discoverable
 @Retention(RetentionPolicy.RUNTIME)
@@ -16,7 +16,7 @@ public @interface GridProcessing
 	
 	String name();
 	
-	GridProcessingTypes type();
+	GridProcessingTypesEnum type();
 
 	Class<?> optionModel();
 	

@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.RegistryKernel;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageWriter;

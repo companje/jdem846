@@ -40,7 +40,7 @@ import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
+import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.render.EngineInstance;
 import us.wthr.jdem846.render.EngineRegistry;
 import us.wthr.jdem846.ui.base.CheckBox;

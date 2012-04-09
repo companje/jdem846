@@ -1,5 +1,6 @@
 package us.wthr.jdem846.render;
 
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.geom.TriangleStrip;
 

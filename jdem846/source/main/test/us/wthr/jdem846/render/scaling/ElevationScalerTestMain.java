@@ -3,6 +3,9 @@ package us.wthr.jdem846.render.scaling;
 import us.wthr.jdem846.AbstractTestMain;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.scaling.ElevationScaler;
+import us.wthr.jdem846.scaling.ElevationScalerEnum;
+import us.wthr.jdem846.scaling.ElevationScalerFactory;
 
 public class ElevationScalerTestMain extends AbstractTestMain
 {

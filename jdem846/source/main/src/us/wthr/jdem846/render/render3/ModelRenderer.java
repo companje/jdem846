@@ -9,8 +9,8 @@ import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.render.CanvasProjection;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.CanvasProjection;
+import us.wthr.jdem846.canvas.ModelCanvas;
 
 public class ModelRenderer extends AbstractGridProcessor implements GridProcessor
 {
