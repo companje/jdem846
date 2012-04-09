@@ -24,6 +24,8 @@ import us.wthr.jdem846.model.processing.render.ModelRenderOptionModel;
 import us.wthr.jdem846.model.processing.render.ModelRenderer;
 import us.wthr.jdem846.model.processing.shading.HillshadingOptionModel;
 import us.wthr.jdem846.model.processing.shading.HillshadingProcessor;
+import us.wthr.jdem846.model.processing.shading.SlopeShadingOptionModel;
+import us.wthr.jdem846.model.processing.shading.SlopeShadingProcessor;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
@@ -131,6 +133,9 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		hillshadingOptionModel.setRayTraceShadows(false);
 		hillshadingOptionModel.setShadowIntensity(0.4);
 		
+		SlopeShadingOptionModel slopeShadingOptionModel = new SlopeShadingOptionModel();
+		
+		
 		
 		ModelRenderOptionModel modelRenderOptionModel = new ModelRenderOptionModel();
 		modelRenderOptionModel.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR.identifier());
@@ -157,7 +162,8 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		modelProcessList.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
 		modelProcessList.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
 		modelProcessList.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
-		modelProcessList.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
+		//modelProcessList.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
+		modelProcessList.addProcessor(new SlopeShadingProcessor(), slopeShadingOptionModel);
 		modelProcessList.addProcessor(new ModelRenderer(), modelRenderOptionModel);
 		
 		

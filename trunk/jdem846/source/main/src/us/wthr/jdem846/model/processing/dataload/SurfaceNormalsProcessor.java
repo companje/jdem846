@@ -126,7 +126,8 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
 		calculateNormal(modelPoint, latitude, longitude);
-	
+		
+		
 	}
 
 	@Override
