@@ -1,7 +1,7 @@
 package us.wthr.jdem846.render.render3;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.render.util.ColorUtil;
+import us.wthr.jdem846.canvas.util.ColorUtil;
 
 public class ModelPoint
 {

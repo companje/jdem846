@@ -1,18 +1,29 @@
 package us.wthr.jdem846.model;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelDimensions;
+import us.wthr.jdem846.Projection;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.gis.planets.Planet;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
+import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessor;
-import us.wthr.jdem846.model.processing.coloring.GridColorProcessor;
-import us.wthr.jdem846.model.processing.dataload.GridHillshadeProcessor;
+import us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor;
+import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsProcessor;
 import us.wthr.jdem846.model.processing.dataload.GridLoadProcessor;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.CanvasProjection;
+import us.wthr.jdem846.canvas.CanvasProjectionFactory;
+import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
+import us.wthr.jdem846.render.InterruptibleProcess;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.ProcessInterruptListener;
-import us.wthr.jdem846.render.scaling.ElevationScaler;
-import us.wthr.jdem846.render.scaling.ElevationScalerFactory;
+import us.wthr.jdem846.scaling.ElevationScaler;
+import us.wthr.jdem846.scaling.ElevationScalerEnum;
+import us.wthr.jdem846.scaling.ElevationScalerFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
 public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
@@ -20,8 +31,8 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 	private static Log log = Logging.getLog(ModelBuilder.class);
 
 	private GridLoadProcessor gridLoadProcessor;
-	private GridColorProcessor gridColorProcessor;
-	private GridHillshadeProcessor gridHillshadeProcessor;
+	private HypsometricColorProcessor gridColorProcessor;
+	private SurfaceNormalsProcessor gridHillshadeProcessor;
 	
 	private boolean runLoadProcessor = true;
 	private boolean runColorProcessor = true;
@@ -30,11 +41,11 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 	private boolean prepared = false;
 	private boolean useScripting = true;
 	
-	public ModelBuilder(ModelContext modelContext, ModelGrid modelGrid)
+	public ModelBuilder()
 	{
-		super(modelContext, modelGrid);
+		//super(modelContext);
 		
-
+		
 		
 	}
 	
@@ -45,37 +56,83 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 	
 	public void prepare() throws RenderEngineException
 	{
+		GlobalOptionModel globalOptionModel = this.getGlobalOptionModel();
 		
-		useScripting = modelContext.getModelOptions().useScripting();
+	
+		if (modelGrid == null) {
+			modelGrid = new ModelGrid(globalOptionModel.getNorthLimit(), 
+					globalOptionModel.getSouthLimit(), 
+					globalOptionModel.getEastLimit(), 
+					globalOptionModel.getWestLimit(), 
+					modelDimensions.getOutputLatitudeResolution(), 
+					modelDimensions.getOutputLongitudeResolution());
+		}
+		
+		/*
+		CanvasProjectionTypeEnum projectionType,
+		MapProjection mapProjection,
+		double north,
+		double south,
+		double east,
+		double west,
+		double width,
+		double height,
+		Planet planet,
+		double elevationMultiple,
+		double minimumValue,
+		double maximumValue,
+		ModelDimensions modelDimensions,
+		Projection projection
+		*/
+		/*
+		CanvasProjection canvasProjection = CanvasProjectionFactory.create( 
+				CanvasProjectionTypeEnum.getCanvasProjectionEnumFromIdentifier(globalOptionModel.getRenderProjection()),
+				modelContext.getMapProjection(),
+				modelContext.getNorth(),
+				modelContext.getSouth(),
+				modelContext.getEast(),
+				modelContext.getWest(),
+				modelDimensions.getOutputWidth(),
+				modelDimensions.getOutputHeight(),
+				PlanetsRegistry.getPlanet(globalOptionModel.getPlanet()),
+				modelContext.getRasterDataContext().getDataMinimumValue(),
+				modelContext.getRasterDataContext().getDataMaximumValue(),
+				modelDimensions,
+				new Projection());
+		*/	
+				
+		ModelCanvas modelCanvas = new ModelCanvas(modelDimensions.getOutputWidth(), 
+													modelDimensions.getOutputHeight(), 
+													globalOptionModel.getSubpixelGridSize(), 
+													globalOptionModel.getBackgroundColor(), 
+													null);
+		modelContext.setModelCanvas(modelCanvas);
+		
+		useScripting = globalOptionModel.isUseScripting();
 		
 		double minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
 		double maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
 		
 		
 		ElevationScaler elevationScaler = null;
+		ElevationScalerEnum elevationScalerEnum = ElevationScalerEnum.getElevationScalerEnumFromIdentifier(globalOptionModel.getElevationScale());
 		try {
-			elevationScaler = ElevationScalerFactory.createElevationScaler(modelContext.getModelOptions().getElevationScaler(), modelContext.getModelOptions().getElevationMultiple(), minimumElevation, maximumElevationTrue);
+			elevationScaler = ElevationScalerFactory.createElevationScaler(elevationScalerEnum, globalOptionModel.getElevationMultiple(), minimumElevation, maximumElevationTrue);
 		} catch (Exception ex) {
 			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
 		}
 		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
 
-		gridLoadProcessor = new GridLoadProcessor(modelContext, modelGrid);
-		gridLoadProcessor.prepare();
-		
-		gridColorProcessor = new GridColorProcessor(modelContext, modelGrid);
-		gridColorProcessor.prepare();
-		
-		if (modelContext.getLightingContext().isLightingEnabled()) {
-			gridHillshadeProcessor = new GridHillshadeProcessor(modelContext, modelGrid);
-			gridHillshadeProcessor.prepare();
-		}
-		
 		prepared = true;
 	}
 	
 	
 	public void process() throws RenderEngineException
+	{
+		
+	}
+	
+	public void process(ModelProcessList modelProcessList) throws RenderEngineException
 	{
 		if (!isPrepared()) {
 			throw new RenderEngineException("Model builder not yet prepared!");
@@ -86,50 +143,8 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 			return;
 		}
 		
-		this.setProcessInterruptListener(new ProcessInterruptListener() {
-			public void onProcessCancelled()
-			{
-				if (gridLoadProcessor != null) {
-					gridLoadProcessor.cancel();
-				}
-				
-				if (gridColorProcessor != null) {
-					gridColorProcessor.cancel();
-				}
-				
-				if (gridHillshadeProcessor != null) {
-					gridHillshadeProcessor.cancel();
-				}
-			}
-			public void onProcessPaused()
-			{
-				if (gridLoadProcessor != null) {
-					gridLoadProcessor.pause();
-				}
-				
-				if (gridColorProcessor != null) {
-					gridColorProcessor.pause();
-				}
-				
-				if (gridHillshadeProcessor != null) {
-					gridHillshadeProcessor.pause();
-				}
-			}
-			public void onProcessResumed()
-			{
-				if (gridLoadProcessor != null) {
-					gridLoadProcessor.resume();
-				}
-				
-				if (gridColorProcessor != null) {
-					gridColorProcessor.resume();
-				}
-				
-				if (gridHillshadeProcessor != null) {
-					gridHillshadeProcessor.resume();
-				}
-			}
-		});
+		ProcessInterruptHandler interruptHandler = new ProcessInterruptHandler();
+		GlobalOptionModel globalOptionModel = this.getGlobalOptionModel();
 		
 		setProcessing(true);
 		
@@ -137,42 +152,38 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 			onTileBefore(modelContext.getModelCanvas());
 		}
 		
-		if (runLoadProcessor()) {
-			log.info("Filling model grid...");
-			gridLoadProcessor.process();
-		}
 		
-		this.checkPause();
-		if (this.isCancelled()) {
-			log.info("Model builder was cancelled. Exiting in incomplete state.");
-			setProcessing(false);
-			return;
+		for (ModelProcessContainer processContainer : modelProcessList.getProcessList()) {
+			
+			AbstractGridProcessor gridProcessor = processContainer.getGridProcessor();
+			OptionModel optionModel = processContainer.getOptionModel();
+			
+			GridProcessing annotation = gridProcessor.getClass().getAnnotation(GridProcessing.class);
+			String name = gridProcessor.getClass().getName();
+			if (annotation != null) {
+				name = annotation.name();
+			}
+			
+			if (gridProcessor instanceof InterruptibleProcess) {
+				interruptHandler.setInterruptibleProcess((InterruptibleProcess)gridProcessor);
+			} else {
+				interruptHandler.setInterruptibleProcess(null);
+			}
+			
+			log.info("Preparing processor: " + name + "'");
+			gridProcessor.setAndPrepare(modelContext, modelGrid, modelDimensions, globalOptionModel, optionModel);
+			
+			log.info("Executing processor: " + name + "'");
+			gridProcessor.process();
+			
+			this.checkPause();
+			if (this.isCancelled()) {
+				log.info("Model builder was cancelled. Exiting in incomplete state.");
+				setProcessing(false);
+				return;
+			}
 		}
-		
-		if (runColorProcessor()) {
-			log.info("Calculating grid colors...");
-			gridColorProcessor.process();
-		}
-		
-		this.checkPause();
-		if (this.isCancelled()) {
-			log.info("Model builder was cancelled. Exiting in incomplete state.");
-			setProcessing(false);
-			return;
-		}
-		
-		if (runHillshadeProcessor() && modelContext.getLightingContext().isLightingEnabled()) {
-			log.info("Generating hill shading...");
-			gridHillshadeProcessor.process();
-		}
-		
-		this.checkPause();
-		if (this.isCancelled()) {
-			log.info("Model builder was cancelled. Exiting in incomplete state.");
-			setProcessing(false);
-			return;
-		}
-		
+
 		if (useScripting) {
 			onTileAfter(modelContext.getModelCanvas());
 		}
@@ -218,12 +229,12 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 		return gridLoadProcessor;
 	}
 
-	public GridColorProcessor getGridColorProcessor()
+	public HypsometricColorProcessor getGridColorProcessor()
 	{
 		return gridColorProcessor;
 	}
 
-	public GridHillshadeProcessor getGridHillshadeProcessor()
+	public SurfaceNormalsProcessor getGridHillshadeProcessor()
 	{
 		return gridHillshadeProcessor;
 	}
@@ -269,4 +280,42 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 		this.useScripting = useScripting;
 	}
 	
+	
+	
+	
+	class ProcessInterruptHandler implements ProcessInterruptListener
+	{
+		private InterruptibleProcess interruptibleProcess;
+		
+		
+		
+		public void setInterruptibleProcess(InterruptibleProcess interruptibleProcess)
+		{
+			this.interruptibleProcess = interruptibleProcess;
+		}
+
+
+		public void onProcessCancelled()
+		{
+			if (this.interruptibleProcess != null) {
+				interruptibleProcess.cancel();
+			}
+		}
+
+		
+		public void onProcessPaused()
+		{
+			if (interruptibleProcess != null) {
+				interruptibleProcess.pause();
+			}
+		}
+
+		public void onProcessResumed()
+		{
+			if (interruptibleProcess != null) {
+				interruptibleProcess.resume();
+			}
+		}
+		
+	}
 }

@@ -18,8 +18,8 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
-import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 
 public class ModelGridTestMain extends AbstractTestMain
@@ -108,7 +108,7 @@ public class ModelGridTestMain extends AbstractTestMain
 		modelOptions.setOption(ModelOptionNamesEnum.SUBPIXEL_WIDTH, ""+1);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, null, imageDataContext, lightingContext, modelOptions);
-		modelContext.updateContext(true);
+		modelContext.updateContext(true, true);
 		
 		
 		

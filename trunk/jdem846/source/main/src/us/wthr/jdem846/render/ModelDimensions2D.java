@@ -2,7 +2,13 @@ package us.wthr.jdem846.render;
 
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.canvas.CanvasProjection;
+import us.wthr.jdem846.canvas.CanvasProjection3d;
+import us.wthr.jdem846.canvas.CanvasProjectionGlobe;
+import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
+import us.wthr.jdem846.canvas.LatLonResolution;
 import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;
@@ -11,26 +17,10 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 
-public class ModelDimensions2D
+public class ModelDimensions2D extends ModelDimensions
 {
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ModelDimensions2D.class);
-	
-	public double north;
-	public double south;
-	public double east;
-	public double west;
-	
-	public int dataRows;
-	public int dataColumns;
-	public double latitudeResolution;
-	public double longitudeResolution;
-	
-	public int outputWidth;
-	public int outputHeight;
-	public double outputLongitudeResolution;
-	public double outputLatitudeResolution;
-	
 	
 	protected ModelDimensions2D()
 	{
@@ -176,109 +166,6 @@ public class ModelDimensions2D
 		
 		ModelDimensions2D modelDimensions = new ModelDimensions2D(modelContext);
 		return modelDimensions;
-	}
-	
-	public double getMetersResolution(double meanRadius)
-	{
-		
-		double lat = (getNorth() - getSouth()) / 2.0;
-		double lon = (getEast() - getWest()) / 2.0;
-		return getMetersResolution(meanRadius, lat, lon, getLatitudeResolution(), getLongitudeResolution());
-
-	}
-	
-	public double getMetersResolution(double meanRadius, double latitude, double longitude)
-	{
-		return ModelDimensions2D.getMetersResolution(meanRadius, latitude, longitude, getLatitudeResolution(), getLongitudeResolution());
-	}
-	
-	public static double getMetersResolution(double meanRadius, double latitude, double longitude, double latitudeResolution, double longitudeResolution)
-	{
-		double lat1 = latitude;
-		double lon1 = longitude;
-		double lat2 = lat1 + latitudeResolution;
-		double lon2 = lon1 + longitudeResolution;
-		double R = meanRadius;
-		double dLat = Math.toRadians(lat2 - lat1);
-		double dLon = Math.toRadians(lon2 - lon1);
-		
-
-		double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
-		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-		double d = R * c * 1000;
-		return d;
-	}
-
-
-	public double getNorth()
-	{
-		return north;
-	}
-
-
-	public double getSouth()
-	{
-		return south;
-	}
-
-
-	public double getEast()
-	{
-		return east;
-	}
-
-
-	public double getWest()
-	{
-		return west;
-	}
-
-
-	public int getDataRows()
-	{
-		return dataRows;
-	}
-
-
-	public int getDataColumns()
-	{
-		return dataColumns;
-	}
-
-
-	public double getLatitudeResolution()
-	{
-		return latitudeResolution;
-	}
-
-
-	public double getLongitudeResolution()
-	{
-		return longitudeResolution;
-	}
-
-
-	public int getOutputWidth()
-	{
-		return outputWidth;
-	}
-
-
-	public int getOutputHeight()
-	{
-		return outputHeight;
-	}
-
-
-	public double getOutputLongitudeResolution()
-	{
-		return outputLongitudeResolution;
-	}
-
-
-	public double getOutputLatitudeResolution()
-	{
-		return outputLatitudeResolution;
 	}
 	
 	

@@ -43,7 +43,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
-import us.wthr.jdem846.render.CanvasProjectionTypeEnum;
+import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.render.simple.SimpleRenderer;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.util.TempFiles;
@@ -167,7 +167,7 @@ public class LightingPreviewPanel extends Panel
 			 * 
 			 */
 			modelContext = ModelContext.createInstance(rasterDataContext, lightingContext, modelOptions);
-			modelContext.updateContext(true);
+			modelContext.updateContext(true, false);
 			//dem2d = new Dem2dGenerator(modelContext);
 			
 			

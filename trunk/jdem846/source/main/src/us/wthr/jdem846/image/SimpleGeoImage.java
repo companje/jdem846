@@ -21,7 +21,7 @@ import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.render.CanvasProjection;
+import us.wthr.jdem846.canvas.CanvasProjection;
 
 public class SimpleGeoImage 
 {

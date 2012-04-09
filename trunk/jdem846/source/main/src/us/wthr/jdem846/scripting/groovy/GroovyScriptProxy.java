@@ -2,7 +2,7 @@ package us.wthr.jdem846.scripting.groovy;
 
 import groovy.lang.GroovyObject;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
 public class GroovyScriptProxy implements ScriptProxy

@@ -12,11 +12,20 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPointHandler;
+import us.wthr.jdem846.model.OptionModel;
+import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
+import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
+@GridProcessing(id="us.wthr.jdem846.model.processing.dataload.GridLoadProcessor",
+				name="Data Grid Load Process",
+				type=GridProcessingTypesEnum.DATA_LOAD,
+				optionModel=GridLoadOptionModel.class,
+				enabled=true
+				)
 public class GridLoadProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
 {
 	private static Log log = Logging.getLog(GridLoadProcessor.class);
@@ -44,6 +53,11 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	protected double minimumElevation = Double.NaN;
 	protected double maximumElevation = Double.NaN;
 	
+	public GridLoadProcessor()
+	{
+		
+	}
+	
 	
 	public GridLoadProcessor(ModelContext modelContext, ModelGrid modelGrid)
 	{
@@ -53,19 +67,21 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		useScripting = modelContext.getModelOptions().useScripting();
+		GridLoadOptionModel optionModel = (GridLoadOptionModel) this.getProcessOptionModel();
+		
+		useScripting = getGlobalOptionModel().isUseScripting();
 		tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		
-		north = modelContext.getNorth();
-		south = modelContext.getSouth();
-		east = modelContext.getEast();
-		west = modelContext.getWest();
+		north = getGlobalOptionModel().getNorthLimit();
+		south = getGlobalOptionModel().getSouthLimit();
+		east = getGlobalOptionModel().getEastLimit();
+		west = getGlobalOptionModel().getWestLimit();
 		
 		getStandardResolutionElevation = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.standardResolutionRetrieval");
 		interpolateData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.interpolateToHigherResolution");
 		averageOverlappedData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData");
 		
-		latitudeResolution = modelContext.getRasterDataContext().getLatitudeResolution();
+		latitudeResolution = getModelDimensions().getLatitudeResolution();
 		tileHeight = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
 		cacheHeight = latitudeResolution * tileHeight;
 		nextCachePoint = north;

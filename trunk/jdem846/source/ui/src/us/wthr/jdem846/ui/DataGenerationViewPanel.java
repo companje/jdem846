@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.render.ModelCanvas;
+import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.RenderEngine;
 import us.wthr.jdem846.render.RenderEngine.TileCompletionListener;
 import us.wthr.jdem846.ui.ModelingWorkerThread.ModelCompletionListener;

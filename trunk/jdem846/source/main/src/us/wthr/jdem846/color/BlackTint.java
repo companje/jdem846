@@ -1,7 +1,7 @@
 package us.wthr.jdem846.color;
 
 import us.wthr.jdem846.annotations.DemColoring;
-import us.wthr.jdem846.render.scaling.ElevationScaler;
+import us.wthr.jdem846.scaling.ElevationScaler;
 
 
 @DemColoring(name="Black", identifier="black-tint", allowGradientConfig=false, needsMinMaxElevation=false)

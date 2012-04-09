@@ -16,7 +16,7 @@
 
 package us.wthr.jdem846.color;
 
-import us.wthr.jdem846.render.scaling.ElevationScaler;
+import us.wthr.jdem846.scaling.ElevationScaler;
 
 public interface ModelColoring 
 {
