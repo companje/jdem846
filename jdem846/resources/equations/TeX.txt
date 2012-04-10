@@ -1,0 +1,13 @@
+TRI=\sqrt { \frac { (E_{ 1 }-E_{ c })^{ 2 }+(E_{ 2 }-E_{ c })^{ 2 }+...+(E_{ 8 }-E_{ c })^{ 2 } }{ 8 }  } 
+TRI=\sqrt { \frac { 1 }{ n } \sum _{ i=1 }^{ n }{ (E_{ i }-E_{ c })^{ 2 } }  } 
+
+shade_{ aspect }=1-(2\frac { aspect }{ 360 } )
+
+m=\cos ^{ -1 }{ N_{ z } } 
+shade_{ slope }=1-(2\frac { m }{ 90 } )
+
+
+A=\begin{ cases } 0 \\ 0 \\ -1 \end{ cases }
+B=\begin{ cases } N_x \\ 0  \\ N_z \end{ cases }
+aspect=\arccos { ( A\cdot  B ) }
+aspect_{ degrees }=\begin{ cases } B_{ x }<0\rightarrow aspect+180 \\ B_{ x }\ge 0\rightarrow aspect \end{ cases }
