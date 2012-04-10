@@ -18,8 +18,12 @@ import us.wthr.jdem846.model.processing.coloring.AspectColoringOptionModel;
 import us.wthr.jdem846.model.processing.coloring.AspectColoringProcessor;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorOptionModel;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor;
+import us.wthr.jdem846.model.processing.coloring.RoughnessColoringOptionModel;
+import us.wthr.jdem846.model.processing.coloring.RoughnessColoringProcessor;
 import us.wthr.jdem846.model.processing.coloring.TerrainRuggednessIndexColoringOptionModel;
 import us.wthr.jdem846.model.processing.coloring.TerrainRuggednessIndexColoringProcessor;
+import us.wthr.jdem846.model.processing.coloring.TopographicPositionIndexColoringOptionModel;
+import us.wthr.jdem846.model.processing.coloring.TopographicPositionIndexColoringProcessor;
 import us.wthr.jdem846.model.processing.dataload.GridLoadOptionModel;
 import us.wthr.jdem846.model.processing.dataload.GridLoadProcessor;
 import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsOptionModel;
@@ -129,7 +133,8 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		AspectColoringOptionModel aspectColoringOptionModel = new AspectColoringOptionModel();
 		
 		TerrainRuggednessIndexColoringOptionModel terrainRuggednessIndexColoringOptionModel = new TerrainRuggednessIndexColoringOptionModel();
-		
+		TopographicPositionIndexColoringOptionModel topographicPositionIndexColoringOptionModel = new TopographicPositionIndexColoringOptionModel();
+		RoughnessColoringOptionModel roughnessColoringOptionModel = new RoughnessColoringOptionModel();
 		
 		HillshadingOptionModel hillshadingOptionModel = new HillshadingOptionModel();
 		hillshadingOptionModel.setLightingEnabled(true);
@@ -175,7 +180,9 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		modelProcessList.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
 		//modelProcessList.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
 		//modelProcessList.addProcessor(new AspectColoringProcessor(), aspectColoringOptionModel);
-		modelProcessList.addProcessor(new TerrainRuggednessIndexColoringProcessor(), terrainRuggednessIndexColoringOptionModel);
+		//modelProcessList.addProcessor(new TerrainRuggednessIndexColoringProcessor(), terrainRuggednessIndexColoringOptionModel);
+		//modelProcessList.addProcessor(new TopographicPositionIndexColoringProcessor(), topographicPositionIndexColoringOptionModel);
+		modelProcessList.addProcessor(new RoughnessColoringProcessor(), roughnessColoringOptionModel);
 		modelProcessList.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
 		//modelProcessList.addProcessor(new SlopeShadingProcessor(), slopeShadingOptionModel);
 		//modelProcessList.addProcessor(new AspectShadingProcessor(), aspectShadingOptionModel);
