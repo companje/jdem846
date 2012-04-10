@@ -14,14 +14,20 @@ import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.processing.coloring.AspectColoringOptionModel;
+import us.wthr.jdem846.model.processing.coloring.AspectColoringProcessor;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorOptionModel;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor;
+import us.wthr.jdem846.model.processing.coloring.TerrainRuggednessIndexColoringOptionModel;
+import us.wthr.jdem846.model.processing.coloring.TerrainRuggednessIndexColoringProcessor;
 import us.wthr.jdem846.model.processing.dataload.GridLoadOptionModel;
 import us.wthr.jdem846.model.processing.dataload.GridLoadProcessor;
 import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsOptionModel;
 import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsProcessor;
 import us.wthr.jdem846.model.processing.render.ModelRenderOptionModel;
 import us.wthr.jdem846.model.processing.render.ModelRenderer;
+import us.wthr.jdem846.model.processing.shading.AspectShadingOptionModel;
+import us.wthr.jdem846.model.processing.shading.AspectShadingProcessor;
 import us.wthr.jdem846.model.processing.shading.HillshadingOptionModel;
 import us.wthr.jdem846.model.processing.shading.HillshadingProcessor;
 import us.wthr.jdem846.model.processing.shading.SlopeShadingOptionModel;
@@ -111,7 +117,7 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		globalOptionModel.setBackgroundColor("0;0;0;255");
 		globalOptionModel.setElevationMultiple(3.0);
 		globalOptionModel.setElevationScale(ElevationScalerEnum.LINEAR.identifier());
-		globalOptionModel.setRenderProjection(CanvasProjectionTypeEnum.PROJECT_3D.identifier());
+		globalOptionModel.setRenderProjection(CanvasProjectionTypeEnum.PROJECT_FLAT.identifier());
 		globalOptionModel.setSubpixelGridSize(1);
 		
 		GridLoadOptionModel gridLoadOptionModel = new GridLoadOptionModel();
@@ -120,13 +126,18 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		HypsometricColorOptionModel hypsometricColorOptionModel = new HypsometricColorOptionModel();
 		hypsometricColorOptionModel.setColorTint("hypsometric-tint");
 		
+		AspectColoringOptionModel aspectColoringOptionModel = new AspectColoringOptionModel();
+		
+		TerrainRuggednessIndexColoringOptionModel terrainRuggednessIndexColoringOptionModel = new TerrainRuggednessIndexColoringOptionModel();
+		
+		
 		HillshadingOptionModel hillshadingOptionModel = new HillshadingOptionModel();
 		hillshadingOptionModel.setLightingEnabled(true);
 		hillshadingOptionModel.setSourceType(LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION.optionValue());
 		hillshadingOptionModel.setRecalcLightForEachPoint(false);
 		hillshadingOptionModel.setDarkZenith(108.0);
 		hillshadingOptionModel.setLightZenith(90.0);
-		hillshadingOptionModel.setLightMultiple(1.0);
+		hillshadingOptionModel.setLightMultiple(3.0);
 		hillshadingOptionModel.setLightIntensity(0.6);
 		hillshadingOptionModel.setDarkIntensity(1.0);
 		hillshadingOptionModel.setSpotExponent(1);
@@ -135,6 +146,7 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		SlopeShadingOptionModel slopeShadingOptionModel = new SlopeShadingOptionModel();
 		
+		AspectShadingOptionModel aspectShadingOptionModel = new AspectShadingOptionModel();
 		
 		
 		ModelRenderOptionModel modelRenderOptionModel = new ModelRenderOptionModel();
@@ -161,9 +173,12 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		modelProcessList.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
 		modelProcessList.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
-		modelProcessList.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
-		//modelProcessList.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
-		modelProcessList.addProcessor(new SlopeShadingProcessor(), slopeShadingOptionModel);
+		//modelProcessList.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
+		//modelProcessList.addProcessor(new AspectColoringProcessor(), aspectColoringOptionModel);
+		modelProcessList.addProcessor(new TerrainRuggednessIndexColoringProcessor(), terrainRuggednessIndexColoringOptionModel);
+		modelProcessList.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
+		//modelProcessList.addProcessor(new SlopeShadingProcessor(), slopeShadingOptionModel);
+		//modelProcessList.addProcessor(new AspectShadingProcessor(), aspectShadingOptionModel);
 		modelProcessList.addProcessor(new ModelRenderer(), modelRenderOptionModel);
 		
 		

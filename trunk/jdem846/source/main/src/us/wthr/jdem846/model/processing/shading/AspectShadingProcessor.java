@@ -13,36 +13,37 @@ import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
+import us.wthr.jdem846.model.processing.util.Aspect;
 
 
-@GridProcessing(id="us.wthr.jdem846.model.processing.shading.SlopeShadingProcessor",
-				name="Slope Shading Process",
+@GridProcessing(id="us.wthr.jdem846.model.processing.shading.AspectShadingProcessor",
+				name="Aspect Shading Process",
 				type=GridProcessingTypesEnum.SHADING,
-				optionModel=SlopeShadingOptionModel.class,
+				optionModel=AspectShadingOptionModel.class,
 				enabled=true
 )
-public class SlopeShadingProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
-{	
-	private static Log log = Logging.getLog(SlopeShadingProcessor.class);
+public class AspectShadingProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+{
+	private static Log log = Logging.getLog(AspectShadingProcessor.class);
 	
 	protected int[] rgbaBuffer = new int[4];
 	
-	public SlopeShadingProcessor()
+	
+	public AspectShadingProcessor()
 	{
 		
 	}
 	
-	public SlopeShadingProcessor(ModelContext modelContext, ModelGrid modelGrid)
+	public AspectShadingProcessor(ModelContext modelContext, ModelGrid modelGrid)
 	{
 		super(modelContext, modelGrid);
 	}
-	
 	
 	@Override
 	public void prepare() throws RenderEngineException
 	{
 		
-		SlopeShadingOptionModel optionModel = (SlopeShadingOptionModel) this.getProcessOptionModel();
+		AspectShadingOptionModel optionModel = (AspectShadingOptionModel) this.getProcessOptionModel();
 		
 		
 	}
@@ -52,22 +53,7 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 	{
 		super.process();
 	}
-	
-	
-	@Override
-	public void onCycleStart() throws RenderEngineException
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void onModelLatitudeStart(double latitude)
-			throws RenderEngineException
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void onModelPoint(double latitude, double longitude)
@@ -76,9 +62,13 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
-		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(modelPoint.getNormal()[2]), -1));
-
-		double shade = 1.0 - (2.0 * (slope / 90.0));
+		double x = modelPoint.getNormal()[0];
+		double z = modelPoint.getNormal()[2];
+		
+		double degrees = Aspect.aspectInDegrees(x, z);
+		
+		double shade = 1.0 - (2.0 * (degrees / 360.0));
+		
 		modelPoint.setDotProduct(shade);
 		processPointColor(modelPoint, latitude, longitude);
 		
@@ -94,20 +84,7 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		modelPoint.setRgba(rgbaBuffer, true);
 	}
 	
+
 	
-	@Override
-	public void onModelLatitudeEnd(double latitude)
-			throws RenderEngineException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onCycleEnd() throws RenderEngineException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 }
