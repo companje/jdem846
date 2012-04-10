@@ -41,6 +41,8 @@ public class ModelPointCycler extends InterruptibleProcess
 		
 		int pointsProcessed = 0;
 		
+		pointHandler.onCycleStart();
+		
 		for (double lat = north; lat > minLat; lat-=latitudeResolution) {
 
 			pointHandler.onModelLatitudeStart(lat);
@@ -69,7 +71,9 @@ public class ModelPointCycler extends InterruptibleProcess
 			
 			pointHandler.onModelLatitudeEnd(lat);
 		}
-
+		
+		pointHandler.onCycleEnd();
+		
 		log.info("Processed " + pointsProcessed + " points");
 	}
 	
