@@ -28,8 +28,8 @@ import us.wthr.jdem846.model.processing.GridProcessor;
  * by one. If no valid data is found in the surrounding points, the result
  * will be zero (0).
  * 
- * Equation: (Cc denotes the central elevation)
- * sqrt([(C1 - Cc)^2 + (C2 - Cc)^2 + ... + (C8 - Cc)^2] / 8)
+ * Equation: (Ec denotes the central elevation)
+ * sqrt([(E1 - Ec)^2 + (E2 - Ec)^2 + ... + (E8 - Ec)^2] / 8)
  * 
  * @author Kevin M. Gill
  *
