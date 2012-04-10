@@ -1,6 +1,8 @@
 TRI=\sqrt { \frac { (E_{ 1 }-E_{ c })^{ 2 }+(E_{ 2 }-E_{ c })^{ 2 }+...+(E_{ 8 }-E_{ c })^{ 2 } }{ 8 }  } 
 TRI=\sqrt { \frac { 1 }{ n } \sum _{ i=1 }^{ n }{ (E_{ i }-E_{ c })^{ 2 } }  } 
 
+TPI=\sqrt { \frac { 1 }{ n } \sum _{ i=1 }^{ n }{ E_{ i }^{ 2 } }  } -E_{ c }
+
 shade_{ aspect }=1-(2\frac { aspect }{ 360 } )
 
 m=\cos ^{ -1 }{ N_{ z } } 
