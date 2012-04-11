@@ -120,7 +120,7 @@ public class TopographicPositionIndexColoringProcessor extends AbstractGridProce
 		double ratio = (tpi - minTpi) / (maxTpi - minTpi);
 		
 		ColorAdjustments.interpolateColor(minTpiColor, maxTpiColor, colorBuffer, ratio);
-		modelPoint.setRgba(colorBuffer, false);
+		modelPoint.setRgba(colorBuffer);
 	}
 	
 	

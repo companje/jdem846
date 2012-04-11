@@ -63,7 +63,7 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 		
 		
 		
-		useScripting = getGlobalOptionModel().isUseScripting();
+		useScripting = getGlobalOptionModel().getUseScripting();
 		
 		
 		north = getGlobalOptionModel().getNorthLimit();
@@ -118,7 +118,7 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 			throw new RenderEngineException("Error getting point color: " + ex.getMessage(), ex);
 		}
 		
-		modelPoint.setRgba(rgbaBuffer, false);
+		modelPoint.setRgba(rgbaBuffer);
 
 	}
 

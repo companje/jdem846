@@ -189,5 +189,158 @@ public class OptionModelContainerTest extends AbstractTestCase
 		assertTrue(value == 4);
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	public void testString1GetAndSetById()
+	{
+		OptionModelPropertyContainer propertyContainer = container.getPropertyById("us.wthr.jdem846.model.TestingOptionModel.string1");
+		assert propertyContainer != null;
+		
+		try {
+			propertyContainer.setValue("Test String 1");
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		Object returned = null;
+		try {
+			returned = propertyContainer.getValue();
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		assertTrue(returned instanceof String);
+		
+		String value = (String) returned;
+		assertTrue(value.equals("Test String 1"));
+	}
+	
+	
+	public void testString2GetAndSetById()
+	{
+		OptionModelPropertyContainer propertyContainer = container.getPropertyById("us.wthr.jdem846.model.TestingOptionModel.string2");
+		assert propertyContainer != null;
+		
+		try {
+			propertyContainer.setValue("Test String 2");
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		Object returned = null;
+		try {
+			returned = propertyContainer.getValue();
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		assertTrue(returned instanceof String);
+		
+		String value = (String) returned;
+		assertTrue(value.equals("Test String 2"));
+	}
+	
+	
+	public void testDouble1GetAndSetById()
+	{
+		OptionModelPropertyContainer propertyContainer = container.getPropertyById("us.wthr.jdem846.model.TestingOptionModel.double1");
+		assert propertyContainer != null;
+		
+		try {
+			propertyContainer.setValue(2.0d);
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		Object returned = null;
+		try {
+			returned = propertyContainer.getValue();
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		assertTrue(returned instanceof Double);
+		
+		Double value = (Double) returned;
+		assertTrue(value == 2.0);
+	}
+	
+	
+	public void testDouble2GetAndSetById()
+	{
+		OptionModelPropertyContainer propertyContainer = container.getPropertyById("us.wthr.jdem846.model.TestingOptionModel.double2");
+		assert propertyContainer != null;
+		
+		try {
+			propertyContainer.setValue(4.0d);
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		Object returned = null;
+		try {
+			returned = propertyContainer.getValue();
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		assertTrue(returned instanceof Double);
+		
+		Double value = (Double) returned;
+		assertTrue(value == 4.0);
+	}
+	
+	public void testInt1GetAndSetById()
+	{
+		OptionModelPropertyContainer propertyContainer = container.getPropertyById("us.wthr.jdem846.model.TestingOptionModel.int1");
+		assert propertyContainer != null;
+		
+		try {
+			propertyContainer.setValue(2);
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		Object returned = null;
+		try {
+			returned = propertyContainer.getValue();
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		assertTrue(returned instanceof Integer);
+		
+		Integer value = (Integer) returned;
+		assertTrue(value == 2);
+	}
+	
+	public void testInt2GetAndSetById()
+	{
+		OptionModelPropertyContainer propertyContainer = container.getPropertyById("us.wthr.jdem846.model.TestingOptionModel.int2");
+		assert propertyContainer != null;
+		
+		try {
+			propertyContainer.setValue(4);
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		Object returned = null;
+		try {
+			returned = propertyContainer.getValue();
+		} catch (MethodContainerInvokeException e) {
+			fail();
+		}
+		
+		assertTrue(returned instanceof Integer);
+		
+		Integer value = (Integer) returned;
+		assertTrue(value == 4);
+	}
 	// TODO: ... And many more needed ...
 }

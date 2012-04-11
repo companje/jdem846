@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
@@ -20,7 +21,7 @@ public class OptionModelMethodContainer
 	private String propertyName;
 	private boolean isSetter;
 	private boolean isGetter;
-	
+	private Order orderAnnotation;
 	
 	public OptionModelMethodContainer(Object declaringObject, Method method) throws InvalidProcessOptionException
 	{
@@ -30,6 +31,12 @@ public class OptionModelMethodContainer
 			annotation = method.getAnnotation(ProcessOption.class);
 		} else {
 			annotation = null;
+		}
+		
+		if (method.isAnnotationPresent(Order.class)) {
+			orderAnnotation = method.getAnnotation(Order.class);
+		} else {
+			orderAnnotation = null;
 		}
 		
 		String name = method.getName();
@@ -119,6 +126,20 @@ public class OptionModelMethodContainer
 	public boolean hasAnnotation()
 	{
 		return (annotation != null);
+	}
+	
+	public boolean hasOrderAnnotation()
+	{
+		return (orderAnnotation != null);
+	}
+	
+	public int getOrder()
+	{
+		if (hasOrderAnnotation()) {
+			return orderAnnotation.value();
+		} else {
+			return Order.NOT_SET;
+		}
 	}
 	
 	public Object getValue() throws MethodContainerInvokeException

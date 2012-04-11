@@ -120,7 +120,7 @@ public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcess
 		double ratio = (tri - minTri) / (maxTri - minTri);
 		
 		ColorAdjustments.interpolateColor(minTriColor, maxTriColor, colorBuffer, ratio);
-		modelPoint.setRgba(colorBuffer, false);
+		modelPoint.setRgba(colorBuffer);
 	}
 	
 	protected double calculateTri(ModelPoint modelPoint, double latitude, double longitude)

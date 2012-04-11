@@ -85,7 +85,7 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 		double degrees = Aspect.aspectInDegrees(modelPoint.getNormal());
 
 		getCategoryColor(degrees, rgbaBuffer);
-		modelPoint.setRgba(rgbaBuffer, false);
+		modelPoint.setRgba(rgbaBuffer);
 	}
 	
 	@Override

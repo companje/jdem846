@@ -1,5 +1,6 @@
 package us.wthr.jdem846.model.processing.shading;
 
+import us.wthr.jdem846.model.AzimuthElevationAngles;
 import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 
@@ -8,7 +9,7 @@ public class HillshadingOptionModel implements OptionModel
 	
 	private boolean lightingEnabled;
 	private String sourceType;
-	private Object sourceLocation; // TODO: Define a type
+	private AzimuthElevationAngles sourceLocation; // TODO: Define a type
 	private long sunlightDate;
 	private long sunlightTime;
 	private boolean recalcLightForEachPoint;
@@ -61,12 +62,12 @@ public class HillshadingOptionModel implements OptionModel
 			label="Source Location",
 			tooltip="",
 			enabled=true)
-	public Object getSourceLocation()
+	public AzimuthElevationAngles getSourceLocation()
 	{
 		return sourceLocation;
 	}
 
-	public void setSourceLocation(Object sourceLocation)
+	public void setSourceLocation(AzimuthElevationAngles sourceLocation)
 	{
 		this.sourceLocation = sourceLocation;
 	}

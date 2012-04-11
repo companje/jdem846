@@ -16,6 +16,7 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.ModelGridDimensions;
+import us.wthr.jdem846.model.ViewPerspective;
 
 public class CanvasProjectionGlobe extends CanvasProjection3d
 {
@@ -38,7 +39,7 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 			double minimumValue,
 			double maximumValue,
 			ModelDimensions modelDimensions,
-			Projection projection)
+			ViewPerspective projection)
 	{
 		super(mapProjection,
 				north, 

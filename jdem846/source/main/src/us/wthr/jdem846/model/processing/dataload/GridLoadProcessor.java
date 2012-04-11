@@ -69,7 +69,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	{
 		GridLoadOptionModel optionModel = (GridLoadOptionModel) this.getProcessOptionModel();
 		
-		useScripting = getGlobalOptionModel().isUseScripting();
+		useScripting = getGlobalOptionModel().getUseScripting();
 		tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		
 		north = getGlobalOptionModel().getNorthLimit();

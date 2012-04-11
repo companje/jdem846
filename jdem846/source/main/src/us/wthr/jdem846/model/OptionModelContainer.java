@@ -1,6 +1,8 @@
 package us.wthr.jdem846.model;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,10 +20,12 @@ public class OptionModelContainer
 	
 	private OptionModel optionModel;
 	
-	private Map<String, Method> allMethods;
-	private Map<String, Method> annotatedMethods;
-	private Map<String, OptionModelMethodContainer> getterSetterMethods;
-	private Map<String, OptionModelPropertyContainer> propertyContainers;
+	private Map<String, Method> allMethods = new HashMap<String, Method>();
+	private Map<String, Method> annotatedMethods = new HashMap<String, Method>();
+	private Map<String, OptionModelMethodContainer> getterSetterMethods = new HashMap<String, OptionModelMethodContainer>();
+	
+	private Map<String, OptionModelPropertyContainer> propertyContainerMap = new HashMap<String, OptionModelPropertyContainer>();
+	private List<OptionModelPropertyContainer> propertyContainerList = new LinkedList<OptionModelPropertyContainer>();
 	
 	public OptionModelContainer(OptionModel optionModel) throws InvalidProcessOptionException
 	{
@@ -29,41 +33,36 @@ public class OptionModelContainer
 		
 		log.info("Loading option model for " + optionModel.getClass().getName());
 		
-		allMethods = getAllMethods();
-		annotatedMethods = getAnnotatedMethods();
-		getterSetterMethods = getGetterSetterMethods();
-		propertyContainers = getPropertyContainers();
+		getAllMethods();
+		getAnnotatedMethods();
+		getGetterSetterMethods();
+		getPropertyContainers();
 	}
 	
-	private Map<String, Method> getAllMethods()
+	private void getAllMethods()
 	{
-		Map<String, Method> methods = new HashMap<String, Method>();
-		
-		for (Method method : optionModel.getClass().getMethods()) {
-			methods.put(method.getName(), method);
-		}
 
-		return methods;
+		for (Method method : optionModel.getClass().getMethods()) {
+			allMethods.put(method.getName(), method);
+		}
+		
 	}
 	
-	private Map<String, Method> getAnnotatedMethods()
+	private void getAnnotatedMethods()
 	{
-		Map<String, Method> methods = new HashMap<String, Method>();
-		
+
 		for (Method method : optionModel.getClass().getMethods()) {
 			if (method.isAnnotationPresent(ProcessOption.class)) {
-				methods.put(method.getName(), method);
+				annotatedMethods.put(method.getName(), method);
 			}
 		}
 
-		return methods;
 	}
 	
 	
-	private Map<String, OptionModelMethodContainer> getGetterSetterMethods() throws InvalidProcessOptionException
+	private void getGetterSetterMethods() throws InvalidProcessOptionException
 	{
-		Map<String, OptionModelMethodContainer> methods = new HashMap<String, OptionModelMethodContainer>();
-		
+
 		for (Method method : optionModel.getClass().getMethods()) {
 			
 			boolean isValid = false;
@@ -75,18 +74,15 @@ public class OptionModelContainer
 
 			if (isValid) {
 				OptionModelMethodContainer container = new OptionModelMethodContainer(optionModel, method);
-				methods.put(method.getName(), container);
+				getterSetterMethods.put(method.getName(), container);
 			}
 
 		}
-		
-		return methods;
+
 	}
 	
-	private Map<String, OptionModelPropertyContainer> getPropertyContainers() throws InvalidProcessOptionException
+	private void getPropertyContainers() throws InvalidProcessOptionException
 	{
-		Map<String, OptionModelPropertyContainer> containers = new HashMap<String, OptionModelPropertyContainer>();
-		
 
 		for (Method method : optionModel.getClass().getMethods()) {
 			if (method.isAnnotationPresent(ProcessOption.class)) {
@@ -98,12 +94,41 @@ public class OptionModelContainer
 
 				OptionModelPropertyContainer propertyContainer = new OptionModelPropertyContainer(m0, m1);
 
-				containers.put(propertyName, propertyContainer);
+				propertyContainerMap.put(propertyName, propertyContainer);
+				propertyContainerList.add(propertyContainer);
 				
 			}
 		}
 		
-		return containers;
+		sortPropertyContainerList(propertyContainerList);
+
+	}
+	
+	private void sortPropertyContainerList(List<OptionModelPropertyContainer> propertyContainerList)
+	{
+		
+		OptionModelPropertyContainer[] containerArray = new OptionModelPropertyContainer[propertyContainerList.size()];
+		propertyContainerList.toArray(containerArray);
+		Arrays.sort(containerArray, new Comparator<OptionModelPropertyContainer>() {
+			public int compare(OptionModelPropertyContainer o1, OptionModelPropertyContainer o2)
+			{
+				if (o1.getOrder() < o2.getOrder()) {
+					return -1;
+				} else if (o1.getOrder() == o2.getOrder()) {
+					return 0;
+				} else {
+					return 1;
+				}
+			}
+			
+		});
+		
+		propertyContainerList.clear();
+		
+		for (OptionModelPropertyContainer propertyContainer : containerArray) {
+			propertyContainerList.add(propertyContainer);
+		}
+		
 	}
 	
 	
@@ -186,7 +211,7 @@ public class OptionModelContainer
 	
 	public OptionModelPropertyContainer getPropertyByName(String propertyName)
 	{
-		return this.propertyContainers.get(propertyName);
+		return this.propertyContainerMap.get(propertyName);
 	}
 	
 	public OptionModelPropertyContainer getPropertyById(String id)
@@ -203,17 +228,28 @@ public class OptionModelContainer
 	
 	public int getPropertyCount()
 	{
-		return this.propertyContainers.size();
+		return this.propertyContainerList.size();
 	}
 	
 	public List<String> getPropertyNames()
 	{
 		List<String> propertyNames = new LinkedList<String>();
-		for (String propertyName : propertyContainers.keySet()) {
+		for (String propertyName : propertyContainerMap.keySet()) {
 			propertyNames.add(propertyName);
 		}
-		//propertyNames.addAll(propertyContainers.keySet());
+
 		return propertyNames;
+	}
+	
+	public List<OptionModelPropertyContainer> getProperties()
+	{
+		List<OptionModelPropertyContainer> propertyList = new LinkedList<OptionModelPropertyContainer>();
+		
+		for (OptionModelPropertyContainer property : this.propertyContainerList) {
+			propertyList.add(property);
+		}
+		
+		return propertyList;
 	}
 	
 }

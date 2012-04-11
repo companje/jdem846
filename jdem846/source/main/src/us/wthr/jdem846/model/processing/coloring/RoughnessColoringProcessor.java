@@ -115,7 +115,7 @@ public class RoughnessColoringProcessor extends AbstractGridProcessor implements
 		double ratio = (r - min) / (max - min);
 		
 		ColorAdjustments.interpolateColor(minColor, maxColor, colorBuffer, ratio);
-		modelPoint.setRgba(colorBuffer, false);
+		modelPoint.setRgba(colorBuffer);
 	}
 	
 	protected double calculateRoughness(ModelPoint modelPoint, double latitude, double longitude)

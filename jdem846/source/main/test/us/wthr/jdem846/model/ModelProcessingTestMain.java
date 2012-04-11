@@ -2,6 +2,10 @@ package us.wthr.jdem846.model;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
 
 import us.wthr.jdem846.AbstractTestMain;
 import us.wthr.jdem846.JDem846Properties;
@@ -42,6 +46,8 @@ import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.scaling.ElevationScalerEnum;
+import us.wthr.jdem846.ui.base.ScrollPane;
+import us.wthr.jdem846.ui.options.DynamicOptionsPanel;
 
 
 public class ModelProcessingTestMain extends AbstractTestMain
@@ -64,9 +70,78 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		try {
 			ModelProcessingTestMain testMain = new ModelProcessingTestMain();
 			testMain.doTesting();
+			//testMain.doTestingOptionModelUiLogic();
 		} catch (Exception ex) {
 			log.error("Uncaught exception while running test main: " + ex.getMessage(), ex);
 		}
+		
+	}
+	
+	public void doTestingOptionModelUiLogic() throws Exception
+	{
+		GlobalOptionModel globalOptionModel = new GlobalOptionModel();
+		globalOptionModel.setPlanet("Earth");
+		globalOptionModel.setUseScripting(true);
+		globalOptionModel.setLimitCoordinates(true);
+		globalOptionModel.setSubpixelGridSize(2);
+		globalOptionModel.setBackgroundColor(new RgbaColor(255, 255, 0, 255));
+		globalOptionModel.setSourceLocation(new AzimuthElevationAngles(270, 35));
+		globalOptionModel.setElevationScale(ElevationScalerEnum.LINEAR.identifier());
+		globalOptionModel.setRenderProjection(CanvasProjectionTypeEnum.PROJECT_FLAT.identifier());
+		globalOptionModel.setElevationMultiple(1.0);
+		globalOptionModel.setWidth(1000);
+		globalOptionModel.setHeight(1000);
+		
+		OptionModelContainer container = new OptionModelContainer(globalOptionModel);
+		
+		
+		List<OptionModelPropertyContainer> properties = container.getProperties();
+		
+		for (OptionModelPropertyContainer propertyContainer : properties) {
+			log.info("Order II: " + propertyContainer.getOrder());
+		}
+		
+		for (OptionModelPropertyContainer propertyContainer : properties) {
+			log.info("Property: " + propertyContainer.getPropertyName());
+			log.info("    ID: " + propertyContainer.getId());
+			log.info("    Label: " + propertyContainer.getLabel());
+			log.info("    Tooltip: " + propertyContainer.getTooltip());
+			log.info("    Option Group: " + propertyContainer.getOptionGroup());
+			log.info("    Has List Model: " + (!propertyContainer.getListModelClass().equals(Object.class)));
+			log.info("    Has Validation Class: " + (propertyContainer.getValidatorClass() != null));
+			log.info("    Enabled: " + propertyContainer.isEnabled());
+			log.info("    Type: " + propertyContainer.getType().getName());
+			
+			if (propertyContainer.getType().equals(int.class)) {
+				log.info("    Supported Type: int");
+			} else if (propertyContainer.getType().equals(boolean.class)) {
+				log.info("    Supported Type: boolean");
+			} else if (propertyContainer.getType().equals(double.class)) {
+				log.info("    Supported Type: double");
+			} else if (propertyContainer.getType().equals(String.class)) {
+				log.info("    Supported Type: String");
+			} else {
+				log.info("    Unsupported Type: " + propertyContainer.getType().getName());
+			}
+			
+		}
+		
+		
+		JFrame frame = new JFrame();
+		frame.setTitle("Dynamic Options Test Frame");
+		frame.setSize(400, 500);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		DynamicOptionsPanel panel = new DynamicOptionsPanel(container);
+		
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		ScrollPane scrollPane = new ScrollPane(panel);
+		
+		frame.setContentPane(scrollPane);
+		
+		
+		frame.setVisible(true);
 		
 	}
 	
@@ -118,7 +193,7 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		globalOptionModel.setSouthLimit(dataProxy.getSouth());
 		globalOptionModel.setEastLimit(dataProxy.getEast());
 		globalOptionModel.setWestLimit(dataProxy.getWest());
-		globalOptionModel.setBackgroundColor("0;0;0;255");
+		globalOptionModel.setBackgroundColor(RgbaColor.fromString("rgba:[0,0,0,255]"));
 		globalOptionModel.setElevationMultiple(3.0);
 		globalOptionModel.setElevationScale(ElevationScalerEnum.LINEAR.identifier());
 		globalOptionModel.setRenderProjection(CanvasProjectionTypeEnum.PROJECT_FLAT.identifier());
@@ -156,16 +231,16 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		ModelRenderOptionModel modelRenderOptionModel = new ModelRenderOptionModel();
 		modelRenderOptionModel.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR.identifier());
-		
-		Projection viewAngle = new Projection();
-		viewAngle.setRotateX(30);
-		viewAngle.setRotateY(0);
-		viewAngle.setRotateZ(0);
-		viewAngle.setShiftX(0);
-		viewAngle.setShiftY(0);
-		viewAngle.setShiftZ(0);
-		viewAngle.setZoom(1.0);
-		modelRenderOptionModel.setViewAngle(viewAngle);
+
+		ViewPerspective viewPerspective = new ViewPerspective();
+		viewPerspective.setRotateX(30);
+		viewPerspective.setRotateY(0);
+		viewPerspective.setRotateZ(0);
+		viewPerspective.setShiftX(0);
+		viewPerspective.setShiftY(0);
+		viewPerspective.setShiftZ(0);
+		viewPerspective.setZoom(1.0);
+		modelRenderOptionModel.setViewAngle(viewPerspective);
 		
 		
 		
@@ -179,10 +254,10 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		modelProcessList.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
 		modelProcessList.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
 		//modelProcessList.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
-		//modelProcessList.addProcessor(new AspectColoringProcessor(), aspectColoringOptionModel);
+		modelProcessList.addProcessor(new AspectColoringProcessor(), aspectColoringOptionModel);
 		//modelProcessList.addProcessor(new TerrainRuggednessIndexColoringProcessor(), terrainRuggednessIndexColoringOptionModel);
 		//modelProcessList.addProcessor(new TopographicPositionIndexColoringProcessor(), topographicPositionIndexColoringOptionModel);
-		modelProcessList.addProcessor(new RoughnessColoringProcessor(), roughnessColoringOptionModel);
+		//modelProcessList.addProcessor(new RoughnessColoringProcessor(), roughnessColoringOptionModel);
 		modelProcessList.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
 		//modelProcessList.addProcessor(new SlopeShadingProcessor(), slopeShadingOptionModel);
 		//modelProcessList.addProcessor(new AspectShadingProcessor(), aspectShadingOptionModel);

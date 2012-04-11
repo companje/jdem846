@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
 
@@ -11,6 +12,8 @@ public class OptionModelPropertyContainer
 {
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(OptionModelPropertyContainer.class);
+	
+	private int order;
 	
 	private OptionModelMethodContainer annotated;
 	private OptionModelMethodContainer setter;
@@ -61,6 +64,14 @@ public class OptionModelPropertyContainer
 		
 		if (m1.hasAnnotation()) {
 			annotated = m1;
+		}
+		
+		if (m0.hasOrderAnnotation()) {
+			order = m0.getOrder();
+		} else if (m1.hasOrderAnnotation()) {
+			order = m1.getOrder();
+		} else {
+			order = Order.NOT_SET;
 		}
 		
 		
@@ -120,6 +131,11 @@ public class OptionModelPropertyContainer
 	public Class<?> getType()
 	{
 		return getter.getType();
+	}
+	
+	public int getOrder()
+	{
+		return order;
 	}
 	
 }
