@@ -71,6 +71,12 @@ public class ModelPoint
 		}
 	}
 
+	public void setRgba(int rgba)
+	{
+		setRgba(rgba, true);
+		setRgba(rgba, false);
+	}
+	
 	public void setRgba(int rgba, boolean shaded)
 	{
 		if (shaded) {
@@ -80,9 +86,21 @@ public class ModelPoint
 		}
 	}
 	
+	public void setRgba(int[] rgba)
+	{
+		setRgba(rgba, true);
+		setRgba(rgba, false);
+	}
+	
 	public void setRgba(int[] rgba, boolean shaded)
 	{
 		this.setRgba(ColorUtil.rgbaToInt(rgba), shaded);
+	}
+	
+	public void setRgba(int r, int g, int b, int a)
+	{
+		setRgba(r, g, b, a, true);
+		setRgba(r, g, b, a, false);
 	}
 	
 	public void setRgba(int r, int g, int b, int a, boolean shaded)

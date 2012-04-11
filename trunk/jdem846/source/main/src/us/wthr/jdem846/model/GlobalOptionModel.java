@@ -1,5 +1,6 @@
 package us.wthr.jdem846.model;
 
+import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 import us.wthr.jdem846.model.listModels.ElevationScalerListModel;
 import us.wthr.jdem846.model.listModels.PlanetListModel;
@@ -20,7 +21,7 @@ public class GlobalOptionModel implements OptionModel
 	private double southLimit;
 	private double eastLimit;
 	private double westLimit;
-	private String backgroundColor;
+	private RgbaColor backgroundColor;
 	private double elevationMultiple;
 	private String elevationScale;
 	private String renderProjection;
@@ -36,7 +37,8 @@ public class GlobalOptionModel implements OptionModel
 					label="Use Scripting",
 					tooltip="",
 					enabled=true)
-	public boolean isUseScripting()
+	@Order(0)
+	public boolean getUseScripting()
 	{
 		return useScripting;
 	}
@@ -50,6 +52,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Width",
 			tooltip="",
 			enabled=true)
+	@Order(1)
 	public int getWidth()
 	{
 		return width;
@@ -64,6 +67,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Height",
 			tooltip="",
 			enabled=true)
+	@Order(2)
 	public int getHeight()
 	{
 		return height;
@@ -78,7 +82,8 @@ public class GlobalOptionModel implements OptionModel
 			label="Maintain Aspect Ratio",
 			tooltip="",
 			enabled=true)
-	public boolean isMaintainAspectRatio()
+	@Order(3)
+	public boolean getMaintainAspectRatio()
 	{
 		return maintainAspectRatio;
 	}
@@ -93,6 +98,7 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true,
 			listModel=PlanetListModel.class)
+	@Order(4)
 	public String getPlanet()
 	{
 		return planet;
@@ -107,6 +113,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Estimate Elevation Min/Max",
 			tooltip="",
 			enabled=true)
+	@Order(5)
 	public boolean isEstimateElevationRange()
 	{
 		return estimateElevationRange;
@@ -121,7 +128,8 @@ public class GlobalOptionModel implements OptionModel
 			label="Limit Coordinates",
 			tooltip="",
 			enabled=true)
-	public boolean isLimitCoordinates()
+	@Order(6)
+	public boolean getLimitCoordinates()
 	{
 		return limitCoordinates;
 	}
@@ -135,6 +143,7 @@ public class GlobalOptionModel implements OptionModel
 			label="North Limit",
 			tooltip="",
 			enabled=true)
+	@Order(7)
 	public double getNorthLimit()
 	{
 		return northLimit;
@@ -149,6 +158,7 @@ public class GlobalOptionModel implements OptionModel
 			label="South Limit",
 			tooltip="",
 			enabled=true)
+	@Order(8)
 	public double getSouthLimit()
 	{
 		return southLimit;
@@ -163,6 +173,7 @@ public class GlobalOptionModel implements OptionModel
 			label="East Limit",
 			tooltip="",
 			enabled=true)
+	@Order(9)
 	public double getEastLimit()
 	{
 		return eastLimit;
@@ -177,6 +188,7 @@ public class GlobalOptionModel implements OptionModel
 			label="West Limit",
 			tooltip="",
 			enabled=true)
+	@Order(10)
 	public double getWestLimit()
 	{
 		return westLimit;
@@ -191,12 +203,13 @@ public class GlobalOptionModel implements OptionModel
 			label="Background Color",
 			tooltip="",
 			enabled=true)
-	public String getBackgroundColor()
+	@Order(11)
+	public RgbaColor getBackgroundColor()
 	{
 		return backgroundColor;
 	}
 
-	public void setBackgroundColor(String backgroundColor)
+	public void setBackgroundColor(RgbaColor backgroundColor)
 	{
 		this.backgroundColor = backgroundColor;
 	}
@@ -205,6 +218,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Elevation Multiple",
 			tooltip="",
 			enabled=true)
+	@Order(12)
 	public double getElevationMultiple()
 	{
 		return elevationMultiple;
@@ -220,6 +234,7 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true,
 			listModel=ElevationScalerListModel.class)
+	@Order(13)
 	public String getElevationScale()
 	{
 		return elevationScale;
@@ -235,6 +250,7 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true,
 			listModel=RenderProjectionListModel.class)
+	@Order(14)
 	public String getRenderProjection()
 	{
 		return renderProjection;
@@ -251,6 +267,7 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true,
 			listModel=SubpixelGridSizeListModel.class)
+	@Order(15)
 	public int getSubpixelGridSize()
 	{
 		return subpixelGridSize;
@@ -261,4 +278,44 @@ public class GlobalOptionModel implements OptionModel
 	{
 		this.subpixelGridSize = subpixelGridSize;
 	}
+	
+	
+	// TODO: Remove the following options...
+	
+	private AzimuthElevationAngles sourceLocation; // TODO: Define a type
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.sourceLocation",
+			label="Source Location",
+			tooltip="",
+			enabled=true)
+	@Order(16)
+	public AzimuthElevationAngles getSourceLocation()
+	{
+		return sourceLocation;
+	}
+
+	public void setSourceLocation(AzimuthElevationAngles sourceLocation)
+	{
+		this.sourceLocation = sourceLocation;
+	}
+	
+	
+	
+	private ViewPerspective viewAngle; // TODO: Determine type
+	
+	@ProcessOption(id="us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle",
+			label="View Angle",
+			tooltip="",
+			enabled=true)
+	@Order(17)
+	public ViewPerspective getViewAngle()
+	{
+		return viewAngle;
+	}
+
+
+	public void setViewAngle(ViewPerspective viewAngle)
+	{
+		this.viewAngle = viewAngle;
+	}
+	
 }

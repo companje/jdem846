@@ -15,6 +15,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.ModelGridDimensions;
+import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.render.gfx.Vector;
 
 
@@ -59,7 +60,7 @@ public class CanvasProjection3d extends CanvasProjection
 			double minimumValue,
 			double maximumValue,
 			ModelDimensions modelDimensions,
-			Projection projection)
+			ViewPerspective projection)
 	{
 		super(mapProjection,
 				north, 
@@ -84,7 +85,7 @@ public class CanvasProjection3d extends CanvasProjection
 			double minimumValue,
 			double maximumValue,
 			ModelDimensions modelDimensions,
-			Projection projection)
+			ViewPerspective projection)
 	{
 		eyeVector = new double[3];
 		cameraVector = new double[3];

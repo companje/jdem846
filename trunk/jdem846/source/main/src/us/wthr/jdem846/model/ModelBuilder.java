@@ -108,7 +108,7 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 													null);
 		modelContext.setModelCanvas(modelCanvas);
 		
-		useScripting = globalOptionModel.isUseScripting();
+		useScripting = globalOptionModel.getUseScripting();
 		
 		double minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
 		double maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();

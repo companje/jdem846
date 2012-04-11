@@ -1,7 +1,8 @@
 package us.wthr.jdem846.model.processing.render;
 
-import us.wthr.jdem846.Projection;
+
 import us.wthr.jdem846.model.OptionModel;
+import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 
 public class ModelRenderOptionModel implements OptionModel
@@ -9,7 +10,7 @@ public class ModelRenderOptionModel implements OptionModel
 	
 	private String mapProjection;
 	
-	private Projection viewAngle; // TODO: Determine type
+	private ViewPerspective viewAngle; // TODO: Determine type
 	
 	
 	
@@ -41,13 +42,13 @@ public class ModelRenderOptionModel implements OptionModel
 			label="View Angle",
 			tooltip="",
 			enabled=true)
-	public Projection getViewAngle()
+	public ViewPerspective getViewAngle()
 	{
 		return viewAngle;
 	}
 
 
-	public void setViewAngle(Projection viewAngle)
+	public void setViewAngle(ViewPerspective viewAngle)
 	{
 		this.viewAngle = viewAngle;
 	}

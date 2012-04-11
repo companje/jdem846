@@ -19,6 +19,7 @@ import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.RgbaColor;
 import us.wthr.jdem846.geom.Geometric;
 import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.geom.Triangle;
@@ -60,8 +61,18 @@ public class ModelCanvas
 	
 	public ModelCanvas(int width, int height, int subpixelWidth, String backgroundColor, CanvasProjection canvasProjection)
 	{
-		this.backgroundColor = ColorSerializationUtil.stringToColor(backgroundColor);
-
+		this(width, height, subpixelWidth, ColorSerializationUtil.stringToColor(backgroundColor), canvasProjection);
+	}
+	
+	public ModelCanvas(int width, int height, int subpixelWidth, RgbaColor backgroundColor, CanvasProjection canvasProjection)
+	{
+		this(width, height, subpixelWidth, backgroundColor.toAwtColor(), canvasProjection);
+	}
+	
+	public ModelCanvas(int width, int height, int subpixelWidth, Color backgroundColor, CanvasProjection canvasProjection)
+	{
+		this.backgroundColor = backgroundColor;
+		
 		this.width = width;
 		this.height = height;
 		

@@ -8,6 +8,7 @@ import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.model.ModelGridDimensions;
+import us.wthr.jdem846.model.ViewPerspective;
 
 public class CanvasProjectionFactory
 {
@@ -45,7 +46,7 @@ public class CanvasProjectionFactory
 										double minimumValue,
 										double maximumValue,
 										ModelDimensions modelDimensions,
-										Projection projection)
+										ViewPerspective projection)
 	{
 		CanvasProjection canvasProjection = null;
 		
