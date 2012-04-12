@@ -2,6 +2,8 @@ package us.wthr.jdem846.ui.options;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -18,6 +20,8 @@ public class BooleanControl extends CheckBox implements ActionListener
 	private static Log log = Logging.getLog(BooleanControl.class);
 	
 	private final OptionModelPropertyContainer propertyContainer;
+	
+	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
 	public BooleanControl(OptionModelPropertyContainer property)
 	{

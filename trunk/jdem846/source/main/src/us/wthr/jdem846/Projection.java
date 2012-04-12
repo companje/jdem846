@@ -14,7 +14,19 @@ public class Projection extends ViewPerspective
 
 	public Projection copy()
 	{
-		return (Projection) super.copy();            
+		Projection copy = new Projection();
+		
+		copy.setRotateX(getRotateX());
+		copy.setRotateY(getRotateY());
+		copy.setRotateZ(getRotateZ());
+		
+		copy.setShiftX(getShiftX());
+		copy.setShiftY(getShiftY());
+		copy.setShiftZ(getShiftZ());
+		
+		copy.setZoom(getZoom());
+		
+		return copy;            
 	}
 	
 }

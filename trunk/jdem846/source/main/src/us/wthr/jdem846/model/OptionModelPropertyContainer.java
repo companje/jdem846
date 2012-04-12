@@ -1,6 +1,8 @@
 package us.wthr.jdem846.model;
 
 import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -18,6 +20,8 @@ public class OptionModelPropertyContainer
 	private OptionModelMethodContainer annotated;
 	private OptionModelMethodContainer setter;
 	private OptionModelMethodContainer getter;
+	
+	private List<OptionModelChangeListener> changeListeners = new LinkedList<OptionModelChangeListener>();
 	
 	public OptionModelPropertyContainer(Object declaringObject, Method m0, Method m1) throws InvalidProcessOptionException
 	{
@@ -125,7 +129,10 @@ public class OptionModelPropertyContainer
 	
 	public void setValue(Object object) throws MethodContainerInvokeException
 	{
+		Object oldValue = getValue();
 		setter.setValue(object);
+		
+		fireOptionModelChangeListeners(oldValue, object);
 	}
 	
 	public Class<?> getType()
@@ -136,6 +143,28 @@ public class OptionModelPropertyContainer
 	public int getOrder()
 	{
 		return order;
+	}
+	
+	
+	public void fireOptionModelChangeListeners(Object oldValue, Object newValue)
+	{
+		
+		OptionModelChangeEvent e = new OptionModelChangeEvent(getPropertyName(), getId(), oldValue, newValue);
+		
+		for (OptionModelChangeListener listener : changeListeners) {
+			listener.onPropertyChanged(e);
+		}
+		
+	}
+	
+	public void addOptionModelChangeListener(OptionModelChangeListener listener)
+	{
+		changeListeners.add(listener);
+	}
+	
+	public boolean removeOptionModelChangeListener(OptionModelChangeListener listener)
+	{
+		return changeListeners.remove(listener);
 	}
 	
 }
