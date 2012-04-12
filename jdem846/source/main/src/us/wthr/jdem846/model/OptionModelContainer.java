@@ -20,6 +20,9 @@ public class OptionModelContainer
 	
 	private OptionModel optionModel;
 	
+	private OptionModelChangeListener internalPropertyChangeListener;
+	private List<OptionModelChangeListener> propertyChangeListeners = new LinkedList<OptionModelChangeListener>();
+	
 	private Map<String, Method> allMethods = new HashMap<String, Method>();
 	private Map<String, Method> annotatedMethods = new HashMap<String, Method>();
 	private Map<String, OptionModelMethodContainer> getterSetterMethods = new HashMap<String, OptionModelMethodContainer>();
@@ -32,6 +35,13 @@ public class OptionModelContainer
 		this.optionModel = optionModel;
 		
 		log.info("Loading option model for " + optionModel.getClass().getName());
+		
+		internalPropertyChangeListener = new OptionModelChangeListener() {
+			public void onPropertyChanged(OptionModelChangeEvent e)
+			{
+				fireOptionModelChangeListeners(e);
+			}
+		};
 		
 		getAllMethods();
 		getAnnotatedMethods();
@@ -93,7 +103,8 @@ public class OptionModelContainer
 				OptionModelMethodContainer m1 = new OptionModelMethodContainer(optionModel, other);
 
 				OptionModelPropertyContainer propertyContainer = new OptionModelPropertyContainer(m0, m1);
-
+				propertyContainer.addOptionModelChangeListener(internalPropertyChangeListener);
+				
 				propertyContainerMap.put(propertyName, propertyContainer);
 				propertyContainerList.add(propertyContainer);
 				
@@ -250,6 +261,26 @@ public class OptionModelContainer
 		}
 		
 		return propertyList;
+	}
+	
+	
+	public void fireOptionModelChangeListeners(OptionModelChangeEvent e)
+	{
+		
+		for (OptionModelChangeListener listener : this.propertyChangeListeners) {
+			listener.onPropertyChanged(e);
+		}
+		
+	}
+	
+	public void addOptionModelChangeListener(OptionModelChangeListener listener)
+	{
+		this.propertyChangeListeners.add(listener);
+	}
+	
+	public boolean removeOptionModelChangeListener(OptionModelChangeListener listener)
+	{
+		return this.propertyChangeListeners.remove(listener);
 	}
 	
 }

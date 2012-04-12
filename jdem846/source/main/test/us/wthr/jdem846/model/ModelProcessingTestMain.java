@@ -18,6 +18,7 @@ import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.coloring.AspectColoringOptionModel;
 import us.wthr.jdem846.model.processing.coloring.AspectColoringProcessor;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorOptionModel;
@@ -48,6 +49,7 @@ import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.scaling.ElevationScalerEnum;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.options.DynamicOptionsPanel;
+import us.wthr.jdem846.ui.options.ProcessTypeConfigurationPanel;
 
 
 public class ModelProcessingTestMain extends AbstractTestMain
@@ -69,11 +71,31 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		try {
 			ModelProcessingTestMain testMain = new ModelProcessingTestMain();
-			testMain.doTesting();
+			//testMain.doTesting();
 			//testMain.doTestingOptionModelUiLogic();
+			testMain.doTestingProcessTypeConfigPanel();
 		} catch (Exception ex) {
 			log.error("Uncaught exception while running test main: " + ex.getMessage(), ex);
 		}
+		
+	}
+	
+	
+	public void doTestingProcessTypeConfigPanel() throws Exception
+	{
+		
+		
+		ProcessTypeConfigurationPanel panel = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.SHADING);
+		//panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		
+		JFrame frame = new JFrame();
+		frame.setTitle("Dynamic Options Test Frame");
+		frame.setSize(400, 500);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		ScrollPane scrollPane = new ScrollPane(panel);
+		frame.setContentPane(scrollPane);
+		frame.setVisible(true);
 		
 	}
 	
