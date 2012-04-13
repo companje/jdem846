@@ -1,26 +1,30 @@
 package us.wthr.jdem846.model.processing.shading;
 
+import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.model.AzimuthElevationAngles;
+import us.wthr.jdem846.model.LightingDate;
+import us.wthr.jdem846.model.LightingTime;
 import us.wthr.jdem846.model.OptionModel;
+import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 
 public class HillshadingOptionModel implements OptionModel
 {
 	
-	private boolean lightingEnabled;
-	private String sourceType;
-	private AzimuthElevationAngles sourceLocation; // TODO: Define a type
-	private long sunlightDate;
-	private long sunlightTime;
-	private boolean recalcLightForEachPoint;
-	private double lightZenith;
-	private double darkZenith;
-	private double lightMultiple;
-	private double lightIntensity;
-	private double darkIntensity;
-	private int spotExponent;
-	private boolean rayTraceShadows;
-	private double shadowIntensity;
+	private boolean lightingEnabled = true;
+	private String sourceType = LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION.optionValue();
+	private AzimuthElevationAngles sourceLocation = new AzimuthElevationAngles(315.0, 25.0); 
+	private LightingDate sunlightDate = new LightingDate(System.currentTimeMillis());
+	private LightingTime sunlightTime = new LightingTime(System.currentTimeMillis());
+	private boolean recalcLightForEachPoint = false;
+	private double lightZenith = 90.0;
+	private double darkZenith = 108.0;
+	private double lightMultiple = 1.0;
+	private double lightIntensity = 0.75;
+	private double darkIntensity = 1.0;
+	private int spotExponent = 1;
+	private boolean rayTraceShadows = false;
+	private double shadowIntensity = 0.4;
 	
 	public HillshadingOptionModel()
 	{
@@ -31,6 +35,7 @@ public class HillshadingOptionModel implements OptionModel
 			label="Lighting Enabled",
 			tooltip="",
 			enabled=true)
+	@Order(0)
 	public boolean isLightingEnabled()
 	{
 		return lightingEnabled;
@@ -48,6 +53,7 @@ public class HillshadingOptionModel implements OptionModel
 			tooltip="",
 			enabled=true,
 			listModel=SourceTypeListModel.class)
+	@Order(10)
 	public String getSourceType()
 	{
 		return sourceType;
@@ -62,6 +68,7 @@ public class HillshadingOptionModel implements OptionModel
 			label="Source Location",
 			tooltip="",
 			enabled=true)
+	@Order(20)
 	public AzimuthElevationAngles getSourceLocation()
 	{
 		return sourceLocation;
@@ -76,12 +83,13 @@ public class HillshadingOptionModel implements OptionModel
 			label="Sunlight Date (GMT)",
 			tooltip="",
 			enabled=true)
-	public long getSunlightDate()
+	@Order(30)
+	public LightingDate getSunlightDate()
 	{
 		return sunlightDate;
 	}
 
-	public void setSunlightDate(long sunlightDate)
+	public void setSunlightDate(LightingDate sunlightDate)
 	{
 		this.sunlightDate = sunlightDate;
 	}
@@ -90,12 +98,13 @@ public class HillshadingOptionModel implements OptionModel
 			label="Sunlight Time (GMT)",
 			tooltip="",
 			enabled=true)
-	public long getSunlightTime()
+	@Order(40)
+	public LightingTime getSunlightTime()
 	{
 		return sunlightTime;
 	}
 
-	public void setSunlightTime(long sunlightTime)
+	public void setSunlightTime(LightingTime sunlightTime)
 	{
 		this.sunlightTime = sunlightTime;
 	}
@@ -104,6 +113,7 @@ public class HillshadingOptionModel implements OptionModel
 			label="Recalc Light For Each Point",
 			tooltip="",
 			enabled=true)
+	@Order(50)
 	public boolean isRecalcLightForEachPoint()
 	{
 		return recalcLightForEachPoint;
@@ -118,6 +128,7 @@ public class HillshadingOptionModel implements OptionModel
 			label="Light Zenith",
 			tooltip="",
 			enabled=true)
+	@Order(60)
 	public double getLightZenith()
 	{
 		return lightZenith;
@@ -132,6 +143,7 @@ public class HillshadingOptionModel implements OptionModel
 			label="Dark Zenith",
 			tooltip="",
 			enabled=true)
+	@Order(70)
 	public double getDarkZenith()
 	{
 		return darkZenith;
@@ -146,6 +158,7 @@ public class HillshadingOptionModel implements OptionModel
 			label="Light Multiple",
 			tooltip="",
 			enabled=true)
+	@Order(80)
 	public double getLightMultiple()
 	{
 		return lightMultiple;
@@ -160,6 +173,7 @@ public class HillshadingOptionModel implements OptionModel
 			label="Light Intensity",
 			tooltip="",
 			enabled=true)
+	@Order(90)
 	public double getLightIntensity()
 	{
 		return lightIntensity;
@@ -174,6 +188,7 @@ public class HillshadingOptionModel implements OptionModel
 			label="Dark Intensity",
 			tooltip="",
 			enabled=true)
+	@Order(100)
 	public double getDarkIntensity()
 	{
 		return darkIntensity;
@@ -188,6 +203,7 @@ public class HillshadingOptionModel implements OptionModel
 			label="Spot Exponent",
 			tooltip="",
 			enabled=true)
+	@Order(110)
 	public int getSpotExponent()
 	{
 		return spotExponent;
@@ -202,6 +218,7 @@ public class HillshadingOptionModel implements OptionModel
 			label="Ray Trace Shadows",
 			tooltip="",
 			enabled=true)
+	@Order(120)
 	public boolean isRayTraceShadows()
 	{
 		return rayTraceShadows;
@@ -216,6 +233,7 @@ public class HillshadingOptionModel implements OptionModel
 			label="Shadow Intensity",
 			tooltip="",
 			enabled=true)
+	@Order(130)
 	public double getShadowIntensity()
 	{
 		return shadowIntensity;
@@ -227,5 +245,25 @@ public class HillshadingOptionModel implements OptionModel
 	}
 	
 	
-	
+	public HillshadingOptionModel copy()
+	{
+		HillshadingOptionModel copy = new HillshadingOptionModel();
+		
+		copy.lightingEnabled = this.lightingEnabled;
+		copy.sourceType = this.sourceType;
+		copy.sourceLocation = this.sourceLocation.copy();
+		copy.sunlightDate = this.sunlightDate.copy();
+		copy.sunlightTime = this.sunlightTime.copy();
+		copy.recalcLightForEachPoint = this.recalcLightForEachPoint;
+		copy.lightZenith = this.lightZenith;
+		copy.darkZenith = this.darkZenith;
+		copy.lightMultiple = this.lightMultiple;
+		copy.lightIntensity = this.lightIntensity;
+		copy.darkIntensity = this.darkIntensity;
+		copy.spotExponent = this.spotExponent;
+		copy.rayTraceShadows = this.rayTraceShadows;
+		copy.shadowIntensity = this.shadowIntensity;
+		
+		return copy;
+	}
 }

@@ -128,8 +128,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 		lightSourceType = LightSourceSpecifyTypeEnum.getByOptionValue(optionModel.getSourceType());
 		
-		lightOnTime = optionModel.getSunlightTime();
-		lightOnDate = optionModel.getSunlightDate();
+		lightOnTime = 0;//optionModel.getSunlightTime();
+		lightOnDate = 0;//optionModel.getSunlightDate();
 		recalcLightOnEachPoint = optionModel.isRecalcLightForEachPoint();
 		lightZenith = optionModel.getLightZenith();
 		darkZenith = optionModel.getDarkZenith();

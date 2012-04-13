@@ -236,7 +236,7 @@ public class LightingPreviewPanel extends Panel
 				log.info("****************************************");
 				modelContext.resetModelCanvas();
 				
-				renderer.prepare(false);
+				renderer.prepare(true);
 				renderer.render();
 				
 				prerendered = (BufferedImage) modelContext.getModelCanvas().getFinalizedImage(false);

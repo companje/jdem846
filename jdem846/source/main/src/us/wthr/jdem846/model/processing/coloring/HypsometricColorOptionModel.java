@@ -6,7 +6,7 @@ import us.wthr.jdem846.model.annotations.ProcessOption;
 public class HypsometricColorOptionModel implements OptionModel
 {
 	
-	private String colorTint;
+	private String colorTint = "hypsometric-tint";
 	
 	public HypsometricColorOptionModel()
 	{
@@ -30,7 +30,14 @@ public class HypsometricColorOptionModel implements OptionModel
 	}
 	
 	
-	
+	public HypsometricColorOptionModel copy()
+	{
+		HypsometricColorOptionModel copy = new HypsometricColorOptionModel();
+		
+		copy.colorTint = this.colorTint;
+		
+		return copy;
+	}
 	
 	
 }

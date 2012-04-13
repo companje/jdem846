@@ -1,5 +1,6 @@
 package us.wthr.jdem846.model;
 
+import java.awt.FlowLayout;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +48,10 @@ import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.scaling.ElevationScalerEnum;
+import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.options.DynamicOptionsPanel;
+import us.wthr.jdem846.ui.options.ModelConfigurationPanel;
 import us.wthr.jdem846.ui.options.ProcessTypeConfigurationPanel;
 
 
@@ -73,7 +76,8 @@ public class ModelProcessingTestMain extends AbstractTestMain
 			ModelProcessingTestMain testMain = new ModelProcessingTestMain();
 			//testMain.doTesting();
 			//testMain.doTestingOptionModelUiLogic();
-			testMain.doTestingProcessTypeConfigPanel();
+			//testMain.doTestingProcessTypeConfigPanel();
+			testMain.doTestingModelConfigPanel();
 		} catch (Exception ex) {
 			log.error("Uncaught exception while running test main: " + ex.getMessage(), ex);
 		}
@@ -81,12 +85,38 @@ public class ModelProcessingTestMain extends AbstractTestMain
 	}
 	
 	
+	
+	public void doTestingModelConfigPanel() throws Exception
+	{
+		ModelProcessManifest modelProcessManifest = new ModelProcessManifest();
+		
+		HillshadingOptionModel hillshadingOptionModel = new HillshadingOptionModel();
+		hillshadingOptionModel.setLightZenith(47.0);
+		modelProcessManifest.addProcessor("us.wthr.jdem846.model.processing.coloring.HillshadingProcessor", hillshadingOptionModel);
+		
+		ModelConfigurationPanel panel = new ModelConfigurationPanel(modelProcessManifest);
+		
+		JFrame frame = new JFrame();
+		frame.setTitle("Dynamic Options Test Frame");
+		frame.setSize(400, 500);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(panel);
+		frame.setVisible(true);
+		
+	}
+	
+	
 	public void doTestingProcessTypeConfigPanel() throws Exception
 	{
 		
-		
-		ProcessTypeConfigurationPanel panel = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.SHADING);
+		String defaultProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.renderProcessor.default");
+		ProcessTypeConfigurationPanel panel = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.RENDER, defaultProcessor);
 		//panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		
+		//Panel wrapperPanel = new Panel();
+		//wrapperPanel.setLayout(new FlowLayout());
+		//wrapperPanel.add(panel);
 		
 		JFrame frame = new JFrame();
 		frame.setTitle("Dynamic Options Test Frame");
@@ -107,12 +137,14 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		globalOptionModel.setLimitCoordinates(true);
 		globalOptionModel.setSubpixelGridSize(2);
 		globalOptionModel.setBackgroundColor(new RgbaColor(255, 255, 0, 255));
-		globalOptionModel.setSourceLocation(new AzimuthElevationAngles(270, 35));
+		//globalOptionModel.setSourceLocation(new AzimuthElevationAngles(270, 35));
 		globalOptionModel.setElevationScale(ElevationScalerEnum.LINEAR.identifier());
 		globalOptionModel.setRenderProjection(CanvasProjectionTypeEnum.PROJECT_FLAT.identifier());
 		globalOptionModel.setElevationMultiple(1.0);
 		globalOptionModel.setWidth(1000);
 		globalOptionModel.setHeight(1000);
+		//globalOptionModel.setSunlightDate(new LightingDate(0));
+		//globalOptionModel.setSunlightTime(new LightingTime(0));
 		
 		OptionModelContainer container = new OptionModelContainer(globalOptionModel);
 		
@@ -270,20 +302,20 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		
 		
-		ModelProcessList modelProcessList = new ModelProcessList();
+		ModelProcessManifest modelProcessManifest = new ModelProcessManifest();
+		modelProcessManifest.setGlobalOptionModel(globalOptionModel);
 		
-		
-		modelProcessList.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
-		modelProcessList.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
-		//modelProcessList.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
-		modelProcessList.addProcessor(new AspectColoringProcessor(), aspectColoringOptionModel);
-		//modelProcessList.addProcessor(new TerrainRuggednessIndexColoringProcessor(), terrainRuggednessIndexColoringOptionModel);
-		//modelProcessList.addProcessor(new TopographicPositionIndexColoringProcessor(), topographicPositionIndexColoringOptionModel);
-		//modelProcessList.addProcessor(new RoughnessColoringProcessor(), roughnessColoringOptionModel);
-		modelProcessList.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
-		//modelProcessList.addProcessor(new SlopeShadingProcessor(), slopeShadingOptionModel);
-		//modelProcessList.addProcessor(new AspectShadingProcessor(), aspectShadingOptionModel);
-		modelProcessList.addProcessor(new ModelRenderer(), modelRenderOptionModel);
+		modelProcessManifest.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
+		modelProcessManifest.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
+		modelProcessManifest.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
+		//modelProcessManifest.addProcessor(new AspectColoringProcessor(), aspectColoringOptionModel);
+		//modelProcessManifest.addProcessor(new TerrainRuggednessIndexColoringProcessor(), terrainRuggednessIndexColoringOptionModel);
+		//modelProcessManifest.addProcessor(new TopographicPositionIndexColoringProcessor(), topographicPositionIndexColoringOptionModel);
+		//modelProcessManifest.addProcessor(new RoughnessColoringProcessor(), roughnessColoringOptionModel);
+		modelProcessManifest.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
+		//modelProcessManifest.addProcessor(new SlopeShadingProcessor(), slopeShadingOptionModel);
+		//modelProcessManifest.addProcessor(new AspectShadingProcessor(), aspectShadingOptionModel);
+		modelProcessManifest.addProcessor(new ModelRenderer(), modelRenderOptionModel);
 		
 		
 		
@@ -298,11 +330,12 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		log.info("Initializing model builder...");
 		ModelBuilder modelBuilder = new ModelBuilder();
-		modelBuilder.setAndPrepare(modelContext, null, modelDimensions, globalOptionModel, null);
+		modelBuilder.prepare(modelContext, modelDimensions, modelProcessManifest);
+		//modelBuilder.setAndPrepare(modelContext, null, modelDimensions, globalOptionModel, null);
 		
 		log.info("Processing...");
 		double startTime = System.currentTimeMillis();
-		modelBuilder.process(modelProcessList);
+		modelBuilder.process();
 		double endTime = System.currentTimeMillis();
 		
 		ModelCanvas canvas = modelContext.getModelCanvas();

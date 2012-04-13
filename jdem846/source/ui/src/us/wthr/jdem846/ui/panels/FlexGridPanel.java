@@ -25,6 +25,7 @@ import java.awt.Insets;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
@@ -56,13 +57,22 @@ public class FlexGridPanel extends Panel
 	@Override
 	public Component add(Component component)
 	{
+		return add(component, false);
+	}
+	
+	public Component add(Component component, boolean last)
+	{
 		//component.setMinimumSize(new Dimension(50, 50));
 		component.setPreferredSize(new Dimension(20, 28));
 		
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = GridBagConstraints.BOTH;
 		
+		
 		constraints.weightx = 1.0;
+		if (last) {
+			constraints.weighty = 1.0;
+		}
 		constraints.insets = new Insets(2, 0, 2, 0);
 		addColumn++;
 		
@@ -75,5 +85,13 @@ public class FlexGridPanel extends Panel
 		}
 		gridbag.setConstraints(component, constraints);
 		return super.add(component);
+	}
+	
+	
+	public void closeGrid()
+	{
+		for (int i = 0; i < columns; i++) {
+			add(new Label(), true);
+		}
 	}
 }

@@ -105,5 +105,19 @@ public class TestingOptionModel implements OptionModel
 	}
 	
 	
-	
+	public TestingOptionModel copy()
+	{
+		TestingOptionModel copy = new TestingOptionModel();
+		
+		copy.string1 = this.string1;
+		copy.string2 = this.string2;
+		
+		copy.double1 = this.double1;
+		copy.double2 = this.double2;
+		
+		copy.int1 = this.int1;
+		copy.int2 = this.int2;
+		
+		return copy;
+	}
 }

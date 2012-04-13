@@ -1,31 +1,33 @@
 package us.wthr.jdem846.model;
 
+import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 import us.wthr.jdem846.model.listModels.ElevationScalerListModel;
 import us.wthr.jdem846.model.listModels.PlanetListModel;
 import us.wthr.jdem846.model.listModels.RenderProjectionListModel;
 import us.wthr.jdem846.model.listModels.SubpixelGridSizeListModel;
+import us.wthr.jdem846.scaling.ElevationScalerEnum;
 
 public class GlobalOptionModel implements OptionModel
 {
 	
-	private boolean useScripting;
-	private int width;
-	private int height;
-	private boolean maintainAspectRatio;
-	private String planet;
-	private boolean estimateElevationRange;
-	private boolean limitCoordinates;
-	private double northLimit;
-	private double southLimit;
-	private double eastLimit;
-	private double westLimit;
-	private RgbaColor backgroundColor;
-	private double elevationMultiple;
-	private String elevationScale;
-	private String renderProjection;
-	private int subpixelGridSize;
+	private boolean useScripting = true;
+	private int width = 2000;
+	private int height = 2000;
+	private boolean maintainAspectRatio = true;
+	private String planet = "Earth";
+	private boolean estimateElevationRange = true;
+	private boolean limitCoordinates = false;
+	private double northLimit = 90.0;
+	private double southLimit = -90.0;
+	private double eastLimit = 180.0;
+	private double westLimit = -180.0;
+	private RgbaColor backgroundColor = new RgbaColor(0, 0, 0, 255);
+	private double elevationMultiple = 1.0;
+	private String elevationScale = ElevationScalerEnum.LINEAR.identifier();
+	private String renderProjection = CanvasProjectionTypeEnum.PROJECT_FLAT.identifier();
+	private int subpixelGridSize = 1;
 	
 	public GlobalOptionModel()
 	{
@@ -280,42 +282,28 @@ public class GlobalOptionModel implements OptionModel
 	}
 	
 	
-	// TODO: Remove the following options...
-	
-	private AzimuthElevationAngles sourceLocation; // TODO: Define a type
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.sourceLocation",
-			label="Source Location",
-			tooltip="",
-			enabled=true)
-	@Order(16)
-	public AzimuthElevationAngles getSourceLocation()
+	public GlobalOptionModel copy()
 	{
-		return sourceLocation;
-	}
-
-	public void setSourceLocation(AzimuthElevationAngles sourceLocation)
-	{
-		this.sourceLocation = sourceLocation;
-	}
-	
-	
-	
-	private ViewPerspective viewAngle; // TODO: Determine type
-	
-	@ProcessOption(id="us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle",
-			label="View Angle",
-			tooltip="",
-			enabled=true)
-	@Order(17)
-	public ViewPerspective getViewAngle()
-	{
-		return viewAngle;
-	}
-
-
-	public void setViewAngle(ViewPerspective viewAngle)
-	{
-		this.viewAngle = viewAngle;
+		GlobalOptionModel copy = new GlobalOptionModel();
+		
+		copy.useScripting = this.useScripting;
+		copy.width = this.width;
+		copy.height = this.height;
+		copy.maintainAspectRatio = this.maintainAspectRatio; 
+		copy.planet = this.planet;
+		copy.estimateElevationRange = this.estimateElevationRange; 
+		copy.limitCoordinates = this.limitCoordinates;
+		copy.northLimit = this.northLimit;
+		copy.southLimit = this.southLimit;
+		copy.eastLimit = this.eastLimit;
+		copy.westLimit = this.westLimit;
+		copy.backgroundColor = this.backgroundColor.copy();
+		copy.elevationMultiple = this.elevationMultiple;
+		copy.elevationScale = this.elevationScale; 
+		copy.renderProjection = this.renderProjection;
+		copy.subpixelGridSize = this.subpixelGridSize;
+		
+		return copy;
 	}
 	
 }

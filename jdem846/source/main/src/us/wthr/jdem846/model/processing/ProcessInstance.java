@@ -38,6 +38,11 @@ public class ProcessInstance
 		return annotation.optionModel();
 	}
 	
+	public Class<?> getProcessorClass()
+	{
+		return clazz;
+	}
+	
 	public boolean isEnabled()
 	{
 		return annotation.enabled();

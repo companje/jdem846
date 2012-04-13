@@ -208,6 +208,11 @@ public class PreferencesDialog extends Dialog
 		pnlButtons.add(btnCancel);
 		add(pnlButtons, BorderLayout.SOUTH);
 		
+		
+		performancePanel.closeGrid();
+		previewPanel.closeGrid();
+		generalPanel.closeGrid();
+		
 		//this.pack();
 		
 		setValuesToUserInterface();

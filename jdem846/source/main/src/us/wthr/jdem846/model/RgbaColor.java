@@ -107,4 +107,11 @@ public class RgbaColor
 			return false;
 		}
 	}
+	
+	
+	public RgbaColor copy()
+	{
+		RgbaColor copy = new RgbaColor(this.rgba);
+		return copy;
+	}
 }
