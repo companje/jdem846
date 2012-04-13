@@ -6,6 +6,8 @@ import java.util.List;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.AzimuthElevationAngles;
+import us.wthr.jdem846.model.LightingDate;
+import us.wthr.jdem846.model.LightingTime;
 import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.OptionModelPropertyContainer;
 import us.wthr.jdem846.model.RgbaColor;
@@ -38,6 +40,8 @@ public class DynamicOptionsPanel extends Panel
 		BorderLayout layout = new BorderLayout();
 		setLayout(layout);
 		add(controlGrid, BorderLayout.CENTER);
+		
+		controlGrid.closeGrid();
 	}
 	
 	
@@ -58,11 +62,28 @@ public class DynamicOptionsPanel extends Panel
 			addDoubleControl(propertyContainer);
 		} else if (propertyContainer.getType().equals(int.class)) {
 			addIntegerControl(propertyContainer);
+		} else if (propertyContainer.getType().equals(LightingDate.class)) {
+			addDateControl(propertyContainer);
+		} else if (propertyContainer.getType().equals(LightingTime.class)) {
+			addTimeControl(propertyContainer);
 		}
 		
 		
 		
 	}
+	
+	protected void addTimeControl(OptionModelPropertyContainer propertyContainer)
+	{
+		controlGrid.add(new Label(propertyContainer.getLabel() + ":"));
+		controlGrid.add(new TimeControl(propertyContainer));
+	}
+	
+	protected void addDateControl(OptionModelPropertyContainer propertyContainer)
+	{
+		controlGrid.add(new Label(propertyContainer.getLabel() + ":"));
+		controlGrid.add(new DateControl(propertyContainer));
+	}
+	
 	
 	protected void addDoubleControl(OptionModelPropertyContainer propertyContainer)
 	{

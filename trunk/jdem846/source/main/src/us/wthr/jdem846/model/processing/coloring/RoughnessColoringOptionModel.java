@@ -4,5 +4,11 @@ import us.wthr.jdem846.model.OptionModel;
 
 public class RoughnessColoringOptionModel implements OptionModel
 {
-
+	
+	public RoughnessColoringOptionModel copy()
+	{
+		RoughnessColoringOptionModel copy = new RoughnessColoringOptionModel();
+		return copy;
+	}
+	
 }

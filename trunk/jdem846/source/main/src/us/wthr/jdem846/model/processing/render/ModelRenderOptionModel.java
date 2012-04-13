@@ -1,6 +1,7 @@
 package us.wthr.jdem846.model.processing.render;
 
 
+import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.annotations.ProcessOption;
@@ -8,9 +9,8 @@ import us.wthr.jdem846.model.annotations.ProcessOption;
 public class ModelRenderOptionModel implements OptionModel
 {
 	
-	private String mapProjection;
-	
-	private ViewPerspective viewAngle; // TODO: Determine type
+	private String mapProjection = MapProjectionEnum.EQUIRECTANGULAR.identifier();
+	private ViewPerspective viewAngle = ViewPerspective.fromString("rotate:[30.0,0,0];shift:[0,0,0];zoom:[1.0]");
 	
 	
 	
@@ -54,7 +54,15 @@ public class ModelRenderOptionModel implements OptionModel
 	}
 
 	
-
+	public ModelRenderOptionModel copy()
+	{
+		ModelRenderOptionModel copy = new ModelRenderOptionModel();
+		
+		copy.mapProjection = this.mapProjection;
+		copy.viewAngle = this.viewAngle.copy();
+		
+		return copy;
+	}
 	
 	
 	

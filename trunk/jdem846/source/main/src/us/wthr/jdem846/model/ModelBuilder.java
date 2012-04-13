@@ -26,13 +26,14 @@ import us.wthr.jdem846.scaling.ElevationScalerEnum;
 import us.wthr.jdem846.scaling.ElevationScalerFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
-public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
+public class ModelBuilder extends InterruptibleProcess
 {
 	private static Log log = Logging.getLog(ModelBuilder.class);
 
-	private GridLoadProcessor gridLoadProcessor;
-	private HypsometricColorProcessor gridColorProcessor;
-	private SurfaceNormalsProcessor gridHillshadeProcessor;
+	private ModelProcessManifest modelProcessManifest;
+	private ModelContext modelContext;
+	private ModelGrid modelGrid;
+	private ModelGridDimensions modelDimensions;
 	
 	private boolean runLoadProcessor = true;
 	private boolean runColorProcessor = true;
@@ -41,11 +42,11 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 	private boolean prepared = false;
 	private boolean useScripting = true;
 	
+	private boolean isProcessing = false;
+	
 	public ModelBuilder()
 	{
-		//super(modelContext);
-		
-		
+
 		
 	}
 	
@@ -54,9 +55,13 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 		
 	}
 	
-	public void prepare() throws RenderEngineException
+	public void prepare(ModelContext modelContext, ModelGridDimensions modelDimensions, ModelProcessManifest modelProcessManifest) throws RenderEngineException
 	{
-		GlobalOptionModel globalOptionModel = this.getGlobalOptionModel();
+		this.modelContext = modelContext;
+		this.modelDimensions = modelDimensions;
+		this.modelProcessManifest = modelProcessManifest;
+		
+		GlobalOptionModel globalOptionModel = modelProcessManifest.getGlobalOptionModel();
 		
 	
 		if (modelGrid == null) {
@@ -68,39 +73,7 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 					modelDimensions.getOutputLongitudeResolution());
 		}
 		
-		/*
-		CanvasProjectionTypeEnum projectionType,
-		MapProjection mapProjection,
-		double north,
-		double south,
-		double east,
-		double west,
-		double width,
-		double height,
-		Planet planet,
-		double elevationMultiple,
-		double minimumValue,
-		double maximumValue,
-		ModelDimensions modelDimensions,
-		Projection projection
-		*/
-		/*
-		CanvasProjection canvasProjection = CanvasProjectionFactory.create( 
-				CanvasProjectionTypeEnum.getCanvasProjectionEnumFromIdentifier(globalOptionModel.getRenderProjection()),
-				modelContext.getMapProjection(),
-				modelContext.getNorth(),
-				modelContext.getSouth(),
-				modelContext.getEast(),
-				modelContext.getWest(),
-				modelDimensions.getOutputWidth(),
-				modelDimensions.getOutputHeight(),
-				PlanetsRegistry.getPlanet(globalOptionModel.getPlanet()),
-				modelContext.getRasterDataContext().getDataMinimumValue(),
-				modelContext.getRasterDataContext().getDataMaximumValue(),
-				modelDimensions,
-				new Projection());
-		*/	
-				
+
 		ModelCanvas modelCanvas = new ModelCanvas(modelDimensions.getOutputWidth(), 
 													modelDimensions.getOutputHeight(), 
 													globalOptionModel.getSubpixelGridSize(), 
@@ -129,11 +102,6 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 	
 	public void process() throws RenderEngineException
 	{
-		
-	}
-	
-	public void process(ModelProcessList modelProcessList) throws RenderEngineException
-	{
 		if (!isPrepared()) {
 			throw new RenderEngineException("Model builder not yet prepared!");
 		}
@@ -144,7 +112,7 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 		}
 		
 		ProcessInterruptHandler interruptHandler = new ProcessInterruptHandler();
-		GlobalOptionModel globalOptionModel = this.getGlobalOptionModel();
+		GlobalOptionModel globalOptionModel = modelProcessManifest.getGlobalOptionModel();
 		
 		setProcessing(true);
 		
@@ -153,7 +121,7 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 		}
 		
 		
-		for (ModelProcessContainer processContainer : modelProcessList.getProcessList()) {
+		for (ModelProcessContainer processContainer : modelProcessManifest.getProcessList()) {
 			
 			AbstractGridProcessor gridProcessor = processContainer.getGridProcessor();
 			OptionModel optionModel = processContainer.getOptionModel();
@@ -224,20 +192,6 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 		
 	}
 
-	public GridLoadProcessor getGridLoadProcessor()
-	{
-		return gridLoadProcessor;
-	}
-
-	public HypsometricColorProcessor getGridColorProcessor()
-	{
-		return gridColorProcessor;
-	}
-
-	public SurfaceNormalsProcessor getGridHillshadeProcessor()
-	{
-		return gridHillshadeProcessor;
-	}
 
 	public boolean runLoadProcessor()
 	{
@@ -318,4 +272,23 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 		}
 		
 	}
+	
+	
+	
+	protected boolean modelContainsData()
+	{
+		return (modelContext.getRasterDataContext().getRasterDataListSize() > 0 ||
+				modelContext.getImageDataContext().getImageListSize() > 0);
+	}
+	
+	protected void setProcessing(boolean isProcessing)
+	{
+		this.isProcessing = isProcessing;
+	}
+	
+	public boolean isProcessing()
+	{
+		return isProcessing;
+	}
+
 }

@@ -1,6 +1,7 @@
 package us.wthr.jdem846.ui.options;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.LinkedList;
@@ -36,20 +37,34 @@ public class ProcessTypeConfigurationPanel extends Panel
 	private ProcessTypeListModel processTypeListModel;
 	private ComboBox cmbProcessSelection;
 	
+	private List<OptionModel> providedOptionModelList = new LinkedList<OptionModel>();
+	
+	private String currentProcessId;
 	private OptionModel currentOptionModel;
 	private OptionModelContainer currentOptionModelContainer;
 	private DynamicOptionsPanel currentOptionsPanel;
+	private ScrollPane currentScrollPane;
 	
 	private OptionModelChangeListener propertyChangeListener;
 	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
-	public ProcessTypeConfigurationPanel(GridProcessingTypesEnum processType)
+	public ProcessTypeConfigurationPanel(GridProcessingTypesEnum processType, String initialSelection)
+	{
+		this(processType, initialSelection, null);
+	}
+	
+	public ProcessTypeConfigurationPanel(GridProcessingTypesEnum processType, String initialSelection, List<OptionModel> providedOptionModelList)
 	{
 		this.processType = processType;
+		if (providedOptionModelList != null) {
+			this.providedOptionModelList.addAll(providedOptionModelList);
+		}
 		
 		processTypeListModel = new ProcessTypeListModel(processType);
 		cmbProcessSelection = new ComboBox(processTypeListModel);
+		
+		
 		
 		propertyChangeListener = new OptionModelChangeListener() {
 			public void onPropertyChanged(OptionModelChangeEvent e)
@@ -73,7 +88,15 @@ public class ProcessTypeConfigurationPanel extends Panel
 		
 		// Set Layout
 		setLayout(new BorderLayout());
+		
 		add(cmbProcessSelection, BorderLayout.NORTH);
+		
+		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		
+		if (initialSelection != null) {
+			processTypeListModel.setSelectedItemByValue(initialSelection);
+			onProcessSelectionChanged(initialSelection);
+		}
 	}
 	
 	protected void onProcessSelectionChanged(String processId)
@@ -82,6 +105,7 @@ public class ProcessTypeConfigurationPanel extends Panel
 		
 		if (processInstance != null) {
 			log.info("Process Selected: " + processInstance.getId());
+			this.currentProcessId = processInstance.getId();
 			
 			buildOptionsPanel(processInstance.getOptionModelClass());
 			
@@ -108,13 +132,20 @@ public class ProcessTypeConfigurationPanel extends Panel
 			currentOptionsPanel = null;
 		}
 		
-		currentOptionModel = null;
-		try {
-			currentOptionModel = (OptionModel) optionModelClass.newInstance();
-		} catch (Exception ex) {
-			// TODO: Display error dialog
-			log.error("Error creating instance of option model: " + ex.getMessage(), ex);
-			return;
+		if (currentScrollPane != null) {
+			remove(currentScrollPane);
+			currentScrollPane = null;
+		}
+		
+		currentOptionModel = getProvidedOptionModel(optionModelClass);
+		if (currentOptionModel == null) {
+			try {
+				currentOptionModel = (OptionModel) optionModelClass.newInstance();
+			} catch (Exception ex) {
+				// TODO: Display error dialog
+				log.error("Error creating instance of option model: " + ex.getMessage(), ex);
+				return;
+			}
 		}
 		
 		currentOptionModelContainer = null;
@@ -126,17 +157,33 @@ public class ProcessTypeConfigurationPanel extends Panel
 			return;
 		}
 		
+		
+		
 		currentOptionModelContainer.addOptionModelChangeListener(propertyChangeListener);
 		
 		currentOptionsPanel = new DynamicOptionsPanel(currentOptionModelContainer);
 		currentOptionsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		
-		ScrollPane scroll = new ScrollPane(currentOptionsPanel);
-		add(scroll, BorderLayout.CENTER);
+
+		currentScrollPane = new ScrollPane(currentOptionsPanel);
+		add(currentScrollPane, BorderLayout.CENTER);
 		
 		this.validate();
 	}
 
+	protected OptionModel getProvidedOptionModel(Class<?> clazz)
+	{
+		
+		for (OptionModel optionModel : this.providedOptionModelList) {
+			if (optionModel.getClass().equals(clazz)) {
+				return optionModel;
+			}
+		}
+		
+		return null;
+		
+	}
+	
+	
 	public OptionModel getCurrentOptionModel()
 	{
 		return currentOptionModel;
@@ -147,6 +194,10 @@ public class ProcessTypeConfigurationPanel extends Panel
 		return currentOptionModelContainer;
 	}
 	
+	public String getCurrentProcessId()
+	{
+		return currentProcessId;
+	}
 	
 	
 	public void fireChangeListener()

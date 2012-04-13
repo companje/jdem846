@@ -77,4 +77,10 @@ public class AzimuthElevationAngles
 		}
 	}
 	
+	public AzimuthElevationAngles copy()
+	{
+		AzimuthElevationAngles copy = new AzimuthElevationAngles(this.azimuthAngle, this.elevationAngle);
+		return copy;
+	}
+	
 }
