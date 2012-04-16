@@ -12,6 +12,8 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
+import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
+import us.wthr.jdem846.model.exceptions.ModelContainerException;
 
 public class OptionModelContainer
 {
@@ -261,6 +263,85 @@ public class OptionModelContainer
 		}
 		
 		return propertyList;
+	}
+	
+	public boolean hasPropertyByName(String propertyName)
+	{
+		if (getPropertyByName(propertyName) != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean hasPropertyById(String propertyId)
+	{
+		if (getPropertyById(propertyId) != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public void setPropertyValueByName(String propertyName, Object value) throws ModelContainerException
+	{
+		OptionModelPropertyContainer propertyContainer = getPropertyByName(propertyName);
+		if (propertyContainer != null) {
+			try {
+				propertyContainer.setValue(value);
+			} catch (MethodContainerInvokeException ex) {
+				throw new ModelContainerException("Exception setting property value: " + ex.getMessage(), ex);
+			}
+		} else {
+			throw new ModelContainerException("Property not found with name '" + propertyName + "'");
+		}
+	
+	}
+	
+	public Object getPropertyValueByName(String propertyName) throws ModelContainerException
+	{
+		OptionModelPropertyContainer propertyContainer = getPropertyByName(propertyName);
+		if (propertyContainer != null) {
+			try {
+				return propertyContainer.getValue();
+			} catch (MethodContainerInvokeException ex) {
+				throw new ModelContainerException("Exception getting property value: " + ex.getMessage(), ex);
+			}
+		} else {
+			throw new ModelContainerException("Property not found with name '" + propertyName + "'");
+		}
+	
+	}
+	
+	
+	public void setPropertyValueById(String propertyId, Object value) throws ModelContainerException
+	{
+		OptionModelPropertyContainer propertyContainer = getPropertyById(propertyId);
+		if (propertyContainer != null) {
+			try {
+				propertyContainer.setValue(value);
+			} catch (MethodContainerInvokeException ex) {
+				throw new ModelContainerException("Exception setting property value: " + ex.getMessage(), ex);
+			}
+		} else {
+			throw new ModelContainerException("Property not found with id '" + propertyId + "'");
+		}
+	
+	}
+	
+	public Object getPropertyValueById(String propertyId) throws ModelContainerException
+	{
+		OptionModelPropertyContainer propertyContainer = getPropertyById(propertyId);
+		if (propertyContainer != null) {
+			try {
+				return propertyContainer.getValue();
+			} catch (MethodContainerInvokeException ex) {
+				throw new ModelContainerException("Exception getting property value: " + ex.getMessage(), ex);
+			}
+		} else {
+			throw new ModelContainerException("Property not found with id '" + propertyId + "'");
+		}
+	
 	}
 	
 	

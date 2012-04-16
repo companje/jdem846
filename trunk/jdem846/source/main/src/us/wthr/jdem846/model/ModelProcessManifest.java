@@ -26,6 +26,15 @@ public class ModelProcessManifest
 		this.globalOptionModel = globalOptionModel;
 	}
 	
+	
+	public void addProcessor(String processId)
+	{
+		ProcessInstance processInstance = ModelProcessRegistry.getInstance(processId);
+		Class<?> clazz = (Class<?>) processInstance.getProcessorClass();
+		
+		
+	}
+	
 	public void addProcessor(String processId, OptionModel optionModel)
 	{
 		ProcessInstance processInstance = ModelProcessRegistry.getInstance(processId);
