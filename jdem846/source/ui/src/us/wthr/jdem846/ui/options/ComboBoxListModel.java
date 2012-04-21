@@ -11,7 +11,7 @@ import us.wthr.jdem846.model.ModelDataListener;
 import us.wthr.jdem846.model.OptionListModel;
 import us.wthr.jdem846.model.OptionListModelItem;
 
-public class ComboBoxListModel<E> implements ComboBoxModel<Object>
+public class ComboBoxListModel<E> implements ComboBoxModel
 {
 	private List<ListDataListener> listDataListeners = new LinkedList<ListDataListener>();
 	private OptionListModel<E> optionListModel;

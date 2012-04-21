@@ -23,7 +23,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;
 
 
-public class JComboBoxModel<E> implements ComboBoxModel<Object>
+public class JComboBoxModel<E> implements ComboBoxModel
 {
 	
 	private List<ComboBoxItem<E>> itemList = new LinkedList<ComboBoxItem<E>>();
@@ -46,14 +46,13 @@ public class JComboBoxModel<E> implements ComboBoxModel<Object>
 	}
 	
 	
-	@Override
+	
 	public Object getSelectedItem() 
 	{
 		return selectedItem;
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public void setSelectedItem(Object anItem) 
 	{
 		selectedItem = (ComboBoxItem<E>) anItem;
