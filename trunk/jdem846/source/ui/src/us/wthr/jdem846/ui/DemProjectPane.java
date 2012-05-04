@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -55,6 +56,8 @@ import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.ModelProcessManifest;
+import us.wthr.jdem846.model.OptionModelChangeEvent;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
@@ -79,6 +82,8 @@ import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.SplitPane;
 import us.wthr.jdem846.ui.lighting.LightingOptionsPanel;
+import us.wthr.jdem846.ui.options.ModelConfigurationChangeListener;
+import us.wthr.jdem846.ui.options.ModelConfigurationPanel;
 import us.wthr.jdem846.ui.panels.EmbeddedTabbedPane;
 import us.wthr.jdem846.ui.scripting.ScriptEditorPanel;
 
@@ -91,8 +96,15 @@ public class DemProjectPane extends JdemPanel implements Savable
 	private DataSetTree datasetTree;
 	private DataSetOptionsPanel datasetOptionsPanel;
 	private OrderingButtonBar orderingButtonBar;
-	private ModelOptionsPanel modelOptionsPanel;
-	private LightingOptionsPanel lightingOptionsPanel;
+	private ModelConfigurationPanel modelConfigurationPanel;
+	
+	//@Deprecated
+	//private ModelOptionsPanel modelOptionsPanel;
+	
+	//@Deprecated
+	//private LightingOptionsPanel lightingOptionsPanel;
+	
+	
 	//private ProjectionConfigPanel projectionConfigPanel;
 	//private GradientConfigPanel gradientConfigPanel;
 	//private LightPositionConfigPanel lightPositionConfigPanel;
@@ -111,11 +123,19 @@ public class DemProjectPane extends JdemPanel implements Savable
 	//private ProjectModel projectModel;
 	
 	private ModelContext modelContext;
-	private ModelOptions modelOptions;
+	
+	
+	private ModelProcessManifest modelProcessManifest;
+	
+	//@Deprecated
+	//private ModelOptions modelOptions;
+	
+	
+	
 	private RasterDataContext rasterDataContext;
 	private ShapeDataContext shapeDataContext;
 	private ImageDataContext imageDataContext;
-	private LightingContext lightingContext;
+	//private LightingContext lightingContext;
 	
 	private List<CreateModelListener> createModelListeners = new LinkedList<CreateModelListener>();
 	
@@ -141,16 +161,17 @@ public class DemProjectPane extends JdemPanel implements Savable
 	{
 		//dataPackage = new DataPackage(null);
 		rasterDataContext = new RasterDataContext();
-		modelOptions = new ModelOptions();
+		//modelOptions = new ModelOptions();
+		modelProcessManifest = new ModelProcessManifest();
 		shapeDataContext = new ShapeDataContext();
 		imageDataContext = new ImageDataContext();
-		lightingContext = new LightingContext();
+		//lightingContext = new LightingContext();
 		
 		
 		
 		
 		try {
-			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions);
+			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, modelProcessManifest);
 		} catch (ModelContextException ex) {
 			// TODO: Display error message dialog
 			log.error("Exception creating model context: " + ex.getMessage(), ex);
@@ -160,8 +181,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		// Apply model options
 		if (projectModel != null) {
-			modelOptions.syncFromProjectModel(projectModel);
-			lightingContext.syncFromProjectModel(projectModel);
+			//modelOptions.syncFromProjectModel(projectModel);
+			//lightingContext.syncFromProjectModel(projectModel);
+			
+			// TODO: Load saved project into model
 			
 			for (String filePath : projectModel.getInputFiles()) {
 				addElevationDataset(filePath, false);
@@ -185,11 +208,13 @@ public class DemProjectPane extends JdemPanel implements Savable
 		datasetOptionsPanel = new DataSetOptionsPanel();
 		orderingButtonBar = new OrderingButtonBar();
 		
-		modelOptionsPanel = new ModelOptionsPanel();
-		modelOptionsPanel.setModelOptions(modelOptions);
+		modelConfigurationPanel = new ModelConfigurationPanel(modelProcessManifest);
 		
-		lightingOptionsPanel = new LightingOptionsPanel();
-		lightingOptionsPanel.setLightingContext(lightingContext);
+		//modelOptionsPanel = new ModelOptionsPanel();
+		//modelOptionsPanel.setModelOptions(modelOptions);
+		
+		//lightingOptionsPanel = new LightingOptionsPanel();
+		//lightingOptionsPanel.setLightingContext(lightingContext);
 		
 		//gradientConfigPanel = new GradientConfigPanel();
 		//projectionConfigPanel = new ProjectionConfigPanel();
@@ -204,6 +229,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 		//layoutPane = new DataInputLayoutPane(modelContext);
 		//previewPane = new ModelPreviewPane(modelContext);
 		visualizationPanel = new ModelVisualizationPanel(modelContext);
+		modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
+		modelContext.setModelProcessManifest(modelProcessManifest);
+		
+		
 		scriptPane = new ScriptEditorPanel();
 		
 		//statusBar = new StatusBar();
@@ -216,13 +245,14 @@ public class DemProjectPane extends JdemPanel implements Savable
 		MainMenuBar.insertMenu(projectMenu);
 		
 		// Add listeners
-		
+		/*
 		modelOptionsPanel.setGetAspectRatioHandler(new GetAspectRatioHandler() {
 			public double getAspectRatio()
 			{
 				return (double)rasterDataContext.getDataColumns() / (double)rasterDataContext.getDataRows();
 			}
 		});
+		*/
 		
 		projectMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.projectPane.menu.project.add"), JDem846Properties.getProperty("us.wthr.jdem846.ui.project.addData"), KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
@@ -344,6 +374,27 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		
 		// Add change listeners
+		
+		modelConfigurationPanel.addModelConfigurationChangeListener(new ModelConfigurationChangeListener() {
+			public void onProcessSelected(String processId)
+			{
+				log.info("** New Process Selected: " + processId);
+				modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
+				modelContext.setModelProcessManifest(modelProcessManifest);
+				// TODO: On configuration changed
+				onConfigurationChanged();
+			}
+			public void onPropertyChanged(OptionModelChangeEvent e)
+			{
+				log.info("** Property change for " + e.getPropertyName() + " from " + e.getOldValue() + " to " + e.getNewValue());
+				modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
+				modelContext.setModelProcessManifest(modelProcessManifest);
+				// TODO: On configuration changed
+				onConfigurationChanged();
+			}			
+		});
+		
+		/*
 		modelOptionsPanel.addOptionsChangedListener(new OptionsChangedListener() {
 			public void onOptionsChanged(MappedOptions options)
 			{
@@ -364,18 +415,22 @@ public class DemProjectPane extends JdemPanel implements Savable
 			}
 		});
 		
+		*/
 		
+		/*
 		lightingContext.addOptionChangeListener(new OptionChangeListener() {
 			public void onOptionChanged(String key, Object oldValue, Object newValue)
 			{
 				
 			}
 		});
+		*/
 		
 		visualizationPanel.addProjectionChangeListener(new ProjectionChangeListener() {
 			public void onProjectionChanged(double rotateX, double rotateY, double rotateZ, double shiftX, double shiftY, double shiftZ, double zoom)
 			{
 				
+				/*
 				modelOptionsPanel.getModelOptions(false).getProjection().setRotateX(rotateX);
 				modelOptionsPanel.getModelOptions(false).getProjection().setRotateY(rotateY);
 				modelOptionsPanel.getModelOptions(false).getProjection().setRotateZ(rotateZ);
@@ -387,6 +442,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 				modelOptionsPanel.getModelOptions(false).getProjection().setZoom(zoom);
 				
 				modelOptionsPanel.applyOptionsToUI();
+				*/
+				// TODO: Apply projection to model
 				applyOptionsToUI();
 				//applyEngineSelectionConfiguration();
 				
@@ -411,17 +468,23 @@ public class DemProjectPane extends JdemPanel implements Savable
 		dataPanel.add(orderingButtonBar, BorderLayout.NORTH);
 		dataPanel.add(datasetTree, BorderLayout.CENTER);
 		dataPanel.add(datasetOptionsPanel, BorderLayout.SOUTH);
-
-		ScrollPane optionsScroll = new ScrollPane(modelOptionsPanel);
-		ScrollPane lightingScroll = new ScrollPane(lightingOptionsPanel);
 		
-		optionsScroll.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		lightingScroll.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		//ScrollPane optionsScroll = new ScrollPane(modelOptionsPanel);
+		
+		//ScrollPane lightingScroll = new ScrollPane(lightingOptionsPanel);
+		
+		
+		
+		//optionsScroll.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		//lightingScroll.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		
+		
 		
 		EmbeddedTabbedPane leftTabPane = new EmbeddedTabbedPane();
 		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.data"), dataPanel);
-		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.setup"), optionsScroll);
-		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.lighting"), lightingScroll);
+		//leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.setup"), modelConfigurationPanel);
+		//leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.setup"), optionsScroll);
+		//leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.lighting"), lightingScroll);
 		
 		EmbeddedTabbedPane leftLowerTabPane = new EmbeddedTabbedPane();
 		leftLowerTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.modelOverview"), regionOverviewPanel);
@@ -438,14 +501,26 @@ public class DemProjectPane extends JdemPanel implements Savable
 		addLeft(leftSplit, false);
 		
 		
+		
 		ComponentAdapter dividerChangeListener = new ComponentAdapter() {
 			public void componentResized(ComponentEvent arg0) {
 				int location = leftSplit.getDividerLocation();
 				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.demProjectPane.leftVerticalSplitPosition", ""+location);
+			
+				int leftWidth = getLeftWidth();
+				int rightWidth = getRightWidth();
+				
+				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.demProjectPane.leftHorizontalSplitPosition", ""+leftWidth);
+				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.demProjectPane.rightHorizontalSplitPosition", ""+rightWidth);
 			}
 		};
+		
+		
 		leftTabPane.addComponentListener(dividerChangeListener);
 		leftLowerTabPane.addComponentListener(dividerChangeListener);
+		
+		addRight(modelConfigurationPanel, false);
+		modelConfigurationPanel.addComponentListener(dividerChangeListener);
 		
 		//leftSplit.get
 		leftSplit.addPropertyChangeListener(new PropertyChangeListener() {
@@ -470,8 +545,19 @@ public class DemProjectPane extends JdemPanel implements Savable
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"), visualizationPanel);
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.script"), scriptPane);
 		
-		setLeftWidth(350);
-		this.setRightVisible(false);
+		
+		ComponentListener setLeftRightWidthsAdapter = new ComponentAdapter() {
+			public void componentShown(ComponentEvent e)
+			{
+				setLeftWidth(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.demProjectPane.leftHorizontalSplitPosition"));
+				setRightWidth(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.demProjectPane.rightHorizontalSplitPosition"));
+				removeComponentListener(this);
+			}
+		};
+		addComponentListener(setLeftRightWidthsAdapter);
+		
+		
+		//this.setRightVisible(false);
 		this.setSouthVisible(false);
 		//this.addRight(gradientConfigPanel, false);
 		//this.addRight(lightPositionConfigPanel, false);
@@ -485,7 +571,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		//onConfigurationChanged();
 		applyOptionsToUI();
-		applyEngineSelectionConfiguration();
+		//applyEngineSelectionConfiguration();
 		onDataModelChanged(true, true, true, true);
 	}
 	
@@ -494,14 +580,15 @@ public class DemProjectPane extends JdemPanel implements Savable
 	{
 		// If this script isn't null or it's longer than 0 characters, then we
 		// can assume that the user has already provided one.
-		if (modelOptions.getUserScript() != null && modelOptions.getUserScript().length() > 0) {
-			return;
-		}
+		///if (modelOptions.getUserScript() != null && modelOptions.getUserScript().length() > 0) {
+		//	return;
+		//}
 		
 		// Default/Hardcode to Groovy for now...
 		
 		String scriptTemplatePath = null;
 		
+		/*
 		if (modelOptions.getScriptLanguage() == ScriptLanguageEnum.GROOVY) {
 			scriptTemplatePath = modelOptions.getOption(ModelOptionNamesEnum.USER_SCRIPT_GROOVY_TEMPLATE);
 		} else if (modelOptions.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
@@ -528,7 +615,9 @@ public class DemProjectPane extends JdemPanel implements Savable
 		if (scriptTemplate != null) {
 			modelOptions.setUserScript(scriptTemplate);
 		}
+		*/
 		
+		// TODO: Reapply scripting
 		
 	}
 	
@@ -579,10 +668,13 @@ public class DemProjectPane extends JdemPanel implements Savable
 	
 	public ProjectModel getProjectModel()
 	{
+		ProjectModel projectModel = new ProjectModel();
+		// TODO: Reapply sync
+		/*
 		ModelOptions modelOptions = modelOptionsPanel.getModelOptions();
 		applyOptionsToModel(modelOptions);
 		
-		ProjectModel projectModel = new ProjectModel();
+		
 		projectModel.setProjectType(ProjectTypeEnum.STANDARD_PROJECT);
 		projectModel.setLoadedFrom(projectLoadedFrom);
 		modelOptions.syncToProjectModel(projectModel);
@@ -599,6 +691,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		for (SimpleGeoImage image : imageDataContext.getImageList()) {
 			projectModel.getImageFiles().add(image);
 		}
+		*/
 		
 		return projectModel;
 	}
@@ -683,21 +776,17 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 	}
 	
+
 	protected void onConfigurationChanged()
-	{
-		onConfigurationChanged(null);
-	}
-	
-	protected void onConfigurationChanged(ModelOptions modelOptions)
 	{
 		if (ignoreValueChanges)
 			return;
 		
 		
-		if (modelOptions == null) {
-			modelOptions = modelOptionsPanel.getModelOptions();
-		}
-		this.modelOptions = modelOptions;
+		//if (modelOptions == null) {
+	//		modelOptions = modelOptionsPanel.getModelOptions();
+		//}
+		//this.modelOptions = modelOptions;
 		
 		//modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
 		////modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
@@ -705,12 +794,13 @@ public class DemProjectPane extends JdemPanel implements Savable
 		//modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
 		//modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
 		//modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
-		modelOptions.setUserScript(scriptPane.getScriptContent());
-		modelOptions.setScriptLanguage(scriptPane.getScriptLanguage());
+		
+		// TODO: Replace scripting
+		//modelOptions.setUserScript(scriptPane.getScriptContent());
+		//modelOptions.setScriptLanguage(scriptPane.getScriptLanguage());
 		
 		applyOptionsToUI();
-		applyEngineSelectionConfiguration();
-		
+
 		onDataModelChanged(false, false, false, true);
 	}
 
@@ -721,68 +811,30 @@ public class DemProjectPane extends JdemPanel implements Savable
 			return;
 		
 		ignoreValueChanges = true;
-		
-		//gradientConfigPanel.setGradientIdentifier(modelOptions.getColoringType());
-		//gradientConfigPanel.setConfigString(modelOptions.getGradientLevels());
-		//lightPositionConfigPanel.setSolarAzimuth(modelOptions.getLightingAzimuth());
-		//lightPositionConfigPanel.setSolarElevation(modelOptions.getLightingElevation());
 
-		//projectionConfigPanel.setRotation(modelOptions.getProjection().getRotateX(),
-		//						modelOptions.getProjection().getRotateY(),
-		//						modelOptions.getProjection().getRotateZ());
-		
+		// TODO: Reapply scripting
+		/*
 		scriptPane.setScriptLanguage(modelOptions.getScriptLanguage());
 		if (modelOptions.getUserScript() != null && modelOptions.getUserScript().length() > 0) {
 			scriptPane.setScriptContent(modelOptions.getUserScript());
 		}
-		
+		*/
 	
 		
 		ignoreValueChanges = false;
 	}
 	
 	
-	protected void applyEngineSelectionConfiguration()
-	{
-		
-		//String engineSelection = modelOptions.getEngine();
-		//String coloringSelection = modelOptions.getColoringType();
-		
-		//EngineInstance engineInstance = EngineRegistry.getInstance(engineSelection);
-		//ColoringInstance coloringInstance = ColoringRegistry.getInstance(coloringSelection);
-		
-		//gradientConfigPanel.setVisible(coloringInstance.allowGradientConfig());
-		//projectionConfigPanel.setVisible(engineInstance.uses3DProjection());
-		//lightPositionConfigPanel.setVisible(engineInstance.usesLightDirection());
-				
-		//if (engineInstance.usesLightDirection()) {
-		//		lightPositionConfigPanel.updatePreview(true);
-		//}	
-		
-		
-		
-	}
-	
 	protected void applyOptionsToModel(ModelOptions modelOptions)
 	{
-		if (modelOptions == null) {
-			modelOptions = this.modelOptions;
-		}
+		//if (modelOptions == null) {
+		//	modelOptions = this.modelOptions;
+		//}
 		
-		//modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
-		
-		
-		
-		//modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
-		//modelOptions.setLightingElevation(lightPositionConfigPanel.getSolarElevation());
 
-		//modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
-		//modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
-		//modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
-		
-		
-		modelOptions.setUserScript(scriptPane.getScriptContent());
-		modelOptions.setScriptLanguage(scriptPane.getScriptLanguage());
+		// TODO: Reapply scripting
+		//modelOptions.setUserScript(scriptPane.getScriptContent());
+		//modelOptions.setScriptLanguage(scriptPane.getScriptLanguage());
 	}
 	
 	
@@ -985,7 +1037,9 @@ public class DemProjectPane extends JdemPanel implements Savable
 		boolean updateImage = forceImageUpdate || lastImageDataCount != imageDataContext.getImageListSize();
 		
 		try {
-			boolean estimate = modelOptions.getBooleanOption(ModelOptionNamesEnum.ESTIMATE_ELEVATION_MIN_MAX);
+			//boolean estimate = modelOptions.getBooleanOption(ModelOptionNamesEnum.ESTIMATE_ELEVATION_MIN_MAX);
+			
+			boolean estimate = this.modelProcessManifest.getGlobalOptionModel().isEstimateElevationRange();
 			modelContext.updateContext(updateRaster, estimate);
 		} catch (ModelContextException ex) {
 			// TODO: Display error dialog
@@ -1231,9 +1285,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 			return;
 		}
 
-		LightingContext lightingContext = this.lightingContext.copy();
+		//LightingContext lightingContext = this.lightingContext.copy();
+		//ModelOptions modelOptions = this.modelOptions.copy();
 		
-		ModelOptions modelOptions = this.modelOptions.copy();
+		ModelProcessManifest modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
 		
 		String scriptContent = scriptPane.getScriptContent();
 		ScriptProxy scriptProxy = null;
@@ -1253,7 +1308,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		}
 		
 		try {
-			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions, scriptProxy);
+			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, modelProcessManifest, scriptProxy);
 		} catch (ModelContextException ex) {
 			// TODO: Display error dialog
 			log.error("Exception updating model context: " + ex.getMessage(), ex);
@@ -1273,12 +1328,16 @@ public class DemProjectPane extends JdemPanel implements Savable
 
 	public void setSavedPath(String savedPath)
 	{
-		modelOptions.setWriteTo(savedPath);
+		// TODO: Reapply savedPath
+		
+		//modelOptions.setWriteTo(savedPath);
 	}
 	
 	public String getSavedPath()
 	{
-		return modelOptions.getWriteTo();
+		// TODO: Reapply get saved path
+		return null;
+		//return modelOptions.getWriteTo();
 	}
 
 	@Override

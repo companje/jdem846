@@ -1,6 +1,7 @@
 package us.wthr.jdem846.ui.options;
 
 import java.awt.BorderLayout;
+import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.logging.Log;
@@ -24,6 +25,9 @@ public class DynamicOptionsPanel extends Panel
 	
 	private OptionModelContainer container;
 	private FlexGridPanel controlGrid;
+	
+	//private List<ModelConfigurationChangeListener> modelConfigurationChangeListeners = new LinkedList<ModelConfigurationChangeListener>();
+	
 	
 	public DynamicOptionsPanel(OptionModelContainer container)
 	{

@@ -61,8 +61,11 @@ public class SimpleRenderer
 		double east = modelContext.getEast();
 		double west = modelContext.getWest();
 		
-		double latitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
-		double longitudeSlices = modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices");
+		double latitudeSlices = 100;//modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices");
+		double longitudeSlices = 100;//modelContext.getModelOptions().getDoubleOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices");
+		
+		
+		
 		
 		double latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
 		double longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
@@ -124,7 +127,7 @@ public class SimpleRenderer
 	
 		projection = modelContext.getModelCanvas().getCanvasProjection();
 		
-		paintGlobalBaseGrid = modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintGlobalBaseGrid");
+		paintGlobalBaseGrid = true;//modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintGlobalBaseGrid");
 
 		
 	}
@@ -158,12 +161,12 @@ public class SimpleRenderer
 		
 		
 		
-		if (modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview")) {
+		//if (modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview")) {
 			
 			modelBuilder.process();
 			modelRenderer.process();
 			
-		}
+		//}
 		
 		
 		

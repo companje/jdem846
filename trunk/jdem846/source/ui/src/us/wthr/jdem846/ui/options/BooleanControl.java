@@ -21,7 +21,7 @@ public class BooleanControl extends CheckBox implements ActionListener
 	
 	private final OptionModelPropertyContainer propertyContainer;
 	
-	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
+	//private List<ModelConfigurationChangeListener> modelConfigurationChangeListeners = new LinkedList<ModelConfigurationChangeListener>();
 	
 	public BooleanControl(OptionModelPropertyContainer property)
 	{
@@ -36,6 +36,7 @@ public class BooleanControl extends CheckBox implements ActionListener
 		} catch (MethodContainerInvokeException ex) {
 			log.error("Error setting initial value to property " + property.getPropertyName());
 		}
+		
 	}
 	
 	@Override
@@ -49,4 +50,6 @@ public class BooleanControl extends CheckBox implements ActionListener
 		}
 	}
 	
+	
+
 }

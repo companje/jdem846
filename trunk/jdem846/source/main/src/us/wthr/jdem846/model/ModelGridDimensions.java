@@ -67,7 +67,7 @@ public class ModelGridDimensions extends ModelDimensions
 				west = MathExt.min(west, image.getWest());
 			}
 		}
-		
+
 		if (north > 90) {
 			north = 90;
 		}
@@ -84,13 +84,19 @@ public class ModelGridDimensions extends ModelDimensions
 			west = -180;
 		}
 
+		
+		
+		
+		
 		dataRows = (int) MathExt.round((north - south) / latitudeResolution);
 		dataColumns = (int) MathExt.round((east - west) / longitudeResolution);
 		
 		outputHeight = globalOptionModel.getHeight();
 		outputWidth = globalOptionModel.getWidth();
 
-		double scaleX = modelContext.getModelOptions().getProjection().getZoom();
+		double scaleX = 1.0;//modelContext.getModelOptions().getProjection().getZoom();
+		
+		
 		
 		LatLonResolution latLonOutputRes = null;
 		CanvasProjectionTypeEnum canvasProjectionType = CanvasProjectionTypeEnum.getCanvasProjectionEnumFromIdentifier(globalOptionModel.getRenderProjection());
@@ -124,11 +130,30 @@ public class ModelGridDimensions extends ModelDimensions
 		outputLatitudeResolution = latLonOutputRes.latitudeResolution;
 		outputLongitudeResolution = latLonOutputRes.longitudeResolution;
 		
+		double latitudeSlices = globalOptionModel.getLatitudeSlices();
+		double longitudeSlices = globalOptionModel.getLongitudeSlices();
+		
+		if (latitudeSlices != -1) {
+			outputLatitudeResolution = (north - south - outputLatitudeResolution) / latitudeSlices;
+		}
+		
+		if (longitudeSlices != -1) {
+			outputLongitudeResolution = (east - west - outputLongitudeResolution) / longitudeSlices;
+		}
+		
+		
 		if (outputLongitudeResolution < longitudeResolution)
 			outputLongitudeResolution = longitudeResolution;
 		
 		if (outputLatitudeResolution < latitudeResolution)
 			outputLatitudeResolution = latitudeResolution;
+	}
+	
+	
+	public static ModelGridDimensions getModelDimensions(ModelContext modelContext)
+	{
+		ModelGridDimensions modelGridDimensions = new ModelGridDimensions(modelContext, modelContext.getModelProcessManifest().getGlobalOptionModel());
+		return modelGridDimensions;
 	}
 	
 	public static ModelGridDimensions getModelDimensions(ModelContext modelContext, GlobalOptionModel globalOptionModel)

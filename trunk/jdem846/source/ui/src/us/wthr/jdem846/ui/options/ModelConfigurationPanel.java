@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -11,7 +14,10 @@ import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelProcessContainer;
 import us.wthr.jdem846.model.ModelProcessManifest;
 import us.wthr.jdem846.model.OptionModel;
+import us.wthr.jdem846.model.OptionModelChangeEvent;
+import us.wthr.jdem846.model.OptionModelChangeListener;
 import us.wthr.jdem846.model.OptionModelContainer;
+import us.wthr.jdem846.model.OptionModelPropertyContainer;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.dataload.GridLoadOptionModel;
@@ -36,13 +42,15 @@ public class ModelConfigurationPanel extends Panel
 	private GlobalOptionModel globalOptionModel;
 	private OptionModelContainer globalOptionModelContainer;
 	
+	private List<ModelConfigurationChangeListener> modelConfigurationChangeListeners = new LinkedList<ModelConfigurationChangeListener>();
+	
 	public ModelConfigurationPanel(ModelProcessManifest modelProcessManifest)
 	{
 		
 		
 		
 		
-		globalOptionModel = new GlobalOptionModel();
+		globalOptionModel = modelProcessManifest.getGlobalOptionModel();
 		try {
 			globalOptionModelContainer = new OptionModelContainer(globalOptionModel);
 		} catch (InvalidProcessOptionException ex) {
@@ -63,10 +71,43 @@ public class ModelConfigurationPanel extends Panel
 		String defaultShadingProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.shadingProcessor.default");
 		String defaultRenderProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.renderProcessor.default");
 		
+		
+		
 		globalOptionsPanel = new DynamicOptionsPanel(globalOptionModelContainer);
 		coloringConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.COLORING, defaultColoringProcessor, optionModelList);
 		shadingConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.SHADING, defaultShadingProcessor, optionModelList);
 		renderConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.RENDER, defaultRenderProcessor, optionModelList);
+		
+		
+		// Add Listeners
+		OptionModelChangeListener propertyChangeListener = new OptionModelChangeListener() {
+			public void onPropertyChanged(OptionModelChangeEvent e)
+			{
+				firePropertyChangeListeners(e);
+				//log.info("Property change for " + e.getPropertyName() + " from " + e.getOldValue() + " to " + e.getNewValue());
+			}
+		};
+		for (OptionModelPropertyContainer propertyContainer : globalOptionModelContainer.getProperties()) {
+			propertyContainer.addOptionModelChangeListener(propertyChangeListener);
+		}
+
+		ModelConfigurationChangeListener modelConfigurationChangeListener = new ModelConfigurationChangeListener() {
+			public void onProcessSelected(String processId)
+			{
+				//log.info("** New Process Selected: " + processId);
+				fireProcessSelectedListeners(processId);
+			}
+			public void onPropertyChanged(OptionModelChangeEvent e)
+			{
+				//log.info("** Property change for " + e.getPropertyName() + " from " + e.getOldValue() + " to " + e.getNewValue());
+				firePropertyChangeListeners(e);
+			}
+		};
+		
+		coloringConfiguration.addModelConfigurationChangeListener(modelConfigurationChangeListener);
+		shadingConfiguration.addModelConfigurationChangeListener(modelConfigurationChangeListener);
+		renderConfiguration.addModelConfigurationChangeListener(modelConfigurationChangeListener);
+		
 		
 		ScrollPane globalOptionsScroll = new ScrollPane(globalOptionsPanel);
 		
@@ -79,6 +120,9 @@ public class ModelConfigurationPanel extends Panel
 		
 		setLayout(new BorderLayout());
 		add(tabPane, BorderLayout.CENTER);
+		
+		
+		
 	}
 	
 	
@@ -109,6 +153,33 @@ public class ModelConfigurationPanel extends Panel
 		modelProcessManifest.addProcessor(renderProcessId, renderOptionModel);
 		
 		return modelProcessManifest;
+	}
+	
+	
+	public void addModelConfigurationChangeListener(ModelConfigurationChangeListener listener)
+	{
+		modelConfigurationChangeListeners.add(listener);
+	}
+	
+	public boolean removeModelConfigurationChangeListener(ModelConfigurationChangeListener listener)
+	{
+		return modelConfigurationChangeListeners.remove(listener);
+	}
+	
+	protected void fireProcessSelectedListeners(String processId)
+	{
+		
+		for (ModelConfigurationChangeListener listener : modelConfigurationChangeListeners) {
+			listener.onProcessSelected(processId);
+		}
+		
+	}
+	
+	protected void firePropertyChangeListeners(OptionModelChangeEvent e)
+	{
+		for (ModelConfigurationChangeListener listener : modelConfigurationChangeListeners) {
+			listener.onPropertyChanged(e);
+		}
 	}
 	
 }
