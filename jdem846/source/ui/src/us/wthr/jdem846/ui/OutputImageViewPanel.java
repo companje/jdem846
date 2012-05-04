@@ -39,6 +39,9 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.ModelBuilder;
+import us.wthr.jdem846.model.ModelGridDimensions;
+import us.wthr.jdem846.model.ModelProcessManifest;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.OutputProduct;
 import us.wthr.jdem846.render.RenderEngine;
@@ -88,7 +91,7 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 	
 	private boolean showPreviews = true;
 	
-	public OutputImageViewPanel(final RenderEngine engine)
+	public OutputImageViewPanel(final ModelContext modelContext)
 	{
 		// Set Properties
 		//this.canvas = canvas;
@@ -97,7 +100,8 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 		//this.engine = engine;
 		//this.dataPackage = engine.getDataPackage();
 		//this.modelOptions = engine.getModelOptions();
-		this.modelContext = engine.getModelContext();
+		//this.modelContext = engine.getModelContext();
+		this.modelContext = modelContext;
 		
 		// Create components
 		imageDisplay = new ImageDisplayPanel();
@@ -248,9 +252,9 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				}
 			}
 		};
-		engine.addTileCompletionListener(tileCompletionListener);
+		//engine.addTileCompletionListener(tileCompletionListener);
 		
-		
+		final ModelBuilder modelBuilder = new ModelBuilder();
 		renderTask = new RunnableTask("Model Render Task") {
 			
 			public void run() throws RenderEngineException
@@ -260,11 +264,25 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				
 				long start = 0;
 				long elapsed = 0;
-
+				
+				ModelProcessManifest modelProcessManifest = modelContext.getModelProcessManifest();
+				
+				//ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext);
+				log.info("Initializing model builder...");
+				modelBuilder.prepare(modelContext, modelProcessManifest);
+				
+				log.info("Processing...");
 				start = System.currentTimeMillis();
-				OutputProduct<ModelCanvas> product = engine.generate(false, false);
+				modelBuilder.process();
+				
+				//OutputProduct<ModelCanvas> product = engine.generate(false, false);
 				elapsed = (System.currentTimeMillis() - start) / 1000;
 				
+				canvas = modelContext.getModelCanvas();
+				synchronized(imageDisplay) {
+					imageDisplay.setImage(canvas.getFinalizedImage());
+				}
+				/*
 				if (product != null) {
 					ModelCanvas demCanvas = product.getProduct();
 					synchronized(imageDisplay) {
@@ -275,7 +293,7 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				} else {
 					// TODO: Message or whatever
 				}
-				
+				*/
 				
 				log.info("Completed render task in " + elapsed + " seconds");
 
@@ -284,19 +302,19 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 			@Override
 			public void cancel()
 			{
-				engine.cancel();
+				modelBuilder.cancel();
 			}
 			
 			@Override
 			public void pause()
 			{
-				engine.pause();
+				modelBuilder.pause();
 			}
 			
 			@Override
 			public void resume()
 			{
-				engine.resume();
+				modelBuilder.resume();
 			}
 		};
 		

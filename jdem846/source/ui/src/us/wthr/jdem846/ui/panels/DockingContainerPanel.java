@@ -95,7 +95,7 @@ public class DockingContainerPanel extends Panel
 		
 		add(verticalSplit, BorderLayout.CENTER);
 		
-		
+		/*
 		this.addComponentListener(new ComponentListener() {
 			public void componentResized(ComponentEvent e)
 			{
@@ -107,8 +107,8 @@ public class DockingContainerPanel extends Panel
 			}
 			public void componentShown(ComponentEvent e)
 			{
-				innerSplit.setDividerLocation(innerSplit.getWidth() - 200);
-				verticalSplit.setDividerLocation(verticalSplit.getHeight() - 200);
+				//innerSplit.setDividerLocation(innerSplit.getWidth() - 200);
+				//verticalSplit.setDividerLocation(verticalSplit.getHeight() - 200);
 				removeComponentListener(this);
 			}
 			public void componentHidden(ComponentEvent e)
@@ -116,6 +116,7 @@ public class DockingContainerPanel extends Panel
 				
 			}
 		});
+		*/
 	}
 	
 	public void addLeft(Component component, boolean scroll)
@@ -155,6 +156,21 @@ public class DockingContainerPanel extends Panel
 	public void setLeftWidth(int width)
 	{
 		outterSplit.setDividerLocation(width);
+	}
+	
+	public int getLeftWidth()
+	{
+		return outterSplit.getDividerLocation();
+	}
+	
+	public void setRightWidth(int width)
+	{
+		innerSplit.setDividerLocation(innerSplit.getWidth() - width);
+	}
+	
+	public int getRightWidth()
+	{
+		return innerSplit.getWidth() - innerSplit.getDividerLocation();
 	}
 	
 	public void setLeftVisible(boolean v)

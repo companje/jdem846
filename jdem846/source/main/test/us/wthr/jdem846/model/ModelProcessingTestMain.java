@@ -326,11 +326,11 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, null, imageDataContext, null, modelOptions);
 		modelContext.updateContext(true, globalOptionModel.isEstimateElevationRange());
 		
-		ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext, globalOptionModel);
+		//ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext, globalOptionModel);
 		
 		log.info("Initializing model builder...");
 		ModelBuilder modelBuilder = new ModelBuilder();
-		modelBuilder.prepare(modelContext, modelDimensions, modelProcessManifest);
+		modelBuilder.prepare(modelContext, modelProcessManifest);
 		//modelBuilder.setAndPrepare(modelContext, null, modelDimensions, globalOptionModel, null);
 		
 		log.info("Processing...");

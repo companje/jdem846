@@ -47,8 +47,8 @@ public class ProcessTypeConfigurationPanel extends Panel
 	
 	private OptionModelChangeListener propertyChangeListener;
 	
-	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
-	
+	private List<ModelConfigurationChangeListener> modelConfigurationChangeListeners = new LinkedList<ModelConfigurationChangeListener>();
+
 	public ProcessTypeConfigurationPanel(GridProcessingTypesEnum processType, String initialSelection)
 	{
 		this(processType, initialSelection, null);
@@ -69,7 +69,8 @@ public class ProcessTypeConfigurationPanel extends Panel
 		propertyChangeListener = new OptionModelChangeListener() {
 			public void onPropertyChanged(OptionModelChangeEvent e)
 			{
-				log.info("Property change for " + e.getPropertyName() + " from " + e.getOldValue() + " to " + e.getNewValue());
+				//log.info("Property change for " + e.getPropertyName() + " from " + e.getOldValue() + " to " + e.getNewValue());
+				firePropertyChangeListeners(e);
 			}
 		};
 		
@@ -78,6 +79,7 @@ public class ProcessTypeConfigurationPanel extends Panel
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					onProcessSelectionChanged(processTypeListModel.getSelectedItemValue());
+					fireProcessSelectedListeners(processTypeListModel.getSelectedItemValue());
 				}
 					
 			}
@@ -199,28 +201,32 @@ public class ProcessTypeConfigurationPanel extends Panel
 		return currentProcessId;
 	}
 	
+	public void addModelConfigurationChangeListener(ModelConfigurationChangeListener listener)
+	{
+		modelConfigurationChangeListeners.add(listener);
+	}
 	
-	public void fireChangeListener()
+	public boolean removeModelConfigurationChangeListener(ModelConfigurationChangeListener listener)
+	{
+		return modelConfigurationChangeListeners.remove(listener);
+	}
+	
+	
+	
+	protected void fireProcessSelectedListeners(String processId)
 	{
 		
-		ChangeEvent e = new ChangeEvent(this);
-		
-		for (ChangeListener listener : changeListeners) {
-			listener.stateChanged(e);
+		for (ModelConfigurationChangeListener listener : modelConfigurationChangeListeners) {
+			listener.onProcessSelected(processId);
 		}
 		
 	}
 	
-	
-	public void addChangeListener(ChangeListener listener)
+	protected void firePropertyChangeListeners(OptionModelChangeEvent e)
 	{
-		this.changeListeners.add(listener);
-	}
-	
-	
-	public boolean removeChangeListener(ChangeListener listener)
-	{
-		return changeListeners.remove(listener);
+		for (ModelConfigurationChangeListener listener : modelConfigurationChangeListeners) {
+			listener.onPropertyChanged(e);
+		}
 	}
 	
 }

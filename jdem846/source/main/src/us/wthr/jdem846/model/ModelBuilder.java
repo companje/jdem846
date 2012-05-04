@@ -55,13 +55,26 @@ public class ModelBuilder extends InterruptibleProcess
 		
 	}
 	
-	public void prepare(ModelContext modelContext, ModelGridDimensions modelDimensions, ModelProcessManifest modelProcessManifest) throws RenderEngineException
+	public void prepare(ModelContext modelContext,  ModelProcessManifest modelProcessManifest) throws RenderEngineException
 	{
+		
+		GlobalOptionModel globalOptionModel = modelProcessManifest.getGlobalOptionModel();
+		
+		if (!globalOptionModel.getLimitCoordinates()) {
+			globalOptionModel.setNorthLimit(modelContext.getNorth());
+			globalOptionModel.setSouthLimit(modelContext.getSouth());
+			globalOptionModel.setEastLimit(modelContext.getEast());
+			globalOptionModel.setWestLimit(modelContext.getWest());
+		}
+		
+		
+		ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext);
+	
 		this.modelContext = modelContext;
 		this.modelDimensions = modelDimensions;
 		this.modelProcessManifest = modelProcessManifest;
 		
-		GlobalOptionModel globalOptionModel = modelProcessManifest.getGlobalOptionModel();
+		
 		
 	
 		if (modelGrid == null) {

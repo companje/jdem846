@@ -12,7 +12,7 @@ import us.wthr.jdem846.scaling.ElevationScalerEnum;
 public class GlobalOptionModel implements OptionModel
 {
 	
-	private boolean useScripting = true;
+	private boolean useScripting = false;
 	private int width = 2000;
 	private int height = 2000;
 	private boolean maintainAspectRatio = true;
@@ -28,6 +28,10 @@ public class GlobalOptionModel implements OptionModel
 	private String elevationScale = ElevationScalerEnum.LINEAR.identifier();
 	private String renderProjection = CanvasProjectionTypeEnum.PROJECT_FLAT.identifier();
 	private int subpixelGridSize = 1;
+	
+	private double latitudeSlices = -1;
+	private double longitudeSlices = -1;
+	
 	
 	public GlobalOptionModel()
 	{
@@ -281,7 +285,32 @@ public class GlobalOptionModel implements OptionModel
 		this.subpixelGridSize = subpixelGridSize;
 	}
 	
+
 	
+	public double getLatitudeSlices()
+	{
+		return latitudeSlices;
+	}
+
+
+	public void setLatitudeSlices(double latitudeSlices)
+	{
+		this.latitudeSlices = latitudeSlices;
+	}
+
+
+	public double getLongitudeSlices()
+	{
+		return longitudeSlices;
+	}
+
+
+	public void setLongitudeSlices(double longitudeSlices)
+	{
+		this.longitudeSlices = longitudeSlices;
+	}
+
+
 	public GlobalOptionModel copy()
 	{
 		GlobalOptionModel copy = new GlobalOptionModel();
@@ -302,6 +331,8 @@ public class GlobalOptionModel implements OptionModel
 		copy.elevationScale = this.elevationScale; 
 		copy.renderProjection = this.renderProjection;
 		copy.subpixelGridSize = this.subpixelGridSize;
+		copy.longitudeSlices = this.longitudeSlices;
+		copy.latitudeSlices = this.latitudeSlices;
 		
 		return copy;
 	}

@@ -609,7 +609,7 @@ public class JdemFrame extends Frame
 	{
 		
 		
-		
+		/*
 		String engineIdentifier = modelContext.getModelOptions().getEngine();
 		EngineInstance engineInstance = EngineRegistry.getInstance(engineIdentifier);
 		
@@ -630,6 +630,7 @@ public class JdemFrame extends Frame
 				    JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		*/
 		//engine.setDataPackage(dataPackage);
 		
 		// TODO: Restore this functionality
@@ -657,12 +658,13 @@ public class JdemFrame extends Frame
 		}
 		*/
 		
-		if (engine.generatesImage()) {
-			OutputImageViewPanel outputPanel = new OutputImageViewPanel(engine);
+		//if (engine.generatesImage()) {
+			OutputImageViewPanel outputPanel = new OutputImageViewPanel(modelContext);
 			tabPane.addTab(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelTabTitle"), outputPanel, true);
 			tabPane.setSelectedComponent(outputPanel);
 			outputPanel.setTitle(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelTabTitle"));
 			outputPanel.startWorker();
+		/*
 		} else {
 			
 			DataGenerationViewPanel outputPanel = new DataGenerationViewPanel(engine);
@@ -671,6 +673,7 @@ public class JdemFrame extends Frame
 			outputPanel.setTitle(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelTabTitle"));
 			outputPanel.startWorker();
 		}
+		*/
 
 	}
 	

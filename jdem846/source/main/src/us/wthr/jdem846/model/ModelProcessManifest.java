@@ -18,7 +18,7 @@ public class ModelProcessManifest
 	
 	public ModelProcessManifest()
 	{
-		
+		this.globalOptionModel = new GlobalOptionModel();
 	}
 	
 	public ModelProcessManifest(GlobalOptionModel globalOptionModel)
@@ -89,6 +89,19 @@ public class ModelProcessManifest
 		this.globalOptionModel = globalOptionModel;
 	}
 	
+	
+	public ModelProcessManifest copy()
+	{
+
+		ModelProcessManifest copy = new ModelProcessManifest(null);
+		copy.globalOptionModel = this.globalOptionModel.copy();
+		for (ModelProcessContainer processContainer : this.processList) {
+			copy.addProcessContainer(new ModelProcessContainer(processContainer.getGridProcessor(), processContainer.getOptionModel()));
+		}
+		
+		return copy;
+		
+	}
 	
 	
 }
