@@ -27,6 +27,16 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 	
 	protected int[] rgbaBuffer = new int[4];
 	
+	private int pass = 0;
+	private double minSlope = 10000000;
+	private double maxSlope = -10000000;
+	
+	protected double relativeLightIntensity;
+	protected double relativeDarkIntensity;
+	protected int spotExponent;
+	private double lightingMultiple = 1.0;
+	
+	
 	public SlopeShadingProcessor()
 	{
 		
@@ -44,12 +54,23 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		
 		SlopeShadingOptionModel optionModel = (SlopeShadingOptionModel) this.getProcessOptionModel();
 		
-		
+		lightingMultiple = optionModel.getLightMultiple();
+		relativeLightIntensity = optionModel.getLightIntensity();
+		relativeDarkIntensity = optionModel.getDarkIntensity();
+		spotExponent = optionModel.getSpotExponent();
 	}
 	
 	@Override
 	public void process() throws RenderEngineException
 	{
+		log.info("Slope Shading Processor 1st Pass...");
+		super.process();
+		
+		log.info("Max Slope: " + maxSlope);
+		log.info("Min Slope: " + minSlope);
+		
+		log.info("Slope Shading Processor 2nd Pass...");
+		pass++;
 		super.process();
 	}
 	
@@ -74,15 +95,52 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 			throws RenderEngineException
 	{
 		
+		
+		if (pass == 0) {
+			onModelPointFirstPass(latitude, longitude);
+		} else {
+			onModelPointSecondPass(latitude, longitude);
+		}
+		
+	}
+	
+	
+	public void onModelPointFirstPass(double latitude, double longitude)
+			throws RenderEngineException
+	{
+		
+		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
+		
+		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(modelPoint.getNormal()[2]), -1));
+		
+		minSlope = MathExt.min(minSlope, slope);
+		maxSlope = MathExt.max(maxSlope, slope);
+		
+	}
+	
+	
+	public void onModelPointSecondPass(double latitude, double longitude)
+			throws RenderEngineException
+	{
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
 		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(modelPoint.getNormal()[2]), -1));
 
-		double shade = 1.0 - (2.0 * (slope / 90.0));
+		double shade = 1.0 - (2.0 * ((slope - minSlope) / (maxSlope - minSlope)));
+		
+		if (shade > 0) {
+			shade *= relativeLightIntensity;
+		} else if (shade < 0) {
+			shade *= relativeDarkIntensity;
+		}
+	
+		if (spotExponent != 1) {
+			shade = MathExt.pow(shade, spotExponent);
+		}
+		
+		
 		modelPoint.setDotProduct(shade);
 		processPointColor(modelPoint, latitude, longitude);
-		
-		
 	}
 	
 	protected void processPointColor(ModelPoint modelPoint, double latitude, double longitude) throws RenderEngineException
