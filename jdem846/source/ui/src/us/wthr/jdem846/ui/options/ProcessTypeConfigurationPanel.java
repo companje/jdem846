@@ -24,8 +24,10 @@ import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
 import us.wthr.jdem846.ui.base.ComboBox;
+import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
+import us.wthr.jdem846.ui.panels.FlexGridPanel;
 
 @SuppressWarnings("serial")
 public class ProcessTypeConfigurationPanel extends Panel
@@ -91,7 +93,12 @@ public class ProcessTypeConfigurationPanel extends Panel
 		// Set Layout
 		setLayout(new BorderLayout());
 		
-		add(cmbProcessSelection, BorderLayout.NORTH);
+		FlexGridPanel topGrid = new FlexGridPanel(2);
+		topGrid.add(new Label("Process:"));
+		topGrid.add(cmbProcessSelection);
+		topGrid.closeGrid();
+		
+		add(topGrid, BorderLayout.NORTH);
 		
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		
@@ -164,9 +171,10 @@ public class ProcessTypeConfigurationPanel extends Panel
 		currentOptionModelContainer.addOptionModelChangeListener(propertyChangeListener);
 		
 		currentOptionsPanel = new DynamicOptionsPanel(currentOptionModelContainer);
-		currentOptionsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		//currentOptionsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		currentScrollPane = new ScrollPane(currentOptionsPanel);
+		currentScrollPane.setBorder(null);
 		add(currentScrollPane, BorderLayout.CENTER);
 		
 		this.validate();

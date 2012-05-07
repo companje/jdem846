@@ -74,10 +74,10 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		try {
 			ModelProcessingTestMain testMain = new ModelProcessingTestMain();
-			testMain.doTesting();
+			//testMain.doTesting();
 			//testMain.doTestingOptionModelUiLogic();
 			//testMain.doTestingProcessTypeConfigPanel();
-			//testMain.doTestingModelConfigPanel();
+			testMain.doTestingModelConfigPanel();
 		} catch (Exception ex) {
 			log.error("Uncaught exception while running test main: " + ex.getMessage(), ex);
 		}
@@ -98,7 +98,7 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		JFrame frame = new JFrame();
 		frame.setTitle("Dynamic Options Test Frame");
-		frame.setSize(400, 500);
+		frame.setSize(400, 650);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(panel);

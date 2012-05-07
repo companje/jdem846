@@ -285,6 +285,13 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			dot = MathExt.pow(dot, spotExponent);
 		}
 		
+		/*
+		if (dot >= 0) {
+			dot = dot + ((lightingMultiple / 100.0) * (1.0 - dot));
+		} else {
+			dot = dot - ((lightingMultiple / 100.0) * (1.0 - MathExt.abs(dot)));
+		}
+		*/
 		
 		modelPoint.setDotProduct(dot);
 		

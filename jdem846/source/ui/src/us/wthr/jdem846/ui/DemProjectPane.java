@@ -480,8 +480,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		
 		
-		EmbeddedTabbedPane leftTabPane = new EmbeddedTabbedPane();
-		leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.data"), dataPanel);
+		//EmbeddedTabbedPane leftTabPane = new EmbeddedTabbedPane();
+		//leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.data"), dataPanel);
 		//leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.setup"), modelConfigurationPanel);
 		//leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.setup"), optionsScroll);
 		//leftTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.lighting"), lightingScroll);
@@ -493,7 +493,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 		final SplitPane leftSplit = new SplitPane(SplitPane.VERTICAL_SPLIT);
 		leftSplit.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
-		leftSplit.add(leftTabPane);
+		//leftSplit.add(leftTabPane);
+		leftSplit.add(dataPanel);
 		leftSplit.add(leftLowerTabPane);
 		leftSplit.setResizeWeight(0);
 		//leftSplit.setDividerSize(5);
@@ -515,8 +516,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 			}
 		};
 		
-		
-		leftTabPane.addComponentListener(dividerChangeListener);
+		dataPanel.addComponentListener(dividerChangeListener);
+		//leftTabPane.addComponentListener(dividerChangeListener);
 		leftLowerTabPane.addComponentListener(dividerChangeListener);
 		
 		addRight(modelConfigurationPanel, false);
