@@ -28,6 +28,10 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 	
 	protected int[] rgbaBuffer = new int[4];
 	
+	protected double relativeLightIntensity;
+	protected double relativeDarkIntensity;
+	protected int spotExponent;
+	private double lightingMultiple = 1.0;
 	
 	public AspectShadingProcessor()
 	{
@@ -46,6 +50,11 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 		AspectShadingOptionModel optionModel = (AspectShadingOptionModel) this.getProcessOptionModel();
 		
 		
+		lightingMultiple = optionModel.getLightMultiple();
+		relativeLightIntensity = optionModel.getLightIntensity();
+		relativeDarkIntensity = optionModel.getDarkIntensity();
+		spotExponent = optionModel.getSpotExponent();
+		
 	}
 	
 	@Override
@@ -61,13 +70,25 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 	{
 		
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
+
+		double degrees = Aspect.aspectInDegrees(modelPoint.getNormal());
+		if (degrees > 180) {
+			degrees = 180 - (degrees - 180);
+		}
 		
-		double x = modelPoint.getNormal()[0];
-		double z = modelPoint.getNormal()[2];
+		double shade = 1.0 - (2.0 * (degrees / 180.0));
 		
-		double degrees = Aspect.aspectInDegrees(x, z);
+		//log.info("Degrees: " + degrees + ", Shade: " + shade);
 		
-		double shade = 1.0 - (2.0 * (degrees / 360.0));
+		if (shade > 0) {
+			shade *= relativeLightIntensity;
+		} else if (shade < 0) {
+			shade *= relativeDarkIntensity;
+		}
+	
+		if (spotExponent != 1) {
+			shade = MathExt.pow(shade, spotExponent);
+		}
 		
 		modelPoint.setDotProduct(shade);
 		processPointColor(modelPoint, latitude, longitude);

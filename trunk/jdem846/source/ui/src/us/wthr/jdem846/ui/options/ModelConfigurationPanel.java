@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -110,6 +111,7 @@ public class ModelConfigurationPanel extends Panel
 		
 		
 		ScrollPane globalOptionsScroll = new ScrollPane(globalOptionsPanel);
+		globalOptionsScroll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		
 		EmbeddedTabbedPane tabPane = new EmbeddedTabbedPane();
 		
