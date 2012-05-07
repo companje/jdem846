@@ -98,6 +98,8 @@ public class ModelVisualizationPanel extends Panel
 	
 	//private SimpleRenderer renderer;
 	
+	private ModelBuilder modelBuilder = null;
+	
 	public ModelVisualizationPanel(ModelContext modelContext)
 	{
 		super();
@@ -605,8 +607,14 @@ public class ModelVisualizationPanel extends Panel
 		
 		modelContextWorkingCopy.resetModelCanvas();
 		
+		if (dataModelChange) {
+			modelBuilder = null;
+		}
 		
-		ModelBuilder modelBuilder = new ModelBuilder();
+		if (modelBuilder == null) {
+			modelBuilder = new ModelBuilder();
+		}
+		
 		try {
 			
 			modelBuilder.prepare(modelContextWorkingCopy, modelContextWorkingCopy.getModelProcessManifest());

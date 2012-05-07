@@ -3,6 +3,8 @@ package us.wthr.jdem846.model.processing.coloring;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.color.ColorAdjustments;
+import us.wthr.jdem846.color.ColoringRegistry;
+import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -50,6 +52,10 @@ public class RoughnessColoringProcessor extends AbstractGridProcessor implements
 	
 	private double pass = 0;
 	
+	private int band = 1;
+	private int bandHalf = 1;
+	private ModelColoring modelColoring;
+	
 	public RoughnessColoringProcessor()
 	{
 		
@@ -67,6 +73,15 @@ public class RoughnessColoringProcessor extends AbstractGridProcessor implements
 		
 		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
 		longitudeResolution = getModelDimensions().getOutputLongitudeResolution();
+		
+		modelColoring = ColoringRegistry.getInstance(optionModel.getColorTint()).getImpl();
+		
+		band = optionModel.getBand();
+		bandHalf = (int) Math.round(((double)band / 2.0));
+		
+		if (bandHalf < 1) {
+			bandHalf = 1;
+		}
 		
 		pass = 0;
 	}
@@ -121,31 +136,31 @@ public class RoughnessColoringProcessor extends AbstractGridProcessor implements
 	protected double calculateRoughness(ModelPoint modelPoint, double latitude, double longitude)
 	{
 		
+		double north = latitude + (latitudeResolution * bandHalf);
+		double south = latitude - (latitudeResolution * bandHalf);
 		
+		double east = longitude + (longitudeResolution * bandHalf);
+		double west = longitude - (longitudeResolution * bandHalf);
 		
 		double c = modelPoint.getElevation();
-		
-		
-		
-		gridElevationBuffer[0] = getElevationAtPoint(latitude + latitudeResolution, longitude);
-		gridElevationBuffer[1] = getElevationAtPoint(latitude + latitudeResolution, longitude - longitudeResolution);
-		gridElevationBuffer[2] = getElevationAtPoint(latitude, longitude - longitudeResolution);
-		gridElevationBuffer[3] = getElevationAtPoint(latitude - latitudeResolution, longitude - longitudeResolution);
-		gridElevationBuffer[4] = getElevationAtPoint(latitude - latitudeResolution, longitude);
-		gridElevationBuffer[5] = getElevationAtPoint(latitude - latitudeResolution, longitude + longitudeResolution);
-		gridElevationBuffer[6] = getElevationAtPoint(latitude, longitude + longitudeResolution);
-		gridElevationBuffer[7] = getElevationAtPoint(latitude + latitudeResolution, longitude + longitudeResolution);
-		
+
+		double elevationPoint = 0.0;
 		
 		double maxDiff = 0;
 		
-		for (double sample : gridElevationBuffer) {
-			if (sample != DemConstants.ELEV_NO_DATA) {
-				maxDiff = MathExt.max(maxDiff, MathExt.sqr(sample - c));
+		for (double lat = north; lat >= south; lat-=latitudeResolution) {
+			
+			for (double lon = west; lon <= east; lon+=longitudeResolution) {
+				elevationPoint = getElevationAtPoint(lat, lon);
+				
+				if (elevationPoint != DemConstants.ELEV_NO_DATA) {
+					maxDiff = MathExt.max(maxDiff, MathExt.sqr(elevationPoint - c));
+				}
 			}
+			
 		}
-
 		return MathExt.sqrt(maxDiff);
+
 	}
 	
 	

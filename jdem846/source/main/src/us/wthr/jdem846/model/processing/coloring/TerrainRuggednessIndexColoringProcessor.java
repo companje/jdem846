@@ -3,6 +3,8 @@ package us.wthr.jdem846.model.processing.coloring;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.color.ColorAdjustments;
+import us.wthr.jdem846.color.ColoringRegistry;
+import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -54,6 +56,14 @@ public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcess
 	
 	private double pass = 0;
 	
+	private int band = 1;
+	private int bandHalf = 1;
+	private ModelColoring modelColoring;
+	
+	
+	
+	private TerrainRuggednessIndexColoringOptionModel optionModel;
+	
 	public TerrainRuggednessIndexColoringProcessor()
 	{
 		
@@ -67,10 +77,19 @@ public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcess
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		TerrainRuggednessIndexColoringOptionModel optionModel = (TerrainRuggednessIndexColoringOptionModel) this.getProcessOptionModel();
+		optionModel = (TerrainRuggednessIndexColoringOptionModel) this.getProcessOptionModel();
 		
 		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
 		longitudeResolution = getModelDimensions().getOutputLongitudeResolution();
+		
+		modelColoring = ColoringRegistry.getInstance(optionModel.getColorTint()).getImpl();
+		
+		band = optionModel.getBand();
+		bandHalf = (int) Math.round(((double)band / 2.0));
+		
+		if (bandHalf < 1) {
+			bandHalf = 1;
+		}
 		
 		pass = 0;
 	}
@@ -118,8 +137,10 @@ public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcess
 		double tri = calculateTri(modelPoint, latitude, longitude);
 		
 		double ratio = (tri - minTri) / (maxTri - minTri);
+
+		modelColoring.getColorByPercent(ratio, colorBuffer);
 		
-		ColorAdjustments.interpolateColor(minTriColor, maxTriColor, colorBuffer, ratio);
+		
 		modelPoint.setRgba(colorBuffer);
 	}
 	
@@ -127,11 +148,41 @@ public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcess
 	{
 		
 		
-		
 		double c = modelPoint.getElevation();
 		
 		
+		double north = latitude + (latitudeResolution * bandHalf);
+		double south = latitude - (latitudeResolution * bandHalf);
 		
+		double east = longitude + (longitudeResolution * bandHalf);
+		double west = longitude - (longitudeResolution * bandHalf);
+		
+		double samples = 0.0;
+		double elevationSum = 0.0;
+		double elevationPoint = 0.0;
+		
+		for (double lat = north; lat >= south; lat-=latitudeResolution) {
+			
+			for (double lon = west; lon <= east; lon+=longitudeResolution) {
+				elevationPoint = getElevationAtPoint(lat, lon);
+				
+				if (elevationPoint != DemConstants.ELEV_NO_DATA) {
+					elevationSum += MathExt.sqr(elevationPoint - c);;
+					samples++;
+				}
+			}
+			
+		}
+		
+		double tri = 0;
+		
+		if (samples > 0) {
+			tri = MathExt.sqrt(elevationSum / samples);
+		}
+		
+		return tri;
+		
+		/*
 		gridElevationBuffer[0] = getElevationAtPoint(latitude + latitudeResolution, longitude);
 		gridElevationBuffer[1] = getElevationAtPoint(latitude + latitudeResolution, longitude - longitudeResolution);
 		gridElevationBuffer[2] = getElevationAtPoint(latitude, longitude - longitudeResolution);
@@ -160,6 +211,8 @@ public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcess
 		}
 		
 		return tri;
+		
+		*/
 	}
 	
 }

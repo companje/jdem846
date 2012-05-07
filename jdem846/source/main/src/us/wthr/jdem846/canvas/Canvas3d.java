@@ -41,7 +41,7 @@ public class Canvas3d
 	
 	private RenderPipeline pipeline;
 	
-	private int subpixelWidth = 8;
+	private int subpixelWidth = 1;
 	
 	private int[] rgbaBuffer = new int[4];
 	
@@ -285,7 +285,7 @@ public class Canvas3d
 		int[] rgba = {0, 0, 0, 255};
 		
 		double f = 1.0 / this.subpixelWidth;
-		
+
 		for (double y = minY; y <= maxY; y+=f) {
 			for (double x = minX; x <= maxX; x+=f) {
 				
@@ -295,11 +295,12 @@ public class Canvas3d
 					tri.getInterpolatedColor(x, y, rgba);
 
 					set(x, y, z, rgba);
-					
+
 				}
 				
 			}
 		}
+
 		
 		
 	}

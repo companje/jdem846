@@ -11,6 +11,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.ModelGrid;
+import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ModelPointHandler;
 import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.annotations.GridProcessing;
@@ -128,21 +129,25 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 		try {
 			double elev = getElevation(latitude, longitude);
 			if (elev != DemConstants.ELEV_NO_DATA) {
-				modelGrid.get(latitude, longitude).setElevation(elev);
+				ModelPoint modelPoint = modelGrid.get(latitude, longitude);
+				if (modelPoint != null) {
+					modelPoint.setElevation(elev);
+					
+					if (Double.isNaN(minimumElevation)) {
+						minimumElevation = elev;
+					} else {
+						minimumElevation = MathExt.min(minimumElevation, elev);
+					}
+					
+					if (Double.isNaN(maximumElevation)) {
+						maximumElevation = elev;
+					} else {
+						maximumElevation = MathExt.max(maximumElevation, elev);
+					}
 				
-				if (Double.isNaN(minimumElevation)) {
-					minimumElevation = elev;
-				} else {
-					minimumElevation = MathExt.min(minimumElevation, elev);
 				}
 				
-				if (Double.isNaN(maximumElevation)) {
-					maximumElevation = elev;
-				} else {
-					maximumElevation = MathExt.max(maximumElevation, elev);
-				}
-				
-			}
+			} 
 			
 		} catch (Exception ex) {
 			throw new RenderEngineException("Error processing point elevation: " + ex.getMessage(), ex);
@@ -178,6 +183,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 			} else {
 				data = dataContext.getDataAtEffectiveResolution(latitude, longitude, averageOverlappedData, interpolateData);
 			}
+			
 		} else if (modelContext.getImageDataContext().getImageListSize() > 0) {
 			data = 0;
 		} else {
@@ -231,7 +237,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 			}
 		}
 
-		
+
 		return elevation;
 	}
 	

@@ -74,10 +74,10 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		try {
 			ModelProcessingTestMain testMain = new ModelProcessingTestMain();
-			//testMain.doTesting();
+			testMain.doTesting();
 			//testMain.doTestingOptionModelUiLogic();
 			//testMain.doTestingProcessTypeConfigPanel();
-			testMain.doTestingModelConfigPanel();
+			//testMain.doTestingModelConfigPanel();
 		} catch (Exception ex) {
 			log.error("Uncaught exception while running test main: " + ex.getMessage(), ex);
 		}
@@ -236,9 +236,13 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		double width = 1000;//dataProxy.getDataColumns();
 		double aspect = (double)dataProxy.getDataColumns() / (double)dataProxy.getDataRows();
 		
-
+		globalOptionModel.setUseScripting(false);
 		globalOptionModel.setWidth((int)width);//dataProxy.getDataColumns());
 		globalOptionModel.setHeight((int) Math.round(width/aspect));
+		
+		//globalOptionModel.setWidth(dataProxy.getDataColumns());//dataProxy.getDataColumns());
+		//globalOptionModel.setHeight(dataProxy.getDataRows());
+		
 		globalOptionModel.setMaintainAspectRatio(true);
 		globalOptionModel.setPlanet("Earth");
 		globalOptionModel.setEstimateElevationRange(false);
@@ -247,11 +251,13 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		globalOptionModel.setSouthLimit(dataProxy.getSouth());
 		globalOptionModel.setEastLimit(dataProxy.getEast());
 		globalOptionModel.setWestLimit(dataProxy.getWest());
-		globalOptionModel.setBackgroundColor(RgbaColor.fromString("rgba:[0,0,0,255]"));
-		globalOptionModel.setElevationMultiple(3.0);
+		globalOptionModel.setBackgroundColor(RgbaColor.fromString("rgba:[255,0,0,255]"));
+		globalOptionModel.setElevationMultiple(1.0);
 		globalOptionModel.setElevationScale(ElevationScalerEnum.LINEAR.identifier());
 		globalOptionModel.setRenderProjection(CanvasProjectionTypeEnum.PROJECT_FLAT.identifier());
 		globalOptionModel.setSubpixelGridSize(1);
+		globalOptionModel.setLatitudeSlices(-1);
+		globalOptionModel.setLongitudeSlices(-1);
 		
 		GridLoadOptionModel gridLoadOptionModel = new GridLoadOptionModel();
 		SurfaceNormalsOptionModel surfaceNormalOptionModel = new SurfaceNormalsOptionModel();
@@ -262,16 +268,27 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		AspectColoringOptionModel aspectColoringOptionModel = new AspectColoringOptionModel();
 		
 		TerrainRuggednessIndexColoringOptionModel terrainRuggednessIndexColoringOptionModel = new TerrainRuggednessIndexColoringOptionModel();
+		terrainRuggednessIndexColoringOptionModel.setBand(30);
+		terrainRuggednessIndexColoringOptionModel.setColorTint("tri-green-yellow-red");
+		
 		TopographicPositionIndexColoringOptionModel topographicPositionIndexColoringOptionModel = new TopographicPositionIndexColoringOptionModel();
+		topographicPositionIndexColoringOptionModel.setBand(30);
+		topographicPositionIndexColoringOptionModel.setColorTint("tri-green-yellow-red");
+		
 		RoughnessColoringOptionModel roughnessColoringOptionModel = new RoughnessColoringOptionModel();
+		roughnessColoringOptionModel.setBand(30);
+		roughnessColoringOptionModel.setColorTint("tri-green-yellow-red");
+		
+		
 		
 		HillshadingOptionModel hillshadingOptionModel = new HillshadingOptionModel();
 		hillshadingOptionModel.setLightingEnabled(true);
 		hillshadingOptionModel.setSourceType(LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION.optionValue());
+		hillshadingOptionModel.setSourceLocation(new AzimuthElevationAngles(270, 20));
 		hillshadingOptionModel.setRecalcLightForEachPoint(false);
 		hillshadingOptionModel.setDarkZenith(108.0);
 		hillshadingOptionModel.setLightZenith(90.0);
-		hillshadingOptionModel.setLightMultiple(3.0);
+		hillshadingOptionModel.setLightMultiple(6.0);
 		hillshadingOptionModel.setLightIntensity(0.6);
 		hillshadingOptionModel.setDarkIntensity(1.0);
 		hillshadingOptionModel.setSpotExponent(1);
@@ -285,7 +302,7 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		ModelRenderOptionModel modelRenderOptionModel = new ModelRenderOptionModel();
 		modelRenderOptionModel.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR.identifier());
-
+		
 		ViewPerspective viewPerspective = new ViewPerspective();
 		viewPerspective.setRotateX(30);
 		viewPerspective.setRotateY(0);
@@ -307,10 +324,10 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		modelProcessManifest.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
 		modelProcessManifest.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
-		modelProcessManifest.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
+		//modelProcessManifest.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
 		//modelProcessManifest.addProcessor(new AspectColoringProcessor(), aspectColoringOptionModel);
 		//modelProcessManifest.addProcessor(new TerrainRuggednessIndexColoringProcessor(), terrainRuggednessIndexColoringOptionModel);
-		//modelProcessManifest.addProcessor(new TopographicPositionIndexColoringProcessor(), topographicPositionIndexColoringOptionModel);
+		modelProcessManifest.addProcessor(new TopographicPositionIndexColoringProcessor(), topographicPositionIndexColoringOptionModel);
 		//modelProcessManifest.addProcessor(new RoughnessColoringProcessor(), roughnessColoringOptionModel);
 		modelProcessManifest.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
 		//modelProcessManifest.addProcessor(new SlopeShadingProcessor(), slopeShadingOptionModel);
@@ -321,9 +338,9 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		
 		
-		ModelOptions modelOptions = new ModelOptions();
+		//ModelOptions modelOptions = new ModelOptions();
 		
-		ModelContext modelContext = ModelContext.createInstance(dataProxy, null, imageDataContext, null, modelOptions);
+		ModelContext modelContext = ModelContext.createInstance(dataProxy, null, imageDataContext, modelProcessManifest);
 		modelContext.updateContext(true, globalOptionModel.isEstimateElevationRange());
 		
 		//ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext, globalOptionModel);

@@ -86,10 +86,11 @@ public class ModelGridDimensions extends ModelDimensions
 
 		
 		
+		south = south += latitudeResolution;
+		east = east -= longitudeResolution;
 		
-		
-		dataRows = (int) MathExt.round((north - south) / latitudeResolution);
-		dataColumns = (int) MathExt.round((east - west) / longitudeResolution);
+		dataRows = (int) MathExt.ceil((north - south) / latitudeResolution);
+		dataColumns = (int) MathExt.ceil((east - west) / longitudeResolution);
 		
 		outputHeight = globalOptionModel.getHeight();
 		outputWidth = globalOptionModel.getWidth();
@@ -133,6 +134,7 @@ public class ModelGridDimensions extends ModelDimensions
 		double latitudeSlices = globalOptionModel.getLatitudeSlices();
 		double longitudeSlices = globalOptionModel.getLongitudeSlices();
 		
+		
 		if (latitudeSlices != -1) {
 			outputLatitudeResolution = (north - south - outputLatitudeResolution) / latitudeSlices;
 		}
@@ -141,12 +143,13 @@ public class ModelGridDimensions extends ModelDimensions
 			outputLongitudeResolution = (east - west - outputLongitudeResolution) / longitudeSlices;
 		}
 		
-		
+		/*
 		if (outputLongitudeResolution < longitudeResolution)
 			outputLongitudeResolution = longitudeResolution;
 		
 		if (outputLatitudeResolution < latitudeResolution)
 			outputLatitudeResolution = latitudeResolution;
+			*/
 	}
 	
 	

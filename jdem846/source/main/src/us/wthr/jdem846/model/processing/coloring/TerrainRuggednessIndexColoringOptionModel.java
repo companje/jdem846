@@ -7,6 +7,8 @@ public class TerrainRuggednessIndexColoringOptionModel implements OptionModel
 {
 	
 	private int band = 1;
+	private String colorTint = "tri-green-yellow-red";
+	
 	
 	public TerrainRuggednessIndexColoringOptionModel()
 	{
@@ -30,11 +32,28 @@ public class TerrainRuggednessIndexColoringOptionModel implements OptionModel
 		this.band = band;
 	}
 
+	
+	@ProcessOption(id="us.wthr.jdem846.model.TerrainRuggednessIndexColoringOptionModel.colorTint",
+			label="Color Tinting",
+			tooltip="",
+			enabled=true,
+			listModel=ColorTintsListModel.class)
+	public String getColorTint()
+	{
+		return colorTint;
+	}
 
+	public void setColorTint(String colorTint)
+	{
+		this.colorTint = colorTint;
+	}
+	
 
 	public TerrainRuggednessIndexColoringOptionModel copy()
 	{
 		TerrainRuggednessIndexColoringOptionModel copy = new TerrainRuggednessIndexColoringOptionModel();
+		copy.band = this.band;
+		copy.colorTint = this.colorTint.toString();
 		return copy;
 	}
 	

@@ -1,9 +1,13 @@
 package us.wthr.jdem846.canvas;
 
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 
 public abstract class AbstractBuffer
 {
+	private static Log log = Logging.getLog(AbstractBuffer.class);
+	
 	private int width;
 	private int height;
 	
@@ -19,6 +23,7 @@ public abstract class AbstractBuffer
 		
 		
 		bufferLength = width * height * (int) MathExt.sqr(subpixelWidth);
+		log.info("Abstract Buffer: " + bufferLength);
 	}
 	
 	public abstract void reset();
