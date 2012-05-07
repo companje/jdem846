@@ -37,7 +37,7 @@ public class ModelPointCycler extends InterruptibleProcess
 	public void forEachModelPoint(ModelPointHandler pointHandler) throws RenderEngineException
 	{
 		double maxLon = east;
-		double minLat = south + latitudeResolution;
+		double minLat = south;
 		
 		int pointsProcessed = 0;
 		
@@ -48,10 +48,12 @@ public class ModelPointCycler extends InterruptibleProcess
 			pointHandler.onModelLatitudeStart(lat);
 			
 
-			for (double lon = west; lon <= maxLon; lon+=longitudeResolution) {
+			for (double lon = west; lon < maxLon; lon+=longitudeResolution) {
 				
-				if (lon > east)
-					lon = east;
+				//if (lon > east) {
+				//	break;
+				//}
+				//	lon = east;
 				
 				
 				pointHandler.onModelPoint(lat, lon);
@@ -64,8 +66,8 @@ public class ModelPointCycler extends InterruptibleProcess
 					return;
 				}
 				
-				if (lon == east)
-					break;
+				//if (lon == east)
+				//	break;
 			}
 			
 			

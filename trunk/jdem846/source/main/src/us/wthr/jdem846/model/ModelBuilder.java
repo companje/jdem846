@@ -151,10 +151,10 @@ public class ModelBuilder extends InterruptibleProcess
 				interruptHandler.setInterruptibleProcess(null);
 			}
 			
-			log.info("Preparing processor: " + name + "'");
+			log.info("Preparing processor: '" + name + "'");
 			gridProcessor.setAndPrepare(modelContext, modelGrid, modelDimensions, globalOptionModel, optionModel);
 			
-			log.info("Executing processor: " + name + "'");
+			log.info("Executing processor: '" + name + "'");
 			gridProcessor.process();
 			
 			this.checkPause();

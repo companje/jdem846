@@ -1,9 +1,13 @@
 package us.wthr.jdem846.model;
 
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 
 public class ModelGrid 
 {
+	private static Log log = Logging.getLog(ModelGrid.class);
+	
 	
 	private double north;
 	private double south;
@@ -30,11 +34,16 @@ public class ModelGrid
 		this.latitudeResolution = latitudeResolution;
 		this.longitudeResolution = longitudeResolution;
 		
-		this.height = (int) MathExt.ceil((north - south) / latitudeResolution);
-		this.width = (int) MathExt.ceil((east - west) / longitudeResolution);
+		double _height = (this.north - this.south) / latitudeResolution;
+		double _width = (this.east - this.west) / longitudeResolution;
+		
+		this.height = (int) MathExt.ceil(_height);
+		this.width = (int) MathExt.ceil(_width);
 		
 		gridLength = height * width;
 		grid = new ModelPoint[gridLength];
+		
+		log.info("Model Grid Width/Height: " + width + "/" + height + ", Length: " + gridLength);
 		
 		for (int i = 0; i < gridLength; i++) {
 			grid[i] = new ModelPoint();

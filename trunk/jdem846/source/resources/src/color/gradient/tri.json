@@ -1,0 +1,26 @@
+{
+	name : 'TRI Green/Yellow/Red',
+	identifier : 'tri-green-yellow-red',
+	needsMinMaxElevation : false,
+	units : 'percent',
+	gradient : [
+		{   
+			stop : 0.0,
+			red : 0,
+			green : 255,
+			blue : 0
+		},
+		{   
+			stop : 0.5,
+			red : 255,
+			green : 255,
+			blue : 0
+		},
+		{   
+			stop : 1.0,
+			red : 255,
+			green : 0,
+			blue : 0
+		}
+	]
+}

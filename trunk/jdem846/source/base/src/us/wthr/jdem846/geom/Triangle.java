@@ -1,6 +1,7 @@
 package us.wthr.jdem846.geom;
 
 
+import us.wthr.jdem846.geom.util.BarycentricTrianglePointTest;
 import us.wthr.jdem846.geom.util.PointTest;
 import us.wthr.jdem846.geom.util.SameSideTrianglePointTest;
 import us.wthr.jdem846.math.MathExt;
