@@ -11,6 +11,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
+import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor;
 import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsProcessor;
@@ -43,6 +44,8 @@ public class ModelBuilder extends InterruptibleProcess
 	private boolean useScripting = true;
 	
 	private boolean isProcessing = false;
+	
+	private boolean dataLoaded = false;
 	
 	public ModelBuilder()
 	{
@@ -145,6 +148,11 @@ public class ModelBuilder extends InterruptibleProcess
 				name = annotation.name();
 			}
 			
+			if (annotation.type() == GridProcessingTypesEnum.DATA_LOAD && dataLoaded) {
+				continue;
+			}  
+			
+			
 			if (gridProcessor instanceof InterruptibleProcess) {
 				interruptHandler.setInterruptibleProcess((InterruptibleProcess)gridProcessor);
 			} else {
@@ -164,7 +172,9 @@ public class ModelBuilder extends InterruptibleProcess
 				return;
 			}
 		}
-
+		
+		dataLoaded = true;
+		
 		if (useScripting) {
 			onTileAfter(modelContext.getModelCanvas());
 		}
