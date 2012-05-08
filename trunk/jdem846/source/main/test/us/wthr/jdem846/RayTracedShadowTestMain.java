@@ -124,7 +124,7 @@ public class RayTracedShadowTestMain extends AbstractTestMain
 		
 		ScriptProxy scriptProxy = ScriptProxyFactory.createScriptProxy(ScriptLanguageEnum.GROOVY, script);
 		
-		ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions, scriptProxy);
+		ModelContext modelContext = ModelContext.createInstance(dataProxy, lightingContext, modelOptions, null);
 		
 		/*
 		lightingContext.setLightingAzimuth(0);

@@ -4,6 +4,7 @@ import us.wthr.jdem846.DataContext;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.exceptions.ContextPrepareException;
 
 public class OrthoimageryContext implements DataContext
 {
@@ -29,7 +30,7 @@ public class OrthoimageryContext implements DataContext
 	}
 
 	@Override
-	public void prepare() throws DataSourceException
+	public void prepare() throws ContextPrepareException
 	{
 		// TODO Auto-generated method stub
 		

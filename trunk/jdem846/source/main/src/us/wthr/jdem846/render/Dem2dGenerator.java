@@ -166,8 +166,9 @@ public class Dem2dGenerator extends BasicRenderEngine
 	{
 		OutputProduct<ModelCanvas> product = null;
 		
+		
 		try {
-			ScriptProxy scriptProxy = getModelContext().getScriptProxy();
+			ScriptProxy scriptProxy = getModelContext().getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.initialize(getModelContext());
 			}
@@ -218,7 +219,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		}
 		
 		try {
-			ScriptProxy scriptProxy = getModelContext().getScriptProxy();
+			ScriptProxy scriptProxy = getModelContext().getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.destroy(getModelContext());
 			}
@@ -235,7 +236,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		OutputProduct<ModelCanvas> product = null;
 		
 		try {
-			ScriptProxy scriptProxy = getModelContext().getScriptProxy();
+			ScriptProxy scriptProxy = getModelContext().getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.initialize(getModelContext());
 			}
@@ -294,7 +295,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		}
 		
 		try {
-			ScriptProxy scriptProxy = getModelContext().getScriptProxy();
+			ScriptProxy scriptProxy = getModelContext().getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.destroy(getModelContext());
 			}

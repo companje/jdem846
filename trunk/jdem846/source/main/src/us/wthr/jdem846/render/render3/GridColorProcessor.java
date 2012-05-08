@@ -128,7 +128,7 @@ public class GridColorProcessor extends AbstractGridProcessor implements GridPro
 	protected void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color) throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.onGetPointColor(modelContext, latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
 			}

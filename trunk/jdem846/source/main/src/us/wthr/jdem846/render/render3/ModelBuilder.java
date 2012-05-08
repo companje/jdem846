@@ -185,7 +185,7 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 	protected void onTileBefore(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}
@@ -198,7 +198,7 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 	protected void onTileAfter(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}

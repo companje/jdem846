@@ -111,7 +111,7 @@ public abstract class RenderEngine extends InterruptibleProcess implements Image
 	
 	public ScriptProxy getScriptProxy()
 	{
-		return modelContext.getScriptProxy();
+		return modelContext.getScriptingContext().getScriptProxy();
 	}
 	
 	public boolean enabled() { return annotation.enabled(); }

@@ -282,7 +282,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	{
 		Object result = null;
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				result = scriptProxy.onGetElevationBefore(modelContext, latitude, longitude);
 			}
@@ -297,7 +297,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	{
 		Object result = null;
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				result = scriptProxy.onGetElevationAfter(modelContext, latitude, longitude, elevation);
 			}

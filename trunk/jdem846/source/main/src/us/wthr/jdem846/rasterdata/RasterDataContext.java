@@ -9,6 +9,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.model.exceptions.ContextPrepareException;
 import us.wthr.jdem846.scaling.ElevationScaler;
 
 public class RasterDataContext implements DataContext
@@ -46,7 +47,7 @@ public class RasterDataContext implements DataContext
 		
 	}
 	
-	public void prepare() throws DataSourceException
+	public void prepare() throws ContextPrepareException
 	{
 		
 		east = -180.0;
@@ -226,20 +227,32 @@ public class RasterDataContext implements DataContext
 	public void addRasterData(RasterData rasterData) throws DataSourceException
 	{
 		rasterDataList.add(rasterData);
-		prepare();
+		try {
+			prepare();
+		} catch (ContextPrepareException ex) {
+			throw new DataSourceException("Failed to prepare with raster data: " + ex.getMessage(), ex);
+		}
 	}
 
 	public void removeRasterData(RasterData rasterData) throws DataSourceException
 	{
 		if (rasterDataList.remove(rasterData)) {
-			prepare();
+			try {
+				prepare();
+			} catch (ContextPrepareException ex) {
+				throw new DataSourceException("Failed to prepare with raster data: " + ex.getMessage(), ex);
+			}
 		}
 	}
 	
 	public RasterData removeRasterData(int index) throws DataSourceException
 	{
 		RasterData removed = rasterDataList.remove(index);
-		prepare();
+		try {
+			prepare();
+		} catch (ContextPrepareException ex) {
+			throw new DataSourceException("Failed to prepare with raster data: " + ex.getMessage(), ex);
+		}
 		return removed;
 	}
 	
@@ -439,7 +452,12 @@ public class RasterDataContext implements DataContext
 			
 		}
 		
-		newDataProxy.prepare();
+		try {
+			newDataProxy.prepare();
+		} catch (ContextPrepareException ex) {
+			throw new DataSourceException("Failed to prepare with raster data: " + ex.getMessage(), ex);
+		}
+		
 		newDataProxy.setEffectiveLatitudeResolution(effectiveLatitudeResolution);
 		newDataProxy.setEffectiveLongitudeResolution(effectiveLongitudeResolution);
 		
