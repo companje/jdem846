@@ -18,8 +18,17 @@ package us.wthr.jdem846.ui.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 
@@ -44,6 +53,8 @@ public class DockingContainerPanel extends Panel
 	private SplitPane innerSplit = null;
 	private SplitPane verticalSplit = null;
 	
+	private List<Component> componentList = new LinkedList<Component>();
+	
 	public DockingContainerPanel()
 	{
 		
@@ -55,10 +66,28 @@ public class DockingContainerPanel extends Panel
 		
 		centerTabPanel = new EmbeddedTabbedPane();
 		southTabPanel = new EmbeddedTabbedPane();
-		//centerTabPanel.setBorder(BorderFactory.createEmptyBorder());
-		//centerTabPanel.setUI(new BasicTabbedPaneUI() {
-		//	protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) { }
-		//});
+		
+		ContainerListener containerListener = new ContainerListener() {
+
+			public void componentAdded(ContainerEvent e)
+			{
+				log.info("Component Added");
+				componentList.add(e.getComponent());
+			}
+
+			public void componentRemoved(ContainerEvent e)
+			{
+				log.info("Component Removed");
+				componentList.remove(e.getComponent());
+			}
+			
+		};
+		
+		leftPanel.addContainerListener(containerListener);
+		rightPanel.addContainerListener(containerListener);
+		centerTabPanel.addContainerListener(containerListener);
+		southTabPanel.addContainerListener(containerListener);
+	
 		
 		
 		// Set Layout
@@ -94,29 +123,29 @@ public class DockingContainerPanel extends Panel
 		verticalSplit.add(southTabPanel);
 		
 		add(verticalSplit, BorderLayout.CENTER);
+
+	}
+	
+	
+	protected boolean containerHasComponent(Container container, Component comp)
+	{
+		for (Component _comp : container.getComponents()) {
+			if (_comp == comp) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void setComponentVisible(Component comp)
+	{
+		if (containerHasComponent(centerTabPanel, comp))
+			centerTabPanel.setSelectedComponent(comp);
 		
-		/*
-		this.addComponentListener(new ComponentListener() {
-			public void componentResized(ComponentEvent e)
-			{
-				
-			}
-			public void componentMoved(ComponentEvent e)
-			{
-				
-			}
-			public void componentShown(ComponentEvent e)
-			{
-				//innerSplit.setDividerLocation(innerSplit.getWidth() - 200);
-				//verticalSplit.setDividerLocation(verticalSplit.getHeight() - 200);
-				removeComponentListener(this);
-			}
-			public void componentHidden(ComponentEvent e)
-			{
-				
-			}
-		});
-		*/
+		if (containerHasComponent(southTabPanel, comp))
+			southTabPanel.setSelectedComponent(comp);
+
+		
 	}
 	
 	public void addLeft(Component component, boolean scroll)

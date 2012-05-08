@@ -151,7 +151,6 @@ public class ImageDisplayPanel extends Panel
 		trueImage = image;
 		imageTrueWidth = image.getWidth(this);
 		imageTrueHeight = image.getHeight(this);
-		zoomFit();
 	}
 	
 	protected void onMouseWheelMoved(int units, int amount, int type, int x, int y)
@@ -256,6 +255,7 @@ public class ImageDisplayPanel extends Panel
 			int scaleToWidth = (int) Math.floor((double)imageTrueWidth * (double) scalePercent);
 			int scaleToHeight = (int) Math.floor((double)imageTrueHeight * (double) scalePercent);
 			
+
 			Object hint = (scaleQuality == Image.SCALE_FAST) ? RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR : RenderingHints.VALUE_INTERPOLATION_BILINEAR;
 			boolean higherQuality = (scaleQuality == Image.SCALE_SMOOTH);
 			
@@ -270,6 +270,10 @@ public class ImageDisplayPanel extends Panel
 	
 	protected double getZoomToFitScalePercentage()
 	{
+		if (trueImage == null) {
+			return 0.0;
+		}
+		
 		double imageWidth = trueImage.getWidth(this);
 		double imageHeight = trueImage.getHeight(this);
 		

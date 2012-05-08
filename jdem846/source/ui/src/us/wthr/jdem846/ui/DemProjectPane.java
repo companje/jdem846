@@ -115,6 +115,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	private ModelVisualizationPanel visualizationPanel;
 	//private DataInputLayoutPane layoutPane;
 	private ScriptEditorPanel scriptPane;
+	private RenderPane renderPane;
 	
 	private ProjectButtonBar projectButtonBar;
 	private Menu projectMenu;
@@ -234,6 +235,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		
 		scriptPane = new ScriptEditorPanel();
+		
+		renderPane = new RenderPane();
 		
 		//statusBar = new StatusBar();
 		//statusBar.setProgressVisible(false);
@@ -545,7 +548,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		//this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layout"), layoutPane);
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"), visualizationPanel);
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.script"), scriptPane);
-		
+		this.addCenter("Render", renderPane);
 		
 		ComponentListener setLeftRightWidthsAdapter = new ComponentAdapter() {
 			public void componentShown(ComponentEvent e)
@@ -556,7 +559,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 			}
 		};
 		addComponentListener(setLeftRightWidthsAdapter);
-		
+
 		
 		//this.setRightVisible(false);
 		this.setSouthVisible(false);
@@ -1316,7 +1319,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 		}
 		
 		
-		fireCreateModelListeners(modelContext);
+		renderPane.render(modelContext);
+		//renderPane.requestFocus();
+		this.setComponentVisible(renderPane);
+		//fireCreateModelListeners(modelContext);
 	}
 	
 	public void fireCreateModelListeners(ModelContext modelContext)

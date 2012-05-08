@@ -166,6 +166,15 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 		
 	}
 	
+	public void setSelectedImageQuality(int imageQuality)
+	{
+		qualityModel.setSelectedItemByValue(imageQuality);
+	}
+	
+	public int getSelectedImageQuality()
+	{
+		return qualityModel.getSelectedItemValue();
+	}
 	
 	public void setComponentEnabled(int button, boolean enabled)
 	{

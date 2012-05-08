@@ -144,6 +144,14 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	
 	protected double createPointVertexes(TriangleStrip strip, double latitude, double longitude, double lastElevation) throws Exception
 	{
+		
+		double nwElev = createPointVertex(strip, latitude, longitude, lastElevation);
+		double swElev = createPointVertex(strip, latitude - latitudeResolution, longitude, nwElev);
+		
+		return nwElev;
+		
+		/*
+		
 		ModelPoint nwPoint = modelGrid.get(latitude, longitude);
 		double nwElev = DemConstants.ELEV_NO_DATA;
 		if (nwPoint != null) {
@@ -180,6 +188,30 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		strip.addVertex(swVtx);
 		
 		return nwElev;
+		*/
+	}
+	
+	
+	protected double createPointVertex(TriangleStrip strip, double latitude, double longitude, double lastElevation) throws Exception
+	{
+		ModelPoint point = modelGrid.get(latitude, longitude);
+		
+		double elev = DemConstants.ELEV_NO_DATA;
+		
+		if (point != null) {
+			elev = point.getElevation();
+			point.getRgba(rgbaBuffer, true);
+		}
+		
+		if (elev == DemConstants.ELEV_NO_DATA){
+			elev = lastElevation;
+		}
+
+		Vertex nwVtx = createVertex(latitude, longitude, elev, rgbaBuffer);
+		
+		strip.addVertex(nwVtx);
+		
+		return elev;
 	}
 	
 	

@@ -17,18 +17,35 @@
 package us.wthr.jdem846.ui.panels;
 
 import java.awt.Graphics;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.TabPane;
 
 @SuppressWarnings("serial")
 public class EmbeddedTabbedPane extends TabPane
 {
-	
+	@SuppressWarnings("unused")
+	private static Log log = Logging.getLog(EmbeddedTabbedPane.class);
 	
 	public EmbeddedTabbedPane()
+	{
+		this(TabPane.TOP, TabPane.WRAP_TAB_LAYOUT);
+	}
+	
+	public EmbeddedTabbedPane(int tabPlacement)
+	{
+		this(tabPlacement, TabPane.WRAP_TAB_LAYOUT);
+	}
+	
+	public EmbeddedTabbedPane(int tabPlacement, int tabLayoutPolicy)
 	{	
 		super();
 		
@@ -40,7 +57,42 @@ public class EmbeddedTabbedPane extends TabPane
 		}
 		*/
 		
+		this.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0)
+			{
+				
+			}
+		});
 		
+		this.addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentHidden(ComponentEvent e)
+			{
+				log.info("Embedded Tab Pane Hidden!");
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e)
+			{
+				log.info("Embedded Tab Pane Shown!");
+			}
+			
+		});
 		
 
 	}
