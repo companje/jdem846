@@ -9,6 +9,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.model.exceptions.ContextPrepareException;
 
 public class ImageDataContext implements DataContext
 {
@@ -36,7 +37,7 @@ public class ImageDataContext implements DataContext
 	}
 
 	@Override
-	public void prepare() throws DataSourceException
+	public void prepare() throws ContextPrepareException
 	{
 		
 		latitudeResolution = Double.MAX_VALUE;

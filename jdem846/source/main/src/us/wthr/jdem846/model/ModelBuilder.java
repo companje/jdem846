@@ -111,7 +111,11 @@ public class ModelBuilder extends InterruptibleProcess
 			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
 		}
 		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
-
+		
+		if (useScripting) {
+			onInitialize(modelContext);
+		}
+		
 		prepared = true;
 	}
 	
@@ -179,6 +183,10 @@ public class ModelBuilder extends InterruptibleProcess
 			onTileAfter(modelContext.getModelCanvas());
 		}
 		
+		if (useScripting) {
+			onDestroy(modelContext);
+		}
+		
 		setProcessing(false);
 	}
 	
@@ -189,10 +197,36 @@ public class ModelBuilder extends InterruptibleProcess
 		return prepared;
 	}
 	
+	protected void onDestroy(ModelContext modelContext) throws RenderEngineException
+	{
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.destroy(modelContext);
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+	}
+	
+	protected void onInitialize(ModelContext modelContext) throws RenderEngineException
+	{
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.initialize(modelContext);
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+	}
+	
 	protected void onTileBefore(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}
@@ -205,7 +239,7 @@ public class ModelBuilder extends InterruptibleProcess
 	protected void onTileAfter(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}

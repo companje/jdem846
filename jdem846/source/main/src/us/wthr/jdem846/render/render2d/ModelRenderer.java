@@ -166,7 +166,7 @@ public class ModelRenderer extends InterruptibleProcess
 	protected void on2DModelBefore(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.on2DModelBefore(modelContext, modelCanvas);
 			}
@@ -179,7 +179,7 @@ public class ModelRenderer extends InterruptibleProcess
 	protected void on2DModelAfter(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.on2DModelAfter(modelContext, modelCanvas);
 			}

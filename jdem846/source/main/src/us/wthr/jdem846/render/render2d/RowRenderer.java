@@ -548,7 +548,7 @@ public class RowRenderer extends InterruptibleProcess
 	protected void onTileBefore(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}
@@ -561,7 +561,7 @@ public class RowRenderer extends InterruptibleProcess
 	protected void onTileAfter(ModelCanvas modelCanvas) throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}
@@ -576,7 +576,7 @@ public class RowRenderer extends InterruptibleProcess
 	{
 		Object result = null;
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				result = scriptProxy.onGetElevationBefore(modelContext, latitude, longitude);
 			}
@@ -591,7 +591,7 @@ public class RowRenderer extends InterruptibleProcess
 	{
 		Object result = null;
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				result = scriptProxy.onGetElevationAfter(modelContext, latitude, longitude, elevation);
 			}
@@ -607,7 +607,7 @@ public class RowRenderer extends InterruptibleProcess
 	protected void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color) throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptProxy();
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
 				scriptProxy.onGetPointColor(modelContext, latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
 			}

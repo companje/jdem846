@@ -7,6 +7,7 @@ import us.wthr.jdem846.DataContext;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.exceptions.ContextPrepareException;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 
@@ -30,7 +31,7 @@ public class ShapeDataContext implements DataContext
 		
 	}
 	
-	public void prepare() throws DataSourceException
+	public void prepare() throws ContextPrepareException
 	{
 		
 		east = -180.0;
@@ -70,20 +71,32 @@ public class ShapeDataContext implements DataContext
 	public void addShapeFile(String path, String shapeDataDefinitionId) throws ShapeFileException, DataSourceException
 	{
 		shapeFiles.add(new ShapeFileRequest(path, shapeDataDefinitionId));
-		prepare();
+		try {
+			prepare();
+		} catch (ContextPrepareException ex) {
+			throw new DataSourceException("Failed to prepare shade data context: " + ex.getMessage(), ex);
+		}
 	}
 	
 	public void addShapeFile(ShapeFileRequest shapeFileRequest) throws DataSourceException
 	{
 		shapeFiles.add(shapeFileRequest);
-		prepare();
+		try {
+			prepare();
+		} catch (ContextPrepareException ex) {
+			throw new DataSourceException("Failed to prepare shade data context: " + ex.getMessage(), ex);
+		}
 	}
 	
 	public ShapeFileRequest removeShapeFile(int index) throws DataSourceException
 	{
 		ShapeFileRequest removed = shapeFiles.remove(index);
 		if (removed != null) {
-			prepare();
+			try {
+				prepare();
+			} catch (ContextPrepareException ex) {
+				throw new DataSourceException("Failed to prepare shade data context: " + ex.getMessage(), ex);
+			}
 		}
 		return removed;
 	}
@@ -92,7 +105,11 @@ public class ShapeDataContext implements DataContext
 	{
 		boolean result = shapeFiles.remove(shapeFileRequest);
 		if (result) {
-			prepare();
+			try {
+				prepare();
+			} catch (ContextPrepareException ex) {
+				throw new DataSourceException("Failed to prepare shade data context: " + ex.getMessage(), ex);
+			}
 		}
 		return result;
 	}

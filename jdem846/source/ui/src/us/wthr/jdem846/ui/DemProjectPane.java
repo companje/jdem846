@@ -58,6 +58,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelProcessManifest;
 import us.wthr.jdem846.model.OptionModelChangeEvent;
+import us.wthr.jdem846.model.exceptions.ContextPrepareException;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
@@ -67,6 +68,7 @@ import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.scripting.ScriptProxyFactory;
+import us.wthr.jdem846.scripting.ScriptingContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.ui.DataSetTree.DatasetSelectionListener;
@@ -136,6 +138,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	private RasterDataContext rasterDataContext;
 	private ShapeDataContext shapeDataContext;
 	private ImageDataContext imageDataContext;
+	private ScriptingContext scriptingContext;
 	//private LightingContext lightingContext;
 	
 	private List<CreateModelListener> createModelListeners = new LinkedList<CreateModelListener>();
@@ -166,13 +169,14 @@ public class DemProjectPane extends JdemPanel implements Savable
 		modelProcessManifest = new ModelProcessManifest();
 		shapeDataContext = new ShapeDataContext();
 		imageDataContext = new ImageDataContext();
+		scriptingContext = new ScriptingContext();
 		//lightingContext = new LightingContext();
 		
 		
 		
 		
 		try {
-			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, modelProcessManifest);
+			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, modelProcessManifest, scriptingContext);
 		} catch (ModelContextException ex) {
 			// TODO: Display error message dialog
 			log.error("Exception creating model context: " + ex.getMessage(), ex);
@@ -592,15 +596,17 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		String scriptTemplatePath = null;
 		
-		/*
-		if (modelOptions.getScriptLanguage() == ScriptLanguageEnum.GROOVY) {
-			scriptTemplatePath = modelOptions.getOption(ModelOptionNamesEnum.USER_SCRIPT_GROOVY_TEMPLATE);
-		} else if (modelOptions.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
-			scriptTemplatePath = modelOptions.getOption(ModelOptionNamesEnum.USER_SCRIPT_JYTHON_TEMPLATE);
+		//us.wthr.jdem846.userScript.groovy.template
+		//us.wthr.jdem846.userScript.jython.template
+		
+		if (scriptingContext.getScriptLanguage() == ScriptLanguageEnum.GROOVY) {
+			scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.groovy.template");
+		} else if (scriptingContext.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
+			scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.jython.template");
 		} else {
 			// fail silently for now
 			// TODO: Don't fail silently
-			log.warn("Script language '" + modelOptions.getScriptLanguage() + "' is null or invalid; Cannot load template");
+			log.warn("Script language '" + scriptingContext.getScriptLanguage() + "' is null or invalid; Cannot load template");
 			return;
 		}
 
@@ -617,12 +623,15 @@ public class DemProjectPane extends JdemPanel implements Savable
 		}
 		
 		if (scriptTemplate != null) {
-			modelOptions.setUserScript(scriptTemplate);
+			scriptingContext.setUserScript(scriptTemplate);
 		}
-		*/
+		
 		
 		// TODO: Reapply scripting
-		
+		scriptPane.setScriptLanguage(scriptingContext.getScriptLanguage());
+		if (scriptingContext.getUserScript() != null && scriptingContext.getUserScript().length() > 0) {
+			scriptPane.setScriptContent(scriptingContext.getUserScript());
+		}
 	}
 	
 	protected String loadTemplateFile(String path) throws IOException
@@ -817,13 +826,14 @@ public class DemProjectPane extends JdemPanel implements Savable
 		ignoreValueChanges = true;
 
 		// TODO: Reapply scripting
+		
 		/*
-		scriptPane.setScriptLanguage(modelOptions.getScriptLanguage());
-		if (modelOptions.getUserScript() != null && modelOptions.getUserScript().length() > 0) {
-			scriptPane.setScriptContent(modelOptions.getUserScript());
+		scriptPane.setScriptLanguage(scriptingContext.getScriptLanguage());
+		if (scriptingContext.getUserScript() != null && scriptingContext.getUserScript().length() > 0) {
+			scriptPane.setScriptContent(scriptingContext.getUserScript());
 		}
+		
 		*/
-	
 		
 		ignoreValueChanges = false;
 	}
@@ -837,8 +847,9 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 
 		// TODO: Reapply scripting
-		//modelOptions.setUserScript(scriptPane.getScriptContent());
-		//modelOptions.setScriptLanguage(scriptPane.getScriptLanguage());
+		
+		scriptingContext.setUserScript(scriptPane.getScriptContent());
+		scriptingContext.setScriptLanguage(scriptPane.getScriptLanguage());
 	}
 	
 	
@@ -1022,7 +1033,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		try {
 			rasterDataContext.prepare();
-		} catch (DataSourceException ex) {
+		} catch (ContextPrepareException ex) {
 			log.warn("Failed to prepare raster data proxy: " + ex.getMessage(), ex);
 		}
 		
@@ -1289,12 +1300,28 @@ public class DemProjectPane extends JdemPanel implements Savable
 			return;
 		}
 
+		ScriptingContext scriptingContext;
+		
+		try {
+			scriptingContext = this.scriptingContext.copy();
+			scriptingContext.setUserScript(scriptPane.getScriptContent());
+			scriptingContext.prepare();
+		} catch (Exception ex) {
+			log.warn("Error compiling script: " + ex.getMessage(), ex);
+			JOptionPane.showMessageDialog(this.getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.message") + ": " + ex.getMessage(),
+				    I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.title"),
+				    JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		//LightingContext lightingContext = this.lightingContext.copy();
 		//ModelOptions modelOptions = this.modelOptions.copy();
 		
 		ModelProcessManifest modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
 		
-		String scriptContent = scriptPane.getScriptContent();
+		//String scriptContent = scriptPane.getScriptContent();
+		
+		/*
 		ScriptProxy scriptProxy = null;
 		ModelContext modelContext = null;
 		
@@ -1310,9 +1337,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 				    JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		*/
 		
 		try {
-			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, modelProcessManifest, scriptProxy);
+			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, modelProcessManifest, scriptingContext);
 		} catch (ModelContextException ex) {
 			// TODO: Display error dialog
 			log.error("Exception updating model context: " + ex.getMessage(), ex);

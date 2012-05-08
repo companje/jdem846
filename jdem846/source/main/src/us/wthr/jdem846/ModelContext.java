@@ -39,6 +39,7 @@ import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.scripting.ScriptProxyFactory;
+import us.wthr.jdem846.scripting.ScriptingContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.util.UniqueIdentifierUtil;
 
@@ -55,12 +56,13 @@ public class ModelContext
 	private RasterDataContext rasterDataContext;
 	private ShapeDataContext shapeDataContext;
 	private ImageDataContext imageDataContext;
+	private ScriptingContext scriptingContext;
 	
 	private ModelProcessManifest modelProcessManifest;
 	
 	@Deprecated
 	private ModelOptions modelOptions;
-	private ScriptProxy scriptProxy;
+
 	
 	@Deprecated
 	private LightingContext lightingContext;
@@ -79,26 +81,26 @@ public class ModelContext
 
 	private boolean isDisposed = false;
 	
-	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, ModelProcessManifest modelProcessManifest, ScriptProxy scriptProxy, String contextId)
+	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, ModelProcessManifest modelProcessManifest, ScriptingContext scriptingContext, String contextId)
 	{
 		this.rasterDataContext = rasterDataContext;
 		this.shapeDataContext = shapeDataContext;
 		this.imageDataContext = imageDataContext;
 		this.modelProcessManifest = modelProcessManifest;
-		this.scriptProxy = scriptProxy;
+		this.scriptingContext = scriptingContext;
 		
 		
 		this.contextId = contextId;
 	}
 	
 	@Deprecated
-	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy, String contextId)
+	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptingContext scriptingContext, String contextId)
 	{
 		this.rasterDataContext = rasterDataContext;
 		this.shapeDataContext = shapeDataContext;
 		this.imageDataContext = imageDataContext;
 		this.modelOptions = modelOptions;
-		this.scriptProxy = scriptProxy;
+		this.scriptingContext = scriptingContext;
 		this.lightingContext = lightingContext;
 		
 		this.contextId = contextId;
@@ -304,12 +306,19 @@ public class ModelContext
 		return modelOptions;
 	}
 
-	public ScriptProxy getScriptProxy()
-	{
-		return scriptProxy;
-	}
+	
 
 	
+	public ScriptingContext getScriptingContext()
+	{
+		return scriptingContext;
+	}
+
+	public void setScriptingContext(ScriptingContext scriptingContext)
+	{
+		this.scriptingContext = scriptingContext;
+	}
+
 	@Deprecated
 	public LightingContext getLightingContext()
 	{
@@ -415,6 +424,7 @@ public class ModelContext
 		ShapeDataContext shapeDataCopy = (shapeDataContext == null) ? null : shapeDataContext.copy();
 		//ModelOptions modelOptionsCopy = (modelOptions == null) ? null : modelOptions.copy();
 		ImageDataContext imageDataCopy = (imageDataContext == null) ? null : imageDataContext.copy();
+		ScriptingContext scriptingContextCopy = (scriptingContext == null) ? null : scriptingContext.copy();
 		
 		ModelProcessManifest modelProcessManifestCopy = (modelProcessManifest == null) ? null : modelProcessManifest.copy();
 		
@@ -433,6 +443,8 @@ public class ModelContext
 		
 		// TODO: Implement script proxy copy
 		//ScriptProxy scriptProxyCopy = null;//(scriptProxy == null) ? null : scriptProxy.copy();
+		
+		/*
 		ScriptProxy scriptProxyCopy = null;
 		
 		
@@ -443,13 +455,13 @@ public class ModelContext
 				throw new DataSourceException("Failed to recompile script: " + ex.getMessage(), ex);
 			} 
 		}
-		
+		*/
 		
 		ModelContext clone = null;
 		
 		
 		try {
-			clone = ModelContext.createInstance(rasterDataCopy, shapeDataCopy, imageDataCopy, modelProcessManifestCopy, scriptProxyCopy);
+			clone = ModelContext.createInstance(rasterDataCopy, shapeDataCopy, imageDataCopy, modelProcessManifestCopy, scriptingContextCopy);
 		} catch (ModelContextException ex) {
 			throw new DataSourceException("Error creating model context: " + ex.getMessage(), ex);
 		}
@@ -476,10 +488,10 @@ public class ModelContext
 		return modelContext;
 	}
 	
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ModelProcessManifest modelProcessManifest, ScriptProxy scriptProxy) throws ModelContextException
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ModelProcessManifest modelProcessManifest, ScriptingContext scriptingContext) throws ModelContextException
 	{
 		String contextId = ModelContext.generateContextId();
-		ModelContext modelContext = new ModelContext(rasterDataContext, null, null, modelProcessManifest, scriptProxy, contextId);
+		ModelContext modelContext = new ModelContext(rasterDataContext, null, null, modelProcessManifest, scriptingContext, contextId);
 		modelContext.updateContext();
 		return modelContext;
 	}
@@ -492,10 +504,10 @@ public class ModelContext
 		return modelContext;
 	}
 	
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ImageDataContext imageDataContext, ModelProcessManifest modelProcessManifest, ScriptProxy scriptProxy) throws ModelContextException
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ImageDataContext imageDataContext, ModelProcessManifest modelProcessManifest, ScriptingContext scriptingContext) throws ModelContextException
 	{
 		String contextId = ModelContext.generateContextId();
-		ModelContext modelContext = new ModelContext(rasterDataContext, null, imageDataContext, modelProcessManifest, scriptProxy, contextId);
+		ModelContext modelContext = new ModelContext(rasterDataContext, null, imageDataContext, modelProcessManifest, scriptingContext, contextId);
 		modelContext.updateContext();
 		return modelContext;
 	}
@@ -508,10 +520,10 @@ public class ModelContext
 		return modelContext;
 	}
 	
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, ModelProcessManifest modelProcessManifest, ScriptProxy scriptProxy) throws ModelContextException
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, ModelProcessManifest modelProcessManifest, ScriptingContext scriptingContext) throws ModelContextException
 	{
 		String contextId = ModelContext.generateContextId();
-		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, imageDataContext, modelProcessManifest, scriptProxy, contextId);
+		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, imageDataContext, modelProcessManifest, scriptingContext, contextId);
 		modelContext.updateContext();
 		return modelContext;
 	}
@@ -530,9 +542,9 @@ public class ModelContext
 	}
 	
 	@Deprecated
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy) throws ModelContextException
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptingContext scriptingContext) throws ModelContextException
 	{
-		return ModelContext.createInstance(rasterDataContext, null, null, lightingContext, modelOptions, scriptProxy);
+		return ModelContext.createInstance(rasterDataContext, null, null, lightingContext, modelOptions, scriptingContext);
 	}
 	
 	@Deprecated
@@ -548,10 +560,10 @@ public class ModelContext
 	}
 	
 	@Deprecated
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptProxy scriptProxy) throws ModelContextException
+	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptingContext scriptingContext) throws ModelContextException
 	{
 		String contextId = ModelContext.generateContextId();
-		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions, scriptProxy, contextId);
+		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions, scriptingContext, contextId);
 		modelContext.updateContext();
 		return modelContext;
 	}

@@ -10,8 +10,11 @@ import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
+import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ModelPointAdapter;
@@ -72,16 +75,31 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	public void prepare() throws RenderEngineException
 	{
 		ModelRenderOptionModel optionModel = (ModelRenderOptionModel) this.getProcessOptionModel();
+		GlobalOptionModel globalOptionModel = modelContext.getModelProcessManifest().getGlobalOptionModel();
 		
 		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
 		
+		MapProjection mapProjection = null;
+		
+		try {
+			mapProjection = MapProjectionProviderFactory.getMapProjection(optionModel.getMapProjection(), 
+					getGlobalOptionModel().getNorthLimit(), 
+					getGlobalOptionModel().getSouthLimit(), 
+					getGlobalOptionModel().getEastLimit(), 
+					getGlobalOptionModel().getWestLimit(), 
+					getGlobalOptionModel().getWidth(), 
+					getGlobalOptionModel().getHeight());
+		} catch (MapProjectionException ex) {
+			log.warn("Error creating map projection: " + ex.getMessage(), ex);
+		}
+
 		projection = CanvasProjectionFactory.create( 
 				CanvasProjectionTypeEnum.getCanvasProjectionEnumFromIdentifier(globalOptionModel.getRenderProjection()),
-				modelContext.getMapProjection(),
-				modelContext.getNorth(),
-				modelContext.getSouth(),
-				modelContext.getEast(),
-				modelContext.getWest(),
+				mapProjection,
+				getGlobalOptionModel().getNorthLimit(),
+				getGlobalOptionModel().getSouthLimit(),
+				getGlobalOptionModel().getEastLimit(),
+				getGlobalOptionModel().getWestLimit(),
 				modelDimensions.getOutputWidth(),
 				modelDimensions.getOutputHeight(),
 				PlanetsRegistry.getPlanet(globalOptionModel.getPlanet()),
@@ -127,7 +145,14 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	{
 		
 		try {
-			lastElevation = createPointVertexes(strip, latitude, longitude, lastElevation);
+			double elev = createPointVertexes(strip, latitude, longitude, lastElevation);
+			
+			if (elev != DemConstants.ELEV_NO_DATA) {
+				lastElevation = elev;
+			} else {
+				canvas.fillShape(strip);
+				strip.reset();
+			}
 		} catch (Exception ex) {
 			log.error("Error creating vertexes: " + ex.getMessage(), ex);
 		}
@@ -148,7 +173,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		double nwElev = createPointVertex(strip, latitude, longitude, lastElevation);
 		double swElev = createPointVertex(strip, latitude - latitudeResolution, longitude, nwElev);
 		
-		return nwElev;
+		return (nwElev != DemConstants.ELEV_NO_DATA) ? nwElev : swElev;
 		
 		/*
 		
@@ -203,9 +228,13 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 			point.getRgba(rgbaBuffer, true);
 		}
 		
-		if (elev == DemConstants.ELEV_NO_DATA){
-			elev = lastElevation;
+		if (elev == DemConstants.ELEV_NO_DATA) {
+			return DemConstants.ELEV_NO_DATA;
 		}
+		
+		//if (elev == DemConstants.ELEV_NO_DATA){
+		//	elev = lastElevation;
+		//}
 
 		Vertex nwVtx = createVertex(latitude, longitude, elev, rgbaBuffer);
 		
