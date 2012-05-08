@@ -17,6 +17,8 @@
 package us.wthr.jdem846.ui.scripting;
 
 import java.awt.BorderLayout;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -148,8 +150,7 @@ public class ScriptEditorPanel extends Panel
 			}
 			
 		});
-		
-		
+
 		// Set Layout
 		BorderLayout layout = new BorderLayout();
 		setLayout(layout);

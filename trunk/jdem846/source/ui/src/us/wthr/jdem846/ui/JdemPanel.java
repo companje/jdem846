@@ -20,11 +20,16 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
 import us.wthr.jdem846.exception.ComponentException;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.panels.DockingContainerPanel;
 
 @SuppressWarnings("serial")
 public abstract class JdemPanel extends DockingContainerPanel
 {
+	@SuppressWarnings("unused")
+	private static Log log = Logging.getLog(JdemPanel.class);
+			
 	private String title;
 	
 	public JdemPanel()

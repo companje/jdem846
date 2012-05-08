@@ -21,11 +21,15 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.ToolBar;
 
 @SuppressWarnings("serial")
 public class ComponentButtonBar extends ToolBar
 {
+	private static Log log = Logging.getLog(ComponentButtonBar.class);
+	
 	
 	public ComponentButtonBar(Component owner)
 	{

@@ -14,6 +14,7 @@ import us.wthr.jdem846.ui.base.EditorPane;
  *
  */
 @SuppressWarnings("serial")
+@Deprecated
 public class ScriptEditorPane extends EditorPane
 {
 	@SuppressWarnings("unused")
