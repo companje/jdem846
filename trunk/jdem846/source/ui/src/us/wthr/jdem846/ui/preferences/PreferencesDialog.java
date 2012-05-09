@@ -69,7 +69,7 @@ public class PreferencesDialog extends Dialog
 	{
 		this.setTitle(I18N.get("us.wthr.jdem846.ui.preferencesDialog.title"));
 		this.setModal(true);
-		this.setSize(430, 300);
+		this.setSize(430, 350);
 		this.setLocationRelativeTo(null);
 		
 		

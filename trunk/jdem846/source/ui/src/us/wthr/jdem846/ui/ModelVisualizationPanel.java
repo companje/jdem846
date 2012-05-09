@@ -34,6 +34,8 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelBuilder;
+import us.wthr.jdem846.model.ViewPerspective;
+import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.simple.SimpleRenderer;
@@ -115,14 +117,24 @@ public class ModelVisualizationPanel extends Panel
 		rasterPreview = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.rasterPreview");
 		autoUpdate = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.autoUpdate");
 	
-		// TODO: Restore sets
-		rotateX = 30;//modelContextActual.getModelOptions().getProjection().getRotateX();
-		rotateY = 0;//modelContextActual.getModelOptions().getProjection().getRotateY();
-		rotateZ = 0;//modelContextActual.getModelOptions().getProjection().getRotateZ();
-		shiftZ = 0;//modelContextActual.getModelOptions().getProjection().getShiftZ();
-		shiftX = 0;//modelContextActual.getModelOptions().getProjection().getShiftX();
-		shiftY = 0;//modelContextActual.getModelOptions().getProjection().getShiftY();
-		zoom = 1.0;//modelContextActual.getModelOptions().getProjection().getZoom();
+		
+		ViewPerspective viewAngle = null;
+		
+		try {
+			viewAngle = (ViewPerspective) modelContextActual.getModelProcessManifest().getPropertyById("us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle");
+		} catch (ModelContainerException ex) {
+			log.error("Error fetching value for view angle from model process manifest: " + ex.getMessage(), ex);
+		}
+		
+
+		rotateX = (viewAngle != null) ? viewAngle.getRotateX() : 30;
+		rotateY = (viewAngle != null) ? viewAngle.getRotateY() : 0;
+		rotateZ = (viewAngle != null) ? viewAngle.getRotateZ() : 0;
+		shiftX = (viewAngle != null) ? viewAngle.getShiftX() : 0;
+		shiftY = (viewAngle != null) ? viewAngle.getShiftY() : 0;
+		shiftZ = (viewAngle != null) ? viewAngle.getShiftZ() : 0;
+		zoom = (viewAngle != null) ? viewAngle.getZoom() : 1.0;
+
 		
 		try {
 			modelContextWorkingCopy = modelContextActual.copy();
@@ -489,6 +501,23 @@ public class ModelVisualizationPanel extends Panel
 		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
 		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
 		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", rasterPreview);
+		
+		
+		ViewPerspective viewAngle = new ViewPerspective(rotateX, 
+														rotateY, 
+														rotateZ,
+														shiftX,
+														shiftY,
+														shiftZ,
+														zoom);
+
+
+		try {
+			modelContextWorkingCopy.getModelProcessManifest().setPropertyById("us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle", viewAngle);
+		} catch (ModelContainerException ex) {
+			log.error("Error setting new projection values to option model: " + ex.getMessage(), ex);
+			// TODO: Display error dialog
+		}
 		
 		//modelContextWorkingCopy.getModelOptions().getProjection().setRotateX(rotateX);
 		//modelContextWorkingCopy.getModelOptions().getProjection().setRotateY(rotateY);

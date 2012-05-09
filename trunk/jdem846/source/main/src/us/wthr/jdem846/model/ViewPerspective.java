@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class ViewPerspective
 {
-	private double rotateX = 0;
+	private double rotateX = 30;
 	private double rotateY = 0;
 	private double rotateZ = 0;
 	

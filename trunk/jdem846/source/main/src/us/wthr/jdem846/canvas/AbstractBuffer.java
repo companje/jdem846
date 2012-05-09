@@ -23,7 +23,7 @@ public abstract class AbstractBuffer
 		
 		
 		bufferLength = width * height * (int) MathExt.sqr(subpixelWidth);
-		log.info("Abstract Buffer: " + bufferLength);
+		log.debug("Abstract Buffer: " + bufferLength);
 	}
 	
 	public abstract void reset();

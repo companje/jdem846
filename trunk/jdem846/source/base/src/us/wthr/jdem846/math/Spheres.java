@@ -35,21 +35,44 @@ public class Spheres
         if (theta <= RAD_90) {
             _z *= -1.0;
 	    } else if (theta  <= RAD_180) {
-	            _x *= -1.0;
-	            _z *= -1.0;
+	    	_x *= -1.0;
+	    	_z *= -1.0;
 	    } else if (theta  <= RAD_270) {
-	            _x *= -1.0;
+	    	_x *= -1.0;
 	    }
 	
 	    if (phi >= 0) { 
-	            _y = MathExt.abs(_y);
+	    	_y = MathExt.abs(_y);
 	    } else {
-	            _y = MathExt.abs(_y) * -1;
+	    	_y = MathExt.abs(_y) * -1;
 	    }
 
         points[0] = _x;
         points[1] = _y;
         points[2] = _z;
+
+	}
+	
+	
+	public static void getPoints2D(double angle, double radius, double[] points)
+	{
+		double b = radius * MathExt.cos(MathExt.radians(angle));
+        double x = MathExt.sqrt(MathExt.sqr(radius) - MathExt.sqr(b));
+        double y = MathExt.sqrt(MathExt.sqr(radius) - MathExt.sqr(x));
+        
+        if (angle <= 90.0) {
+        	y = radius - y;
+        } else if (angle  <= 180.0) {
+        	y = y + radius;
+        } else if (angle  <= 270.0) {
+        	x = -1 * x;
+        	y = y + radius;
+        } else if (angle <= 360.0) {
+        	x = -1 * x;
+        	y = radius - y;
+        }
+        points[0] = x;
+        points[1] = y;
 
 	}
 	

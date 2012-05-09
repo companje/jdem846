@@ -22,6 +22,7 @@ public class OptionModelMethodContainer
 	private boolean isSetter;
 	private boolean isGetter;
 	private Order orderAnnotation;
+	private OptionValidator optionValidator = null;
 	
 	public OptionModelMethodContainer(Object declaringObject, Method method) throws InvalidProcessOptionException
 	{
@@ -63,6 +64,16 @@ public class OptionModelMethodContainer
 		}
 		
 		
+		
+		
+		if (annotation != null && annotation.validator() != null) {
+			Class<?> validatorClazz = annotation.validator();
+			try {
+				optionValidator = (OptionValidator) validatorClazz.newInstance();
+			} catch (Exception ex) {
+				throw new InvalidProcessOptionException("Error creating instance of option validator class " + validatorClazz.getName() + ": " + ex.getMessage(), ex);
+			}
+		}
 	}
 	
 	
@@ -97,6 +108,12 @@ public class OptionModelMethodContainer
 	{
 		return annotation.validator();
 	}
+	
+	public OptionValidator getValidator()
+	{
+		return optionValidator;
+	}
+	
 	
 	public boolean isEnabled()
 	{

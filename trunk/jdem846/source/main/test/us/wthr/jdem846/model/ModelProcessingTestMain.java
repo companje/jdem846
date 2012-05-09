@@ -94,7 +94,9 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		hillshadingOptionModel.setLightZenith(47.0);
 		modelProcessManifest.addProcessor("us.wthr.jdem846.model.processing.coloring.HillshadingProcessor", hillshadingOptionModel);
 		
-		ModelConfigurationPanel panel = new ModelConfigurationPanel(modelProcessManifest);
+		List<OptionModel> optionModelList = new LinkedList<OptionModel>();
+		
+		ModelConfigurationPanel panel = new ModelConfigurationPanel(modelProcessManifest, optionModelList);
 		
 		JFrame frame = new JFrame();
 		frame.setTitle("Dynamic Options Test Frame");

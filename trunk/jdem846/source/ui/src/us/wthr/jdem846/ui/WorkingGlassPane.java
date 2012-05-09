@@ -23,10 +23,13 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.Timer;
 
@@ -40,10 +43,13 @@ public class WorkingGlassPane extends Panel
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(WorkingGlassPane.class);
 
-	private String text;
+	
 	private Font labelFont = new Font("SansSerif", Font.BOLD, 15);
 	//private JLabel jlblLabel;
-	private Component shadeComponent;
+	
+	//private Component shadeComponent;
+	
+	private List<ShadedComponent> shadedComponents = new LinkedList<ShadedComponent>();
 	
 	private int arcAngle = 0;
 	private Timer arcTimer;
@@ -59,7 +65,7 @@ public class WorkingGlassPane extends Panel
 			public void actionPerformed(ActionEvent e)
 			{
 				arcAngle+=5;
-				if (arcAngle >= 360)
+				if (arcAngle > 360)
 					arcAngle = 0;
 				repaint();
 			}
@@ -82,24 +88,10 @@ public class WorkingGlassPane extends Panel
 		super.setVisible(visible);
 	}
 	
-	public void clearText()
-	{
-		this.text = null;
-		//jlblLabel.setText(null);
-	}
-	
-	public void setText(String text)
-	{
-		this.text = text;
-	}
-	
-	public String getText()
-	{
-		return text;
-	}
+
 
 	
-
+	/*
 	public Component getShadeComponent()
 	{
 		return shadeComponent;
@@ -109,39 +101,69 @@ public class WorkingGlassPane extends Panel
 	{
 		this.shadeComponent = shadeComponent;
 	}
+	*/
+	
+
+	public void addShadedComponent(Component component, String text)
+	{
+		this.shadedComponents.add(new ShadedComponent(component, text));
+		this.setVisible(shadedComponents.size() > 0);
+	}
+	
+	public boolean removeShadedComponent(Component component)
+	{
+		for (ShadedComponent shadedComponent : shadedComponents) {
+			if (shadedComponent.component.equals(component)) {
+				shadedComponents.remove(shadedComponent);
+				return true;
+			}
+		}
+		return false;
+		
+	}
+	
 
 	@Override
 	public void paint(Graphics g)
 	{
-		if (shadeComponent == null) {
-			shadeComponent = JdemFrame.getInstance();
+		for (ShadedComponent shadedComponent : shadedComponents) {
+			paintOver((Graphics2D) g, shadedComponent.text, shadedComponent.component);
 		}
-		
-		if (!shadeComponent.isVisible()) {
+	}
+	
+	protected void paintOver(Graphics2D g2d, String text, Component component)
+	{
+		if (!component.isVisible()) {
 			return;
 		}
 		
-		Graphics2D g2d = (Graphics2D) g;
+		Point compPoint = null;
+		
+		try {
+			compPoint = component.getLocationOnScreen();
+		} catch (IllegalComponentStateException ex) {
+			return;
+		}
+		
+		Point pt = this.getLocationOnScreen();
+		
+		int x = compPoint.x - pt.x;
+		int y = compPoint.y - pt.y;
+		int width = component.getWidth();
+		int height = component.getHeight();
+		
+		paintOver(g2d, text, x, y, width, height);
+	}
+	
+	
+	protected void paintOver(Graphics2D g2d, String text, int x, int y, int width, int height)
+	{
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		Color color = new Color(150, 150, 150, 100);
 		g2d.setColor(color);
 		
-		Point pt = this.getLocationOnScreen();
-		Point compPoint = shadeComponent.getLocationOnScreen();
-		int x = compPoint.x - pt.x;
-		int y = compPoint.y - pt.y;
-		int width = shadeComponent.getWidth();
-		int height = shadeComponent.getHeight();
-		
-		//int x = (limitSpace != null) ? limitSpace.x - pt.x : 0;
-		//int y = (limitSpace != null) ? limitSpace.y - pt.y : 0;
-		//int width = (limitSpace != null) ? limitSpace.width : getWidth();
-		//int height = (limitSpace != null) ? limitSpace.height : getHeight();
-		
 		g2d.fillRect(x, y, width, height);
-		
-		
 		
 		g2d.setColor(new Color(100, 100, 100, 150));
 		int arcWidth = 100;
@@ -161,6 +183,35 @@ public class WorkingGlassPane extends Panel
 			int labelX = x + (width / 2) - (fontWidth / 2);
 			int labelY = y + (height / 2) + (fontMetrics.getHeight() / 2) - (fontMetrics.getAscent() / 2);// - labelFont.getSize();
 			g2d.drawString(text, labelX, labelY);
+		}
+	}
+	
+	
+	protected class ShadedComponent
+	{
+		public String text;
+		public Component component;
+		
+		public ShadedComponent(Component component, String text)
+		{
+			this.text = text;
+			this.component = component;
+		}
+		
+		
+		public boolean equals(Object obj)
+		{
+			if (obj == null)
+				return false;
+			
+			if (obj instanceof ShadedComponent && obj == this)
+				return true;
+			
+			if (obj instanceof Component && component.equals(obj)) {
+				return true;
+			}
+			
+			return false;
 		}
 	}
 }

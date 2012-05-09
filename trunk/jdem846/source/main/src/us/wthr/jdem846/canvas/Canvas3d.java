@@ -1,5 +1,6 @@
 package us.wthr.jdem846.canvas;
 
+import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
@@ -47,10 +48,26 @@ public class Canvas3d
 	
 	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth)
 	{
-		this(width, height, clipNearZ, clipFarZ, subpixelWidth, null);
+		this(width, height, clipNearZ, clipFarZ, subpixelWidth, 0x0, null);
+	}
+
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth, int backgroundColor)
+	{
+		this(width, height, clipNearZ, clipFarZ, subpixelWidth, backgroundColor, null);
 	}
 	
-	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth, RenderPipeline pipeline)
+	
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth, Color color)
+	{
+		this(width, height, clipNearZ, clipFarZ, subpixelWidth, color.getRGB(), null);
+	}
+	
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth, int[] rgba)
+	{
+		this(width, height, clipNearZ, clipFarZ, subpixelWidth, ColorUtil.rgbaToInt(rgba[0], rgba[1], rgba[2], rgba[3]), null);
+	}
+	
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth, int backgroundColor, RenderPipeline pipeline)
 	{
 		this.pipeline = pipeline;
 		this.width = width;
@@ -60,7 +77,7 @@ public class Canvas3d
 		this.subpixelWidth = subpixelWidth;
 		
 		rasterBuffer = new RasterBuffer3d(width, height, this.subpixelWidth);
-		
+		rasterBuffer.reset(backgroundColor);
 		//pixelBuffer = new MatrixBuffer<Integer>(width, height);
 		//zBuffer = new MatrixBuffer<Double>(width, height);
 		

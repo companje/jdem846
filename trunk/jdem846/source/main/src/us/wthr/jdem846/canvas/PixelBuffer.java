@@ -17,12 +17,17 @@ public class PixelBuffer extends AbstractBuffer
 	
 	public void reset()
 	{
+		reset(0x0);
+	}
+	
+	public void reset(int backgroundColor)
+	{
 		if (buffer == null) {
 			return;
 		}
 		
 		for (int i = 0; i < getBufferLength(); i++) {
-			buffer[i] = 0x0;
+			buffer[i] = backgroundColor;
 		}
 	}
 	

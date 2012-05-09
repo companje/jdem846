@@ -5,6 +5,9 @@ import java.util.List;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
+import us.wthr.jdem846.model.exceptions.ModelContainerException;
+import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
@@ -13,19 +16,27 @@ public class ModelProcessManifest
 {
 	private static Log log = Logging.getLog(ModelProcessManifest.class);
 	
-	private GlobalOptionModel globalOptionModel;
+	
+	private OptionModelContainer globalOptionModelContainer;
+	
 	private List<ModelProcessContainer> processList = new LinkedList<ModelProcessContainer>();
 	
-	public ModelProcessManifest()
+	public ModelProcessManifest() throws ProcessContainerException
 	{
-		this.globalOptionModel = new GlobalOptionModel();
+		this(new GlobalOptionModel());
 	}
 	
-	public ModelProcessManifest(GlobalOptionModel globalOptionModel)
+	public ModelProcessManifest(GlobalOptionModel globalOptionModel) throws ProcessContainerException
 	{
-		this.globalOptionModel = globalOptionModel;
+		if (globalOptionModel != null) {
+			setGlobalOptionModel(globalOptionModel);
+		}
 	}
 	
+	public ModelProcessManifest(OptionModelContainer globalOptionModelContainer)
+	{
+		this.globalOptionModelContainer = globalOptionModelContainer;
+	}
 	
 	public void addProcessor(String processId)
 	{
@@ -35,7 +46,7 @@ public class ModelProcessManifest
 		
 	}
 	
-	public void addProcessor(String processId, OptionModel optionModel)
+	public void addProcessor(String processId, OptionModel optionModel) throws ProcessContainerException
 	{
 		ProcessInstance processInstance = ModelProcessRegistry.getInstance(processId);
 		Class<?> clazz = (Class<?>) processInstance.getProcessorClass();
@@ -54,7 +65,7 @@ public class ModelProcessManifest
 		
 	}
 	
-	public void addProcessor(AbstractGridProcessor gridProcessor, OptionModel optionModel)
+	public void addProcessor(AbstractGridProcessor gridProcessor, OptionModel optionModel) throws ProcessContainerException
 	{
 		addProcessContainer(new ModelProcessContainer(gridProcessor, optionModel));
 	}
@@ -81,20 +92,112 @@ public class ModelProcessManifest
 
 	public GlobalOptionModel getGlobalOptionModel()
 	{
-		return globalOptionModel;
+		return (GlobalOptionModel) this.globalOptionModelContainer.getOptionModel();
 	}
 
-	public void setGlobalOptionModel(GlobalOptionModel globalOptionModel)
+	public void setGlobalOptionModel(GlobalOptionModel globalOptionModel) throws ProcessContainerException
 	{
-		this.globalOptionModel = globalOptionModel;
+		try {
+			globalOptionModelContainer = new OptionModelContainer(globalOptionModel);
+		} catch (InvalidProcessOptionException ex) {
+			throw new ProcessContainerException("Error creating default container for global option model: " + ex.getMessage(), ex);
+		}
 	}
 	
 	
-	public ModelProcessManifest copy()
+	protected OptionModelContainer getOptionModelContainerThatContainsPropertyName(String name)
+	{
+		if (globalOptionModelContainer != null && globalOptionModelContainer.hasPropertyByName(name)) {
+			return globalOptionModelContainer;
+		}
+		
+		for (ModelProcessContainer processContainer : this.processList) {
+			OptionModelContainer optionModelContainer = processContainer.getOptionModelContainer();
+			if (optionModelContainer != null && optionModelContainer.hasPropertyByName(name)) {
+				return optionModelContainer;
+			}
+			
+		}
+		
+		return null;
+	}
+	
+	protected OptionModelContainer getOptionModelContainerThatContainsPropertyId(String id)
+	{
+		if (globalOptionModelContainer != null && globalOptionModelContainer.hasPropertyById(id)) {
+			return globalOptionModelContainer;
+		}
+		
+		for (ModelProcessContainer processContainer : this.processList) {
+			OptionModelContainer optionModelContainer = processContainer.getOptionModelContainer();
+			if (optionModelContainer != null && optionModelContainer.hasPropertyById(id)) {
+				return optionModelContainer;
+			}
+			
+		}
+		
+		return null;
+	}
+	
+	public boolean setPropertyById(String id, Object value) throws ModelContainerException
+	{
+		OptionModelContainer optionModelContainer = getOptionModelContainerThatContainsPropertyId(id);
+		if (optionModelContainer != null && optionModelContainer.hasPropertyById(id)) {
+			optionModelContainer.setPropertyValueById(id, value);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	public Object getPropertyById(String id) throws ModelContainerException
+	{
+		OptionModelContainer optionModelContainer = getOptionModelContainerThatContainsPropertyId(id);
+		if (optionModelContainer != null && optionModelContainer.hasPropertyById(id)) {
+			return optionModelContainer.getPropertyValueById(id);
+		} else {
+			return null;
+		}
+	}
+	
+	public boolean setPropertyByName(String name, Object value) throws ModelContainerException
+	{
+		OptionModelContainer optionModelContainer = getOptionModelContainerThatContainsPropertyName(name);
+		if (optionModelContainer != null && optionModelContainer.hasPropertyByName(name)) {
+			optionModelContainer.setPropertyValueByName(name, value);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	public Object getPropertyByName(String name) throws ModelContainerException
+	{
+		OptionModelContainer optionModelContainer = getOptionModelContainerThatContainsPropertyName(name);
+		if (optionModelContainer != null && optionModelContainer.hasPropertyByName(name)) {
+			return optionModelContainer.getPropertyValueByName(name);
+		} else {
+			return null;
+		}
+	}
+	
+	
+	public ModelProcessManifest copy() throws ProcessContainerException
 	{
 
-		ModelProcessManifest copy = new ModelProcessManifest(null);
-		copy.globalOptionModel = this.globalOptionModel.copy();
+		ModelProcessManifest copy = null;
+		
+		
+		copy = new ModelProcessManifest((GlobalOptionModel)null);
+		try {
+			copy.globalOptionModelContainer = new OptionModelContainer(this.globalOptionModelContainer.getOptionModel());
+		} catch (InvalidProcessOptionException ex) {
+			throw new ProcessContainerException("Error creating copy of option model container: " + ex.getMessage(), ex);
+		}
+		
+		
 		for (ModelProcessContainer processContainer : this.processList) {
 			copy.addProcessContainer(new ModelProcessContainer(processContainer.getGridProcessor(), processContainer.getOptionModel()));
 		}
