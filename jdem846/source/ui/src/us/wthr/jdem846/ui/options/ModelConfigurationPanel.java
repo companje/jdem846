@@ -31,7 +31,7 @@ import us.wthr.jdem846.ui.base.TabPane;
 import us.wthr.jdem846.ui.panels.EmbeddedTabbedPane;
 
 @SuppressWarnings("serial")
-public class ModelConfigurationPanel extends Panel
+public class ModelConfigurationPanel extends Panel implements OptionModelChangeListener, ModelConfigurationChangeListener
 {
 	private static Log log = Logging.getLog(ModelConfigurationPanel.class);
 	
@@ -45,7 +45,7 @@ public class ModelConfigurationPanel extends Panel
 	
 	private List<ModelConfigurationChangeListener> modelConfigurationChangeListeners = new LinkedList<ModelConfigurationChangeListener>();
 	
-	public ModelConfigurationPanel(ModelProcessManifest modelProcessManifest)
+	public ModelConfigurationPanel(ModelProcessManifest modelProcessManifest, List<OptionModel> providedOptionModelList)
 	{
 		
 		
@@ -61,9 +61,11 @@ public class ModelConfigurationPanel extends Panel
 		}
 		
 		List<OptionModel> optionModelList = new LinkedList<OptionModel>();
-		for (ModelProcessContainer modelProcessContainer : modelProcessManifest.getProcessList()) {
-			optionModelList.add(modelProcessContainer.getOptionModel());
-		}
+		optionModelList.addAll(providedOptionModelList);
+		
+		//for (ModelProcessContainer modelProcessContainer : modelProcessManifest.getProcessList()) {
+		//	optionModelList.add(modelProcessContainer.getOptionModel());
+		//}
 		
 		//us.wthr.jdem846.ui.options.modelConfiguration.shadingProcessor.default
 		//us.wthr.jdem846.ui.options.modelConfiguration.renderProcessor.default
@@ -81,33 +83,16 @@ public class ModelConfigurationPanel extends Panel
 		
 		
 		// Add Listeners
-		OptionModelChangeListener propertyChangeListener = new OptionModelChangeListener() {
-			public void onPropertyChanged(OptionModelChangeEvent e)
-			{
-				firePropertyChangeListeners(e);
-				//log.info("Property change for " + e.getPropertyName() + " from " + e.getOldValue() + " to " + e.getNewValue());
-			}
-		};
+		//OptionModelChangeListener propertyChangeListener = new OptionModelChangeListener() {
+			
+		//};
 		for (OptionModelPropertyContainer propertyContainer : globalOptionModelContainer.getProperties()) {
-			propertyContainer.addOptionModelChangeListener(propertyChangeListener);
+			propertyContainer.addOptionModelChangeListener(this);
 		}
 
-		ModelConfigurationChangeListener modelConfigurationChangeListener = new ModelConfigurationChangeListener() {
-			public void onProcessSelected(String processId)
-			{
-				//log.info("** New Process Selected: " + processId);
-				fireProcessSelectedListeners(processId);
-			}
-			public void onPropertyChanged(OptionModelChangeEvent e)
-			{
-				//log.info("** Property change for " + e.getPropertyName() + " from " + e.getOldValue() + " to " + e.getNewValue());
-				firePropertyChangeListeners(e);
-			}
-		};
-		
-		coloringConfiguration.addModelConfigurationChangeListener(modelConfigurationChangeListener);
-		shadingConfiguration.addModelConfigurationChangeListener(modelConfigurationChangeListener);
-		renderConfiguration.addModelConfigurationChangeListener(modelConfigurationChangeListener);
+		coloringConfiguration.addModelConfigurationChangeListener(this);
+		shadingConfiguration.addModelConfigurationChangeListener(this);
+		renderConfiguration.addModelConfigurationChangeListener(this);
 		
 		
 		ScrollPane globalOptionsScroll = new ScrollPane(globalOptionsPanel);
@@ -128,7 +113,7 @@ public class ModelConfigurationPanel extends Panel
 	}
 	
 	
-	public ModelProcessManifest getModelProcessManifest()
+	public ModelProcessManifest getModelProcessManifest() throws Exception
 	{
 		ModelProcessManifest modelProcessManifest = new ModelProcessManifest();
 		
@@ -158,6 +143,16 @@ public class ModelConfigurationPanel extends Panel
 	}
 	
 	
+	public void onPropertyChanged(OptionModelChangeEvent e)
+	{
+		firePropertyChangeListeners(e);
+	}
+	
+	public void onProcessSelected(String processId)
+	{
+		fireProcessSelectedListeners(processId);
+	}
+
 	public void addModelConfigurationChangeListener(ModelConfigurationChangeListener listener)
 	{
 		modelConfigurationChangeListeners.add(listener);

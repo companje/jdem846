@@ -122,8 +122,11 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 		planet = PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet());
 		
-		solarAzimuth = 270.0;//modelContext.getLightingContext().getLightingAzimuth();
-		solarElevation = 25.0;//modelContext.getLightingContext().getLightingElevation();
+		solarAzimuth = optionModel.getSourceLocation().getAzimuthAngle();
+		solarElevation = optionModel.getSourceLocation().getElevationAngle();
+		
+		//solarAzimuth = 270.0;//modelContext.getLightingContext().getLightingAzimuth();
+		//solarElevation = 25.0;//modelContext.getLightingContext().getLightingElevation();
 
 		
 		lightSourceType = LightSourceSpecifyTypeEnum.getByOptionValue(optionModel.getSourceType());

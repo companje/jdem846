@@ -51,6 +51,12 @@ public class OptionModelContainer
 		getPropertyContainers();
 	}
 	
+	
+	public OptionModel getOptionModel()
+	{
+		return optionModel;
+	}
+	
 	private void getAllMethods()
 	{
 

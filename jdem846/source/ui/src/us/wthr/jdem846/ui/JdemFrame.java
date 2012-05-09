@@ -677,28 +677,19 @@ public class JdemFrame extends Frame
 
 	}
 	
-	public void setGlassVisible(boolean visible)
+	public void addShadedComponent(Component component, String text)
 	{
 		WorkingGlassPane glassPane = (WorkingGlassPane) this.getGlassPane();
-		glassPane.setVisible(visible);
+		glassPane.addShadedComponent(component, text);
 	}
 	
-	public void setGlassVisible(String text, boolean visible)
+	public boolean removeShadedComponent(Component component)
 	{
 		WorkingGlassPane glassPane = (WorkingGlassPane) this.getGlassPane();
-		glassPane.setVisible(visible);
-		glassPane.setShadeComponent(null);
-		glassPane.setText(text);
+		return glassPane.removeShadedComponent(component);
 	}
 	
-	public void setGlassVisible(String text, Component component, boolean visible)
-	{
-		WorkingGlassPane glassPane = (WorkingGlassPane) this.getGlassPane();
-		glassPane.setVisible(visible);
-		glassPane.setShadeComponent(component);
-		glassPane.setText(text);
-	}
-	
+
 	
 	public static JdemFrame getInstance()
 	{

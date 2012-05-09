@@ -356,7 +356,7 @@ public class ModelPreviewPane extends RoundedPanel
 			//canvas.drawImage(shapeLayerCanvas.getImage(), 0, 0, shapeLayerCanvas.getWidth(), shapeLayerCanvas.getHeight());
 		}
 
-		imagePanel.setImage((BufferedImage)canvas.getFinalizedImage());
+		imagePanel.setImage((BufferedImage)canvas.getImage());
 		repaint();
 	}
 	

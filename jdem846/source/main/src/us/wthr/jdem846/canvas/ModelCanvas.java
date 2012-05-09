@@ -51,12 +51,11 @@ public class ModelCanvas
 
 	public ModelCanvas(ModelContext modelContext)
 	{
-		this(modelContext.getModelDimensions().getOutputWidth(),
-				modelContext.getModelDimensions().getOutputHeight(),
-				modelContext.getModelOptions().getIntegerOption(ModelOptionNamesEnum.SUBPIXEL_WIDTH),
-				modelContext.getModelOptions().getBackgroundColor(),
+		this(modelContext.getModelProcessManifest().getGlobalOptionModel().getWidth(), 
+				modelContext.getModelProcessManifest().getGlobalOptionModel().getHeight(), 
+				modelContext.getModelProcessManifest().getGlobalOptionModel().getSubpixelGridSize(), 
+				modelContext.getModelProcessManifest().getGlobalOptionModel().getBackgroundColor(), 
 				CanvasProjectionFactory.create(modelContext));
-
 	}
 	
 	public ModelCanvas(int width, int height, int subpixelWidth, String backgroundColor, CanvasProjection canvasProjection)
@@ -81,7 +80,7 @@ public class ModelCanvas
 		double clipFarZ = -width;
 		
 
-		canvas = new Canvas3d(width, height, clipNearZ, clipFarZ, subpixelWidth);
+		canvas = new Canvas3d(width, height, clipNearZ, clipFarZ, subpixelWidth, backgroundColor);
 		
 		if (canvasProjection != null) {
 			this.canvasProjection = canvasProjection;
@@ -527,65 +526,12 @@ public class ModelCanvas
 		return subImage;
 	}
 	
-	public Image getFinalizedImage()
-	{
-		return getFinalizedImage(true);
-	}
-	
-	public Image getFinalizedImage(boolean applyBackground)
-	{
-		BufferedImage finalImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D graphics = (Graphics2D) finalImage.createGraphics();
-		graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-		//if (modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED)) {
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		//}
-		graphics.drawImage(canvas.getImage(), 0, 0, getWidth(), getHeight(), null);
-		
-		
-		//BufferedImage finalImage = ImageUtilities.getScaledInstance(image, getWidth(), getHeight(), RenderingHints.VALUE_INTERPOLATION_BILINEAR, false);
-		//if (isAntiAliased) {
-		//	stripAlphaChannel(finalImage);
-	//	}
-		
-		if (applyBackground) {
-			applyBackgroundColor(finalImage);
-		}
-		graphics.dispose();
-		return finalImage;
-		
-	}
-	
-	protected void applyBackgroundColor(BufferedImage image)
-	{
-		WritableRaster raster = image.getRaster();
-		int[] rasterPixel = new int[4];
-		
-		for (int row = 0; row < raster.getHeight(); row++) {
-			for (int column = 0; column < raster.getWidth(); column++) {
-				raster.getPixel(column, row, rasterPixel);
-				
-				if (rasterPixel[0] == 0 && rasterPixel[1] == 0 && rasterPixel[2] == 0 && rasterPixel[3] == 0) {
-					// Apply background color
-					
-					rasterPixel[0] = backgroundColor.getRed();
-					rasterPixel[1] = backgroundColor.getGreen();
-					rasterPixel[2] = backgroundColor.getBlue();
-					rasterPixel[3] = backgroundColor.getAlpha();
-					
-					raster.setPixel(column, row, rasterPixel);
-				} 
-			}
-			
-		}
-	}
 
-	
 	
 	public void save(String saveTo) throws CanvasException
 	{
 		try {
-			ImageWriter.saveImage((BufferedImage)getFinalizedImage(), saveTo);
+			ImageWriter.saveImage((BufferedImage)getImage(), saveTo);
 		} catch (ImageException ex) {
 			throw new CanvasException("Failed to save image to disk: " + ex.getMessage(), ex);
 		}

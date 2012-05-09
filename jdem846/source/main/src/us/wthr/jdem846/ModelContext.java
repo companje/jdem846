@@ -27,6 +27,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelGridDimensions;
 import us.wthr.jdem846.model.ModelProcessManifest;
+import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.CancelIndicator;
 import us.wthr.jdem846.gis.elevation.ElevationMinMax;
@@ -139,6 +140,7 @@ public class ModelContext
 		}
 		*/
 		
+		
 		if (updateDataMinMax) {
 			
 			
@@ -190,6 +192,7 @@ public class ModelContext
 				}
 			}
 		}
+		
 		
 	}
 	
@@ -426,7 +429,13 @@ public class ModelContext
 		ImageDataContext imageDataCopy = (imageDataContext == null) ? null : imageDataContext.copy();
 		ScriptingContext scriptingContextCopy = (scriptingContext == null) ? null : scriptingContext.copy();
 		
-		ModelProcessManifest modelProcessManifestCopy = (modelProcessManifest == null) ? null : modelProcessManifest.copy();
+		ModelProcessManifest modelProcessManifestCopy = null;
+		
+		try {
+			modelProcessManifestCopy = (modelProcessManifest == null) ? null : modelProcessManifest.copy();
+		} catch (ProcessContainerException ex) {
+			throw new DataSourceException("Error creating copy of model process manifest: " + ex.getMessage(), ex);
+		}
 		
 		//LightingContext lightingContextCopy = (lightingContext == null) ? null : lightingContext.copy();
 		ModelCanvas modelCanvasCopy = null;
@@ -479,6 +488,7 @@ public class ModelContext
 		return clone;
 
 	}
+
 	
 	public static ModelContext createInstance(RasterDataContext rasterDataContext, ModelProcessManifest modelProcessManifest) throws ModelContextException
 	{

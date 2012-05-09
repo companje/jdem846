@@ -118,7 +118,7 @@ public class RenderViewPane extends Panel
 				
 				canvas = modelContext.getModelCanvas();
 				synchronized(imageDisplay) {
-					imageDisplay.setImage(canvas.getFinalizedImage());
+					imageDisplay.setImage(canvas.getImage());
 					imageDisplay.zoomFit();
 				}
 
@@ -249,6 +249,7 @@ public class RenderViewPane extends Panel
 			TaskControllerService.addTask(renderTask, taskStatusListener);
 			setWorking(true);
 			//spinner.start();
+			//JdemFrame.getInstance().setGlassVisible("Working...", this, true);
 		}
 		
 
@@ -447,6 +448,13 @@ public class RenderViewPane extends Panel
 	protected void setWorking(boolean isWorking) 
 	{
 		this.isWorking = isWorking;
+		
+		if (isWorking) {
+			JdemFrame.getInstance().addShadedComponent(this, "Working...");
+		} else {
+			JdemFrame.getInstance().removeShadedComponent(this);
+		}
+		
 	}
 	
 	protected void onMousePosition(int x, int y, double scaledPercent)
@@ -515,7 +523,7 @@ public class RenderViewPane extends Panel
 	
 	protected void saveTo(String path) 
 	{
-		FileSaveThread saveThread = new FileSaveThread(canvas.getFinalizedImage(), path);
+		FileSaveThread saveThread = new FileSaveThread(canvas.getImage(), path);
 		saveThread.addSaveCompletedListener(new SaveCompletedListener() {
 			public void onSaveSuccessful()
 			{

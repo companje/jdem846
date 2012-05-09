@@ -7,6 +7,7 @@ import us.wthr.jdem846.model.listModels.ElevationScalerListModel;
 import us.wthr.jdem846.model.listModels.PlanetListModel;
 import us.wthr.jdem846.model.listModels.RenderProjectionListModel;
 import us.wthr.jdem846.model.listModels.SubpixelGridSizeListModel;
+import us.wthr.jdem846.model.processing.ModelHeightWidthValidator;
 import us.wthr.jdem846.scaling.ElevationScalerEnum;
 
 public class GlobalOptionModel implements OptionModel
@@ -57,7 +58,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.width",
 			label="Width",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			validator=ModelHeightWidthValidator.class)
 	@Order(1)
 	public int getWidth()
 	{
@@ -72,7 +74,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.height",
 			label="Height",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			validator=ModelHeightWidthValidator.class)
 	@Order(2)
 	public int getHeight()
 	{

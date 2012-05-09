@@ -57,8 +57,15 @@ import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelProcessManifest;
+import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.OptionModelChangeEvent;
+import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.exceptions.ContextPrepareException;
+import us.wthr.jdem846.model.exceptions.ModelContainerException;
+import us.wthr.jdem846.model.exceptions.ProcessContainerException;
+import us.wthr.jdem846.model.exceptions.ProcessCreateException;
+import us.wthr.jdem846.model.processing.ModelProcessRegistry;
+import us.wthr.jdem846.model.processing.ProcessInstance;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
@@ -166,7 +173,17 @@ public class DemProjectPane extends JdemPanel implements Savable
 		//dataPackage = new DataPackage(null);
 		rasterDataContext = new RasterDataContext();
 		//modelOptions = new ModelOptions();
-		modelProcessManifest = new ModelProcessManifest();
+		
+		
+		List<OptionModel> defaultOptionModelList = createDefaultOptionModelList();
+		
+		try {
+			modelProcessManifest = new ModelProcessManifest();
+		} catch (ProcessContainerException ex) {
+			log.error("Error creating default model process manifest: " + ex.getMessage(), ex);
+		}
+		
+		
 		shapeDataContext = new ShapeDataContext();
 		imageDataContext = new ImageDataContext();
 		scriptingContext = new ScriptingContext();
@@ -213,7 +230,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		datasetOptionsPanel = new DataSetOptionsPanel();
 		orderingButtonBar = new OrderingButtonBar();
 		
-		modelConfigurationPanel = new ModelConfigurationPanel(modelProcessManifest);
+		modelConfigurationPanel = new ModelConfigurationPanel(modelProcessManifest, defaultOptionModelList);
 		
 		//modelOptionsPanel = new ModelOptionsPanel();
 		//modelOptionsPanel.setModelOptions(modelOptions);
@@ -234,7 +251,13 @@ public class DemProjectPane extends JdemPanel implements Savable
 		//layoutPane = new DataInputLayoutPane(modelContext);
 		//previewPane = new ModelPreviewPane(modelContext);
 		visualizationPanel = new ModelVisualizationPanel(modelContext);
-		modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
+		try {
+			modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
+		} catch (Exception ex) {
+			log.error("Error creating initial model process manifest: " + ex.getMessage(), ex);
+		}
+		
+		
 		modelContext.setModelProcessManifest(modelProcessManifest);
 		
 		
@@ -386,16 +409,26 @@ public class DemProjectPane extends JdemPanel implements Savable
 			public void onProcessSelected(String processId)
 			{
 				log.info("** New Process Selected: " + processId);
-				modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
-				modelContext.setModelProcessManifest(modelProcessManifest);
+				try {
+					modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
+					modelContext.setModelProcessManifest(modelProcessManifest);
+				} catch (Exception ex) {
+					log.error("Error fetching model process manifest from configuration panel: " + ex.getMessage(), ex);
+				}
+				
 				// TODO: On configuration changed
 				onConfigurationChanged();
 			}
 			public void onPropertyChanged(OptionModelChangeEvent e)
 			{
 				log.info("** Property change for " + e.getPropertyName() + " from " + e.getOldValue() + " to " + e.getNewValue());
-				modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
-				modelContext.setModelProcessManifest(modelProcessManifest);
+				try {
+					modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
+					modelContext.setModelProcessManifest(modelProcessManifest);
+				} catch (Exception ex) {
+					log.error("Error fetching model process manifest from configuration panel: " + ex.getMessage(), ex);
+				}
+				
 				// TODO: On configuration changed
 				onConfigurationChanged();
 			}			
@@ -437,6 +470,23 @@ public class DemProjectPane extends JdemPanel implements Savable
 			public void onProjectionChanged(double rotateX, double rotateY, double rotateZ, double shiftX, double shiftY, double shiftZ, double zoom)
 			{
 				
+				log.info("Projection Changed to Rotate: " + rotateX + "/" + rotateY + "/" + rotateZ + ", Shift: "  + shiftX + "/" + shiftY + "/" + shiftZ + ", Zoom: " + zoom);
+				
+				ViewPerspective viewAngle = new ViewPerspective(rotateX, 
+																rotateY, 
+																rotateZ,
+																shiftX,
+																shiftY,
+																shiftZ,
+																zoom);
+				
+				
+				try {
+					modelProcessManifest.setPropertyById("us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle", viewAngle);
+				} catch (ModelContainerException ex) {
+					log.error("Error setting new projection values to option model: " + ex.getMessage(), ex);
+					// TODO: Display error dialog
+				}
 				/*
 				modelOptionsPanel.getModelOptions(false).getProjection().setRotateX(rotateX);
 				modelOptionsPanel.getModelOptions(false).getProjection().setRotateY(rotateY);
@@ -584,6 +634,26 @@ public class DemProjectPane extends JdemPanel implements Savable
 	}
 	
 	
+	public List<OptionModel> createDefaultOptionModelList()
+	{
+		List<OptionModel> defaultOptionModelList = new LinkedList<OptionModel>();
+		
+		List<ProcessInstance> processList = ModelProcessRegistry.getInstances();
+		for (ProcessInstance processInstance : processList) {
+			
+			try {
+				OptionModel optionModel = processInstance.createOptionModel();
+				defaultOptionModelList.add(optionModel);
+			} catch (ProcessCreateException ex) {
+				log.error("Error creating option model for process id " + processInstance.getId());
+				// TODO: Display error dialog
+			}
+			
+		}
+		
+		return defaultOptionModelList;
+	}
+	
 	public void loadDefaultScripting()
 	{
 		// If this script isn't null or it's longer than 0 characters, then we
@@ -683,29 +753,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	{
 		ProjectModel projectModel = new ProjectModel();
 		// TODO: Reapply sync
-		/*
-		ModelOptions modelOptions = modelOptionsPanel.getModelOptions();
-		applyOptionsToModel(modelOptions);
-		
-		
-		projectModel.setProjectType(ProjectTypeEnum.STANDARD_PROJECT);
-		projectModel.setLoadedFrom(projectLoadedFrom);
-		modelOptions.syncToProjectModel(projectModel);
-		lightingContext.syncToProjectModel(projectModel);
-		
-		for (RasterData rasterData : rasterDataContext.getRasterDataList()) {
-			projectModel.getInputFiles().add(rasterData.getFilePath());
-		}
 
-		for (ShapeFileRequest shapeFile : shapeDataContext.getShapeFiles()) {
-			projectModel.getShapeFiles().add(shapeFile);
-		}
-
-		for (SimpleGeoImage image : imageDataContext.getImageList()) {
-			projectModel.getImageFiles().add(image);
-		}
-		*/
-		
 		return projectModel;
 	}
 	
@@ -1317,7 +1365,15 @@ public class DemProjectPane extends JdemPanel implements Savable
 		//LightingContext lightingContext = this.lightingContext.copy();
 		//ModelOptions modelOptions = this.modelOptions.copy();
 		
-		ModelProcessManifest modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
+		ModelProcessManifest modelProcessManifest = null;
+		
+		try {
+			modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
+		} catch (Exception ex) {
+			log.error("Error retrieving model process manifest from configuration panel: " + ex.getMessage(), ex);
+		}
+		modelProcessManifest.getGlobalOptionModel().setLatitudeSlices(-1);
+		modelProcessManifest.getGlobalOptionModel().setLongitudeSlices(-1);
 		
 		//String scriptContent = scriptPane.getScriptContent();
 		

@@ -47,15 +47,7 @@ public class RenderPane extends Panel implements Savable
 	{
 		
 		buttonBar = new OutputImageViewButtonBar(this);
-		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_SAVE, false);
-		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_IN, false);
-		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
-		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
-		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
-		buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
-		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
-		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
-		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
+		this.setButtonBarAllDisabled();
 		
 		outputImageTabbedPane = new EmbeddedTabbedPane(EmbeddedTabbedPane.BOTTOM);
 		
@@ -174,13 +166,25 @@ public class RenderPane extends Panel implements Savable
 	}
 	
 	
+	protected void setButtonBarAllDisabled()
+	{
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_SAVE, false);
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_IN, false);
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
+		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
+	}
 	
 	public void render(ModelContext modelContext)
 	{
 		renderCount++;
 		
 		RenderViewPane renderViewPane = new RenderViewPane(modelContext);
-		outputImageTabbedPane.add("Image #" + renderCount, renderViewPane);
+		outputImageTabbedPane.addTab("Image #" + renderCount, renderViewPane, true);
 		
 		renderViewPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
@@ -215,9 +219,7 @@ public class RenderPane extends Panel implements Savable
 	
 	protected void onImageTabChanged()
 	{
-		
 		updateActiveRenderViewState();
-		
 	}
 	
 	protected void updateActiveRenderViewState()
@@ -225,6 +227,8 @@ public class RenderPane extends Panel implements Savable
 		RenderViewPane renderViewPane = getActiveRenderViewPane();
 		if (renderViewPane != null) {
 			renderViewPane.setButtonBarState(buttonBar);
+		} else {
+			setButtonBarAllDisabled();
 		}
 	}
 	

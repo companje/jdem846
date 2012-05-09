@@ -43,7 +43,7 @@ public class GeomRenderTestMain extends AbstractTestMain
 	
 	public void doTesting() throws Exception
 	{
-		Canvas3d canvas = new Canvas3d(500, 500, 500000, -500000, 1, null);
+		Canvas3d canvas = new Canvas3d(500, 500, 500000, -500000, 1, 0x0, null);
 		
 		
 		double strips = 10.0;
@@ -101,7 +101,7 @@ public class GeomRenderTestMain extends AbstractTestMain
 	
 	public void __doTesting() throws Exception
 	{
-		Canvas3d canvas = new Canvas3d(500, 500, 500000, -500000, 1, null);
+		Canvas3d canvas = new Canvas3d(500, 500, 500000, -500000, 1, 0x0, null);
 		
 		
 		

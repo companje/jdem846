@@ -131,7 +131,7 @@ public class RasterDataTesting
 		
 		ModelCanvas canvas = ModelRenderer.render(modelContext);
 		
-		ImageWriter.saveImage((BufferedImage)canvas.getFinalizedImage(), saveOutputTo);
+		ImageWriter.saveImage((BufferedImage)canvas.getImage(), saveOutputTo);
 		
 	}
 	

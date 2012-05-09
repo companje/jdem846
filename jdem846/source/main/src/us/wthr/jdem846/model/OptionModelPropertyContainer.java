@@ -21,6 +21,8 @@ public class OptionModelPropertyContainer
 	private OptionModelMethodContainer setter;
 	private OptionModelMethodContainer getter;
 	
+	
+	
 	private List<OptionModelChangeListener> changeListeners = new LinkedList<OptionModelChangeListener>();
 	
 	public OptionModelPropertyContainer(Object declaringObject, Method m0, Method m1) throws InvalidProcessOptionException
@@ -79,6 +81,8 @@ public class OptionModelPropertyContainer
 		}
 		
 		
+		
+		
 	}
 	
 	
@@ -110,6 +114,11 @@ public class OptionModelPropertyContainer
 	public Class<?> getValidatorClass()
 	{
 		return annotated.getValidatorClass();
+	}
+	
+	public OptionValidator getValidator()
+	{
+		return annotated.getValidator();
 	}
 	
 	public boolean isEnabled()

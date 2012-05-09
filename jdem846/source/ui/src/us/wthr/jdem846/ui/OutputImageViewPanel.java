@@ -246,7 +246,7 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				prgProgress.setValue((int)(pctComplete * 100));
 				
 				if (showPreviews) {
-					imageDisplay.setImage(modelCanvas.getFinalizedImage());
+					imageDisplay.setImage(modelCanvas.getImage());
 					canvas = modelCanvas;
 					repaint();
 				}
@@ -280,7 +280,7 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				
 				canvas = modelContext.getModelCanvas();
 				synchronized(imageDisplay) {
-					imageDisplay.setImage(canvas.getFinalizedImage());
+					imageDisplay.setImage(canvas.getImage());
 				}
 				/*
 				if (product != null) {
@@ -603,7 +603,7 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 	
 	protected void saveTo(String path) 
 	{
-		FileSaveThread saveThread = new FileSaveThread(canvas.getFinalizedImage(), path);
+		FileSaveThread saveThread = new FileSaveThread(canvas.getImage(), path);
 		saveThread.addSaveCompletedListener(new SaveCompletedListener() {
 			public void onSaveSuccessful()
 			{

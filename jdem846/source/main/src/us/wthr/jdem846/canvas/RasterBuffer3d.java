@@ -31,7 +31,12 @@ public class RasterBuffer3d
 	
 	public void reset()
 	{
-		pixelBuffer.reset();
+		reset(0x0);
+	}
+	
+	public void reset(int backgroundColor)
+	{
+		pixelBuffer.reset(backgroundColor);
 		zBuffer.reset();
 	}
 	

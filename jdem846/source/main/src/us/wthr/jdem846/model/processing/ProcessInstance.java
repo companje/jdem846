@@ -2,7 +2,9 @@ package us.wthr.jdem846.model.processing;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.annotations.GridProcessing;
+import us.wthr.jdem846.model.exceptions.ProcessCreateException;
 
 public class ProcessInstance
 {
@@ -36,6 +38,25 @@ public class ProcessInstance
 	public Class<?> getOptionModelClass()
 	{
 		return annotation.optionModel();
+	}
+	
+	public OptionModel createOptionModel() throws ProcessCreateException
+	{
+		Class<?> clazz = getOptionModelClass();
+		
+		if (clazz == null) {
+			throw new ProcessCreateException("Cannot create option model: class not specified");
+		}
+		
+		OptionModel optionModel = null;
+		
+		try {
+			optionModel = (OptionModel) clazz.newInstance();
+		} catch (Exception ex) {
+			throw new ProcessCreateException("Error creating new option model with class " + clazz.getName() + ": " + ex.getMessage(), ex);
+		} 
+		
+		return optionModel;
 	}
 	
 	public Class<?> getProcessorClass()

@@ -36,10 +36,30 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Spheres;
+import us.wthr.jdem846.model.AzimuthElevationAngles;
+import us.wthr.jdem846.model.GlobalOptionModel;
+import us.wthr.jdem846.model.ModelBuilder;
+import us.wthr.jdem846.model.ModelProcessManifest;
+import us.wthr.jdem846.model.RgbaColor;
+import us.wthr.jdem846.model.exceptions.ModelContainerException;
+import us.wthr.jdem846.model.processing.coloring.HypsometricColorOptionModel;
+import us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor;
+import us.wthr.jdem846.model.processing.coloring.TopographicPositionIndexColoringProcessor;
+import us.wthr.jdem846.model.processing.dataload.GridLoadOptionModel;
+import us.wthr.jdem846.model.processing.dataload.GridLoadProcessor;
+import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsOptionModel;
+import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsProcessor;
+import us.wthr.jdem846.model.processing.render.ModelRenderOptionModel;
+import us.wthr.jdem846.model.processing.render.ModelRenderer;
+import us.wthr.jdem846.model.processing.shading.HillshadingOptionModel;
+import us.wthr.jdem846.model.processing.shading.HillshadingProcessor;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
@@ -63,16 +83,12 @@ public class LightingPreviewPanel extends Panel
 	private double renderedAzimuth = -1;
 	private double renderedElevation = -1;
 	
-	
-	
-	
-	private ModelOptions modelOptions;
-	private LightingContext lightingContext;
+
 	private RasterDataContext rasterDataContext;
 	private ModelContext modelContext;
-	//private Dem2dGenerator dem2d;
-	private SimpleRenderer renderer;
-	
+	private ModelBuilder modelBuilder;
+	private ModelProcessManifest modelProcessManifest;
+
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
 	private boolean isDisposed = false;
@@ -102,13 +118,7 @@ public class LightingPreviewPanel extends Panel
 		};
 		this.addMouseListener(mouseAdapter);
 		this.addMouseMotionListener(mouseAdapter);
-		
 
-		
-		lightingContext = new LightingContext();
-		modelOptions = new ModelOptions();
-		modelOptions.setColoringType(JDem846Properties.getProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewColoring"));
-		
 		try {
 			File tmpGridFloatData = TempFiles.getTemporaryFile("lghtprv", ".flt", JDem846Properties.getProperty("us.wthr.jdem846.previewData") + "/raster-data.flt");
 			
@@ -122,58 +132,62 @@ public class LightingPreviewPanel extends Panel
 			tmpTempGridFloatHeader.renameTo(tmpGridFloatHeader);
 			
 			RasterData rasterData = RasterDataProviderFactory.loadRasterData(tmpGridFloatData.getAbsolutePath());
-			
-			
-			modelOptions.setBackgroundColor(I18N.get("us.wthr.jdem846.color.transparent"));
-			modelOptions.setWidth(300);//rasterData.getColumns());
-			modelOptions.setHeight(300);//rasterData.getRows());
-			lightingContext.setRelativeLightIntensity(0.75);
-			lightingContext.setRelativeDarkIntensity(1.0);
-			lightingContext.setRayTraceShadows(false);
-			lightingContext.setLightingMultiple(5.0);
-			//modelOptions.setDoublePrecisionHillshading(false);
-			//modelOptions.setTileSize(1000);
-			modelOptions.setGridSize(2);
-			//modelOptions.setUseSimpleCanvasFill(true);
-			modelOptions.setAntialiased(false);
-			//modelOptions.setPrecacheStrategy(DemConstants.PRECACHE_STRATEGY_NONE);
-			modelOptions.setConcurrentRenderPoolSize(1);
-			//modelOptions.setUsePipelineRender(false);
-			
-			
-			double quality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewQuality");
-			double latitudeSlices = quality * (double) rasterData.getRows();
-			double longitudeSlices = quality * (double) rasterData.getColumns();
-			
-			
-			modelOptions.setModelProjection(CanvasProjectionTypeEnum.PROJECT_FLAT);
-			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.standardResolutionRetrieval", true);
-			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.interpolate", false);
-			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.data.averageOverlappedData", false);
-			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);
-			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);
-			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", false);
-			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", false);
-			modelOptions.setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", true);
-			
 			rasterDataContext = new RasterDataContext();
 			rasterDataContext.addRasterData(rasterData);
 			rasterDataContext.prepare();
 			rasterDataContext.fillBuffers();
 			
-			/*
-			rasterDataContext.calculateElevationMinMax(true);
-			// TODO: Replace
-			 * 
-			 */
-			modelContext = ModelContext.createInstance(rasterDataContext, lightingContext, modelOptions);
+			
+			
+			GlobalOptionModel globalOptionModel = new GlobalOptionModel();
+			
+			GridLoadOptionModel gridLoadOptionModel = new GridLoadOptionModel();
+			SurfaceNormalsOptionModel surfaceNormalOptionModel = new SurfaceNormalsOptionModel();
+			HypsometricColorOptionModel hypsometricColorOptionModel = new HypsometricColorOptionModel();
+			HillshadingOptionModel hillshadingOptionModel = new HillshadingOptionModel();
+			ModelRenderOptionModel modelRenderOptionModel = new ModelRenderOptionModel();
+			
+			double quality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewQuality");
+			double latitudeSlices = quality * (double) rasterData.getRows();
+			double longitudeSlices = quality * (double) rasterData.getColumns();
+			
+			globalOptionModel.setUseScripting(false);
+			globalOptionModel.setBackgroundColor(new RgbaColor(0, 0, 0, 0));
+			globalOptionModel.setWidth(300);
+			globalOptionModel.setHeight(300);
+			globalOptionModel.setLatitudeSlices(latitudeSlices);
+			globalOptionModel.setLongitudeSlices(longitudeSlices);
+			globalOptionModel.setRenderProjection(CanvasProjectionTypeEnum.PROJECT_FLAT.identifier());
+			globalOptionModel.setElevationMultiple(3.0);
+			
+			hypsometricColorOptionModel.setColorTint(JDem846Properties.getProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewColoring"));
+			
+			hillshadingOptionModel.setLightIntensity(0.75);
+			hillshadingOptionModel.setDarkIntensity(1.0);
+			hillshadingOptionModel.setRayTraceShadows(false);
+			hillshadingOptionModel.setLightMultiple(5.0);
+			
+			modelRenderOptionModel.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR.identifier());
+			
+			
+			modelProcessManifest = new ModelProcessManifest();
+			modelProcessManifest.setGlobalOptionModel(globalOptionModel);
+			
+			modelProcessManifest.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
+			modelProcessManifest.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
+			modelProcessManifest.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
+			modelProcessManifest.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
+			modelProcessManifest.addProcessor(new ModelRenderer(), modelRenderOptionModel);
+			
+			modelContext = ModelContext.createInstance(rasterDataContext, modelProcessManifest);
+			modelContext.updateContext(true, globalOptionModel.isEstimateElevationRange());
+
+			log.info("Initializing model builder...");
+			modelBuilder = new ModelBuilder();
+			modelBuilder.prepare(modelContext, modelProcessManifest);
+
 			modelContext.updateContext(true, false);
-			//dem2d = new Dem2dGenerator(modelContext);
-			
-			
-			renderer = new SimpleRenderer(modelContext);
-			renderer.prepare(true);
-			
+
 		} catch (Exception e1) {
 			
 			e1.printStackTrace();
@@ -191,13 +205,13 @@ public class LightingPreviewPanel extends Panel
 		
 		int size = (getWidth() < getHeight()) ? getWidth() : getHeight();
 		
-		int xMid = (int)Math.round(((double)getWidth()/2.0));
-		int yMid = (int)Math.round(((double)getHeight()/2.0));
+		int xMid = (int)MathExt.round(((double)getWidth()/2.0));
+		int yMid = (int)MathExt.round(((double)getHeight()/2.0));
 		
 		double mX = x - xMid;
 		double mY = y - yMid;
-		double radius = sqrt(pow(Math.abs(mX), 2) + pow(Math.abs(mY), 2));
-		double angle = Math.toDegrees(asin(Math.abs(mY) / radius));
+		double radius = MathExt.sqrt(MathExt.sqr(MathExt.abs(mX)) + MathExt.sqr(MathExt.abs(mY)));
+		double angle = MathExt.degrees(MathExt.asin(MathExt.abs(mY) / radius));
 		
 		if (mX >= 0 && mY < 0) { 			// Top right
 			angle = 90 - angle;
@@ -227,28 +241,21 @@ public class LightingPreviewPanel extends Panel
 	public void update(boolean rerenderPreview)
 	{
 		if (rerenderPreview && (renderedAzimuth != solarAzimuth || renderedElevation != solarElevation)) {
-			
-			//JdemFrame.getInstance().setGlassVisible(I18N.get("us.wthr.jdem846.ui.modelPreviewPane.working"), this, true);
 
 			
 			try {
 				log.info("Updating lighting preview model image");
 				log.info("****************************************");
-				modelContext.resetModelCanvas();
+	
+				modelBuilder.prepare(modelContext, modelProcessManifest);
+				modelBuilder.process();
 				
-				renderer.prepare(true);
-				renderer.render();
-				
-				prerendered = (BufferedImage) modelContext.getModelCanvas().getFinalizedImage(false);
-				//OutputProduct<ModelCanvas> product = dem2d.generate();
-				//prerendered = (BufferedImage) product.getProduct().getImage();
-				
+				prerendered = (BufferedImage) modelContext.getModelCanvas().getImage();
+
 			} catch (Exception e) {
 				log.warn("Failed to render preview image: " + e.getMessage(), e);
 				e.printStackTrace();
 			} finally {
-				//JdemFrame.getInstance().setGlassVisible(false);
-				
 				renderedAzimuth = solarAzimuth;
 				renderedElevation = solarElevation;
 			}
@@ -265,27 +272,7 @@ public class LightingPreviewPanel extends Panel
 		super.setEnabled(enabled);
 	}
 	
-	protected void getPoints2D(double angle, double radius, double[] points)
-	{
-		double b = radius * cos(angle);
-        double x = sqrt(pow(radius, 2) - pow(b, 2));
-        double y = sqrt(pow(radius, 2) - pow(x, 2));
-        
-        if (angle <= 90.0) {
-        	y = radius - y;
-        } else if (angle  <= 180.0) {
-        	y = y + radius;
-        } else if (angle  <= 270.0) {
-        	x = -1 * x;
-        	y = y + radius;
-        } else if (angle <= 360.0) {
-        	x = -1 * x;
-        	y = radius - y;
-        }
-        points[0] = x;
-        points[1] = y;
-
-	}
+	
 	
 	@Override
 	public void paint(Graphics g)
@@ -308,43 +295,33 @@ public class LightingPreviewPanel extends Panel
 		if (prerendered != null) {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2d.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
-			//g2d.setColor(background);
-			//g2d.fillRect(0, 0, getWidth(), getHeight());
-			
+
 			int backgroundSize = (getWidth() > getHeight()) ? getWidth() : getHeight();
 			int size = (getWidth() < getHeight()) ? getWidth() : getHeight();
-
+			size -= 4;
 			
-			
-			//g2d.drawImage(prerendered, drawX, drawY, size, size, this);
 			if (prerendered != null) {
-				g2d.drawImage(prerendered, (int) (((double)getWidth() / 2.0) - (backgroundSize / 2.0)),
-						(int) (((double)getHeight() / 2.0) - (backgroundSize / 2.0)),
-						backgroundSize, 
-						backgroundSize, 
-						this);
+				g2d.drawImage(prerendered,
+								-2, -2,
+								getWidth() + 4, getHeight() + 4,
+								null);
 			}
 			
 			
 			int drawX = (int) (((double)getWidth() / 2.0) - (size / 2.0));
 			int drawY = (int) (((double)getHeight() / 2.0) - (size / 2.0));
 			
-			int xMid = (int)Math.round(((double)getWidth()/2.0));
-			int yMid = (int)Math.round(((double)getHeight()/2.0));
+			int xMid = (int)MathExt.round(((double)getWidth()/2.0));
+			int yMid = (int)MathExt.round(((double)getHeight()/2.0));
 			
 			double radius = ((double)(size) / 2.0);
-			
-			//g2d.setColor(Color.DARK_GRAY);
-			//g2d.drawOval(drawX+1, drawY+1, (int) size,  (int)size);
-			
-			
 			
 			
 			double angle = this.getSolarAzimuth();
 
 			double[] points = {0.0, 0.0};
 			
-			getPoints2D(angle, radius, points);
+			Spheres.getPoints2D(angle, radius, points);
 			double x = points[0];
 			double y = points[1];
 			
@@ -355,23 +332,23 @@ public class LightingPreviewPanel extends Panel
 			g2d.setColor(shadowColor);
 			g2d.drawOval(drawX+1, drawY+1, (int) size,  (int)size);
 			g2d.drawLine((int)xP+1, (int)yP+1, xMid+1, yMid+1);
-			g2d.fillOval((int)Math.round(xMid - 5)+1, (int)Math.round(yMid - 5)+1, 10, 10);
-			g2d.fillOval((int)Math.round(xP - 5)+1, (int)Math.round(yP - 5)+1, 10, 10);
+			g2d.fillOval((int)MathExt.round(xMid - 5)+1, (int)MathExt.round(yMid - 5)+1, 10, 10);
+			g2d.fillOval((int)MathExt.round(xP - 5)+1, (int)MathExt.round(yP - 5)+1, 10, 10);
 			
 			// Lines
 			g2d.setColor(arcColor);
 			g2d.drawOval(drawX, drawY, (int) size,  (int)size);
 			g2d.drawLine((int)xP, (int)yP, xMid, yMid);
-			g2d.fillOval((int)Math.round(xMid - 5), (int)Math.round(yMid - 5), 10, 10);
-			g2d.fillOval((int)Math.round(xP - 5), (int)Math.round(yP - 5), 10, 10);
+			g2d.fillOval((int)MathExt.round(xMid - 5), (int)MathExt.round(yMid - 5), 10, 10);
+			g2d.fillOval((int)MathExt.round(xP - 5), (int)MathExt.round(yP - 5), 10, 10);
 			
 			double pctElev = 1.0 - ( this.getSolarElevation() / 90.0);
 			
 			
 			double elevRadius = radius*pctElev;
-			size = (int) Math.round((double) size * pctElev);
+			size = (int) MathExt.round((double) size * pctElev);
 
-			getPoints2D(angle, elevRadius , points);
+			Spheres.getPoints2D(angle, elevRadius , points);
 			
 			
 			x = points[0];
@@ -381,14 +358,14 @@ public class LightingPreviewPanel extends Panel
 			yP = y + (((double)getHeight() / 2.0) - (size / 2.0));
 
 			g2d.setColor(shadowColor);
-			g2d.drawOval((int)Math.round(xP - 5), (int)Math.round(yP - 5), 10, 10);
+			g2d.drawOval((int)MathExt.round(xP - 5), (int)MathExt.round(yP - 5), 10, 10);
 			
 			g2d.setColor(pointColor);
-			g2d.fillOval((int)Math.round(xP - 5), (int)Math.round(yP - 5), 10, 10);
+			g2d.fillOval((int)MathExt.round(xP - 5), (int)MathExt.round(yP - 5), 10, 10);
 
 
-			int iAzimuth = (int)Math.round(getSolarAzimuth());
-			int iElevation = (int) Math.round(getSolarElevation());
+			int iAzimuth = (int)MathExt.round(getSolarAzimuth());
+			int iElevation = (int) MathExt.round(getSolarElevation());
 			
 			String label = "" + iAzimuth + "\u00B0, " + iElevation + "\u00B0";
 			FontMetrics fontMetrics = g2d.getFontMetrics();
@@ -396,25 +373,22 @@ public class LightingPreviewPanel extends Panel
 			int lblHeight = fontMetrics.getHeight();
 			
 			int lblX = 0;
-			int lblY = (int)Math.round(yP + 5);
+			int lblY = (int)MathExt.round(yP + 5);
 			if (xP < xMid) {
-				lblX = (int)Math.round(xP + 7);
+				lblX = (int)MathExt.round(xP + 7);
 			} else {
-				lblX = (int)Math.round(xP - 7 - lblWidth - 8);
+				lblX = (int)MathExt.round(xP - 7 - lblWidth - 8);
 			}
 			
 			g2d.setColor(shadowColor);
-			g2d.drawRoundRect(lblX, (int)Math.round(yP - (lblHeight / 2.0)), lblWidth + 8, lblHeight, 7, 7);
+			g2d.drawRoundRect(lblX, (int)MathExt.round(yP - (lblHeight / 2.0)), lblWidth + 8, lblHeight, 7, 7);
 			
 			g2d.setColor(bubbleColor);
-			g2d.fillRoundRect(lblX, (int)Math.round(yP - (lblHeight / 2.0)), lblWidth + 8, lblHeight, 7, 7);
+			g2d.fillRoundRect(lblX, (int)MathExt.round(yP - (lblHeight / 2.0)), lblWidth + 8, lblHeight, 7, 7);
 			
 			g2d.setColor(fontColor);
 			g2d.drawString(label, lblX + 4, lblY);
-			
-			
-			
-			
+
 			
 		} else {
 			log.warn("No preview to render");
@@ -430,7 +404,7 @@ public class LightingPreviewPanel extends Panel
 	public void setSolarAzimuth(double solarAzimuth)
 	{
 		this.solarAzimuth = solarAzimuth;
-		lightingContext.setLightingAzimuth(solarAzimuth);
+		updateAzimuthElevationAngles();
 	}
 
 
@@ -443,9 +417,19 @@ public class LightingPreviewPanel extends Panel
 	public void setSolarElevation(double solarElevation)
 	{
 		this.solarElevation = solarElevation;
-		lightingContext.setLightingElevation(solarElevation);
+		updateAzimuthElevationAngles();
 	}
 
+	protected void updateAzimuthElevationAngles()
+	{
+		AzimuthElevationAngles angles = new AzimuthElevationAngles(solarAzimuth, solarElevation);
+		
+		try {
+			modelProcessManifest.setPropertyById("us.wthr.jdem846.model.HillshadingOptionModel.sourceLocation", angles);
+		} catch (ModelContainerException ex) {
+			log.error("Error setting azimuth/elevation angle options: " + ex.getMessage(), ex);
+		}
+	}
 	
 	
 	public void addChangeListener(ChangeListener listener)
@@ -465,46 +449,6 @@ public class LightingPreviewPanel extends Panel
 		for (ChangeListener listener : changeListeners) {
 			listener.stateChanged(event);
 		}
-	}
-
-	protected double asin(double a)
-	{
-		return Math.asin(a);
-	}
-	
-	protected double atan2(double a, double b)
-	{
-		return Math.atan2(a, b);
-	}
-	
-	protected double sqr(double a)
-	{
-		return (a*a);
-	}
-	
-	protected double abs(double a)
-	{
-		return Math.abs(a);
-	}
-	
-	protected double pow(double a, double b)
-	{
-		return Math.pow(a, b);
-	}
-	
-	protected double sqrt(double d)
-	{
-		return Math.sqrt(d);
-	}
-	
-	protected double cos(double d)
-	{
-		return Math.cos(Math.toRadians(d));
-	}
-	
-	protected double sin(double d)
-	{
-		return Math.sin(Math.toRadians(d));
 	}
 
 
