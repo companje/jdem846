@@ -8,12 +8,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.annotations.ProcessOption;
+import us.wthr.jdem846.model.annotations.ValueBounds;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
+import us.wthr.jdem846.model.exceptions.OptionValidationException;
 
 public class OptionModelContainer
 {
@@ -348,6 +351,72 @@ public class OptionModelContainer
 			throw new ModelContainerException("Property not found with id '" + propertyId + "'");
 		}
 	
+	}
+	
+	
+	public List<PropertyValidationResult> validateOptions(ModelContext modelContext) throws ModelContainerException
+	{
+		List<PropertyValidationResult> results = new LinkedList<PropertyValidationResult>();
+		
+		for (OptionModelPropertyContainer propertyContainer : this.propertyContainerList) {
+			OptionValidator validator = propertyContainer.getValidator();
+			if (validator == null)
+				continue;
+			
+			Object value = null;
+			
+			try {
+				value = propertyContainer.getValue();
+			} catch (MethodContainerInvokeException ex) {
+				throw new ModelContainerException("Error fetching value for property " + propertyContainer.getId() + ": " + ex.getMessage(), ex);
+			}
+			
+			boolean refreshUI = false;
+			OptionValidationException exception = null;
+			
+			try {
+				validateBounds(value, propertyContainer.getValueBounds());
+			} catch (OptionValidationException ex) {
+				exception = ex;
+			}
+			
+			if (exception == null) {
+				try {
+					refreshUI = validator.validate(modelContext, optionModel, propertyContainer.getId(), value);
+				} catch (OptionValidationException ex) {
+					exception = ex;
+				}
+			}
+			
+			results.add(new PropertyValidationResult(propertyContainer.getId(), exception, refreshUI));
+		}
+		
+		return results;
+	}
+	
+	protected void validateBounds(Object valueObj, ValueBounds bounds) throws OptionValidationException
+	{
+		if (bounds == null) {
+			return;
+		}
+		
+		double value = 0;
+		
+		if (valueObj instanceof Integer) {
+			value = ((Integer)valueObj).doubleValue();
+		} else if (valueObj instanceof Double) {
+			value = (Double)valueObj;
+		}
+		
+		if (value < bounds.minimum()) {
+			throw new OptionValidationException("Value is less than minimum of " + bounds.minimum());
+		}
+		
+		if (value > bounds.maximum()) {
+			throw new OptionValidationException("Value is greater than maximum of " + bounds.minimum());
+		}
+		
+		
 	}
 	
 	

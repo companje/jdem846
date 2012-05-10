@@ -96,7 +96,9 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		List<OptionModel> optionModelList = new LinkedList<OptionModel>();
 		
-		ModelConfigurationPanel panel = new ModelConfigurationPanel(modelProcessManifest, optionModelList);
+		
+		
+		ModelConfigurationPanel panel = new ModelConfigurationPanel(null, modelProcessManifest, optionModelList);
 		
 		JFrame frame = new JFrame();
 		frame.setTitle("Dynamic Options Test Frame");

@@ -100,7 +100,8 @@ public class LightingValueControl extends Panel
 	protected void updateValueText()
 	{
 		NumberFormat nf = NumberFormat.getNumberInstance();
-		nf.setMaximumFractionDigits(2);
+		nf.setMaximumFractionDigits(3);
+		nf.setMinimumFractionDigits(3);
 		String text = nf.format(solarAzimuth) + "\u00B0, " + nf.format(solarElevation) + "\u00B0";
 		txtValue.setText(text);
 	}

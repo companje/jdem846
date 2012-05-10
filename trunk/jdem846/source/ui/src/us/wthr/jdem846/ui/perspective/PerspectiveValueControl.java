@@ -107,7 +107,8 @@ public class PerspectiveValueControl extends Panel implements PerspectiveSelecti
 	protected void updateValueText()
 	{
 		NumberFormat nf = NumberFormat.getNumberInstance();
-		nf.setMaximumFractionDigits(2);
+		nf.setMaximumFractionDigits(3);
+		nf.setMinimumFractionDigits(3);
 		String text = nf.format(rotateX) + "\u00B0, " + nf.format(rotateY) + "\u00B0";
 		txtValue.setText(text);
 	}

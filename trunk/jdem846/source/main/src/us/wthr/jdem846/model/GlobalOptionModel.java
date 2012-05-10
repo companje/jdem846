@@ -3,6 +3,7 @@ package us.wthr.jdem846.model;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
+import us.wthr.jdem846.model.annotations.ValueBounds;
 import us.wthr.jdem846.model.listModels.ElevationScalerListModel;
 import us.wthr.jdem846.model.listModels.PlanetListModel;
 import us.wthr.jdem846.model.listModels.RenderProjectionListModel;
@@ -24,7 +25,7 @@ public class GlobalOptionModel implements OptionModel
 	private double southLimit = -90.0;
 	private double eastLimit = 180.0;
 	private double westLimit = -180.0;
-	private RgbaColor backgroundColor = new RgbaColor(0, 0, 0, 255);
+	private RgbaColor backgroundColor = new RgbaColor(255, 255, 255, 255);
 	private double elevationMultiple = 1.0;
 	private String elevationScale = ElevationScalerEnum.LINEAR.identifier();
 	private String renderProjection = CanvasProjectionTypeEnum.PROJECT_FLAT.identifier();
@@ -42,7 +43,7 @@ public class GlobalOptionModel implements OptionModel
 	
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.useScripting",
 					label="Use Scripting",
-					tooltip="",
+					tooltip="Enable scripting during the modeling process",
 					enabled=true)
 	@Order(0)
 	public boolean getUseScripting()
@@ -57,10 +58,11 @@ public class GlobalOptionModel implements OptionModel
 
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.width",
 			label="Width",
-			tooltip="",
+			tooltip="Model image width",
 			enabled=true,
 			validator=ModelHeightWidthValidator.class)
 	@Order(1)
+	@ValueBounds(minimum=1)
 	public int getWidth()
 	{
 		return width;
@@ -73,10 +75,10 @@ public class GlobalOptionModel implements OptionModel
 
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.height",
 			label="Height",
-			tooltip="",
-			enabled=true,
-			validator=ModelHeightWidthValidator.class)
+			tooltip="Model image height",
+			enabled=true)
 	@Order(2)
+	@ValueBounds(minimum=1)
 	public int getHeight()
 	{
 		return height;
@@ -89,7 +91,7 @@ public class GlobalOptionModel implements OptionModel
 
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.maintainAspectRatio",
 			label="Maintain Aspect Ratio",
-			tooltip="",
+			tooltip="Maintain model dimensions aspect ratio in relation to raster data bounds",
 			enabled=true)
 	@Order(3)
 	public boolean getMaintainAspectRatio()
@@ -153,6 +155,9 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true)
 	@Order(7)
+	@ValueBounds(minimum=-90.0, 
+			maximum=90.0, 
+			stepSize=.1)
 	public double getNorthLimit()
 	{
 		return northLimit;
@@ -168,6 +173,9 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true)
 	@Order(8)
+	@ValueBounds(minimum=-90.0, 
+			maximum=90.0, 
+			stepSize=.1)
 	public double getSouthLimit()
 	{
 		return southLimit;
@@ -183,6 +191,9 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true)
 	@Order(9)
+	@ValueBounds(minimum=-360.0, 
+			maximum=360.0, 
+			stepSize=.1)
 	public double getEastLimit()
 	{
 		return eastLimit;
@@ -198,6 +209,9 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true)
 	@Order(10)
+	@ValueBounds(minimum=-360.0, 
+			maximum=360.0, 
+			stepSize=.1)
 	public double getWestLimit()
 	{
 		return westLimit;
@@ -210,7 +224,7 @@ public class GlobalOptionModel implements OptionModel
 	
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.backgroundColor",
 			label="Background Color",
-			tooltip="",
+			tooltip="Model image background color",
 			enabled=true)
 	@Order(11)
 	public RgbaColor getBackgroundColor()
@@ -228,6 +242,8 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true)
 	@Order(12)
+	@ValueBounds(minimum=0,
+				stepSize=0.1)
 	public double getElevationMultiple()
 	{
 		return elevationMultiple;
@@ -277,6 +293,8 @@ public class GlobalOptionModel implements OptionModel
 			enabled=true,
 			listModel=SubpixelGridSizeListModel.class)
 	@Order(15)
+	@ValueBounds(minimum=1, 
+				maximum=16)
 	public int getSubpixelGridSize()
 	{
 		return subpixelGridSize;

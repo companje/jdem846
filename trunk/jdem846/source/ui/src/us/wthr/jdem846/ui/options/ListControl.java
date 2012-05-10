@@ -11,7 +11,7 @@ import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
 import us.wthr.jdem846.ui.base.ComboBox;
 
 @SuppressWarnings("serial")
-public class ListControl extends ComboBox implements ItemListener
+public class ListControl extends ComboBox implements ItemListener, OptionModelUIControl
 {
 	
 	private static Log log = Logging.getLog(ListControl.class);
@@ -22,6 +22,7 @@ public class ListControl extends ComboBox implements ItemListener
 	public ListControl(OptionModelPropertyContainer property) 
 	{
 		this.propertyContainer = property;
+		this.setToolTipText(propertyContainer.getTooltip());
 		
 		OptionListModel<?> optionListModel = null;
 		try {
@@ -34,9 +35,14 @@ public class ListControl extends ComboBox implements ItemListener
 		listModel = new ComboBoxListModel(optionListModel);
 		this.setModel(listModel);
 		
+		refreshUI();
 		
 		this.addItemListener(this);
 		
+	}
+	
+	public void refreshUI()
+	{
 		try {
 			if (propertyContainer.getValue() != null) {
 				
@@ -45,7 +51,6 @@ public class ListControl extends ComboBox implements ItemListener
 		} catch (MethodContainerInvokeException ex) {
 			log.info("Error setting initial value of " + propertyContainer.getPropertyName());
 		}
-		
 	}
 	
 	public void itemStateChanged(ItemEvent e) {

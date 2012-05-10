@@ -56,10 +56,12 @@ public class ModelVisualizationPanel extends Panel
 	private ModelContext modelContextWorkingCopy;
 	
 	private ModelDisplayPanel pnlModelDisplay;
+	//private ImageDisplayPanel pnlModelDisplay;
 	private Slider sldQuality;
 	private CheckBox chkPreviewRaster;
 	private ToolbarButton btnUpdate;
 	private CheckBox chkAutoUpdate;
+	private CheckBox chkScripting;
 	
 	int buttonDown = -1;
 	int downX = -1;
@@ -91,6 +93,7 @@ public class ModelVisualizationPanel extends Panel
 	
 	private boolean ignoreUpdate = false;
 	private boolean autoUpdate = true;
+	private boolean useScripting = true;
 	
 	/*
 	 * Holy long variable names, Batman!
@@ -116,7 +119,7 @@ public class ModelVisualizationPanel extends Panel
 		previewQuality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewQuality");
 		rasterPreview = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.rasterPreview");
 		autoUpdate = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.autoUpdate");
-	
+		useScripting = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.scripting");
 		
 		ViewPerspective viewAngle = null;
 		
@@ -148,9 +151,11 @@ public class ModelVisualizationPanel extends Panel
 		
 		// Create components
 		this.pnlModelDisplay = new ModelDisplayPanel();
+		//pnlModelDisplay = new ImageDisplayPanel();
 		sldQuality = new Slider(1, 100);
 		chkPreviewRaster = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.previewRaster.label"));
 		chkAutoUpdate = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.autoUpdate.label"));
+		chkScripting = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.scripting.label"));
 		btnUpdate = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.update.label"), JDem846Properties.getProperty("us.wthr.jdem846.ui.preview.refresh"), new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
@@ -161,12 +166,14 @@ public class ModelVisualizationPanel extends Panel
 		chkPreviewRaster.setOpaque(false);
 		chkAutoUpdate.setOpaque(false);
 		sldQuality.setOpaque(false);
+		chkScripting.setOpaque(false);
 		
 		// Set Tooltips
 		
 		sldQuality.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.quality.tooltip"));
 		chkPreviewRaster.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.previewRaster.tooltip"));
 		chkAutoUpdate.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.autoUpdate.tooltip"));
+		chkScripting.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.scripting.tooltip"));
 		btnUpdate.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.update.tooltip"));
 		
 		// Add listeners
@@ -250,7 +257,12 @@ public class ModelVisualizationPanel extends Panel
 				onAutoUpdateCheckChanged();
 			}
 		});
-
+		chkScripting.getModel().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0)
+			{
+				onScriptingCheckChanged();
+			}
+		});
 		
 		JDem846Properties.addPropertiesChangeListener(new PropertiesChangeListener() {
 			public void onPropertyChanged(String property, String oldValue, String newValue)
@@ -284,6 +296,8 @@ public class ModelVisualizationPanel extends Panel
 		buttonBar.addSeparator();
 		buttonBar.add(chkPreviewRaster);
 		buttonBar.addSeparator();
+		buttonBar.add(chkScripting);
+		buttonBar.addSeparator();
 		buttonBar.add(chkAutoUpdate);
 		buttonBar.add(btnUpdate);
 		
@@ -304,9 +318,16 @@ public class ModelVisualizationPanel extends Panel
 		
 		chkPreviewRaster.setSelected(rasterPreview);
 		chkAutoUpdate.setSelected(autoUpdate);
+		chkScripting.setSelected(useScripting);
 		
 	}
 
+	protected void onScriptingCheckChanged()
+	{
+		useScripting = chkScripting.getModel().isSelected();
+		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.scripting", ""+useScripting);
+	}
+	
 	protected void onAutoUpdateCheckChanged()
 	{
 		autoUpdate = chkAutoUpdate.getModel().isSelected();
@@ -337,7 +358,9 @@ public class ModelVisualizationPanel extends Panel
 		//modelContextWorkingCopy.getModelOptions().setColoringType("hypsometric-tint");
 		
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
-		globalOptionModel.setUseScripting(false);
+		
+		
+		
 		//globalOptionModel.setWidth(getWidth() - 20);
 		//globalOptionModel.setHeight(getHeight() - 20);
 		globalOptionModel.setMaintainAspectRatio(false);
@@ -498,6 +521,12 @@ public class ModelVisualizationPanel extends Panel
 		globalOptionModel.setLatitudeSlices(latitudeSlices);
 		globalOptionModel.setLongitudeSlices(longitudeSlices);
 		
+		// Only disable scripting if it's already enabled. Don't enable it if the user turned it off via the 
+		// global option model
+		if (globalOptionModel.getUseScripting()) {
+			globalOptionModel.setUseScripting(useScripting);
+		}
+		
 		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
 		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
 		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", rasterPreview);
@@ -593,14 +622,34 @@ public class ModelVisualizationPanel extends Panel
 		
 		log.info("Rendering model visualization image");
 		
-		int dimension = (int) MathExt.min((double)pnlModelDisplay.getWidth(), (double)pnlModelDisplay.getHeight());
-		
+		int maxPreviewSize = (int) MathExt.min((double)pnlModelDisplay.getWidth(), (double)pnlModelDisplay.getHeight()) - 10;
+		 
 		
 		//log.info("Dimension: " + dimension);
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
 		
-		globalOptionModel.setWidth(dimension - 20);
-		globalOptionModel.setHeight(dimension - 20);
+		double width = globalOptionModel.getWidth();
+		double height = globalOptionModel.getHeight();
+		
+		//double aspectRatio = (double)modelContext.getRasterDataContext().getDataColumns() / (double)modelContext.getRasterDataContext().getDataRows();
+		double aspect = width / height;
+		
+		if (width > height) {
+			
+			width = maxPreviewSize;
+			height = Math.round(width / aspect);
+			
+		} else {
+			
+			height = maxPreviewSize;
+			width = Math.round(height * aspect);
+			
+		}
+		
+		
+		
+		globalOptionModel.setWidth((int)width);
+		globalOptionModel.setHeight((int)height);
 		//modelContextWorkingCopy.getModelOptions().setWidth(dimension - 20);
 		//modelContextWorkingCopy.getModelOptions().setHeight(dimension - 20);
 		
@@ -664,9 +713,10 @@ public class ModelVisualizationPanel extends Panel
 		ModelCanvas modelCanvas = modelContextWorkingCopy.getModelCanvas();
 		
 		pnlModelDisplay.backgroundColor = globalOptionModel.getBackgroundColor().toAwtColor();
-		//pnlModelDisplay.backgroundColor = ColorSerializationUtil.stringToColor(modelContextWorkingCopy.getModelOptions().getBackgroundColor());
 		pnlModelDisplay.modelVisualizationImage = modelCanvas.getImage();
-
+		setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
+		//pnlModelDisplay.setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
+		//pnlModelDisplay.setImage(modelCanvas.getImage());
 	}
 	
 
@@ -749,5 +799,6 @@ public class ModelVisualizationPanel extends Panel
 		
 		
 	}
+	
 	
 }

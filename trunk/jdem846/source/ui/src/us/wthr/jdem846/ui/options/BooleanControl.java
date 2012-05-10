@@ -15,7 +15,7 @@ import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
 import us.wthr.jdem846.ui.base.CheckBox;
 
 @SuppressWarnings("serial")
-public class BooleanControl extends CheckBox implements ActionListener
+public class BooleanControl extends CheckBox implements ActionListener, OptionModelUIControl
 {
 	private static Log log = Logging.getLog(BooleanControl.class);
 	
@@ -31,12 +31,17 @@ public class BooleanControl extends CheckBox implements ActionListener
 		
 		this.getModel().addActionListener(this);
 
-		try {
-			this.getModel().setSelected((Boolean)property.getValue());
-		} catch (MethodContainerInvokeException ex) {
-			log.error("Error setting initial value to property " + property.getPropertyName());
-		}
+		refreshUI();
 		
+	}
+	
+	public void refreshUI()
+	{
+		try {
+			this.getModel().setSelected((Boolean)propertyContainer.getValue());
+		} catch (MethodContainerInvokeException ex) {
+			log.error("Error setting initial value to property " + propertyContainer.getPropertyName());
+		}
 	}
 	
 	@Override

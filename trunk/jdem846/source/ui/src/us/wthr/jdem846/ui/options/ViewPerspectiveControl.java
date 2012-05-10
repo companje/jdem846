@@ -11,7 +11,7 @@ import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
 import us.wthr.jdem846.ui.perspective.PerspectiveValueControl;
 
 @SuppressWarnings("serial")
-public class ViewPerspectiveControl extends PerspectiveValueControl implements ChangeListener
+public class ViewPerspectiveControl extends PerspectiveValueControl implements ChangeListener, OptionModelUIControl
 {
 	private static Log log = Logging.getLog(ViewPerspectiveControl.class);
 	
@@ -21,8 +21,15 @@ public class ViewPerspectiveControl extends PerspectiveValueControl implements C
 	public ViewPerspectiveControl(OptionModelPropertyContainer propertyContainer)
 	{
 		this.propertyContainer = propertyContainer;
+		this.setToolTipText(propertyContainer.getTooltip());
 		
+		refreshUI();
 		
+		this.addChangeListener(this);
+	}
+	
+	public void refreshUI()
+	{
 		try {
 			ViewPerspective initialValue = (ViewPerspective) propertyContainer.getValue();
 			if (initialValue != null) {
@@ -34,10 +41,9 @@ public class ViewPerspectiveControl extends PerspectiveValueControl implements C
 		} catch (MethodContainerInvokeException ex) {
 			log.error("Error setting initial value for property " + propertyContainer.getPropertyName());
 		}
-		
-		this.addChangeListener(this);
 	}
-
+	
+	
 	@Override
 	public void stateChanged(ChangeEvent e)
 	{

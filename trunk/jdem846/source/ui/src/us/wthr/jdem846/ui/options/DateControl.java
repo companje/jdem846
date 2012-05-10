@@ -18,7 +18,7 @@ import us.wthr.jdem846.model.OptionModelPropertyContainer;
 import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
 
 @SuppressWarnings("serial")
-public class DateControl extends JDateChooser
+public class DateControl extends JDateChooser implements OptionModelUIControl
 {
 	private static Log log = Logging.getLog(DateControl.class);
 	
@@ -40,6 +40,22 @@ public class DateControl extends JDateChooser
 		getJCalendar().setTodayButtonText(I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.dateChooser.today"));
 		getJCalendar().setTodayButtonVisible(true);
 		
+		refreshUI();
+		
+		addPropertyChangeListener("date", new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt)
+			{
+				onDateChanged();
+			}
+			
+		});
+	}
+	
+	
+	public void refreshUI()
+	{
 		try {
 			LightingDate lightingDate = (LightingDate) propertyContainer.getValue();
 			if (lightingDate != null) {
@@ -51,17 +67,6 @@ public class DateControl extends JDateChooser
 			// TODO: Display error dialog
 			log.error("Error setting initial value for property " + propertyContainer.getPropertyName(), ex);
 		}
-		
-		
-		addPropertyChangeListener("date", new PropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent evt)
-			{
-				onDateChanged();
-			}
-			
-		});
 	}
 	
 	public void onDateChanged()

@@ -59,6 +59,8 @@ public class ScriptEditorPanel extends Panel
 	private DefaultSyntaxKit syntaxKit;
 	private SyntaxDocument syntaxDocument;
 	
+	private JScrollPane scrollPane;
+	
 	static {
 		
 	}
@@ -95,7 +97,7 @@ public class ScriptEditorPanel extends Panel
 		
 
 		
-		JScrollPane scrollPane = new JScrollPane(editorPane);
+		scrollPane = new JScrollPane(editorPane);
 		
 		
 		
@@ -195,7 +197,10 @@ public class ScriptEditorPanel extends Panel
 	
 	
 	
-	
+	public void scrollToTop()
+	{
+		editorPane.setCaretPosition(0);
+	}
 	
 	
 	public String getScriptContent()
@@ -207,9 +212,8 @@ public class ScriptEditorPanel extends Panel
 	{
 		log.info("Setting script content...");
 		editorPane.setText(scriptContent);
-		//syntaxDocument.clearUndos();
 		
-		//editorPane.setCaretPosition(0);
+		scrollToTop();
 	}
 	
 	public ScriptLanguageEnum getScriptLanguage()
