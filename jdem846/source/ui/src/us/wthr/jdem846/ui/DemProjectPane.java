@@ -101,23 +101,13 @@ public class DemProjectPane extends JdemPanel implements Savable
 {
 	private static Log log = Logging.getLog(DemProjectPane.class);
 	
+	private DemProjectPane instance;
 	
 	private DataSetTree datasetTree;
 	private DataSetOptionsPanel datasetOptionsPanel;
 	private OrderingButtonBar orderingButtonBar;
 	private ModelConfigurationPanel modelConfigurationPanel;
-	
-	//@Deprecated
-	//private ModelOptionsPanel modelOptionsPanel;
-	
-	//@Deprecated
-	//private LightingOptionsPanel lightingOptionsPanel;
-	
-	
-	//private ProjectionConfigPanel projectionConfigPanel;
-	//private GradientConfigPanel gradientConfigPanel;
-	//private LightPositionConfigPanel lightPositionConfigPanel;
-	
+
 	private DataOverviewPanel regionOverviewPanel;
 	private DataOverviewPanel layerOverviewPanel;
 	//private ModelPreviewPane previewPane;
@@ -159,7 +149,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	
 	public DemProjectPane()
 	{
-		initialize(null);
+		this(null);
 	}
 	
 	public DemProjectPane(ProjectModel projectModel)
@@ -170,11 +160,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 	
 	protected void initialize(ProjectModel projectModel)
 	{
-		//dataPackage = new DataPackage(null);
+		this.instance = this;
+		
 		rasterDataContext = new RasterDataContext();
-		//modelOptions = new ModelOptions();
-		
-		
+
 		List<OptionModel> defaultOptionModelList = createDefaultOptionModelList();
 		
 		try {
@@ -230,7 +219,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		datasetOptionsPanel = new DataSetOptionsPanel();
 		orderingButtonBar = new OrderingButtonBar();
 		
-		modelConfigurationPanel = new ModelConfigurationPanel(modelProcessManifest, defaultOptionModelList);
+		modelConfigurationPanel = new ModelConfigurationPanel(modelContext, modelProcessManifest, defaultOptionModelList);
 		
 		//modelOptionsPanel = new ModelOptionsPanel();
 		//modelOptionsPanel.setModelOptions(modelOptions);
@@ -843,25 +832,9 @@ public class DemProjectPane extends JdemPanel implements Savable
 		if (ignoreValueChanges)
 			return;
 		
-		
-		//if (modelOptions == null) {
-	//		modelOptions = modelOptionsPanel.getModelOptions();
-		//}
-		//this.modelOptions = modelOptions;
-		
-		//modelOptions.setGradientLevels(gradientConfigPanel.getConfigString());
-		////modelOptions.setLightingAzimuth(lightPositionConfigPanel.getSolarAzimuth());
-		//modelOptions.setLightingElevation(lightPositionConfigPanel.getSolarElevation());
-		//modelOptions.getProjection().setRotateX(projectionConfigPanel.getRotateX());
-		//modelOptions.getProjection().setRotateY(projectionConfigPanel.getRotateY());
-		//modelOptions.getProjection().setRotateZ(projectionConfigPanel.getRotateZ());
-		
-		// TODO: Replace scripting
-		//modelOptions.setUserScript(scriptPane.getScriptContent());
-		//modelOptions.setScriptLanguage(scriptPane.getScriptLanguage());
-		
-		applyOptionsToUI();
 
+		applyOptionsToUI();
+		updateScriptingContext();
 		onDataModelChanged(false, false, false, true);
 	}
 
@@ -887,17 +860,23 @@ public class DemProjectPane extends JdemPanel implements Savable
 	}
 	
 	
-	protected void applyOptionsToModel(ModelOptions modelOptions)
+	protected void updateScriptingContext()
 	{
-		//if (modelOptions == null) {
-		//	modelOptions = this.modelOptions;
-		//}
-		
 
-		// TODO: Reapply scripting
-		
 		scriptingContext.setUserScript(scriptPane.getScriptContent());
 		scriptingContext.setScriptLanguage(scriptPane.getScriptLanguage());
+		
+		if (this.modelProcessManifest.getGlobalOptionModel().getUseScripting()) {
+			try {
+				scriptingContext.prepare();
+			} catch (Exception ex) {
+				log.warn("Error compiling script: " + ex.getMessage(), ex);
+				JOptionPane.showMessageDialog(this.getRootPane(),
+					    I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.message") + ": " + ex.getMessage(),
+					    I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.title"),
+					    JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 	
 	
@@ -1020,29 +999,26 @@ public class DemProjectPane extends JdemPanel implements Savable
 	}
 	
 	
-	protected void addElevationDataset(String filePath, boolean triggerModelChanged)
+	protected void addElevationDataset(final String filePath, final boolean triggerModelChanged)
 	{
-		
-		//DataSource dataSource = null;
+
 		RasterData rasterData = null;
 		try {
-			//dataSource = DataSourceFactory.loadDataSource(filePath);
 			rasterData = RasterDataProviderFactory.loadRasterData(filePath);
 		} catch (DataSourceException ex) {
 			log.warn("Invalid file format: " + ex.getMessage(), ex);
-			JOptionPane.showMessageDialog(this.getRootPane(),
+			JOptionPane.showMessageDialog(instance.getRootPane(),
 				    I18N.get("us.wthr.jdem846.ui.projectPane.add.elevation.loadFailed.invalidFormat.message") + ": " + "", //ex.getExtension(),
 				    I18N.get("us.wthr.jdem846.ui.projectPane.add.elevation.loadFailed.invalidFormat.title"),
 				    JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		//rasterData.calculateDataStats();
+
 		try {
 			rasterDataContext.addRasterData(rasterData);
 		} catch (DataSourceException ex) {
 			log.error("Failed to add raster data: " + ex.getMessage(), ex);
-			JOptionPane.showMessageDialog(this.getRootPane(),
+			JOptionPane.showMessageDialog(instance.getRootPane(),
 				    I18N.get("us.wthr.jdem846.ui.projectPane.add.shapeData.loadFailed.invalidFormat.message") + ": " + "", //ex.getExtension(),
 				    I18N.get("us.wthr.jdem846.ui.projectPane.add.shapeData.loadFailed.invalidFormat.title"),
 				    JOptionPane.ERROR_MESSAGE);
@@ -1050,6 +1026,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		if (triggerModelChanged)
 			onDataModelChanged();
+		
+
 	}
 	
 	public void onDataModelChanged()
@@ -1109,10 +1087,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 			log.warn("Exception updating model context: " + ex.getMessage(), ex);
 		}
 		
-		updatePreviewPane(updateRaster, updateShape, updateImage, optionsChanged);
+		
 		//previewPanel.update();
 		
-		
+		this.modelConfigurationPanel.validateOptions();
 		
 		regionOverviewPanel.setRows(modelContext.getModelDimensions().getDataRows());
 		regionOverviewPanel.setColumns(modelContext.getModelDimensions().getDataColumns());
@@ -1131,6 +1109,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		lastRasterDataCount = rasterDataContext.getRasterDataListSize();
 		lastShapeDataCount = shapeDataContext.getShapeFiles().size();
 		
+		updatePreviewPane(updateRaster, updateShape, updateImage, optionsChanged);
 	}
 	
 	
@@ -1138,7 +1117,38 @@ public class DemProjectPane extends JdemPanel implements Savable
 	{
 		//previewPane.update(updateRaster, updateShape);
 		visualizationPanel.update(updateRaster || updateShape || updateImage, optionsChanged);
+		//JdemFrame.getInstance().addShadedComponent(visualizationPanel, "Updated...");
+		//VisualizationUpdateThread thread = new VisualizationUpdateThread(updateRaster, updateShape, updateImage, optionsChanged);
+		//thread.start();
+		
 	}
+	
+	/*
+	class VisualizationUpdateThread extends Thread
+	{
+		boolean updateRaster;
+		boolean updateShape;
+		boolean updateImage;
+		boolean optionsChanged;
+		
+		public VisualizationUpdateThread(boolean updateRaster, boolean updateShape, boolean updateImage, boolean optionsChanged)
+		{
+			this.updateRaster = updateRaster;
+			this.updateShape = updateShape;
+			this.updateImage = updateImage;
+			this.optionsChanged = optionsChanged;
+		}
+		
+		public void run()
+		{
+			synchronized(visualizationPanel) {
+				visualizationPanel.update(updateRaster || updateShape || updateImage, optionsChanged);
+				JdemFrame.getInstance().removeShadedComponent(visualizationPanel);
+			}
+		}
+		
+	}
+	*/
 	
 	
 	public void onDataSetSelected()

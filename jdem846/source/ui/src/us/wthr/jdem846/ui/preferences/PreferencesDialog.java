@@ -55,6 +55,7 @@ public class PreferencesDialog extends Dialog
 	private Slider sldPreviewingPreviewQuality;
 	private CheckBox chkPreviewingIncludeRasterDataInPreview;
 	private CheckBox chkPreviewAutoUpdate;
+	private CheckBox chkPreviewScripting;
 	
 	private CheckBox chkPerfPipelineRendering;
 	private CheckBox chkPerfNearestNeighborDataRetrieval;
@@ -94,6 +95,7 @@ public class PreferencesDialog extends Dialog
 		sldPreviewingPreviewQuality = new Slider(1, 100);
 		chkPreviewingIncludeRasterDataInPreview = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.includeRasterDataInPreview"));
 		chkPreviewAutoUpdate = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.autoUpdate"));
+		chkPreviewScripting = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.scripting"));
 		
 		chkPerfPipelineRendering = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.pipelineRendering"));
 		chkPerfNearestNeighborDataRetrieval = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.nearestNeighborDataRetrieval"));
@@ -177,6 +179,9 @@ public class PreferencesDialog extends Dialog
 		previewPanel.add(new Label(""));
 		previewPanel.add(chkPreviewAutoUpdate);
 		
+		previewPanel.add(new Label(""));
+		previewPanel.add(chkPreviewScripting);
+		
 		performancePanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.tileSize") + ":"));
 		performancePanel.add(txtPerfTileSize);
 		
@@ -237,7 +242,7 @@ public class PreferencesDialog extends Dialog
 		sldPreviewingPreviewQuality.setValue((int)(JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewQuality") * 100.0));
 		chkPreviewingIncludeRasterDataInPreview.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.rasterPreview"));
 		chkPreviewAutoUpdate.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.autoUpdate"));
-		
+		chkPreviewScripting.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.scripting"));
 		
 		chkPerfPipelineRendering.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.pipelineRender"));
 		chkPerfNearestNeighborDataRetrieval.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.standardResolutionRetrieval"));
@@ -269,7 +274,7 @@ public class PreferencesDialog extends Dialog
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewQuality", ""+quality);
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.rasterPreview", ""+chkPreviewingIncludeRasterDataInPreview.getModel().isSelected()); 
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.autoUpdate", ""+chkPreviewAutoUpdate.getModel().isSelected());
-		
+		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.scripting", ""+chkPreviewScripting.getModel().isSelected());
 		
 		
 		

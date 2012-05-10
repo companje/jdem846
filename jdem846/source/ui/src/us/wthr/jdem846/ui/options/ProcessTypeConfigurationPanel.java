@@ -30,7 +30,7 @@ import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
 
 @SuppressWarnings("serial")
-public class ProcessTypeConfigurationPanel extends Panel
+public class ProcessTypeConfigurationPanel extends Panel implements OptionModelUIControl
 {
 	private static Log log = Logging.getLog(ProcessTypeConfigurationPanel.class);
 	
@@ -106,6 +106,18 @@ public class ProcessTypeConfigurationPanel extends Panel
 			processTypeListModel.setSelectedItemByValue(initialSelection);
 			onProcessSelectionChanged(initialSelection);
 		}
+	}
+	
+	public void refreshUI()
+	{
+		if (currentOptionsPanel != null) {
+			currentOptionsPanel.refreshUI();
+		}
+	}
+	
+	public void setControlErrorDisplayed(String id, boolean display, String message)
+	{
+		currentOptionsPanel.setControlErrorDisplayed(id, display, message);
 	}
 	
 	protected void onProcessSelectionChanged(String processId)

@@ -17,8 +17,11 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -31,10 +34,16 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.Slider;
+import us.wthr.jdem846.ui.panels.RoundedPanel;
 
 @SuppressWarnings("serial")
 public class ImageDisplayPanel extends Panel
@@ -60,17 +69,39 @@ public class ImageDisplayPanel extends Panel
 	
 	private boolean isBestFit = false;
 	
+	private double minScalePercent;
+	private Slider sldZoomLevel;
+	
+	public Color backgroundColor = Color.WHITE;
+	
 	public ImageDisplayPanel()
 	{
 		// Set Properties
 		setLayout(new BorderLayout());
+		this.setOpaque(false);
 		
 		// Create components
 		
 		setAlignmentX(CENTER_ALIGNMENT);
 		setAlignmentY(CENTER_ALIGNMENT);
 		
+		sldZoomLevel = new Slider(1, 100);
+		//sldZoomLevel.setOpaque(false);
+		sldZoomLevel.setOrientation(Slider.VERTICAL);
+		sldZoomLevel.setBackground(new Color(0, 0, 0, 75));
+		
 		// Add listeners
+		
+		sldZoomLevel.getModel().addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e)
+			{
+				double scale = minScalePercent + (((double)sldZoomLevel.getValue() / 100.0) * (1.0 - minScalePercent));
+				
+				log.info("Scale To: " + scale);
+				setScalePercent(scale);
+			}
+		});
+		
 		this.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
 				if (isBestFit) {
@@ -112,9 +143,37 @@ public class ImageDisplayPanel extends Panel
 				onMouseWheelMoved(e.getUnitsToScroll(), e.getScrollAmount(), e.getScrollType(), e.getX(), e.getY());
 			}
 		});
-
+		
+		
+		this.setLayout(null);
+		
+		this.add(sldZoomLevel);
+		
+		Insets insets = this.getInsets();
+		Dimension size = new Dimension(30, 150);
+		sldZoomLevel.setPreferredSize(size);
+		sldZoomLevel.setPaintTicks(true);
+		sldZoomLevel.setBounds(insets.left + 10, insets.top + 10, size.width, size.height);
+		
+		
 	}
 	
+	@Override
+	public void setBackground(Color backgroundColor)
+	{
+		this.backgroundColor = backgroundColor;
+	}
+	
+	public Color getBackground()
+	{
+		return backgroundColor;
+	}
+	
+	protected void updateZoomSliderValue()
+	{
+		double scale = ((scalePercent - minScalePercent) / (1.0 - minScalePercent)) * 100;
+		sldZoomLevel.setValue((int)MathExt.round(scale));
+	}
 	
 	
 	public int getScaleQuality()
@@ -141,7 +200,18 @@ public class ImageDisplayPanel extends Panel
 
 	public void setScalePercent(double scalePercent)
 	{
+		if (scalePercent >= 1.0)
+			scalePercent = 1.0;
+		if (scalePercent <= minScalePercent)
+			scalePercent = minScalePercent;
+		
 		this.scalePercent = scalePercent;
+		
+		updateZoomSliderValue();
+		
+		createScaledImage();
+		validateImagePosition();
+		repaint();
 	}
 
 
@@ -151,12 +221,13 @@ public class ImageDisplayPanel extends Panel
 		trueImage = image;
 		imageTrueWidth = image.getWidth(this);
 		imageTrueHeight = image.getHeight(this);
+		
+		this.minScalePercent = getZoomToFitScalePercentage();
 	}
 	
 	protected void onMouseWheelMoved(int units, int amount, int type, int x, int y)
 	{
 		zoom(units);
-
 	}
 	
 	protected void onMouseDragged(int x, int y)
@@ -188,7 +259,10 @@ public class ImageDisplayPanel extends Panel
 	@Override
 	public void paint(Graphics g)
 	{
-		super.paint(g);
+		if (backgroundColor != null) {
+			g.setColor(backgroundColor);
+			g.drawRect(0, 0, getWidth(), getHeight());
+		}
 		
 		Image displayImage = getDisplayImage();
 		if (displayImage != null) {
@@ -202,13 +276,16 @@ public class ImageDisplayPanel extends Panel
 			int drawY = (int) Math.round((viewHeight / 2.0) - (scaleToHeight / 2.0)) + translateY;
 			
 			
-			g.drawImage(displayImage, drawX, drawY, null);
+			int x = (int) ((getWidth() / 2.0) - (scaleToWidth / 2.0)) + translateX;
+			int y = (int) ((getHeight() / 2.0) - (scaleToHeight / 2.0)) + translateY;
+			
+			g.drawImage(displayImage, x, y, null);
 			
 		}
 		
 
 		
-		
+		super.paint(g);
 	}
 	
 	protected void validateImagePosition()
@@ -222,22 +299,6 @@ public class ImageDisplayPanel extends Panel
 		
 		int viewWidth = getWidth();
 		int viewHeight = getHeight();
-		
-		if (translateX < ((viewWidth - imageWidth) - ((viewWidth - imageWidth) / 2.0))) {
-			translateX = (int) (viewWidth - imageWidth - ((viewWidth - imageWidth) / 2.0));
-		}
-		
-		if (translateX > ((imageWidth - viewWidth) + ((viewWidth - imageWidth) / 2.0))) {
-			translateX = (int) (imageWidth - viewWidth + ((viewWidth - imageWidth) / 2.0));
-		}
-		
-		if (translateY < ((viewHeight - imageHeight) - ((viewHeight - imageHeight) / 2.0))) {
-			translateY = (int) (viewHeight - imageHeight - ((viewHeight - imageHeight) / 2.0));
-		}
-		
-		if (translateY > ((imageHeight - viewHeight) + ((viewHeight - imageHeight) / 2.0))) {
-			translateY = (int) (imageHeight - viewHeight + ((viewHeight - imageHeight) / 2.0));
-		}
 		
 	}
 	
@@ -305,11 +366,8 @@ public class ImageDisplayPanel extends Panel
 	
 	public void zoom(double units)
 	{
-		scalePercent += ((units / 100.0) * -1);
 		isBestFit = false;
-		createScaledImage();
-		validateImagePosition();
-		repaint();
+		setScalePercent(scalePercent + ((units / 100.0) * -1));
 	}
 	
 	public void zoomIn()
@@ -324,21 +382,17 @@ public class ImageDisplayPanel extends Panel
 	
 	public void zoomFit()
 	{
-		scalePercent = this.getZoomToFitScalePercentage();
-		if (scalePercent > 1.0)
-			scalePercent = 1.0;
 		isBestFit = true;
-		createScaledImage();
-		validateImagePosition();
-		repaint();
+		translateX = 0;
+		translateY = 0;
+		
+		this.setScalePercent(getZoomToFitScalePercentage());
 
 	}
 	
 	public void zoomActual()
 	{
-		scalePercent = 1.0;
-		createScaledImage();
-		repaint();
+		setScalePercent(1.0);
 	}
 	
 	public void addMousePositionListener(MousePositionListener listener)

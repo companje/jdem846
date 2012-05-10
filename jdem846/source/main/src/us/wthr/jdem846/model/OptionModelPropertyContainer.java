@@ -7,6 +7,7 @@ import java.util.List;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.annotations.Order;
+import us.wthr.jdem846.model.annotations.ValueBounds;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
 
@@ -131,11 +132,17 @@ public class OptionModelPropertyContainer
 		return getter.getPropertyName();
 	}
 	
+	public ValueBounds getValueBounds()
+	{
+		return annotated.getValueBounds();
+	}
+	
 	public Object getValue() throws MethodContainerInvokeException
 	{
 		return getter.getValue();
 	}
 	
+
 	public void setValue(Object object) throws MethodContainerInvokeException
 	{
 		Object oldValue = getValue();
@@ -143,6 +150,8 @@ public class OptionModelPropertyContainer
 		
 		fireOptionModelChangeListeners(oldValue, object);
 	}
+	
+	
 	
 	public Class<?> getType()
 	{

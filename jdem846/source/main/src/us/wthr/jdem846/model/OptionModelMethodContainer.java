@@ -7,6 +7,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
+import us.wthr.jdem846.model.annotations.ValueBounds;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
 
@@ -22,6 +23,7 @@ public class OptionModelMethodContainer
 	private boolean isSetter;
 	private boolean isGetter;
 	private Order orderAnnotation;
+	private ValueBounds boundsAnnotation;
 	private OptionValidator optionValidator = null;
 	
 	public OptionModelMethodContainer(Object declaringObject, Method method) throws InvalidProcessOptionException
@@ -39,6 +41,13 @@ public class OptionModelMethodContainer
 		} else {
 			orderAnnotation = null;
 		}
+		
+		if (method.isAnnotationPresent(ValueBounds.class)) {
+			boundsAnnotation = method.getAnnotation(ValueBounds.class);
+		} else {
+			boundsAnnotation = null;
+		}
+		
 		
 		String name = method.getName();
 		
@@ -66,7 +75,7 @@ public class OptionModelMethodContainer
 		
 		
 		
-		if (annotation != null && annotation.validator() != null) {
+		if (annotation != null && annotation.validator() != null && !annotation.validator().equals(Object.class)) {
 			Class<?> validatorClazz = annotation.validator();
 			try {
 				optionValidator = (OptionValidator) validatorClazz.newInstance();
@@ -157,6 +166,11 @@ public class OptionModelMethodContainer
 		} else {
 			return Order.NOT_SET;
 		}
+	}
+	
+	public ValueBounds getValueBounds()
+	{
+		return boundsAnnotation;
 	}
 	
 	public Object getValue() throws MethodContainerInvokeException

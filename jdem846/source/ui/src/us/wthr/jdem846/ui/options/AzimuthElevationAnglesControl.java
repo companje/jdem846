@@ -12,7 +12,7 @@ import us.wthr.jdem846.ui.lighting.LightingValueControl;
 
 
 @SuppressWarnings("serial")
-public class AzimuthElevationAnglesControl extends LightingValueControl implements ChangeListener
+public class AzimuthElevationAnglesControl extends LightingValueControl implements ChangeListener, OptionModelUIControl
 {
 	private static Log log = Logging.getLog(AzimuthElevationAnglesControl.class);
 	
@@ -21,9 +21,16 @@ public class AzimuthElevationAnglesControl extends LightingValueControl implemen
 	public AzimuthElevationAnglesControl(OptionModelPropertyContainer propertyContainer)
 	{
 		this.propertyContainer = propertyContainer;
+		this.setToolTipText(propertyContainer.getTooltip());
 		
+		refreshUI();
+
+		this.addChangeListener(this);
 		
-		
+	}
+	
+	public void refreshUI()
+	{
 		try {
 			AzimuthElevationAngles initialValue = (AzimuthElevationAngles) propertyContainer.getValue();
 			if (initialValue != null) {
@@ -33,12 +40,8 @@ public class AzimuthElevationAnglesControl extends LightingValueControl implemen
 		} catch (MethodContainerInvokeException ex) {
 			log.error("Error setting initial control value for property " + propertyContainer.getPropertyName());
 		}
-		
-		
-		this.addChangeListener(this);
-		
 	}
-
+	
 	@Override
 	public void stateChanged(ChangeEvent e)
 	{

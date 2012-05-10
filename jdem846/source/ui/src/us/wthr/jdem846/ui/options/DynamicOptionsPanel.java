@@ -1,8 +1,12 @@
 package us.wthr.jdem846.ui.options;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -19,12 +23,14 @@ import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
 
 @SuppressWarnings("serial")
-public class DynamicOptionsPanel extends Panel
+public class DynamicOptionsPanel extends Panel implements OptionModelUIControl
 {
 	private static Log log = Logging.getLog(DynamicOptionsPanel.class);
 	
 	private OptionModelContainer container;
 	private FlexGridPanel controlGrid;
+	
+	private Map<String, LabeledControlContainer> optionModelUiControls = new HashMap<String, LabeledControlContainer>();
 	
 	//private List<ModelConfigurationChangeListener> modelConfigurationChangeListeners = new LinkedList<ModelConfigurationChangeListener>();
 	
@@ -48,6 +54,23 @@ public class DynamicOptionsPanel extends Panel
 		controlGrid.closeGrid();
 	}
 	
+	
+	public void refreshUI()
+	{
+		for (LabeledControlContainer container : optionModelUiControls.values()) {
+			container.getControl().refreshUI();
+		}
+	}
+	
+	public void setControlErrorDisplayed(String id, boolean display, String message)
+	{
+		LabeledControlContainer container = optionModelUiControls.get(id);
+		
+		if (container != null) {
+			container.setDisplayError(display, message);
+		}
+		
+	}
 	
 	protected void addPropertyControl(OptionModelPropertyContainer propertyContainer)
 	{
@@ -76,61 +99,66 @@ public class DynamicOptionsPanel extends Panel
 		
 	}
 	
+	protected void addControl(String id, String label, String toolTipText, OptionModelUIControl control)
+	{
+		Label jlabel = new Label(label);
+		jlabel.setToolTipText(toolTipText);
+		
+		optionModelUiControls.put(id, new LabeledControlContainer(id, jlabel, control));
+		
+		controlGrid.add(jlabel);
+		controlGrid.add((Component)control);
+	}
+	
 	protected void addTimeControl(OptionModelPropertyContainer propertyContainer)
 	{
-		controlGrid.add(new Label(propertyContainer.getLabel() + ":"));
-		controlGrid.add(new TimeControl(propertyContainer));
+		addControl(propertyContainer.getId(), propertyContainer.getLabel() + ":", propertyContainer.getTooltip(), new TimeControl(propertyContainer));
 	}
 	
 	protected void addDateControl(OptionModelPropertyContainer propertyContainer)
 	{
-		controlGrid.add(new Label(propertyContainer.getLabel() + ":"));
-		controlGrid.add(new DateControl(propertyContainer));
+		addControl(propertyContainer.getId(), propertyContainer.getLabel() + ":", propertyContainer.getTooltip(), new DateControl(propertyContainer));
 	}
 	
 	
 	protected void addDoubleControl(OptionModelPropertyContainer propertyContainer)
 	{
-		controlGrid.add(new Label(propertyContainer.getLabel() + ":"));
-		controlGrid.add(new DoubleControl(propertyContainer));
+		addControl(propertyContainer.getId(), propertyContainer.getLabel() + ":", propertyContainer.getTooltip(), new DoubleControl(propertyContainer));
 	}
 	
 	protected void addIntegerControl(OptionModelPropertyContainer propertyContainer)
 	{
-		controlGrid.add(new Label(propertyContainer.getLabel() + ":"));
-		controlGrid.add(new IntegerControl(propertyContainer));
+		addControl(propertyContainer.getId(), propertyContainer.getLabel() + ":", propertyContainer.getTooltip(), new IntegerControl(propertyContainer));
 	}
 	
 	protected void addViewPerspectiveControl(OptionModelPropertyContainer propertyContainer)
 	{
-		controlGrid.add(new Label(propertyContainer.getLabel() + ":"));
-		controlGrid.add(new ViewPerspectiveControl(propertyContainer));
+		addControl(propertyContainer.getId(), propertyContainer.getLabel() + ":", propertyContainer.getTooltip(), new ViewPerspectiveControl(propertyContainer));
 	}
 	
 	protected void addAzimuthElevationAnglesControl(OptionModelPropertyContainer propertyContainer)
 	{
-		controlGrid.add(new Label(propertyContainer.getLabel() + ":"));
-		controlGrid.add(new AzimuthElevationAnglesControl(propertyContainer));
+		addControl(propertyContainer.getId(), propertyContainer.getLabel() + ":", propertyContainer.getTooltip(), new AzimuthElevationAnglesControl(propertyContainer));
 	}
 
 	protected void addColorPropertyControl(OptionModelPropertyContainer propertyContainer)
 	{
-		controlGrid.add(new Label(propertyContainer.getLabel() + ":"));
-		controlGrid.add(new ColorSelectControl(propertyContainer));
+		addControl(propertyContainer.getId(), propertyContainer.getLabel() + ":", propertyContainer.getTooltip(), new ColorSelectControl(propertyContainer));
 	}
 	
 	protected void addListPropertyControl(OptionModelPropertyContainer propertyContainer)
 	{
-		controlGrid.add(new Label(propertyContainer.getLabel() + ":"));
-		controlGrid.add(new ListControl(propertyContainer));
-		
-		
+		addControl(propertyContainer.getId(), propertyContainer.getLabel() + ":", propertyContainer.getTooltip(), new ListControl(propertyContainer));
 	}
 	
 	protected void addBooleanPropertyControl(OptionModelPropertyContainer propertyContainer)
 	{
-		controlGrid.add(new Label());
-		controlGrid.add(new BooleanControl(propertyContainer));
+		addControl(propertyContainer.getId(), "", propertyContainer.getTooltip(), new BooleanControl(propertyContainer));
 	}
+	
+	
+	
+	
+
 	
 }

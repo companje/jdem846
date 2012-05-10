@@ -13,7 +13,7 @@ import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
 import us.wthr.jdem846.ui.ColorSelection;
 
 @SuppressWarnings("serial")
-public class ColorSelectControl extends ColorSelection implements ChangeListener
+public class ColorSelectControl extends ColorSelection implements ChangeListener, OptionModelUIControl
 {
 	private static Log log = Logging.getLog(ColorSelectControl.class);
 	
@@ -25,9 +25,16 @@ public class ColorSelectControl extends ColorSelection implements ChangeListener
 		super();
 		
 		this.propertyContainer = propertyContainer;
+		this.setToolTipText(propertyContainer.getTooltip());
+		
+		refreshUI();
 		
 		this.addChangeListener(this);
-		
+
+	}
+	
+	public void refreshUI()
+	{
 		try {
 			if (propertyContainer.getValue() != null) {
 				RgbaColor color = (RgbaColor) propertyContainer.getValue();
@@ -36,9 +43,7 @@ public class ColorSelectControl extends ColorSelection implements ChangeListener
 		} catch (MethodContainerInvokeException ex) {
 			log.error("Error setting initial value to property " + propertyContainer.getPropertyName());
 		}
-		
 	}
-
 
 	@Override
 	public void stateChanged(ChangeEvent e)

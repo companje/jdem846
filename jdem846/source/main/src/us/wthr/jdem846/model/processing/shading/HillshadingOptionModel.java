@@ -7,6 +7,7 @@ import us.wthr.jdem846.model.LightingTime;
 import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
+import us.wthr.jdem846.model.annotations.ValueBounds;
 
 public class HillshadingOptionModel implements OptionModel
 {
@@ -159,6 +160,8 @@ public class HillshadingOptionModel implements OptionModel
 			tooltip="",
 			enabled=true)
 	@Order(80)
+	@ValueBounds(minimum=0,
+			stepSize=0.1)
 	public double getLightMultiple()
 	{
 		return lightMultiple;
@@ -174,6 +177,9 @@ public class HillshadingOptionModel implements OptionModel
 			tooltip="",
 			enabled=true)
 	@Order(90)
+	@ValueBounds(minimum=0,
+			maximum=1.0,
+			stepSize=0.05)
 	public double getLightIntensity()
 	{
 		return lightIntensity;
@@ -189,6 +195,9 @@ public class HillshadingOptionModel implements OptionModel
 			tooltip="",
 			enabled=true)
 	@Order(100)
+	@ValueBounds(minimum=0,
+			maximum=1.0,
+			stepSize=0.05)
 	public double getDarkIntensity()
 	{
 		return darkIntensity;
@@ -204,6 +213,8 @@ public class HillshadingOptionModel implements OptionModel
 			tooltip="",
 			enabled=true)
 	@Order(110)
+	@ValueBounds(minimum=1,
+			maximum=5)
 	public int getSpotExponent()
 	{
 		return spotExponent;
@@ -234,6 +245,9 @@ public class HillshadingOptionModel implements OptionModel
 			tooltip="",
 			enabled=true)
 	@Order(130)
+	@ValueBounds(minimum=0,
+			maximum=1.0,
+			stepSize=0.1)
 	public double getShadowIntensity()
 	{
 		return shadowIntensity;

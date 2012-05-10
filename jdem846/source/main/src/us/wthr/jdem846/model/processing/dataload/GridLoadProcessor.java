@@ -96,8 +96,8 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	{
 		super.process();
 		
-		modelContext.getRasterDataContext().setDataMaximumValue(maximumElevation);
-		modelContext.getRasterDataContext().setDataMinimumValue(minimumElevation);
+		//modelContext.getRasterDataContext().setDataMaximumValue(maximumElevation);
+		//modelContext.getRasterDataContext().setDataMinimumValue(minimumElevation);
 		
 		log.info("Found Minimum Elevation: " + minimumElevation);
 		log.info("Found Maximum Elevation: " + maximumElevation);

@@ -17,7 +17,7 @@ import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
 import us.wthr.jdem846.ui.base.Spinner;
 
 @SuppressWarnings("serial")
-public class TimeControl extends Spinner implements ChangeListener
+public class TimeControl extends Spinner implements ChangeListener, OptionModelUIControl
 {
 	private static Log log = Logging.getLog(TimeControl.class);
 	
@@ -28,6 +28,7 @@ public class TimeControl extends Spinner implements ChangeListener
 	public TimeControl(OptionModelPropertyContainer propertyContainer)
 	{
 		this.propertyContainer = propertyContainer;
+		this.setToolTipText(propertyContainer.getTooltip());
 		
 		lightOnTimeModel = new SpinnerDateModel();
 		this.setModel(lightOnTimeModel);
@@ -35,8 +36,14 @@ public class TimeControl extends Spinner implements ChangeListener
 		JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(this, I18N.get("us.wthr.jdem846.ui.lightingOptionsPanel.timeSpinner.format"));
 		setEditor(timeEditor);
 		
-		getModel().addChangeListener(this);
+		refreshUI();
 		
+		getModel().addChangeListener(this);
+	}
+
+	@Override
+	public void refreshUI()
+	{
 		try {
 			LightingTime lightingTime = (LightingTime) propertyContainer.getValue();
 			if (lightingTime != null) {
@@ -49,9 +56,8 @@ public class TimeControl extends Spinner implements ChangeListener
 		} catch (Exception ex) {
 			log.error("Error setting initial value to property " + propertyContainer.getPropertyName());
 		}
-		
 	}
-
+	
 	@Override
 	public void stateChanged(ChangeEvent e)
 	{

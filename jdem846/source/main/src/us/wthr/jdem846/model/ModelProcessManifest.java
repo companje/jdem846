@@ -192,7 +192,7 @@ public class ModelProcessManifest
 		
 		copy = new ModelProcessManifest((GlobalOptionModel)null);
 		try {
-			copy.globalOptionModelContainer = new OptionModelContainer(this.globalOptionModelContainer.getOptionModel());
+			copy.globalOptionModelContainer = new OptionModelContainer(this.globalOptionModelContainer.getOptionModel().copy());
 		} catch (InvalidProcessOptionException ex) {
 			throw new ProcessContainerException("Error creating copy of option model container: " + ex.getMessage(), ex);
 		}

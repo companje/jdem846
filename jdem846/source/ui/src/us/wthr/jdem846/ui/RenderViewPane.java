@@ -60,7 +60,7 @@ public class RenderViewPane extends Panel
 	private boolean showPreviews = true;
 	
 	private String lastSavePath = null;
-	
+
 	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
