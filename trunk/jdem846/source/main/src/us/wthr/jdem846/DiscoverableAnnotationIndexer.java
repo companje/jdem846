@@ -84,6 +84,7 @@ public class DiscoverableAnnotationIndexer
 		URL[] urls = ClasspathUrlFinder.findClassPaths();
 		for (URL url : urls) {	
 			log.info("Scanning Classpath URL: " + url);
+			StartupLoadNotifyQueue.add("Searching for modules in " + url);
 			db.scanArchives(url);
 		}
 		//db.crossReferenceImplementedInterfaces();

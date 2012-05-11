@@ -41,6 +41,7 @@ public class TemporaryFileService extends AbstractLockableService
 	public void initialize()
 	{
 		log.info("Initialize Temporary File Service");
+		StartupLoadNotifyQueue.add("Initialized temporary file service");
 	}
 	
 	

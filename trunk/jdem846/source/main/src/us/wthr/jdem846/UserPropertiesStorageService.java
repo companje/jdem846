@@ -1,5 +1,6 @@
 package us.wthr.jdem846;
 
+import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.OnShutdown;
 import us.wthr.jdem846.annotations.Service;
 import us.wthr.jdem846.logging.Log;
@@ -15,6 +16,11 @@ public class UserPropertiesStorageService implements AppService
 		
 	}
 	
+	@Initialize
+	public void initialize()
+	{
+		StartupLoadNotifyQueue.add("Initialized user properties persistence service");
+	}
 	
 	@OnShutdown
 	public void onShutdown()

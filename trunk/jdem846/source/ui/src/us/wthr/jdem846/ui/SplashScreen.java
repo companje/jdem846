@@ -26,9 +26,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.StartupLoadNotifyQueue;
+import us.wthr.jdem846.StartupLoadNotifyQueue.NotificationAddedListener;
 import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.ui.base.Window;
 
 @SuppressWarnings("serial")
@@ -42,26 +45,46 @@ public class SplashScreen extends Window
 	private static List<SplashIcon> splashIcons = new LinkedList<SplashIcon>();
 	private static SplashScreen instance = null;
 	
+	private SplashNotifyList notifyList = new SplashNotifyList();;
+	
 	public SplashScreen()
 	{
-		
-		
-		
+
 		try {
 			splashImage = ImageIcons.loadImage(JDem846Properties.getProperty("us.wthr.jdem846.splash"));
 		} catch (Exception ex) {
 			log.error("Error loading splash screen image: " + ex.getMessage(), ex);
 		}
 		
-		if (splashImage != null) {
-			this.setSize(splashImage.getWidth(this), splashImage.getHeight(this));
-		}
+
+		this.setSize(splashImage.getWidth(this), splashImage.getHeight(this));
+
+		Graphics2D g2d = (Graphics2D) splashImage.getGraphics();
+		g2d.setColor(new Color(0, 0, 0, 100));
+		int rectY = getHeight() - 10 - (notifyList.notifications.length * 17);
+		int rectHeight = getHeight() - rectY - 5;
+		g2d.fillRoundRect(5, rectY, getWidth() - 10, rectHeight, 10, 10);
+		
+		g2d.setColor(new Color(255, 255, 255, 80));
+		rectY = getHeight() - 10 - (notifyList.notifications.length * 17) + 3;
+		int rectX = getWidth() - 10 - 3;
+		rectHeight = getHeight() - rectY - 5 - 3;
+		int rectWidth = 3;
+		g2d.fillRect(rectX, rectY, rectWidth, rectHeight);
 		
 		
-		//this.setAlwaysOnTop(true);
 		this.setLocationRelativeTo(null);
 		
 		SplashScreen.instance = this;
+
+		StartupLoadNotifyQueue.addNotificationAddedListener(new NotificationAddedListener() {
+			public void onNotificationAdded(String notification)
+			{
+				notifyList.add(notification);
+				repaint();
+			}
+		});
+		
 	}
 	
 
@@ -90,6 +113,7 @@ public class SplashScreen extends Window
 	public void paint(Graphics g)
 	{
 		Graphics2D g2d = (Graphics2D) g;
+		FontMetrics fontMetrics = g2d.getFontMetrics();
 		
 		if (splashImage != null) {
 			g2d.drawImage(splashImage, 0, 0, getWidth(), getHeight(), this);
@@ -97,14 +121,17 @@ public class SplashScreen extends Window
 		
 		if (copyright != null) {
 			g2d.setColor(Color.WHITE);
-			g2d.drawString(copyright, 5, getHeight() - 5);
+			
+			int strWidth = fontMetrics.stringWidth(copyright);
+			
+			g2d.drawString(copyright, getWidth() - strWidth - 5, 15);
 		}
 		
 		int iconPaddingX = 40;
 		int iconPaddingY = 10;
 		int iconX = iconPaddingX;
 		
-		FontMetrics fontMetrics = g2d.getFontMetrics();
+		
 		
 		g2d.setColor(Color.WHITE);
 		for (SplashIcon splashIcon : splashIcons) {
@@ -120,6 +147,35 @@ public class SplashScreen extends Window
 			
 		}
 		
+		int rectY = getHeight() - 10 - (notifyList.notifications.length * 17) + 3;
+		int rectX = getWidth() - 10 - 3;
+		int rectHeight = getHeight() - rectY - 5 - 3;
+		int rectWidth = 3;
+		
+		g2d.setColor(new Color(255, 255, 255, 180));
+		double pct = (double) notifyList.notifications.length / (double)notifyList.totalAdded;
+		if (pct > 1.0)
+			pct = 1.0;
+		int rectBottom = rectY + rectHeight;
+		rectY = rectBottom - (int)MathExt.round(rectHeight * pct);
+		rectHeight = rectBottom - rectY;
+		g2d.fillRect(rectX, rectY, rectWidth, rectHeight);
+		
+		
+		g2d.setColor(Color.WHITE);
+		for (int i = notifyList.notifications.length - 1; i >= 0; i--) {
+			
+			String notification = notifyList.notifications[i];
+			if (notification == null)
+				continue;
+			
+			int x = 10;
+			int y = getHeight() - 10 - (i * 17);
+			
+			g2d.drawString(notification, x, y);
+			
+			
+		}
 		
 	}
 
@@ -135,5 +191,25 @@ public class SplashScreen extends Window
 		this.copyright = copyright;
 	}
 	
-
+	
+	class SplashNotifyList 
+	{
+		
+		public String[] notifications = new String[3];
+		public int totalAdded = 0;
+		
+		public SplashNotifyList()
+		{
+			notifications[0] = notifications[1] = notifications[2] = null;
+		}
+		
+		public void add(String notification)
+		{
+			notifications[0] = notifications[1];
+			notifications[1] = notifications[2];
+			notifications[2] = notification;
+			totalAdded++;
+		}
+		
+	}
 }
