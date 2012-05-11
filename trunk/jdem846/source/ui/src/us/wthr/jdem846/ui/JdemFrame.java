@@ -547,7 +547,7 @@ public class JdemFrame extends Frame
 			projectPane.setSavedPath(projectModel.getLoadedFrom());
 		}
 		
-		tabPane.addTab(title, projectPane, true);
+		tabPane.addTab(title, JDem846Properties.getProperty("us.wthr.jdem846.ui.project.standard.icon"), projectPane, true);
 		tabPane.setSelectedComponent(projectPane);
 		projectPane.setTitle(title);
 
@@ -581,7 +581,7 @@ public class JdemFrame extends Frame
 			projectPane.setSavedPath(projectModel.getLoadedFrom());
 		}
 		
-		tabPane.addTab(title, projectPane, true);
+		tabPane.addTab(title, JDem846Properties.getProperty("us.wthr.jdem846.ui.project.script.icon"), projectPane, true);
 		tabPane.setSelectedComponent(projectPane);
 		projectPane.setTitle(title);
 

@@ -55,8 +55,7 @@ public class ModelVisualizationPanel extends Panel
 	private ModelContext modelContextActual;
 	private ModelContext modelContextWorkingCopy;
 	
-	private ModelDisplayPanel pnlModelDisplay;
-	//private ImageDisplayPanel pnlModelDisplay;
+	private ImageDisplayPanel pnlModelDisplay;
 	private Slider sldQuality;
 	private CheckBox chkPreviewRaster;
 	private ToolbarButton btnUpdate;
@@ -86,8 +85,6 @@ public class ModelVisualizationPanel extends Panel
 	double previewQuality = 0.25;
 	double latitudeSlices;
 	double longitudeSlices;
-	
-	//private boolean useElevationOnDataGrids = true;
 
 	private List<ProjectionChangeListener> projectionChangeListeners = new LinkedList<ProjectionChangeListener>();
 	
@@ -100,8 +97,6 @@ public class ModelVisualizationPanel extends Panel
 	 */
 	private boolean lastRerenderCancelledButNeededDataRangeUpdate = false;
 	private boolean lastRerenderCancelledButNeededCacheReset = false;
-	
-	//private SimpleRenderer renderer;
 	
 	private ModelBuilder modelBuilder = null;
 	
@@ -147,11 +142,12 @@ public class ModelVisualizationPanel extends Panel
 			return;
 		}
 		
-		//modelContextWorkingCopy.getModelOptions().setBackgroundColor("255;255;255;0");
-		
+
 		// Create components
-		this.pnlModelDisplay = new ModelDisplayPanel();
-		//pnlModelDisplay = new ImageDisplayPanel();
+		pnlModelDisplay = new ImageDisplayPanel();
+		pnlModelDisplay.setAllowZooming(false);
+		pnlModelDisplay.zoomFit();
+		
 		sldQuality = new Slider(1, 100);
 		chkPreviewRaster = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.previewRaster.label"));
 		chkAutoUpdate = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.autoUpdate.label"));
@@ -354,42 +350,12 @@ public class ModelVisualizationPanel extends Panel
 	
 	protected void setWorkingCopyOptions()
 	{
-		//modelContextWorkingCopy.getModelOptions().setBackgroundColor("0;0;0;0");
-		//modelContextWorkingCopy.getModelOptions().setColoringType("hypsometric-tint");
-		
+
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
-		
-		
-		
-		//globalOptionModel.setWidth(getWidth() - 20);
-		//globalOptionModel.setHeight(getHeight() - 20);
+
 		globalOptionModel.setMaintainAspectRatio(false);
 		globalOptionModel.setSubpixelGridSize(1);
 		
-		//modelContextWorkingCopy.getModelOptions().setUseScripting(false);
-		//modelContextWorkingCopy.getModelOptions().setAntialiased(false);
-		//modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
-		//modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
-		//modelContextWorkingCopy.getModelOptions().setElevationMultiple(1.0);
-		//modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.MAINTAIN_ASPECT_RATIO_TO_DATA, false);
-
-		//modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.STANDARD_RESOLUTION_RETRIEVAL, JDem846Properties.getProperty("us.wthr.jdem846.ui.modelVisualizationPanel.data.standardResolutionRetrieval"));
-		//modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.INTERPOLATE_HIGHER_RESOLUTION, JDem846Properties.getProperty("us.wthr.jdem846.ui.modelVisualizationPanel.data.interpolate"));
-		//modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.AVERAGE_OVERLAPPING_RASTER_DATA, JDem846Properties.getProperty("us.wthr.jdem846.ui.modelVisualizationPanel.data.averageOverlappedData"));
-		
-		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
-		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
-		
-		
-		
-		
-		//boolean paintLightSourceLines = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.paintLightSourceLines");
-		//boolean paintBaseGrid = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.paintBaseGrid");
-		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintLightSourceLines", paintLightSourceLines);
-		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintBaseGrid", paintBaseGrid);
-		
-		////modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.SUBPIXEL_RENDERING, false);
-		//modelContextWorkingCopy.getModelOptions().setOption(ModelOptionNamesEnum.SUBPIXEL_WIDTH, 1);
 		try {
 			modelContextWorkingCopy.updateContext();
 		} catch (ModelContextException ex) {
@@ -527,11 +493,7 @@ public class ModelVisualizationPanel extends Panel
 			globalOptionModel.setUseScripting(useScripting);
 		}
 		
-		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices", latitudeSlices);// JDem846Properties.getProperty("us.wthr.jdem846.modelOptions.simpleRenderer.latitudeSlices"));
-		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices", longitudeSlices);//JDem846Properties.getDoubleProperty("us.wthr.jdem846.modelOptions.simpleRenderer.longitudeSlices"));
-		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintRasterPreview", rasterPreview);
-		
-		
+
 		ViewPerspective viewAngle = new ViewPerspective(rotateX, 
 														rotateY, 
 														rotateZ,
@@ -548,34 +510,6 @@ public class ModelVisualizationPanel extends Panel
 			// TODO: Display error dialog
 		}
 		
-		//modelContextWorkingCopy.getModelOptions().getProjection().setRotateX(rotateX);
-		//modelContextWorkingCopy.getModelOptions().getProjection().setRotateY(rotateY);
-		//modelContextWorkingCopy.getModelOptions().getProjection().setRotateZ(rotateZ);
-		
-		//modelContextWorkingCopy.getModelOptions().getProjection().setShiftX(shiftX);
-		//modelContextWorkingCopy.getModelOptions().getProjection().setShiftY(shiftY);
-		//modelContextWorkingCopy.getModelOptions().getProjection().setShiftZ(shiftZ);
-		
-		//modelContextWorkingCopy.getModelOptions().getProjection().setZoom(zoom);
-		
-		// TODO: Replace projection stuff
-		
-		//boolean paintGlobalBaseGrid = false;
-		
-		//if (modelContextWorkingCopy.getModelOptions().getModelProjection() == CanvasProjectionTypeEnum.PROJECT_SPHERE) {
-		//	paintGlobalBaseGrid = true;
-	//	}
-		
-		//modelContextWorkingCopy.getModelOptions().setOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintGlobalBaseGrid", paintGlobalBaseGrid);
-		
-		/*
-		if (renderer == null) {
-			renderer = new SimpleRenderer(modelContextWorkingCopy);
-		} else {
-			renderer.setModelContext(modelContextWorkingCopy);
-		}
-		*/
-		
 		if (modelContextWorkingCopy.getRasterDataContext().getRasterDataListSize() == 0) {
 			modelContextWorkingCopy.setNorthLimit(90);
 			modelContextWorkingCopy.setSouthLimit(-90);
@@ -588,10 +522,6 @@ public class ModelVisualizationPanel extends Panel
 		renderModelVisualizationImage(dataModelChange);
 		
 		repaint();
-		
-		//if (dataModelChange) {
-		//	update(false, false);
-		//}
 	}
 	
 	
@@ -624,14 +554,12 @@ public class ModelVisualizationPanel extends Panel
 		
 		int maxPreviewSize = (int) MathExt.min((double)pnlModelDisplay.getWidth(), (double)pnlModelDisplay.getHeight()) - 10;
 		 
-		
-		//log.info("Dimension: " + dimension);
+
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
 		
 		double width = globalOptionModel.getWidth();
 		double height = globalOptionModel.getHeight();
 		
-		//double aspectRatio = (double)modelContext.getRasterDataContext().getDataColumns() / (double)modelContext.getRasterDataContext().getDataRows();
 		double aspect = width / height;
 		
 		if (width > height) {
@@ -650,21 +578,15 @@ public class ModelVisualizationPanel extends Panel
 		
 		globalOptionModel.setWidth((int)width);
 		globalOptionModel.setHeight((int)height);
-		//modelContextWorkingCopy.getModelOptions().setWidth(dimension - 20);
-		//modelContextWorkingCopy.getModelOptions().setHeight(dimension - 20);
-		
-		//modelContextWorkingCopy.getModelOptions().setWidth(getWidth() - 20);
-		//modelContextWorkingCopy.getModelOptions().setHeight(getHeight() - 20);
-		
-		//if (modelContextWorkingCopy.getModelOptions().getBooleanOption(ModelOptionNamesEnum.LIMIT_COORDINATES)) {
+
 		if (globalOptionModel.getLimitCoordinates()) {
 			
 			
 			
-			double optNorthLimit = globalOptionModel.getNorthLimit();//modelContextWorkingCopy.getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_NORTH);
-			double optSouthLimit = globalOptionModel.getSouthLimit();//modelContextWorkingCopy.getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_SOUTH);
-			double optEastLimit = globalOptionModel.getEastLimit();//modelContextWorkingCopy.getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_EAST);
-			double optWestLimit = globalOptionModel.getWestLimit();//modelContextWorkingCopy.getModelOptions().getDoubleOption(ModelOptionNamesEnum.LIMITS_WEST);
+			double optNorthLimit = globalOptionModel.getNorthLimit();
+			double optSouthLimit = globalOptionModel.getSouthLimit();
+			double optEastLimit = globalOptionModel.getEastLimit();
+			double optWestLimit = globalOptionModel.getWestLimit();
 			
 			if (optNorthLimit != DemConstants.ELEV_NO_DATA)
 				modelContextWorkingCopy.setNorthLimit(optNorthLimit);
@@ -711,12 +633,11 @@ public class ModelVisualizationPanel extends Panel
 		log.info("Done rendering vizualization model");
 		
 		ModelCanvas modelCanvas = modelContextWorkingCopy.getModelCanvas();
-		
-		pnlModelDisplay.backgroundColor = globalOptionModel.getBackgroundColor().toAwtColor();
-		pnlModelDisplay.modelVisualizationImage = modelCanvas.getImage();
+
 		setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
-		//pnlModelDisplay.setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
-		//pnlModelDisplay.setImage(modelCanvas.getImage());
+		pnlModelDisplay.setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
+		pnlModelDisplay.setImage(modelCanvas.getImage());
+		pnlModelDisplay.zoomFit();
 	}
 	
 
@@ -747,58 +668,7 @@ public class ModelVisualizationPanel extends Panel
 	
 	
 	
-	private class ModelDisplayPanel extends RoundedPanel
-	{
-		public Image modelVisualizationImage = null;
-		public Color backgroundColor = Color.WHITE;
-		
-		public ModelDisplayPanel()
-		{
-			this.setOpaque(false);
-			
-		}
-		
-		@Override
-		public void paint(Graphics g)
-		{
-			Graphics2D g2d = (Graphics2D) g;
-			
-			setBackground(backgroundColor);
-			
-			super.paint(g2d);
-			
-			
-			if (modelVisualizationImage != null) {
-				
-				int x = (int) ((getWidth() / 2.0) - (modelVisualizationImage.getWidth(null) / 2.0));
-				int y = (int) ((getHeight() / 2.0) - (modelVisualizationImage.getHeight(null) / 2.0));
-				
-				g2d.drawImage(modelVisualizationImage, x, y, modelVisualizationImage.getWidth(null), modelVisualizationImage.getHeight(null), null);
-			}
-			
-			if (downX != -1 && downY != -1 && buttonDown == 3) {
-				
-				
-				int x0 = (int) MathExt.min(downX, lastX);
-				int y0 = (int) MathExt.min(downY, lastY);
-				
-				int x1 = (int) MathExt.max(downX, lastX);
-				int y1 = (int) MathExt.max(downY, lastY);
-				
-				g2d.setColor(Color.BLUE);
-				g2d.drawRect(x0, y0, x1 - x0, y1 - y0);
-				
-				
-				g2d.setColor(new Color(Color.BLUE.getRed(), Color.BLUE.getGreen(), Color.BLUE.getBlue(), 25));
-				g2d.fillRect(x0, y0, x1 - x0, y1 - y0);
-			}
-			
-			
-			
-		}
-		
-		
-	}
+
 	
 	
 }
