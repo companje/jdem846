@@ -21,6 +21,7 @@ import net.sf.json.JSONSerializer;
 import us.wthr.jdem846.AppRegistry;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
+import us.wthr.jdem846.StartupLoadNotifyQueue;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.logging.Log;
@@ -166,7 +167,7 @@ public class PlanetsRegistry implements AppRegistry
 		planet.setAlbedoGeometric(albedoGeometric);
 		planet.setAlbedoBond(albedoBond);
 		
-		
+		StartupLoadNotifyQueue.add("Loaded planet " + name + " (" + planet.getElevationSamplesPath() + ")");
 		log.info("Loaded planet " + name + " (" + planet.getElevationSamplesPath() + ")");
 		planetsMap.put(name.toUpperCase(), planet);
 	}

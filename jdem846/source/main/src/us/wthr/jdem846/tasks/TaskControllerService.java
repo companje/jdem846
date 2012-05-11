@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import us.wthr.jdem846.AbstractLockableService;
+import us.wthr.jdem846.StartupLoadNotifyQueue;
 import us.wthr.jdem846.annotations.Destroy;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.OnShutdown;
@@ -65,6 +66,7 @@ public class TaskControllerService extends AbstractLockableService
 	public void initialize()
 	{
 		log.info("Initializing task controller service");
+		
 		if (TaskControllerService.instance == null) {
 			TaskControllerService.instance = this;
 		}
@@ -75,6 +77,8 @@ public class TaskControllerService extends AbstractLockableService
 	public void runtime()
 	{
 		log.info("Entering task controller service runtime routine");
+		
+		StartupLoadNotifyQueue.add("Starting task controller service");
 		
 		defaultTaskGroup = new TaskGroup("DefaultTaskGroup");
 		defaultTaskGroup.setPersistentThread(true);

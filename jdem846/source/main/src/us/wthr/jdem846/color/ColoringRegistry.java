@@ -29,6 +29,7 @@ import us.wthr.jdem846.AppRegistry;
 import us.wthr.jdem846.DiscoverableAnnotationIndexer;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
+import us.wthr.jdem846.StartupLoadNotifyQueue;
 import us.wthr.jdem846.annotations.DemColoring;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
@@ -97,6 +98,8 @@ public class ColoringRegistry implements AppRegistry
 		} catch (Exception ex) {
 			throw new RegistryException(gradientFile.getAbsolutePath(), "Error creating coloring instance: " + ex.getMessage(), ex);
 		}
+		
+		StartupLoadNotifyQueue.add("Loaded gradient " + coloring.getName());
 	}
 	
 	protected ColoringRegistry()

@@ -61,56 +61,21 @@ public class RegistryKernel
 			}
 		}
 		
-		
-		/*
-		try {
 
-			AnnotationDB db = new AnnotationDB();
-			URL[] urls = ClasspathUrlFinder.findClassPaths();
-			for (URL url : urls) {
-				log.info("Scanning Classpath URL: " + url);
-				db.scanArchives(url);
-			}
-			//db.crossReferenceImplementedInterfaces();
-			 	
-			Map<String, Set<String>> annotationIndex = db.getAnnotationIndex();
-			Set<String> regClasses = annotationIndex.get(Registry.class.getName());
-			
-			if (regClasses != null) {
-				for (String clazzName : regClasses) {
-					initializeRegistry(clazzName);
-				}
-			}
-			
-		} catch (Exception ex) {
-			log.error("Failure in registry initialization: " + ex.getMessage(), ex);
-			//ex.printStackTrace();
-			throw new  RegistryException("Failure in registry initialization", ex);
-		}
-		*/
 	}
 	
 	@SuppressWarnings("unchecked")
 	protected void initializeRegistry(Class<AppRegistry> clazz) throws RegistryException
 	{
-		/*
-		Class<AppRegistry> clazz = null;
-		try {
-			clazz = (Class<AppRegistry>) Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
-			registryClasses.put(clazzName, clazz);
-		} catch(ClassNotFoundException ex) {
-			ex.printStackTrace();
-			throw new RegistryException(clazzName, "Failed to load class '" + clazzName + "'", ex);
-		}
-		*/
-		
+
 		boolean initMethodInvoked = false;
 		
 		Method[] methods = clazz.getMethods();
 		for (Method method : methods) {
 			if (method.getAnnotation(Initialize.class) != null) {
+				StartupLoadNotifyQueue.add("Initializing " + clazz.getName() + "." + method.getName());
 				log.info("Initializing " + clazz.getName() + "." + method.getName());
-				//System.out.println("RegistryKernel: Initializing " + clazzName + "." + method.getName());
+				
 				try {
 					method.invoke(JDem846Properties.class);
 					initMethodInvoked = true;

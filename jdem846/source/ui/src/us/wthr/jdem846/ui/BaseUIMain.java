@@ -10,6 +10,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.ServiceKernel;
+import us.wthr.jdem846.StartupLoadNotifyQueue;
 import us.wthr.jdem846.ServiceKernel.ServiceThreadListener;
 import us.wthr.jdem846.exception.ArgumentException;
 import us.wthr.jdem846.exception.RegistryException;
@@ -150,6 +151,8 @@ public abstract class BaseUIMain
 
 		}
 		
+		StartupLoadNotifyQueue.add("Loading User Interface...");
+		Thread.sleep(3000);
 
 		if (splash != null)
 			splash.setVisible(false);

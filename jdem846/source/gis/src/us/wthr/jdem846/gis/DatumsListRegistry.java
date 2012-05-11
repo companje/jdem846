@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import us.wthr.jdem846.AppRegistry;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
+import us.wthr.jdem846.StartupLoadNotifyQueue;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.logging.Log;
@@ -97,6 +98,7 @@ public class DatumsListRegistry implements AppRegistry
 		
 		}
 		
+		StartupLoadNotifyQueue.add("Loaded " + primeMeridianMap.size() + " prime meridian definitions");
 		log.info("Loaded " + primeMeridianMap.size() + " prime meridian definitions");
 	}
 	
@@ -119,6 +121,7 @@ public class DatumsListRegistry implements AppRegistry
 			ellipsoidMap.put(ellipsoid.getShortName(), ellipsoid);
 		}
 		 
+		StartupLoadNotifyQueue.add("Loaded " + ellipsoidMap.size() + " ellipsoid definitions");
 		log.info("Loaded " + ellipsoidMap.size() + " ellipsoid definitions");
 	}
 	
@@ -161,6 +164,7 @@ public class DatumsListRegistry implements AppRegistry
 			 
 		 }
 		 
+		 StartupLoadNotifyQueue.add("Loaded " + unitMap.size() + " unit definitions");
 		 log.info("Loaded " + unitMap.size() + " unit definitions");
 	}
 	
@@ -198,7 +202,7 @@ public class DatumsListRegistry implements AppRegistry
 			count++;
 		}
 		 
-		 
+		StartupLoadNotifyQueue.add("Loaded " + count + " datum definitions");
 		log.info("Loaded " + count + " datum definitions");
 	}
 	
