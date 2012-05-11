@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
@@ -72,6 +73,8 @@ public class ImageDisplayPanel extends Panel
 	private double minScalePercent;
 	private Slider sldZoomLevel;
 	
+	private boolean allowZooming = true;
+	
 	public Color backgroundColor = Color.WHITE;
 	
 	public ImageDisplayPanel()
@@ -86,10 +89,9 @@ public class ImageDisplayPanel extends Panel
 		setAlignmentY(CENTER_ALIGNMENT);
 		
 		sldZoomLevel = new Slider(1, 100);
-		//sldZoomLevel.setOpaque(false);
+		sldZoomLevel.setOpaque(false);
 		sldZoomLevel.setOrientation(Slider.VERTICAL);
-		sldZoomLevel.setBackground(new Color(0, 0, 0, 75));
-		
+
 		// Add listeners
 		
 		sldZoomLevel.getModel().addChangeListener(new ChangeListener() {
@@ -111,10 +113,14 @@ public class ImageDisplayPanel extends Panel
 		});
 		this.addMouseMotionListener(new MouseMotionListener() {
 			public void mouseDragged(MouseEvent e) {
-				onMouseDragged(e.getX(), e.getY());
+				if (allowZooming) {
+					onMouseDragged(e.getX(), e.getY());
+				}
 			}
 			public void mouseMoved(MouseEvent e) {
-				onMouseMoved(e.getX(), e.getY());
+				if (allowZooming) {
+					onMouseMoved(e.getX(), e.getY());
+				}
 			}
 		});
 		
@@ -129,18 +135,24 @@ public class ImageDisplayPanel extends Panel
 				
 			}
 			public void mousePressed(MouseEvent e) {
-				lastDragMouseX = e.getX();
-				lastDragMouseY = e.getY();
+				if (allowZooming) {
+					lastDragMouseX = e.getX();
+					lastDragMouseY = e.getY();
+				}
 			}
 			public void mouseReleased(MouseEvent e) {
-				lastDragMouseX = -1;
-				lastDragMouseY = -1;
+				if (allowZooming) {
+					lastDragMouseX = -1;
+					lastDragMouseY = -1;
+				}
 			}
 		});
 		
 		this.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				onMouseWheelMoved(e.getUnitsToScroll(), e.getScrollAmount(), e.getScrollType(), e.getX(), e.getY());
+				if (allowZooming) {
+					onMouseWheelMoved(e.getUnitsToScroll(), e.getScrollAmount(), e.getScrollType(), e.getX(), e.getY());
+				}
 			}
 		});
 		
@@ -259,22 +271,18 @@ public class ImageDisplayPanel extends Panel
 	@Override
 	public void paint(Graphics g)
 	{
+		Graphics2D g2d = (Graphics2D) g;
+		
 		if (backgroundColor != null) {
 			g.setColor(backgroundColor);
 			g.drawRect(0, 0, getWidth(), getHeight());
 		}
 		
+		
 		Image displayImage = getDisplayImage();
 		if (displayImage != null) {
-			int viewWidth = getWidth();
-			int viewHeight = getHeight();
-			
 			int scaleToWidth = (int) Math.floor((double)imageTrueWidth * (double) scalePercent);
 			int scaleToHeight = (int) Math.floor((double)imageTrueHeight * (double) scalePercent);
-			
-			int drawX = (int) Math.round((viewWidth / 2.0) - (scaleToWidth / 2.0)) + translateX;
-			int drawY = (int) Math.round((viewHeight / 2.0) - (scaleToHeight / 2.0)) + translateY;
-			
 			
 			int x = (int) ((getWidth() / 2.0) - (scaleToWidth / 2.0)) + translateX;
 			int y = (int) ((getHeight() / 2.0) - (scaleToHeight / 2.0)) + translateY;
@@ -283,7 +291,11 @@ public class ImageDisplayPanel extends Panel
 			
 		}
 		
-
+		if (sldZoomLevel.isVisible()) {
+			Insets insets = this.getInsets();
+			g2d.setColor(new Color(0, 0, 0, 50));
+			g2d.fillRoundRect(insets.left + 10, insets.top + 10, sldZoomLevel.getWidth(), sldZoomLevel.getHeight(), 10, 10);
+		}
 		
 		super.paint(g);
 	}
@@ -293,13 +305,7 @@ public class ImageDisplayPanel extends Panel
 		Image displayImage = getDisplayImage();
 		if (displayImage == null)
 			return;
-		
-		int imageWidth = displayImage.getWidth(null);
-		int imageHeight = displayImage.getHeight(null);
-		
-		int viewWidth = getWidth();
-		int viewHeight = getHeight();
-		
+
 	}
 	
 	protected Image getDisplayImage()
@@ -395,6 +401,20 @@ public class ImageDisplayPanel extends Panel
 		setScalePercent(1.0);
 	}
 	
+	
+	
+	
+	public boolean isAllowZooming()
+	{
+		return allowZooming;
+	}
+
+	public void setAllowZooming(boolean allowZooming)
+	{
+		this.allowZooming = allowZooming;
+		this.sldZoomLevel.setVisible(allowZooming);
+	}
+
 	public void addMousePositionListener(MousePositionListener listener)
 	{
 		mousePositionListeners.add(listener);

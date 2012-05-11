@@ -21,11 +21,14 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.ComponentException;
@@ -48,7 +51,16 @@ public class ClosableTab extends Panel
 	
 	private List<ActionListener> actionListeners = new LinkedList<ActionListener>();
 	
+	private Label tabIconLabel;
+	private ImageIcon closeImage;
+	private ImageIcon closeImageActive;
+	
 	public ClosableTab(String title, boolean closable)
+	{
+		this(title, null, closable);
+	}
+	
+	public ClosableTab(String title, String iconUrl, boolean closable)
 	{
 		// Set Properties
 		this.closable = closable;
@@ -58,25 +70,42 @@ public class ClosableTab extends Panel
 		
 		// Create components
 		lblTitle = new TabLabel(title);
-		//lblTitle.setOpaque(true);
-		//lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 		
-		btnClose = new Button();
-		
-		String iconUrl = JDem846Properties.getProperty("us.wthr.jdem846.ui.closableTab.tabClose");
-		try {
-			btnClose.setIcon(ImageIcons.loadImageIcon(iconUrl));
-		} catch (IOException ex) {
-			log.warn("Failed to load icon at " + iconUrl, ex);
+		if (iconUrl != null) {
+			try {
+				ImageIcon tabIcon = ImageIcons.loadImageIcon(iconUrl);
+				tabIconLabel = new Label();
+				tabIconLabel.setIcon(tabIcon);
+				tabIconLabel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
+			} catch (IOException ex) {
+				log.warn("Error loading tab icon from " + iconUrl, ex);
+			}
 		}
+		
+		
+		
+		btnClose = new Button();		
+		String closeImageUrl = JDem846Properties.getProperty("us.wthr.jdem846.ui.closableTab.tabClose");
+		try {
+			closeImage = ImageIcons.loadImageIcon(closeImageUrl);
+			btnClose.setIcon(closeImage);
+		} catch (IOException ex) {
+			log.warn("Failed to load icon at " + closeImageUrl, ex);
+		}
+		
+		String closeImageActiveUrl = JDem846Properties.getProperty("us.wthr.jdem846.ui.closableTab.tabCloseActive");
+		try {
+			closeImageActive = ImageIcons.loadImageIcon(closeImageActiveUrl);
+		} catch (IOException ex) {
+			log.warn("Failed to load active icon from " + closeImageActiveUrl, ex);
+		}
+		
 		
 		btnClose.setOpaque(false);
 		btnClose.setContentAreaFilled(false);
 		btnClose.setFocusable(false);
-		//btnClose.setBorder(BorderFactory.createEtchedBorder());
-		btnClose.setBorder(BorderFactory.createEmptyBorder(3, 6, 0, 0));
-		//btnClose.setBorderPainted(false);
-		
+		btnClose.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
+
 		// Set Tooltips
 		btnClose.setToolTipText(I18N.get("us.wthr.jdem846.ui.closableTab.closeButton.tooltip"));
 		
@@ -92,12 +121,31 @@ public class ClosableTab extends Panel
 			
 		});
 		
+		btnClose.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseEntered(MouseEvent arg0)
+			{
+				btnClose.setIcon(closeImageActive);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0)
+			{
+				btnClose.setIcon(closeImage);
+			}
+			
+		});
+		
 		
 		// Set Layout
+		if (tabIconLabel != null) {
+			add(tabIconLabel);
+		}
 		add(lblTitle);
-		if (closable)
+		if (closable) {
 			add(btnClose);
-		
+		}
 		
 	}
 	

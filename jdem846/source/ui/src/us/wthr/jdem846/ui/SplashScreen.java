@@ -21,6 +21,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,7 +57,6 @@ public class SplashScreen extends Window
 			log.error("Error loading splash screen image: " + ex.getMessage(), ex);
 		}
 		
-
 		this.setSize(splashImage.getWidth(this), splashImage.getHeight(this));
 
 		Graphics2D g2d = (Graphics2D) splashImage.getGraphics();
@@ -72,6 +72,7 @@ public class SplashScreen extends Window
 		int rectWidth = 3;
 		g2d.fillRect(rectX, rectY, rectWidth, rectHeight);
 		
+
 		
 		this.setLocationRelativeTo(null);
 		
@@ -109,10 +110,11 @@ public class SplashScreen extends Window
 	}
 	
 	
-	@Override
-	public void paint(Graphics g)
+	protected Image createSplashDisplayImage()
 	{
-		Graphics2D g2d = (Graphics2D) g;
+		BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = (Graphics2D) image.createGraphics();
+		
 		FontMetrics fontMetrics = g2d.getFontMetrics();
 		
 		if (splashImage != null) {
@@ -120,9 +122,13 @@ public class SplashScreen extends Window
 		}
 		
 		if (copyright != null) {
-			g2d.setColor(Color.WHITE);
-			
 			int strWidth = fontMetrics.stringWidth(copyright);
+			
+			
+			g2d.setColor(new Color(0, 0, 0, 100));
+			g2d.fillRoundRect(getWidth() - strWidth - 10, 2, getWidth(), 18, 3, 6);
+			
+			g2d.setColor(Color.WHITE);
 			
 			g2d.drawString(copyright, getWidth() - strWidth - 5, 15);
 		}
@@ -177,6 +183,24 @@ public class SplashScreen extends Window
 			
 		}
 		
+		g2d.dispose();
+		return image;
+	}
+	
+	@Override
+	public boolean isDoubleBuffered()
+	{
+		return true;
+	}
+	
+	@Override
+	public void paint(Graphics g)
+	{
+		
+		Graphics2D g2d = (Graphics2D) g;
+		Image splash = createSplashDisplayImage();
+		g2d.drawImage(splash, 0, 0, null);
+		
 	}
 
 
@@ -191,25 +215,5 @@ public class SplashScreen extends Window
 		this.copyright = copyright;
 	}
 	
-	
-	class SplashNotifyList 
-	{
-		
-		public String[] notifications = new String[3];
-		public int totalAdded = 0;
-		
-		public SplashNotifyList()
-		{
-			notifications[0] = notifications[1] = notifications[2] = null;
-		}
-		
-		public void add(String notification)
-		{
-			notifications[0] = notifications[1];
-			notifications[1] = notifications[2];
-			notifications[2] = notification;
-			totalAdded++;
-		}
-		
-	}
+
 }

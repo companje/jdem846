@@ -70,15 +70,25 @@ public class TabPane extends JTabbedPane implements Disposable
 	@Override
 	public void addTab(String title, Component component)
 	{
-		addTab(title, component, false);
+		addTab(title, null, component, false);
+	}
+	
+	public void addTab(String title, String iconUrl, Component component)
+	{
+		addTab(title, iconUrl, component, false);
 	}
 	
 	public void addTab(String title, Component component, boolean closable)
 	{
+		addTab(title, null, component, closable);
+	}
+	
+	public void addTab(String title, String iconUrl, Component component, boolean closable)
+	{
 		super.addTab(title, component);
 		
 		if (closable) {
-			ClosableTab tab = new ClosableTab(title, closable);
+			ClosableTab tab = new ClosableTab(title, iconUrl, closable);
 	
 			tab.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
