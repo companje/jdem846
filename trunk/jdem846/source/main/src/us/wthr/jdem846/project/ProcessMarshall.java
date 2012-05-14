@@ -2,10 +2,6 @@ package us.wthr.jdem846.project;
 
 import java.util.Map;
 
-import us.wthr.jdem846.exception.ProjectMarshalException;
-import us.wthr.jdem846.model.ModelProcessContainer;
-import us.wthr.jdem846.model.exceptions.ModelContainerException;
-
 public class ProcessMarshall
 {
 	private String id;
@@ -27,25 +23,21 @@ public class ProcessMarshall
 		return id;
 	}
 
+	public void setId(String id)
+	{
+		this.id = id;
+	}
+
 	public Map<String, String> getOptions()
 	{
 		return options;
 	}
-	
-	
-	public static ProcessMarshall marshalProcess(ModelProcessContainer processContainer) throws ProjectMarshalException
+
+	public void setOptions(Map<String, String> options)
 	{
-		ProcessMarshall pm = new ProcessMarshall();
-		
-		pm.id = processContainer.getProcessId();
-		
-		try {
-			pm.options = processContainer.getOptionModelContainer().getPropertyMapById();
-		} catch (ModelContainerException ex) {
-			throw new ProjectMarshalException("Error fetching process options: " + ex.getMessage(), ex);
-		}
-		
-		return pm;
+		this.options = options;
 	}
+
+	
 	
 }
