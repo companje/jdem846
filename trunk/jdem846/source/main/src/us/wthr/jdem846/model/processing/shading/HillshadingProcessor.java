@@ -32,9 +32,8 @@ import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorOptionModel;
 import us.wthr.jdem846.model.processing.dataload.CornerEnum;
+import us.wthr.jdem846.model.processing.shading.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.RayTracing;
-import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
 
 
 @GridProcessing(id="us.wthr.jdem846.model.processing.coloring.HillshadingProcessor",
