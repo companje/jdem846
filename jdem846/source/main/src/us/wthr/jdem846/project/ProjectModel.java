@@ -27,7 +27,7 @@ import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
-
+@Deprecated
 public class ProjectModel 
 {
 	private ProjectTypeEnum projectType = ProjectTypeEnum.STANDARD_PROJECT;

@@ -1108,6 +1108,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		lastRasterDataCount = rasterDataContext.getRasterDataListSize();
 		lastShapeDataCount = shapeDataContext.getShapeFiles().size();
+		lastImageDataCount = imageDataContext.getImageListSize();
 		
 		updatePreviewPane(updateRaster, updateShape, updateImage, optionsChanged);
 	}

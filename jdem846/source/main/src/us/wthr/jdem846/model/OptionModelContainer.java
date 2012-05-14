@@ -263,6 +263,47 @@ public class OptionModelContainer
 		return propertyNames;
 	}
 	
+	public List<String> getPropertyIds()
+	{
+		List<String> propertyIds = new LinkedList<String>();
+		
+		for (OptionModelPropertyContainer property : this.propertyContainerList) {
+			propertyIds.add(property.getId());
+		}
+
+		return propertyIds;
+	}
+	
+	public Map<String, String> getPropertyMapByName() throws ModelContainerException
+	{
+		Map<String, String> propertyMap = new HashMap<String, String>();
+		
+		for (OptionModelPropertyContainer property : this.propertyContainerList) {
+			try {
+				propertyMap.put(property.getPropertyName(), property.getValue().toString());
+			} catch (MethodContainerInvokeException ex) {
+				throw new ModelContainerException("Error retrieving property value: " + ex.getMessage(), ex);
+			}
+		}
+		
+		return propertyMap;
+	}
+	
+	public Map<String, String> getPropertyMapById() throws ModelContainerException
+	{
+		Map<String, String> propertyMap = new HashMap<String, String>();
+		
+		for (OptionModelPropertyContainer property : this.propertyContainerList) {
+			try {
+				propertyMap.put(property.getId(), property.getValue().toString());
+			} catch (MethodContainerInvokeException ex) {
+				throw new ModelContainerException("Error retrieving property value: " + ex.getMessage(), ex);
+			}
+		}
+		
+		return propertyMap;
+	}
+	
 	public List<OptionModelPropertyContainer> getProperties()
 	{
 		List<OptionModelPropertyContainer> propertyList = new LinkedList<OptionModelPropertyContainer>();

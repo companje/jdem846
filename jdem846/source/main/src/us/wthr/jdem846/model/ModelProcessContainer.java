@@ -1,5 +1,6 @@
 package us.wthr.jdem846.model;
 
+import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
@@ -21,6 +22,11 @@ public class ModelProcessContainer
 		} catch (InvalidProcessOptionException ex) {
 			throw new ProcessContainerException("Error creating option model container: " + ex.getMessage(), ex);
 		}
+	}
+	
+	public String getProcessId()
+	{
+		return gridProcessor.getClass().getAnnotation(GridProcessing.class).id();
 	}
 
 	public AbstractGridProcessor getGridProcessor()

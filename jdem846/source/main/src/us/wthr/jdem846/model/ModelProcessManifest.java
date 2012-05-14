@@ -95,6 +95,11 @@ public class ModelProcessManifest
 		return (GlobalOptionModel) this.globalOptionModelContainer.getOptionModel();
 	}
 
+	public OptionModelContainer getGlobalOptionModelContainer()
+	{
+		return this.globalOptionModelContainer;
+	}
+	
 	public void setGlobalOptionModel(GlobalOptionModel globalOptionModel) throws ProcessContainerException
 	{
 		try {

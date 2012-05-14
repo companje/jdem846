@@ -34,6 +34,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 
+@Deprecated
 public class XmlProjectFileReader 
 {
 	private static Log log = Logging.getLog(XmlProjectFileReader.class);

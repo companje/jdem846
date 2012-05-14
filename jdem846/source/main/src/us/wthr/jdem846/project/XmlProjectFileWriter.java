@@ -33,7 +33,7 @@ import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
 
 
-
+@Deprecated
 public class XmlProjectFileWriter
 {
 	
