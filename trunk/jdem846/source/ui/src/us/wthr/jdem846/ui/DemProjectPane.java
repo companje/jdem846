@@ -1385,6 +1385,12 @@ public class DemProjectPane extends JdemPanel implements Savable
 		}
 		modelProcessManifest.getGlobalOptionModel().setLatitudeSlices(-1);
 		modelProcessManifest.getGlobalOptionModel().setLongitudeSlices(-1);
+		modelProcessManifest.getGlobalOptionModel().setGetStandardResolutionElevation(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.standardResolutionRetrieval"));
+		modelProcessManifest.getGlobalOptionModel().setInterpolateData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.interpolateToHigherResolution"));
+		modelProcessManifest.getGlobalOptionModel().setAverageOverlappedData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData"));
+		modelProcessManifest.getGlobalOptionModel().setPrecacheStrategy(JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy"));
+
+
 		
 		//String scriptContent = scriptPane.getScriptContent();
 		

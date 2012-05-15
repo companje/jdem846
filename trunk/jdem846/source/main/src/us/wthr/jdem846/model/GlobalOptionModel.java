@@ -34,6 +34,10 @@ public class GlobalOptionModel implements OptionModel
 	private double latitudeSlices = -1;
 	private double longitudeSlices = -1;
 	
+	private boolean getStandardResolutionElevation = false;
+	private boolean interpolateData = true;
+	private boolean averageOverlappedData = true;
+	private String precacheStrategy = "tiled";
 	
 	public GlobalOptionModel()
 	{
@@ -331,6 +335,58 @@ public class GlobalOptionModel implements OptionModel
 		this.longitudeSlices = longitudeSlices;
 	}
 
+	
+
+	public boolean getStandardResolutionElevation()
+	{
+		return getStandardResolutionElevation;
+	}
+
+
+	public void setGetStandardResolutionElevation(
+			boolean getStandardResolutionElevation)
+	{
+		this.getStandardResolutionElevation = getStandardResolutionElevation;
+	}
+
+
+	public boolean getInterpolateData()
+	{
+		return interpolateData;
+	}
+
+
+	public void setInterpolateData(boolean interpolateData)
+	{
+		this.interpolateData = interpolateData;
+	}
+
+
+	public boolean getAverageOverlappedData()
+	{
+		return averageOverlappedData;
+	}
+
+
+	public void setAverageOverlappedData(boolean averageOverlappedData)
+	{
+		this.averageOverlappedData = averageOverlappedData;
+	}
+	
+	
+
+
+	public String getPrecacheStrategy()
+	{
+		return precacheStrategy;
+	}
+
+
+	public void setPrecacheStrategy(String precacheStrategy)
+	{
+		this.precacheStrategy = precacheStrategy;
+	}
+
 
 	public GlobalOptionModel copy()
 	{
@@ -354,7 +410,10 @@ public class GlobalOptionModel implements OptionModel
 		copy.subpixelGridSize = this.subpixelGridSize;
 		copy.longitudeSlices = this.longitudeSlices;
 		copy.latitudeSlices = this.latitudeSlices;
-		
+		copy.averageOverlappedData = this.averageOverlappedData;
+		copy.getStandardResolutionElevation = this.getStandardResolutionElevation;
+		copy.interpolateData = this.interpolateData;
+		copy.precacheStrategy = this.precacheStrategy;
 		return copy;
 	}
 	

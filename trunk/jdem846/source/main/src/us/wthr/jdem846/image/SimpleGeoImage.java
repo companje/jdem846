@@ -330,6 +330,10 @@ public class SimpleGeoImage
 		
 		raster.getPixel(x, y, rgba);
 		
+		if (image.getAlphaRaster() == null) {
+			rgba[3] = 0xFF;
+		}
+		
 		return true;
 	}
 	

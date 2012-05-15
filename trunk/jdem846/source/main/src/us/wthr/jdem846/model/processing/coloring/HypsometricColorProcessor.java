@@ -1,6 +1,7 @@
 package us.wthr.jdem846.model.processing.coloring;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.DataSourceException;
@@ -42,7 +43,8 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 	protected double minimumElevation;
 	protected double maximumElevation;
 	
-	private int[] rgbaBuffer = new int[4];
+	private int[] rgbaBufferA = new int[4];
+	private int[] rgbaBufferB = new int[4];
 	
 	private boolean useScripting = true;
 	
@@ -113,12 +115,12 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
 		try {
-			getPointColor(latitude, longitude, modelPoint.getElevation(), rgbaBuffer);
+			getPointColor(latitude, longitude, modelPoint.getElevation(), rgbaBufferA);
 		} catch (DataSourceException ex) {
 			throw new RenderEngineException("Error getting point color: " + ex.getMessage(), ex);
 		}
 		
-		modelPoint.setRgba(rgbaBuffer);
+		modelPoint.setRgba(rgbaBufferA);
 
 	}
 
@@ -138,10 +140,20 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 	protected void getPointColor(double latitude, double longitude, double elevation, int[] rgba) throws DataSourceException, RenderEngineException
 	{
 		
+		
+		boolean imageOverlayed = false;
 		if (modelContext.getImageDataContext() != null
 				&& modelContext.getImageDataContext().getColor(latitude, longitude, rgba)) {
-			// All right, then
-		} else {
+			imageOverlayed = true;
+		} 
+		
+		if (imageOverlayed && rgba[3] < 0xFF) {
+			modelColoring.getGradientColor(elevation, minimumElevation, maximumElevation, rgbaBufferB);
+			double r = ((double)rgba[3] / 255.0);
+			ColorAdjustments.interpolateColor(rgbaBufferB, rgba, rgba, r);
+		}
+		
+		if (!imageOverlayed) {
 			modelColoring.getGradientColor(elevation, minimumElevation, maximumElevation, rgba);
 		}
 		

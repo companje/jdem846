@@ -355,6 +355,10 @@ public class ModelVisualizationPanel extends Panel
 
 		globalOptionModel.setMaintainAspectRatio(false);
 		globalOptionModel.setSubpixelGridSize(1);
+		globalOptionModel.setAverageOverlappedData(false);
+		globalOptionModel.setGetStandardResolutionElevation(true);
+		globalOptionModel.setInterpolateData(false);
+		globalOptionModel.setPrecacheStrategy("none");
 		
 		try {
 			modelContextWorkingCopy.updateContext();
