@@ -550,7 +550,7 @@ public class RowRenderer extends InterruptibleProcess
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onTileBefore(modelContext, modelCanvas);
+				//scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -563,7 +563,7 @@ public class RowRenderer extends InterruptibleProcess
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onTileBefore(modelContext, modelCanvas);
+				//scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

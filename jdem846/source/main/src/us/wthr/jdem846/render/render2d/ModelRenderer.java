@@ -168,7 +168,7 @@ public class ModelRenderer extends InterruptibleProcess
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.on2DModelBefore(modelContext, modelCanvas);
+			//	scriptProxy.on2DModelBefore(modelContext, modelCanvas);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -181,7 +181,7 @@ public class ModelRenderer extends InterruptibleProcess
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.on2DModelAfter(modelContext, modelCanvas);
+			//	scriptProxy.on2DModelAfter(modelContext, modelCanvas);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

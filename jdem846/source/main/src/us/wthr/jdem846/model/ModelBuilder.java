@@ -134,14 +134,23 @@ public class ModelBuilder extends InterruptibleProcess
 		ProcessInterruptHandler interruptHandler = new ProcessInterruptHandler();
 		GlobalOptionModel globalOptionModel = modelProcessManifest.getGlobalOptionModel();
 		
+		if (useScripting) {
+			this.onInitialize(modelContext);
+		}
+		
 		setProcessing(true);
 		
 		if (useScripting) {
-			onTileBefore(modelContext.getModelCanvas());
+			onModelBefore();
 		}
 		
 		
+		
 		for (ModelProcessContainer processContainer : modelProcessManifest.getProcessList()) {
+			
+			if (useScripting) {
+				onProcessBefore(processContainer);
+			}
 			
 			AbstractGridProcessor gridProcessor = processContainer.getGridProcessor();
 			OptionModel optionModel = processContainer.getOptionModel();
@@ -169,6 +178,10 @@ public class ModelBuilder extends InterruptibleProcess
 			log.info("Executing processor: '" + name + "'");
 			gridProcessor.process();
 			
+			if (useScripting) {
+				onProcessAfter(processContainer);
+			}
+			
 			this.checkPause();
 			if (this.isCancelled()) {
 				log.info("Model builder was cancelled. Exiting in incomplete state.");
@@ -180,7 +193,7 @@ public class ModelBuilder extends InterruptibleProcess
 		dataLoaded = true;
 		
 		if (useScripting) {
-			onTileAfter(modelContext.getModelCanvas());
+			onModelAfter();
 		}
 		
 		if (useScripting) {
@@ -223,12 +236,12 @@ public class ModelBuilder extends InterruptibleProcess
 		
 	}
 	
-	protected void onTileBefore(ModelCanvas modelCanvas) throws RenderEngineException
+	protected void onModelBefore() throws RenderEngineException
 	{
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onTileBefore(modelContext, modelCanvas);
+				scriptProxy.onModelBefore(modelContext);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -236,12 +249,38 @@ public class ModelBuilder extends InterruptibleProcess
 		
 	}
 	
-	protected void onTileAfter(ModelCanvas modelCanvas) throws RenderEngineException
+	protected void onModelAfter() throws RenderEngineException
 	{
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onTileBefore(modelContext, modelCanvas);
+				scriptProxy.onModelAfter(modelContext);
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+	}
+	
+	protected void onProcessBefore(ModelProcessContainer modelProcessContainer) throws RenderEngineException
+	{
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.onProcessBefore(modelContext, modelProcessContainer);
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+	}
+	
+	protected void onProcessAfter(ModelProcessContainer modelProcessContainer) throws RenderEngineException
+	{
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.onProcessBefore(modelContext, modelProcessContainer);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

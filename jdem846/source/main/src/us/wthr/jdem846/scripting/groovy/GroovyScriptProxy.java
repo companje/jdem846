@@ -3,6 +3,7 @@ package us.wthr.jdem846.scripting.groovy;
 import groovy.lang.GroovyObject;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
+import us.wthr.jdem846.model.ModelProcessContainer;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
 public class GroovyScriptProxy implements ScriptProxy
@@ -28,27 +29,27 @@ public class GroovyScriptProxy implements ScriptProxy
 	}
 
 	@Override
-	public void on2DModelBefore(ModelContext modelContext, ModelCanvas modelCanvas)
+	public void onModelBefore(ModelContext modelContext)
 	{
-		invokeMethod("on2DModelBefore", modelContext, modelCanvas);
+		invokeMethod("onModelBefore", modelContext);
 	}
 
 	@Override
-	public void on2DModelAfter(ModelContext modelContext, ModelCanvas modelCanvas)
+	public void onModelAfter(ModelContext modelContext)
 	{
-		invokeMethod("on2DModelAfter", modelContext, modelCanvas);
+		invokeMethod("onModelAfter", modelContext);
 	}
 
 	@Override
-	public void onTileBefore(ModelContext modelContext, ModelCanvas modelCanvas)
+	public void onProcessBefore(ModelContext modelContext, ModelProcessContainer modelProcessContainer)
 	{
-		invokeMethod("onTileBefore", modelContext, modelCanvas);
+		invokeMethod("onProcessBefore", modelContext, modelProcessContainer);
 	}
 
 	@Override
-	public void onTileAfter(ModelContext modelContext, ModelCanvas modelCanvas)
+	public void onProcessAfter(ModelContext modelContext, ModelProcessContainer modelProcessContainer)
 	{
-		invokeMethod("onTileAfter", modelContext, modelCanvas);
+		invokeMethod("onProcessAfter", modelContext, modelProcessContainer);
 	}
 
 	@Override

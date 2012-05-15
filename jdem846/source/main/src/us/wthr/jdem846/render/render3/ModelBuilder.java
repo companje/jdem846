@@ -187,7 +187,7 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onTileBefore(modelContext, modelCanvas);
+				//scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -200,7 +200,7 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onTileBefore(modelContext, modelCanvas);
+				//scriptProxy.onTileBefore(modelContext, modelCanvas);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

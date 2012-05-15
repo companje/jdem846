@@ -18,6 +18,7 @@ package us.wthr.jdem846.scripting;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
+import us.wthr.jdem846.model.ModelProcessContainer;
 
 /** Describes a proxy interface for modeling engines to call user-provided scripts
  * 
@@ -30,11 +31,11 @@ public interface ScriptProxy
 	public void initialize(ModelContext modelContext);
 	public void destroy(ModelContext modelContext);
 	
-	public void on2DModelBefore(ModelContext modelContext, ModelCanvas modelCanvas);
-	public void on2DModelAfter(ModelContext modelContext, ModelCanvas modelCanvas);
+	public void onModelBefore(ModelContext modelContext);
+	public void onModelAfter(ModelContext modelContext);
 	
-	public void onTileBefore(ModelContext modelContext, ModelCanvas modelCanvas);
-	public void onTileAfter(ModelContext modelContext, ModelCanvas modelCanvas);
+	public void onProcessBefore(ModelContext modelContext, ModelProcessContainer modelProcessContainer);
+	public void onProcessAfter(ModelContext modelContext, ModelProcessContainer modelProcessContainer);
 
 	public Object onGetElevationBefore(ModelContext modelContext, double latitude, double longitude);
 	public Object onGetElevationAfter(ModelContext modelContext, double latitude, double longitude, double elevation);
