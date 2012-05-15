@@ -10,6 +10,7 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ModelPointHandler;
@@ -69,18 +70,24 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	public void prepare() throws RenderEngineException
 	{
 		GridLoadOptionModel optionModel = (GridLoadOptionModel) this.getProcessOptionModel();
-		
+	
 		useScripting = getGlobalOptionModel().getUseScripting();
-		tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
+		//tiledPrecaching = JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy").equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
+		
+		tiledPrecaching = getGlobalOptionModel().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_TILED);
 		
 		north = getGlobalOptionModel().getNorthLimit();
 		south = getGlobalOptionModel().getSouthLimit();
 		east = getGlobalOptionModel().getEastLimit();
 		west = getGlobalOptionModel().getWestLimit();
 		
-		getStandardResolutionElevation = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.standardResolutionRetrieval");
-		interpolateData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.interpolateToHigherResolution");
-		averageOverlappedData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData");
+		getStandardResolutionElevation = getGlobalOptionModel().getStandardResolutionElevation();
+		averageOverlappedData = getGlobalOptionModel().getAverageOverlappedData();
+		interpolateData = getGlobalOptionModel().getInterpolateData();
+		
+		//getStandardResolutionElevation = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.standardResolutionRetrieval");
+		//interpolateData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.interpolateToHigherResolution");
+		//averageOverlappedData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData");
 		
 		latitudeResolution = getModelDimensions().getLatitudeResolution();
 		tileHeight = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");

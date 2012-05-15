@@ -5,6 +5,7 @@ import java.util.List;
 
 import us.wthr.jdem846.DataContext;
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -28,6 +29,8 @@ public class ImageDataContext implements DataContext
 	
 	private int columns;
 	private int rows;
+	
+	private int[] rgbaBufferA = new int[4];
 	
 	private List<SimpleGeoImage> imageList = new ArrayList<SimpleGeoImage>();
 	
@@ -91,19 +94,42 @@ public class ImageDataContext implements DataContext
 	
 	public boolean getColor(double latitude, double longitude, int[] rgba) throws DataSourceException
 	{
+		boolean pixelLoaded = false;
+		int i = 0;
 		
 		for (SimpleGeoImage image : imageList) {
 			if (image.contains(latitude, longitude)) {
 				try {
-					image.getColor(latitude, longitude, rgba);
+					image.getColor(latitude, longitude, rgbaBufferA);
 				} catch (DataSourceException ex) {
 					throw new DataSourceException("Error retrieving color values: " + ex.getMessage(), ex);
 				}
-				return true;
+				
+				pixelLoaded = true;
+				
+				if (i == 0) {
+					rgba[0] = rgbaBufferA[0];
+					rgba[1] = rgbaBufferA[1];
+					rgba[2] = rgbaBufferA[2];
+					rgba[3] = rgbaBufferA[3];
+				} else {
+					
+					double r = 1.0 - ((double)rgbaBufferA[3] / 255.0);
+					int a = Math.max(rgbaBufferA[3], rgba[3]);
+					ColorAdjustments.interpolateColor(rgbaBufferA, rgba, rgba, r);
+					rgba[3] = a;
+					
+				}
+				
+				i++;
+			}
+			
+			if (pixelLoaded && rgba[3] == 255) {
+				//break;
 			}
 		}
 		
-		return false;
+		return pixelLoaded;
 	}
 	
 	
