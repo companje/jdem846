@@ -92,7 +92,7 @@ public class RasterBuffer3d
 				rgba[0] += this.rgbaBuffer[0];
 				rgba[1] += this.rgbaBuffer[1];
 				rgba[2] += this.rgbaBuffer[2];
-				//rgba[3] += this.rgbaBuffer[3];
+				rgba[3] += this.rgbaBuffer[3];
 
 			}
 		}
@@ -102,7 +102,8 @@ public class RasterBuffer3d
 		rgba[0] = (int) Math.round((double) rgba[0] / MathExt.sqr(this.subpixelWidth));
 		rgba[1] = (int) Math.round((double) rgba[1] / MathExt.sqr(this.subpixelWidth));
 		rgba[2] = (int) Math.round((double) rgba[2] / MathExt.sqr(this.subpixelWidth));
-		rgba[3] = 0xFF; // TODO: Mess with alpha later
+		rgba[3] = (int) Math.round((double) rgba[3] / MathExt.sqr(this.subpixelWidth));
+		//rgba[3] = 0xFF; // TODO: Mess with alpha later
 	}
 	
 	public void get(double x, double y, int[] rgba)
@@ -131,5 +132,5 @@ public class RasterBuffer3d
 	}
 	
 	
-	
+
 }
