@@ -61,7 +61,7 @@ public class WorkingGlassPane extends Panel
 		//setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		setVisible(false);
 		
-		arcTimer = new Timer(100, new ActionListener() {
+		arcTimer = new Timer(1000, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				arcAngle+=5;

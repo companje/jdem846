@@ -21,6 +21,7 @@ import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
@@ -57,6 +58,17 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 	protected double frontLeftPoints[] = new double[3];
 	protected double frontRightPoints[] = new double[3];
 
+	private double[] xyzN = new double[3];
+	private double[] xyzS = new double[3];
+	private double[] xyzE = new double[3];
+	private double[] xyzW = new double[3];
+	private double[] xyzC = new double[3];
+	
+	private double[] normalNW = new double[3];
+	private double[] normalNE = new double[3];
+	private double[] normalSW = new double[3];
+	private double[] normalSE = new double[3];
+	
 	protected Perspectives perspectives = new Perspectives();
 
 	private Planet planet;
@@ -171,6 +183,24 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 		double wElev = (wPoint != null) ? wPoint.getElevation() : midPoint.getElevation();
 		double nElev = (nPoint != null) ? nPoint.getElevation() : midPoint.getElevation();
 		
+		
+		fillPointXYZ(xyzN, nLat, nLon, nElev);
+		fillPointXYZ(xyzS, sLat, sLon, sElev);
+		fillPointXYZ(xyzE, eLat, eLon, eElev);
+		fillPointXYZ(xyzW, wLat, wLon, wElev);
+		fillPointXYZ(xyzC, latitude, longitude, midElev);
+		
+		perspectives.calcNormal(xyzN, xyzW, xyzC, normalNW); // NW
+		perspectives.calcNormal(xyzW, xyzS, xyzC, normalSW); // SW
+		perspectives.calcNormal(xyzC, xyzS, xyzE, normalSE); // SE
+		perspectives.calcNormal(xyzN, xyzC, xyzE, normalNE); // NE
+		
+		normalBufferB[0] = (normalNW[0] + normalSW[0] + normalSE[0] + normalNE[0]) / 4.0;
+		normalBufferB[1] = (normalNW[1] + normalSW[1] + normalSE[1] + normalNE[1]) / 4.0;
+		normalBufferB[2] = (normalNW[2] + normalSW[2] + normalSE[2] + normalNE[2]) / 4.0;
+		midPoint.setNormal(normalBufferB);
+		
+		/*
 		calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normalBufferA);
 		normalBufferB[0] = normalBufferA[0];
 		normalBufferB[1] = normalBufferA[1];
@@ -199,13 +229,18 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 		normalBufferB[2] = normalBufferB[2] / 4.0;
 		
 		midPoint.setNormal(normalBufferB);
-		
+		*/
 		
 	}
 	
 	
+	
+	
 	protected void calculateNormal(double nw, double sw, double se, double ne, CornerEnum corner, double[] normal)
 	{
+		
+		
+		
 		backLeftPoints[1] = nw * lightingMultiple;
 		backRightPoints[1] = ne * lightingMultiple;
 		frontLeftPoints[1] = sw * lightingMultiple;
@@ -220,6 +255,19 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 		} else if (corner == CornerEnum.NORTHEAST) {
 			perspectives.calcNormal(backLeftPoints, frontRightPoints, backRightPoints, normal);
 		}
+		
+	}
+	
+	protected void fillPointXYZ(double[] P, double latitude, double longitude, double elevation)
+	{
+		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
+		
+		if (planet != null) {
+			meanRadius = planet.getMeanRadius();
+		}
+		meanRadius += elevation;
+
+		Spheres.getPoint3D(longitude, latitude, meanRadius, P);
 		
 	}
 	
