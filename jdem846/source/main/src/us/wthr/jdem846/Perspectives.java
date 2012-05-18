@@ -42,6 +42,13 @@ public class Perspectives
 		usr[1] = pt0[1] - pt1[1];
 		usr[2] = pt0[2] - pt1[2];
 	}
+	
+	public  void add(double[] pt0, double[] pt1, double[] usr)
+	{
+		usr[0] = pt0[0] + pt1[0];
+		usr[1] = pt0[1] + pt1[1];
+		usr[2] = pt0[2] + pt1[2];
+	}
 
 	public  void crossProduct(double[] pt0, double[] pt1, double[] usr)
 	{

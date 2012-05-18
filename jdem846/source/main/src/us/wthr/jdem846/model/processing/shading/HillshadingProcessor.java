@@ -21,6 +21,7 @@ import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
@@ -85,7 +86,18 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	protected Coordinate latitudeCoordinate;
 	protected Coordinate longitudeCoordinate;
 	protected boolean sunIsUp = false;
-
+	
+	private boolean advancedLightingControl = false;
+	private double emmisive;
+	private double ambient;
+	private double diffuse;
+	private double specular;
+	
+	private double[] emmisiveColor = new double[4];
+	private double[] ambientColor = new double[4];
+	private double[] diffuseColor = new double[4];
+	private double[] specularColor = new double[4];
+	
 	protected RayTracing lightSourceRayTracer;
 	protected boolean rayTraceShadows;
 	protected double shadowIntensity;
@@ -110,6 +122,27 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		relativeDarkIntensity = optionModel.getDarkIntensity();
 		spotExponent = optionModel.getSpotExponent();
 
+		advancedLightingControl = optionModel.getAdvancedLightingControl();
+		emmisive = optionModel.getEmmisive();
+		ambient = optionModel.getAmbient();
+		diffuse = optionModel.getDiffuse();
+		specular = optionModel.getSpecular();
+		
+		/*
+		double t = (emmisive + ambient + diffuse + specular);
+		emmisive = emmisive / t;
+		ambient = ambient / t;
+		diffuse = diffuse / t;
+		specular = specular / t;
+		*/
+		
+		/*
+		 *private double emmisive;
+	private double ambient;
+	private double diffuse;
+	private double specular; 
+		 */
+		
 		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
 		longitudeResolution = getModelDimensions().getOutputLongitudeResolution();
 		
@@ -269,6 +302,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			dot = -1.0;
 		}
 		
+		
 		try {
 			double blockAmt = calculateRayTracedShadow(modelPoint, latitude, longitude);
 			dot = dot - (2 * shadowIntensity * blockAmt);
@@ -279,15 +313,13 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			throw new RenderEngineException("Error ray tracing shadows: " + ex.getMessage(), ex);
 		}
 		
-		if (dot > 0) {
-			dot *= relativeLightIntensity;
-		} else if (dot < 0) {
-			dot *= relativeDarkIntensity;
-		}
+		
 	
+		/*
 		if (spotExponent != 1) {
 			dot = MathExt.pow(dot, spotExponent);
 		}
+		*/
 		
 		/*
 		if (dot >= 0) {
@@ -312,17 +344,164 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	}
 	
 
-
+	
 	protected void processPointColor(ModelPoint modelPoint, double latitude, double longitude) throws RenderEngineException
 	{
-		double dot = modelPoint.getDotProduct();
+		
+		double eye[] = {0.000001,0.000001,0.000001};
+		
+		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
+		
+		if (planet != null) {
+			meanRadius = planet.getMeanRadius();
+		}
+		meanRadius += modelPoint.getElevation();
+		
+		double[] P = new double[3];
+		Spheres.getPoint3D(longitude+180, latitude, meanRadius, P);
+		
+		//double resolutionMeters = RasterDataContext.getMetersResolution(meanRadius, latitude, longitude, latitudeResolution, longitudeResolution);
+		//double xzRes = (resolutionMeters / 2.0);
+		
 		
 		modelPoint.getRgba(rgbaBuffer, false);
-		ColorAdjustments.adjustBrightness(rgbaBuffer, dot);
+		
+		if (advancedLightingControl) {
+			double dot = modelPoint.getDotProduct();
+			
+			double[] color = new double[4];
+			color[0] = (double) rgbaBuffer[0] / 255.0;
+			color[1] = (double) rgbaBuffer[1] / 255.0;
+			color[2] = (double) rgbaBuffer[2] / 255.0;
+			color[3] = (double) rgbaBuffer[3] / 255.0;
+			
+			double[] N = new double[3];
+			modelPoint.getNormal(N);
+			
+			double[] n = new double[3];
+			modelPoint.getNormal(n);
+			
+			//double [] e = Utility.normalize(Utility.substractVectors(eyeLocation,point));
+			double[] e = new double[3];
+			perspectives.subtract(eye, P, e);
+			perspectives.normalize(e, e);
+			
+			
+			//double [] h = Utility.normalize(
+			//					Utility.substractVectors(
+			//						Utility.multiplyByConstant(n,(
+			//														Utility.dotProduct(L, n))*(2.)
+			//													 )
+			//					,L));
+			double[] h = new double[3];
+			double d = perspectives.dotProduct(this.sunsource, n);
+			n[0] *= d;
+			n[1] *= d;
+			n[2] *= d;
+			
+			perspectives.subtract(n, this.sunsource, h);
+			perspectives.normalize(h, h);
+			
+			
+			emmisiveColor[0] = color[0] * emmisive;
+			emmisiveColor[1] = color[1] * emmisive;
+			emmisiveColor[2] = color[2] * emmisive;
+			emmisiveColor[3] = color[3];
+			
+			
+			ambientColor[0] = color[0] * ambient;
+			ambientColor[1] = color[1] * ambient;
+			ambientColor[2] = color[2] * ambient;
+			ambientColor[3] = color[3];
+	
+			//double diffcomp = Math.max( 0 , Utility.dotProduct( n , L ));
+			//double diffuseLight = MathExt.max(dot, 0);
+			/*
+			modelPoint.getNormal(n);
+			double diffcomp = perspectives.dotProduct(n, this.sunsource);
+			diffuseColor[0] = diffuse * color[0] * diffcomp;
+			diffuseColor[1] = diffuse * color[1] * diffcomp;
+			diffuseColor[2] = diffuse * color[2] * diffcomp;
+			diffuseColor[3] = color[3];
+			*/
+			modelPoint.getNormal(n);
+			double[] L =  new double[3];
+			perspectives.subtract(this.sunsource, P, L);
+			perspectives.normalize(L, L);
+			double diffuseLight = MathExt.max(0, perspectives.dotProduct(n, L));
+			diffuseColor[0] = diffuse * color[0] * diffuseLight;
+			diffuseColor[1] = diffuse * color[1] * diffuseLight;
+			diffuseColor[2] = diffuse * color[2] * diffuseLight;
+			diffuseColor[3] = color[3];
+	
+			/*
+			float3 V = normalize(eyePosition - P);
+  float3 H = normalize(L + V);
+  float specularLight = pow(max(dot(N, H), 0),  shininess);
+			*/
+			//double speccomp = Math.pow(Math.max( 0 , Utility.dotProduct( e , h )),material.getSpecularP());
+			
+			//double speccomp = MathExt.pow(perspectives.dotProduct(e, h), this.spotExponent);
+			
+			double[] V = new double[3];
+			perspectives.subtract(eye, P, V);
+			perspectives.normalize(V, V);
+			double[] H = new double[3];
+			perspectives.add(this.sunsource, V, H);
+			
+			
+			//double viewDot = MathExt.max(perspectives.dotProduct(modelPoint.getNormal(), H), 0);
+			//double specularLight = MathExt.pow(viewDot, spotExponent);
+			//if (diffuseLight <= 0) 
+			//	specularLight = 0;
+			double specularLight = MathExt.pow(MathExt.max(0, perspectives.dotProduct(N, H)), this.spotExponent);
+			if (diffuseLight <= 0) 
+				specularLight = 0;
+			specularColor[0] = specular * color[0] * specularLight;
+			specularColor[1] = specular * color[1] * specularLight;
+			specularColor[2] = specular * color[2] * specularLight;
+			
+			//specularColor[0] = specular * color[0] * speccomp;
+			//specularColor[1] = specular * color[1] * speccomp;
+			//specularColor[2] = specular * color[2] * speccomp;
+			specularColor[3] = color[3];
+	
+			// Add and clamp color channels
+			rgbaBuffer[0] = (int) clamp(255.0 * (emmisiveColor[0] + ambientColor[0] + diffuseColor[0] + specularColor[0]));
+			rgbaBuffer[1] = (int) clamp(255.0 * (emmisiveColor[1] + ambientColor[1] + diffuseColor[1] + specularColor[1]));
+			rgbaBuffer[2] = (int) clamp(255.0 * (emmisiveColor[2] + ambientColor[2] + diffuseColor[2] + specularColor[2]));
+			
+			
+			
+			
+		} else {
+			double dot = modelPoint.getDotProduct();
+			
+			if (dot > 0) {
+				dot *= relativeLightIntensity;
+			} else if (dot < 0) {
+				dot *= relativeDarkIntensity;
+			}
+			
+			if (spotExponent != 1) {
+				dot = MathExt.pow(dot, spotExponent);
+			}
+			ColorAdjustments.adjustBrightness(rgbaBuffer, dot);
+		}
+		//modelPoint.getRgba(rgbaBuffer, false);
+		//ColorAdjustments.adjustBrightness(rgbaBuffer, dot);
 		modelPoint.setRgba(rgbaBuffer, true);
 	}
 	
-
+	protected double clamp(double c)
+	{
+		if (c > 255)
+			c = 255;
+		if (c < 0)
+			c = 0;
+		return c;
+	}
+	
 
 	protected void setUpLightSource(double latitude, double longitude, double solarElevation, double solarAzimuth, boolean force)
 	{

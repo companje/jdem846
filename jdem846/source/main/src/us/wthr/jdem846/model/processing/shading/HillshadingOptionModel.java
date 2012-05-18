@@ -23,6 +23,13 @@ public class HillshadingOptionModel implements OptionModel
 	private double lightMultiple = 1.0;
 	private double lightIntensity = 0.75;
 	private double darkIntensity = 1.0;
+	
+	private boolean advancedLightingControl = false;
+	private double emmisive = 0.0;
+	private double ambient = 0.4;
+	private double diffuse = 0.7;
+	private double specular = 0.6;
+	
 	private int spotExponent = 1;
 	private boolean rayTraceShadows = false;
 	private double shadowIntensity = 0.4;
@@ -171,6 +178,8 @@ public class HillshadingOptionModel implements OptionModel
 	{
 		this.lightMultiple = lightMultiple;
 	}
+	
+	
 
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.lightIntensity",
 			label="Light Intensity",
@@ -214,7 +223,7 @@ public class HillshadingOptionModel implements OptionModel
 			enabled=true)
 	@Order(110)
 	@ValueBounds(minimum=1,
-			maximum=5)
+			maximum=128)
 	public int getSpotExponent()
 	{
 		return spotExponent;
@@ -259,6 +268,94 @@ public class HillshadingOptionModel implements OptionModel
 	}
 	
 	
+	
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.advancedLightingControl",
+			label="Advanced Lighting",
+			tooltip="",
+			enabled=true)
+	@Order(140)
+	public boolean getAdvancedLightingControl()
+	{
+		return advancedLightingControl;
+	}
+
+	public void setAdvancedLightingControl(boolean advancedLightingControl)
+	{
+		this.advancedLightingControl = advancedLightingControl;
+	}
+
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.emmisive",
+			label="Emmisive",
+			tooltip="",
+			enabled=true)
+	@Order(150)
+	@ValueBounds(minimum=0,
+			maximum=1.0,
+			stepSize=0.1)
+	public double getEmmisive()
+	{
+		return emmisive;
+	}
+
+	public void setEmmisive(double emmisive)
+	{
+		this.emmisive = emmisive;
+	}
+	
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.ambient",
+			label="Ambient",
+			tooltip="",
+			enabled=true)
+	@Order(160)
+	@ValueBounds(minimum=0,
+			maximum=1.0,
+			stepSize=0.1)
+	public double getAmbient()
+	{
+		return ambient;
+	}
+
+	public void setAmbient(double ambient)
+	{
+		this.ambient = ambient;
+	}
+	
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.diffuse",
+			label="Diffuse",
+			tooltip="",
+			enabled=true)
+	@Order(170)
+	@ValueBounds(minimum=0,
+			maximum=1.0,
+			stepSize=0.1)
+	public double getDiffuse()
+	{
+		return diffuse;
+	}
+
+	public void setDiffuse(double diffuse)
+	{
+		this.diffuse = diffuse;
+	}
+	
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.specular",
+			label="Specular",
+			tooltip="",
+			enabled=true)
+	@Order(180)
+	@ValueBounds(minimum=0,
+			maximum=1.0,
+			stepSize=0.1)
+	public double getSpecular()
+	{
+		return specular;
+	}
+
+	public void setSpecular(double specular)
+	{
+		this.specular = specular;
+	}
+
 	public HillshadingOptionModel copy()
 	{
 		HillshadingOptionModel copy = new HillshadingOptionModel();
