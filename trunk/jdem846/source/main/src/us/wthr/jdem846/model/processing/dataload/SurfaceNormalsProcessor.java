@@ -265,7 +265,7 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 		if (planet != null) {
 			meanRadius = planet.getMeanRadius();
 		}
-		meanRadius += elevation;
+		meanRadius = meanRadius * 1000 + elevation;
 
 		Spheres.getPoint3D(longitude, latitude, meanRadius, P);
 		

@@ -107,7 +107,9 @@ public class RayTracing
 		
 		// Variables for use during each pass
 		double radius = radiusInterval;
-
+		
+		//double lastElevation = DemConstants.ELEV_NO_DATA;
+		
 		while (true) {
 			
 			// Fetch points in space following the path of the azimuth and elevation angles
@@ -134,6 +136,11 @@ public class RayTracing
 			double _rayElevation = centerElevation + (resolution * metersResolution);
 			double rayElevation = _rayElevation;//getElevationMultiplied(_rayElevation);
 			
+			//if (lastElevation != DemConstants.ELEV_NO_DATA && lastElevation > rayElevation) {
+			//	isBlocked = 0.0;
+			//	break;
+			//}
+			//lastElevation = rayElevation;
 			
 			// Fetch the elevation value
 			double pointElevation = 0;
@@ -143,6 +150,8 @@ public class RayTracing
 				throw new RayTracingException("Failed to get elevation for point: " + ex.getMessage(), ex);
 			}
 			//pointElevation = getElevationMultiplied(pointElevation);
+			
+			
 			
 			// Increment for the next pass radius
 			radius += radiusInterval;
