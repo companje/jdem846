@@ -355,7 +355,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		if (planet != null) {
 			meanRadius = planet.getMeanRadius();
 		}
-		meanRadius += modelPoint.getElevation();
+		meanRadius = meanRadius * 1000 + modelPoint.getElevation();
 		
 		double[] P = new double[3];
 		Spheres.getPoint3D(longitude+180, latitude, meanRadius, P);
