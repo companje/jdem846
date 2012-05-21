@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -17,6 +18,7 @@ import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 
@@ -49,33 +51,55 @@ public class JsonProjectFileReader
 	
 	
 	
-	protected static void parseSettings(ProjectModel projectModel, JSONArray settingsArray) throws ProjectParseException
+	protected static void parseOptions(Map<String, String> optionsMap, JSONArray optionsArray)
 	{
-		for (int i = 0; i < settingsArray.size(); i++) {
-			JSONObject settingsObj = settingsArray.getJSONObject(i);
+		for (int i = 0; i < optionsArray.size(); i++) {
+			JSONObject settingsObj = optionsArray.getJSONObject(i);
 
 			String key = settingsObj.getString("key");
 			String value = settingsObj.getString("value");
 			
 			if (key != null && value != null) {
-				projectModel.setOption(key, value);
-				
-				if (key.equals("us.wthr.jdem846.modelOptions.userScript.language")) {
-					projectModel.setScriptLanguage(value);
-				}
-				
+				optionsMap.put(key, value);
 			}
 			
 		}
+		
+		
 	}
 	
-	protected static void parseRasterLayer(ProjectModel projectModel, JSONObject layerObj) throws ProjectParseException
+	protected static ProcessMarshall parseProcess(JSONObject jsonProcess) throws ProjectParseException
+	{
+		ProcessMarshall processMarshall = new ProcessMarshall();
+		processMarshall.setId(jsonProcess.getString("id"));
+		
+		JSONArray optionsArray = jsonProcess.getJSONArray("options");
+		parseOptions(processMarshall.getOptions(), optionsArray);
+		
+		return processMarshall;
+	}
+	
+	protected static void parseProcesses(ProjectMarshall projectMarshall, JSONArray processArray) throws ProjectParseException
+	{
+		
+		for (int i = 0; i < processArray.size(); i++) {
+			JSONObject processObj = processArray.getJSONObject(i);
+			
+			ProcessMarshall processMarshall = parseProcess(processObj);
+			projectMarshall.getProcesses().add(processMarshall);
+		}
+		
+		
+	}
+	
+	
+	protected static void parseRasterLayer(ProjectMarshall projectMarshall, JSONObject layerObj) throws ProjectParseException
 	{
 		String path = layerObj.getString("path");
-		projectModel.getInputFiles().add(path);
+		projectMarshall.getRasterFiles().add(path);
 	}
 	
-	protected static void parseImageLayer(ProjectModel projectModel, JSONObject layerObj) throws ProjectParseException
+	protected static void parseImageLayer(ProjectMarshall projectMarshall, JSONObject layerObj) throws ProjectParseException
 	{
 		
 		String path = layerObj.getString("path");
@@ -93,18 +117,18 @@ public class JsonProjectFileReader
 		}
 		
 		
-		projectModel.getImageFiles().add(image);
+		projectMarshall.getImageFiles().add(image);
 		
 	}
 	
-	protected static void parseShapeLayer(ProjectModel projectModel, JSONObject layerObj) throws ProjectParseException
+	protected static void parseShapeLayer(ProjectMarshall projectMarshall, JSONObject layerObj) throws ProjectParseException
 	{
 		String path = layerObj.getString("path");
 		String definitionId = layerObj.getString("defId");
 		
 		if (path != null && definitionId != null) {
 			try {
-				projectModel.getShapeFiles().add(new ShapeFileRequest(path, definitionId, false));
+				projectMarshall.getShapeFiles().add(new ShapeFileRequest(path, definitionId, false));
 			} catch (ShapeFileException ex) {
 				throw new ProjectParseException("Failed to load shapefile data when parsing project file", ex);
 			}
@@ -114,7 +138,7 @@ public class JsonProjectFileReader
 		
 	}
 	
-	protected static void parseLayers(ProjectModel projectModel, JSONArray layersArray) throws ProjectParseException
+	protected static void parseLayers(ProjectMarshall projectMarshall, JSONArray layersArray) throws ProjectParseException
 	{
 		for (int i = 0; i < layersArray.size(); i++) {
 			JSONObject layersObj = layersArray.getJSONObject(i);
@@ -122,11 +146,11 @@ public class JsonProjectFileReader
 			String type = layersObj.getString("type");
 			
 			if (type.equalsIgnoreCase("raster")) {
-				JsonProjectFileReader.parseRasterLayer(projectModel, layersObj);
+				JsonProjectFileReader.parseRasterLayer(projectMarshall, layersObj);
 			} else if (type.equalsIgnoreCase("shapefile")) {
-				JsonProjectFileReader.parseShapeLayer(projectModel, layersObj);
+				JsonProjectFileReader.parseShapeLayer(projectMarshall, layersObj);
 			} else if (type.equalsIgnoreCase("image")) {
-				JsonProjectFileReader.parseImageLayer(projectModel, layersObj);
+				JsonProjectFileReader.parseImageLayer(projectMarshall, layersObj);
 			} else {
 				throw new ProjectParseException("Unrecognized layer type: " + type);
 			}
@@ -135,29 +159,33 @@ public class JsonProjectFileReader
 	}
 	
 	
-	protected static ProjectModel parseProject(JSONObject json) throws ProjectParseException
+	protected static ProjectMarshall parseProject(JSONObject json) throws ProjectParseException
 	{
-		ProjectModel projectModel = new ProjectModel();
+		ProjectMarshall projectMarshall = new ProjectMarshall();
 		
 		if (json.has("type")) {
 			String projectTypeIdentifier = json.getString("type");
 			if (projectTypeIdentifier != null) {
 				ProjectTypeEnum projectType = ProjectTypeEnum.getProjectTypeFromIdentifier(projectTypeIdentifier);
-				projectModel.setProjectType(projectType);
+				projectMarshall.setProjectType(projectType);
 			}
 		}
 		
-		JSONArray settingsArray = json.getJSONArray("settings");
+		JSONArray globalOptionsArray = json.getJSONArray("global");
+		JSONArray processesArray = json.getJSONArray("processes");
 		JSONArray layersArray = json.getJSONArray("layers");
 		
-		JsonProjectFileReader.parseSettings(projectModel, settingsArray);
-		JsonProjectFileReader.parseLayers(projectModel, layersArray);
+		projectMarshall.setScriptLanguage(ScriptLanguageEnum.getLanguageFromString(json.getString("scriptLanguage")));
 		
-		return projectModel;
+		JsonProjectFileReader.parseOptions(projectMarshall.getGlobalOptions(), globalOptionsArray);
+		JsonProjectFileReader.parseProcesses(projectMarshall, processesArray);
+		JsonProjectFileReader.parseLayers(projectMarshall, layersArray);
+		
+		return projectMarshall;
 	}
 	
 	
-	public static ProjectModel readProject(String path) throws IOException, FileNotFoundException, ProjectParseException
+	public static ProjectMarshall readProject(String path) throws IOException, FileNotFoundException, ProjectParseException
 	{
 		log.info("Opening project file: " + path);
 		
@@ -170,14 +198,14 @@ public class JsonProjectFileReader
 	}
 	
 	
-	public static ProjectModel readProject(InputStream in) throws IOException, FileNotFoundException, ProjectParseException
+	public static ProjectMarshall readProject(InputStream in) throws IOException, FileNotFoundException, ProjectParseException
 	{
-		ProjectModel projectModel = null;
+		ProjectMarshall projectMarshall = null;
 		
 		JSONObject json = JsonProjectFileReader.loadProjectFile(in);
-		projectModel = JsonProjectFileReader.parseProject(json);
+		projectMarshall = JsonProjectFileReader.parseProject(json);
 		
-		return projectModel;
+		return projectMarshall;
 		
 	}
 }

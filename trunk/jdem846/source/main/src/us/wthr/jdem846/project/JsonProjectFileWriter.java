@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -26,11 +27,11 @@ public class JsonProjectFileWriter
 	}
 	
 	
-	protected static JSONArray createSettingsObject(ProjectModel projectModel)
+	protected static JSONArray createSettingsObject(Map<String, String> globalOptions)
 	{
 		JSONArray settingsArray = new JSONArray();
-		for (String key : projectModel.getOptionKeys()) {
-			String value = projectModel.getOption(key);
+		for (String key : globalOptions.keySet()) {
+			String value = globalOptions.get(key);
 			
 			JSONObject settingsObject = new JSONObject();
 			settingsObject.element("key", key);
@@ -39,6 +40,9 @@ public class JsonProjectFileWriter
 		}
 		return settingsArray;
 	}
+	
+	
+	
 	
 	protected static JSONObject createRasterObject(String path)
 	{
@@ -70,21 +74,21 @@ public class JsonProjectFileWriter
 	}
 	
 	
-	protected static JSONArray createLayersObject(ProjectModel projectModel)
+	protected static JSONArray createLayersObject(ProjectMarshall projectMarshall)
 	{
 		JSONArray layersArray = new JSONArray();
 		
-		for (String path : projectModel.getInputFiles()) {
+		for (String path : projectMarshall.getRasterFiles()) {
 			JSONObject rasterObj = createRasterObject(path);
 			layersArray.add(rasterObj);
 		}
 		
-		for (ShapeFileRequest shapeFileReq : projectModel.getShapeFiles()) {
+		for (ShapeFileRequest shapeFileReq : projectMarshall.getShapeFiles()) {
 			JSONObject shapeObj = createShapeObject(shapeFileReq);
 			layersArray.add(shapeObj);
 		}
 		
-		for (SimpleGeoImage image : projectModel.getImageFiles()) {
+		for (SimpleGeoImage image : projectMarshall.getImageFiles()) {
 			JSONObject imageObj = createImageObject(image);
 			layersArray.add(imageObj);
 		}
@@ -92,37 +96,66 @@ public class JsonProjectFileWriter
 		return layersArray;
 	}
 	
-	protected static JSONObject createJsonObject(ProjectModel projectModel)
+	protected static JSONObject createProcessObject(ProcessMarshall processMarshall)
+	{
+		JSONObject processObject = new JSONObject();
+		
+		processObject.element("id", processMarshall.getId());
+		processObject.element("options", createSettingsObject(processMarshall.getOptions()));
+		
+		return processObject;
+	}
+	
+	protected static JSONArray createProcessesArray(ProjectMarshall projectMarshall)
+	{
+		JSONArray processesArray = new JSONArray();
+		
+		for (ProcessMarshall processMarshall : projectMarshall.getProcesses()) {
+			
+			processesArray.add(createProcessObject(processMarshall));
+			
+		}
+		
+		return processesArray;
+	}
+	
+	
+	protected static JSONObject createJsonObject(ProjectMarshall projectMarshall)
 	{
 		JSONObject jsonObject = new JSONObject();
 		
-		if (projectModel.getProjectType() != null) {
-			jsonObject.element("type", projectModel.getProjectType().identifier());
+		if (projectMarshall.getProjectType() != null) {
+			jsonObject.element("type", projectMarshall.getProjectType().identifier());
 		}
 		
-		jsonObject.element("settings", createSettingsObject(projectModel));
-		jsonObject.element("layers", createLayersObject(projectModel));
+		if (projectMarshall.getScriptLanguage() != null) {
+			jsonObject.element("scriptLanguage", projectMarshall.getScriptLanguage().text());
+		}
+		
+		jsonObject.element("global", createSettingsObject(projectMarshall.getGlobalOptions()));
+		jsonObject.element("processes", createProcessesArray(projectMarshall));
+		jsonObject.element("layers", createLayersObject(projectMarshall));
 		
 		return jsonObject;
 	}
 	
 	
-	public static void writeProject(ProjectModel projectModel, String path) throws IOException
+	public static void writeProject(ProjectMarshall projectMarshall, String path) throws IOException
 	{
 		log.info("Writing project file to " + path);
 		File file = JDemResourceLoader.getAsFile(path);
 		OutputStream fos = new BufferedOutputStream(new FileOutputStream(file));
-		writeProject(projectModel, fos);
+		writeProject(projectMarshall, fos);
 		fos.close();
 		
 	}
 	
 	
-	public static void writeProject(ProjectModel projectModel, OutputStream out) throws IOException
+	public static void writeProject(ProjectMarshall projectMarshall, OutputStream out) throws IOException
 	{
 		
 		
-		JSONObject jsonObject = JsonProjectFileWriter.createJsonObject(projectModel);
+		JSONObject jsonObject = JsonProjectFileWriter.createJsonObject(projectMarshall);
 		String json = jsonObject.toString(3);
 
 		out.write(json.getBytes());

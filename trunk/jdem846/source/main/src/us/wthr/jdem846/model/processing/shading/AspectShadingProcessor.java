@@ -90,19 +90,17 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 			shade = MathExt.pow(shade, spotExponent);
 		}
 		
-		modelPoint.setDotProduct(shade);
-		processPointColor(modelPoint, latitude, longitude);
+
+		processPointColor(modelPoint, latitude, longitude, shade);
 		
 		
 	}
 	
-	protected void processPointColor(ModelPoint modelPoint, double latitude, double longitude) throws RenderEngineException
+	protected void processPointColor(ModelPoint modelPoint, double latitude, double longitude, double shade) throws RenderEngineException
 	{
-		double dot = modelPoint.getDotProduct();
-		
-		modelPoint.getRgba(rgbaBuffer, false);
-		ColorAdjustments.adjustBrightness(rgbaBuffer, dot);
-		modelPoint.setRgba(rgbaBuffer, true);
+		modelPoint.getRgba(rgbaBuffer);
+		ColorAdjustments.adjustBrightness(rgbaBuffer, shade);
+		modelPoint.setRgba(rgbaBuffer);
 	}
 	
 

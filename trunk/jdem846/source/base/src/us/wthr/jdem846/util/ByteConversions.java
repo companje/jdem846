@@ -138,6 +138,83 @@ public class ByteConversions
 		return buffer;
 	}
 	
+	/** Converts a float to a 4 byte array using the specified byte order.
+	 * 
+	 * @param value
+	 * @param byteOrder
+	 * @return A 4 byte array/
+	 */
+	public static byte[] doubleToBytes(double value)
+	{
+		return doubleToBytes(value, DEFAULT_BYTE_ORDER);
+	}
+	
+	/** Converts a float to a 4 byte array using the specified byte order.
+	 * 
+	 * @param value
+	 * @param byteOrder
+	 * @return A 4 byte array/
+	 */
+	public static byte[] doubleToBytes(double value, ByteOrder byteOrder)
+	{
+
+		long bits = Double.doubleToLongBits(value);
+		
+		byte[] buffer = null;
+		
+		if (byteOrder == ByteOrder.MSBFIRST) {
+			buffer = new byte[] {
+				(byte)(bits >>> 56),
+				(byte)(bits >>> 48),
+				(byte)(bits >>> 40),
+				(byte)(bits >>> 32),
+                (byte)(bits >>> 24),
+                (byte)(bits >>> 16),
+                (byte)(bits >>> 8),
+                (byte)bits};
+		} else {
+			buffer = new byte[] {
+	                (byte)(bits),
+	                (byte)(bits >>> 8),
+	                (byte)(bits >>> 16),
+	                (byte)(bits >>> 24),
+	                (byte)(bits >>> 32),
+	                (byte)(bits >>> 40),
+	                (byte)(bits >>> 48),
+	                (byte)(bits >>> 56)
+			};
+		}
+		
+		return buffer;
+	}
+	
+	public static byte[] intToBytes(int value)
+	{
+		return intToBytes(value, DEFAULT_BYTE_ORDER);
+	}
+
+	public static byte[] intToBytes(int bits, ByteOrder byteOrder)
+	{
+
+		byte[] buffer = null;
+		
+		if (byteOrder == ByteOrder.MSBFIRST) {
+			buffer = new byte[] {
+                (byte)(bits >>> 24),
+                (byte)(bits >>> 16),
+                (byte)(bits >>> 8),
+                (byte)bits};
+		} else {
+			buffer = new byte[] {
+	                (byte)(bits),
+	                (byte)(bits >>> 8),
+	                (byte)(bits >>> 16),
+	                (byte)(bits >>> 24)};
+		}
+		
+		return buffer;
+	}
+	
 	/** Converts a 4 byte array to an integer using the default byte order.
 	 * 
 	 * @param bytes A 4 byte array.

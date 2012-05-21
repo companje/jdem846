@@ -280,7 +280,7 @@ public class ModelBuilder extends InterruptibleProcess
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onProcessBefore(modelContext, modelProcessContainer);
+				scriptProxy.onProcessAfter(modelContext, modelProcessContainer);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

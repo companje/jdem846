@@ -51,6 +51,7 @@ import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectFiles;
+import us.wthr.jdem846.project.ProjectMarshall;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.render.EngineInstance;
@@ -105,6 +106,11 @@ public class JdemFrame extends Frame
 		} catch (IOException e) {
 			e.printStackTrace();
 			log.warn("Failed to load icon: " + e.getMessage(), e);
+		}
+		
+		boolean maximize = JDem846Properties.getBooleanProperty("us.wthr.jdem846.state.ui.windowMaximized");
+		if (maximize) {
+			this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		}
 		
 		// Create components
@@ -209,6 +215,7 @@ public class JdemFrame extends Frame
 			{
 				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.windowHeight", ""+getHeight());
 				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.windowWidth", ""+getWidth());
+				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.windowMaximized", ""+(getExtendedState() == JFrame.MAXIMIZED_BOTH));
 			}
 			public void componentShown(ComponentEvent e)
 			{
@@ -472,19 +479,19 @@ public class JdemFrame extends Frame
 	{
 		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.loadingNew"));
 		
-		ProjectModel projectModel = new ProjectModel();
-		projectModel.setProjectType(projectType);
-		buildProjectUI(projectModel);
+		ProjectMarshall projectMarshall = new ProjectMarshall();
+		projectMarshall.setProjectType(projectType);
+		buildProjectUI(projectMarshall);
 	}
 	
 	public void openProject(String filePath)
 	{
 		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.loadingPath") + " " + filePath);
 		
-		ProjectModel projectModel = null;
+		ProjectMarshall projectMarshall = null;
 
 		try {
-			projectModel = ProjectFiles.read(filePath);
+			projectMarshall = ProjectFiles.read(filePath);
 			
 			RecentProjectTracker.addProject(filePath);
 		} catch (FileNotFoundException ex) {
@@ -510,29 +517,29 @@ public class JdemFrame extends Frame
 			return;
 		}
 		
-		projectModel.setLoadedFrom(filePath);
+		projectMarshall.setLoadedFrom(filePath);
 		
-		buildProjectUI(projectModel);
+		buildProjectUI(projectMarshall);
 	}
 	
 	
-	protected void buildProjectUI(ProjectModel projectModel)
+	protected void buildProjectUI(ProjectMarshall projectMarshall)
 	{
-		if (projectModel.getProjectType() == ProjectTypeEnum.STANDARD_PROJECT) {
-			buildStandardProjectUI(projectModel);
-		} else if (projectModel.getProjectType() == ProjectTypeEnum.SCRIPT_PROJECT) {
-			buildScriptProjectUI(projectModel);
+		if (projectMarshall.getProjectType() == ProjectTypeEnum.STANDARD_PROJECT) {
+			buildStandardProjectUI(projectMarshall);
+		} else if (projectMarshall.getProjectType() == ProjectTypeEnum.SCRIPT_PROJECT) {
+			buildScriptProjectUI(projectMarshall);
 		} else {
-			log.warn("Invalid project type: " + projectModel.getProjectType());
+			log.warn("Invalid project type: " + projectMarshall.getProjectType());
 			// TODO: Message Dialog
 		}
 	}
 	
 	
-	protected void buildStandardProjectUI(ProjectModel projectModel)
+	protected void buildStandardProjectUI(ProjectMarshall projectMarshall)
 	{
 		
-		DemProjectPane projectPane = new DemProjectPane(projectModel);
+		DemProjectPane projectPane = new DemProjectPane(projectMarshall);
 		
 		projectPane.addCreateModelListener(new CreateModelListener() {
 			public void onCreateModel(ModelContext modelContext) {
@@ -541,10 +548,10 @@ public class JdemFrame extends Frame
 		});
 		
 		String title = I18N.get("us.wthr.jdem846.ui.defaultProjectTitle");
-		if (projectModel != null && projectModel.getLoadedFrom() != null) {
-			File f = new File(projectModel.getLoadedFrom());
+		if (projectMarshall != null && projectMarshall.getLoadedFrom() != null) {
+			File f = new File(projectMarshall.getLoadedFrom());
 			title = f.getName();
-			projectPane.setSavedPath(projectModel.getLoadedFrom());
+			projectPane.setSavedPath(projectMarshall.getLoadedFrom());
 		}
 		
 		tabPane.addTab(title, JDem846Properties.getProperty("us.wthr.jdem846.ui.project.standard.icon"), projectPane, true);
@@ -555,7 +562,7 @@ public class JdemFrame extends Frame
 		
 	}
 	
-	protected void buildScriptProjectUI(ProjectModel projectModel)
+	protected void buildScriptProjectUI(ProjectMarshall projectMarshall)
 	{
 		/*
 		JOptionPane.showMessageDialog(getRootPane(),
@@ -564,7 +571,7 @@ public class JdemFrame extends Frame
 			    JOptionPane.INFORMATION_MESSAGE);
 		*/
 		
-		ScriptProjectPane projectPane = new ScriptProjectPane(projectModel);
+		ScriptProjectPane projectPane = new ScriptProjectPane(projectMarshall);
 		
 		/*
 		projectPane.addCreateModelListener(new CreateModelListener() {
@@ -575,10 +582,10 @@ public class JdemFrame extends Frame
 		*/
 		
 		String title = I18N.get("us.wthr.jdem846.ui.defaultProjectTitle");
-		if (projectModel != null && projectModel.getLoadedFrom() != null) {
-			File f = new File(projectModel.getLoadedFrom());
+		if (projectMarshall != null && projectMarshall.getLoadedFrom() != null) {
+			File f = new File(projectMarshall.getLoadedFrom());
 			title = f.getName();
-			projectPane.setSavedPath(projectModel.getLoadedFrom());
+			projectPane.setSavedPath(projectMarshall.getLoadedFrom());
 		}
 		
 		tabPane.addTab(title, JDem846Properties.getProperty("us.wthr.jdem846.ui.project.script.icon"), projectPane, true);

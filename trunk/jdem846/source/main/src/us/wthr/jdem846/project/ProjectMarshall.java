@@ -20,6 +20,8 @@ public class ProjectMarshall
 {
 	private static Log log = Logging.getLog(ProjectMarshall.class);
 	
+	private ProjectTypeEnum projectType = ProjectTypeEnum.STANDARD_PROJECT;
+	
 	private Map<String, String> globalOptions = new HashMap<String, String>();
 	private List<ProcessMarshall> processes = new LinkedList<ProcessMarshall>();
 	
@@ -30,11 +32,31 @@ public class ProjectMarshall
 	private String userScript = null;
 	private ScriptLanguageEnum scriptLanguage = null;
 	
-	protected ProjectMarshall()
+	private String loadedFrom = null;
+	
+	public ProjectMarshall()
 	{
 		
 	}
-
+	
+	public ProjectTypeEnum getProjectType()
+	{
+		return projectType;
+	}
+	
+	public void setProjectType(ProjectTypeEnum projectType)
+	{
+		this.projectType = projectType;
+	}
+	
+	public void setProjectType(String identifier)
+	{
+		this.projectType = ProjectTypeEnum.getProjectTypeFromIdentifier(identifier);
+	}
+	
+	
+	
+	
 	public Map<String, String> getGlobalOptions()
 	{
 		return globalOptions;
@@ -105,9 +127,31 @@ public class ProjectMarshall
 		this.scriptLanguage = scriptLanguage;
 	}
 	
+	public String getLoadedFrom() 
+	{
+		return loadedFrom;
+	}
+	
+	public void setLoadedFrom(String loadedFrom) 
+	{
+		this.loadedFrom = loadedFrom;
+	}
+	
+	public boolean containsProcess(String processId)
+	{
+		return (getProcessMarshall(processId) != null);
+	}
 	
 	
-	
-	
+	public ProcessMarshall getProcessMarshall(String processId)
+	{
+		for (ProcessMarshall processMarshall : this.processes) {
+			if (processMarshall.getId() != null && processMarshall.getId().equals(processId)) {
+				return processMarshall;
+			}
+		}
+		
+		return null;
+	}
 	
 }

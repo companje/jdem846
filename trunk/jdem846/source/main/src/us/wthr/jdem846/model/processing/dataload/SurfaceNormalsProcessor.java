@@ -183,7 +183,7 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 		double wElev = (wPoint != null) ? wPoint.getElevation() : midPoint.getElevation();
 		double nElev = (nPoint != null) ? nPoint.getElevation() : midPoint.getElevation();
 		
-		
+		/*
 		fillPointXYZ(xyzN, nLat, nLon, nElev);
 		fillPointXYZ(xyzS, sLat, sLon, sElev);
 		fillPointXYZ(xyzE, eLat, eLon, eElev);
@@ -198,9 +198,12 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 		normalBufferB[0] = (normalNW[0] + normalSW[0] + normalSE[0] + normalNE[0]) / 4.0;
 		normalBufferB[1] = (normalNW[1] + normalSW[1] + normalSE[1] + normalNE[1]) / 4.0;
 		normalBufferB[2] = (normalNW[2] + normalSW[2] + normalSE[2] + normalNE[2]) / 4.0;
-		midPoint.setNormal(normalBufferB);
 		
-		/*
+		
+		midPoint.setNormal(normalBufferB);
+		*/
+		
+		
 		calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normalBufferA);
 		normalBufferB[0] = normalBufferA[0];
 		normalBufferB[1] = normalBufferA[1];
@@ -229,7 +232,7 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 		normalBufferB[2] = normalBufferB[2] / 4.0;
 		
 		midPoint.setNormal(normalBufferB);
-		*/
+		
 		
 	}
 	
@@ -258,6 +261,7 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 		
 	}
 	
+	
 	protected void fillPointXYZ(double[] P, double latitude, double longitude, double elevation)
 	{
 		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
@@ -265,9 +269,9 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 		if (planet != null) {
 			meanRadius = planet.getMeanRadius();
 		}
-		meanRadius = meanRadius * 1000 + elevation;
+		double radius = meanRadius * 1000 + elevation;
 
-		Spheres.getPoint3D(longitude, latitude, meanRadius, P);
+		Spheres.getPoint3D(longitude, latitude, radius, P);
 		
 	}
 	

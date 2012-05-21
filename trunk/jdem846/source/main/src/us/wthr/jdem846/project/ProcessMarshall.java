@@ -1,11 +1,12 @@
 package us.wthr.jdem846.project;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ProcessMarshall
 {
 	private String id;
-	private Map<String, String> options;
+	private Map<String, String> options = new HashMap<String, String>();
 	
 	protected ProcessMarshall()
 	{
