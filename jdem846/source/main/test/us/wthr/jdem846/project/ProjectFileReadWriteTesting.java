@@ -73,14 +73,14 @@ public class ProjectFileReadWriteTesting extends AbstractTestMain
 	
 	public void doWriteTesting(ProjectModel projectModel, String projectTestPath) throws Exception
 	{
-		ProjectFiles.write(projectModel, projectTestPath);
+		//ProjectFiles.write(projectModel, projectTestPath);
 	}
 	
 	public ProjectModel doReadTesting(String projectTestPath) throws Exception
 	{
 		
 		
-		
+		/*
 		ProjectModel projectModel = ProjectFiles.read(projectTestPath);
 		
 		if (projectModel != null) {
@@ -98,7 +98,8 @@ public class ProjectFileReadWriteTesting extends AbstractTestMain
 		}
 		
 		return projectModel;
-		
+		*/
+		return null;
 	}
 	
 	
@@ -121,14 +122,14 @@ public class ProjectFileReadWriteTesting extends AbstractTestMain
 	
 	public void doZipWriteTesting(ProjectModel projectModel, String zipTestPath) throws Exception
 	{
-		ZipProjectFileWriter.writeProject(projectModel, zipTestPath);
+		//ZipProjectFileWriter.writeProject(projectModel, zipTestPath);
 	}
 	
 	public ProjectModel doZipReadTesting(String zipTestPath) throws Exception
 	{
 		
 		
-		
+		/*
 		ProjectModel projectModel = ZipProjectFileReader.readProject(zipTestPath);
 		
 		if (projectModel != null) {
@@ -146,7 +147,8 @@ public class ProjectFileReadWriteTesting extends AbstractTestMain
 		}
 		
 		return projectModel;
-		
+		*/
+		return null;
 	}
 	
 	public void doJsonTesting(ProjectModel projectModel, String jsonTestPath) throws Exception
@@ -160,14 +162,14 @@ public class ProjectFileReadWriteTesting extends AbstractTestMain
 	
 	public void doJsonWriteTesting(ProjectModel projectModel, String jsonTestPath) throws Exception
 	{
-		JsonProjectFileWriter.writeProject(projectModel, jsonTestPath);
+		//JsonProjectFileWriter.writeProject(projectModel, jsonTestPath);
 	}
 	
 	public ProjectModel doJsonReadTesting(String jsonTestPath) throws Exception
 	{
 		
 		
-		
+		/*
 		ProjectModel projectModel = JsonProjectFileReader.readProject(jsonTestPath);
 		
 		if (projectModel != null) {
@@ -183,7 +185,9 @@ public class ProjectFileReadWriteTesting extends AbstractTestMain
 		}
 		
 		return projectModel;
-		
+		*
+		*/
+		return null;
 	}
 	
 	

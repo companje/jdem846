@@ -18,23 +18,21 @@ public class ProjectFiles
 		
 	}
 	
-	public static void write(ProjectModel projectModel, String path) throws IOException, ProjectParseException
+	public static void write(ProjectMarshall projectMarshall, String path) throws IOException, ProjectParseException
 	{
 		String ext = path.substring(path.lastIndexOf("."));
 		if (ext == null) {
 			throw new ProjectParseException("Invalid file format: " + path);
 		} else if (ext.equalsIgnoreCase(".jdem") || ext.equalsIgnoreCase(".json")) {
-			JsonProjectFileWriter.writeProject(projectModel, path);
+			JsonProjectFileWriter.writeProject(projectMarshall, path);
 		} else if (ext.equalsIgnoreCase(".zdem") || ext.equalsIgnoreCase(".zip")) {
-			ZipProjectFileWriter.writeProject(projectModel, path);
-		} else if (ext.equalsIgnoreCase(".xdem") || ext.equalsIgnoreCase(".xml")) {
-			XmlProjectFileWriter.writeProject(projectModel, path);
+			ZipProjectFileWriter.writeProject(projectMarshall, path);
 		} else {
 			throw new ProjectParseException("Unrecognized Extension: " + ext);
 		}
 	}
 	
-	public static ProjectModel read(String path) throws IOException, FileNotFoundException, ProjectParseException
+	public static ProjectMarshall read(String path) throws IOException, FileNotFoundException, ProjectParseException
 	{
 		
 		String ext = path.substring(path.lastIndexOf("."));
@@ -44,8 +42,6 @@ public class ProjectFiles
 			return JsonProjectFileReader.readProject(path);
 		} else if (ext.equalsIgnoreCase(".zdem") || ext.equalsIgnoreCase(".zip")) {
 			return ZipProjectFileReader.readProject(path);
-		} else if (ext.equalsIgnoreCase(".xdem") || ext.equalsIgnoreCase(".xml")) {
-			return XmlProjectFileReader.readProject(path);
 		} else {
 			throw new ProjectParseException("Unrecognized Extension: " + ext);
 		}

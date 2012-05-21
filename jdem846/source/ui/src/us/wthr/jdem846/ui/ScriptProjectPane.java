@@ -24,6 +24,7 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectFiles;
+import us.wthr.jdem846.project.ProjectMarshall;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
@@ -39,6 +40,11 @@ import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.scripting.ScriptEditorPanel;
 
 @SuppressWarnings("serial")
+/** Note: Needs a whole rework
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class ScriptProjectPane extends JdemPanel implements Savable
 {
 	
@@ -62,18 +68,18 @@ public class ScriptProjectPane extends JdemPanel implements Savable
 		initialize(null);
 	}
 	
-	public ScriptProjectPane(ProjectModel projectModel)
+	public ScriptProjectPane(ProjectMarshall projectMarshall)
 	{
-		initialize(projectModel);
+		initialize(projectMarshall);
 	}
 	
-	protected void initialize(ProjectModel projectModel)
+	protected void initialize(ProjectMarshall projectMarshall)
 	{
 		modelOptions = new ModelOptions();
 		
-		if (projectModel != null) {
-			modelOptions.syncFromProjectModel(projectModel);
-			modelOptions.setWriteTo(projectModel.getLoadedFrom());
+		if (projectMarshall != null) {
+			//modelOptions.syncFromProjectModel(projectModel);
+			modelOptions.setWriteTo(projectMarshall.getLoadedFrom());
 		}
 		
 		scriptPane = new ScriptEditorPanel();
@@ -112,9 +118,9 @@ public class ScriptProjectPane extends JdemPanel implements Savable
 		this.setLeftVisible(false);
 		
 	
-		if (projectModel.getUserScript() != null && projectModel.getUserScript().length() > 0) {
-			scriptPane.setScriptContent(projectModel.getUserScript());
-			scriptPane.setScriptLanguage(projectModel.getScriptLanguage());
+		if (projectMarshall.getUserScript() != null && projectMarshall.getUserScript().length() > 0) {
+			scriptPane.setScriptContent(projectMarshall.getUserScript());
+			scriptPane.setScriptLanguage(projectMarshall.getScriptLanguage());
 		} else {
 			loadDefaultScripting();
 		}
@@ -372,9 +378,8 @@ public class ScriptProjectPane extends JdemPanel implements Savable
 	{
 		try {
 			
-			ProjectModel projectModel = getProjectModel();
-			
-			ProjectFiles.write(projectModel, saveTo);
+			//ProjectModel projectModel = getProjectModel();
+			//ProjectFiles.write(projectModel, saveTo);
 			
 			setSavedPath(saveTo);
 			log.info("Project file saved to " + saveTo);

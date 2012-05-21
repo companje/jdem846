@@ -56,9 +56,11 @@ import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelProcessManifest;
 import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.OptionModelChangeEvent;
+import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.exceptions.ContextPrepareException;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
@@ -66,7 +68,10 @@ import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.exceptions.ProcessCreateException;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
+import us.wthr.jdem846.project.ProcessMarshall;
 import us.wthr.jdem846.project.ProjectFiles;
+import us.wthr.jdem846.project.ProjectMarshall;
+import us.wthr.jdem846.project.ProjectMarshaller;
 import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.rasterdata.RasterData;
@@ -152,22 +157,33 @@ public class DemProjectPane extends JdemPanel implements Savable
 		this(null);
 	}
 	
-	public DemProjectPane(ProjectModel projectModel)
+	public DemProjectPane(ProjectMarshall projectMarshall)
 	{
-		initialize(projectModel);
+		initialize(projectMarshall);
 	}
 
 	
-	protected void initialize(ProjectModel projectModel)
+	protected void initialize(ProjectMarshall projectMarshall)
 	{
 		this.instance = this;
 		
 		rasterDataContext = new RasterDataContext();
 
-		List<OptionModel> defaultOptionModelList = createDefaultOptionModelList();
+		List<OptionModel> defaultOptionModelList = null;
+		try {
+			defaultOptionModelList = createDefaultOptionModelList(projectMarshall);
+		} catch (Exception ex) {
+			log.error("Error creating option model list: " + ex.getMessage(), ex);
+			// TODO: Display error dialog
+			
+			defaultOptionModelList = new LinkedList<OptionModel>();
+		}
 		
 		try {
 			modelProcessManifest = new ModelProcessManifest();
+			if (defaultOptionModelList != null && defaultOptionModelList.size() > 0) {
+				modelProcessManifest.setGlobalOptionModel((GlobalOptionModel)defaultOptionModelList.get(0));
+			}
 		} catch (ProcessContainerException ex) {
 			log.error("Error creating default model process manifest: " + ex.getMessage(), ex);
 		}
@@ -191,25 +207,25 @@ public class DemProjectPane extends JdemPanel implements Savable
 		//this.projectModel = projectModel;
 		
 		// Apply model options
-		if (projectModel != null) {
+		if (projectMarshall != null) {
 			//modelOptions.syncFromProjectModel(projectModel);
 			//lightingContext.syncFromProjectModel(projectModel);
 			
 			// TODO: Load saved project into model
 			
-			for (String filePath : projectModel.getInputFiles()) {
+			for (String filePath : projectMarshall.getRasterFiles()) {
 				addElevationDataset(filePath, false);
 			}
 					
-			for (ShapeFileRequest shapeFile : projectModel.getShapeFiles()) {
+			for (ShapeFileRequest shapeFile : projectMarshall.getShapeFiles()) {
 				addShapeDataset(shapeFile.getPath(), shapeFile.getShapeDataDefinitionId(), false);
 			}
 			
-			for (SimpleGeoImage imageRef : projectModel.getImageFiles()) {
+			for (SimpleGeoImage imageRef : projectMarshall.getImageFiles()) {
 				addImageryData(imageRef.getImageFile(), imageRef.getNorth(), imageRef.getSouth(), imageRef.getEast(), imageRef.getWest(), false);
 			}
 					
-			projectLoadedFrom = projectModel.getLoadedFrom();
+			projectLoadedFrom = projectMarshall.getLoadedFrom();
 		}
 		
 		
@@ -614,7 +630,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		//this.setSouth(statusBar);
 		
 		
-		loadDefaultScripting();
+		initializeScripting(projectMarshall);
 		
 		//onConfigurationChanged();
 		applyOptionsToUI();
@@ -623,15 +639,45 @@ public class DemProjectPane extends JdemPanel implements Savable
 	}
 	
 	
-	public List<OptionModel> createDefaultOptionModelList()
+	public List<OptionModel> createDefaultOptionModelList(ProjectMarshall projectMarshall) throws Exception
 	{
 		List<OptionModel> defaultOptionModelList = new LinkedList<OptionModel>();
+		
+		GlobalOptionModel globalOptionModel = new GlobalOptionModel();
+		
+		if (projectMarshall != null && projectMarshall.getGlobalOptions() != null) {
+			
+			OptionModelContainer globalOptionModelContainer = new OptionModelContainer(globalOptionModel);
+			
+			for (String option : projectMarshall.getGlobalOptions().keySet()) {
+				String value = projectMarshall.getGlobalOptions().get(option);
+				globalOptionModelContainer.setPropertyValueById(option, value);
+			}
+		}
+		
+		defaultOptionModelList.add(globalOptionModel);
+		
+		
 		
 		List<ProcessInstance> processList = ModelProcessRegistry.getInstances();
 		for (ProcessInstance processInstance : processList) {
 			
+			
+			ProcessMarshall processMarshall = projectMarshall.getProcessMarshall(processInstance.getId());
+			
 			try {
 				OptionModel optionModel = processInstance.createOptionModel();
+				
+				if (processMarshall != null) {
+					OptionModelContainer optionModelContainer = new OptionModelContainer(optionModel);
+					
+					for (String option : processMarshall.getOptions().keySet()) {
+						String value = processMarshall.getOptions().get(option);
+						optionModelContainer.setPropertyValueById(option, value);
+					}
+				
+				}
+				
 				defaultOptionModelList.add(optionModel);
 			} catch (ProcessCreateException ex) {
 				log.error("Error creating option model for process id " + processInstance.getId());
@@ -643,7 +689,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		return defaultOptionModelList;
 	}
 	
-	public void loadDefaultScripting()
+	public void initializeScripting(ProjectMarshall projectMarshall)
 	{
 		// If this script isn't null or it's longer than 0 characters, then we
 		// can assume that the user has already provided one.
@@ -653,38 +699,48 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		// Default/Hardcode to Groovy for now...
 		
-		String scriptTemplatePath = null;
 		
-		//us.wthr.jdem846.userScript.groovy.template
-		//us.wthr.jdem846.userScript.jython.template
 		
-		if (scriptingContext.getScriptLanguage() == ScriptLanguageEnum.GROOVY) {
-			scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.groovy.template");
-		} else if (scriptingContext.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
-			scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.jython.template");
+		if (projectMarshall != null && projectMarshall.getUserScript() != null && projectMarshall.getUserScript().length() > 0) {
+			scriptingContext.setScriptLanguage(projectMarshall.getScriptLanguage());
+			scriptingContext.setUserScript(projectMarshall.getUserScript());
 		} else {
-			// fail silently for now
-			// TODO: Don't fail silently
-			log.warn("Script language '" + scriptingContext.getScriptLanguage() + "' is null or invalid; Cannot load template");
-			return;
-		}
-
-		String scriptTemplate = null;
-		try {
-			scriptTemplate = loadTemplateFile(scriptTemplatePath);
-		} catch (Exception ex) {
-			log.error("Error when loading script template file from '" + scriptTemplatePath + "': " + ex.getMessage(), ex);
-			JOptionPane.showMessageDialog(getRootPane(),
-					I18N.get("us.wthr.jdem846.ui.projectPane.scripting.loadTemplateFailure.message"),
-				    I18N.get("us.wthr.jdem846.ui.projectPane.scripting.loadTemplateFailure.title"),
-				    JOptionPane.ERROR_MESSAGE);
-			return;
-		}
 		
-		if (scriptTemplate != null) {
-			scriptingContext.setUserScript(scriptTemplate);
-		}
+			String scriptTemplatePath = null;
+			
+			//us.wthr.jdem846.userScript.groovy.template
+			//us.wthr.jdem846.userScript.jython.template
+			
+	
+			
+			if (scriptingContext.getScriptLanguage() == ScriptLanguageEnum.GROOVY) {
+				scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.groovy.template");
+			} else if (scriptingContext.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
+				scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.jython.template");
+			} else {
+				// fail silently for now
+				// TODO: Don't fail silently
+				log.warn("Script language '" + scriptingContext.getScriptLanguage() + "' is null or invalid; Cannot load template");
+				return;
+			}
+	
+			String scriptTemplate = null;
+			try {
+				scriptTemplate = loadTemplateFile(scriptTemplatePath);
+			} catch (Exception ex) {
+				log.error("Error when loading script template file from '" + scriptTemplatePath + "': " + ex.getMessage(), ex);
+				JOptionPane.showMessageDialog(getRootPane(),
+						I18N.get("us.wthr.jdem846.ui.projectPane.scripting.loadTemplateFailure.message"),
+					    I18N.get("us.wthr.jdem846.ui.projectPane.scripting.loadTemplateFailure.title"),
+					    JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			if (scriptTemplate != null) {
+				scriptingContext.setUserScript(scriptTemplate);
+			}
 		
+		}
 		
 		// TODO: Reapply scripting
 		scriptPane.setScriptLanguage(scriptingContext.getScriptLanguage());
@@ -692,6 +748,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 			scriptPane.setScriptContent(scriptingContext.getUserScript());
 		}
 	}
+	
+	
+	
+	
 	
 	protected String loadTemplateFile(String path) throws IOException
 	{
@@ -1438,14 +1498,13 @@ public class DemProjectPane extends JdemPanel implements Savable
 	{
 		// TODO: Reapply savedPath
 		
-		//modelOptions.setWriteTo(savedPath);
+		this.projectLoadedFrom = savedPath;
 	}
 	
 	public String getSavedPath()
 	{
 		// TODO: Reapply get saved path
-		return null;
-		//return modelOptions.getWriteTo();
+		return this.projectLoadedFrom;
 	}
 
 	@Override
@@ -1491,9 +1550,11 @@ public class DemProjectPane extends JdemPanel implements Savable
 	{
 		try {
 			
-			ProjectModel projectModel = getProjectModel();
+			//ProjectModel projectModel = getProjectModel();
 			
-			ProjectFiles.write(projectModel, saveTo);
+			ProjectMarshall projectMarshall = ProjectMarshaller.marshallProject(modelContext);
+			
+			ProjectFiles.write(projectMarshall, saveTo);
 			
 			setSavedPath(saveTo);
 			

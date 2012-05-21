@@ -23,7 +23,7 @@ public class ZipProjectFileWriter
 	}
 	
 	
-	public static void writeProject(ProjectModel projectModel, String path) throws IOException
+	public static void writeProject(ProjectMarshall projectMarshall, String path) throws IOException
 	{
 		log.info("Writing project file to " + path);
 		File file = JDemResourceLoader.getAsFile(path);
@@ -32,20 +32,20 @@ public class ZipProjectFileWriter
 		ZipEntry settingsEntry = new ZipEntry("project.json");
 		zos.putNextEntry(settingsEntry);
 		
-		JsonProjectFileWriter.writeProject(projectModel, zos);
+		JsonProjectFileWriter.writeProject(projectMarshall, zos);
 		
 		
-		if (projectModel.getUserScript() != null) {
+		if (projectMarshall.getUserScript() != null) {
 			ZipEntry scriptEntry = null;
-			if (projectModel.getScriptLanguage() == ScriptLanguageEnum.GROOVY) {
+			if (projectMarshall.getScriptLanguage() == ScriptLanguageEnum.GROOVY) {
 				scriptEntry = new ZipEntry("script.groovy");
-			} else if (projectModel.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
+			} else if (projectMarshall.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
 				scriptEntry = new ZipEntry("script.py");
 			}
 			
 			if (scriptEntry != null) {
 				zos.putNextEntry(scriptEntry);
-				zos.write(projectModel.getUserScript().getBytes());
+				zos.write(projectMarshall.getUserScript().getBytes());
 			}
 		} else {
 			log.info("User script is null, cannot write.");

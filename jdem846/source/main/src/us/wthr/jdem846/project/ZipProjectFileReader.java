@@ -34,7 +34,7 @@ public class ZipProjectFileReader
 	}
 	
 	
-	protected static void loadScriptFromZip(ProjectModel projectModel, InputStream in) throws IOException
+	protected static void loadScriptFromZip(ProjectMarshall projectMarshall, InputStream in) throws IOException
 	{
 		byte[] buffer = new byte[1024];
 		int len = 0;
@@ -46,13 +46,13 @@ public class ZipProjectFileReader
 		}
 		
 		String script = new String(baos.toByteArray());
-		projectModel.setUserScript(script);
+		projectMarshall.setUserScript(script);
 	}
 	
-	public static ProjectModel readProject(String path) throws IOException, FileNotFoundException, ProjectParseException
+	public static ProjectMarshall readProject(String path) throws IOException, FileNotFoundException, ProjectParseException
 	{
 		log.info("Opening project file: " + path);
-		ProjectModel projectModel = null;
+		ProjectMarshall projectMarshall = null;
 		
 		if (!fileExists(path)) {
 			throw new FileNotFoundException(path);
@@ -64,25 +64,25 @@ public class ZipProjectFileReader
 		ZipEntry jsonSettingsEntry = zipFile.getEntry("project.json");
 		
 		if (jsonSettingsEntry != null) {
-			projectModel = JsonProjectFileReader.readProject(zipFile.getInputStream(jsonSettingsEntry));
+			projectMarshall = JsonProjectFileReader.readProject(zipFile.getInputStream(jsonSettingsEntry));
 		} else {
 			throw new ProjectParseException("Project settings file not found!");
 		}
 		
 		ZipEntry scriptEntry = null;
-		if (projectModel.getScriptLanguage() == ScriptLanguageEnum.GROOVY) {
+		if (projectMarshall.getScriptLanguage() == ScriptLanguageEnum.GROOVY) {
 			scriptEntry = zipFile.getEntry("script.groovy");
-		} else if (projectModel.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
+		} else if (projectMarshall.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
 			scriptEntry = zipFile.getEntry("script.py");
 		}
 		
 		if (scriptEntry != null) {
-			loadScriptFromZip(projectModel, zipFile.getInputStream(scriptEntry));
+			loadScriptFromZip(projectMarshall, zipFile.getInputStream(scriptEntry));
 		} else {
 			log.info("Script file not found, cannot load");
 		}
 		
 		
-		return projectModel;
+		return projectMarshall;
 	}
 }

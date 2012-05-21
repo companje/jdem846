@@ -225,7 +225,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		
 		if (point != null) {
 			elev = point.getElevation();
-			point.getRgba(rgbaBuffer, true);
+			point.getRgba(rgbaBuffer);
 		}
 		
 		if (elev == DemConstants.ELEV_NO_DATA) {

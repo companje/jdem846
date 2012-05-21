@@ -1,5 +1,7 @@
 package us.wthr.jdem846.canvas;
 
+import us.wthr.jdem846.canvas.util.ColorUtil;
+
 
 public class PixelBuffer extends AbstractBuffer
 {
@@ -38,6 +40,12 @@ public class PixelBuffer extends AbstractBuffer
 		int index = this.getIndex(x, y);
 		
 		if (index >= 0 && index < getBufferLength()) {
+			
+			int existing = get(x, y);
+			if (existing != 0x0) {
+				rgba = ColorUtil.overlayColor(rgba, existing);
+			}
+			
 			buffer[index] = rgba;
 		} else {
 			// TODO: Throw

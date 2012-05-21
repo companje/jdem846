@@ -286,7 +286,7 @@ public class HillshadingOptionModel implements OptionModel
 
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.emmisive",
 			label="Emmisive",
-			tooltip="",
+			tooltip="Light emmitted or given off by the surface",
 			enabled=true)
 	@Order(150)
 	@ValueBounds(minimum=0,
@@ -304,7 +304,7 @@ public class HillshadingOptionModel implements OptionModel
 	
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.ambient",
 			label="Ambient",
-			tooltip="",
+			tooltip="Fixed-intensity light that affects all surfaces equally",
 			enabled=true)
 	@Order(160)
 	@ValueBounds(minimum=0,
@@ -322,7 +322,7 @@ public class HillshadingOptionModel implements OptionModel
 	
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.diffuse",
 			label="Diffuse",
-			tooltip="",
+			tooltip="Directed light reflected off a surface equally in all directions",
 			enabled=true)
 	@Order(170)
 	@ValueBounds(minimum=0,
@@ -340,7 +340,7 @@ public class HillshadingOptionModel implements OptionModel
 	
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.specular",
 			label="Specular",
-			tooltip="",
+			tooltip="Light scattered from the surface predominantly around the mirror direction (Shininess).",
 			enabled=true)
 	@Order(180)
 	@ValueBounds(minimum=0,

@@ -1,5 +1,8 @@
 package us.wthr.jdem846.model;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.canvas.util.ColorUtil;
 
@@ -8,9 +11,9 @@ public class ModelPoint
 	
 	private double elevation = DemConstants.ELEV_NO_DATA;
 	private double[] normal = new double[3];
-	private double dotProduct;
 	private int rgba;
-	private int shadedRgba;
+	
+	private List<ModelPointChangedListener> changeListeners = new LinkedList<ModelPointChangedListener>();
 	
 	public ModelPoint()
 	{
@@ -46,68 +49,56 @@ public class ModelPoint
 		this.normal[2] = normal[2];
 	}
 
-	public double getDotProduct()
-	{
-		return dotProduct;
-	}
-
-	public void setDotProduct(double dotProduct)
-	{
-		this.dotProduct = dotProduct;
-	}
 
 	
-	public void getRgba(int[] fill, boolean shaded) 
+	public void getRgba(int[] fill) 
 	{
-		ColorUtil.intToRGBA(getRgba(shaded), fill);
+		ColorUtil.intToRGBA(getRgba(), fill);
 	}
 	
-	public int getRgba(boolean shaded)
+	public int getRgba()
 	{
-		if (shaded) {
-			return this.shadedRgba;
-		} else {
-			return rgba;
-		}
+		return rgba;
 	}
 
 	public void setRgba(int rgba)
 	{
-		setRgba(rgba, true);
-		setRgba(rgba, false);
+		this.rgba = rgba;
 	}
 	
-	public void setRgba(int rgba, boolean shaded)
-	{
-		if (shaded) {
-			this.shadedRgba = rgba;
-		} else {
-			this.rgba = rgba;
-		}
-	}
-	
+
 	public void setRgba(int[] rgba)
 	{
-		setRgba(rgba, true);
-		setRgba(rgba, false);
+		this.setRgba(ColorUtil.rgbaToInt(rgba));
 	}
 	
-	public void setRgba(int[] rgba, boolean shaded)
-	{
-		this.setRgba(ColorUtil.rgbaToInt(rgba), shaded);
-	}
 	
 	public void setRgba(int r, int g, int b, int a)
 	{
-		setRgba(r, g, b, a, true);
-		setRgba(r, g, b, a, false);
+		this.setRgba(ColorUtil.rgbaToInt(r, g, b, a));
 	}
 	
-	public void setRgba(int r, int g, int b, int a, boolean shaded)
+	
+	protected void fireModelPointChangedListeners()
 	{
-		this.setRgba(ColorUtil.rgbaToInt(r, g, b, a), shaded);
+		for (ModelPointChangedListener listener : changeListeners)
+		{
+			listener.onModelPointChanged(this);
+		}
 	}
 	
+	public void addModelPointChangedListener(ModelPointChangedListener listener)
+	{
+		changeListeners.add(listener);
+	}
 	
+	public void removeModelPointChangedListener(ModelPointChangedListener listener)
+	{
+		changeListeners.remove(listener);
+	}
 	
+	public interface ModelPointChangedListener
+	{
+		public void onModelPointChanged(ModelPoint modelPoint);
+	}
 }

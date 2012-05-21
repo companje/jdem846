@@ -192,7 +192,7 @@ public class OptionModelMethodContainer
 		
 		if (isSetter()) {
 			try {
-				method.invoke(declaringObject, value);
+				method.invoke(declaringObject, OptionValueTypeConverter.fromString(value.toString(), getType()));
 			} catch (Exception ex) {
 				throw new MethodContainerInvokeException("Error invoking method: " + ex.getMessage(), ex);
 			}
