@@ -10,6 +10,7 @@ import us.wthr.jdem846.model.ModelGridDimensions;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ModelPointCycler;
+import us.wthr.jdem846.model.ModelPointGrid;
 import us.wthr.jdem846.model.ModelPointHandler;
 import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.render.InterruptibleProcess;
@@ -22,7 +23,7 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 	private static Log log = Logging.getLog(AbstractGridProcessor.class);
 	
 	protected ModelContext modelContext;
-	protected ModelGrid modelGrid;
+	protected ModelPointGrid modelGrid;
 	protected GlobalOptionModel globalOptionModel;
 	protected OptionModel processOptionModel; 
 	protected ModelGridDimensions modelDimensions;
@@ -34,14 +35,14 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 		
 	}
 	
-	public AbstractGridProcessor(ModelContext modelContext, ModelGrid modelGrid)
+	public AbstractGridProcessor(ModelContext modelContext, ModelPointGrid modelGrid)
 	{
 		setModelContext(modelContext);
 		setModelGrid(modelGrid);
 	}
 	
 	
-	public void setAndPrepare(ModelContext modelContext, ModelGrid modelGrid, ModelGridDimensions modelDimensions, GlobalOptionModel globalOptionModel, OptionModel processOptionModel) throws RenderEngineException
+	public void setAndPrepare(ModelContext modelContext, ModelPointGrid modelGrid, ModelGridDimensions modelDimensions, GlobalOptionModel globalOptionModel, OptionModel processOptionModel) throws RenderEngineException
 	{
 		setModelContext(modelContext);
 		setModelGrid(modelGrid);
@@ -84,7 +85,7 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 		this.modelContext = modelContext;
 	}
 	
-	public void setModelGrid(ModelGrid modelGrid)
+	public void setModelGrid(ModelPointGrid modelGrid)
 	{
 		this.modelGrid = modelGrid;
 	}

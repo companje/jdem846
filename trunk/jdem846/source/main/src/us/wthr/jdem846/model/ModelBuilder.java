@@ -33,7 +33,7 @@ public class ModelBuilder extends InterruptibleProcess
 
 	private ModelProcessManifest modelProcessManifest;
 	private ModelContext modelContext;
-	private ModelGrid modelGrid;
+	private ModelPointGrid modelGrid;
 	private ModelGridDimensions modelDimensions;
 	
 	private boolean runLoadProcessor = true;
@@ -78,15 +78,28 @@ public class ModelBuilder extends InterruptibleProcess
 		this.modelProcessManifest = modelProcessManifest;
 		
 		
-		
+		boolean useDiskCachedModelGrid = globalOptionModel.getUseDiskCachedModelGrid();
 	
 		if (modelGrid == null) {
-			modelGrid = new ModelGrid(globalOptionModel.getNorthLimit(), 
-					globalOptionModel.getSouthLimit(), 
-					globalOptionModel.getEastLimit(), 
-					globalOptionModel.getWestLimit(), 
-					modelDimensions.getOutputLatitudeResolution(), 
-					modelDimensions.getOutputLongitudeResolution());
+			if (useDiskCachedModelGrid) {
+				try {
+					modelGrid = new DiskCachedModelGrid(globalOptionModel.getNorthLimit(), 
+							globalOptionModel.getSouthLimit(), 
+							globalOptionModel.getEastLimit(), 
+							globalOptionModel.getWestLimit(), 
+							modelDimensions.getOutputLatitudeResolution(), 
+							modelDimensions.getOutputLongitudeResolution());
+				} catch (Exception ex) {
+					throw new RenderEngineException("Error creating disk cached model grid: " + ex.getMessage(), ex);
+				}
+			} else {
+				modelGrid = new ModelGrid(globalOptionModel.getNorthLimit(), 
+						globalOptionModel.getSouthLimit(), 
+						globalOptionModel.getEastLimit(), 
+						globalOptionModel.getWestLimit(), 
+						modelDimensions.getOutputLatitudeResolution(), 
+						modelDimensions.getOutputLongitudeResolution());
+			}
 		}
 		
 

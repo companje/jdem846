@@ -27,6 +27,7 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 	private static Log log = Logging.getLog(AspectShadingProcessor.class);
 	
 	protected int[] rgbaBuffer = new int[4];
+	protected double[] normal = new double[3];
 	
 	protected double relativeLightIntensity;
 	protected double relativeDarkIntensity;
@@ -71,7 +72,8 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 		
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 
-		double degrees = Aspect.aspectInDegrees(modelPoint.getNormal());
+		modelPoint.getNormal(normal);
+		double degrees = Aspect.aspectInDegrees(normal);
 		if (degrees > 180) {
 			degrees = 180 - (degrees - 180);
 		}

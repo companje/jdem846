@@ -198,7 +198,7 @@ public class ByteConversions
 
 		byte[] buffer = null;
 		
-		if (byteOrder == ByteOrder.MSBFIRST) {
+		if (byteOrder == ByteOrder.LSBFIRST) {
 			buffer = new byte[] {
                 (byte)(bits >>> 24),
                 (byte)(bits >>> 16),

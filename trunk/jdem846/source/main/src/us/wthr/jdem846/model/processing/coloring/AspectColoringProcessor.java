@@ -28,7 +28,7 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 {
 	private static Log log = Logging.getLog(AspectColoringProcessor.class);
 	
-	
+	private double[] normal = new double[3];
 	private int[] rgbaBuffer = new int[4];
 	
 	
@@ -81,8 +81,9 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 	{
 		
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
-
-		double degrees = Aspect.aspectInDegrees(modelPoint.getNormal());
+		
+		modelPoint.getNormal(normal);
+		double degrees = Aspect.aspectInDegrees(normal);
 
 		getCategoryColor(degrees, rgbaBuffer);
 		modelPoint.setRgba(rgbaBuffer);

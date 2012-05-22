@@ -4,13 +4,20 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.model.ModelPoint.ModelPointChangedListener;
+import us.wthr.jdem846.model.WatchableModelPoint.ModelPointChangedListener;
 import us.wthr.jdem846.util.ByteConversions;
 import us.wthr.jdem846.util.TempFiles;
 
+/** A grid that stores the model point data on the hard disk. This is for larger data sets that can easily
+ * exceed heap memory. Depending on disk speed, it can be considerably slower.
+ * 
+ * @author Kevin M. Gill
+ *
+ */
 public class DiskCachedModelGrid extends ModelPointGrid
 {
 	private static final long MODEL_POINT_SIZE_DOUBLE = 36; // Bytes
@@ -43,9 +50,12 @@ public class DiskCachedModelGrid extends ModelPointGrid
 		closeFilePointer();
 		
 		FileOutputStream out = new FileOutputStream(cacheFile);
+		
+		byte[] writeBuffer = new byte[2048];
+		Arrays.fill(writeBuffer, (byte)0x0);
 
-		for (long i = 0; i < cacheSize; i++) {
-			out.write(0x0);
+		for (long i = 0; i < cacheSize; i+=2048) {
+			out.write(writeBuffer);
 		}
 		
 		out.close();
@@ -101,7 +111,13 @@ public class DiskCachedModelGrid extends ModelPointGrid
 		long index = getIndex(latitude, longitude);
 		
 		if (/*grid != null && */index >= 0 && index < this.gridLength) {
-			return null;//grid[index];
+			try {
+				return get(index);
+			} catch (Exception ex) {
+				// TODO: Add some real error handling here!
+				log.error("Error fetching model point at index " + index + ": " + ex.getMessage(), ex);
+				return null;
+			}
 		} else {
 			// TODO: Throw
 			return null;
@@ -110,7 +126,7 @@ public class DiskCachedModelGrid extends ModelPointGrid
 	
 	public ModelPoint get(long index) throws Exception
 	{
-		ModelPoint modelPoint = new ModelPoint();
+		WatchableModelPoint modelPoint = new WatchableModelPoint();
 		
 		RandomAccessFile filePointer = getFilePointer(true);
 		
@@ -165,7 +181,6 @@ public class DiskCachedModelGrid extends ModelPointGrid
 		
 		b = ByteConversions.doubleToBytes(normal[2]);
 		filePointer.write(b);
-		
 		
 		b = ByteConversions.intToBytes(modelPoint.getRgba());
 		filePointer.write(b);
