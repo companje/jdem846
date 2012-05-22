@@ -26,6 +26,7 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 	private static Log log = Logging.getLog(SlopeShadingProcessor.class);
 	
 	protected int[] rgbaBuffer = new int[4];
+	protected double[] normal = new double[3];
 	
 	private int pass = 0;
 	private double minSlope = 10000000;
@@ -111,7 +112,8 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
-		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(modelPoint.getNormal()[2]), -1));
+		modelPoint.getNormal(normal);
+		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal[2]), -1));
 		
 		minSlope = MathExt.min(minSlope, slope);
 		maxSlope = MathExt.max(maxSlope, slope);
@@ -124,7 +126,8 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 	{
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
-		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(modelPoint.getNormal()[2]), -1));
+		modelPoint.getNormal(normal);
+		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal[2]), -1));
 
 		double shade = 1.0 - (2.0 * ((slope - minSlope) / (maxSlope - minSlope)));
 		

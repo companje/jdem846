@@ -22,7 +22,7 @@ public class ModelGrid extends ModelPointGrid
 		log.info("Model Grid Width/Height: " + width + "/" + height + ", Length: " + gridLength);
 		
 		for (int i = 0; i < gridLength; i++) {
-			grid[i] = new ModelPoint();
+			grid[i] = null;//new ModelPoint();
 		}
 		
 		reset();
@@ -50,12 +50,19 @@ public class ModelGrid extends ModelPointGrid
 	{
 		int index = getIndex(latitude, longitude);
 		
+		ModelPoint point = null;
+		
 		if (grid != null && index >= 0 && index < this.gridLength) {
-			return grid[index];
+			point = grid[index];
+			if (point == null) {
+				point = new BasicModelPoint();
+				grid[index] = point;
+			}
 		} else {
 			// TODO: Throw
-			return null;
 		}
+		
+		return point;
 	}
 	
 

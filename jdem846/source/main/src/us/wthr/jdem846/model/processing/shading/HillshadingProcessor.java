@@ -54,7 +54,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	private double latitudeResolution;
 	private double longitudeResolution;
 	
-
+	private double[] normal = new double[3];
+	
 	protected double sunsource[] = new double[3];
 	protected double solarElevation;
 	protected double solarAzimuth;
@@ -285,7 +286,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	
 	protected double calculateDotProduct(ModelPoint modelPoint, double latitude, double longitude) throws RenderEngineException
 	{
-		double dot = perspectives.dotProduct(modelPoint.getNormal(), sunsource);
+		modelPoint.getNormal(normal);
+		double dot = perspectives.dotProduct(normal, sunsource);
 		
 		
 		double lower = lightZenith;

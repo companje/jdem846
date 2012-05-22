@@ -359,6 +359,7 @@ public class ModelVisualizationPanel extends Panel
 		globalOptionModel.setGetStandardResolutionElevation(true);
 		globalOptionModel.setInterpolateData(false);
 		globalOptionModel.setPrecacheStrategy("none");
+		globalOptionModel.setUseDiskCachedModelGrid(false);
 		
 		try {
 			modelContextWorkingCopy.updateContext();

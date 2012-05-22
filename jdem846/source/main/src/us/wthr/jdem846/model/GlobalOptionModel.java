@@ -39,6 +39,8 @@ public class GlobalOptionModel implements OptionModel
 	private boolean averageOverlappedData = true;
 	private String precacheStrategy = "tiled";
 	
+	private boolean useDiskCachedModelGrid = false;
+	
 	public GlobalOptionModel()
 	{
 		
@@ -387,6 +389,24 @@ public class GlobalOptionModel implements OptionModel
 		this.precacheStrategy = precacheStrategy;
 	}
 
+	
+	
+	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.useDiskCachedModelGrid",
+			label="Use Disk Cache",
+			tooltip="",
+			enabled=true)
+	@Order(16)
+	public boolean getUseDiskCachedModelGrid()
+	{
+		return useDiskCachedModelGrid;
+	}
+
+
+	public void setUseDiskCachedModelGrid(boolean useDiskCachedModelGrid)
+	{
+		this.useDiskCachedModelGrid = useDiskCachedModelGrid;
+	}
+
 
 	public GlobalOptionModel copy()
 	{
@@ -414,6 +434,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.getStandardResolutionElevation = this.getStandardResolutionElevation;
 		copy.interpolateData = this.interpolateData;
 		copy.precacheStrategy = this.precacheStrategy;
+		copy.useDiskCachedModelGrid = this.useDiskCachedModelGrid;
 		return copy;
 	}
 	
