@@ -29,6 +29,7 @@ import us.wthr.jdem846.model.processing.dataload.GridLoadOptionModel;
 import us.wthr.jdem846.model.processing.dataload.GridLoadProcessor;
 import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsOptionModel;
 import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsProcessor;
+import us.wthr.jdem846.model.processing.shapes.ShapeOptionModel;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.TabPane;
@@ -127,7 +128,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		
 		String defaultLoadProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.loadProcessor.default");
 		String defaultSurfaceNormalsProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.normalsProcessor.default");
-		
+		String defaultShapesProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.shapesProcessor.default");
 		
 		String coloringProcessId = coloringConfiguration.getCurrentProcessId();
 		OptionModel coloringOptionModel = coloringConfiguration.getCurrentOptionModel();
@@ -143,6 +144,8 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		
 		modelProcessManifest.addProcessor(coloringProcessId, coloringOptionModel);
 		modelProcessManifest.addProcessor(shadingProcessId, shadingOptionModel);
+		
+		modelProcessManifest.addProcessor(defaultShapesProcessor, new ShapeOptionModel());
 		modelProcessManifest.addProcessor(renderProcessId, renderOptionModel);
 		
 		return modelProcessManifest;

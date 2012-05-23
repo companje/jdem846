@@ -165,7 +165,7 @@ public class ModelBuilder extends InterruptibleProcess
 				onProcessBefore(processContainer);
 			}
 			
-			AbstractGridProcessor gridProcessor = processContainer.getGridProcessor();
+			GridProcessor gridProcessor = processContainer.getGridProcessor();
 			OptionModel optionModel = processContainer.getOptionModel();
 			
 			GridProcessing annotation = gridProcessor.getClass().getAnnotation(GridProcessing.class);
