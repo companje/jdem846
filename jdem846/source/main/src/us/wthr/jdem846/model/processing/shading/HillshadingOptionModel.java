@@ -34,6 +34,11 @@ public class HillshadingOptionModel implements OptionModel
 	private boolean rayTraceShadows = false;
 	private double shadowIntensity = 0.4;
 	
+	private boolean useDistanceAttenuation = true;
+	private double attenuationConstant = 5;
+	private double attenuationLinear = 200;
+	private double attenuationQuadratic = 250;
+	
 	public HillshadingOptionModel()
 	{
 		
@@ -234,38 +239,7 @@ public class HillshadingOptionModel implements OptionModel
 		this.spotExponent = spotExponent;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.rayTraceShadows",
-			label="Ray Trace Shadows",
-			tooltip="",
-			enabled=true)
-	@Order(120)
-	public boolean isRayTraceShadows()
-	{
-		return rayTraceShadows;
-	}
-
-	public void setRayTraceShadows(boolean rayTraceShadows)
-	{
-		this.rayTraceShadows = rayTraceShadows;
-	}
-
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.shadowIntensity",
-			label="Shadow Intensity",
-			tooltip="",
-			enabled=true)
-	@Order(130)
-	@ValueBounds(minimum=0,
-			maximum=1.0,
-			stepSize=0.1)
-	public double getShadowIntensity()
-	{
-		return shadowIntensity;
-	}
-
-	public void setShadowIntensity(double shadowIntensity)
-	{
-		this.shadowIntensity = shadowIntensity;
-	}
+	
 	
 	
 	
@@ -356,6 +330,105 @@ public class HillshadingOptionModel implements OptionModel
 		this.specular = specular;
 	}
 
+	
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.rayTraceShadows",
+			label="Ray Trace Shadows",
+			tooltip="",
+			enabled=true)
+	@Order(190)
+	public boolean isRayTraceShadows()
+	{
+		return rayTraceShadows;
+	}
+
+	public void setRayTraceShadows(boolean rayTraceShadows)
+	{
+		this.rayTraceShadows = rayTraceShadows;
+	}
+
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.shadowIntensity",
+			label="Shadow Intensity",
+			tooltip="",
+			enabled=true)
+	@Order(200)
+	@ValueBounds(minimum=0,
+			maximum=1.0,
+			stepSize=0.1)
+	public double getShadowIntensity()
+	{
+		return shadowIntensity;
+	}
+
+	public void setShadowIntensity(double shadowIntensity)
+	{
+		this.shadowIntensity = shadowIntensity;
+	}
+	
+	
+	
+	
+	
+	
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.useDistanceAttenuation",
+			label="Use Distance Attenuation",
+			tooltip="",
+			enabled=true)
+	@Order(210)
+	public boolean getUseDistanceAttenuation()
+	{
+		return useDistanceAttenuation;
+	}
+
+	public void setUseDistanceAttenuation(boolean useDistanceAttenuation)
+	{
+		this.useDistanceAttenuation = useDistanceAttenuation;
+	}
+
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.attenuationConstant",
+			label="Attenuation Constant",
+			tooltip="",
+			enabled=true)
+	@Order(220)
+	public double getAttenuationConstant()
+	{
+		return attenuationConstant;
+	}
+
+	public void setAttenuationConstant(double attenuationConstant)
+	{
+		this.attenuationConstant = attenuationConstant;
+	}
+
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.attenuationLinear",
+			label="Attenuation Linear",
+			tooltip="",
+			enabled=true)
+	@Order(230)
+	public double getAttenuationLinear()
+	{
+		return attenuationLinear;
+	}
+
+	public void setAttenuationLinear(double attenuationLinear)
+	{
+		this.attenuationLinear = attenuationLinear;
+	}
+
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.attenuationQuadratic",
+			label="Attenuation Quadratic",
+			tooltip="",
+			enabled=true)
+	@Order(240)
+	public double getAttenuationQuadratic()
+	{
+		return attenuationQuadratic;
+	}
+
+	public void setAttenuationQuadratic(double attenuationQuadratic)
+	{
+		this.attenuationQuadratic = attenuationQuadratic;
+	}
+
 	public HillshadingOptionModel copy()
 	{
 		HillshadingOptionModel copy = new HillshadingOptionModel();
@@ -374,6 +447,10 @@ public class HillshadingOptionModel implements OptionModel
 		copy.spotExponent = this.spotExponent;
 		copy.rayTraceShadows = this.rayTraceShadows;
 		copy.shadowIntensity = this.shadowIntensity;
+		copy.useDistanceAttenuation = this.useDistanceAttenuation;
+		copy.attenuationConstant = this.attenuationConstant;
+		copy.attenuationLinear = this.attenuationLinear;
+		copy.attenuationQuadratic = this.attenuationQuadratic;
 		
 		return copy;
 	}

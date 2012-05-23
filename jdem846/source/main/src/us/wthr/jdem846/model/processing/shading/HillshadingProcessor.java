@@ -5,6 +5,7 @@ import java.util.TimeZone;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
@@ -117,8 +118,12 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		spotExponent = optionModel.getSpotExponent();
 
 		advancedLightingControl = optionModel.getAdvancedLightingControl();
-		advancedLightingCalculator = new LightingCalculator(optionModel.getEmmisive(), optionModel.getAmbient(), optionModel.getDiffuse(), optionModel.getSpecular());
-
+		advancedLightingCalculator = new LightingCalculator(optionModel.getEmmisive(), optionModel.getAmbient(), optionModel.getDiffuse(), optionModel.getSpecular(), optionModel.getShadowIntensity());
+		
+		advancedLightingCalculator.setUseDistanceAttenuation(optionModel.getUseDistanceAttenuation());
+		advancedLightingCalculator.setAttenuationConstant(optionModel.getAttenuationConstant());
+		advancedLightingCalculator.setAttenuationLinear(optionModel.getAttenuationLinear());
+		advancedLightingCalculator.setAttenuationQuadratic(optionModel.getAttenuationQuadratic());
 		
 		
 		if (planet != null) {
@@ -217,7 +222,15 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		shadowIntensity = optionModel.getShadowIntensity();
 		if (rayTraceShadows) {
 			lightSourceRayTracer = new RayTracing(
-					modelContext,
+					latitudeResolution, 
+					longitudeResolution, 
+					modelRadius,
+					modelContext.getNorth(),
+					modelContext.getSouth(),
+					modelContext.getEast(),
+					modelContext.getWest(),
+					modelContext.getRasterDataContext().getDataMaximumValue(),
+					modelContext.getRasterDataContext().getElevationScaler(),
 					new RasterDataFetchHandler() {
 						public double getRasterData(double latitude, double longitude) throws Exception {
 							return getElevationAtPoint(latitude, longitude);
@@ -337,6 +350,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	protected double calculateRayTracedShadow(ModelPoint modelPoint, double latitude, double longitude) throws RayTracingException
 	{
 		if (this.rayTraceShadows) {	
+
 			double blockAmt = lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, modelPoint.getElevation());
 			return blockAmt;
 		} else {
@@ -351,12 +365,30 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 		modelPoint.getRgba(rgbaBuffer);
 		
+		boolean lightBlocked = false;
+		double blockAmt = 0;
+		try {
+			blockAmt = calculateRayTracedShadow(modelPoint, latitude, longitude);
+		} catch (RayTracingException ex) {
+			throw new RenderEngineException("Error running ray tracing: " + ex.getMessage(), ex);
+		}
+		
+		
+		//if (blockAmt > 0) {
+		//	lightBlocked = true;
+		//}
+		
+		
+		
+		
+		
 		if (advancedLightingControl) {
 			advancedLightingCalculator.calculateColor(modelPoint, 
 													latitude, 
 													longitude, 
 													modelRadius, 
-													spotExponent, 
+													spotExponent,
+													blockAmt,
 													sunsource,
 													rgbaBuffer);
 			
