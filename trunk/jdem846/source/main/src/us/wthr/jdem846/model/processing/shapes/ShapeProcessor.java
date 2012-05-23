@@ -229,7 +229,6 @@ public class ShapeProcessor extends InterruptibleProcess  implements GridProcess
 			public void translatePoint(double[] coords)
 			{
 				try {
-					//double elevation = getElevationAtPoint(coords[1], coords[0]);
 					ModelPoint modelPoint = modelGrid.get(coords[1], coords[0]);
 					double elevation = 0;
 					if (modelPoint != null) {

@@ -13,6 +13,13 @@ public class LightingCalculator
 	private double diffuse = 0;
 	private double specular = 0;
 	
+	private boolean useDistanceAttenuation = true;
+	private double attenuationConstant;
+	private double attenuationLinear;
+	private double attenuationQuadratic;
+	
+	private double blockShadowIntensity = 0.4;
+	
 	private double[] emmisiveColor = new double[4];
 	private double[] ambientColor = new double[4];
 	private double[] diffuseColor = new double[4];
@@ -34,16 +41,17 @@ public class LightingCalculator
 		
 	}
 	
-	public LightingCalculator(double emmisive, double ambient, double diffuse, double specular)
+	public LightingCalculator(double emmisive, double ambient, double diffuse, double specular, double blockShadowIntensity)
 	{
 		setEmmisive(emmisive);
 		setAmbient(ambient);
 		setDiffuse(diffuse);
 		setSpecular(specular);
+		setBlockShadowIntensity(blockShadowIntensity);
 	}
 
 	
-	public void calculateColor(ModelPoint modelPoint, double latitude, double longitude, double radius, double shininess, double[] lightSource, int[] rgba)
+	public void calculateColor(ModelPoint modelPoint, double latitude, double longitude, double radius, double shininess, double blockDistance, double[] lightSource, int[] rgba)
 	{
 		Spheres.getPoint3D(longitude+180, latitude, radius, P);
 		modelPoint.getNormal(N);
@@ -63,10 +71,31 @@ public class LightingCalculator
 		ambientColor[2] = color[2] * ambient;
 
 		
+		double d = blockDistance;
+		double kC = 5;
+		double kL = 200;
+		double kQ = 250;
+		double attenuation = 1.0;
 		
+		if (useDistanceAttenuation) {
+			attenuation = 1.0 / (attenuationConstant + attenuationLinear * d + attenuationQuadratic * d * d);
+		}
+
+
 		perspectives.subtract(lightSource, P, L);
 		perspectives.normalize(L, L);
-		double diffuseLight = MathExt.max(0, perspectives.dotProduct(N, L));
+		double diffuseLight = perspectives.dotProduct(N, L);
+		
+		
+		if (blockDistance > 0.0) {
+			diffuseLight = diffuseLight - (2 * attenuation * 1.0);
+			if (diffuseLight < -1.0) {
+				diffuseLight = -1.0;
+			}
+		}
+		
+		
+		//double diffuseLight = (blocked) ? MathExt.min(0, perspectives.dotProduct(N, L)) : MathExt.max(0, perspectives.dotProduct(N, L));
 		diffuseColor[0] = diffuse * color[0] * diffuseLight;
 		diffuseColor[1] = diffuse * color[1] * diffuseLight;
 		diffuseColor[2] = diffuse * color[2] * diffuseLight;
@@ -78,12 +107,14 @@ public class LightingCalculator
 		perspectives.add(lightSource, V, H);
 		
 		
+		double effectiveSpecular = (attenuation > 0.0) ? 0.0 : specular;
+		
 		double specularLight = MathExt.pow(MathExt.max(0, perspectives.dotProduct(N, H)), shininess);
 		if (diffuseLight <= 0) 
 			specularLight = 0;
-		specularColor[0] = specular * color[0] * specularLight;
-		specularColor[1] = specular * color[1] * specularLight;
-		specularColor[2] = specular * color[2] * specularLight;
+		specularColor[0] = effectiveSpecular * color[0] * specularLight;
+		specularColor[1] = effectiveSpecular * color[1] * specularLight;
+		specularColor[2] = effectiveSpecular * color[2] * specularLight;
 
 
 		// Add and clamp color channels
@@ -142,6 +173,56 @@ public class LightingCalculator
 	public void setSpecular(double specular)
 	{
 		this.specular = specular;
+	}
+
+	public double getBlockShadowIntensity()
+	{
+		return blockShadowIntensity;
+	}
+
+	public void setBlockShadowIntensity(double blockShadowIntensity)
+	{
+		this.blockShadowIntensity = blockShadowIntensity;
+	}
+
+	public boolean getUseDistanceAttenuation()
+	{
+		return useDistanceAttenuation;
+	}
+
+	public void setUseDistanceAttenuation(boolean useDistanceAttenuation)
+	{
+		this.useDistanceAttenuation = useDistanceAttenuation;
+	}
+
+	public double getAttenuationConstant()
+	{
+		return attenuationConstant;
+	}
+
+	public void setAttenuationConstant(double attenuationConstant)
+	{
+		this.attenuationConstant = attenuationConstant;
+	}
+
+	public double getAttenuationLinear()
+	{
+		return attenuationLinear;
+	}
+
+	public void setAttenuationLinear(double attenuationLinear)
+	{
+		this.attenuationLinear = attenuationLinear;
+	}
+
+	public double getAttenuationQuadratic()
+	{
+		return attenuationQuadratic;
+	}
+
+	public void setAttenuationQuadratic(double attenuationQuadratic)
+	{
+		this.attenuationQuadratic = attenuationQuadratic;
 	}
 	
 	

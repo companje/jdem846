@@ -2,11 +2,13 @@ package us.wthr.jdem846.model.processing.shading;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
+import us.wthr.jdem846.scaling.ElevationScaler;
 
 public class RayTracing
 {
@@ -20,64 +22,41 @@ public class RayTracing
 	private double latitudeResolution;
 	private double radiusInterval;
 	
-	private double metersResolution;
+	private double modelRadiusMeters;
 	
 	private double northLimit;
 	private double southLimit;
 	private double eastLimit;
 	private double westLimit;
-	
-	private double elevationMultiple;
-	private double minDataValue;
-	private double maxDataValueTrue;
-	private double maxDataValue;
+
+	private double maximumElevation;
+	private ElevationScaler elevationScaler;
 	
 	private double[] points;
-	
-	public RayTracing(
-			ModelContext modelContext,
-			RasterDataFetchHandler rasterDataFetchHandler)
-		{
-			this(
-				modelContext.getRasterDataContext().getEffectiveLatitudeResolution(),
-				modelContext.getRasterDataContext().getEffectiveLongitudeResolution(),
-				modelContext.getRasterDataContext().getMetersResolution(),
-				modelContext.getNorth(),
-				modelContext.getSouth(),
-				modelContext.getEast(),
-				modelContext.getWest(),
-				modelContext.getRasterDataContext().getDataMinimumValue(),
-				modelContext.getRasterDataContext().getDataMaximumValue(),
-				modelContext.getModelProcessManifest().getGlobalOptionModel().getElevationMultiple(),
-				rasterDataFetchHandler
-				);
-		}
+
 	
 	public RayTracing(
 					double latitudeResolution, 
 					double longitudeResolution, 
-					double metersResolution, 
+					double modelRadiusMeters, 
 					double northLimit,
 					double southLimit,
 					double eastLimit,
 					double westLimit,
-					double minDataValue,
-					double maxDataValue,
-					double elevationMultiple,
+					double maximumElevation,
+					ElevationScaler elevationScaler,
 					RasterDataFetchHandler rasterDataFetchHandler)
 	{
 		this.rasterDataFetchHandler = rasterDataFetchHandler;
 		this.latitudeResolution = latitudeResolution;
 		this.longitudeResolution = longitudeResolution;
-		this.metersResolution = metersResolution;
+		this.modelRadiusMeters = modelRadiusMeters;
 		this.northLimit = northLimit;
 		this.southLimit = southLimit;
 		this.eastLimit = eastLimit;
 		this.westLimit = westLimit;
-		this.elevationMultiple = elevationMultiple;
-		this.minDataValue = minDataValue;
-		this.maxDataValueTrue = maxDataValue;
-		this.maxDataValue = maxDataValue * elevationMultiple;
+		this.maximumElevation = maximumElevation;
+		this.elevationScaler = elevationScaler;
 		
 		this.points = new double[3];
 		
@@ -100,16 +79,14 @@ public class RayTracing
 	 */
 	public double isRayBlocked(double remoteElevationAngle, double remoteAzimuth, double centerLatitude, double centerLongitude, double centerElevation) throws RayTracingException
 	{
-		//boolean isBlocked = false;
-		
+
 		double isBlocked = 0.0;
 		
 		
 		// Variables for use during each pass
 		double radius = radiusInterval;
 		
-		//double lastElevation = DemConstants.ELEV_NO_DATA;
-		
+
 		while (true) {
 			
 			// Fetch points in space following the path of the azimuth and elevation angles
@@ -127,20 +104,16 @@ public class RayTracing
 					latitude < southLimit ||
 					longitude > eastLimit ||
 					longitude < westLimit) {
-				//isBlocked = 0.0;
 				break;
 			}
 			
 			// Calculate the elevation of the path at the current radius.
+			double metersResolution = ModelDimensions.getMetersResolution(modelRadiusMeters / 1000.0, longitude, latitude, latitudeResolution, longitudeResolution);
 			double resolution = (points[1] / radiusInterval);
 			double _rayElevation = centerElevation + (resolution * metersResolution);
-			double rayElevation = _rayElevation;//getElevationMultiplied(_rayElevation);
+			double rayElevation = _rayElevation;//getScaledElevation(_rayElevation);
 			
-			//if (lastElevation != DemConstants.ELEV_NO_DATA && lastElevation > rayElevation) {
-			//	isBlocked = 0.0;
-			//	break;
-			//}
-			//lastElevation = rayElevation;
+
 			
 			// Fetch the elevation value
 			double pointElevation = 0;
@@ -149,8 +122,7 @@ public class RayTracing
 			} catch (Exception ex) {
 				throw new RayTracingException("Failed to get elevation for point: " + ex.getMessage(), ex);
 			}
-			//pointElevation = getElevationMultiplied(pointElevation);
-			
+
 			
 			
 			// Increment for the next pass radius
@@ -165,27 +137,14 @@ public class RayTracing
 			// If the elevation at the current point exceeds the elevation of the ray path
 			// then the ray is blocked. 
 			if (pointElevation > rayElevation) {
-				isBlocked = 1.0;
+				isBlocked = radius;
 				break;
-				// TODO: Find a good method for edge detecting the shadows...
-				/*
-				double d = pointElevation - rayElevation;
-				if (d >= 10.0) {
-					isBlocked = 1.0;
-					break;
-				} else {
-					isBlocked = d / 10.0;
-					break;
-				}
-				*/
-				
-				//break;
+
 			}
 			
 			// If the elevation of the ray path at the current radius exceeds the maximum dataset
 			// elevation then we can safely assume that the ray is not blocked.
-			if (rayElevation > this.maxDataValue) {
-				//isBlocked = 0.0;
+			if (rayElevation > this.maximumElevation) {
 				break;
 			}
 			
@@ -197,24 +156,16 @@ public class RayTracing
 	}
 	
 	
-	protected double getElevationMultiplied(double elevation)
+	protected double getScaledElevation(double elevation)
 	{
 
-		double ratio = (elevation - minDataValue) / (maxDataValueTrue - minDataValue);
-		elevation = minDataValue + (maxDataValue - minDataValue) * ratio;
-		
-		return elevation;
-	}
-	
-	public double getMaxDataValue()
-	{
-		return maxDataValue;
+		if (elevationScaler != null) {
+			return elevationScaler.scale(elevation);
+		} else {
+			return elevation;
+		}
 	}
 
-	public void setMaxDataValue(double maxDataValue)
-	{
-		this.maxDataValue = maxDataValue;
-	}
 
 	public double getNorthLimit()
 	{
@@ -276,14 +227,14 @@ public class RayTracing
 		this.latitudeResolution = latitudeResolution;
 	}
 
-	public double getMetersResolution()
+	public double getModelRadiusMeters()
 	{
-		return metersResolution;
+		return modelRadiusMeters;
 	}
 
-	public void setMetersResolution(double metersResolution)
+	public void setModelRadiusMeters(double modelRadiusMeters)
 	{
-		this.metersResolution = metersResolution;
+		this.modelRadiusMeters = modelRadiusMeters;
 	}
 
 
