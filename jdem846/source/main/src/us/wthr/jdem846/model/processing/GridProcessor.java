@@ -12,6 +12,7 @@ public interface GridProcessor
 {
 	public boolean isProcessing();
 	
+	public void setAndPrepare(ModelContext modelContext, ModelPointGrid modelGrid, ModelGridDimensions modelDimensions, GlobalOptionModel globalOptionModel, OptionModel processOptionModel) throws RenderEngineException;
 	public void setModelContext(ModelContext modelContext);
 	public void setModelGrid(ModelPointGrid modelGrid);
 	public void setModelDimensions(ModelGridDimensions modelDimensions);

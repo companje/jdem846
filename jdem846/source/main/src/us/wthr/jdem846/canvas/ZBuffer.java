@@ -59,7 +59,7 @@ public class ZBuffer extends AbstractBuffer
 	public boolean isVisible(double x, double y, double z)
 	{
 		double _z = get(x, y);
-		if (Double.isNaN(_z) || (z > _z && !Double.isNaN(_z))) {
+		if (Double.isNaN(_z) || (z >= _z && !Double.isNaN(_z))) {
 			return true;
 		} else {
 			return false;

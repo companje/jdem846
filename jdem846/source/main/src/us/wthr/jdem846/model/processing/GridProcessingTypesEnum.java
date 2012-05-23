@@ -5,5 +5,6 @@ public enum GridProcessingTypesEnum
 	DATA_LOAD,
 	COLORING,
 	SHADING,
+	SHAPES,
 	RENDER
 }

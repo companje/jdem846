@@ -9,6 +9,7 @@ import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
+import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
 
@@ -52,9 +53,9 @@ public class ModelProcessManifest
 		Class<?> clazz = (Class<?>) processInstance.getProcessorClass();
 		
 		
-		AbstractGridProcessor gridProcessor = null;
+		GridProcessor gridProcessor = null;
 		try {
-			gridProcessor = (AbstractGridProcessor) clazz.newInstance();
+			gridProcessor = (GridProcessor) clazz.newInstance();
 		} catch (Exception ex) {
 			// TODO: Throw up
 			log.error("Error creating processor instance: " + ex.getMessage(), ex);
@@ -65,7 +66,7 @@ public class ModelProcessManifest
 		
 	}
 	
-	public void addProcessor(AbstractGridProcessor gridProcessor, OptionModel optionModel) throws ProcessContainerException
+	public void addProcessor(GridProcessor gridProcessor, OptionModel optionModel) throws ProcessContainerException
 	{
 		addProcessContainer(new ModelProcessContainer(gridProcessor, optionModel));
 	}
