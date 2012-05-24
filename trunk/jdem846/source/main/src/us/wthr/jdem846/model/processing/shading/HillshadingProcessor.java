@@ -121,9 +121,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		advancedLightingCalculator = new LightingCalculator(optionModel.getEmmisive(), optionModel.getAmbient(), optionModel.getDiffuse(), optionModel.getSpecular(), optionModel.getShadowIntensity());
 		
 		advancedLightingCalculator.setUseDistanceAttenuation(optionModel.getUseDistanceAttenuation());
-		advancedLightingCalculator.setAttenuationConstant(optionModel.getAttenuationConstant());
-		advancedLightingCalculator.setAttenuationLinear(optionModel.getAttenuationLinear());
-		advancedLightingCalculator.setAttenuationQuadratic(optionModel.getAttenuationQuadratic());
+		advancedLightingCalculator.setAttenuationRadius(optionModel.getAttenuationRadius());
 		
 		
 		if (planet != null) {

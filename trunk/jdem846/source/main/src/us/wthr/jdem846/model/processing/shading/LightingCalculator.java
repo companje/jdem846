@@ -1,12 +1,16 @@
 package us.wthr.jdem846.model.processing.shading;
 
 import us.wthr.jdem846.Perspectives;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.model.ModelPoint;
 
 public class LightingCalculator
 {
+	private static Log log = Logging.getLog(LightingCalculator.class);
+	
 	
 	private double emmisive = 0;
 	private double ambient = 0;
@@ -14,10 +18,7 @@ public class LightingCalculator
 	private double specular = 0;
 	
 	private boolean useDistanceAttenuation = true;
-	private double attenuationConstant;
-	private double attenuationLinear;
-	private double attenuationQuadratic;
-	
+	private double attenuationRadius = 2000;
 	private double blockShadowIntensity = 0.4;
 	
 	private double[] emmisiveColor = new double[4];
@@ -70,17 +71,6 @@ public class LightingCalculator
 		ambientColor[1] = color[1] * ambient;
 		ambientColor[2] = color[2] * ambient;
 
-		
-		double d = blockDistance;
-		double kC = 5;
-		double kL = 200;
-		double kQ = 250;
-		double attenuation = 1.0;
-		
-		if (useDistanceAttenuation) {
-			attenuation = 1.0 / (attenuationConstant + attenuationLinear * d + attenuationQuadratic * d * d);
-		}
-
 
 		perspectives.subtract(lightSource, P, L);
 		perspectives.normalize(L, L);
@@ -88,12 +78,29 @@ public class LightingCalculator
 		
 		
 		if (blockDistance > 0.0) {
+			
+			double r = attenuationRadius;
+			double d = blockDistance;
+			double kC = 1.0;
+			double kL = 2.0 / r;
+			double kQ = 1.0 / (r * r);
+			
+			
+			double attenuation = (blockDistance > 0.0) ? 1.0 : 0.0;
+			
+			if (useDistanceAttenuation) {
+				attenuation = 1.0 / (kC + kL * d + kQ * d * d);
+			}
+			
+			attenuation *= blockShadowIntensity;
+			
 			diffuseLight = diffuseLight - (2 * attenuation * 1.0);
 			if (diffuseLight < -1.0) {
 				diffuseLight = -1.0;
 			}
+
 		}
-		
+
 		
 		//double diffuseLight = (blocked) ? MathExt.min(0, perspectives.dotProduct(N, L)) : MathExt.max(0, perspectives.dotProduct(N, L));
 		diffuseColor[0] = diffuse * color[0] * diffuseLight;
@@ -105,16 +112,17 @@ public class LightingCalculator
 		perspectives.subtract(eye, P, V);
 		perspectives.normalize(V, V);
 		perspectives.add(lightSource, V, H);
+		perspectives.normalize(H, H);
 		
+		double effectiveSpecular = (blockDistance > 0.0) ? 0.0 : specular;
 		
-		double effectiveSpecular = (attenuation > 0.0) ? 0.0 : specular;
-		
-		double specularLight = MathExt.pow(MathExt.max(0, perspectives.dotProduct(N, H)), shininess);
+		double specularLight = perspectives.dotProduct(N, H);
+		specularLight = MathExt.pow(MathExt.max(0, specularLight), shininess);
 		if (diffuseLight <= 0) 
 			specularLight = 0;
-		specularColor[0] = effectiveSpecular * color[0] * specularLight;
-		specularColor[1] = effectiveSpecular * color[1] * specularLight;
-		specularColor[2] = effectiveSpecular * color[2] * specularLight;
+		specularColor[0] = effectiveSpecular * 0.7 * specularLight;
+		specularColor[1] = effectiveSpecular * 0.7 * specularLight;
+		specularColor[2] = effectiveSpecular * 0.7 * specularLight;
 
 
 		// Add and clamp color channels
@@ -195,37 +203,16 @@ public class LightingCalculator
 		this.useDistanceAttenuation = useDistanceAttenuation;
 	}
 
-	public double getAttenuationConstant()
+	public double getAttenuationRadius()
 	{
-		return attenuationConstant;
+		return attenuationRadius;
 	}
 
-	public void setAttenuationConstant(double attenuationConstant)
+	public void setAttenuationRadius(double attenuationRadius)
 	{
-		this.attenuationConstant = attenuationConstant;
+		this.attenuationRadius = attenuationRadius;
 	}
 
-	public double getAttenuationLinear()
-	{
-		return attenuationLinear;
-	}
-
-	public void setAttenuationLinear(double attenuationLinear)
-	{
-		this.attenuationLinear = attenuationLinear;
-	}
-
-	public double getAttenuationQuadratic()
-	{
-		return attenuationQuadratic;
-	}
-
-	public void setAttenuationQuadratic(double attenuationQuadratic)
-	{
-		this.attenuationQuadratic = attenuationQuadratic;
-	}
-	
-	
 	
 	
 	

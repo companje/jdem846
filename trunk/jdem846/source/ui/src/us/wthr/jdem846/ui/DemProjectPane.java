@@ -665,7 +665,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 			
 			ProcessMarshall processMarshall = projectMarshall.getProcessMarshall(processInstance.getId());
 			
-			try {
+			
 				OptionModel optionModel = processInstance.createOptionModel();
 				
 				if (processMarshall != null) {
@@ -673,16 +673,19 @@ public class DemProjectPane extends JdemPanel implements Savable
 					
 					for (String option : processMarshall.getOptions().keySet()) {
 						String value = processMarshall.getOptions().get(option);
-						optionModelContainer.setPropertyValueById(option, value);
+						try {
+							optionModelContainer.setPropertyValueById(option, value);
+						} catch (Exception ex) {
+							log.warn("Option '" + option + "' cannot be set: " + ex.getMessage());
+							//log.error("Error creating option model for process id " + processInstance.getId());
+							// TODO: Display error dialog
+						}
 					}
 				
 				}
 				
 				defaultOptionModelList.add(optionModel);
-			} catch (ProcessCreateException ex) {
-				log.error("Error creating option model for process id " + processInstance.getId());
-				// TODO: Display error dialog
-			}
+			
 			
 		}
 		

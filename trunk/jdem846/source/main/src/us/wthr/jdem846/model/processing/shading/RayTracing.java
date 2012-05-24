@@ -137,7 +137,7 @@ public class RayTracing
 			// If the elevation at the current point exceeds the elevation of the ray path
 			// then the ray is blocked. 
 			if (pointElevation > rayElevation) {
-				isBlocked = radius;
+				isBlocked = (radius / radiusInterval) * metersResolution;
 				break;
 
 			}

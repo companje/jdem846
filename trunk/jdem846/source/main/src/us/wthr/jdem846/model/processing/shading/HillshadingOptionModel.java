@@ -35,10 +35,8 @@ public class HillshadingOptionModel implements OptionModel
 	private double shadowIntensity = 0.4;
 	
 	private boolean useDistanceAttenuation = true;
-	private double attenuationConstant = 5;
-	private double attenuationLinear = 200;
-	private double attenuationQuadratic = 250;
-	
+	private double attenuationRadius = 2000;
+
 	public HillshadingOptionModel()
 	{
 		
@@ -264,7 +262,7 @@ public class HillshadingOptionModel implements OptionModel
 			enabled=true)
 	@Order(150)
 	@ValueBounds(minimum=0,
-			maximum=1.0,
+			maximum=10.0,
 			stepSize=0.1)
 	public double getEmmisive()
 	{
@@ -282,7 +280,7 @@ public class HillshadingOptionModel implements OptionModel
 			enabled=true)
 	@Order(160)
 	@ValueBounds(minimum=0,
-			maximum=1.0,
+			maximum=10.0,
 			stepSize=0.1)
 	public double getAmbient()
 	{
@@ -300,7 +298,7 @@ public class HillshadingOptionModel implements OptionModel
 			enabled=true)
 	@Order(170)
 	@ValueBounds(minimum=0,
-			maximum=1.0,
+			maximum=10.0,
 			stepSize=0.1)
 	public double getDiffuse()
 	{
@@ -318,7 +316,7 @@ public class HillshadingOptionModel implements OptionModel
 			enabled=true)
 	@Order(180)
 	@ValueBounds(minimum=0,
-			maximum=1.0,
+			maximum=10.0,
 			stepSize=0.1)
 	public double getSpecular()
 	{
@@ -384,49 +382,22 @@ public class HillshadingOptionModel implements OptionModel
 		this.useDistanceAttenuation = useDistanceAttenuation;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.attenuationConstant",
-			label="Attenuation Constant",
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.attenuationRadius",
+			label="Attenuation Radius",
 			tooltip="",
 			enabled=true)
+	@ValueBounds(minimum=0,
+			maximum=1000000000,
+			stepSize=500)
 	@Order(220)
-	public double getAttenuationConstant()
+	public double getAttenuationRadius()
 	{
-		return attenuationConstant;
+		return attenuationRadius;
 	}
 
-	public void setAttenuationConstant(double attenuationConstant)
+	public void setAttenuationRadius(double attenuationRadius)
 	{
-		this.attenuationConstant = attenuationConstant;
-	}
-
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.attenuationLinear",
-			label="Attenuation Linear",
-			tooltip="",
-			enabled=true)
-	@Order(230)
-	public double getAttenuationLinear()
-	{
-		return attenuationLinear;
-	}
-
-	public void setAttenuationLinear(double attenuationLinear)
-	{
-		this.attenuationLinear = attenuationLinear;
-	}
-
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.attenuationQuadratic",
-			label="Attenuation Quadratic",
-			tooltip="",
-			enabled=true)
-	@Order(240)
-	public double getAttenuationQuadratic()
-	{
-		return attenuationQuadratic;
-	}
-
-	public void setAttenuationQuadratic(double attenuationQuadratic)
-	{
-		this.attenuationQuadratic = attenuationQuadratic;
+		this.attenuationRadius = attenuationRadius;
 	}
 
 	public HillshadingOptionModel copy()
@@ -448,9 +419,7 @@ public class HillshadingOptionModel implements OptionModel
 		copy.rayTraceShadows = this.rayTraceShadows;
 		copy.shadowIntensity = this.shadowIntensity;
 		copy.useDistanceAttenuation = this.useDistanceAttenuation;
-		copy.attenuationConstant = this.attenuationConstant;
-		copy.attenuationLinear = this.attenuationLinear;
-		copy.attenuationQuadratic = this.attenuationQuadratic;
+		copy.attenuationRadius = this.attenuationRadius;
 		
 		return copy;
 	}
