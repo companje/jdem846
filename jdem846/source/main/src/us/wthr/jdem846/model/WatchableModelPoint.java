@@ -29,24 +29,12 @@ public class WatchableModelPoint extends BasicModelPoint
 	}
 
 
-	
-	public void setNormal(double[] normal)
-	{
-		this.setNormal(normal);
-		fireModelPointChangedListeners();
-	}
-	
-	public void setNormal(float[] normal)
-	{
-		this.setNormal(normal);
-		fireModelPointChangedListeners();
-	}
 
 
-
+	@Override
 	public void setRgba(int rgba)
 	{
-		this.setRgba(rgba);
+		super.setRgba(rgba);
 		fireModelPointChangedListeners();
 	}
 	

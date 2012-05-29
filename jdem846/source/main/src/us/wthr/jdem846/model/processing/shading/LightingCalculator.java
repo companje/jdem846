@@ -52,11 +52,15 @@ public class LightingCalculator
 	}
 
 	
-	public void calculateColor(ModelPoint modelPoint, double latitude, double longitude, double radius, double shininess, double blockDistance, double[] lightSource, int[] rgba)
+	public void calculateColor(double[] normal, double latitude, double longitude, double radius, double shininess, double blockDistance, double[] lightSource, int[] rgba)
 	{
 		Spheres.getPoint3D(longitude+180, latitude, radius, P);
-		modelPoint.getNormal(N);
-
+		//modelPoint.getNormal(N);
+		
+		N[0] = normal[0];
+		N[1] = normal[1];
+		N[2] = normal[2];
+		
 		color[0] = (double) rgba[0] / 255.0;
 		color[1] = (double) rgba[1] / 255.0;
 		color[2] = (double) rgba[2] / 255.0;

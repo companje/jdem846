@@ -100,6 +100,9 @@ public class ModelVisualizationPanel extends Panel
 	
 	private ModelBuilder modelBuilder = null;
 	
+	private ReRenderRequestContainer rerendering;
+	
+	
 	public ModelVisualizationPanel(ModelContext modelContext)
 	{
 		super();
@@ -115,6 +118,8 @@ public class ModelVisualizationPanel extends Panel
 		rasterPreview = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.rasterPreview");
 		autoUpdate = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.autoUpdate");
 		useScripting = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.scripting");
+		
+		rerendering = new ReRenderRequestContainer();
 		
 		ViewPerspective viewAngle = null;
 		
@@ -360,6 +365,7 @@ public class ModelVisualizationPanel extends Panel
 		globalOptionModel.setInterpolateData(false);
 		globalOptionModel.setPrecacheStrategy("none");
 		globalOptionModel.setUseDiskCachedModelGrid(false);
+		globalOptionModel.setDisposeGridOnComplete(false);
 		
 		try {
 			modelContextWorkingCopy.updateContext();
@@ -450,8 +456,12 @@ public class ModelVisualizationPanel extends Panel
 		update(dataModelChange, optionsChanged, false);
 	}
 	
+	
+	
+	
 	public void update(boolean dataModelChange, boolean optionsChanged, boolean force)
 	{
+		
 		if (ignoreUpdate) {
 			return;
 		}
@@ -459,9 +469,44 @@ public class ModelVisualizationPanel extends Panel
 		if (!autoUpdate && !force) {
 			return;
 		}
+		
+		rerendering.setReRenderNeeded(dataModelChange, optionsChanged, force);
+		if (!rerendering.isRendererWorking()) {
+			rerender();
+		}
+		
+	}
+	
+	protected void rerender()
+	{
 
+		rerendering.setRendererWorking(true);
+		
+		while(rerendering.isReRenderNeeded()) {
+			boolean dataModelChanged = rerendering.isDataModelChanged();
+			boolean optionsChanged = rerendering.isOptionsChanged();
+			boolean force = rerendering.isForce();
+			
+			rerendering.setReRenderCaptured();
+			
+			__rerender(dataModelChanged, optionsChanged, force);
+			
+			repaint();
+		}
+
+		rerendering.setRendererWorking(false);
 		
 		
+		
+		// TODO: Make sure this never results in an infinite loop. That'd be bad.
+		//if (rerendering.isReRenderNeeded()) {
+		//	rerendering.setReRenderCaptured();
+		//	update(rerendering.isDataModelChanged(), rerendering.isOptionsChanged(), rerendering.isForce());
+		//} 
+	}
+	
+	protected void __rerender(boolean dataModelChange, boolean optionsChanged, boolean force)
+	{
 		if (optionsChanged || dataModelChange) {
 			log.info("Model visualization: update working context from actual");
 			
@@ -523,15 +568,6 @@ public class ModelVisualizationPanel extends Panel
 		}
 
 		
-		
-		renderModelVisualizationImage(dataModelChange);
-		
-		repaint();
-	}
-	
-	
-	public void renderModelVisualizationImage(boolean dataModelChange)
-	{
 		boolean resetCache = dataModelChange;
 		boolean resetDataRange = dataModelChange;
 		
@@ -560,7 +596,7 @@ public class ModelVisualizationPanel extends Panel
 		int maxPreviewSize = (int) MathExt.min((double)pnlModelDisplay.getWidth(), (double)pnlModelDisplay.getHeight()) - 10;
 		 
 
-		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
+		//GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
 		
 		double width = globalOptionModel.getWidth();
 		double height = globalOptionModel.getHeight();
@@ -643,9 +679,9 @@ public class ModelVisualizationPanel extends Panel
 		pnlModelDisplay.setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
 		pnlModelDisplay.setImage(modelCanvas.getImage());
 		pnlModelDisplay.zoomFit();
+		
+		
 	}
-	
-
 	
 	public void addProjectionChangeListener(ProjectionChangeListener listener)
 	{
@@ -672,7 +708,84 @@ public class ModelVisualizationPanel extends Panel
 	
 	
 	
-	
+	class ReRenderRequestContainer 
+	{
+		
+		private boolean reRenderNeeded = false;
+		private boolean dataModelChanged = false;
+		private boolean optionsChanged = false;
+		private boolean force = false;
+		private boolean working = false;
+		
+		public ReRenderRequestContainer()
+		{
+			
+		}
+		
+		public void setRendererWorking(boolean working)
+		{
+			synchronized(this) {
+				this.working = working;
+			}
+		}
+		
+		public boolean isRendererWorking()
+		{
+			synchronized(this) {
+				return this.working;
+			}
+		}
+		
+		public boolean isReRenderNeeded()
+		{
+			synchronized(this) {
+				return this.reRenderNeeded;
+			}
+		}
+		
+		public boolean isDataModelChanged()
+		{
+			synchronized(this) {
+				return this.dataModelChanged;
+			}
+		}
+		
+		public boolean isOptionsChanged()
+		{
+			synchronized(this) {
+				return this.optionsChanged;
+			}
+		}
+		
+		public boolean isForce()
+		{
+			synchronized(this) {
+				return this.force;
+			}
+		}
+		
+		public void setReRenderNeeded(boolean dataModelChanged, boolean optionsChanged, boolean force)
+		{
+			synchronized(this) {
+				reRenderNeeded = true;
+				this.dataModelChanged = (this.dataModelChanged || dataModelChanged);
+				this.optionsChanged = (this.optionsChanged || optionsChanged);
+				this.force = (this.force || force);
+			}
+		}
+		
+		public void setReRenderCaptured()
+		{
+			synchronized(this) {
+				reRenderNeeded = false;
+				dataModelChanged = false;
+				optionsChanged = false;
+				force = false;
+			}
+		}
+		
+		
+	}
 
 	
 	

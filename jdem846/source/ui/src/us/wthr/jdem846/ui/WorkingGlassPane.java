@@ -115,9 +115,11 @@ public class WorkingGlassPane extends Panel
 		for (ShadedComponent shadedComponent : shadedComponents) {
 			if (shadedComponent.component.equals(component)) {
 				shadedComponents.remove(shadedComponent);
+				this.setVisible(shadedComponents.size() > 0);
 				return true;
 			}
 		}
+		this.setVisible(shadedComponents.size() > 0);
 		return false;
 		
 	}

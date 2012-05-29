@@ -61,6 +61,7 @@ public class RenderViewPane extends Panel
 	
 	private String lastSavePath = null;
 
+	private ModelBuilder modelBuilder;
 	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
@@ -92,7 +93,7 @@ public class RenderViewPane extends Panel
 		
 		
 		
-		final ModelBuilder modelBuilder = new ModelBuilder();
+		modelBuilder = new ModelBuilder();
 		renderTask = new RunnableTask("Model Render Task") {
 			
 			public void run() throws RenderEngineException
@@ -121,7 +122,10 @@ public class RenderViewPane extends Panel
 					imageDisplay.setImage(canvas.getImage());
 					imageDisplay.zoomFit();
 				}
-
+				
+				modelBuilder.dispose();
+				modelBuilder = null;
+				
 				log.info("Completed render task in " + elapsed + " seconds");
 
 			}

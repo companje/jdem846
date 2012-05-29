@@ -221,6 +221,9 @@ public class ModelContext
 			shapeDataContext.dispose();
 		}
 		
+		if (!scriptingContext.isDisposed()) {
+			scriptingContext.dispose();
+		}
 	}
 	
 	

@@ -139,10 +139,10 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 		try {
 			double elev = getElevation(latitude, longitude);
 			if (elev != DemConstants.ELEV_NO_DATA) {
-				ModelPoint modelPoint = modelGrid.get(latitude, longitude);
-				if (modelPoint != null) {
-					modelPoint.setElevation(elev);
-					
+				//ModelPoint modelPoint = modelGrid.get(latitude, longitude);
+				//if (modelPoint != null) {
+					//modelPoint.setElevation(elev);
+					modelGrid.setElevation(latitude, longitude, elev);
 					if (Double.isNaN(minimumElevation)) {
 						minimumElevation = elev;
 					} else {
@@ -155,7 +155,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 						maximumElevation = MathExt.max(maximumElevation, elev);
 					}
 				
-				}
+				//}
 				
 			} 
 			

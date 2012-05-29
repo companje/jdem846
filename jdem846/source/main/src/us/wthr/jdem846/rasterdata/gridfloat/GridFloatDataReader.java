@@ -25,6 +25,7 @@ public class GridFloatDataReader
 	
 	private byte[] buffer4 = {0, 0, 0, 0};
 
+	private byte[] readBuffer;
 	
 	public GridFloatDataReader(File dataFile, int rows, int columns, ByteOrder byteOrder)
 	{
@@ -42,7 +43,7 @@ public class GridFloatDataReader
 			throw new DataSourceException("Raster data reader already disposed.");
 		}
 		
-		
+		readBuffer = null;
 		
 		// TODO: Finish
 		isDisposed = true;
@@ -90,7 +91,9 @@ public class GridFloatDataReader
 		}
 		
 		int readLength = bufferLength * (Float.SIZE / 8);
-		byte[] readBuffer = new byte[readLength];
+		if (readBuffer == null || readBuffer.length != readLength) {
+			readBuffer = new byte[readLength];
+		}
 		
 		try {
 			dataReader.readFully(readBuffer);

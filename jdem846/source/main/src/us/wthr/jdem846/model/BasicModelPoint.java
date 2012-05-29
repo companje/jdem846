@@ -5,15 +5,20 @@ import us.wthr.jdem846.canvas.util.ColorUtil;
 
 public class BasicModelPoint implements ModelPoint
 {
-	private double elevation = DemConstants.ELEV_NO_DATA;
-	private double[] normal = new double[3];
-	private int rgba;
+	protected double elevation = DemConstants.ELEV_NO_DATA;
+	protected int rgba;
 
 	public BasicModelPoint()
 	{
 		
 	}
-
+	
+	
+	public void dispose()
+	{
+		
+	}
+	
 	public double getElevation()
 	{
 		return elevation;
@@ -28,22 +33,6 @@ public class BasicModelPoint implements ModelPoint
 	{
 		this.elevation = elevation;
 	}
-
-	public void getNormal(double[] fill)
-	{
-		fill[0] = normal[0];
-		fill[1] = normal[1];
-		fill[2] = normal[2];
-	}
-
-	
-	public void setNormal(double[] normal)
-	{
-		this.normal[0] = (float) normal[0];
-		this.normal[1] = (float) normal[1];
-		this.normal[2] = (float) normal[2];
-	}
-	
 
 
 	

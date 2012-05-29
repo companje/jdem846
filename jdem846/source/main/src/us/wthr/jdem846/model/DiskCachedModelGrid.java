@@ -33,7 +33,6 @@ public class DiskCachedModelGrid extends ModelPointGrid
 	
 	private byte[] buffer4 = new byte[4];
 	private byte[] buffer8 = new byte[8];
-	private double[] normal = new double[3];
 	
 	public DiskCachedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution) throws Exception
 	{
@@ -139,19 +138,19 @@ public class DiskCachedModelGrid extends ModelPointGrid
 		
 		// Normal
 		filePointer.readFully(buffer8);
-		normal[0] = ByteConversions.bytesToDouble(buffer8);
+		//normal[0] = ByteConversions.bytesToDouble(buffer8);
 		
 		filePointer.readFully(buffer8);
-		normal[1] = ByteConversions.bytesToDouble(buffer8);
+		//normal[1] = ByteConversions.bytesToDouble(buffer8);
 		
 		filePointer.readFully(buffer8);
-		normal[2] = ByteConversions.bytesToDouble(buffer8);
+		//normal[2] = ByteConversions.bytesToDouble(buffer8);
 		
 		filePointer.readFully(buffer4);
 		int rgba = ByteConversions.bytesToInt(buffer4);
 		
 		modelPoint.setElevation(elevation);
-		modelPoint.setNormal(normal);
+		//modelPoint.setNormal(normal);
 		modelPoint.setRgba(rgba);
 		
 		modelPoint.addModelPointChangedListener(new ModelPointChangedHandler(index));
@@ -171,15 +170,15 @@ public class DiskCachedModelGrid extends ModelPointGrid
 		b = ByteConversions.doubleToBytes(modelPoint.getElevation());
 		filePointer.write(b);
 		
-		modelPoint.getNormal(normal);
+		//modelPoint.getNormal(normal);
 		
-		b = ByteConversions.doubleToBytes(normal[0]);
+		//b = ByteConversions.doubleToBytes(normal[0]);
 		filePointer.write(b);
 		
-		b = ByteConversions.doubleToBytes(normal[1]);
+		//b = ByteConversions.doubleToBytes(normal[1]);
 		filePointer.write(b);
 		
-		b = ByteConversions.doubleToBytes(normal[2]);
+		//b = ByteConversions.doubleToBytes(normal[2]);
 		filePointer.write(b);
 		
 		b = ByteConversions.intToBytes(modelPoint.getRgba());
