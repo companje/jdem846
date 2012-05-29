@@ -5,6 +5,7 @@ import java.util.List;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -16,6 +17,7 @@ import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.util.Aspect;
+import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 
 
 @GridProcessing(id="us.wthr.jdem846.model.processing.coloring.AspectColoringProcessor",
@@ -28,9 +30,10 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 {
 	private static Log log = Logging.getLog(AspectColoringProcessor.class);
 	
-	private double[] normal = new double[3];
 	private int[] rgbaBuffer = new int[4];
 	
+	private double[] normal = new double[3];
+	private SurfaceNormalCalculator normalsCalculator;
 	
 	private List<AspectColorCategory> colorCategoryList = new LinkedList<AspectColorCategory>();
 	
@@ -64,7 +67,10 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 		colorCategoryList.add(new AspectColorCategory("North", 337.5, 360.0, new int[] {255, 0, 0, 255}));
 		
 		
-		
+		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
+				PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet()), 
+				getModelDimensions().getOutputLatitudeResolution(), 
+				getModelDimensions().getOutputLongitudeResolution());
 	}
 	
 	
@@ -82,7 +88,8 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 		
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
-		modelPoint.getNormal(normal);
+		//modelPoint.getNormal(normal);
+		normalsCalculator.calculateNormal(latitude, longitude, normal);
 		double degrees = Aspect.aspectInDegrees(normal);
 
 		getCategoryColor(degrees, rgbaBuffer);

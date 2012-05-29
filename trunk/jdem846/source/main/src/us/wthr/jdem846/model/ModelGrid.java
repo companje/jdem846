@@ -33,6 +33,13 @@ public class ModelGrid extends ModelPointGrid
 		if (isDisposed())
 			return;
 		
+		for (int i = 0; i < gridLength; i++) {
+			if (grid[i] != null) {
+				grid[i].dispose();
+			}
+			grid[i] = null;
+		}
+
 		grid = null;
 	}
 	

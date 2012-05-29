@@ -174,67 +174,19 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		double swElev = createPointVertex(strip, latitude - latitudeResolution, longitude, nwElev);
 		
 		return (nwElev != DemConstants.ELEV_NO_DATA) ? nwElev : swElev;
-		
-		/*
-		
-		ModelPoint nwPoint = modelGrid.get(latitude, longitude);
-		double nwElev = DemConstants.ELEV_NO_DATA;
-		if (nwPoint != null) {
-			nwElev = nwPoint.getElevation();
-			nwPoint.getRgba(rgbaBuffer, true);
-		}
-		
-		if (nwElev == DemConstants.ELEV_NO_DATA){
-			nwElev = lastElevation;
-		}
-
-		Vertex nwVtx = createVertex(latitude, longitude, nwElev, rgbaBuffer);
-		
-		
-		double swLat = latitude - latitudeResolution;
-		if (swLat < south)
-			swLat = south;
-		
-		ModelPoint swPoint = modelGrid.get(swLat, longitude);
-		double swElev = DemConstants.ELEV_NO_DATA;
-		if (swPoint != null) {
-			swElev = swPoint.getElevation();
-			swPoint.getRgba(rgbaBuffer, true);
-		} 
-		
-		if (swElev == DemConstants.ELEV_NO_DATA){
-			swElev = lastElevation;
-		}
-
-		
-		Vertex swVtx = createVertex(latitude - latitudeResolution, longitude, swElev, rgbaBuffer);
-		
-		strip.addVertex(nwVtx);
-		strip.addVertex(swVtx);
-		
-		return nwElev;
-		*/
 	}
 	
 	
 	protected double createPointVertex(TriangleStrip strip, double latitude, double longitude, double lastElevation) throws Exception
 	{
-		ModelPoint point = modelGrid.get(latitude, longitude);
-		
-		double elev = DemConstants.ELEV_NO_DATA;
-		
-		if (point != null) {
-			elev = point.getElevation();
-			point.getRgba(rgbaBuffer);
-		}
+
+		double elev = modelGrid.getElevation(latitude, longitude);
 		
 		if (elev == DemConstants.ELEV_NO_DATA) {
 			return DemConstants.ELEV_NO_DATA;
 		}
 		
-		//if (elev == DemConstants.ELEV_NO_DATA){
-		//	elev = lastElevation;
-		//}
+		modelGrid.getRgba(latitude, longitude, rgbaBuffer);
 
 		Vertex nwVtx = createVertex(latitude, longitude, elev, rgbaBuffer);
 		

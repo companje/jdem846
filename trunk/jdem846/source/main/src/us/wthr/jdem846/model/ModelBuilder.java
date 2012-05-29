@@ -93,12 +93,22 @@ public class ModelBuilder extends InterruptibleProcess
 					throw new RenderEngineException("Error creating disk cached model grid: " + ex.getMessage(), ex);
 				}
 			} else {
+				
+				modelGrid = new BufferedModelGrid(globalOptionModel.getNorthLimit(), 
+						globalOptionModel.getSouthLimit(), 
+						globalOptionModel.getEastLimit(), 
+						globalOptionModel.getWestLimit(), 
+						modelDimensions.getOutputLatitudeResolution(), 
+						modelDimensions.getOutputLongitudeResolution());
+				
+				/*
 				modelGrid = new ModelGrid(globalOptionModel.getNorthLimit(), 
 						globalOptionModel.getSouthLimit(), 
 						globalOptionModel.getEastLimit(), 
 						globalOptionModel.getWestLimit(), 
 						modelDimensions.getOutputLatitudeResolution(), 
 						modelDimensions.getOutputLongitudeResolution());
+				*/
 			}
 		}
 		
@@ -212,6 +222,12 @@ public class ModelBuilder extends InterruptibleProcess
 		if (useScripting) {
 			onDestroy(modelContext);
 		}
+		
+		if (globalOptionModel.getDisposeGridOnComplete()) {
+			modelGrid.dispose();
+			modelGrid = null;
+		}
+		
 		
 		setProcessing(false);
 	}

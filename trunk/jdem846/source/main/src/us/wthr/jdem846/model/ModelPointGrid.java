@@ -1,5 +1,7 @@
 package us.wthr.jdem846.model;
 
+import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -66,4 +68,59 @@ public abstract class ModelPointGrid
 		return index;
 	}
 	
+	
+	public double getElevation(double latitude, double longitude)
+	{
+		ModelPoint mp = get(latitude, longitude);
+		if (mp != null) {
+			return mp.getElevation();
+		} else {
+			return DemConstants.ELEV_NO_DATA;
+		}
+	}
+	
+	
+	public void setElevation(double latitude, double longitude, double elevation)
+	{
+		ModelPoint mp = get(latitude, longitude);
+		if (mp != null) {
+			mp.setElevation(elevation);
+		}
+	}
+	
+	public void getRgba(double latitude, double longitude, int[] fill) 
+	{
+		ModelPoint mp = get(latitude, longitude);
+		if (mp != null) {
+			mp.getRgba(fill);
+		}
+	}
+	
+	public int getRgba(double latitude, double longitude)
+	{
+		ModelPoint mp = get(latitude, longitude);
+		if (mp != null) {
+			return mp.getRgba();
+		} else {
+			return 0x0;
+		}
+	}
+
+	public void setRgba(double latitude, double longitude, int rgba)
+	{
+		ModelPoint mp = get(latitude, longitude);
+		if (mp != null) {
+			mp.setRgba(rgba);
+		}
+	}
+	
+
+	public void setRgba(double latitude, double longitude, int[] rgba)
+	{
+		ModelPoint mp = get(latitude, longitude);
+		if (mp != null) {
+			mp.setRgba(rgba);
+		}
+	}
+
 }

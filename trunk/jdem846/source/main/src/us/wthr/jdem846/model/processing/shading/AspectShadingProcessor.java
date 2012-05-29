@@ -3,6 +3,7 @@ package us.wthr.jdem846.model.processing.shading;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -14,6 +15,7 @@ import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.util.Aspect;
+import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 
 
 @GridProcessing(id="us.wthr.jdem846.model.processing.shading.AspectShadingProcessor",
@@ -27,12 +29,14 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 	private static Log log = Logging.getLog(AspectShadingProcessor.class);
 	
 	protected int[] rgbaBuffer = new int[4];
-	protected double[] normal = new double[3];
+	private double[] normal = new double[3];
+	private SurfaceNormalCalculator normalsCalculator;
 	
 	protected double relativeLightIntensity;
 	protected double relativeDarkIntensity;
 	protected int spotExponent;
 	private double lightingMultiple = 1.0;
+	
 	
 	public AspectShadingProcessor()
 	{
@@ -56,6 +60,10 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 		relativeDarkIntensity = optionModel.getDarkIntensity();
 		spotExponent = optionModel.getSpotExponent();
 		
+		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
+				PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet()), 
+				getModelDimensions().getOutputLatitudeResolution(), 
+				getModelDimensions().getOutputLongitudeResolution());
 	}
 	
 	@Override
@@ -72,7 +80,8 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 		
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 
-		modelPoint.getNormal(normal);
+		normalsCalculator.calculateNormal(latitude, longitude, normal);
+		//modelPoint.getNormal(normal);
 		double degrees = Aspect.aspectInDegrees(normal);
 		if (degrees > 180) {
 			degrees = 180 - (degrees - 180);

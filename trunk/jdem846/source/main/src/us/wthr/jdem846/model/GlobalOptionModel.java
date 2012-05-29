@@ -40,6 +40,7 @@ public class GlobalOptionModel implements OptionModel
 	private String precacheStrategy = "tiled";
 	
 	private boolean useDiskCachedModelGrid = false;
+	private boolean disposeGridOnComplete = true;
 	
 	public GlobalOptionModel()
 	{
@@ -405,6 +406,20 @@ public class GlobalOptionModel implements OptionModel
 	public void setUseDiskCachedModelGrid(boolean useDiskCachedModelGrid)
 	{
 		this.useDiskCachedModelGrid = useDiskCachedModelGrid;
+	}
+
+	
+	
+	
+	public boolean getDisposeGridOnComplete()
+	{
+		return disposeGridOnComplete;
+	}
+
+
+	public void setDisposeGridOnComplete(boolean disposeGridOnComplete)
+	{
+		this.disposeGridOnComplete = disposeGridOnComplete;
 	}
 
 

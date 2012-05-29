@@ -35,6 +35,7 @@ import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorOptionModel;
 import us.wthr.jdem846.model.processing.dataload.CornerEnum;
 import us.wthr.jdem846.model.processing.shading.RayTracing.RasterDataFetchHandler;
+import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 
 
@@ -55,7 +56,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	private double latitudeResolution;
 	private double longitudeResolution;
 	
-	private double[] normal = new double[3];
+	
 	
 	protected double sunsource[] = new double[3];
 	protected double solarElevation;
@@ -96,6 +97,9 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	protected RayTracing lightSourceRayTracer;
 	protected boolean rayTraceShadows;
 	protected double shadowIntensity;
+	
+	private double[] normal = new double[3];
+	private SurfaceNormalCalculator normalsCalculator;
 	
 	public HillshadingProcessor()
 	{
@@ -238,6 +242,13 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			lightSourceRayTracer = null;
 		}
 		
+		
+		
+		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
+				PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet()), 
+				getModelDimensions().getOutputLatitudeResolution(), 
+				getModelDimensions().getOutputLongitudeResolution());
+
 	}
 
 	@Override
@@ -268,10 +279,10 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 
 		setUpLightSource(latitude, longitude, 0, 0, recalcLightOnEachPoint);
 		
-		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
+		//ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 
 		//calculateDotProduct(modelPoint, latitude, longitude);
-		processPointColor(modelPoint, latitude, longitude);
+		processPointColor(latitude, longitude);
 		
 		
 	}
@@ -295,11 +306,9 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	
 
 	
-	protected double calculateDotProduct(ModelPoint modelPoint, double latitude, double longitude) throws RenderEngineException
+	protected double calculateDotProduct(double[] normal) throws RenderEngineException
 	{
-		modelPoint.getNormal(normal);
 		double dot = perspectives.dotProduct(normal, sunsource);
-		
 		
 		double lower = lightZenith;
 		double upper = darkZenith;
@@ -314,42 +323,16 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			dot = -1.0;
 		}
 		
-		
-		try {
-			double blockAmt = calculateRayTracedShadow(modelPoint, latitude, longitude);
-			dot = dot - (2 * shadowIntensity * blockAmt);
-			if (dot < -1.0) {
-				dot = -1.0;
-			}
-		} catch (RayTracingException ex) {
-			throw new RenderEngineException("Error ray tracing shadows: " + ex.getMessage(), ex);
-		}
-		
 		return dot;
-	
-		/*
-		if (spotExponent != 1) {
-			dot = MathExt.pow(dot, spotExponent);
-		}
-		*/
-		
-		/*
-		if (dot >= 0) {
-			dot = dot + ((lightingMultiple / 100.0) * (1.0 - dot));
-		} else {
-			dot = dot - ((lightingMultiple / 100.0) * (1.0 - MathExt.abs(dot)));
-		}
-		*/
-		
-		//modelPoint.setDotProduct(dot);
+
 		
 	}
 	
-	protected double calculateRayTracedShadow(ModelPoint modelPoint, double latitude, double longitude) throws RayTracingException
+	protected double calculateRayTracedShadow(double elevation, double latitude, double longitude) throws RayTracingException
 	{
 		if (this.rayTraceShadows) {	
 
-			double blockAmt = lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, modelPoint.getElevation());
+			double blockAmt = lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, elevation);
 			return blockAmt;
 		} else {
 			return 0.0;
@@ -358,30 +341,26 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	
 
 	
-	protected void processPointColor(ModelPoint modelPoint, double latitude, double longitude) throws RenderEngineException
+	protected void processPointColor(double latitude, double longitude) throws RenderEngineException
 	{
+		modelGrid.getRgba(latitude, longitude, rgbaBuffer);
+		normalsCalculator.calculateNormal(latitude, longitude, normal);
+		//modelGrid.getNormal(latitude, longitude, normal);
 		
-		modelPoint.getRgba(rgbaBuffer);
-		
-		boolean lightBlocked = false;
+		//modelPoint.getRgba(rgbaBuffer);
+
 		double blockAmt = 0;
 		try {
-			blockAmt = calculateRayTracedShadow(modelPoint, latitude, longitude);
+			blockAmt = calculateRayTracedShadow(modelGrid.getElevation(latitude, longitude), latitude, longitude);
 		} catch (RayTracingException ex) {
 			throw new RenderEngineException("Error running ray tracing: " + ex.getMessage(), ex);
 		}
 		
-		
-		//if (blockAmt > 0) {
-		//	lightBlocked = true;
-		//}
-		
-		
-		
+
 		
 		
 		if (advancedLightingControl) {
-			advancedLightingCalculator.calculateColor(modelPoint, 
+			advancedLightingCalculator.calculateColor(normal, 
 													latitude, 
 													longitude, 
 													modelRadius, 
@@ -392,12 +371,20 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			
 			
 		} else {
-			double dot = calculateDotProduct(modelPoint, latitude, longitude);
+			double dot = calculateDotProduct(normal);
+			
 			
 			if (dot > 0) {
 				dot *= relativeLightIntensity;
 			} else if (dot < 0) {
 				dot *= relativeDarkIntensity;
+			}
+			
+			if (blockAmt > 0) {
+				dot = dot - (2 * shadowIntensity * blockAmt);
+				if (dot < -1.0) {
+					dot = -1.0;
+				}
 			}
 			
 			if (spotExponent != 1) {
@@ -406,7 +393,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			ColorAdjustments.adjustBrightness(rgbaBuffer, dot);
 		}
 
-		modelPoint.setRgba(rgbaBuffer);
+		modelGrid.setRgba(latitude, longitude, rgbaBuffer);
 	}
 	
 

@@ -3,6 +3,7 @@ package us.wthr.jdem846.model.processing.shading;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -13,6 +14,7 @@ import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
+import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 
 
 @GridProcessing(id="us.wthr.jdem846.model.processing.shading.SlopeShadingProcessor",
@@ -26,7 +28,8 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 	private static Log log = Logging.getLog(SlopeShadingProcessor.class);
 	
 	protected int[] rgbaBuffer = new int[4];
-	protected double[] normal = new double[3];
+	private double[] normal = new double[3];
+	private SurfaceNormalCalculator normalsCalculator;
 	
 	private int pass = 0;
 	private double minSlope = 10000000;
@@ -59,6 +62,11 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		relativeLightIntensity = optionModel.getLightIntensity();
 		relativeDarkIntensity = optionModel.getDarkIntensity();
 		spotExponent = optionModel.getSpotExponent();
+		
+		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
+				PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet()), 
+				getModelDimensions().getOutputLatitudeResolution(), 
+				getModelDimensions().getOutputLongitudeResolution());
 	}
 	
 	@Override
@@ -112,7 +120,8 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
-		modelPoint.getNormal(normal);
+		//modelPoint.getNormal(normal);
+		normalsCalculator.calculateNormal(latitude, longitude, normal);
 		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal[2]), -1));
 		
 		minSlope = MathExt.min(minSlope, slope);
@@ -126,7 +135,8 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 	{
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
-		modelPoint.getNormal(normal);
+		//modelPoint.getNormal(normal);
+		normalsCalculator.calculateNormal(latitude, longitude, normal);
 		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal[2]), -1));
 
 		double shade = 1.0 - (2.0 * ((slope - minSlope) / (maxSlope - minSlope)));

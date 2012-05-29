@@ -707,6 +707,14 @@ public class DemProjectPane extends JdemPanel implements Savable
 		if (projectMarshall != null && projectMarshall.getUserScript() != null && projectMarshall.getUserScript().length() > 0) {
 			scriptingContext.setScriptLanguage(projectMarshall.getScriptLanguage());
 			scriptingContext.setUserScript(projectMarshall.getUserScript());
+			
+			try {
+				scriptingContext.prepare();
+			} catch (ContextPrepareException ex) {
+				log.error("Error preparing initial scripting context: " + ex.getMessage(), ex);
+				// TODO: Display error dialog
+			}
+			
 		} else {
 		
 			String scriptTemplatePath = null;

@@ -112,15 +112,17 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 			throws RenderEngineException
 	{
 		
-		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
+		//ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
+		double elevation = modelGrid.getElevation(latitude, longitude);
 		try {
-			getPointColor(latitude, longitude, modelPoint.getElevation(), rgbaBufferA);
+			getPointColor(latitude, longitude, elevation, rgbaBufferA);
 		} catch (DataSourceException ex) {
 			throw new RenderEngineException("Error getting point color: " + ex.getMessage(), ex);
 		}
 		
-		modelPoint.setRgba(rgbaBufferA);
+		modelGrid.setRgba(latitude, longitude, rgbaBufferA);
+		//modelPoint.setRgba(rgbaBufferA);
 
 	}
 
