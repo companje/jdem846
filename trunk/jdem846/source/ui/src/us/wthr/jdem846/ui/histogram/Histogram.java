@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Polygon;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import us.wthr.jdem846.math.MathExt;
@@ -25,6 +28,7 @@ public class Histogram extends Panel
 	{
 		this.channels = channels;
 		this.setHistogramModel(histogramModel);
+		this.setOpaque(false);
 	}
 	
 	
@@ -43,8 +47,12 @@ public class Histogram extends Panel
 	public void paintHistogram(Graphics g, int width, int height)
 	{
 		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		g2d.setColor(Color.WHITE);
+		Color background = new Color(0, 0, 0, 0);
+		
+		g2d.setColor(background);
 		g2d.fillRect(0, 0, width, height);
 		
 		if (histogramModel == null)
@@ -58,6 +66,17 @@ public class Histogram extends Panel
 		Color color2 = new Color(0, 0, 255, 85);
 		Color color3 = new Color(255, 255, 0, 85);
 		
+		Polygon polygon0 = new Polygon();
+		Polygon polygon1 = new Polygon();
+		Polygon polygon2 = new Polygon();
+		Polygon polygon3 = new Polygon();
+		
+		polygon0.addPoint(0, height);
+		polygon1.addPoint(0, height);
+		polygon2.addPoint(0, height);
+		polygon3.addPoint(0, height);
+		
+		
 		for (int i = 0; i <= 255; i++) {
 			double c0 = histogramModel.getChannel0().distribution[i];
 			double c1 = histogramModel.getChannel1().distribution[i];
@@ -69,27 +88,39 @@ public class Histogram extends Panel
 			int h2 = (int) MathExt.round((c2 / max) * (double)height);
 			int h3 = (int) MathExt.round((c3 / max) * (double)height);
 			
-			if ((channels & Channels.CHANNEL_1) == Channels.CHANNEL_1) {
-				g2d.setColor(color0);
-				g2d.drawLine(i, height - h0, i, height);
-			}
 			
-			if ((channels & Channels.CHANNEL_2) == Channels.CHANNEL_2) {
-				g2d.setColor(color1);
-				g2d.drawLine(i, height - h1, i, height);
-			}
-			
-			if ((channels & Channels.CHANNEL_3) == Channels.CHANNEL_3) {
-				g2d.setColor(color2);
-				g2d.drawLine(i, height - h2, i, height);
-			}
-			
-			if ((channels & Channels.CHANNEL_4) == Channels.CHANNEL_4) {
-				g2d.setColor(color3);
-				g2d.drawLine(i, height - h3, i, height);
-			}
+			polygon0.addPoint(i, height - h0);
+			polygon1.addPoint(i, height - h1);
+			polygon2.addPoint(i, height - h2);
+			polygon3.addPoint(i, height - h3);
+
 		}
 		
+		polygon0.addPoint(width, height);
+		polygon1.addPoint(width, height);
+		polygon2.addPoint(width, height);
+		polygon3.addPoint(width, height);
+		
+		
+		if ((channels & Channels.CHANNEL_1) == Channels.CHANNEL_1) {
+			g2d.setColor(color0);
+			g2d.fill(polygon0);
+		}
+		
+		if ((channels & Channels.CHANNEL_2) == Channels.CHANNEL_2) {
+			g2d.setColor(color1);
+			g2d.fill(polygon1);
+		}
+		
+		if ((channels & Channels.CHANNEL_3) == Channels.CHANNEL_3) {
+			g2d.setColor(color2);
+			g2d.fill(polygon2);
+		}
+		
+		if ((channels & Channels.CHANNEL_4) == Channels.CHANNEL_4) {
+			g2d.setColor(color3);
+			g2d.fill(polygon3);
+		}
 		
 	}
 	
@@ -97,8 +128,14 @@ public class Histogram extends Panel
 	public void paint(Graphics g)
 	{
 		if (histogram != null) {
-			g.drawImage(histogram, 0, 0, getWidth(), getHeight(), null);
+			
+			Insets insets = this.getInsets();
+			int width = getWidth() - insets.left - insets.right;
+			int height = getHeight() - insets.top - insets.bottom;
+			g.drawImage(histogram, insets.left, insets.top, width, height, null);
 		}
+		
+		super.paint(g);
 	}
 	
 }

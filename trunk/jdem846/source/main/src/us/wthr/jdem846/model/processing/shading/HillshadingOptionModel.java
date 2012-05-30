@@ -17,7 +17,7 @@ public class HillshadingOptionModel implements OptionModel
 	private AzimuthElevationAngles sourceLocation = new AzimuthElevationAngles(315.0, 25.0); 
 	private LightingDate sunlightDate = new LightingDate(System.currentTimeMillis());
 	private LightingTime sunlightTime = new LightingTime(System.currentTimeMillis());
-	private boolean recalcLightForEachPoint = false;
+	private boolean recalcLightForEachPoint = true;
 	private double lightZenith = 90.0;
 	private double darkZenith = 108.0;
 	private double lightMultiple = 1.0;

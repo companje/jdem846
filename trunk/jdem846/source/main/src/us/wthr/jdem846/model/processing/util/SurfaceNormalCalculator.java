@@ -23,8 +23,9 @@ public class SurfaceNormalCalculator
 	
 	protected Perspectives perspectives = new Perspectives();
 
-	private Planet planet;
 
+	private double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
+	
 	private double[] normalBufferA = new double[3];
 	private double[] normalBufferB = new double[3];
 	
@@ -36,7 +37,21 @@ public class SurfaceNormalCalculator
 	public SurfaceNormalCalculator(ModelPointGrid modelGrid, Planet planet, double latitudeResolution, double longitudeResolution)
 	{
 		this.modelGrid = modelGrid;
-		this.planet = planet;
+		this.meanRadius = planet.getMeanRadius();
+		this.latitudeResolution = latitudeResolution;
+		this.longitudeResolution = longitudeResolution;
+	}
+	
+	public SurfaceNormalCalculator(Planet planet, double latitudeResolution, double longitudeResolution)
+	{
+		this.modelGrid = null;
+		this.meanRadius = planet.getMeanRadius();
+		this.latitudeResolution = latitudeResolution;
+		this.longitudeResolution = longitudeResolution;
+	}
+	
+	public SurfaceNormalCalculator(double latitudeResolution, double longitudeResolution)
+	{
 		this.latitudeResolution = latitudeResolution;
 		this.longitudeResolution = longitudeResolution;
 	}
@@ -44,7 +59,6 @@ public class SurfaceNormalCalculator
 	
 	public void calculateNormal(double latitude, double longitude, double[] normal)
 	{
-		resetBuffers(latitude, longitude);
 		
 		double eLat = latitude;
 		double eLon = longitude + longitudeResolution;
@@ -57,7 +71,7 @@ public class SurfaceNormalCalculator
 		
 		double nLat = latitude + latitudeResolution;
 		double nLon = longitude;
-
+		
 		double midElev = modelGrid.getElevation(latitude, longitude);
 		double eElev = modelGrid.getElevation(eLat, eLon);
 		double sElev = modelGrid.getElevation(sLat, sLon);
@@ -69,6 +83,44 @@ public class SurfaceNormalCalculator
 		wElev = (wElev == DemConstants.ELEV_NO_DATA) ? midElev : wElev;
 		nElev = (nElev == DemConstants.ELEV_NO_DATA) ? midElev : nElev;
 		
+		calculateNormal(latitude,
+						longitude,
+						midElev,
+						nElev,
+						sElev,
+						eElev,
+						wElev,
+						normal);
+	}
+	
+	public void calculateNormal(double latitude, 
+			double longitude, 
+			double elevation,
+			double[] normal)
+	{
+			
+		calculateNormal(latitude, 
+				longitude,
+				elevation,
+				elevation,
+				elevation,
+				elevation,
+				elevation,
+				normal);
+	}
+	
+	
+	public void calculateNormal(double latitude, 
+								double longitude, 
+								double midElev,
+								double nElev,
+								double sElev,
+								double eElev,
+								double wElev,
+								double[] normal)
+	{
+		resetBuffers(latitude, longitude);
+
 		
 		/*
 		fillPointXYZ(xyzN, nLat, nLon, nElev);
@@ -118,9 +170,7 @@ public class SurfaceNormalCalculator
 		normal[1] = normalBufferB[1] / 4.0;
 		normal[2] = normalBufferB[2] / 4.0;
 		
-		//midPoint.setNormal(normalBufferB);
-		//modelGrid.setNormal(latitude, longitude, normalBufferB);
-		
+
 	}
 	
 	
@@ -148,11 +198,6 @@ public class SurfaceNormalCalculator
 	
 	protected void fillPointXYZ(double[] P, double latitude, double longitude, double elevation)
 	{
-		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
-		
-		if (planet != null) {
-			meanRadius = planet.getMeanRadius();
-		}
 		double radius = meanRadius * 1000 + elevation;
 
 		Spheres.getPoint3D(longitude, latitude, radius, P);
@@ -161,12 +206,6 @@ public class SurfaceNormalCalculator
 	
 	public void resetBuffers(double latitude, double longitude)
 	{
-		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
-		
-		if (planet != null) {
-			meanRadius = planet.getMeanRadius();
-		}
-		
 		double resolutionMeters = RasterDataContext.getMetersResolution(meanRadius, latitude, longitude, latitudeResolution, longitudeResolution);
 		double xzRes = (resolutionMeters / 2.0);
 		
