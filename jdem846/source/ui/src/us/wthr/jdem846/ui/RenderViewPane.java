@@ -1,11 +1,14 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -31,6 +34,10 @@ import us.wthr.jdem846.ui.FileSaveThread.SaveCompletedListener;
 import us.wthr.jdem846.ui.ImageDisplayPanel.MousePositionListener;
 import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Panel;
+import us.wthr.jdem846.ui.base.SplitPane;
+import us.wthr.jdem846.ui.histogram.DistributionGenerator;
+import us.wthr.jdem846.ui.histogram.Histogram;
+import us.wthr.jdem846.ui.histogram.HistogramModel;
 
 @SuppressWarnings("serial")
 public class RenderViewPane extends Panel
@@ -53,6 +60,7 @@ public class RenderViewPane extends Panel
 	private TaskStatusListener taskStatusListener;
 	
 	private ImageDisplayPanel imageDisplay;
+	private Histogram histogramDisplay;
 	
 	private ModelCanvas canvas;
 	private ModelContext modelContext;
@@ -85,10 +93,25 @@ public class RenderViewPane extends Panel
 			}
 		});
 		
+		histogramDisplay = new Histogram();
+		histogramDisplay.setPreferredSize(new Dimension(255, 150));
+		
+		//BorderFactory.createEtchedBorder()
+		histogramDisplay.setBorder(BorderFactory.createTitledBorder("RGB Histogram"));
+		Panel southPanel = new Panel();
+		southPanel.setLayout(new BorderLayout());
+		southPanel.add(histogramDisplay, BorderLayout.EAST);
+		southPanel.setPreferredSize(new Dimension(400, 150));
+		
+		
 		
 		setLayout(new BorderLayout());
-		this.add(imageDisplay, BorderLayout.CENTER);
 		
+		
+		
+
+		this.add(imageDisplay, BorderLayout.CENTER);
+		this.add(southPanel, BorderLayout.SOUTH);
 		
 		
 		
@@ -118,10 +141,15 @@ public class RenderViewPane extends Panel
 				elapsed = (System.currentTimeMillis() - start) / 1000;
 				
 				canvas = modelContext.getModelCanvas();
+				
+				BufferedImage modelImage = (BufferedImage) canvas.getImage();
 				synchronized(imageDisplay) {
-					imageDisplay.setImage(canvas.getImage());
+					imageDisplay.setImage(modelImage);
 					imageDisplay.zoomFit();
 				}
+				
+				HistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(modelImage);
+				histogramDisplay.setHistogramModel(histogramModel);
 				
 				modelBuilder.dispose();
 				modelBuilder = null;

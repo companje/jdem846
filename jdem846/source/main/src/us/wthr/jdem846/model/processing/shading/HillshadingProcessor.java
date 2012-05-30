@@ -35,6 +35,7 @@ import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorOptionModel;
 import us.wthr.jdem846.model.processing.dataload.CornerEnum;
 import us.wthr.jdem846.model.processing.shading.RayTracing.RasterDataFetchHandler;
+import us.wthr.jdem846.model.processing.util.SunlightPositioning;
 import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 
@@ -66,29 +67,13 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	protected int[] rgbaBuffer = new int[4];
 	
 	protected Perspectives perspectives = new Perspectives();
-	
-	private double lightingMultiple = 1.0;
-	
-	private Planet planet;
-	
-	double north;
-	double south;
-	double east;
-	double west;
-	
 
 	protected double lightZenith;
 	protected double darkZenith;
-	protected LightSourceSpecifyTypeEnum lightSourceType;
-	protected long lightOnDate;
-	protected long lightOnTime;
+
+
 	protected boolean recalcLightOnEachPoint;
-	protected SolarCalculator solarCalculator;
-	protected SolarPosition position;
-	protected EarthDateTime datetime;
-	protected Coordinate latitudeCoordinate;
-	protected Coordinate longitudeCoordinate;
-	protected boolean sunIsUp = false;
+
 	
 	private boolean advancedLightingControl = false;
 	private LightingCalculator advancedLightingCalculator;
@@ -98,8 +83,11 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	protected boolean rayTraceShadows;
 	protected double shadowIntensity;
 	
+	
 	private double[] normal = new double[3];
 	private SurfaceNormalCalculator normalsCalculator;
+	
+	private SunlightPositioning sunlightPosition;
 	
 	public HillshadingProcessor()
 	{
@@ -127,51 +115,27 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		advancedLightingCalculator.setUseDistanceAttenuation(optionModel.getUseDistanceAttenuation());
 		advancedLightingCalculator.setAttenuationRadius(optionModel.getAttenuationRadius());
 		
-		
+		Planet planet = PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet());
 		if (planet != null) {
 			modelRadius = planet.getMeanRadius() * 1000;
 		} else {
 			modelRadius = DemConstants.EARTH_MEAN_RADIUS * 1000;
 		}
 
-		
-		/*
-		double t = (emmisive + ambient + diffuse + specular);
-		emmisive = emmisive / t;
-		ambient = ambient / t;
-		diffuse = diffuse / t;
-		specular = specular / t;
-		*/
-		
-		/*
-		 *private double emmisive;
-	private double ambient;
-	private double diffuse;
-	private double specular; 
-		 */
-		
+
 		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
 		longitudeResolution = getModelDimensions().getOutputLongitudeResolution();
 		
-		north = getGlobalOptionModel().getNorthLimit();
-		south = getGlobalOptionModel().getSouthLimit();
-		east = getGlobalOptionModel().getEastLimit();
-		west = getGlobalOptionModel().getWestLimit();
-		
-		
-		planet = PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet());
-		
-		solarAzimuth = optionModel.getSourceLocation().getAzimuthAngle();
-		solarElevation = optionModel.getSourceLocation().getElevationAngle();
-		
-		//solarAzimuth = 270.0;//modelContext.getLightingContext().getLightingAzimuth();
-		//solarElevation = 25.0;//modelContext.getLightingContext().getLightingElevation();
 
 		
-		lightSourceType = LightSourceSpecifyTypeEnum.getByOptionValue(optionModel.getSourceType());
+		double solarAzimuth = optionModel.getSourceLocation().getAzimuthAngle();
+		double solarElevation = optionModel.getSourceLocation().getElevationAngle();
 		
-		lightOnTime = optionModel.getSunlightTime().getTime();//optionModel.getSunlightTime();
-		lightOnDate = optionModel.getSunlightDate().getDate();//optionModel.getSunlightDate();
+
+		LightSourceSpecifyTypeEnum lightSourceType = LightSourceSpecifyTypeEnum.getByOptionValue(optionModel.getSourceType());
+		
+		long lightOnTime = optionModel.getSunlightTime().getTime();
+		long lightOnDate = optionModel.getSunlightDate().getDate();
 		lightOnDate += lightOnTime;
 		
 		recalcLightOnEachPoint = optionModel.isRecalcLightForEachPoint();
@@ -179,47 +143,26 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		darkZenith = optionModel.getDarkZenith();
 		
 		
+		sunlightPosition = new SunlightPositioning(modelContext, modelGrid, lightOnDate);
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
-			sunIsUp = true;
-			setUpLightSource(0, 0, solarElevation, solarAzimuth, true);
+			sunlightPosition.getLightPositionByAngles(solarElevation, solarAzimuth, sunsource);
 		}
 		
-		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME) {
+		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME && !recalcLightOnEachPoint) {
 			
-			Calendar cal = Calendar.getInstance();
-			cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+			double north = getGlobalOptionModel().getNorthLimit();
+			double south = getGlobalOptionModel().getSouthLimit();
+			double east = getGlobalOptionModel().getEastLimit();
+			double west = getGlobalOptionModel().getWestLimit();
 			
-			cal.setTimeInMillis(lightOnDate);
-			
-			int year = cal.get(Calendar.YEAR);
-			int month = cal.get(Calendar.MONTH) + 1;
-			int day = cal.get(Calendar.DAY_OF_MONTH);
-			int hour = cal.get(Calendar.HOUR_OF_DAY);
-			int minute = cal.get(Calendar.MINUTE);
-			int second = cal.get(Calendar.SECOND);
-			
-			log.info("Setting initial date/time to " + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
-			
-			position = new SolarPosition();
-			datetime = new EarthDateTime(year, month, day, hour, minute, second, 0, false);
-			latitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LATITUDE);
-			longitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LONGITUDE);
-			solarCalculator = new SolarCalculator();
-			solarCalculator.setDatetime(datetime);
-			
-		
-		
-			
-			if (!recalcLightOnEachPoint) {
+			double latitude = (north + south) / 2.0;
+			double longitude = (east + west) / 2.0;
 				
-				double latitude = (north + south) / 2.0;
-				double longitude = (east + west) / 2.0;
-				
-				setUpLightSource(latitude, longitude, 0, 0, true);
-			}
+			sunlightPosition.getLightPositionByCoordinates(latitude, longitude, sunsource);
+
 		}
 
-		lightingMultiple = optionModel.getLightMultiple();
+		
 		rayTraceShadows = optionModel.isRayTraceShadows();
 		shadowIntensity = optionModel.getShadowIntensity();
 		if (rayTraceShadows) {
@@ -242,10 +185,9 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			lightSourceRayTracer = null;
 		}
 		
-		
-		
+
 		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
-				PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet()), 
+				planet, 
 				getModelDimensions().getOutputLatitudeResolution(), 
 				getModelDimensions().getOutputLongitudeResolution());
 
@@ -276,29 +218,21 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	public void onModelPoint(double latitude, double longitude)
 			throws RenderEngineException
 	{
-
-		setUpLightSource(latitude, longitude, 0, 0, recalcLightOnEachPoint);
-		
-		//ModelPoint modelPoint = modelGrid.get(latitude, longitude);
-
-		//calculateDotProduct(modelPoint, latitude, longitude);
 		processPointColor(latitude, longitude);
-		
-		
 	}
 
 	@Override
 	public void onModelLatitudeEnd(double latitude)
 			throws RenderEngineException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onCycleEnd() throws RenderEngineException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -330,8 +264,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	
 	protected double calculateRayTracedShadow(double elevation, double latitude, double longitude) throws RayTracingException
 	{
-		if (this.rayTraceShadows) {	
-
+		if (this.rayTraceShadows) {
 			double blockAmt = lightSourceRayTracer.isRayBlocked(this.solarElevation, this.solarAzimuth, latitude, longitude, elevation);
 			return blockAmt;
 		} else {
@@ -343,11 +276,13 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	
 	protected void processPointColor(double latitude, double longitude) throws RenderEngineException
 	{
+		
+		if (recalcLightOnEachPoint) {
+			sunlightPosition.getLightPositionByCoordinates(latitude, longitude, sunsource);
+		}
+		
 		modelGrid.getRgba(latitude, longitude, rgbaBuffer);
 		normalsCalculator.calculateNormal(latitude, longitude, normal);
-		//modelGrid.getNormal(latitude, longitude, normal);
-		
-		//modelPoint.getRgba(rgbaBuffer);
 
 		double blockAmt = 0;
 		try {
@@ -398,60 +333,6 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	
 
 
-	protected void setUpLightSource(double latitude, double longitude, double solarElevation, double solarAzimuth, boolean force)
-	{
-
-		if (force && lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
-			setUpLightSourceBasic(solarElevation, solarAzimuth);
-		} else if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME) {
-			setUpLightSourceOnDate(latitude, longitude);
-		}
-		
-		
-		
-	}
-	
-	protected void setUpLightSourceOnDate(double latitude, double longitude)
-	{
-		// This stuff in here probably can be vastly optimized...
-		
-		//int timezone = (int) Math.floor((longitude / 180.0) * 12.0);
-
-		//datetime.setTimezone(timezone);
-		
-		latitudeCoordinate.fromDecimal(latitude);
-		longitudeCoordinate.fromDecimal(longitude);
-
-		
-		solarCalculator.update();
-		solarCalculator.setLatitude(latitudeCoordinate);
-		solarCalculator.setLongitude(longitudeCoordinate);
-		
-		solarAzimuth = solarCalculator.solarAzimuthAngle();
-		solarElevation = solarCalculator.solarElevationAngle();
-		solarZenith = solarCalculator.solarZenithAngle();
-
-		if (solarZenith > darkZenith) {
-			sunIsUp = false;
-		} else {
-			sunIsUp = true;
-		}
-		
-		setUpLightSourceBasic(solarElevation, solarAzimuth);
-		
-	}
-	
-	protected void setUpLightSourceBasic(double solarElevation, double solarAzimuth)
-	{
-		
-		sunsource[0] = 0.0;
-		sunsource[1] = 0.0;
-		sunsource[2] = -149598000000.0; // One AU in meters
-
-		Vectors.rotate(solarElevation, -solarAzimuth, 0, sunsource);
-		
-	}
-	
 
 	public boolean rayTraceShadows()
 	{
