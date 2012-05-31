@@ -10,23 +10,28 @@ public class RasterBuffer3d
 	private int height;
 	
 	private int subpixelWidth;
+	private int pixelStackDepth;
 	
-	private PixelBuffer pixelBuffer;
-	private ZBuffer zBuffer;
+	//private PixelBuffer pixelBuffer;
+	//private ZBuffer zBuffer;
+	private PixelMatrix pixelMatrix;
 	
 	private boolean isDisposed = false;
 	
 	private int[] rgbaBuffer = new int[4];
+	private int backgroundColor = 0x0;
 	
-	public RasterBuffer3d(int width, int height, int subpixelWidth)
+	public RasterBuffer3d(int width, int height, int pixelStackDepth, int subpixelWidth)
 	{
 		this.width = width;
 		this.height = height;
 		this.subpixelWidth = subpixelWidth;
+		this.pixelStackDepth = pixelStackDepth;
 		
-		pixelBuffer = new PixelBuffer(width, height, subpixelWidth);
-		zBuffer = new ZBuffer(width, height, subpixelWidth);
+		//pixelBuffer = new PixelBuffer(width, height, subpixelWidth);
+		//zBuffer = new ZBuffer(width, height, subpixelWidth);
 		
+		pixelMatrix = new PixelMatrix(width, height, pixelStackDepth, subpixelWidth);
 	}
 	
 	public void reset()
@@ -36,16 +41,19 @@ public class RasterBuffer3d
 	
 	public void reset(int backgroundColor)
 	{
-		pixelBuffer.reset(backgroundColor);
-		zBuffer.reset();
+		this.backgroundColor = backgroundColor;
+		//pixelBuffer.reset(backgroundColor);
+		//zBuffer.reset();
+		pixelMatrix.reset(backgroundColor);
 	}
 	
 	public void dispose()
 	{
 		if (!isDisposed()) {
 			
-			pixelBuffer = null;
-			zBuffer = null;
+			//pixelBuffer = null;
+			//zBuffer = null;
+			pixelMatrix.dispose();
 			
 			isDisposed = true;
 		}
@@ -69,10 +77,16 @@ public class RasterBuffer3d
 	public void set(double x, double y, double z, int rgba)
 	{
 		
-		if (zBuffer.isVisible(x, y, z)) {
-			pixelBuffer.set(x, y, rgba);
-			zBuffer.set(x, y, z);
-		}
+		//if (zBuffer.isVisible(x, y, z)) {
+		//	pixelBuffer.set(x, y, rgba);
+		//	zBuffer.set(x, y, z);
+		//}
+		pixelMatrix.set(x, y, z, rgba);
+	}
+	
+	public boolean isPixelFilled(double x, double y)
+	{
+		return pixelMatrix.isPixelFilled(x, y);
 	}
 	
 	public void get(int x, int y, int[] rgba)
@@ -113,7 +127,20 @@ public class RasterBuffer3d
 	
 	public int get(double x, double y)
 	{
-		return pixelBuffer.get(x, y);
+		
+		int[] rgbaStack = pixelMatrix.getRgbaStack(x, y);
+		
+		int rgba = backgroundColor;
+		
+		for (int i = rgbaStack.length - 1; i >= 0; i--) {
+			
+			rgba = ColorUtil.overlayColor(rgbaStack[i], rgba);
+			
+		}
+		
+		return rgba;
+		
+		//return pixelBuffer.get(x, y);
 	}
 
 	public int getWidth()

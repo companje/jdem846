@@ -170,7 +170,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		try {
 			ScriptProxy scriptProxy = getModelContext().getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.initialize(getModelContext());
+				scriptProxy.initialize();
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -221,7 +221,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		try {
 			ScriptProxy scriptProxy = getModelContext().getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.destroy(getModelContext());
+				scriptProxy.destroy();
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -238,7 +238,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		try {
 			ScriptProxy scriptProxy = getModelContext().getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.initialize(getModelContext());
+				scriptProxy.initialize();
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -297,7 +297,7 @@ public class Dem2dGenerator extends BasicRenderEngine
 		try {
 			ScriptProxy scriptProxy = getModelContext().getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.destroy(getModelContext());
+				scriptProxy.destroy();
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

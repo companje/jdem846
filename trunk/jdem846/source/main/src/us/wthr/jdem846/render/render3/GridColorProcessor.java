@@ -130,7 +130,7 @@ public class GridColorProcessor extends AbstractGridProcessor implements GridPro
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onGetPointColor(modelContext, latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
+				scriptProxy.onGetPointColor(latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

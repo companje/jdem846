@@ -54,6 +54,8 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	double lastElevation = 0;
 	ModelCanvas canvas;
 	
+	private ModelRenderOptionModel optionModel;
+	
 	public ModelRenderer()
 	{
 		
@@ -74,7 +76,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		ModelRenderOptionModel optionModel = (ModelRenderOptionModel) this.getProcessOptionModel();
+		optionModel = (ModelRenderOptionModel) this.getProcessOptionModel();
 		GlobalOptionModel globalOptionModel = modelContext.getModelProcessManifest().getGlobalOptionModel();
 		
 		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
@@ -187,7 +189,9 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		}
 		
 		modelGrid.getRgba(latitude, longitude, rgbaBuffer);
-
+		
+		rgbaBuffer[3] = optionModel.getForceAlpha();
+		
 		Vertex nwVtx = createVertex(latitude, longitude, elev, rgbaBuffer);
 		
 		strip.addVertex(nwVtx);

@@ -53,22 +53,23 @@ public class ModelCanvas
 	{
 		this(modelContext.getModelProcessManifest().getGlobalOptionModel().getWidth(), 
 				modelContext.getModelProcessManifest().getGlobalOptionModel().getHeight(), 
+				modelContext.getModelProcessManifest().getGlobalOptionModel().getPixelStackDepth(),
 				modelContext.getModelProcessManifest().getGlobalOptionModel().getSubpixelGridSize(), 
 				modelContext.getModelProcessManifest().getGlobalOptionModel().getBackgroundColor(), 
 				CanvasProjectionFactory.create(modelContext));
 	}
 	
-	public ModelCanvas(int width, int height, int subpixelWidth, String backgroundColor, CanvasProjection canvasProjection)
+	public ModelCanvas(int width, int height, int pixelStackDepth, int subpixelWidth, String backgroundColor, CanvasProjection canvasProjection)
 	{
-		this(width, height, subpixelWidth, ColorSerializationUtil.stringToColor(backgroundColor), canvasProjection);
+		this(width, height, pixelStackDepth, subpixelWidth, ColorSerializationUtil.stringToColor(backgroundColor), canvasProjection);
 	}
 	
-	public ModelCanvas(int width, int height, int subpixelWidth, RgbaColor backgroundColor, CanvasProjection canvasProjection)
+	public ModelCanvas(int width, int height, int pixelStackDepth, int subpixelWidth, RgbaColor backgroundColor, CanvasProjection canvasProjection)
 	{
-		this(width, height, subpixelWidth, backgroundColor.toAwtColor(), canvasProjection);
+		this(width, height, pixelStackDepth, subpixelWidth, backgroundColor.toAwtColor(), canvasProjection);
 	}
 	
-	public ModelCanvas(int width, int height, int subpixelWidth, Color backgroundColor, CanvasProjection canvasProjection)
+	public ModelCanvas(int width, int height, int pixelStackDepth, int subpixelWidth, Color backgroundColor, CanvasProjection canvasProjection)
 	{
 		this.backgroundColor = backgroundColor;
 		
@@ -80,7 +81,7 @@ public class ModelCanvas
 		double clipFarZ = -width;
 		
 
-		canvas = new Canvas3d(width, height, clipNearZ, clipFarZ, subpixelWidth, backgroundColor);
+		canvas = new Canvas3d(width, height, clipNearZ, clipFarZ, pixelStackDepth, subpixelWidth, backgroundColor);
 		
 		if (canvasProjection != null) {
 			this.canvasProjection = canvasProjection;
@@ -476,6 +477,11 @@ public class ModelCanvas
 	public Image getImage()
 	{
 		return canvas.getImage();
+	}
+	
+	public boolean[][] getModelMask()
+	{
+		return canvas.getModelMask();
 	}
 	
 	public Image getSubImage(double north, double south, double east, double west) throws CanvasException

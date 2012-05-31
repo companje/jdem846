@@ -28,19 +28,21 @@ import us.wthr.jdem846.model.ModelProcessContainer;
 public interface ScriptProxy
 {
 	
-	public void initialize(ModelContext modelContext);
-	public void destroy(ModelContext modelContext);
+	public void setModelContext(ModelContext modelContext);
 	
-	public void onModelBefore(ModelContext modelContext);
-	public void onModelAfter(ModelContext modelContext);
+	public void initialize();
+	public void destroy();
 	
-	public void onProcessBefore(ModelContext modelContext, ModelProcessContainer modelProcessContainer);
-	public void onProcessAfter(ModelContext modelContext, ModelProcessContainer modelProcessContainer);
+	public void onModelBefore();
+	public void onModelAfter();
+	
+	public void onProcessBefore(ModelProcessContainer modelProcessContainer);
+	public void onProcessAfter(ModelProcessContainer modelProcessContainer);
 
-	public Object onGetElevationBefore(ModelContext modelContext, double latitude, double longitude);
-	public Object onGetElevationAfter(ModelContext modelContext, double latitude, double longitude, double elevation);
+	public Object onGetElevationBefore(double latitude, double longitude);
+	public Object onGetElevationAfter(double latitude, double longitude, double elevation);
 
-	public void onGetPointColor(ModelContext modelContext, double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color);
+	public void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color);
 	// TODO: Add copy()
 	
 	// getGradientColor

@@ -1,5 +1,8 @@
 package us.wthr.jdem846.scripting.groovy;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 
@@ -35,10 +38,15 @@ public class GroovyScriptLoader
 		
 		try {
 			groovyObject = (GroovyObject) clazz.newInstance();
-			//for (Field field : groovyObject.getClass().getFields()) {
-			//	log.info("Groovy Field: " + field.getName());
-			//}
 			
+			/*
+			for (Method method : groovyObject.getClass().getMethods()) {
+				log.info("Groovy Method: " + method.getName());
+			}
+			for (Field field : groovyObject.getClass().getFields()) {
+				log.info("Groovy Field: " + field.getName());
+			}
+			*/
 			
 		} catch (InstantiationException ex) {
 			throw new ScriptingException("Failed to instantiate Groovy class: " + ex.getMessage(), ex);

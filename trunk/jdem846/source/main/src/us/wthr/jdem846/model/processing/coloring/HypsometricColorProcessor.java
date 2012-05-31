@@ -158,10 +158,12 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 		if (!imageOverlayed) {
 			modelColoring.getGradientColor(elevation, minimumElevation, maximumElevation, rgba);
 		}
-		
+	
 		if (useScripting) {
 			onGetPointColor(latitude, longitude, elevation, minimumElevation, maximumElevation, rgba);
 		}
+		
+		
 	}
 	
 	protected void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color) throws RenderEngineException
@@ -169,7 +171,7 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onGetPointColor(modelContext, latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
+				scriptProxy.onGetPointColor(latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

@@ -258,7 +258,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				result = scriptProxy.onGetElevationBefore(modelContext, latitude, longitude);
+				result = scriptProxy.onGetElevationBefore(latitude, longitude);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -273,7 +273,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				result = scriptProxy.onGetElevationAfter(modelContext, latitude, longitude, elevation);
+				result = scriptProxy.onGetElevationAfter(latitude, longitude, elevation);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
