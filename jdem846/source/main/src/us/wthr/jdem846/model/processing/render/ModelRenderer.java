@@ -190,7 +190,9 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		
 		modelGrid.getRgba(latitude, longitude, rgbaBuffer);
 		
-		rgbaBuffer[3] = optionModel.getForceAlpha();
+		if (rgbaBuffer[3] > optionModel.getForceAlpha()) {
+			rgbaBuffer[3] = optionModel.getForceAlpha();
+		}
 		
 		Vertex nwVtx = createVertex(latitude, longitude, elev, rgbaBuffer);
 		
