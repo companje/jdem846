@@ -3,16 +3,16 @@ package us.wthr.jdem846.canvas;
 
 public class ZBuffer extends AbstractBuffer
 {
-	private final static double NO_VALUE = Double.NaN;
+	private final static float NO_VALUE = -999999.999f;
 	
 
-	private double[] buffer;
+	private float[] buffer;
 	
 	public ZBuffer(int width, int height, int subpixelWidth)
 	{
 		super(width, height, subpixelWidth);
 		
-		buffer = new double[getBufferLength()];
+		buffer = new float[getBufferLength()];
 		
 		reset();
 	}
@@ -37,7 +37,7 @@ public class ZBuffer extends AbstractBuffer
 		int index = this.getIndex(x, y);
 		
 		if (index >= 0 && index < getBufferLength()) {
-			buffer[index] = z;
+			buffer[index] = (float) z;
 		} else {
 			// TODO: Throw
 		}
@@ -49,7 +49,7 @@ public class ZBuffer extends AbstractBuffer
 		if (index >= 0 && index < getBufferLength()) {
 			return buffer[index];
 		} else {
-			return Double.NaN;
+			return NO_VALUE;
 			// TODO: Throw
 		}
 	}
@@ -59,7 +59,7 @@ public class ZBuffer extends AbstractBuffer
 	public boolean isVisible(double x, double y, double z)
 	{
 		double _z = get(x, y);
-		if (Double.isNaN(_z) || (z >= _z && !Double.isNaN(_z))) {
+		if (z == NO_VALUE || (z >= _z)) {
 			return true;
 		} else {
 			return false;

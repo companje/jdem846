@@ -8,8 +8,12 @@ import us.wthr.jdem846.math.MathExt;
 public class DistributionGenerator
 {
 	
-	
 	public static HistogramModel generateHistogramModelFromImage(BufferedImage image)
+	{
+		return generateHistogramModelFromImage(image, null);
+	}
+	
+	public static HistogramModel generateHistogramModelFromImage(BufferedImage image, boolean[][] modelMask)
 	{
 		TonalDistribution channel0 = new TonalDistribution(0);
 		TonalDistribution channel1 = new TonalDistribution(1);
@@ -25,12 +29,15 @@ public class DistributionGenerator
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				raster.getPixel(x, y, rgba);
 				
-				channel0.distribution[rgba[0]]++;
-				channel1.distribution[rgba[1]]++;
-				channel2.distribution[rgba[2]]++;
-				channel3.distribution[rgba[3]]++;
+				if (modelMask == null || modelMask[y][x] == true) {
+					raster.getPixel(x, y, rgba);
+					
+					channel0.distribution[rgba[0]]++;
+					channel1.distribution[rgba[1]]++;
+					channel2.distribution[rgba[2]]++;
+					channel3.distribution[rgba[3]]++;
+				}
 			}
 		}
 		

@@ -115,12 +115,19 @@ public class ModelBuilder extends InterruptibleProcess
 
 		ModelCanvas modelCanvas = new ModelCanvas(modelDimensions.getOutputWidth(), 
 													modelDimensions.getOutputHeight(), 
+													globalOptionModel.getPixelStackDepth(),
 													globalOptionModel.getSubpixelGridSize(), 
 													globalOptionModel.getBackgroundColor(), 
 													null);
 		modelContext.setModelCanvas(modelCanvas);
 		
 		useScripting = globalOptionModel.getUseScripting();
+		
+		if (useScripting 
+				&& modelContext.getScriptingContext() != null 
+				&& modelContext.getScriptingContext().getScriptProxy() != null) {
+			modelContext.getScriptingContext().getScriptProxy().setModelContext(modelContext);
+		}
 		
 		double minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
 		double maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
@@ -244,7 +251,7 @@ public class ModelBuilder extends InterruptibleProcess
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.destroy(modelContext);
+				scriptProxy.destroy();
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -257,7 +264,7 @@ public class ModelBuilder extends InterruptibleProcess
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.initialize(modelContext);
+				scriptProxy.initialize();
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -270,7 +277,7 @@ public class ModelBuilder extends InterruptibleProcess
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onModelBefore(modelContext);
+				scriptProxy.onModelBefore();
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -283,7 +290,7 @@ public class ModelBuilder extends InterruptibleProcess
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onModelAfter(modelContext);
+				scriptProxy.onModelAfter();
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -296,7 +303,7 @@ public class ModelBuilder extends InterruptibleProcess
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onProcessBefore(modelContext, modelProcessContainer);
+				scriptProxy.onProcessBefore(modelProcessContainer);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -309,7 +316,7 @@ public class ModelBuilder extends InterruptibleProcess
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onProcessAfter(modelContext, modelProcessContainer);
+				scriptProxy.onProcessAfter(modelProcessContainer);
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

@@ -143,12 +143,14 @@ public class RenderViewPane extends Panel
 				canvas = modelContext.getModelCanvas();
 				
 				BufferedImage modelImage = (BufferedImage) canvas.getImage();
+				boolean[][] modelMask = canvas.getModelMask();
+				
 				synchronized(imageDisplay) {
 					imageDisplay.setImage(modelImage);
 					imageDisplay.zoomFit();
 				}
 				
-				HistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(modelImage);
+				HistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(modelImage, modelMask);
 				histogramDisplay.setHistogramModel(histogramModel);
 				
 				modelBuilder.dispose();

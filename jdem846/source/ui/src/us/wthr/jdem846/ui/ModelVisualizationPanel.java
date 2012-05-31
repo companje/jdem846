@@ -366,6 +366,7 @@ public class ModelVisualizationPanel extends Panel
 		globalOptionModel.setPrecacheStrategy("none");
 		globalOptionModel.setUseDiskCachedModelGrid(false);
 		globalOptionModel.setDisposeGridOnComplete(false);
+		globalOptionModel.setPixelStackDepth(1);
 		
 		try {
 			modelContextWorkingCopy.updateContext();

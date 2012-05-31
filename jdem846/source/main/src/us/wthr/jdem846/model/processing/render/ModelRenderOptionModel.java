@@ -4,13 +4,16 @@ package us.wthr.jdem846.model.processing.render;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.ViewPerspective;
+import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
+import us.wthr.jdem846.model.annotations.ValueBounds;
 
 public class ModelRenderOptionModel implements OptionModel
 {
 	
 	private String mapProjection = MapProjectionEnum.EQUIRECTANGULAR.identifier();
 	private ViewPerspective viewAngle = ViewPerspective.fromString("rotate:[30.0,0,0];shift:[0,0,0];zoom:[1.0]");
+	private int forceAlpha = 255;
 	
 	
 	
@@ -24,6 +27,7 @@ public class ModelRenderOptionModel implements OptionModel
 			tooltip="",
 			enabled=true,
 			listModel=MapProjectionListModel.class)
+	@Order(100)
 	public String getMapProjection()
 	{
 		return mapProjection;
@@ -42,6 +46,7 @@ public class ModelRenderOptionModel implements OptionModel
 			label="View Angle",
 			tooltip="",
 			enabled=true)
+	@Order(200)
 	public ViewPerspective getViewAngle()
 	{
 		return viewAngle;
@@ -54,12 +59,31 @@ public class ModelRenderOptionModel implements OptionModel
 	}
 
 	
+	
+	@ProcessOption(id="us.wthr.jdem846.model.ModelRenderOptionModel.forceAlpha",
+			label="Model Transparency",
+			tooltip="",
+			enabled=true)
+	@ValueBounds(minimum=0, 
+				maximum=255)
+	@Order(300)
+	public int getForceAlpha()
+	{
+		return forceAlpha;
+	}
+
+	public void setForceAlpha(int forceAlpha)
+	{
+		this.forceAlpha = forceAlpha;
+	}
+
 	public ModelRenderOptionModel copy()
 	{
 		ModelRenderOptionModel copy = new ModelRenderOptionModel();
 		
 		copy.mapProjection = this.mapProjection;
 		copy.viewAngle = this.viewAngle.copy();
+		copy.forceAlpha = this.forceAlpha;
 		
 		return copy;
 	}

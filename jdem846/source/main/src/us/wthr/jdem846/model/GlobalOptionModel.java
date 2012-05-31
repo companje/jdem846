@@ -5,6 +5,7 @@ import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 import us.wthr.jdem846.model.annotations.ValueBounds;
 import us.wthr.jdem846.model.listModels.ElevationScalerListModel;
+import us.wthr.jdem846.model.listModels.PixelStackDepthListModel;
 import us.wthr.jdem846.model.listModels.PlanetListModel;
 import us.wthr.jdem846.model.listModels.RenderProjectionListModel;
 import us.wthr.jdem846.model.listModels.SubpixelGridSizeListModel;
@@ -30,6 +31,7 @@ public class GlobalOptionModel implements OptionModel
 	private String elevationScale = ElevationScalerEnum.LINEAR.identifier();
 	private String renderProjection = CanvasProjectionTypeEnum.PROJECT_FLAT.identifier();
 	private int subpixelGridSize = 1;
+	private int pixelStackDepth = 1;
 	
 	private double latitudeSlices = -1;
 	private double longitudeSlices = -1;
@@ -313,8 +315,27 @@ public class GlobalOptionModel implements OptionModel
 		this.subpixelGridSize = subpixelGridSize;
 	}
 	
-
 	
+	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.pixelStackDepth",
+			label="Pixel Stack Depth",
+			tooltip="",
+			enabled=true,
+			listModel=PixelStackDepthListModel.class)
+	@Order(16)
+	@ValueBounds(minimum=0, 
+				maximum=32)
+	public int getPixelStackDepth()
+	{
+		return pixelStackDepth;
+	}
+
+
+	public void setPixelStackDepth(int pixelStackDepth)
+	{
+		this.pixelStackDepth = pixelStackDepth;
+	}
+
+
 	public double getLatitudeSlices()
 	{
 		return latitudeSlices;
@@ -443,6 +464,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.elevationScale = this.elevationScale; 
 		copy.renderProjection = this.renderProjection;
 		copy.subpixelGridSize = this.subpixelGridSize;
+		copy.pixelStackDepth = this.pixelStackDepth;
 		copy.longitudeSlices = this.longitudeSlices;
 		copy.latitudeSlices = this.latitudeSlices;
 		copy.averageOverlappedData = this.averageOverlappedData;

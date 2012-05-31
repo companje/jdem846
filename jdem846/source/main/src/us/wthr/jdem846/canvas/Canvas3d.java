@@ -43,31 +43,32 @@ public class Canvas3d
 	private RenderPipeline pipeline;
 	
 	private int subpixelWidth = 1;
+	private int pixelStackDepth = 1;
 	
 	private int[] rgbaBuffer = new int[4];
 	
-	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth)
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int pixelStackDepth, int subpixelWidth)
 	{
-		this(width, height, clipNearZ, clipFarZ, subpixelWidth, 0x0, null);
+		this(width, height, clipNearZ, clipFarZ, pixelStackDepth, subpixelWidth, 0x0, null);
 	}
 
-	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth, int backgroundColor)
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int pixelStackDepth, int subpixelWidth, int backgroundColor)
 	{
-		this(width, height, clipNearZ, clipFarZ, subpixelWidth, backgroundColor, null);
+		this(width, height, clipNearZ, clipFarZ, pixelStackDepth, subpixelWidth, backgroundColor, null);
 	}
 	
 	
-	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth, Color color)
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int pixelStackDepth, int subpixelWidth, Color color)
 	{
-		this(width, height, clipNearZ, clipFarZ, subpixelWidth, color.getRGB(), null);
+		this(width, height, clipNearZ, clipFarZ, pixelStackDepth, subpixelWidth, color.getRGB(), null);
 	}
 	
-	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth, int[] rgba)
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int pixelStackDepth, int subpixelWidth, int[] rgba)
 	{
-		this(width, height, clipNearZ, clipFarZ, subpixelWidth, ColorUtil.rgbaToInt(rgba[0], rgba[1], rgba[2], rgba[3]), null);
+		this(width, height, clipNearZ, clipFarZ, pixelStackDepth, subpixelWidth, ColorUtil.rgbaToInt(rgba[0], rgba[1], rgba[2], rgba[3]), null);
 	}
 	
-	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int subpixelWidth, int backgroundColor, RenderPipeline pipeline)
+	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int pixelStackDepth, int subpixelWidth, int backgroundColor, RenderPipeline pipeline)
 	{
 		this.pipeline = pipeline;
 		this.width = width;
@@ -75,8 +76,9 @@ public class Canvas3d
 		this.clipNearZ = clipNearZ;
 		this.clipFarZ = clipFarZ;
 		this.subpixelWidth = subpixelWidth;
+		this.pixelStackDepth = pixelStackDepth;
 		
-		rasterBuffer = new RasterBuffer3d(width, height, this.subpixelWidth);
+		rasterBuffer = new RasterBuffer3d(width, height, pixelStackDepth, subpixelWidth);
 		rasterBuffer.reset(backgroundColor);
 		//pixelBuffer = new MatrixBuffer<Integer>(width, height);
 		//zBuffer = new MatrixBuffer<Double>(width, height);
@@ -602,6 +604,21 @@ public class Canvas3d
 	}
 	
 	
+	public boolean[][] getModelMask()
+	{
+		
+		boolean[][] mask = new boolean[height][width];
+		
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				mask[y][x] = rasterBuffer.isPixelFilled(x, y);
+			}
+		}
+		
+		return mask;
+		
+	}
+	
 	public BufferedImage getImage()
 	{
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -616,38 +633,6 @@ public class Canvas3d
 				raster.setPixel(x, y, rgba);
 			}
 		}
-		
-		
-		/*
-		 * 
-		Graphics2D gfx = (Graphics2D) image.getGraphics();
-		gfx.setComposite(AlphaComposite.SrcOver);
-		gfx.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-		gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		Path2D.Double path = new Path2D.Double();
-		
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				get(x, y, rgba);
-				//Color color = new Color(rgbaToInt(rgba));
-				Color color = new Color(rgba[0], rgba[1], rgba[2]);
-				gfx.setColor(color);
-				path.reset();
-				
-				path.moveTo(x-0.25, y-0.25);
-				path.lineTo(x-0.25, y+1.25);
-				path.lineTo(x+1.25, y+1.25);
-				path.lineTo(x+1.25, y-0.25);
-				path.closePath();
-				gfx.fill(path);
-				
-				//gfx.fillRect(x, y, 1, 1);
-				//log.info("RGBA: " + rgba[0] + "/" + rgba[1] + "/" + rgba[2] + "/" + rgba[3]);
-				//raster.setPixel(x, y, rgba);
-			}
-		}
-		*/
 		
 		return image;
 	}

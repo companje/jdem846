@@ -3,56 +3,62 @@ import us.wthr.jdem846.*
 import us.wthr.jdem846.logging.*
 import us.wthr.jdem846.image.*
 import us.wthr.jdem846.input.*
+import us.wthr.jdem846.geom.*
+import us.wthr.jdem846.gis.*
+import us.wthr.jdem846.gis.projections.*
+import us.wthr.jdem846.gis.planets.*
+import us.wthr.jdem846.model.*
+import us.wthr.jdem846.model.util.*
 import java.io.*
 import javax.imageio.ImageIO
 import java.awt.image.*
 
 
 class JDemScript {
+
+	def log
+	def modelContext
 	
-	def log = Logging.getLog(JDemScript.class)
-	
-	def initialize(modelContext) {
+	def initialize = {
 		
 	}
 	
-	def onModelBefore(modelContext) {
-		
-		
-	}
-	
-	def onProcessBefore(modelContext, modelProcessContainer) {
+	def onModelBefore = { 
 		
 		
 	}
 	
-	def onProcessAfter(modelContext, modelProcessContainer) {
-	
-	
-	}
-	
-	def onModelAfter(modelContext) {
-	
-	
-	}
-	
-	def onGetElevationBefore(modelContext, latitude, longitude) {
+	def onProcessBefore = { modelProcessContainer ->
 		
-		return null
-	}
-	
-	def onGetElevationAfter(modelContext, latitude, longitude, elevation) {
-		
-		return null
-	}
-	
-	
-	def onGetPointColor(modelContext, latitude, longitude, elevation, elevationMinimum, elevationMaximum, color)
-	{
 		
 	}
 	
-	def destroy(modelContext) {
+	def onProcessAfter = { modelProcessContainer ->
+	
+	
+	}
+	
+	def onModelAfter = { 
+	
+	
+	}
+	
+	def onGetElevationBefore = {latitude, longitude ->
+		
+		
+	}
+	
+	def onGetElevationAfter = { latitude, longitude, elevation ->
+		
+		
+	}
+	
+	
+	def onGetPointColor = { latitude, longitude, elevation, elevationMinimum, elevationMaximum, color ->
+		
+	}
+	
+	def destroy = { 
 	
 	}
 }
