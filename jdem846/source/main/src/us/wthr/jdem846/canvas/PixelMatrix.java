@@ -17,6 +17,9 @@ public class PixelMatrix extends AbstractBuffer
 	private int[][] rgbaMatrix;
 	private float[][] zMatrix;
 	
+	private int[] rgbaBufferA = new int[4];
+	private int[] rgbaBufferB = new int[4];
+	
 	public PixelMatrix(int width, int height, int subpixelWidth)
 	{
 		this(width, height, DEFAULT_STACK_DEPTH, subpixelWidth);
@@ -103,6 +106,10 @@ public class PixelMatrix extends AbstractBuffer
 		
 		int matrixIndex = this.getIndex(x, y);
 		
+		if (!isVisible(x, y, z)) {
+			return;
+		}
+		
 		if (isPixelDepthLimited() && stackDepth == 1 && overlayTransparentColors()) {
 			
 			if (zMatrix[matrixIndex][0] < z) {
@@ -164,6 +171,32 @@ public class PixelMatrix extends AbstractBuffer
 		
 		return zMatrix[matrixIndex].length;
 				
+	}
+	
+	/** Determine if a point would be visible given the specified z-index. Visiblity is determined
+	 * a false if there is a non-transparent pixel with a higher z-index a the x/y coordinates.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
+	protected boolean isVisible(double x, double y, double z)
+	{
+
+		int matrixIndex = this.getIndex(x, y);
+		
+		for (int i = 0; i < zMatrix[matrixIndex].length; i++) {
+			
+			ColorUtil.intToRGBA(rgbaMatrix[matrixIndex][i], rgbaBufferB);
+			
+			if (zMatrix[matrixIndex][i] > z && rgbaBufferB[3] == 255) {
+				return false;
+			}
+
+		}
+		
+		return true;
 	}
 	
 	
