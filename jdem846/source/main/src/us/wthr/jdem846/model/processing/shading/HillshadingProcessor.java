@@ -28,7 +28,9 @@ import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ModelPointHandler;
 import us.wthr.jdem846.model.OptionModel;
+import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.annotations.GridProcessing;
+import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
@@ -88,6 +90,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	private SurfaceNormalCalculator normalsCalculator;
 	
 	private SunlightPositioning sunlightPosition;
+	private ViewPerspective viewPerspective;
 	
 	public HillshadingProcessor()
 	{
@@ -108,9 +111,16 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		relativeLightIntensity = optionModel.getLightIntensity();
 		relativeDarkIntensity = optionModel.getDarkIntensity();
 		spotExponent = optionModel.getSpotExponent();
-
+		
+		
+		try {
+			viewPerspective = (ViewPerspective) modelContext.getModelProcessManifest().getPropertyById("us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle");
+		} catch (ModelContainerException ex) {
+			log.warn("Error fetching view perspective: " + ex.getMessage(), ex);
+		}
+		
 		advancedLightingControl = optionModel.getAdvancedLightingControl();
-		advancedLightingCalculator = new LightingCalculator(optionModel.getEmmisive(), optionModel.getAmbient(), optionModel.getDiffuse(), optionModel.getSpecular(), optionModel.getShadowIntensity());
+		advancedLightingCalculator = new LightingCalculator(optionModel.getEmmisive(), optionModel.getAmbient(), optionModel.getDiffuse(), optionModel.getSpecular(), optionModel.getShadowIntensity(), viewPerspective);
 		
 		advancedLightingCalculator.setUseDistanceAttenuation(optionModel.getUseDistanceAttenuation());
 		advancedLightingCalculator.setAttenuationRadius(optionModel.getAttenuationRadius());
@@ -141,9 +151,9 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		recalcLightOnEachPoint = optionModel.isRecalcLightForEachPoint();
 		lightZenith = optionModel.getLightZenith();
 		darkZenith = optionModel.getDarkZenith();
+
 		
-		
-		sunlightPosition = new SunlightPositioning(modelContext, modelGrid, lightOnDate);
+		sunlightPosition = new SunlightPositioning(modelContext, modelGrid, lightOnDate, viewPerspective);
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
 			sunlightPosition.getLightPositionByAngles(solarElevation, solarAzimuth, sunsource);
 		}
@@ -189,7 +199,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
 				planet, 
 				getModelDimensions().getOutputLatitudeResolution(), 
-				getModelDimensions().getOutputLongitudeResolution());
+				getModelDimensions().getOutputLongitudeResolution(),
+				viewPerspective);
 
 	}
 

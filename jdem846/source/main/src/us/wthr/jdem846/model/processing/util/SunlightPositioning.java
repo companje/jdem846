@@ -16,10 +16,12 @@ import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGridDimensions;
 import us.wthr.jdem846.model.ModelPointGrid;
+import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.processing.shading.RayTracing;
 
 public class SunlightPositioning
@@ -69,11 +71,11 @@ public class SunlightPositioning
 	protected RayTracing lightSourceRayTracer;
 	protected boolean rayTraceShadows;
 	protected double shadowIntensity;
+
 	
-	private double[] normal = new double[3];
-	private SurfaceNormalCalculator normalsCalculator;
+	protected ViewPerspective viewPerspective;
 	
-	public SunlightPositioning(ModelContext modelContext, ModelPointGrid modelGrid, long lightOnDate)
+	public SunlightPositioning(ModelContext modelContext, ModelPointGrid modelGrid, long lightOnDate, ViewPerspective viewPerspective)
 	{
 		this.modelContext = modelContext;
 		this.modelGrid = modelGrid;
@@ -89,8 +91,11 @@ public class SunlightPositioning
 		
 		modelDimensions = ModelGridDimensions.getModelDimensions(modelContext);
 		
+		this.viewPerspective = viewPerspective;
 		
 		//lightOnDate = System.currentTimeMillis();
+		this.lightOnDate = lightOnDate;
+		this.lightOnTime = lightOnDate - (long) MathExt.floor((double)lightOnDate / 86400000.0) * 86400000;
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -113,11 +118,7 @@ public class SunlightPositioning
 		solarCalculator = new SolarCalculator();
 		solarCalculator.setDatetime(datetime);
 		
-		
-		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
-				planet, 
-				modelDimensions.getOutputLatitudeResolution(), 
-				modelDimensions.getOutputLongitudeResolution());
+
 		
 	}
 	
@@ -133,16 +134,20 @@ public class SunlightPositioning
 		solarCalculator.setLongitude(longitudeCoordinate);
 		
 		solarAzimuth = solarCalculator.solarAzimuthAngle();
-		solarElevation = solarCalculator.solarElevationAngle();
+		solarElevation = solarCalculator.correctedSolarElevation();
 		solarZenith = solarCalculator.solarZenithAngle();
-
+		
+		//double declination = solarCalculator.declinationOfSun();
+		//double hourAngle = solarCalculator.hourAngle();
+		
 		if (solarZenith > darkZenith) {
 			sunIsUp = false;
 		} else {
 			sunIsUp = true;
 		}
 		
-		
+		//double rotateY = 180.0 - (((double) lightOnTime / 86400000.0) * 360.0);
+		//getLightPositionByAngles(declination, longitude-hourAngle, xyz);
 		getLightPositionByAngles(solarElevation, solarAzimuth, xyz);
 	}
 	
@@ -152,6 +157,9 @@ public class SunlightPositioning
 		sunsource[1] = 0.0;
 		sunsource[2] = -149598000000.0; // One AU in meters
 
+		
+		//Vectors.rotate(0.0, viewPerspective.getRotateY()-90.0+solarAzimuth, 0.0, sunsource);
+		//Vectors.rotate(viewPerspective.getRotateX()+solarElevation, 0.0, 0.0, sunsource);
 		Vectors.rotate(solarElevation, -solarAzimuth, 0, sunsource);
 		
 		xyz[0] = sunsource[0];

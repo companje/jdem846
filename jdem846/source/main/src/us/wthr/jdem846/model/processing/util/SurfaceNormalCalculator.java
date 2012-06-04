@@ -6,8 +6,10 @@ import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Spheres;
+import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPointGrid;
+import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.processing.dataload.CornerEnum;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 
@@ -34,26 +36,48 @@ public class SurfaceNormalCalculator
 	protected double frontLeftPoints[] = new double[3];
 	protected double frontRightPoints[] = new double[3];
 	
+	protected double xyzN[] = new double[3];
+	protected double xyzS[] = new double[3];
+	protected double xyzE[] = new double[3];
+	protected double xyzW[] = new double[3];
+	protected double xyzC[] = new double[3];
+	
+	
+	protected double normalNW[] = new double[3];
+	protected double normalSW[] = new double[3];
+	protected double normalSE[] = new double[3];
+	protected double normalNE[] = new double[3];
+	
+	protected ViewPerspective viewPerspective;
+	
 	public SurfaceNormalCalculator(ModelPointGrid modelGrid, Planet planet, double latitudeResolution, double longitudeResolution)
+	{
+		this(modelGrid, planet, latitudeResolution, longitudeResolution, null);
+	}
+	
+	public SurfaceNormalCalculator(ModelPointGrid modelGrid, Planet planet, double latitudeResolution, double longitudeResolution, ViewPerspective viewPerspective)
 	{
 		this.modelGrid = modelGrid;
 		this.meanRadius = planet.getMeanRadius();
 		this.latitudeResolution = latitudeResolution;
 		this.longitudeResolution = longitudeResolution;
+		this.viewPerspective = viewPerspective;
 	}
 	
-	public SurfaceNormalCalculator(Planet planet, double latitudeResolution, double longitudeResolution)
+	public SurfaceNormalCalculator(Planet planet, double latitudeResolution, double longitudeResolution, ViewPerspective viewPerspective)
 	{
 		this.modelGrid = null;
 		this.meanRadius = planet.getMeanRadius();
 		this.latitudeResolution = latitudeResolution;
 		this.longitudeResolution = longitudeResolution;
+		this.viewPerspective = viewPerspective;
 	}
 	
-	public SurfaceNormalCalculator(double latitudeResolution, double longitudeResolution)
+	public SurfaceNormalCalculator(double latitudeResolution, double longitudeResolution, ViewPerspective viewPerspective)
 	{
 		this.latitudeResolution = latitudeResolution;
 		this.longitudeResolution = longitudeResolution;
+		this.viewPerspective = viewPerspective;
 	}
 	
 	
@@ -121,8 +145,19 @@ public class SurfaceNormalCalculator
 	{
 		resetBuffers(latitude, longitude);
 
-		
 		/*
+		double eLat = latitude;
+		double eLon = longitude + longitudeResolution;
+		
+		double sLat = latitude - latitudeResolution;
+		double sLon = longitude;
+		
+		double wLat = latitude;
+		double wLon = longitude - longitudeResolution;
+		
+		double nLat = latitude + latitudeResolution;
+		double nLon = longitude;
+		
 		fillPointXYZ(xyzN, nLat, nLon, nElev);
 		fillPointXYZ(xyzS, sLat, sLon, sElev);
 		fillPointXYZ(xyzE, eLat, eLon, eElev);
@@ -134,13 +169,13 @@ public class SurfaceNormalCalculator
 		perspectives.calcNormal(xyzC, xyzS, xyzE, normalSE); // SE
 		perspectives.calcNormal(xyzN, xyzC, xyzE, normalNE); // NE
 		
-		normalBufferB[0] = (normalNW[0] + normalSW[0] + normalSE[0] + normalNE[0]) / 4.0;
-		normalBufferB[1] = (normalNW[1] + normalSW[1] + normalSE[1] + normalNE[1]) / 4.0;
-		normalBufferB[2] = (normalNW[2] + normalSW[2] + normalSE[2] + normalNE[2]) / 4.0;
-		
-		
-		midPoint.setNormal(normalBufferB);
+		normal[0] = (normalNW[0] + normalSW[0] + normalSE[0] + normalNE[0]) / 4.0;
+		normal[1] = (normalNW[1] + normalSW[1] + normalSE[1] + normalNE[1]) / 4.0;
+		normal[2] = (normalNW[2] + normalSW[2] + normalSE[2] + normalNE[2]) / 4.0;
 		*/
+		
+		
+		
 		
 		
 		calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normalBufferA);
@@ -202,6 +237,10 @@ public class SurfaceNormalCalculator
 
 		Spheres.getPoint3D(longitude, latitude, radius, P);
 		
+		if (viewPerspective != null) {
+			Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, P);
+			Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
+		}
 	}
 	
 	public void resetBuffers(double latitude, double longitude)
