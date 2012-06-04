@@ -5,7 +5,9 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
+import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.ModelPoint;
+import us.wthr.jdem846.model.ViewPerspective;
 
 public class LightingCalculator
 {
@@ -36,25 +38,31 @@ public class LightingCalculator
 	double[] H = new double[3];
 	
 	protected Perspectives perspectives = new Perspectives();
+	protected ViewPerspective viewPerspective;
 	
 	public LightingCalculator()
 	{
 		
 	}
 	
-	public LightingCalculator(double emmisive, double ambient, double diffuse, double specular, double blockShadowIntensity)
+	public LightingCalculator(double emmisive, double ambient, double diffuse, double specular, double blockShadowIntensity, ViewPerspective viewPerspective)
 	{
 		setEmmisive(emmisive);
 		setAmbient(ambient);
 		setDiffuse(diffuse);
 		setSpecular(specular);
 		setBlockShadowIntensity(blockShadowIntensity);
+		this.viewPerspective = viewPerspective;
 	}
 
 	
 	public void calculateColor(double[] normal, double latitude, double longitude, double radius, double shininess, double blockDistance, double[] lightSource, int[] rgba)
 	{
 		Spheres.getPoint3D(longitude+180, latitude, radius, P);
+		
+		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, P);
+		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
+		
 		//modelPoint.getNormal(N);
 		
 		N[0] = normal[0];
