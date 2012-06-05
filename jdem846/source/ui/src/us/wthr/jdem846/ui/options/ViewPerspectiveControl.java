@@ -60,8 +60,8 @@ public class ViewPerspectiveControl extends PerspectiveValueControl implements C
 			viewPerspective = new ViewPerspective();
 		}
 		
-		viewPerspective.setRotateX(getRotateX());
-		viewPerspective.setRotateY(getRotateY());
+		//viewPerspective.setRotateX(getRotateX());
+		//viewPerspective.setRotateY(getRotateY());
 		
 		try {
 			propertyContainer.setValue(viewPerspective);

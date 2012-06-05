@@ -34,9 +34,9 @@ public class DiskCachedModelGrid extends ModelPointGrid
 	private byte[] buffer4 = new byte[4];
 	private byte[] buffer8 = new byte[8];
 	
-	public DiskCachedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution) throws Exception
+	public DiskCachedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum) throws Exception
 	{
-		super(north, south, east, west, latitudeResolution, longitudeResolution);
+		super(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum);
 		
 		cacheFile = TempFiles.getTemporaryFile("jdem_grid_");
 		

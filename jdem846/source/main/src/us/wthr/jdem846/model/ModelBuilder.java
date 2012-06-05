@@ -55,7 +55,8 @@ public class ModelBuilder extends InterruptibleProcess
 	
 	public void dispose()
 	{
-		
+		modelGrid.dispose();
+		modelGrid = null;
 	}
 	
 	public void prepare(ModelContext modelContext,  ModelProcessManifest modelProcessManifest) throws RenderEngineException
@@ -88,7 +89,9 @@ public class ModelBuilder extends InterruptibleProcess
 							globalOptionModel.getEastLimit(), 
 							globalOptionModel.getWestLimit(), 
 							modelDimensions.getOutputLatitudeResolution(), 
-							modelDimensions.getOutputLongitudeResolution());
+							modelDimensions.getOutputLongitudeResolution(),
+							modelContext.getRasterDataContext().getDataMinimumValue(),
+							modelContext.getRasterDataContext().getDataMaximumValue());
 				} catch (Exception ex) {
 					throw new RenderEngineException("Error creating disk cached model grid: " + ex.getMessage(), ex);
 				}
@@ -99,7 +102,10 @@ public class ModelBuilder extends InterruptibleProcess
 						globalOptionModel.getEastLimit(), 
 						globalOptionModel.getWestLimit(), 
 						modelDimensions.getOutputLatitudeResolution(), 
-						modelDimensions.getOutputLongitudeResolution());
+						modelDimensions.getOutputLongitudeResolution(),
+						modelContext.getRasterDataContext().getDataMinimumValue(),
+						modelContext.getRasterDataContext().getDataMaximumValue());
+				
 				
 				/*
 				modelGrid = new ModelGrid(globalOptionModel.getNorthLimit(), 
@@ -231,8 +237,7 @@ public class ModelBuilder extends InterruptibleProcess
 		}
 		
 		if (globalOptionModel.getDisposeGridOnComplete()) {
-			modelGrid.dispose();
-			modelGrid = null;
+			dispose();
 		}
 		
 		
@@ -422,5 +427,12 @@ public class ModelBuilder extends InterruptibleProcess
 	{
 		return isProcessing;
 	}
+
+	public ModelPointGrid getModelGrid()
+	{
+		return modelGrid;
+	}
+	
+	
 
 }

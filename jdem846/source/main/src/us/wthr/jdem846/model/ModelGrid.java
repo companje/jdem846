@@ -13,9 +13,9 @@ public class ModelGrid extends ModelPointGrid
 	
 	private boolean isDisposed = false;
 	
-	public ModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution)
+	public ModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum)
 	{
-		super(north, south, east, west, latitudeResolution, longitudeResolution);
+		super(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum);
 
 		grid = new ModelPoint[gridLength];
 		

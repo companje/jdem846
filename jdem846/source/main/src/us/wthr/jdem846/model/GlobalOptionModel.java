@@ -40,6 +40,7 @@ public class GlobalOptionModel implements OptionModel
 	private boolean interpolateData = true;
 	private boolean averageOverlappedData = true;
 	private String precacheStrategy = "tiled";
+	private int tileSize = 1000;
 	
 	private boolean useDiskCachedModelGrid = false;
 	private boolean disposeGridOnComplete = true;
@@ -413,6 +414,18 @@ public class GlobalOptionModel implements OptionModel
 
 	
 	
+	public int getTileSize()
+	{
+		return tileSize;
+	}
+
+
+	public void setTileSize(int tileSize)
+	{
+		this.tileSize = tileSize;
+	}
+
+
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.useDiskCachedModelGrid",
 			label="Use Disk Cache",
 			tooltip="",

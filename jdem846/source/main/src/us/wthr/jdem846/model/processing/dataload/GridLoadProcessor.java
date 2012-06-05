@@ -90,7 +90,8 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 		//averageOverlappedData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData");
 		
 		latitudeResolution = getModelDimensions().getLatitudeResolution();
-		tileHeight = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
+		//tileHeight = JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize");
+		tileHeight = getGlobalOptionModel().getTileSize();
 		cacheHeight = latitudeResolution * tileHeight;
 		nextCachePoint = north;
 		

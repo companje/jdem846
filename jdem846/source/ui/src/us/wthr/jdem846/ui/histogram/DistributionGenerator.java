@@ -8,12 +8,12 @@ import us.wthr.jdem846.math.MathExt;
 public class DistributionGenerator
 {
 	
-	public static HistogramModel generateHistogramModelFromImage(BufferedImage image)
+	public static TonalHistogramModel generateHistogramModelFromImage(BufferedImage image)
 	{
 		return generateHistogramModelFromImage(image, null);
 	}
 	
-	public static HistogramModel generateHistogramModelFromImage(BufferedImage image, boolean[][] modelMask)
+	public static TonalHistogramModel generateHistogramModelFromImage(BufferedImage image, boolean[][] modelMask)
 	{
 		TonalDistribution channel0 = new TonalDistribution(0);
 		TonalDistribution channel1 = new TonalDistribution(1);
@@ -43,7 +43,7 @@ public class DistributionGenerator
 		
 
 		
-		HistogramModel hm = new HistogramModel(channel0, channel1, channel2, channel3);
+		TonalHistogramModel hm = new TonalHistogramModel(channel0, channel1, channel2, channel3);
 
 		return hm;
 	}

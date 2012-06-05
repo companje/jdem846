@@ -25,6 +25,8 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.model.ElevationHistogramModel;
 import us.wthr.jdem846.model.ModelBuilder;
 import us.wthr.jdem846.model.ModelProcessManifest;
 import us.wthr.jdem846.tasks.RunnableTask;
@@ -33,11 +35,14 @@ import us.wthr.jdem846.tasks.TaskStatusListener;
 import us.wthr.jdem846.ui.FileSaveThread.SaveCompletedListener;
 import us.wthr.jdem846.ui.ImageDisplayPanel.MousePositionListener;
 import us.wthr.jdem846.ui.base.FileChooser;
+import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.SplitPane;
+import us.wthr.jdem846.ui.base.TabPane;
 import us.wthr.jdem846.ui.histogram.DistributionGenerator;
-import us.wthr.jdem846.ui.histogram.Histogram;
-import us.wthr.jdem846.ui.histogram.HistogramModel;
+import us.wthr.jdem846.ui.histogram.ElevationHistogram;
+import us.wthr.jdem846.ui.histogram.TonalHistogram;
+import us.wthr.jdem846.ui.histogram.TonalHistogramModel;
 
 @SuppressWarnings("serial")
 public class RenderViewPane extends Panel
@@ -60,7 +65,8 @@ public class RenderViewPane extends Panel
 	private TaskStatusListener taskStatusListener;
 	
 	private ImageDisplayPanel imageDisplay;
-	private Histogram histogramDisplay;
+	private TonalHistogram histogramDisplay;
+	private ElevationHistogram elevationHistogram;
 	
 	private ModelCanvas canvas;
 	private ModelContext modelContext;
@@ -93,16 +99,25 @@ public class RenderViewPane extends Panel
 			}
 		});
 		
-		histogramDisplay = new Histogram();
+		histogramDisplay = new TonalHistogram();
 		histogramDisplay.setPreferredSize(new Dimension(255, 150));
 		
+		elevationHistogram = new ElevationHistogram();
+		elevationHistogram.setPreferredSize(new Dimension(255, 150));
+		
 		//BorderFactory.createEtchedBorder()
-		histogramDisplay.setBorder(BorderFactory.createTitledBorder("RGB Histogram"));
+		//histogramDisplay.setBorder(BorderFactory.createTitledBorder("RGB Histogram"));
+		
+		TabPane toolsPanel = new TabPane();
+		toolsPanel.addTab("Tools", new Label("Tools go here."));
+		toolsPanel.addTab("RGB Histogram", histogramDisplay);
+		toolsPanel.addTab("Elevation Histogram", elevationHistogram);
+		
 		Panel southPanel = new Panel();
 		southPanel.setLayout(new BorderLayout());
-		southPanel.add(histogramDisplay, BorderLayout.EAST);
+		//southPanel.add(histogramDisplay, BorderLayout.EAST);
 		southPanel.setPreferredSize(new Dimension(400, 150));
-		
+		southPanel.add(toolsPanel, BorderLayout.CENTER);
 		
 		
 		setLayout(new BorderLayout());
@@ -128,7 +143,7 @@ public class RenderViewPane extends Panel
 				long elapsed = 0;
 				
 				ModelProcessManifest modelProcessManifest = modelContext.getModelProcessManifest();
-				
+				modelProcessManifest.getGlobalOptionModel().setDisposeGridOnComplete(false);
 				//ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext);
 				log.info("Initializing model builder...");
 				modelBuilder.prepare(modelContext, modelProcessManifest);
@@ -150,8 +165,25 @@ public class RenderViewPane extends Panel
 					imageDisplay.zoomFit();
 				}
 				
-				HistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(modelImage, modelMask);
+				TonalHistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(modelImage, modelMask);
 				histogramDisplay.setHistogramModel(histogramModel);
+				
+				ElevationHistogramModel elevationHistogramModel = modelBuilder.getModelGrid().getElevationHistogramModel();
+				elevationHistogram.setElevationHistogramModel(elevationHistogramModel);
+				
+				/*
+				int min = (int) MathExt.round(elevationHistogramModel.getMinimum());
+				int max = (int) MathExt.round(elevationHistogramModel.getMaximum());
+				int step = (int) MathExt.round(((double)max - (double)min) / (double)100);
+				
+				for (int e = min; e <= max; e+=step) {
+					int c = elevationHistogramModel.getCountWithinElevationRange(e, e+step-1);
+					log.info("" + e + ": " + c);
+				}
+
+				log.info("Max: " + elevationHistogramModel.getMaximumCount(step));
+				log.info("Min: " + elevationHistogramModel.getMinimumCount(step));
+				*/
 				
 				modelBuilder.dispose();
 				modelBuilder = null;
