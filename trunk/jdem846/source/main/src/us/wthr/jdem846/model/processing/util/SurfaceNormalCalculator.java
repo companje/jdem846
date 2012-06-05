@@ -172,8 +172,8 @@ public class SurfaceNormalCalculator
 		normal[0] = (normalNW[0] + normalSW[0] + normalSE[0] + normalNE[0]) / 4.0;
 		normal[1] = (normalNW[1] + normalSW[1] + normalSE[1] + normalNE[1]) / 4.0;
 		normal[2] = (normalNW[2] + normalSW[2] + normalSE[2] + normalNE[2]) / 4.0;
-		*/
 		
+		*/
 		
 		
 		
@@ -205,7 +205,7 @@ public class SurfaceNormalCalculator
 		normal[1] = normalBufferB[1] / 4.0;
 		normal[2] = normalBufferB[2] / 4.0;
 		
-
+	
 	}
 	
 	

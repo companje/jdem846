@@ -22,8 +22,9 @@ public abstract class ModelPointGrid
 	
 	protected int gridLength;
 
+	private ElevationHistogramModel elevationHistogramModel;
 	
-	public ModelPointGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution)
+	public ModelPointGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum)
 	{
 		this.north = north;
 		this.south = south;
@@ -39,7 +40,8 @@ public abstract class ModelPointGrid
 		this.width = (int) MathExt.ceil(_width);
 		
 		gridLength = height * width;
-
+		
+		elevationHistogramModel = new ElevationHistogramModel(minimum, maximum);
 		
 	}
 	
@@ -52,8 +54,8 @@ public abstract class ModelPointGrid
 	
 	protected int getIndex(double latitude, double longitude)
 	{
-		int column = (int) Math.floor((longitude - west) / longitudeResolution);
-		int row = (int) Math.floor((north - latitude) / latitudeResolution);
+		int column = (int) Math.round((longitude - west) / longitudeResolution);
+		int row = (int) Math.round((north - latitude) / latitudeResolution);
 		
 		if (column < 0 || column >= width) {
 			return -1;
@@ -85,6 +87,7 @@ public abstract class ModelPointGrid
 		ModelPoint mp = get(latitude, longitude);
 		if (mp != null) {
 			mp.setElevation(elevation);
+			getElevationHistogramModel().add(elevation);
 		}
 	}
 	
@@ -122,5 +125,13 @@ public abstract class ModelPointGrid
 			mp.setRgba(rgba);
 		}
 	}
+
+	public ElevationHistogramModel getElevationHistogramModel()
+	{
+		return elevationHistogramModel;
+	}
+
+	
+	
 
 }

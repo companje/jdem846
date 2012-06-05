@@ -47,7 +47,7 @@ private static Log log = null;
 		
 		BufferedImage spectrumImage = (BufferedImage) ImageIcons.loadImage("resources://jdem846-splash.png");
 		
-		HistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(spectrumImage);
+		TonalHistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(spectrumImage);
 		
 		for (int i = 0; i < 256; i++) {
 			
@@ -64,7 +64,7 @@ private static Log log = null;
 		System.out.println("Max: " + max);
 		
 		
-		Histogram histogram = new Histogram(histogramModel, Channels.CHANNEL_1 | Channels.CHANNEL_2 | Channels.CHANNEL_3);
+		TonalHistogram histogram = new TonalHistogram(histogramModel, Channels.CHANNEL_1 | Channels.CHANNEL_2 | Channels.CHANNEL_3);
 		frame.setContentPane(histogram);
 		frame.setVisible(true);
 		

@@ -52,6 +52,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 {
 	private static Log log = Logging.getLog(HillshadingProcessor.class);
 
+	protected boolean lightingEnabled = true;
+	
 	protected double relativeLightIntensity;
 	protected double relativeDarkIntensity;
 	protected int spotExponent;
@@ -107,6 +109,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	{
 		
 		HillshadingOptionModel optionModel = (HillshadingOptionModel) this.getProcessOptionModel();
+		
+		lightingEnabled = optionModel.isLightingEnabled();
 		
 		relativeLightIntensity = optionModel.getLightIntensity();
 		relativeDarkIntensity = optionModel.getDarkIntensity();
@@ -287,6 +291,9 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	
 	protected void processPointColor(double latitude, double longitude) throws RenderEngineException
 	{
+		if (!lightingEnabled) {
+			return;
+		}
 		
 		if (recalcLightOnEachPoint) {
 			sunlightPosition.getLightPositionByCoordinates(latitude, longitude, sunsource);
@@ -294,7 +301,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 		modelGrid.getRgba(latitude, longitude, rgbaBuffer);
 		normalsCalculator.calculateNormal(latitude, longitude, normal);
-
+		
+		
 		double blockAmt = 0;
 		try {
 			blockAmt = calculateRayTracedShadow(modelGrid.getElevation(latitude, longitude), latitude, longitude);

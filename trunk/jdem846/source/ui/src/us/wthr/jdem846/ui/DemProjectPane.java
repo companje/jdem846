@@ -1460,7 +1460,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		modelProcessManifest.getGlobalOptionModel().setInterpolateData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.interpolateToHigherResolution"));
 		modelProcessManifest.getGlobalOptionModel().setAverageOverlappedData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData"));
 		modelProcessManifest.getGlobalOptionModel().setPrecacheStrategy(JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy"));
-
+		modelProcessManifest.getGlobalOptionModel().setTileSize(JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize"));
 
 		
 		//String scriptContent = scriptPane.getScriptContent();
@@ -1483,15 +1483,16 @@ public class DemProjectPane extends JdemPanel implements Savable
 		}
 		*/
 		
+		ModelContext modelContextCopy = null;
 		try {
-			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, modelProcessManifest, scriptingContext);
+			modelContextCopy = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, modelProcessManifest, scriptingContext);
 		} catch (ModelContextException ex) {
 			// TODO: Display error dialog
 			log.error("Exception updating model context: " + ex.getMessage(), ex);
 		}
 		
 		
-		renderPane.render(modelContext);
+		renderPane.render(modelContextCopy);
 		//renderPane.requestFocus();
 		this.setComponentVisible(renderPane);
 		//fireCreateModelListeners(modelContext);

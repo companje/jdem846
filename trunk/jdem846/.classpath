@@ -38,5 +38,7 @@
 	<classpathentry kind="lib" path="lib/jgoodies-common-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/jgoodies-looks-2.4.2.jar"/>
 	<classpathentry kind="lib" path="lib/jsyntaxpane-0.9.5-b29.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.17.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.14.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

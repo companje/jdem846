@@ -17,9 +17,9 @@ public class BufferedModelGrid extends ModelPointGrid
 	
 	private boolean isDisposed = false;
 	
-	public BufferedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution)
+	public BufferedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum)
 	{
-		super(north, south, east, west, latitudeResolution, longitudeResolution);
+		super(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum);
 		
 		elevationGrid = new float[gridLength];
 		rgbaGrid = new int[gridLength];
@@ -105,6 +105,7 @@ public class BufferedModelGrid extends ModelPointGrid
 		int index = getIndex(latitude, longitude);
 		if (index >= 0 && index < this.gridLength) {
 			elevationGrid[index] = (float) elevation;
+			getElevationHistogramModel().add(elevation);
 		}
 	}
 	

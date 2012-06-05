@@ -2,7 +2,7 @@ package us.wthr.jdem846.ui.histogram;
 
 import us.wthr.jdem846.math.MathExt;
 
-public class HistogramModel
+public class TonalHistogramModel
 {
 	
 	
@@ -12,7 +12,7 @@ public class HistogramModel
 	private TonalDistribution channel3;
 	
 	
-	public HistogramModel(TonalDistribution channel0, TonalDistribution channel1, TonalDistribution channel2, TonalDistribution channel3)
+	public TonalHistogramModel(TonalDistribution channel0, TonalDistribution channel1, TonalDistribution channel2, TonalDistribution channel3)
 	{
 		this.channel0 = channel0;
 		this.channel1 = channel1;
