@@ -41,7 +41,7 @@ public abstract class ModelPointGrid
 		
 		gridLength = height * width;
 		
-		elevationHistogramModel = new ElevationHistogramModel(minimum, maximum);
+		elevationHistogramModel = new ElevationHistogramModel(500, minimum, maximum);
 		
 	}
 	

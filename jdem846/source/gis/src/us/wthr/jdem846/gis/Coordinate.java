@@ -1,6 +1,15 @@
 package us.wthr.jdem846.gis;
 
+import java.text.NumberFormat;
+
 public class Coordinate {
+	
+	private static final NumberFormat nf = NumberFormat.getNumberInstance();
+	
+	static {
+		nf.setMaximumFractionDigits(3);
+		nf.setMinimumFractionDigits(3);
+	}
 	
 	private double decimal;
     private int hour;
@@ -121,7 +130,45 @@ public class Coordinate {
 
 	public String toString()
     {
-		String str = "" + this.hour + "\u00B0 " + this.minute + "' " + this.second + "\"";
+		
+		char d;
+		
+		if (decimal >= 0) {
+			
+			if (coordinateType == CoordinateTypeEnum.LATITUDE) {
+				d = 'N';
+			} else {
+				d = 'S';
+			}
+			
+		} else {
+			
+			if (coordinateType == CoordinateTypeEnum.LONGITUDE) {
+				d = 'E';
+			} else {
+				d = 'W';
+			}
+			
+		}
+		
+		String str = "" + this.hour + "\u00B0 " + this.minute + "' " + nf.format(this.second) + "\" " + d;
         return str;
     }
+	
+	
+	public boolean equals(Object other)
+	{
+		if (other != null && other instanceof Coordinate) {
+			Coordinate cOther = (Coordinate) other;
+			
+			if (cOther.decimal == this.decimal && cOther.coordinateType == this.coordinateType) {
+				return true;
+			} else {
+				return false;
+			}
+			
+		} else {
+			return false;
+		}
+	}
 }

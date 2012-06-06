@@ -12,9 +12,8 @@ public class RasterBuffer3d
 	private int subpixelWidth;
 	private int pixelStackDepth;
 	
-	//private PixelBuffer pixelBuffer;
-	//private ZBuffer zBuffer;
-	private PixelMatrix pixelMatrix;
+
+	protected PixelMatrix pixelMatrix;
 	
 	private boolean isDisposed = false;
 	
@@ -27,10 +26,7 @@ public class RasterBuffer3d
 		this.height = height;
 		this.subpixelWidth = subpixelWidth;
 		this.pixelStackDepth = pixelStackDepth;
-		
-		//pixelBuffer = new PixelBuffer(width, height, subpixelWidth);
-		//zBuffer = new ZBuffer(width, height, subpixelWidth);
-		
+
 		pixelMatrix = new PixelMatrix(width, height, pixelStackDepth, subpixelWidth);
 	}
 	
@@ -42,17 +38,12 @@ public class RasterBuffer3d
 	public void reset(int backgroundColor)
 	{
 		this.backgroundColor = backgroundColor;
-		//pixelBuffer.reset(backgroundColor);
-		//zBuffer.reset();
 		pixelMatrix.reset(backgroundColor);
 	}
 	
 	public void dispose()
 	{
 		if (!isDisposed()) {
-			
-			//pixelBuffer = null;
-			//zBuffer = null;
 			pixelMatrix.dispose();
 			
 			isDisposed = true;
@@ -76,11 +67,7 @@ public class RasterBuffer3d
 	
 	public void set(double x, double y, double z, int rgba)
 	{
-		
-		//if (zBuffer.isVisible(x, y, z)) {
-		//	pixelBuffer.set(x, y, rgba);
-		//	zBuffer.set(x, y, z);
-		//}
+
 		pixelMatrix.set(x, y, z, rgba);
 	}
 	
@@ -139,8 +126,6 @@ public class RasterBuffer3d
 		}
 		
 		return rgba;
-		
-		//return pixelBuffer.get(x, y);
 	}
 
 	public int getWidth()

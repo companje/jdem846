@@ -5,6 +5,8 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.Projection;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.geom.GeoTriangleStrip;
+import us.wthr.jdem846.geom.GeoVertex;
 import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
@@ -139,7 +141,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	@Override
 	public void onModelLatitudeStart(double latitude)
 	{
-		strip = new TriangleStrip();
+		strip = new GeoTriangleStrip();
 	}
 
 	@Override
@@ -210,7 +212,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
     	double y = point.row;
     	double z = point.z;
 		
-    	Vertex v = new Vertex(x, y, z, rgba);
+    	Vertex v = new GeoVertex(x, y, z, rgba, lat, lon, elev);
     	return v;
 	}
 

@@ -70,32 +70,11 @@ public class TonalHistogram extends Panel
 			return;
 		}
 		
-		
-		Color[] colors = {new Color(255, 0, 0, 85),
-						new Color(0, 255, 0, 85),
-						new Color(0, 0, 255, 85)
-		};
-
-		class CustomRenderer extends AreaRenderer {
-			private Paint[] colors;
-			
-			public CustomRenderer() 
-			{
-				colors = new Paint[] {new Color(255, 0, 0, 85),
-						new Color(0, 255, 0, 85),
-						new Color(0, 0, 255, 85)
-				};
-			}
-			
-			public Paint getItemPaint(final int row, final int column) 
-			{ 
-				return (this.colors[row % this.colors.length]); 
-			} 
-		};
+	
 		
 		
-		double[][] data = new double[3][256];
-		for (int i = 0; i <= 255; i++) {
+		double[][] data = new double[3][255];
+		for (int i = 0; i < 255; i++) {
 			int c0 = histogramModel.getChannel0().distribution[i];
 			int c1 = histogramModel.getChannel1().distribution[i];
 			int c2 = histogramModel.getChannel2().distribution[i];
@@ -138,125 +117,13 @@ public class TonalHistogram extends Panel
 		plot.getRangeAxis().setMinorTickMarksVisible(false);
 		plot.getRangeAxis().setTickLabelsVisible(false);
 		
-		CustomRenderer renderer = new CustomRenderer();
+		HistogramRenderer renderer = new HistogramRenderer();
 		plot.setRenderer(renderer);
-        //plot.setForegroundAlpha(0.33f);
-		
+
 		ChartPanel chartPanel = new ChartPanel(chart);
 		add(chartPanel, BorderLayout.CENTER);
-		
-		/*
-		if (histogramModel != null && getWidth() > 0 && getHeight() > 0) {
-			histogram = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-			paintHistogram(histogram.getGraphics(), getWidth(), getHeight());
-		}
-		*/
-	}
-	
-	public void paintHistogram(Graphics g, int width, int height)
-	{
-		
-		/*
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		Color background = new Color(0, 0, 0, 0);
-		
-		g2d.setColor(background);
-		g2d.fillRect(0, 0, width, height);
-		
-		if (histogramModel == null)
-			return;
-		
-		
-		double max = histogramModel.getMax(channels);
-		
-		Color color0 = new Color(255, 0, 0, 85);
-		Color color1 = new Color(0, 255, 0, 85);
-		Color color2 = new Color(0, 0, 255, 85);
-		Color color3 = new Color(255, 255, 0, 85);
-		
-		Polygon polygon0 = new Polygon();
-		Polygon polygon1 = new Polygon();
-		Polygon polygon2 = new Polygon();
-		Polygon polygon3 = new Polygon();
-		
-		polygon0.addPoint(0, height);
-		polygon1.addPoint(0, height);
-		polygon2.addPoint(0, height);
-		polygon3.addPoint(0, height);
-		
-		int x = 0;
-		
-		for (int i = 0; i <= 255; i++) {
-			double c0 = histogramModel.getChannel0().distribution[i];
-			double c1 = histogramModel.getChannel1().distribution[i];
-			double c2 = histogramModel.getChannel2().distribution[i];
-			double c3 = histogramModel.getChannel3().distribution[i];
-			
-			int h0 = (int) MathExt.round((c0 / max) * (double)height);
-			int h1 = (int) MathExt.round((c1 / max) * (double)height);
-			int h2 = (int) MathExt.round((c2 / max) * (double)height);
-			int h3 = (int) MathExt.round((c3 / max) * (double)height);
-			
-			
-			x = (int) MathExt.round(((double)i / 255.0) * (double) width);
-			
-			polygon0.addPoint(x, height - h0);
-			polygon1.addPoint(x, height - h1);
-			polygon2.addPoint(x, height - h2);
-			polygon3.addPoint(x, height - h3);
 
-		}
-		
-		polygon0.addPoint(width, height);
-		polygon1.addPoint(width, height);
-		polygon2.addPoint(width, height);
-		polygon3.addPoint(width, height);
-		
-		
-		if ((channels & Channels.CHANNEL_1) == Channels.CHANNEL_1) {
-			g2d.setColor(color0);
-			g2d.fill(polygon0);
-		}
-		
-		if ((channels & Channels.CHANNEL_2) == Channels.CHANNEL_2) {
-			g2d.setColor(color1);
-			g2d.fill(polygon1);
-		}
-		
-		if ((channels & Channels.CHANNEL_3) == Channels.CHANNEL_3) {
-			g2d.setColor(color2);
-			g2d.fill(polygon2);
-		}
-		
-		if ((channels & Channels.CHANNEL_4) == Channels.CHANNEL_4) {
-			g2d.setColor(color3);
-			g2d.fill(polygon3);
-		}
-		*/
 	}
 	
-	/*
-	public void paint(Graphics g)
-	{
-		if (histogramModel != null && histogram != null && histogram.getWidth() != getWidth() || histogram.getHeight() != getHeight()) {
-			createHistogram();
-		}
-		
-		if (histogram != null) {
-			
-			
-			
-			Insets insets = this.getInsets();
-			int width = getWidth() - insets.left - insets.right;
-			int height = getHeight() - insets.top - insets.bottom;
-			g.drawImage(histogram, insets.left, insets.top, width, height, null);
-		}
-		
-		super.paint(g);
-	}
-	*/
-	
+
 }

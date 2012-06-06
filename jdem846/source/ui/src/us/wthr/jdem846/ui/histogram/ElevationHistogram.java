@@ -104,6 +104,10 @@ public class ElevationHistogram extends Panel
 		plot.getRangeAxis().setMinorTickMarksVisible(false);
 		plot.getRangeAxis().setTickLabelsVisible(false);
 		
+		HistogramRenderer renderer = new HistogramRenderer();
+		plot.setRenderer(renderer);
+		//plot.setForegroundAlpha(0.33f);
+		
 		ChartPanel chartPanel = new ChartPanel(chart);
 		add(chartPanel, BorderLayout.CENTER);
 		
