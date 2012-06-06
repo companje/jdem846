@@ -198,7 +198,23 @@ public class PixelMatrix extends AbstractBuffer
 		
 		return true;
 	}
-	
+
+	public boolean isVisibleAbsolute(double x, double y, double z)
+	{
+		int matrixIndex = this.getIndex(x, y);
+		
+		for (int i = 0; i < zMatrix[matrixIndex].length; i++) {
+			if (zMatrix[matrixIndex][i] > z) {
+				return false;
+			}
+
+		}
+		
+		return true;
+		
+	}
+
+		
 	
 	
 	protected boolean overlayTransparentColors()

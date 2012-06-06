@@ -16,14 +16,20 @@
 
 package us.wthr.jdem846.ui;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -31,6 +37,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,6 +83,9 @@ public class ImageDisplayPanel extends Panel
 	private boolean allowZooming = true;
 	
 	public Color backgroundColor = Color.WHITE;
+	
+	private Rectangle paintedImageBounds = new Rectangle();
+	private String status = null;
 	
 	public ImageDisplayPanel()
 	{
@@ -272,6 +282,7 @@ public class ImageDisplayPanel extends Panel
 	public void paint(Graphics g)
 	{
 		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		if (backgroundColor != null) {
 			g.setColor(backgroundColor);
@@ -289,6 +300,11 @@ public class ImageDisplayPanel extends Panel
 			
 			g.drawImage(displayImage, x, y, null);
 			
+			paintedImageBounds.x = x;
+			paintedImageBounds.y = y;
+			paintedImageBounds.width = displayImage.getWidth(null);
+			paintedImageBounds.height = displayImage.getHeight(null);
+			
 		}
 		
 		if (sldZoomLevel.isVisible()) {
@@ -297,7 +313,49 @@ public class ImageDisplayPanel extends Panel
 			g2d.fillRoundRect(insets.left + 10, insets.top + 10, sldZoomLevel.getWidth(), sldZoomLevel.getHeight(), 10, 10);
 		}
 		
+		Stroke origStroke = g2d.getStroke();
+		Font origFont = g2d.getFont();
+		if (status != null) {
+			g2d.setColor(new Color(0, 0, 0, 50));
+			g2d.fillRect(0, getHeight() - 20, getWidth(), 20);
+			
+			FontMetrics fm = g2d.getFontMetrics();
+
+			
+			Font f = new Font(Font.SANS_SERIF, Font.BOLD, 12);
+		    GlyphVector gv = f.createGlyphVector(g2d.getFontRenderContext(), status);
+		    Shape shape = gv.getOutline();
+		    
+		    g2d.setStroke(new BasicStroke(2.0f));
+
+			int w = fm.stringWidth(status);
+			int x = (int) MathExt.round(((double)getWidth() / 2.0) - ((double)w / 2.0));
+			
+			int h = fm.getAscent();
+			int y = (int) MathExt.round(getHeight() - (10 - ((double)h / 2.0)));
+			
+			
+			
+			g2d.setColor(new Color(0, 0, 0, 180));
+			g.translate(x, y); 
+			g2d.draw(shape);
+			g.translate(-x, -y); 
+			
+			g2d.setFont(f);
+			g2d.setColor(Color.WHITE);
+			g2d.drawString(status, x, y);
+			
+			
+		}
+		g2d.setStroke(origStroke);
+		g2d.setFont(origFont);
+		
 		super.paint(g);
+	}
+	
+	public void setStatus(String status)
+	{
+		this.status = status;
 	}
 	
 	protected void validateImagePosition()
@@ -415,6 +473,12 @@ public class ImageDisplayPanel extends Panel
 		this.sldZoomLevel.setVisible(allowZooming);
 	}
 
+	
+	public Rectangle getPaintedImageBounds()
+	{
+		return paintedImageBounds;
+	}
+
 	public void addMousePositionListener(MousePositionListener listener)
 	{
 		mousePositionListeners.add(listener);
@@ -437,5 +501,7 @@ public class ImageDisplayPanel extends Panel
 	{
 		public void onMousePositionChanged(int x, int y, double scaledPercent);
 	}
+	
+
 	
 }

@@ -12,15 +12,25 @@ public class ElevationHistogramModel
 	private int minimum;
 	private int maximum;
 	
+	private int maxBins;
+	private int bins;
 	
-	public ElevationHistogramModel(double min, double max)
+	public ElevationHistogramModel(int maxBins, double min, double max)
 	{
-		
-		minimum = (int) MathExt.round(min);
-		maximum = (int) MathExt.round(max);
-		
+		this.maxBins = maxBins;
+		minimum = (int) MathExt.floor(min);
+		maximum = (int) MathExt.ceil(max);
+
 		int length = maximum - minimum + 1;
-		distribution = new int[length];
+		if (length < maxBins) {
+			bins = length;
+		} else {
+			bins = maxBins;
+		}
+		
+		
+		
+		distribution = new int[bins];
 		Arrays.fill(distribution, 0);
 		
 	}
@@ -40,9 +50,8 @@ public class ElevationHistogramModel
 
 	protected int getIndex(double elevation)
 	{
-		int ielevation = (int) MathExt.round(elevation);
-		int index = ielevation - minimum;
-		return index;
+		int i = (int) MathExt.round(((double)(elevation - minimum) / (double)(maximum - minimum)) * (double)bins);
+		return i;
 	}
 
 	public int getMinimum()

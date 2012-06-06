@@ -1,7 +1,10 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -17,11 +20,14 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.gis.Coordinate;
+import us.wthr.jdem846.gis.CoordinateTypeEnum;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -68,7 +74,8 @@ public class RenderViewPane extends Panel
 	private TonalHistogram histogramDisplay;
 	private ElevationHistogram elevationHistogram;
 	
-	private ModelCanvas canvas;
+	//private ModelCanvas canvas;
+	private JDemElevationModel jdemElevationModel;
 	private ModelContext modelContext;
 	private boolean isWorking = false;
 	private boolean showPreviews = true;
@@ -79,6 +86,13 @@ public class RenderViewPane extends Panel
 	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
+	private Coordinate latitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LATITUDE);
+    private Coordinate longitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LONGITUDE);
+
+    private int lastMouseX = -1;
+    private int lastMouseY = -1;
+
+    
 	public RenderViewPane(final ModelContext modelContext)
 	{
 		this.modelContext = modelContext;
@@ -150,40 +164,28 @@ public class RenderViewPane extends Panel
 				
 				log.info("Processing...");
 				start = System.currentTimeMillis();
-				modelBuilder.process();
+				jdemElevationModel = modelBuilder.process();
 				
 
 				elapsed = (System.currentTimeMillis() - start) / 1000;
+
+				//canvas = modelContext.getModelCanvas();
 				
-				canvas = modelContext.getModelCanvas();
-				
-				BufferedImage modelImage = (BufferedImage) canvas.getImage();
-				boolean[][] modelMask = canvas.getModelMask();
+				BufferedImage modelImage = (BufferedImage) jdemElevationModel.getImage();
+				//boolean[][] modelMask = canvas.getModelMask();
 				
 				synchronized(imageDisplay) {
 					imageDisplay.setImage(modelImage);
 					imageDisplay.zoomFit();
 				}
 				
-				TonalHistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(modelImage, modelMask);
+				TonalHistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(jdemElevationModel);
 				histogramDisplay.setHistogramModel(histogramModel);
 				
+				//ElevationHistogramModel elevationHistogramModel = jdemElevationModel.getElevationHistogramModel(500);
 				ElevationHistogramModel elevationHistogramModel = modelBuilder.getModelGrid().getElevationHistogramModel();
 				elevationHistogram.setElevationHistogramModel(elevationHistogramModel);
-				
-				/*
-				int min = (int) MathExt.round(elevationHistogramModel.getMinimum());
-				int max = (int) MathExt.round(elevationHistogramModel.getMaximum());
-				int step = (int) MathExt.round(((double)max - (double)min) / (double)100);
-				
-				for (int e = min; e <= max; e+=step) {
-					int c = elevationHistogramModel.getCountWithinElevationRange(e, e+step-1);
-					log.info("" + e + ": " + c);
-				}
 
-				log.info("Max: " + elevationHistogramModel.getMaximumCount(step));
-				log.info("Min: " + elevationHistogramModel.getMinimumCount(step));
-				*/
 				
 				modelBuilder.dispose();
 				modelBuilder = null;
@@ -214,7 +216,7 @@ public class RenderViewPane extends Panel
 		taskStatusListener = new TaskStatusListener() {
 			public void taskCancelled(RunnableTask task)
 			{
-				if (canvas != null) {
+				if (jdemElevationModel != null) {
 					taskCompleted(task);
 				} else {
 					onNonSuccessfulCompletion(task, null);
@@ -237,7 +239,7 @@ public class RenderViewPane extends Panel
 			}
 			public void taskFailed(RunnableTask task, Throwable thrown)
 			{
-				canvas = null;
+				jdemElevationModel = null;
 				currentState = RenderViewPane.FAILED;
 				
 				detachModelListeners(true);
@@ -258,7 +260,7 @@ public class RenderViewPane extends Panel
 			
 			protected void onNonSuccessfulCompletion(RunnableTask task, Throwable thrown) 
 			{
-				canvas = null;
+				jdemElevationModel = null;
 				
 				currentState = RenderViewPane.CANCELED;
 				
@@ -525,22 +527,47 @@ public class RenderViewPane extends Panel
 	
 	protected void onMousePosition(int x, int y, double scaledPercent)
 	{
+
+		updateStatus(x, y, scaledPercent);
+
+		lastMouseX = x;
+		lastMouseY = y;
+	}
+	
+	protected void updateStatus(int mouseX, int mouseY, double scaledPercent)
+	{
+		
 		if (isWorking()) {
 			return;
 		}
 		
-		int trueX = (int) Math.round((double)x / scaledPercent);
-		int trueY = (int) Math.round((double)y / scaledPercent);
 		
-		if (trueX == -1 || trueY == -1) {
-			//statusBar.setStatus(" ");
-			SharedStatusBar.setStatus("");
-			return;
-		}
+		int paintedX = imageDisplay.getPaintedImageBounds().x;
+		int paintedY = imageDisplay.getPaintedImageBounds().y;
+		
+		int trueX = (int) Math.round((double)(mouseX - paintedX) / scaledPercent);
+		int trueY = (int) Math.round((double)(mouseY - paintedY) / scaledPercent);
+		
 
+		if (jdemElevationModel != null && jdemElevationModel.getMask(trueX, trueY)) {
+			
+			double latitude = jdemElevationModel.getLatitude(trueX, trueY);
+			double longitude = jdemElevationModel.getLongitude(trueX, trueY);
+			double elevation = jdemElevationModel.getElevation(trueX, trueY);
+			
+			latitudeCoordinate.fromDecimal(latitude);
+			longitudeCoordinate.fromDecimal(longitude);
+			
+			String status = ""+latitudeCoordinate + "  " + longitudeCoordinate + "  elev " + ((int)MathExt.round(elevation)) + "m";
+			
+			imageDisplay.setStatus(status);
+		} else {
+			imageDisplay.setStatus(null);
+		}
+		
+		imageDisplay.repaint();
 		
 	}
-	
 
 	
 	public void save()
@@ -589,7 +616,7 @@ public class RenderViewPane extends Panel
 	
 	protected void saveTo(String path) 
 	{
-		FileSaveThread saveThread = new FileSaveThread(canvas.getImage(), path);
+		FileSaveThread saveThread = new FileSaveThread(jdemElevationModel.getImage(), path);
 		saveThread.addSaveCompletedListener(new SaveCompletedListener() {
 			public void onSaveSuccessful()
 			{

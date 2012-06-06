@@ -1,5 +1,6 @@
 package us.wthr.jdem846.model;
 
+import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.Projection;
@@ -156,7 +157,7 @@ public class ModelBuilder extends InterruptibleProcess
 	}
 	
 	
-	public void process() throws RenderEngineException
+	public JDemElevationModel process() throws RenderEngineException
 	{
 		if (!isPrepared()) {
 			throw new RenderEngineException("Model builder not yet prepared!");
@@ -164,7 +165,7 @@ public class ModelBuilder extends InterruptibleProcess
 		
 		if (!modelContainsData()) {
 			log.info("Model contains no data. Skipping model build process");
-			return;
+			return null;
 		}
 		
 		ProcessInterruptHandler interruptHandler = new ProcessInterruptHandler();
@@ -222,7 +223,7 @@ public class ModelBuilder extends InterruptibleProcess
 			if (this.isCancelled()) {
 				log.info("Model builder was cancelled. Exiting in incomplete state.");
 				setProcessing(false);
-				return;
+				return modelContext.getModelCanvas().getJdemElevationModel();
 			}
 		}
 		
@@ -242,6 +243,8 @@ public class ModelBuilder extends InterruptibleProcess
 		
 		
 		setProcessing(false);
+		
+		return modelContext.getModelCanvas().getJdemElevationModel();
 	}
 	
 

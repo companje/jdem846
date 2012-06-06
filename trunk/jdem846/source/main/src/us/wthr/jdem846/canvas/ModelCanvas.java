@@ -12,6 +12,7 @@ import java.awt.Shape;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
+import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.exception.CanvasException;
@@ -473,6 +474,11 @@ public class ModelCanvas
 		return isDisposed;
 	}
 	
+	
+	public JDemElevationModel getJdemElevationModel()
+	{
+		return canvas.getJdemElevationModel();
+	}
 	
 	public Image getImage()
 	{

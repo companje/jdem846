@@ -44,7 +44,7 @@ private static Log log = null;
 		frame.setSize(256, 150);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		
+		/*
 		BufferedImage spectrumImage = (BufferedImage) ImageIcons.loadImage("resources://jdem846-splash.png");
 		
 		TonalHistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(spectrumImage);
@@ -68,7 +68,7 @@ private static Log log = null;
 		frame.setContentPane(histogram);
 		frame.setVisible(true);
 		
-		
+		*/
 		
 	}
 }

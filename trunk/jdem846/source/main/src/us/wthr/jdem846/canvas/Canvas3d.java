@@ -11,8 +11,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.geom.Edge;
+import us.wthr.jdem846.geom.GeoTriangle;
 import us.wthr.jdem846.geom.Geometric;
 import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.geom.Triangle;
@@ -38,7 +40,7 @@ public class Canvas3d
 	//private MatrixBuffer<Integer> pixelBuffer;
 	//private MatrixBuffer<Double> zBuffer;
 	
-	private RasterBuffer3d rasterBuffer;
+	private GeoRasterBuffer3d rasterBuffer;
 	
 	private RenderPipeline pipeline;
 	
@@ -78,14 +80,8 @@ public class Canvas3d
 		this.subpixelWidth = subpixelWidth;
 		this.pixelStackDepth = pixelStackDepth;
 		
-		rasterBuffer = new RasterBuffer3d(width, height, pixelStackDepth, subpixelWidth);
+		rasterBuffer = new GeoRasterBuffer3d(width, height, pixelStackDepth, subpixelWidth);
 		rasterBuffer.reset(backgroundColor);
-		//pixelBuffer = new MatrixBuffer<Integer>(width, height);
-		//zBuffer = new MatrixBuffer<Double>(width, height);
-		
-		//pixelBuffer.fill(0x0);
-		//zBuffer.fill(Canvas3d.Z_VALUE_NOT_SET);
-
 	}
 	
 	public void draw(Geometric shape, int[] rgba)
@@ -305,6 +301,11 @@ public class Canvas3d
 		
 		double f = 1.0 / this.subpixelWidth;
 
+		GeoTriangle geoTriangle = null;
+		if (tri instanceof GeoTriangle) {
+			geoTriangle = (GeoTriangle) tri;
+		}
+		
 		for (double y = minY; y <= maxY; y+=f) {
 			for (double x = minX; x <= maxX; x+=f) {
 				
@@ -312,9 +313,16 @@ public class Canvas3d
 					
 					double z = tri.getInterpolatedZ(x, y);
 					tri.getInterpolatedColor(x, y, rgba);
-
-					set(x, y, z, rgba);
-
+					
+					if (geoTriangle == null) {
+						set(x, y, z, rgba);
+					} else {
+						set(x, y, z, rgba,
+								geoTriangle.getInterpolatedLatitude(x, y),
+								geoTriangle.getInterpolatedLongitude(x, y),
+								geoTriangle.getInterpolatedElevation(x, y));
+					}
+					
 				}
 				
 			}
@@ -483,6 +491,11 @@ public class Canvas3d
 	
 	
 	
+	public void set(double x, double y, double z, int[] rgba, double latitude, double longitude, double elevation)
+	{
+		set(x, y, z, ColorUtil.rgbaToInt(rgba), latitude, longitude, elevation);
+	}
+	
 	public void set(double x, double y, double z, int[] rgba)
 	{
 		set(x, y, z, ColorUtil.rgbaToInt(rgba));
@@ -493,64 +506,11 @@ public class Canvas3d
 		this.rasterBuffer.set(x, y, z, rgba);
 	}
 	
-	/*
-	public void set(int x, int y, double z, int[] rgb)
+	public void set(double x, double y, double z, int rgba, double latitude, double longitude, double elevation)
 	{
-		set(x, y, z, ColorUtil.rgbaToInt(rgb));
+		this.rasterBuffer.set(x, y, z, rgba, latitude, longitude, elevation);
 	}
-	
-	public void set(int x, int y, double z, int r, int g, int b)
-	{
-		set(x, y, z, ColorUtil.rgbaToInt(r, g, b));
-	}
-	
-	public void set(int x, int y, double z, int rgb)
-	{
-		if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
-			return;
-		}
-		
-		if (!isValidZCoordinate(z)) {
-			return;
-		}
 
-		double _z = zBuffer.get(x, y);
-		
-		if (_z == DemConstants.ELEV_NO_DATA || _z < z) {
-			pixelBuffer.set(x, y, rgb);
-			zBuffer.set(x, y, z);
-		}
-		
-	}
-	
-	public void set(double x, double y, double z, int rgba)
-	{
-		int[] _rgba = new int[4];
-		ColorUtil.intToRGBA(rgba, _rgba);
-		set(x, y, z, _rgba);
-	}
-	
-	public void set(double x, double y, double z, int[] rgba)
-	{
-		
-		int _x = (int) MathExt.floor(x);
-		int _y = (int) MathExt.floor(y);
-		
-		if (!isValidZCoordinate(z))
-			return;
-
-		
-		if (_x < 0 || _x >= getWidth() || _y < 0 || _y >= getHeight()) {
-			return;
-		}
-		
-		double _z = zBuffer.get(_x, _y);
-		if (_z == DemConstants.ELEV_NO_DATA || z >= _z) {
-			set(_x, _y, z, rgba);
-		}
-		
-	}
-	*/
 	
 	private boolean isValidZCoordinate(double z)
 	{
@@ -635,6 +595,11 @@ public class Canvas3d
 		}
 		
 		return image;
+	}
+	
+	public JDemElevationModel getJdemElevationModel()
+	{
+		return new JDemElevationModel(rasterBuffer);
 	}
 	
 	

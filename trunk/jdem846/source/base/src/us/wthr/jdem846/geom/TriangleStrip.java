@@ -50,7 +50,7 @@ public class TriangleStrip
 		Vertex p2 = verteces.get(index + 2);
 		
 		if (triangle == null) {
-			triangle = new Triangle();
+			triangle = createDefaultTriangle();
 		}
 		triangle.p0 = p0;
 		triangle.p1 = p1;
@@ -58,6 +58,11 @@ public class TriangleStrip
 		triangle.initialize();
 		//Triangle triangle = new Triangle(p0, p1, p2);
 		return triangle;
+	}
+	
+	protected Triangle createDefaultTriangle()
+	{
+		return new Triangle();
 	}
 	
 }
