@@ -29,7 +29,8 @@ public class ElevationHistogramModel
 	public void add(double elevation)
 	{
 		int index = getIndex(elevation);
-		distribution[index]++;
+		if (index < distribution.length)
+			distribution[index]++;
 	}
 	
 	public int[] getDistribution()
@@ -58,7 +59,10 @@ public class ElevationHistogramModel
 	public int getCountAtElevation(double elevation)
 	{
 		int index = getIndex(elevation);
-		return distribution[index];
+		if (index >= 0 && index < distribution.length)
+			return distribution[index];
+		else
+			return 0;
 	}
 	
 	public int getMaximumCount(int step)
