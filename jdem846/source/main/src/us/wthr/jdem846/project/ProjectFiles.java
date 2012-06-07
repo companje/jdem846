@@ -2,7 +2,9 @@ package us.wthr.jdem846.project;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
+import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;

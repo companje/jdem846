@@ -106,7 +106,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		globalOptionsScroll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		
 		EmbeddedTabbedPane tabPane = new EmbeddedTabbedPane();
-		
+		tabPane.setBorder(BorderFactory.createEmptyBorder());
 		tabPane.add("General", globalOptionsScroll);
 		tabPane.add("Coloring", coloringConfiguration);
 		tabPane.add("Shading", shadingConfiguration);

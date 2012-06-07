@@ -1,8 +1,14 @@
 package us.wthr.jdem846.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.util.ByteConversions;
 
 public class ElevationHistogramModel
 {
@@ -11,13 +17,15 @@ public class ElevationHistogramModel
 	
 	private int minimum;
 	private int maximum;
-	
-	private int maxBins;
 	private int bins;
+	
+	public ElevationHistogramModel(InputStream in) throws IOException
+	{
+		this.read(in);
+	}
 	
 	public ElevationHistogramModel(int maxBins, double min, double max)
 	{
-		this.maxBins = maxBins;
 		minimum = (int) MathExt.floor(min);
 		maximum = (int) MathExt.ceil(max);
 
@@ -116,6 +124,69 @@ public class ElevationHistogramModel
 		}
 		
 		return count;
+	}
+	
+	protected void read(InputStream in) throws IOException
+	{
+		byte[] buffer1k = new byte[1024];
+		byte[] buffer4 = new byte[4];
+		
+		int intValue = 0;
+		int len = 0;
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		while((len = in.read(buffer1k)) != -1) {
+			baos.write(buffer1k, 0, len);
+		}
+		
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		
+		bais.read(buffer4);
+		minimum = ByteConversions.bytesToInt(buffer4);
+		
+		bais.read(buffer4);
+		maximum = ByteConversions.bytesToInt(buffer4);
+		
+		bais.read(buffer4);
+		bins = ByteConversions.bytesToInt(buffer4);
+		
+		distribution = new int[bins];
+		for (int i = 0; i < bins; i++) {
+			bais.read(buffer4);
+			distribution[i] = ByteConversions.bytesToInt(buffer4);
+		}
+		
+	}
+	
+	public void write(OutputStream out) throws IOException
+	{
+		
+		byte[] buffer4 = new byte[4];
+		
+		ByteConversions.intToBytes(minimum, buffer4);
+		out.write(buffer4);
+		
+		ByteConversions.intToBytes(maximum, buffer4);
+		out.write(buffer4);
+		
+		ByteConversions.intToBytes(bins, buffer4);
+		out.write(buffer4);
+		
+		for (int i = 0; i < distribution.length; i++) {
+			ByteConversions.intToBytes(distribution[i], buffer4);
+			out.write(buffer4);
+		}
+		
+		out.flush();
+		/*
+		 * private int[] distribution;
+	
+	private int minimum;
+	private int maximum;
+	private int bins;
+		 */
+		
 	}
 	
 }

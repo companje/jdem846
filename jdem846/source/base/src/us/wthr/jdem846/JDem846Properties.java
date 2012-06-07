@@ -29,6 +29,7 @@ import java.util.Properties;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.util.NumberFormattingUtil;
 
 /** Properties manager class.
  * 
@@ -55,12 +56,30 @@ public class JDem846Properties
 		return properties.containsKey(name);
 	}
 	
-	public static void setProperty(String name, String value)
+	public static void setProperty(String name, Object value)
 	{
-		String oldValue = properties.getProperty(name);
-		properties.setProperty(name, value);
+		if (value == null) {
+			return;
+		}
 		
-		firePropertiesChangeListener(name, oldValue, value);
+		String sValue = null;
+		if (value instanceof String) {
+			sValue = (String) value;
+		} else if (value instanceof Integer ||
+					value instanceof Double ||
+					value instanceof Long ||
+					value instanceof Float) {
+			sValue = NumberFormattingUtil.format(value);
+		} else if (value instanceof Boolean){
+			sValue = Boolean.toString((Boolean)value);
+		} else {
+			sValue = value.toString();
+		}
+
+		String oldValue = properties.getProperty(name);
+		properties.setProperty(name, sValue);
+		
+		firePropertiesChangeListener(name, oldValue, sValue);
 	}
 	
 	public static String getProperty(String name)

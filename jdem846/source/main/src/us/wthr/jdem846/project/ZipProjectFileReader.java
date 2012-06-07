@@ -1,17 +1,23 @@
 package us.wthr.jdem846.project;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.imageio.ImageIO;
+
+import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.ElevationHistogramModel;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 
 public class ZipProjectFileReader
@@ -49,6 +55,57 @@ public class ZipProjectFileReader
 		projectMarshall.setUserScript(script);
 	}
 	
+	
+	protected static JDemElevationModel loadElevationModelFromZip(int index, ZipFile zipFile) throws IOException
+	{
+		ZipEntry imageFile = zipFile.getEntry("models/" + index + "/image.png");
+		
+		
+		if (imageFile == null) {
+			return null;
+		}
+		
+		log.info("Loading from " + imageFile.getName() + ". Compressed Size: " + imageFile.getCompressedSize() + ". Size: " + imageFile.getSize());
+		InputStream imageInStream = zipFile.getInputStream(imageFile);
+		BufferedImage image = ImageIO.read(imageInStream);
+		imageInStream.close();
+		
+		ZipEntry dataFile = zipFile.getEntry("models/" + index + "/model.dat");
+		log.info("Loading from " + dataFile.getName() + ". Compressed Size: " + dataFile.getCompressedSize() + ". Size: " + dataFile.getSize());
+		InputStream dataInStream = zipFile.getInputStream(dataFile);
+		JDemElevationModel jdemElevationModel = new JDemElevationModel(image, dataInStream);
+		dataInStream.close();
+		
+		
+		ZipEntry histogramEntry = zipFile.getEntry("models/" + index + "/elevation-histogram.dat");
+		if (histogramEntry != null) {
+			log.info("Loading from " + histogramEntry.getName() + ". Compressed Size: " + histogramEntry.getCompressedSize() + ". Size: " + histogramEntry.getSize());
+			InputStream histogramInStream = zipFile.getInputStream(histogramEntry);
+			ElevationHistogramModel histogramModel = new ElevationHistogramModel(histogramInStream);
+			jdemElevationModel.setElevationHistogramModel(histogramModel);
+		}
+		
+		
+		
+		return jdemElevationModel;
+	}
+	
+	protected static void loadElevationModelsFromZip(ProjectMarshall projectMarshall, ZipFile zipFile) throws IOException
+	{
+		
+		for (int i = 0; i < 256; i++) {
+			
+			JDemElevationModel jdemElevationModel = loadElevationModelFromZip(i, zipFile);
+			if (jdemElevationModel != null) {
+				projectMarshall.getElevationModels().add(jdemElevationModel);
+			} else {
+				break;
+			}
+			
+		}
+		
+	}
+	
 	public static ProjectMarshall readProject(String path) throws IOException, FileNotFoundException, ProjectParseException
 	{
 		log.info("Opening project file: " + path);
@@ -76,11 +133,15 @@ public class ZipProjectFileReader
 			scriptEntry = zipFile.getEntry("script.py");
 		}
 		
+		loadElevationModelsFromZip(projectMarshall, zipFile);
+		
 		if (scriptEntry != null) {
 			loadScriptFromZip(projectMarshall, zipFile.getInputStream(scriptEntry));
 		} else {
 			log.info("Script file not found, cannot load");
 		}
+		
+		
 		
 		
 		return projectMarshall;

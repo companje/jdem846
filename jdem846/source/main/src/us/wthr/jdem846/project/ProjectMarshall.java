@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.ProjectMarshalException;
 import us.wthr.jdem846.image.SimpleGeoImage;
@@ -28,6 +29,8 @@ public class ProjectMarshall
 	private List<String> rasterFiles = new LinkedList<String>();
 	private List<ShapeFileRequest> shapeFiles = new LinkedList<ShapeFileRequest>();
 	private List<SimpleGeoImage> imageFiles = new LinkedList<SimpleGeoImage>();
+	
+	private List<JDemElevationModel> modelList = new LinkedList<JDemElevationModel>();
 	
 	private String userScript = null;
 	private ScriptLanguageEnum scriptLanguage = null;
@@ -90,6 +93,16 @@ public class ProjectMarshall
 	public List<ShapeFileRequest> getShapeFiles()
 	{
 		return shapeFiles;
+	}
+	
+	public void setElevationModels(List<JDemElevationModel> modelList)
+	{
+		this.modelList = modelList;
+	}
+	
+	public List<JDemElevationModel> getElevationModels()
+	{
+		return this.modelList;
 	}
 
 	public void setShapeFiles(List<ShapeFileRequest> shapeFiles)

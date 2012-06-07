@@ -7,11 +7,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -74,6 +77,8 @@ public class RenderViewPane extends Panel
 	private TonalHistogram histogramDisplay;
 	private ElevationHistogram elevationHistogram;
 	
+	private SplitPane viewSplit;
+	
 	//private ModelCanvas canvas;
 	private JDemElevationModel jdemElevationModel;
 	private ModelContext modelContext;
@@ -92,10 +97,20 @@ public class RenderViewPane extends Panel
     private int lastMouseX = -1;
     private int lastMouseY = -1;
 
-    
-	public RenderViewPane(final ModelContext modelContext)
+    public RenderViewPane(ModelContext _modelContext)
 	{
-		this.modelContext = modelContext;
+    	this(_modelContext, null);
+	}
+    
+    public RenderViewPane(JDemElevationModel jdemElevationModel)
+	{
+    	this(null, jdemElevationModel);
+	}
+    
+    
+	public RenderViewPane(ModelContext _modelContext, JDemElevationModel jdemElevationModel)
+	{
+		this.modelContext = _modelContext;
 		
 		showPreviews = JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.renderInProcessPreviewing");
 		
@@ -122,185 +137,254 @@ public class RenderViewPane extends Panel
 		//BorderFactory.createEtchedBorder()
 		//histogramDisplay.setBorder(BorderFactory.createTitledBorder("RGB Histogram"));
 		
+		
 		TabPane toolsPanel = new TabPane();
 		toolsPanel.addTab("Tools", new Label("Tools go here."));
-		toolsPanel.addTab("RGB Histogram", histogramDisplay);
-		toolsPanel.addTab("Elevation Histogram", elevationHistogram);
+
 		
-		Panel southPanel = new Panel();
-		southPanel.setLayout(new BorderLayout());
+		histogramDisplay.setBorder(BorderFactory.createTitledBorder("RGB Histogram"));
+		elevationHistogram.setBorder(BorderFactory.createTitledBorder("Elevation Histogram"));
+		
+		Panel componentPanel = new Panel();
+		componentPanel.setLayout(new BoxLayout(componentPanel, BoxLayout.Y_AXIS));
+		componentPanel.add(toolsPanel);
+		componentPanel.add(histogramDisplay);
+		componentPanel.add(elevationHistogram);
+		//componentPanel.setLayout(new BorderLayout());
 		//southPanel.add(histogramDisplay, BorderLayout.EAST);
-		southPanel.setPreferredSize(new Dimension(400, 150));
-		southPanel.add(toolsPanel, BorderLayout.CENTER);
+		//componentPanel.setPreferredSize(new Dimension(400, 150));
+		//componentPanel.add(toolsPanel, BorderLayout.CENTER);
 		
+		
+		viewSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
+		viewSplit.setBorder(BorderFactory.createEmptyBorder());
+		viewSplit.setResizeWeight(1.0);
+		viewSplit.add(imageDisplay);
+		viewSplit.add(componentPanel);
 		
 		setLayout(new BorderLayout());
 		
 		
 		
 
-		this.add(imageDisplay, BorderLayout.CENTER);
-		this.add(southPanel, BorderLayout.SOUTH);
+		this.add(viewSplit, BorderLayout.CENTER);
+		//this.add(viewSplit, BorderLayout.SOUTH);
 		
+		viewSplit.setDividerLocation(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.renderViewPane.mainSplitPosition"));
 		
-		
-		
-		modelBuilder = new ModelBuilder();
-		renderTask = new RunnableTask("Model Render Task") {
+		imageDisplay.addComponentListener(new ComponentAdapter() {
 			
-			public void run() throws RenderEngineException
-			{
-				log.info("Model rendering task starting");
-				this.setStoppable(true);
-				
-				long start = 0;
-				long elapsed = 0;
-				
-				ModelProcessManifest modelProcessManifest = modelContext.getModelProcessManifest();
-				modelProcessManifest.getGlobalOptionModel().setDisposeGridOnComplete(false);
-				//ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext);
-				log.info("Initializing model builder...");
-				modelBuilder.prepare(modelContext, modelProcessManifest);
-				
-				log.info("Processing...");
-				start = System.currentTimeMillis();
-				jdemElevationModel = modelBuilder.process();
-				
-
-				elapsed = (System.currentTimeMillis() - start) / 1000;
-
-				//canvas = modelContext.getModelCanvas();
-				
-				BufferedImage modelImage = (BufferedImage) jdemElevationModel.getImage();
-				//boolean[][] modelMask = canvas.getModelMask();
-				
-				synchronized(imageDisplay) {
-					imageDisplay.setImage(modelImage);
-					imageDisplay.zoomFit();
-				}
-				
-				TonalHistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(jdemElevationModel);
-				histogramDisplay.setHistogramModel(histogramModel);
-				
-				//ElevationHistogramModel elevationHistogramModel = jdemElevationModel.getElevationHistogramModel(500);
-				ElevationHistogramModel elevationHistogramModel = modelBuilder.getModelGrid().getElevationHistogramModel();
-				elevationHistogram.setElevationHistogramModel(elevationHistogramModel);
-
-				
-				modelBuilder.dispose();
-				modelBuilder = null;
-				
-				log.info("Completed render task in " + elapsed + " seconds");
-
-			}
+			private boolean initialSizeSet = false;
 			
 			@Override
-			public void cancel()
+			public void componentResized(ComponentEvent e)
 			{
-				modelBuilder.cancel();
+				int location = viewSplit.getDividerLocation();
+				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.renderViewPane.mainSplitPosition", location);
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e)
+			{
+				if (!initialSizeSet) {
+					
+					///viewSplit.setDividerLocation(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.renderViewPane.mainSplitPosition"));
+					
+					initialSizeSet = true;
+				}
 			}
 			
-			@Override
-			public void pause()
-			{
-				modelBuilder.pause();
-			}
-			
-			@Override
-			public void resume()
-			{
-				modelBuilder.resume();
-			}
-		};
+		});
 		
-		taskStatusListener = new TaskStatusListener() {
-			public void taskCancelled(RunnableTask task)
-			{
-				if (jdemElevationModel != null) {
-					taskCompleted(task);
-				} else {
-					onNonSuccessfulCompletion(task, null);
+		if (jdemElevationModel != null) {
+			initializeWithJDemElevationModel(jdemElevationModel);
+			currentState = RenderViewPane.COMPLETED;
+		} else if (modelContext != null) {
+			modelBuilder = new ModelBuilder();
+			renderTask = new RunnableTask("Model Render Task") {
+				
+				public void run() throws RenderEngineException
+				{
+					log.info("Model rendering task starting");
+					this.setStoppable(true);
+					
+					long start = 0;
+					long elapsed = 0;
+					
+					ModelProcessManifest modelProcessManifest = modelContext.getModelProcessManifest();
+					modelProcessManifest.getGlobalOptionModel().setDisposeGridOnComplete(false);
+					//ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext);
+					log.info("Initializing model builder...");
+					modelBuilder.prepare(modelContext, modelProcessManifest);
+					
+					log.info("Processing...");
+					start = System.currentTimeMillis();
+					JDemElevationModel jdemElevationModel = modelBuilder.process();
+					
+	
+					elapsed = (System.currentTimeMillis() - start) / 1000;
+	
+					//canvas = modelContext.getModelCanvas();
+					
+					initializeWithJDemElevationModel(jdemElevationModel);
+					
+					modelBuilder.dispose();
+					modelBuilder = null;
+					
+					log.info("Completed render task in " + elapsed + " seconds");
+	
 				}
 				
-			}
-			public void taskCompleted(RunnableTask task)
-			{
-				currentState = RenderViewPane.COMPLETED;
-				
-				detachModelListeners(true);
-				
-				disposeModelingInformation();
-				
-				setWorking(false);
-				
-				fireChangeListeners();
-				
-				repaint();
-			}
-			public void taskFailed(RunnableTask task, Throwable thrown)
-			{
-				jdemElevationModel = null;
-				currentState = RenderViewPane.FAILED;
-				
-				detachModelListeners(true);
-				disposeModelingInformation();
-				
-				if (thrown != null) {
-					JOptionPane.showMessageDialog(getRootPane(),
-						    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.message") + ": " + thrown.getMessage(),
-						    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.title"),
-						    JOptionPane.ERROR_MESSAGE);
-				}
-				setWorking(false);
-				
-				fireChangeListeners();
-				
-				repaint();
-			}
-			
-			protected void onNonSuccessfulCompletion(RunnableTask task, Throwable thrown) 
-			{
-				jdemElevationModel = null;
-				
-				currentState = RenderViewPane.CANCELED;
-				
-				
-				detachModelListeners(true);
-				
-				disposeModelingInformation();
-				
-				if (thrown != null) {
-					JOptionPane.showMessageDialog(getRootPane(),
-						    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.message") + ": " + thrown.getMessage(),
-						    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.title"),
-						    JOptionPane.ERROR_MESSAGE);
+				@Override
+				public void cancel()
+				{
+					modelBuilder.cancel();
 				}
 				
-				setWorking(false);
+				@Override
+				public void pause()
+				{
+					modelBuilder.pause();
+				}
 				
-				fireChangeListeners();
+				@Override
+				public void resume()
+				{
+					modelBuilder.resume();
+				}
+			};
+			
+			taskStatusListener = new TaskStatusListener() {
+				public void taskCancelled(RunnableTask task)
+				{
+					//if (jdemElevationModel != null) {
+					//	taskCompleted(task);
+					//} else {
+						onNonSuccessfulCompletion(task, null);
+				//	}
+					
+				}
+				public void taskCompleted(RunnableTask task)
+				{
+					currentState = RenderViewPane.COMPLETED;
+					
+					detachModelListeners(true);
+					
+					disposeModelingInformation();
+					
+					setWorking(false);
+					
+					fireChangeListeners();
+					
+					repaint();
+				}
+				public void taskFailed(RunnableTask task, Throwable thrown)
+				{
+					//jdemElevationModel = null;
+					currentState = RenderViewPane.FAILED;
+					
+					detachModelListeners(true);
+					disposeModelingInformation();
+					
+					if (thrown != null) {
+						JOptionPane.showMessageDialog(getRootPane(),
+							    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.message") + ": " + thrown.getMessage(),
+							    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.title"),
+							    JOptionPane.ERROR_MESSAGE);
+					}
+					setWorking(false);
+					
+					fireChangeListeners();
+					
+					repaint();
+				}
 				
-				repaint();
-			}
+				protected void onNonSuccessfulCompletion(RunnableTask task, Throwable thrown) 
+				{
+					//jdemElevationModel = null;
+					
+					currentState = RenderViewPane.CANCELED;
+					
+					
+					detachModelListeners(true);
+					
+					disposeModelingInformation();
+					
+					if (thrown != null) {
+						JOptionPane.showMessageDialog(getRootPane(),
+							    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.message") + ": " + thrown.getMessage(),
+							    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.modelFailed.title"),
+							    JOptionPane.ERROR_MESSAGE);
+					}
+					
+					setWorking(false);
+					
+					fireChangeListeners();
+					
+					repaint();
+				}
+				
+				public void taskStarting(RunnableTask task)
+				{
+					currentState = RenderViewPane.RUNNING;
+					fireChangeListeners();
+				}
+				
+				public void taskPaused(RunnableTask task)
+				{
+					currentState = RenderViewPane.PAUSED;
+					fireChangeListeners();
+				}
+				
+				public void taskResumed(RunnableTask task)
+				{
+					currentState = RenderViewPane.RUNNING;
+					fireChangeListeners();
+				}
+			};
 			
-			public void taskStarting(RunnableTask task)
-			{
-				currentState = RenderViewPane.RUNNING;
-				fireChangeListeners();
-			}
-			
-			public void taskPaused(RunnableTask task)
-			{
-				currentState = RenderViewPane.PAUSED;
-				fireChangeListeners();
-			}
-			
-			public void taskResumed(RunnableTask task)
-			{
-				currentState = RenderViewPane.RUNNING;
-				fireChangeListeners();
-			}
-		};
+		}
+	}
+	
+	
+	
+	
+	protected void initializeWithJDemElevationModel(JDemElevationModel jdemElevationModel)
+	{
+		this.jdemElevationModel = jdemElevationModel;
+		
+		BufferedImage modelImage = (BufferedImage) jdemElevationModel.getImage();
+
+		synchronized(imageDisplay) {
+			imageDisplay.setImage(modelImage);
+			imageDisplay.zoomFit();
+		}
+		
+		if (!imageDisplay.isVisible()) {
+			imageDisplay.addComponentListener(new ComponentAdapter() {
+				
+				private boolean shownOnce = false;
+				@Override
+				public void componentShown(ComponentEvent e)
+				{
+					if (!shownOnce) {
+						imageDisplay.zoomFit();
+						shownOnce = true;
+					}
+				}
+				
+			});
+		}
+		
+		TonalHistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(jdemElevationModel);
+		histogramDisplay.setHistogramModel(histogramModel);
+		
+		ElevationHistogramModel elevationHistogramModel = jdemElevationModel.getElevationHistogramModel();
+		//ElevationHistogramModel elevationHistogramModel = modelBuilder.getModelGrid().getElevationHistogramModel();
+		if (elevationHistogramModel != null) {
+			elevationHistogram.setElevationHistogramModel(elevationHistogramModel);
+		}
+		
 		
 	}
 	
@@ -547,7 +631,6 @@ public class RenderViewPane extends Panel
 		
 		int trueX = (int) Math.round((double)(mouseX - paintedX) / scaledPercent);
 		int trueY = (int) Math.round((double)(mouseY - paintedY) / scaledPercent);
-		
 
 		if (jdemElevationModel != null && jdemElevationModel.getMask(trueX, trueY)) {
 			
@@ -570,6 +653,12 @@ public class RenderViewPane extends Panel
 	}
 
 	
+	
+	public JDemElevationModel getJdemElevationModel()
+	{
+		return jdemElevationModel;
+	}
+
 	public void save()
 	{
 		if (lastSavePath == null) {

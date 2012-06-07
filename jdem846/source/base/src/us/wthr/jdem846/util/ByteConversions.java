@@ -117,25 +117,35 @@ public class ByteConversions
 	 */
 	public static byte[] floatToBytes(float value, ByteOrder byteOrder)
 	{
+		byte[] buffer = new byte[4];
+		floatToBytes(value, buffer, byteOrder);
+		return buffer;
+	}
+	
+	public static void floatToBytes(float value, byte[] buffer)
+	{
+		floatToBytes(value, buffer, ByteConversions.DEFAULT_BYTE_ORDER);
+	}
+	
+	public static void floatToBytes(float value, byte[] buffer, ByteOrder byteOrder)
+	{
 		int bits = Float.floatToIntBits(value);
 
-		byte[] buffer = null;
-		
+
 		if (byteOrder == ByteOrder.MSBFIRST) {
-			buffer = new byte[] {
-                (byte)(bits >>> 24),
-                (byte)(bits >>> 16),
-                (byte)(bits >>> 8),
-                (byte)bits};
+			buffer[0] = (byte) (bits >>> 24);
+			buffer[1] = (byte) (bits >>> 16);
+			buffer[2] = (byte) (bits >>> 8);
+			buffer[3] = (byte) (bits);
+
 		} else {
-			buffer = new byte[] {
-	                (byte)(bits),
-	                (byte)(bits >>> 8),
-	                (byte)(bits >>> 16),
-	                (byte)(bits >>> 24)};
+			buffer[0] = (byte) (bits);
+			buffer[1] = (byte) (bits >>> 8);
+			buffer[2] = (byte) (bits >>> 16);
+			buffer[3] = (byte) (bits >>> 24);
+			
 		}
-		
-		return buffer;
+
 	}
 	
 	/** Converts a float to a 4 byte array using the specified byte order.
@@ -195,24 +205,31 @@ public class ByteConversions
 
 	public static byte[] intToBytes(int bits, ByteOrder byteOrder)
 	{
-
-		byte[] buffer = null;
-		
-		if (byteOrder == ByteOrder.LSBFIRST) {
-			buffer = new byte[] {
-                (byte)(bits >>> 24),
-                (byte)(bits >>> 16),
-                (byte)(bits >>> 8),
-                (byte)bits};
-		} else {
-			buffer = new byte[] {
-	                (byte)(bits),
-	                (byte)(bits >>> 8),
-	                (byte)(bits >>> 16),
-	                (byte)(bits >>> 24)};
-		}
-		
+		byte[] buffer = new byte[4];
+		intToBytes(bits, buffer, byteOrder);
 		return buffer;
+	}
+	
+	public static void intToBytes(int bits, byte[] buffer)
+	{
+		intToBytes(bits, buffer, ByteConversions.DEFAULT_BYTE_ORDER);
+	}
+	
+	public static void intToBytes(int bits, byte[] buffer, ByteOrder byteOrder)
+	{
+
+		if (byteOrder == ByteOrder.LSBFIRST) {
+			buffer[0] = (byte) (0xFF & (bits >>> 24));
+			buffer[1] = (byte) (0xFF & (bits >>> 16));
+			buffer[2] = (byte) (0xFF & (bits >>> 8));
+			buffer[3] = (byte) (0xFF & (bits));
+		} else {
+			buffer[0] = (byte) (0xFF & (bits));
+			buffer[1] = (byte) (0xFF & (bits >>> 8));
+			buffer[2] = (byte) (0xFF & (bits >>> 16));
+			buffer[3] = (byte) (0xFF & (bits >>> 24));
+		}
+
 	}
 	
 	/** Converts a 4 byte array to an integer using the default byte order.

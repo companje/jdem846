@@ -41,6 +41,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.MappedOptions;
 import us.wthr.jdem846.ModelContext;
@@ -120,6 +121,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	//private DataInputLayoutPane layoutPane;
 	private ScriptEditorPanel scriptPane;
 	private RenderPane renderPane;
+	private SplitPane configSplit;
 	
 	private ProjectButtonBar projectButtonBar;
 	private Menu projectMenu;
@@ -569,12 +571,15 @@ public class DemProjectPane extends JdemPanel implements Savable
 			public void componentResized(ComponentEvent arg0) {
 				int location = leftSplit.getDividerLocation();
 				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.demProjectPane.leftVerticalSplitPosition", ""+location);
-			
+				
+				int configSplitLocation = configSplit.getDividerLocation();
+				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.demProjectPane.rightHorizontalSplitPosition", ""+configSplitLocation);
+				
 				int leftWidth = getLeftWidth();
-				int rightWidth = getRightWidth();
+				//int rightWidth = getRightWidth();
 				
 				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.demProjectPane.leftHorizontalSplitPosition", ""+leftWidth);
-				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.demProjectPane.rightHorizontalSplitPosition", ""+rightWidth);
+				//JDem846Properties.setProperty("us.wthr.jdem846.state.ui.demProjectPane.rightHorizontalSplitPosition", ""+rightWidth);
 			}
 		};
 		
@@ -582,7 +587,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 		//leftTabPane.addComponentListener(dividerChangeListener);
 		leftLowerTabPane.addComponentListener(dividerChangeListener);
 		
-		addRight(modelConfigurationPanel, false);
+		//addRight(modelConfigurationPanel, false);
+		this.setRightVisible(false);
 		modelConfigurationPanel.addComponentListener(dividerChangeListener);
 		
 		//leftSplit.get
@@ -604,16 +610,28 @@ public class DemProjectPane extends JdemPanel implements Savable
 		this.addLeft(modelOptionsPanel, false);
 		*/
 		
+		
+		configSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
+		configSplit.add(visualizationPanel);
+		configSplit.add(modelConfigurationPanel);
+		configSplit.setBorder(BorderFactory.createEmptyBorder());
+		configSplit.setResizeWeight(1.0);
+		
+		
+		
 		//this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layout"), layoutPane);
-		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"), visualizationPanel);
+		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.preview"), configSplit);
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.script"), scriptPane);
 		this.addCenter("Render", renderPane);
+		
+		
 		
 		ComponentListener setLeftRightWidthsAdapter = new ComponentAdapter() {
 			public void componentShown(ComponentEvent e)
 			{
 				setLeftWidth(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.demProjectPane.leftHorizontalSplitPosition"));
-				setRightWidth(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.demProjectPane.rightHorizontalSplitPosition"));
+				//setRightWidth(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.demProjectPane.rightHorizontalSplitPosition"));
+				configSplit.setDividerLocation(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.demProjectPane.rightHorizontalSplitPosition"));
 				removeComponentListener(this);
 			}
 		};
@@ -631,6 +649,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		
 		initializeScripting(projectMarshall);
+		initializeLoadedElevationModels(projectMarshall);
 		
 		//onConfigurationChanged();
 		applyOptionsToUI();
@@ -638,6 +657,19 @@ public class DemProjectPane extends JdemPanel implements Savable
 		onDataModelChanged(true, true, true, true);
 	}
 	
+	
+	protected void initializeLoadedElevationModels(ProjectMarshall projectMarshall)
+	{
+		if (projectMarshall == null)
+			return;
+		
+		if (projectMarshall.getElevationModels() == null)
+			return;
+		
+		for (JDemElevationModel jdemElevationModel : projectMarshall.getElevationModels()) {
+			renderPane.display(jdemElevationModel);
+		}
+	}
 	
 	public List<OptionModel> createDefaultOptionModelList(ProjectMarshall projectMarshall) throws Exception
 	{
@@ -1565,6 +1597,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 			//ProjectModel projectModel = getProjectModel();
 			
 			ProjectMarshall projectMarshall = ProjectMarshaller.marshallProject(modelContext);
+			
+			List<JDemElevationModel> modelList = this.renderPane.getJdemElevationModels();
+			projectMarshall.getElevationModels().addAll(modelList);
+			
 			
 			ProjectFiles.write(projectMarshall, saveTo);
 			

@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -16,6 +18,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
@@ -199,6 +202,22 @@ public class RenderPane extends Panel implements Savable
 		
 	}
 	
+	public void display(JDemElevationModel jdemElevationModel)
+	{
+		renderCount++;
+		
+		RenderViewPane renderViewPane = new RenderViewPane(jdemElevationModel);
+		outputImageTabbedPane.addTab("Image #" + renderCount, renderViewPane, true);
+		
+		renderViewPane.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e)
+			{
+				updateActiveRenderViewState();
+			}
+		});
+		
+		outputImageTabbedPane.setSelectedComponent(renderViewPane);
+	}
 	
 	protected RenderViewPane getActiveRenderViewPane()
 	{
@@ -290,7 +309,20 @@ public class RenderPane extends Panel implements Savable
 	}
 	
 	
-	
+	public List<JDemElevationModel> getJdemElevationModels()
+	{
+		List<JDemElevationModel> modelList = new ArrayList<JDemElevationModel>();
+		for (Component component : outputImageTabbedPane.getComponents()) {
+			if (component instanceof RenderViewPane) {
+				RenderViewPane viewPane = (RenderViewPane) component;
+				if (viewPane.getJdemElevationModel() != null) {
+					modelList.add(viewPane.getJdemElevationModel());
+				}
+			}
+		}
+		
+		return modelList;
+	}
 
 	@Override
 	public void save()

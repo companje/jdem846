@@ -1,17 +1,28 @@
 package us.wthr.jdem846;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import us.wthr.jdem846.canvas.AbstractBuffer;
 import us.wthr.jdem846.canvas.GeoRasterBuffer3d;
 import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.ElevationHistogramModel;
+import us.wthr.jdem846.util.ByteConversions;
 
 public class JDemElevationModel extends AbstractBuffer
 {
-	public final static float NO_VALUE = -999999.999f;
+	private static Log log = Logging.getLog(JDemElevationModel.class);
+	
+	public final static float NO_VALUE = (float) DemConstants.ELEV_NO_DATA;
 	
 	private boolean[] maskBuffer;
 	private int[] rgbaBuffer;
@@ -19,6 +30,16 @@ public class JDemElevationModel extends AbstractBuffer
 	private float[] latitudeBuffer;
 	private float[] elevationBuffer;
 	
+	private ElevationHistogramModel elevationHistogramModel;
+	
+	public JDemElevationModel(BufferedImage image, InputStream dataIn) throws IOException
+	{
+		this(image.getWidth(), image.getHeight());
+		
+		this.readModelData(dataIn);
+		this.loadImageData(image);
+		
+	}
 	
 	public JDemElevationModel(GeoRasterBuffer3d geoRasterBuffer)
 	{
@@ -69,43 +90,15 @@ public class JDemElevationModel extends AbstractBuffer
 	@Override
 	public void reset()
 	{
-		
+		for (int i = 0; i < this.getBufferLength(); i++) {
+			maskBuffer[i] = false;
+			rgbaBuffer[i] = 0x0;
+			longitudeBuffer[i] = JDemElevationModel.NO_VALUE;
+			latitudeBuffer[i] = JDemElevationModel.NO_VALUE;
+			elevationBuffer[i] = (float) DemConstants.ELEV_NO_DATA;
+		}
 	}
 	
-	
-	public ElevationHistogramModel getElevationHistogramModel(int bins)
-	{
-		
-		double minimum = 10000000;
-		double maximum = -10000000;
-		
-		for (int y = 0; y < getHeight(); y++) {
-			for (int x = 0; x < getWidth(); x++) {
-				
-				if (this.getMask(x, y)) {
-					double e = this.getElevation(x, y);
-					minimum = MathExt.min(minimum, e);
-					maximum = MathExt.max(maximum, e);
-				}
-				
-			}
-		}
-		
-		
-		ElevationHistogramModel histogramModel = new ElevationHistogramModel(bins, minimum, maximum);
-		
-		for (int y = 0; y < getHeight(); y++) {
-			for (int x = 0; x < getWidth(); x++) {
-				
-				if (this.getMask(x, y)) {
-					double e = this.getElevation(x, y);
-					histogramModel.add(e);
-				}
-			}
-		}
-		
-		return histogramModel;
-	}
 	
 	public int getRgba(double x, double y)
 	{
@@ -188,7 +181,149 @@ public class JDemElevationModel extends AbstractBuffer
 		return image;
 	}
 	
-
 	
+	
+	public ElevationHistogramModel getElevationHistogramModel()
+	{
+		return elevationHistogramModel;
+	}
+
+	public void setElevationHistogramModel(
+			ElevationHistogramModel elevationHistogramModel)
+	{
+		this.elevationHistogramModel = elevationHistogramModel;
+	}
+
+	protected void loadImageData(BufferedImage image)
+	{
+		Raster raster = image.getRaster();
+		
+		int w = raster.getWidth();
+		int h = raster.getHeight();
+		
+		int[] rgbaBuffer = new int[4];
+
+		
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				raster.getPixel(x, y, rgbaBuffer);
+				
+				int i = getIndex(x, y);
+				
+				if (i >= 0 && i < this.rgbaBuffer.length) {
+					this.rgbaBuffer[i] = ColorUtil.rgbaToInt(rgbaBuffer);
+				}
+			}
+		}
+		
+	}
+	
+	protected void readModelData(InputStream in) throws IOException
+	{
+		byte b = 0x0;
+		byte[] buffer4 = new byte[4];
+		byte[] buffer1024 = new byte[1024];
+		
+		float fltValue = 0;
+		int intValue = 0;
+		boolean boolValue = false;
+		
+		int pointsRead = 0;
+		int validRead = 0;
+		
+		int len = 0;
+		int ttlRead = 0;
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		while((len = in.read(buffer1024)) != -1) {
+			ttlRead+=len;
+			baos.write(buffer1024, 0, len);
+		}
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+				
+		for (int i = 0; i < this.getBufferLength(); i++) {
+			
+			if ((len = bais.read(buffer4, 0, 4)) != 4) {
+				throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
+			} else {
+				ttlRead += 4;
+			}
+			fltValue = ByteConversions.bytesToFloat(buffer4);
+			latitudeBuffer[i] = fltValue;
+			
+			if ((len = bais.read(buffer4, 0, 4)) != 4) {
+				throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
+			} else {
+				ttlRead += 4;
+			}
+			fltValue = ByteConversions.bytesToFloat(buffer4);
+			longitudeBuffer[i] = fltValue;
+			
+			if ((len = bais.read(buffer4, 0, 4)) != 4) {
+				throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
+			} else {
+				ttlRead += 4;
+			}
+			fltValue = ByteConversions.bytesToFloat(buffer4);
+			elevationBuffer[i] = fltValue;
+			
+			
+			if (bais.read() == 0x01) {
+				maskBuffer[i] = true;
+			} else {
+				maskBuffer[i] = false;
+			}
+			ttlRead += 1;
+	
+			pointsRead++;
+			if (maskBuffer[i]) {
+				validRead++;
+			}
+		}
+		
+		log.info("JDEMELEVMDL Read " + pointsRead + " points with " + validRead + " valid");
+		
+	}
+	
+	
+	
+	public void writeModelData(OutputStream out) throws IOException
+	{
+		byte b = 0x0;
+		byte[] buffer4 = new byte[4];
+
+		int pointsWritten = 0;
+		int validWritten = 0;
+		
+		for (int i = 0; i < this.getBufferLength(); i++) {
+			
+			ByteConversions.floatToBytes(latitudeBuffer[i], buffer4);
+			out.write(buffer4, 0, 4);
+			
+			ByteConversions.floatToBytes(longitudeBuffer[i], buffer4);
+			out.write(buffer4, 0, 4);
+			
+			ByteConversions.floatToBytes(elevationBuffer[i], buffer4);
+			out.write(buffer4, 0, 4);
+			
+			if (maskBuffer[i] == true) {
+				out.write(0x01);
+			} else {
+				out.write(0x00);
+			}
+
+			pointsWritten++;
+			if (maskBuffer[i]) {
+				validWritten++;
+			}
+		}
+		
+		out.flush();
+		
+		log.info("JDEMELEVMDL Wrote " + pointsWritten + " with " + validWritten + " valid points");
+		
+	}
 	
 }
