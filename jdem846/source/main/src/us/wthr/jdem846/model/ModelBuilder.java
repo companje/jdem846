@@ -80,6 +80,20 @@ public class ModelBuilder extends InterruptibleProcess
 		this.modelProcessManifest = modelProcessManifest;
 		
 		
+		double minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
+		double maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
+		
+		
+		ElevationScaler elevationScaler = null;
+		ElevationScalerEnum elevationScalerEnum = ElevationScalerEnum.getElevationScalerEnumFromIdentifier(globalOptionModel.getElevationScale());
+		try {
+			elevationScaler = ElevationScalerFactory.createElevationScaler(elevationScalerEnum, globalOptionModel.getElevationMultiple(), minimumElevation, maximumElevationTrue);
+		} catch (Exception ex) {
+			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
+		}
+		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
+		
+		
 		boolean useDiskCachedModelGrid = globalOptionModel.getUseDiskCachedModelGrid();
 	
 		if (modelGrid == null) {
@@ -136,18 +150,6 @@ public class ModelBuilder extends InterruptibleProcess
 			modelContext.getScriptingContext().getScriptProxy().setModelContext(modelContext);
 		}
 		
-		double minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
-		double maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
-		
-		
-		ElevationScaler elevationScaler = null;
-		ElevationScalerEnum elevationScalerEnum = ElevationScalerEnum.getElevationScalerEnumFromIdentifier(globalOptionModel.getElevationScale());
-		try {
-			elevationScaler = ElevationScalerFactory.createElevationScaler(elevationScalerEnum, globalOptionModel.getElevationMultiple(), minimumElevation, maximumElevationTrue);
-		} catch (Exception ex) {
-			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
-		}
-		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
 		
 		if (useScripting) {
 			onInitialize(modelContext);
