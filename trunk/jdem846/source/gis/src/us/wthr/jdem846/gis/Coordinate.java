@@ -131,25 +131,20 @@ public class Coordinate {
 	public String toString()
     {
 		
-		char d;
+		char d = ' ';
 		
-		if (decimal >= 0) {
-			
-			if (coordinateType == CoordinateTypeEnum.LATITUDE) {
-				d = 'N';
-			} else {
-				d = 'S';
-			}
-			
-		} else {
-			
-			if (coordinateType == CoordinateTypeEnum.LONGITUDE) {
-				d = 'E';
-			} else {
-				d = 'W';
-			}
-			
-		}
+	
+		if (direction == CardinalDirectionEnum.EAST)
+			d = 'E';
+		else if (direction == CardinalDirectionEnum.WEST)
+			d = 'W';
+		else if (direction == CardinalDirectionEnum.NORTH)
+			d = 'N';
+		else if (direction == CardinalDirectionEnum.SOUTH)
+			d = 'S';
+	 
+		
+		
 		
 		String str = "" + this.hour + "\u00B0 " + this.minute + "' " + nf.format(this.second) + "\" " + d;
         return str;
