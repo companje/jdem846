@@ -87,6 +87,8 @@ public class ImageDisplayPanel extends Panel
 	private Rectangle paintedImageBounds = new Rectangle();
 	private String status = null;
 	
+	private boolean imageInitialized = false;
+	
 	public ImageDisplayPanel()
 	{
 		// Set Properties
@@ -116,6 +118,8 @@ public class ImageDisplayPanel extends Panel
 		
 		this.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
+				
+				minScalePercent = getZoomToFitScalePercentage();
 				if (isBestFit) {
 					zoomFit();
 				}
@@ -229,11 +233,16 @@ public class ImageDisplayPanel extends Panel
 		
 		this.scalePercent = scalePercent;
 		
-		updateZoomSliderValue();
-		
-		createScaledImage();
-		validateImagePosition();
-		repaint();
+		if (this.getWidth() > 0 && this.getHeight() > 0) {
+			updateZoomSliderValue();
+			
+			createScaledImage();
+			validateImagePosition();
+			repaint();
+			
+			
+			this.imageInitialized = true;
+		}
 	}
 
 
@@ -281,6 +290,11 @@ public class ImageDisplayPanel extends Panel
 	@Override
 	public void paint(Graphics g)
 	{
+		
+		if (!imageInitialized) {
+			setScalePercent(this.scalePercent);
+		}
+		
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		

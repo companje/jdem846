@@ -1,0 +1,36 @@
+*.zdem
+
+
+project.json
+script.groovy
+
+models/
+	0/
+		image.png
+		model.dat
+	1/
+		image.png
+		model.dat
+
+data/
+	raster/
+		0/
+			raster0.flt
+			raster0.hdr
+			raster0.prj
+		1/
+			raster1.flt
+			raster1.hdr
+			raster1.prj
+	image/
+		0/
+			image0.jpg
+		1/
+			image1.jpg
+	shape/
+		0/
+			shape0.shp
+			shape0.shx
+			shape0.dbf
+			shape0.prj
+	

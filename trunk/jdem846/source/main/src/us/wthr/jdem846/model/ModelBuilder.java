@@ -244,7 +244,10 @@ public class ModelBuilder extends InterruptibleProcess
 		
 		setProcessing(false);
 		
-		return modelContext.getModelCanvas().getJdemElevationModel();
+		JDemElevationModel elevationModel = modelContext.getModelCanvas().getJdemElevationModel();
+		elevationModel.setElevationHistogramModel(modelGrid.getElevationHistogramModel());
+		
+		return elevationModel;
 	}
 	
 
