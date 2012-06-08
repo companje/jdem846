@@ -9,7 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,6 +30,8 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ProjectMarshalException;
+import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
@@ -38,11 +42,16 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 import us.wthr.jdem846.model.ModelBuilder;
 import us.wthr.jdem846.model.ModelProcessManifest;
+import us.wthr.jdem846.project.ProjectFiles;
+import us.wthr.jdem846.project.ProjectMarshall;
+import us.wthr.jdem846.project.ProjectMarshaller;
+import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.tasks.RunnableTask;
 import us.wthr.jdem846.tasks.TaskControllerService;
 import us.wthr.jdem846.tasks.TaskStatusListener;
 import us.wthr.jdem846.ui.FileSaveThread.SaveCompletedListener;
 import us.wthr.jdem846.ui.ImageDisplayPanel.MousePositionListener;
+import us.wthr.jdem846.ui.ImageToolButtonGridPanel.ClickListener;
 import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
@@ -78,6 +87,7 @@ public class RenderViewPane extends Panel
 	private ElevationHistogram elevationHistogram;
 	
 	private SplitPane viewSplit;
+	private Panel componentPanel;
 	
 	//private ModelCanvas canvas;
 	private JDemElevationModel jdemElevationModel;
@@ -85,7 +95,6 @@ public class RenderViewPane extends Panel
 	private boolean isWorking = false;
 	private boolean showPreviews = true;
 	
-	private String lastSavePath = null;
 
 	private ModelBuilder modelBuilder;
 	
@@ -97,6 +106,8 @@ public class RenderViewPane extends Panel
     private int lastMouseX = -1;
     private int lastMouseY = -1;
 
+    private String lastExportPath = null;
+    
     public RenderViewPane(ModelContext _modelContext)
 	{
     	this(_modelContext, null);
@@ -134,28 +145,32 @@ public class RenderViewPane extends Panel
 		elevationHistogram = new ElevationHistogram();
 		elevationHistogram.setPreferredSize(new Dimension(255, 150));
 		
-		//BorderFactory.createEtchedBorder()
-		//histogramDisplay.setBorder(BorderFactory.createTitledBorder("RGB Histogram"));
-		
+
+		ImageToolButtonGridPanel toolButtonGrid = new ImageToolButtonGridPanel();
+		toolButtonGrid.addClickListener(new ClickListener() {
+			public void onButtonClicked(String action)
+			{
+				log.info("Action button clicked: " + action);
+				JOptionPane.showMessageDialog(getRootPane(),
+						I18N.get("us.wthr.jdem846.ui.notYetImplemented.message"),
+					    I18N.get("us.wthr.jdem846.ui.notYetImplemented.title"),
+					    JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 		
 		TabPane toolsPanel = new TabPane();
-		toolsPanel.addTab("Tools", new Label("Tools go here."));
+		toolsPanel.addTab("Quick Tools", toolButtonGrid);
 
 		
 		histogramDisplay.setBorder(BorderFactory.createTitledBorder("RGB Histogram"));
 		elevationHistogram.setBorder(BorderFactory.createTitledBorder("Elevation Histogram"));
 		
-		Panel componentPanel = new Panel();
+		componentPanel = new Panel();
 		componentPanel.setLayout(new BoxLayout(componentPanel, BoxLayout.Y_AXIS));
 		componentPanel.add(toolsPanel);
 		componentPanel.add(histogramDisplay);
 		componentPanel.add(elevationHistogram);
-		//componentPanel.setLayout(new BorderLayout());
-		//southPanel.add(histogramDisplay, BorderLayout.EAST);
-		//componentPanel.setPreferredSize(new Dimension(400, 150));
-		//componentPanel.add(toolsPanel, BorderLayout.CENTER);
-		
-		
+
 		viewSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT);
 		viewSplit.setBorder(BorderFactory.createEmptyBorder());
 		viewSplit.setResizeWeight(1.0);
@@ -168,33 +183,36 @@ public class RenderViewPane extends Panel
 		
 
 		this.add(viewSplit, BorderLayout.CENTER);
-		//this.add(viewSplit, BorderLayout.SOUTH);
+
+		viewSplit.setDividerLocation(viewSplit.getWidth() - JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.renderViewPane.mainSplitPosition"));
 		
-		viewSplit.setDividerLocation(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.renderViewPane.mainSplitPosition"));
+		ComponentListener splitHandler = new ComponentAdapter() {
 		
-		imageDisplay.addComponentListener(new ComponentAdapter() {
 			
 			private boolean initialSizeSet = false;
 			
 			@Override
 			public void componentResized(ComponentEvent e)
 			{
-				int location = viewSplit.getDividerLocation();
-				JDem846Properties.setProperty("us.wthr.jdem846.state.ui.renderViewPane.mainSplitPosition", location);
+				if (initialSizeSet) {
+					int location = componentPanel.getWidth();
+					JDem846Properties.setProperty("us.wthr.jdem846.state.ui.renderViewPane.mainSplitPosition", location);
+				}
 			}
-
+			
 			@Override
 			public void componentShown(ComponentEvent e)
 			{
 				if (!initialSizeSet) {
-					
-					///viewSplit.setDividerLocation(JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.renderViewPane.mainSplitPosition"));
-					
+					viewSplit.setDividerLocation(viewSplit.getWidth() - JDem846Properties.getIntProperty("us.wthr.jdem846.state.ui.renderViewPane.mainSplitPosition"));
 					initialSizeSet = true;
 				}
 			}
 			
-		});
+		};
+		this.addComponentListener(splitHandler);
+		imageDisplay.addComponentListener(splitHandler);
+		//imageDisplay.setBackground(Color.WHITE);
 		
 		if (jdemElevationModel != null) {
 			initializeWithJDemElevationModel(jdemElevationModel);
@@ -661,10 +679,10 @@ public class RenderViewPane extends Panel
 
 	public void save()
 	{
-		if (lastSavePath == null) {
+		if (lastExportPath == null) {
 			saveAs();
 		} else {
-			saveTo(lastSavePath);
+			saveTo(lastExportPath);
 		}
 		
 	}
@@ -675,25 +693,29 @@ public class RenderViewPane extends Panel
 		log.info("Save");
 		
 		FileChooser chooser = new FileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.png"), "png");
+		FileNameExtensionFilter filter = null;
+		
+		
+		
+
+		filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.jdemimg"), "jdemimg");
+		chooser.addChoosableFileFilter(filter);
 		chooser.setFileFilter(filter);
 		
 		filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.jpeg"), "jpg", "jpeg");
-		chooser.setFileFilter(filter);
+		chooser.addChoosableFileFilter(filter);
+		
+		filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.png"), "png");
+		chooser.addChoosableFileFilter(filter);
 		
 		filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveImage.supportedTypes"), "png", "jpg", "jpeg");
-		chooser.setFileFilter(filter);
-		
-		
-	   // int returnVal = chooser.showOpenDialog(this);
+		chooser.addChoosableFileFilter(filter);
+
 	    int returnVal = chooser.showSaveDialog(this);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 	    	String filePath = chooser.getSelectedFile().getAbsolutePath();
 	    	
-	    	//if (!filePath.toLowerCase().endsWith(".png")) {
-	    	//	filePath = filePath + ".png";
-    		//}
-	    	
+
 	    	log.info("Saving to: " + filePath);
 	    	saveTo(filePath);
 	    	//canvas.save(filePath);
@@ -701,9 +723,55 @@ public class RenderViewPane extends Panel
 	    }
 	}
 	
-
-	
 	protected void saveTo(String path) 
+	{
+		String extension = path.substring(path.lastIndexOf("."));
+		if (extension == null) {
+			extension = ".jdemimg";
+			path += extension;
+		}
+		
+		if (extension.toLowerCase().equals(".jdemimg")) {
+			saveDemImageTo(path);
+		} else {
+			saveImageTo(path);
+		}
+		
+	}
+	
+	protected void saveDemImageTo(String path) 
+	{
+		try {
+			ProjectMarshall projectMarshall = ProjectMarshaller.marshallProject(null);
+			
+			projectMarshall.setProjectType(ProjectTypeEnum.DEM_IMAGE);
+			projectMarshall.getElevationModels().add(this.jdemElevationModel);
+			
+			
+			ProjectFiles.write(projectMarshall, path);
+			
+			lastExportPath = path;
+			
+			RecentProjectTracker.addProject(path);
+			
+			log.info("Project file saved to " + path);
+			SharedStatusBar.setStatus("Project file saved to " + path);
+			
+			
+			
+		} catch (Exception ex) {
+			log.warn("Error trying to write project to disk: " + ex.getMessage(), ex);
+			JOptionPane.showMessageDialog(getRootPane(),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.message"),
+				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.title"),
+				    JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		
+	}
+	
+	protected void saveImageTo(String path) 
 	{
 		FileSaveThread saveThread = new FileSaveThread(jdemElevationModel.getImage(), path);
 		saveThread.addSaveCompletedListener(new SaveCompletedListener() {
@@ -723,8 +791,10 @@ public class RenderViewPane extends Panel
 			}
 		});
 		saveThread.start();
-		lastSavePath = path;
+		lastExportPath = path;
 	}
+	
+	
 	
 	
 	public void addChangeListener(ChangeListener l)

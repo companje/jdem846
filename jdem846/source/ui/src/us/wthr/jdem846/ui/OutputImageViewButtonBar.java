@@ -67,7 +67,7 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 		super(owner);
 		
 		// Create components
-		jbtnSave = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.saveButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.outputImageView.save"), new ActionListener() {
+		jbtnSave = new ToolbarButton(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.exportButton"), JDem846Properties.getProperty("us.wthr.jdem846.ui.outputImageView.export"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fireButtonClickedListeners(BTN_SAVE);
 			}
@@ -116,7 +116,7 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 		lblQuality = new JLabel("Quality: ");
 		
 		// Set Tooltips
-		jbtnSave.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.saveTooltip"));
+		jbtnSave.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.exportTooltip"));
 		jbtnZoomIn.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomInTooltip"));
 		jbtnZoomOut.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomOutTooltip"));
 		jbtnZoomActual.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomActualTooltip"));

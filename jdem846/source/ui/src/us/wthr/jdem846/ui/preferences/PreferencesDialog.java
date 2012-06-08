@@ -50,6 +50,7 @@ public class PreferencesDialog extends Dialog
 	private CheckBox chkGeneralPreviewModelDuringRender;	
 	private CheckBox chkGeneralLimitConsoleOutput;
 	private NumberTextField txtGeneralConsoleBufferSize;
+	private CheckBox chkGeneralReportUsage;
 	
 	
 	private Slider sldPreviewingPreviewQuality;
@@ -70,7 +71,7 @@ public class PreferencesDialog extends Dialog
 	{
 		this.setTitle(I18N.get("us.wthr.jdem846.ui.preferencesDialog.title"));
 		this.setModal(true);
-		this.setSize(430, 350);
+		this.setSize(430, 375);
 		this.setLocationRelativeTo(null);
 		
 		
@@ -89,7 +90,7 @@ public class PreferencesDialog extends Dialog
 		chkGeneralPreviewModelDuringRender = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.previewModelDuringRender"));
 		chkGeneralLimitConsoleOutput = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.limitConsoleOutput"));
 		txtGeneralConsoleBufferSize = new NumberTextField(false);
-		
+		chkGeneralReportUsage = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.reportUsage"));
 		
 		
 		sldPreviewingPreviewQuality = new Slider(1, 100);
@@ -144,8 +145,8 @@ public class PreferencesDialog extends Dialog
 		generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.language") + ":"));
 		generalPanel.add(cmbGeneralLanguage);
 		
-		generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.userInterfaceColorTheme") + ":"));
-		generalPanel.add(cmbGeneralColorTheme);
+		//generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.userInterfaceColorTheme") + ":"));
+		//generalPanel.add(cmbGeneralColorTheme);
 		
 		generalPanel.add(new Label(""));
 		generalPanel.add(chkGeneralDisplayToolbarText);
@@ -168,6 +169,8 @@ public class PreferencesDialog extends Dialog
 		generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.consoleBufferSize") + ":"));
 		generalPanel.add(txtGeneralConsoleBufferSize);
 		
+		generalPanel.add(new Label(""));
+		generalPanel.add(chkGeneralReportUsage);
 		
 		
 		previewPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.previewQuality") + ":"));
@@ -234,7 +237,8 @@ public class PreferencesDialog extends Dialog
 		chkGeneralDisplayMemoryMonitor.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.jdemFrame.displayMemoryMonitor"));
 		chkGeneralDisplayLogPanel.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.displayLogViewPanel"));
 		chkGeneralPreviewModelDuringRender.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.renderInProcessPreviewing"));
-	
+		chkGeneralReportUsage.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.usage.report"));
+		
 		chkGeneralLimitConsoleOutput.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.console.limitOuput"));
 		txtGeneralConsoleBufferSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.console.bufferSize"));
 		
@@ -268,6 +272,8 @@ public class PreferencesDialog extends Dialog
 		
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.console.limitOuput", ""+chkGeneralLimitConsoleOutput.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.console.bufferSize", ""+txtGeneralConsoleBufferSize.getInteger());
+		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.usage.report", chkGeneralReportUsage.getModel().isSelected());
+		
 		
 		
 		double quality = (double)sldPreviewingPreviewQuality.getValue() / 100.0;

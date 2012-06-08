@@ -3,7 +3,8 @@ package us.wthr.jdem846.project;
 public enum ProjectTypeEnum
 {
 	STANDARD_PROJECT("us.wthr.jdem846.project.types.standardProject"),
-	SCRIPT_PROJECT("us.wthr.jdem846.project.types.scriptProject");
+	SCRIPT_PROJECT("us.wthr.jdem846.project.types.scriptProject"),
+	DEM_IMAGE("us.wthr.jdem846.project.types.modelImage");
 	
 	private final String identifier;
 	

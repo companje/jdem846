@@ -151,6 +151,7 @@ public class ModelVisualizationPanel extends Panel
 		// Create components
 		pnlModelDisplay = new ImageDisplayPanel();
 		pnlModelDisplay.setAllowZooming(false);
+		pnlModelDisplay.setDisplayImageShadow(false);
 		pnlModelDisplay.zoomFit();
 		
 		sldQuality = new Slider(1, 100);

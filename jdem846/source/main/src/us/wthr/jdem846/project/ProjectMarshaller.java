@@ -16,33 +16,36 @@ public class ProjectMarshaller
 	{
 		ProjectMarshall pm = new ProjectMarshall();
 		
-		try {
-			pm.setGlobalOptions(modelContext.getModelProcessManifest().getGlobalOptionModelContainer().getPropertyMapById());
-		} catch (ModelContainerException ex) {
-			throw new ProjectMarshalException("Error marshalling global option model: " + ex.getMessage(), ex);
-		}
-		
-		for (ModelProcessContainer processContainer : modelContext.getModelProcessManifest().getProcessList()) {
+		if (modelContext != null) {
+			try {
+				pm.setGlobalOptions(modelContext.getModelProcessManifest().getGlobalOptionModelContainer().getPropertyMapById());
+			} catch (ModelContainerException ex) {
+				throw new ProjectMarshalException("Error marshalling global option model: " + ex.getMessage(), ex);
+			}
 			
-			ProcessMarshall processMarshall = ProjectMarshaller.marshalProcess(processContainer);
-			pm.getProcesses().add(processMarshall);
+			for (ModelProcessContainer processContainer : modelContext.getModelProcessManifest().getProcessList()) {
+				
+				ProcessMarshall processMarshall = ProjectMarshaller.marshalProcess(processContainer);
+				pm.getProcesses().add(processMarshall);
+			}
+	
+	
+			for (RasterData rasterData : modelContext.getRasterDataContext().getRasterDataList()) {
+				pm.getRasterFiles().add(rasterData.getFilePath());
+			}
+			
+			for (ShapeFileRequest shapeFileRequest : modelContext.getShapeDataContext().getShapeFiles()) {
+				pm.getShapeFiles().add(shapeFileRequest);
+			}
+			
+			for (SimpleGeoImage simpleGeoImage : modelContext.getImageDataContext().getImageList()) {
+				pm.getImageFiles().add(simpleGeoImage);
+			}
+			
+			pm.setUserScript(modelContext.getScriptingContext().getUserScript());
+			pm.setScriptLanguage(modelContext.getScriptingContext().getScriptLanguage());
+			
 		}
-
-
-		for (RasterData rasterData : modelContext.getRasterDataContext().getRasterDataList()) {
-			pm.getRasterFiles().add(rasterData.getFilePath());
-		}
-		
-		for (ShapeFileRequest shapeFileRequest : modelContext.getShapeDataContext().getShapeFiles()) {
-			pm.getShapeFiles().add(shapeFileRequest);
-		}
-		
-		for (SimpleGeoImage simpleGeoImage : modelContext.getImageDataContext().getImageList()) {
-			pm.getImageFiles().add(simpleGeoImage);
-		}
-		
-		pm.setUserScript(modelContext.getScriptingContext().getUserScript());
-		pm.setScriptLanguage(modelContext.getScriptingContext().getScriptLanguage());
 		
 		return pm;
 	}

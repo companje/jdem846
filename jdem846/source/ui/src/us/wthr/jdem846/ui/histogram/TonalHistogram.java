@@ -74,7 +74,9 @@ public class TonalHistogram extends Panel
 		
 		
 		double[][] data = new double[3][255];
-		for (int i = 0; i < 255; i++) {
+		
+		// Eliminate the two extremes
+		for (int i = 1; i < 255; i++) {
 			int c0 = histogramModel.getChannel0().distribution[i];
 			int c1 = histogramModel.getChannel1().distribution[i];
 			int c2 = histogramModel.getChannel2().distribution[i];
