@@ -37,6 +37,11 @@ public class ToolbarButton extends Button
 	
 	public ToolbarButton(String text, String iconPath, ActionListener actionListener)
 	{
+		this(text, iconPath, null, actionListener);
+	}
+	
+	public ToolbarButton(String text, String iconPath, String tooltip, ActionListener actionListener)
+	{
 		super(text);
 		
 		if (iconPath != null) {
@@ -45,6 +50,10 @@ public class ToolbarButton extends Button
 			} catch (IOException ex) {
 				log.warn("Failed to load icon: " + ex.getMessage(), ex);
 			}
+		}
+		
+		if (tooltip != null) {
+			this.setToolTipText(tooltip);
 		}
 		
 		this.addActionListener(actionListener);

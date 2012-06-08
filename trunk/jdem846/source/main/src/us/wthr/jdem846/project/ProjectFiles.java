@@ -27,7 +27,7 @@ public class ProjectFiles
 			throw new ProjectParseException("Invalid file format: " + path);
 		} else if (ext.equalsIgnoreCase(".jdem") || ext.equalsIgnoreCase(".json")) {
 			JsonProjectFileWriter.writeProject(projectMarshall, path);
-		} else if (ext.equalsIgnoreCase(".zdem") || ext.equalsIgnoreCase(".zip")) {
+		} else if (ext.equalsIgnoreCase(".jdemimg") || ext.equalsIgnoreCase(".jdemprj") || ext.equalsIgnoreCase(".zdem") || ext.equalsIgnoreCase(".zip")) {
 			ZipProjectFileWriter.writeProject(projectMarshall, path);
 		} else {
 			throw new ProjectParseException("Unrecognized Extension: " + ext);
@@ -42,7 +42,7 @@ public class ProjectFiles
 			throw new ProjectParseException("Invalid file format: " + path);
 		} else if (ext.equalsIgnoreCase(".jdem") || ext.equalsIgnoreCase(".json")) {
 			return JsonProjectFileReader.readProject(path);
-		} else if (ext.equalsIgnoreCase(".zdem") || ext.equalsIgnoreCase(".zip")) {
+		} else if (ext.equalsIgnoreCase(".jdemimg") || ext.equalsIgnoreCase(".jdemprj") || ext.equalsIgnoreCase(".zdem") || ext.equalsIgnoreCase(".zip")) {
 			return ZipProjectFileReader.readProject(path);
 		} else {
 			throw new ProjectParseException("Unrecognized Extension: " + ext);

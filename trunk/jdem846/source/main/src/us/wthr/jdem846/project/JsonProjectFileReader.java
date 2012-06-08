@@ -175,11 +175,28 @@ public class JsonProjectFileReader
 		JSONArray processesArray = json.getJSONArray("processes");
 		JSONArray layersArray = json.getJSONArray("layers");
 		
-		projectMarshall.setScriptLanguage(ScriptLanguageEnum.getLanguageFromString(json.getString("scriptLanguage")));
+		String scriptLanguage = null;
+		if (json.has("scriptLanguage")) {
+			scriptLanguage = json.getString("scriptLanguage");
+		}
 		
-		JsonProjectFileReader.parseOptions(projectMarshall.getGlobalOptions(), globalOptionsArray);
-		JsonProjectFileReader.parseProcesses(projectMarshall, processesArray);
-		JsonProjectFileReader.parseLayers(projectMarshall, layersArray);
+		
+		if (scriptLanguage != null) {
+			
+			projectMarshall.setScriptLanguage(ScriptLanguageEnum.getLanguageFromString(scriptLanguage));
+		}
+		
+		if (globalOptionsArray != null) {
+			JsonProjectFileReader.parseOptions(projectMarshall.getGlobalOptions(), globalOptionsArray);
+		}
+		
+		if (processesArray != null) {
+			JsonProjectFileReader.parseProcesses(projectMarshall, processesArray);
+		}
+		
+		if (layersArray != null) {
+			JsonProjectFileReader.parseLayers(projectMarshall, layersArray);
+		}
 		
 		return projectMarshall;
 	}

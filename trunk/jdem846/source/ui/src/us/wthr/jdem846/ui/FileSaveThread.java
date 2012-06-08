@@ -86,6 +86,7 @@ public class FileSaveThread extends Thread
 		File writeFile = new File(path);
 		try {
 			ImageIO.write((BufferedImage)image, formatName, writeFile);
+			SharedStatusBar.setStatus("Image exported to " + writeFile);
 			this.fireSaveSuccessfulListeners();
 		} catch (IOException e) {
 			log.error("Failed to write image to disk: " + e.getMessage(), e);

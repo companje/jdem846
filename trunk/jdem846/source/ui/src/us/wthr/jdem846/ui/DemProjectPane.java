@@ -270,7 +270,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		scriptPane = new ScriptEditorPanel();
 		
-		renderPane = new RenderPane();
+		renderPane = new RenderPane(true);
 		
 		//statusBar = new StatusBar();
 		//statusBar.setProgressVisible(false);
@@ -1567,10 +1567,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 	{
 		FileChooser chooser = new FileChooser();
 
-		FileNameExtensionFilter xdemFilter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.xdem.name"), "xdem");
-		FileNameExtensionFilter zdemFilter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.zdem.name"), "zdem");
-		
-		chooser.addChoosableFileFilter(xdemFilter);
+		FileNameExtensionFilter zdemFilter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.jdemprj.name"), "jdemprj");
+
 		chooser.addChoosableFileFilter(zdemFilter);
 		chooser.setFileFilter(zdemFilter);
 		chooser.setMultiSelectionEnabled(false);
@@ -1580,8 +1578,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 	    	File selectedFile = chooser.getSelectedFile();
 	    	
 	    	String path = selectedFile.getAbsolutePath();
-	    	if (!path.toLowerCase().endsWith(".zdem")) {
-	    		path = path + ".zdem";
+	    	if (!path.toLowerCase().endsWith(".jdemprj")) {
+	    		path = path + ".jdemprj";
 	    	}
 	    		
 	    	saveTo(path);
@@ -1593,9 +1591,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 	protected void saveTo(String saveTo)
 	{
 		try {
-			
-			//ProjectModel projectModel = getProjectModel();
-			
+
 			ProjectMarshall projectMarshall = ProjectMarshaller.marshallProject(modelContext);
 			
 			List<JDemElevationModel> modelList = this.renderPane.getJdemElevationModels();
@@ -1609,10 +1605,9 @@ public class DemProjectPane extends JdemPanel implements Savable
 			RecentProjectTracker.addProject(saveTo);
 			
 			log.info("Project file saved to " + saveTo);
-			//File file = new File(saveTo);
-			//setComponentTabTitle(tabPane.getSelectedIndex(), file.getName());
+			SharedStatusBar.setStatus("Project file saved to " + saveTo);
+			
 		} catch (Exception ex) {
-			//ex.printStackTrace();
 			log.warn("Error trying to write project to disk: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(getRootPane(),
 				    I18N.get("us.wthr.jdem846.ui.jdemFrame.saveError.writeError.message"),

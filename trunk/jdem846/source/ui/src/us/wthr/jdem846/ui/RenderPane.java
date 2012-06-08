@@ -42,29 +42,35 @@ public class RenderPane extends Panel implements Savable
 	
 	private OutputImageViewButtonBar buttonBar;
 	private Menu modelMenu;
+	
+	private boolean tabbed = true;
 	private EmbeddedTabbedPane outputImageTabbedPane;
+	private RenderViewPane renderViewPane;
 	
 	private int renderCount = 0;
 	
-	public RenderPane()
+	public RenderPane(boolean tabbed)
 	{
-		
+		this.tabbed = tabbed;
 		buttonBar = new OutputImageViewButtonBar(this);
 		this.setButtonBarAllDisabled();
 		
-		outputImageTabbedPane = new EmbeddedTabbedPane(EmbeddedTabbedPane.BOTTOM);
-		
-		outputImageTabbedPane.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e)
-			{
-				onImageTabChanged();
-			}
-		});
+		if (tabbed) {
+			outputImageTabbedPane = new EmbeddedTabbedPane(EmbeddedTabbedPane.BOTTOM);
+			outputImageTabbedPane.setTabsVisible(false);
+			
+			outputImageTabbedPane.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e)
+				{
+					onImageTabChanged();
+				}
+			});
+		}
 		
 		modelMenu = new ComponentMenu(this, I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu"), KeyEvent.VK_M);
 		MainMenuBar.insertMenu(modelMenu);
 		
-		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.save"), JDem846Properties.getProperty("us.wthr.jdem846.ui.outputImageView.save"), KeyEvent.VK_A, new ActionListener() {
+		modelMenu.add(new MenuItem(I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.menu.export"), JDem846Properties.getProperty("us.wthr.jdem846.ui.outputImageView.export"), KeyEvent.VK_A, new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				save();
@@ -165,7 +171,9 @@ public class RenderPane extends Panel implements Savable
 		setLayout(new BorderLayout());
 		
 		add(buttonBar, BorderLayout.NORTH);
-		add(outputImageTabbedPane, BorderLayout.CENTER);
+		if (tabbed) {
+			add(outputImageTabbedPane, BorderLayout.CENTER);
+		}
 	}
 	
 	
@@ -187,7 +195,15 @@ public class RenderPane extends Panel implements Savable
 		renderCount++;
 		
 		RenderViewPane renderViewPane = new RenderViewPane(modelContext);
-		outputImageTabbedPane.addTab("Image #" + renderCount, renderViewPane, true);
+		
+		if (tabbed) {
+			outputImageTabbedPane.addTab("Image #" + renderCount, renderViewPane, true);
+			outputImageTabbedPane.setSelectedComponent(renderViewPane);
+		} else {
+			this.renderViewPane = renderViewPane;
+			add(renderViewPane, BorderLayout.CENTER);
+			updateActiveRenderViewState();
+		}
 		
 		renderViewPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
@@ -195,9 +211,7 @@ public class RenderPane extends Panel implements Savable
 				updateActiveRenderViewState();
 			}
 		});
-		
-		outputImageTabbedPane.setSelectedComponent(renderViewPane);
-		
+	
 		renderViewPane.startWorker();
 		
 	}
@@ -207,7 +221,15 @@ public class RenderPane extends Panel implements Savable
 		renderCount++;
 		
 		RenderViewPane renderViewPane = new RenderViewPane(jdemElevationModel);
-		outputImageTabbedPane.addTab("Image #" + renderCount, renderViewPane, true);
+		
+		if (tabbed) {
+			outputImageTabbedPane.addTab("Image #" + renderCount, renderViewPane, true);
+			outputImageTabbedPane.setSelectedComponent(renderViewPane);
+		} else {
+			this.renderViewPane = renderViewPane;
+			add(renderViewPane, BorderLayout.CENTER);
+			updateActiveRenderViewState();
+		}
 		
 		renderViewPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
@@ -216,23 +238,26 @@ public class RenderPane extends Panel implements Savable
 			}
 		});
 		
-		outputImageTabbedPane.setSelectedComponent(renderViewPane);
 	}
 	
 	protected RenderViewPane getActiveRenderViewPane()
 	{
-		if (outputImageTabbedPane.getTabCount() == 0) {
-			return null;
-		}
-		
-		int index = outputImageTabbedPane.getSelectedIndex();
-		Component comp = outputImageTabbedPane.getComponentAt(index);
-		
-		if (comp instanceof RenderViewPane) {
-			RenderViewPane renderViewPane = (RenderViewPane) comp;
-			return renderViewPane;
+		if (tabbed) {
+			if (outputImageTabbedPane.getTabCount() == 0) {
+				return null;
+			}
+			
+			int index = outputImageTabbedPane.getSelectedIndex();
+			Component comp = outputImageTabbedPane.getComponentAt(index);
+			
+			if (comp instanceof RenderViewPane) {
+				RenderViewPane renderViewPane = (RenderViewPane) comp;
+				return renderViewPane;
+			} else {
+				return null;
+			}
 		} else {
-			return null;
+			return renderViewPane;
 		}
 	}
 	
@@ -312,13 +337,22 @@ public class RenderPane extends Panel implements Savable
 	public List<JDemElevationModel> getJdemElevationModels()
 	{
 		List<JDemElevationModel> modelList = new ArrayList<JDemElevationModel>();
-		for (Component component : outputImageTabbedPane.getComponents()) {
-			if (component instanceof RenderViewPane) {
-				RenderViewPane viewPane = (RenderViewPane) component;
-				if (viewPane.getJdemElevationModel() != null) {
-					modelList.add(viewPane.getJdemElevationModel());
+		
+		if (tabbed) {
+		
+			for (Component component : outputImageTabbedPane.getComponents()) {
+				if (component instanceof RenderViewPane) {
+					RenderViewPane viewPane = (RenderViewPane) component;
+					if (viewPane.getJdemElevationModel() != null) {
+						modelList.add(viewPane.getJdemElevationModel());
+					}
 				}
 			}
+		
+		} else if (renderViewPane != null){
+			
+			modelList.add(renderViewPane.getJdemElevationModel());
+			
 		}
 		
 		return modelList;

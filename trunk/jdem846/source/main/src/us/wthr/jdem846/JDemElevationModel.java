@@ -24,6 +24,7 @@ public class JDemElevationModel extends AbstractBuffer
 	
 	public final static float NO_VALUE = (float) DemConstants.ELEV_NO_DATA;
 	
+	
 	private boolean[] maskBuffer;
 	private int[] rgbaBuffer;
 	private float[] longitudeBuffer;
@@ -245,41 +246,61 @@ public class JDemElevationModel extends AbstractBuffer
 				
 		for (int i = 0; i < this.getBufferLength(); i++) {
 			
-			if ((len = bais.read(buffer4, 0, 4)) != 4) {
-				throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
-			} else {
-				ttlRead += 4;
-			}
-			fltValue = ByteConversions.bytesToFloat(buffer4);
-			latitudeBuffer[i] = fltValue;
+			intValue = bais.read();
 			
-			if ((len = bais.read(buffer4, 0, 4)) != 4) {
-				throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
-			} else {
-				ttlRead += 4;
-			}
-			fltValue = ByteConversions.bytesToFloat(buffer4);
-			longitudeBuffer[i] = fltValue;
-			
-			if ((len = bais.read(buffer4, 0, 4)) != 4) {
-				throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
-			} else {
-				ttlRead += 4;
-			}
-			fltValue = ByteConversions.bytesToFloat(buffer4);
-			elevationBuffer[i] = fltValue;
-			
-			
-			if (bais.read() == 0x01) {
+			if (intValue == 0x01) {
+				if ((len = bais.read(buffer4, 0, 4)) != 4) {
+					throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
+				} else {
+					ttlRead += 4;
+				}
+				fltValue = ByteConversions.bytesToFloat(buffer4);
+				latitudeBuffer[i] = fltValue;
+				
+				if ((len = bais.read(buffer4, 0, 4)) != 4) {
+					throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
+				} else {
+					ttlRead += 4;
+				}
+				fltValue = ByteConversions.bytesToFloat(buffer4);
+				longitudeBuffer[i] = fltValue;
+				
+				if ((len = bais.read(buffer4, 0, 4)) != 4) {
+					throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
+				} else {
+					ttlRead += 4;
+				}
+				fltValue = ByteConversions.bytesToFloat(buffer4);
+				elevationBuffer[i] = fltValue;
+				
 				maskBuffer[i] = true;
+				ttlRead += 1;
+		
+				pointsRead++;
+				if (maskBuffer[i]) {
+					validRead++;
+				}
 			} else {
-				maskBuffer[i] = false;
-			}
-			ttlRead += 1;
-	
-			pointsRead++;
-			if (maskBuffer[i]) {
-				validRead++;
+				
+				
+				
+				if ((len = bais.read(buffer4, 0, 4)) != 4) {
+					throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
+				} else {
+					ttlRead += 4;
+				}
+				int skipLength = ByteConversions.bytesToInt(buffer4);
+				
+				//log.info("READ SKIP: " + skipLength);
+				
+				for (int j = i; j < i + skipLength && j < latitudeBuffer.length; j++) {
+					latitudeBuffer[j] = NO_VALUE;
+					longitudeBuffer[j] = NO_VALUE;
+					elevationBuffer[j] = (float) DemConstants.ELEV_NO_DATA;
+					maskBuffer[j] = false;
+				}
+				
+				i += skipLength;
 			}
 		}
 		
@@ -299,24 +320,44 @@ public class JDemElevationModel extends AbstractBuffer
 		
 		for (int i = 0; i < this.getBufferLength(); i++) {
 			
-			ByteConversions.floatToBytes(latitudeBuffer[i], buffer4);
-			out.write(buffer4, 0, 4);
-			
-			ByteConversions.floatToBytes(longitudeBuffer[i], buffer4);
-			out.write(buffer4, 0, 4);
-			
-			ByteConversions.floatToBytes(elevationBuffer[i], buffer4);
-			out.write(buffer4, 0, 4);
-			
 			if (maskBuffer[i] == true) {
+			
 				out.write(0x01);
+				
+				ByteConversions.floatToBytes(latitudeBuffer[i], buffer4);
+				out.write(buffer4, 0, 4);
+				
+				ByteConversions.floatToBytes(longitudeBuffer[i], buffer4);
+				out.write(buffer4, 0, 4);
+				
+				ByteConversions.floatToBytes(elevationBuffer[i], buffer4);
+				out.write(buffer4, 0, 4);
+	
+				
+	
+				pointsWritten++;
+				if (maskBuffer[i]) {
+					validWritten++;
+				}
+				
 			} else {
 				out.write(0x00);
-			}
-
-			pointsWritten++;
-			if (maskBuffer[i]) {
-				validWritten++;
+				int skipLength = 0;
+				
+				for (int j = i; j < getBufferLength(); j++) {
+					if (maskBuffer[j]) {
+						break;
+					} else {
+						skipLength++;
+					}
+				}
+				
+				ByteConversions.intToBytes(skipLength, buffer4);
+				out.write(buffer4, 0, 4);
+				
+				//log.info("WRITE SKIP: " + skipLength);
+				i += skipLength;
+				
 			}
 		}
 		

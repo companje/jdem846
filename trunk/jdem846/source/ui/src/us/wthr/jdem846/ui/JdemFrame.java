@@ -462,7 +462,7 @@ public class JdemFrame extends Frame
 	{
 		log.info("Displaying open project dialog");
 		FileChooser chooser = new FileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.generic.name"), "zdem", "xdem");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.generic.name"), "jdemprj", "jdemimg");
 		chooser.setFileFilter(filter);
 		chooser.setMultiSelectionEnabled(false);
 	    int returnVal = chooser.showOpenDialog(this);
@@ -529,12 +529,32 @@ public class JdemFrame extends Frame
 			buildStandardProjectUI(projectMarshall);
 		} else if (projectMarshall.getProjectType() == ProjectTypeEnum.SCRIPT_PROJECT) {
 			buildScriptProjectUI(projectMarshall);
+		} else if (projectMarshall.getProjectType() == ProjectTypeEnum.DEM_IMAGE) {
+			buildImageProjectUI(projectMarshall);
 		} else {
 			log.warn("Invalid project type: " + projectMarshall.getProjectType());
 			// TODO: Message Dialog
 		}
 	}
 	
+	
+	protected void buildImageProjectUI(ProjectMarshall projectMarshall) 
+	{
+		DemImageProjectPane projectPane = new DemImageProjectPane(projectMarshall);
+		
+		String title = I18N.get("us.wthr.jdem846.ui.demImageProjectTitle");
+		if (projectMarshall != null && projectMarshall.getLoadedFrom() != null) {
+			File f = new File(projectMarshall.getLoadedFrom());
+			title = f.getName();
+			projectPane.setSavedPath(projectMarshall.getLoadedFrom());
+		}
+		
+		tabPane.addTab(title, JDem846Properties.getProperty("us.wthr.jdem846.ui.project.dem.icon"), projectPane, true);
+		tabPane.setSelectedComponent(projectPane);
+		projectPane.setTitle(title);
+
+		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.ready"));
+	}
 	
 	protected void buildStandardProjectUI(ProjectMarshall projectMarshall)
 	{

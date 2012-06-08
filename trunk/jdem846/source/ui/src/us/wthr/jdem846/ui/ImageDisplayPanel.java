@@ -45,6 +45,7 @@ import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -82,18 +83,23 @@ public class ImageDisplayPanel extends Panel
 	
 	private boolean allowZooming = true;
 	
-	public Color backgroundColor = Color.WHITE;
+	private boolean imageShadow = true;
 	
 	private Rectangle paintedImageBounds = new Rectangle();
 	private String status = null;
 	
 	private boolean imageInitialized = false;
 	
+	private int[] rgba0 = new int[4];
+	private int[] rgba1 = new int[4];
+	
 	public ImageDisplayPanel()
 	{
 		// Set Properties
 		setLayout(new BorderLayout());
 		this.setOpaque(false);
+		
+		this.setBackground(Color.LIGHT_GRAY);
 		
 		// Create components
 		
@@ -110,8 +116,7 @@ public class ImageDisplayPanel extends Panel
 			public void stateChanged(ChangeEvent e)
 			{
 				double scale = minScalePercent + (((double)sldZoomLevel.getValue() / 100.0) * (1.0 - minScalePercent));
-				
-				log.info("Scale To: " + scale);
+
 				setScalePercent(scale);
 			}
 		});
@@ -181,19 +186,10 @@ public class ImageDisplayPanel extends Panel
 		sldZoomLevel.setPaintTicks(true);
 		sldZoomLevel.setBounds(insets.left + 10, insets.top + 10, size.width, size.height);
 		
+
 		
 	}
-	
-	@Override
-	public void setBackground(Color backgroundColor)
-	{
-		this.backgroundColor = backgroundColor;
-	}
-	
-	public Color getBackground()
-	{
-		return backgroundColor;
-	}
+
 	
 	protected void updateZoomSliderValue()
 	{
@@ -298,10 +294,12 @@ public class ImageDisplayPanel extends Panel
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		if (backgroundColor != null) {
-			g.setColor(backgroundColor);
-			g.drawRect(0, 0, getWidth(), getHeight());
-		}
+		Color backgroundColor = getBackground();
+		
+		//if (backgroundColor != null) {
+		g.setColor(backgroundColor);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		//}
 		
 		
 		Image displayImage = getDisplayImage();
@@ -312,12 +310,18 @@ public class ImageDisplayPanel extends Panel
 			int x = (int) ((getWidth() / 2.0) - (scaleToWidth / 2.0)) + translateX;
 			int y = (int) ((getHeight() / 2.0) - (scaleToHeight / 2.0)) + translateY;
 			
+			if (getDisplayImageShadow()) {
+				paintImageShadow(g2d, x, y, displayImage.getWidth(null), displayImage.getHeight(null));
+			}
+			
 			g.drawImage(displayImage, x, y, null);
 			
 			paintedImageBounds.x = x;
 			paintedImageBounds.y = y;
 			paintedImageBounds.width = displayImage.getWidth(null);
 			paintedImageBounds.height = displayImage.getHeight(null);
+			
+			
 			
 		}
 		
@@ -365,6 +369,56 @@ public class ImageDisplayPanel extends Panel
 		g2d.setFont(origFont);
 		
 		super.paint(g);
+	}
+	
+	
+	/** Apologies to http://weblogs.java.net/blog/campbell/archive/2006/07/java_2d_tricker_2.html
+	 * 
+	 * @param g2d
+	 * @param imageX
+	 * @param imageY
+	 * @param imageWidth
+	 * @param imageHeight
+	 */
+	private void paintImageShadow(Graphics2D g2d, int imageX, int imageY, int imageWidth, int imageHeight)
+	{
+		
+		Color backgroundColor = getBackground();
+
+		int shadowWidth = 30;
+		
+		for (int i = shadowWidth; i >= 2; i-=1) {
+			double pct = (double)(shadowWidth - i) / (shadowWidth - 1.0);
+			
+	        g2d.setColor(getInterpolatedColor(Color.GRAY, backgroundColor, 1.0 - pct));
+	        g2d.setStroke(new BasicStroke(i));
+	        
+	        g2d.drawRoundRect(imageX, imageY, imageWidth, imageHeight, 5, 5);
+	        //g2d.drawRect(imageX, imageY, imageWidth, imageHeight);
+	        
+		}
+		
+	}
+	
+	
+	
+	private Color getInterpolatedColor(Color c0, Color c1, double f)
+	{
+
+		rgba0[0] = c0.getRed();
+		rgba0[1] = c0.getGreen();
+		rgba0[2] = c0.getBlue();
+		rgba0[3] = c0.getAlpha();
+		
+		rgba1[0] = c1.getRed();
+		rgba1[1] = c1.getGreen();
+		rgba1[2] = c1.getBlue();
+		rgba1[3] = c1.getAlpha();
+		
+		ColorAdjustments.interpolateColor(rgba0, rgba1, rgba1, f);
+		
+		return new Color(rgba1[0], rgba1[1], rgba1[2], rgba1[3]);
+		
 	}
 	
 	public void setStatus(String status)
@@ -488,6 +542,19 @@ public class ImageDisplayPanel extends Panel
 	}
 
 	
+	
+	public boolean getDisplayImageShadow()
+	{
+		return imageShadow;
+	}
+
+
+	public void setDisplayImageShadow(boolean imageShadow)
+	{
+		this.imageShadow = imageShadow;
+	}
+
+
 	public Rectangle getPaintedImageBounds()
 	{
 		return paintedImageBounds;

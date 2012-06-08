@@ -53,7 +53,9 @@ public class TabPane extends JTabbedPane implements Disposable
 	{
 		
 		hiddenTabUI = new HiddenTabPaneUI();
-		//this.setUI(hiddenTabUI);
+	//	this.setUI(hiddenTabUI);
+ 
+		
 		
 		addContainerListener(new ContainerListener() {
 			public void componentAdded(ContainerEvent arg0)
@@ -150,7 +152,8 @@ public class TabPane extends JTabbedPane implements Disposable
 	
 	public void setTabsVisible(boolean v)
 	{
-		hiddenTabUI.setTabsVisible(v);
+		//hiddenTabUI.setTabsVisible(v);
+		
 	}
 	
 	public boolean areTabsVisible()
@@ -162,9 +165,9 @@ public class TabPane extends JTabbedPane implements Disposable
 	{
 
 		if (getTabCount() == 1 ) {
-			//hiddenTabUI.setTabsVisible(false);
+		//	hiddenTabUI.setTabsVisible(false);
 		} else {
-			//hiddenTabUI.setTabsVisible(true);
+		//	hiddenTabUI.setTabsVisible(true);
 		}
 		
 	}
