@@ -12,6 +12,8 @@ import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.IOUtils;
+
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.exception.ProjectParseException;
@@ -70,10 +72,22 @@ public class ZipProjectFileReader
 		BufferedImage image = ImageIO.read(imageInStream);
 		imageInStream.close();
 		
+		
+		// Properties JSON
+		//String jsonPropertiesTxt = IOUtils.toString( in );
+		String jsonPropertiesTxt = null;
+		ZipEntry propertiesFile = zipFile.getEntry("models/" + index + "/properties.json");
+			if (propertiesFile != null) {
+			log.info("Loading from " + propertiesFile.getName() + ". Compressed Size: " + propertiesFile.getCompressedSize() + ". Size: " + propertiesFile.getSize());
+			InputStream propertiesInStream = zipFile.getInputStream(propertiesFile);
+			jsonPropertiesTxt = IOUtils.toString( propertiesInStream );
+		}
+		
+		
 		ZipEntry dataFile = zipFile.getEntry("models/" + index + "/model.dat");
 		log.info("Loading from " + dataFile.getName() + ". Compressed Size: " + dataFile.getCompressedSize() + ". Size: " + dataFile.getSize());
 		InputStream dataInStream = zipFile.getInputStream(dataFile);
-		JDemElevationModel jdemElevationModel = new JDemElevationModel(image, dataInStream);
+		JDemElevationModel jdemElevationModel = new JDemElevationModel(image, dataInStream, jsonPropertiesTxt);
 		dataInStream.close();
 		
 		

@@ -85,16 +85,14 @@ public class RenderViewPane extends Panel
 	private ImageDisplayPanel imageDisplay;
 	private TonalHistogram histogramDisplay;
 	private ElevationHistogram elevationHistogram;
+	private ModelPropertiesPanel modelPropertiesPanel;
 	
 	private SplitPane viewSplit;
 	private Panel componentPanel;
 	
-	//private ModelCanvas canvas;
 	private JDemElevationModel jdemElevationModel;
 	private ModelContext modelContext;
 	private boolean isWorking = false;
-	private boolean showPreviews = true;
-	
 
 	private ModelBuilder modelBuilder;
 	
@@ -102,9 +100,6 @@ public class RenderViewPane extends Panel
 	
 	private Coordinate latitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LATITUDE);
     private Coordinate longitudeCoordinate = new Coordinate(0.0, CoordinateTypeEnum.LONGITUDE);
-
-    private int lastMouseX = -1;
-    private int lastMouseY = -1;
 
     private String lastExportPath = null;
     
@@ -123,8 +118,7 @@ public class RenderViewPane extends Panel
 	{
 		this.modelContext = _modelContext;
 		
-		showPreviews = JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.renderInProcessPreviewing");
-		
+
 		imageDisplay = new ImageDisplayPanel();
 		// Set the image to be zoomed all the way out so the user can see the image updating
 		// as it is drawn.
@@ -145,6 +139,7 @@ public class RenderViewPane extends Panel
 		elevationHistogram = new ElevationHistogram();
 		elevationHistogram.setPreferredSize(new Dimension(255, 150));
 		
+		modelPropertiesPanel = new ModelPropertiesPanel();
 
 		ImageToolButtonGridPanel toolButtonGrid = new ImageToolButtonGridPanel();
 		toolButtonGrid.addClickListener(new ClickListener() {
@@ -160,7 +155,7 @@ public class RenderViewPane extends Panel
 		
 		TabPane toolsPanel = new TabPane();
 		toolsPanel.addTab("Quick Tools", toolButtonGrid);
-
+		toolsPanel.addTab("Properties", modelPropertiesPanel);
 		
 		histogramDisplay.setBorder(BorderFactory.createTitledBorder("RGB Histogram"));
 		elevationHistogram.setBorder(BorderFactory.createTitledBorder("Elevation Histogram"));
@@ -231,7 +226,7 @@ public class RenderViewPane extends Panel
 					
 					ModelProcessManifest modelProcessManifest = modelContext.getModelProcessManifest();
 					modelProcessManifest.getGlobalOptionModel().setDisposeGridOnComplete(false);
-					//ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext);
+					
 					log.info("Initializing model builder...");
 					modelBuilder.prepare(modelContext, modelProcessManifest);
 					
@@ -242,8 +237,6 @@ public class RenderViewPane extends Panel
 	
 					elapsed = (System.currentTimeMillis() - start) / 1000;
 	
-					//canvas = modelContext.getModelCanvas();
-					
 					initializeWithJDemElevationModel(jdemElevationModel);
 					
 					modelBuilder.dispose();
@@ -275,12 +268,9 @@ public class RenderViewPane extends Panel
 			taskStatusListener = new TaskStatusListener() {
 				public void taskCancelled(RunnableTask task)
 				{
-					//if (jdemElevationModel != null) {
-					//	taskCompleted(task);
-					//} else {
-						onNonSuccessfulCompletion(task, null);
-				//	}
-					
+
+					onNonSuccessfulCompletion(task, null);
+
 				}
 				public void taskCompleted(RunnableTask task)
 				{
@@ -298,7 +288,6 @@ public class RenderViewPane extends Panel
 				}
 				public void taskFailed(RunnableTask task, Throwable thrown)
 				{
-					//jdemElevationModel = null;
 					currentState = RenderViewPane.FAILED;
 					
 					detachModelListeners(true);
@@ -319,10 +308,8 @@ public class RenderViewPane extends Panel
 				
 				protected void onNonSuccessfulCompletion(RunnableTask task, Throwable thrown) 
 				{
-					//jdemElevationModel = null;
-					
+
 					currentState = RenderViewPane.CANCELED;
-					
 					
 					detachModelListeners(true);
 					
@@ -403,6 +390,8 @@ public class RenderViewPane extends Panel
 			elevationHistogram.setElevationHistogramModel(elevationHistogramModel);
 		}
 		
+		modelPropertiesPanel.setJdemElevationModel(jdemElevationModel);
+		
 		
 	}
 	
@@ -418,8 +407,6 @@ public class RenderViewPane extends Panel
 		if (!this.isWorking) {
 			TaskControllerService.addTask(renderTask, taskStatusListener);
 			setWorking(true);
-			//spinner.start();
-			//JdemFrame.getInstance().setGlassVisible("Working...", this, true);
 		}
 		
 
@@ -467,9 +454,7 @@ public class RenderViewPane extends Panel
 		
 		currentState = state;
 		
-		int scaleQuality = imageDisplay.getScaleQuality();
-		buttonBar.setSelectedImageQuality(scaleQuality);
-		
+
 		switch (currentState) {
 		case RenderViewPane.NOT_STARTED:
 			
@@ -478,7 +463,6 @@ public class RenderViewPane extends Panel
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
-			buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
@@ -491,7 +475,6 @@ public class RenderViewPane extends Panel
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, true);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, true);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, true);
-			buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, true);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
@@ -504,7 +487,6 @@ public class RenderViewPane extends Panel
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
-			buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
@@ -517,7 +499,6 @@ public class RenderViewPane extends Panel
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
-			buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
@@ -530,7 +511,6 @@ public class RenderViewPane extends Panel
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
-			buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, true);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, true);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
@@ -543,7 +523,6 @@ public class RenderViewPane extends Panel
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
-			buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, true);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, true);
@@ -556,7 +535,6 @@ public class RenderViewPane extends Panel
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
-			buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
 			buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
@@ -632,8 +610,6 @@ public class RenderViewPane extends Panel
 
 		updateStatus(x, y, scaledPercent);
 
-		lastMouseX = x;
-		lastMouseY = y;
 	}
 	
 	protected void updateStatus(int mouseX, int mouseY, double scaledPercent)
@@ -750,7 +726,7 @@ public class RenderViewPane extends Panel
 			
 			ProjectFiles.write(projectMarshall, path);
 			
-			lastExportPath = path;
+			//lastExportPath = path;
 			
 			RecentProjectTracker.addProject(path);
 			
@@ -791,7 +767,7 @@ public class RenderViewPane extends Panel
 			}
 		});
 		saveThread.start();
-		lastExportPath = path;
+		//lastExportPath = path;
 	}
 	
 	

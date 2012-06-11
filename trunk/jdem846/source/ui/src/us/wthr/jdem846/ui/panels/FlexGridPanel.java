@@ -37,7 +37,7 @@ public class FlexGridPanel extends Panel
 	private int columns = 1;
 	//private int row = 0;
 	private int addColumn = 0;
-	private GridBagLayout gridbag;
+	protected GridBagLayout gridbag;
 	
 	public FlexGridPanel(int columns)
 	{
@@ -60,15 +60,18 @@ public class FlexGridPanel extends Panel
 		return add(component, false);
 	}
 	
+	
+	
+	
 	public Component add(Component component, boolean last)
 	{
 		//component.setMinimumSize(new Dimension(50, 50));
-		component.setPreferredSize(new Dimension(20, 28));
+		//component.setPreferredSize(new Dimension(20, 28));
 		
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = GridBagConstraints.BOTH;
 		
-		
+
 		constraints.weightx = 1.0;
 		if (last) {
 			constraints.weighty = 1.0;
@@ -87,6 +90,10 @@ public class FlexGridPanel extends Panel
 		return super.add(component);
 	}
 	
+	public Component addDirect(Component component)
+	{
+		return super.add(component);
+	}
 	
 	public void closeGrid()
 	{

@@ -31,6 +31,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.ui.base.ComboBox;
 import us.wthr.jdem846.ui.base.JComboBoxModel;
+import us.wthr.jdem846.ui.optionModels.ImageQualityListModel;
 
 @SuppressWarnings("serial")
 public class OutputImageViewButtonBar extends ComponentButtonBar
@@ -40,7 +41,6 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 	public static final int BTN_ZOOM_OUT = 2;
 	public static final int BTN_ZOOM_ACTUAL = 3;
 	public static final int BTN_ZOOM_FIT = 4;
-	public static final int OPTION_QUALITY = 5;
 	public static final int BTN_STOP = 6;
 	public static final int BTN_PAUSE = 7;
 	public static final int BTN_RESUME = 8;
@@ -53,11 +53,7 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 	private ToolbarButton jbtnStop;
 	private ToolbarButton jbtnPause;
 	private ToolbarButton jbtnResume;
-	
-	private ComboBox cmbQuality;
-	private ImageQualityListModel qualityModel;
-	
-	private JLabel lblQuality;
+
 	
 	private List<ButtonClickedListener> buttonClickedListeners = new LinkedList<ButtonClickedListener>();	
 	private List<OptionChangeListener> optionChangeListeners = new LinkedList<OptionChangeListener>();
@@ -111,9 +107,7 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 			}
 		});
 
-		qualityModel = new ImageQualityListModel();
-		cmbQuality = new ComboBox(qualityModel);
-		lblQuality = new JLabel("Quality: ");
+
 		
 		// Set Tooltips
 		jbtnSave.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.exportTooltip"));
@@ -121,7 +115,6 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 		jbtnZoomOut.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomOutTooltip"));
 		jbtnZoomActual.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomActualTooltip"));
 		jbtnZoomFit.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.zoomFitTooltip"));
-		cmbQuality.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.qualityTooltip"));
 		jbtnStop.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.stopTooltip"));
 		jbtnPause.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.pauseTooltip"));
 		jbtnResume.setToolTipText(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.resumeTooltip"));
@@ -135,19 +128,7 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 		jbtnStop.setTextDisplayed(displayText);
 		jbtnPause.setTextDisplayed(displayText);
 		jbtnResume.setTextDisplayed(displayText);
-		lblQuality.setVisible(displayText);
-		
-		
-		// Add Listeners
-		cmbQuality.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					fireOptionChangeListeners(OPTION_QUALITY);
-				}	
-			}
-		});
-		
-		
+
 		
 		// Set layout
 		add(jbtnSave);
@@ -161,20 +142,9 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 		add(jbtnPause);
 		add(jbtnResume);
 		addSeparator();
-		add(lblQuality);
-		add(cmbQuality);
-		
+
 	}
-	
-	public void setSelectedImageQuality(int imageQuality)
-	{
-		qualityModel.setSelectedItemByValue(imageQuality);
-	}
-	
-	public int getSelectedImageQuality()
-	{
-		return qualityModel.getSelectedItemValue();
-	}
+
 	
 	public void setComponentEnabled(int button, boolean enabled)
 	{
@@ -193,9 +163,6 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 			break;
 		case BTN_ZOOM_FIT:
 			jbtnZoomFit.setEnabled(enabled);
-			break;
-		case OPTION_QUALITY:
-			cmbQuality.setEnabled(enabled);
 			break;
 		case BTN_STOP:
 			jbtnStop.setEnabled(enabled);
@@ -278,9 +245,7 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 	{
 		for (OptionChangeListener listener : optionChangeListeners) {
 			switch (option) {
-			case OPTION_QUALITY:
-				listener.onImageQualityChanged(qualityModel.getSelectedItemValue());
-				break;
+
 			}
 		}
 	}
@@ -288,19 +253,8 @@ public class OutputImageViewButtonBar extends ComponentButtonBar
 	
 	public interface OptionChangeListener
 	{
-		public void onImageQualityChanged(int quality);
-	}
-	
-	
-	class ImageQualityListModel extends JComboBoxModel<Integer>
-	{
 		
-		public ImageQualityListModel()
-		{
-			addItem(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.quality.smooth"), Image.SCALE_SMOOTH);
-			addItem(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.quality.default"), Image.SCALE_DEFAULT);
-			addItem(I18N.get("us.wthr.jdem846.ui.outputImageViewButtonBar.quality.fast"), Image.SCALE_FAST);
-			this.setSelectedItemByValue(Image.SCALE_DEFAULT);
-		}
 	}
+	
+
 }
