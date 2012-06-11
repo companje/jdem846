@@ -1,5 +1,8 @@
 package us.wthr.jdem846.model;
 
+import java.util.Date;
+
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
@@ -11,6 +14,7 @@ import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.annotations.GridProcessing;
+import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
@@ -36,6 +40,7 @@ public class ModelBuilder extends InterruptibleProcess
 	private ModelContext modelContext;
 	private ModelPointGrid modelGrid;
 	private ModelGridDimensions modelDimensions;
+	private GlobalOptionModel globalOptionModel;
 	
 	private boolean runLoadProcessor = true;
 	private boolean runColorProcessor = true;
@@ -63,7 +68,7 @@ public class ModelBuilder extends InterruptibleProcess
 	public void prepare(ModelContext modelContext,  ModelProcessManifest modelProcessManifest) throws RenderEngineException
 	{
 		
-		GlobalOptionModel globalOptionModel = modelProcessManifest.getGlobalOptionModel();
+		globalOptionModel = modelProcessManifest.getGlobalOptionModel();
 		
 		if (!globalOptionModel.getLimitCoordinates()) {
 			globalOptionModel.setNorthLimit(modelContext.getNorth());
@@ -247,14 +252,85 @@ public class ModelBuilder extends InterruptibleProcess
 		setProcessing(false);
 		
 		JDemElevationModel elevationModel = modelContext.getModelCanvas().getJdemElevationModel();
-		if (elevationModel != null && modelGrid != null) {
-			elevationModel.setElevationHistogramModel(modelGrid.getElevationHistogramModel());
-		}
+		setJDemElevationModelProperties(elevationModel);
 		
 		return elevationModel;
 	}
 	
 
+	protected void setJDemElevationModelProperties(JDemElevationModel elevationModel)
+	{
+		elevationModel.setProperty("subject", "");
+		elevationModel.setProperty("description", "");
+		elevationModel.setProperty("author", "");
+		elevationModel.setProperty("author-contact", "");
+		elevationModel.setProperty("institution", "");
+		elevationModel.setProperty("institution-contact", "");
+		elevationModel.setProperty("institution-address", "");
+		elevationModel.setProperty("render-date", (new Date()).toString());
+		elevationModel.setProperty("product-version", JDem846Properties.getProperty("us.wthr.jdem846.version"));
+		
+		if (modelGrid != null) {
+			elevationModel.setElevationHistogramModel(modelGrid.getElevationHistogramModel());
+		}
+
+		elevationModel.setProperty("max-model-latitude", ""+this.globalOptionModel.getNorthLimit());
+		elevationModel.setProperty("min-model-latitude", ""+this.globalOptionModel.getSouthLimit());
+
+		elevationModel.setProperty("max-model-longitude", ""+this.globalOptionModel.getEastLimit());
+		elevationModel.setProperty("min-model-longitude", ""+this.globalOptionModel.getWestLimit());
+
+		elevationModel.setProperty("max-data-latitude", ""+modelContext.getNorth());
+		elevationModel.setProperty("min-data-latitude", ""+modelContext.getSouth());
+
+		elevationModel.setProperty("max-data-longitude", ""+modelContext.getEast());
+		elevationModel.setProperty("min-data-longitude", ""+modelContext.getWest());
+		
+		elevationModel.setProperty("model-resolution-latitude", ""+modelDimensions.outputLatitudeResolution);
+		elevationModel.setProperty("model-resolution-longitude", ""+modelDimensions.outputLongitudeResolution);
+
+		elevationModel.setProperty("data-resolution-latitude", ""+modelDimensions.latitudeResolution);
+		elevationModel.setProperty("data-resolution-longitude", ""+modelDimensions.longitudeResolution);
+		
+		elevationModel.setProperty("elevation-minimum", ""+modelContext.getRasterDataContext().getDataMinimumValue());
+		elevationModel.setProperty("elevation-maximum-true", ""+modelContext.getRasterDataContext().getDataMaximumValueTrue());
+		elevationModel.setProperty("elevation-maximum-scaled", ""+modelContext.getRasterDataContext().getDataMaximumValue());
+		elevationModel.setProperty("elevation-minmax-estimated", ""+globalOptionModel.isEstimateElevationRange());
+		
+		elevationModel.setProperty("model-columns", ""+modelDimensions.outputWidth);
+		elevationModel.setProperty("model-rows", ""+modelDimensions.outputHeight);
+	
+		elevationModel.setProperty("data-columns", ""+modelDimensions.dataColumns);
+		elevationModel.setProperty("data-rows", ""+modelDimensions.dataRows);
+		
+		elevationModel.setProperty("render-projection", globalOptionModel.getRenderProjection());
+		elevationModel.setProperty("elevation-scale", globalOptionModel.getElevationScale());
+		elevationModel.setProperty("elevation-multiple", ""+globalOptionModel.getElevationMultiple());
+		elevationModel.setProperty("planet", globalOptionModel.getPlanet());
+		
+		
+		try {
+			String projection = (String) modelContext.getModelProcessManifest().getPropertyById("us.wthr.jdem846.model.ModelRenderOptionModel.mapProjection");
+			if (projection != null) {
+				elevationModel.setProperty("projection", projection);
+			}
+		} catch (ModelContainerException ex) {
+			log.warn("Error fetching projection: " + ex.getMessage(), ex);
+		}
+		
+		
+		try {
+			ViewPerspective viewPerspective = (ViewPerspective) modelContext.getModelProcessManifest().getPropertyById("us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle");
+			if (viewPerspective != null) {
+				elevationModel.setProperty("view-perspective", viewPerspective.toString());
+			}
+		} catch (ModelContainerException ex) {
+			log.warn("Error fetching view perspective: " + ex.getMessage(), ex);
+		}
+		
+	}
+	
+	
 
 	public boolean isPrepared()
 	{

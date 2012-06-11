@@ -19,6 +19,7 @@ import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Slider;
 import us.wthr.jdem846.ui.base.TabPane;
+import us.wthr.jdem846.ui.optionModels.ImageQualityListModel;
 import us.wthr.jdem846.ui.optionModels.JGoodiesColorThemeListModel;
 import us.wthr.jdem846.ui.optionModels.LanguageListModel;
 import us.wthr.jdem846.ui.optionModels.PrecacheStrategyOptionsListModel;
@@ -52,6 +53,8 @@ public class PreferencesDialog extends Dialog
 	private NumberTextField txtGeneralConsoleBufferSize;
 	private CheckBox chkGeneralReportUsage;
 	
+	private ComboBox cmbGeneralQuality;
+	private ImageQualityListModel qualityModel;
 	
 	private Slider sldPreviewingPreviewQuality;
 	private CheckBox chkPreviewingIncludeRasterDataInPreview;
@@ -91,6 +94,10 @@ public class PreferencesDialog extends Dialog
 		chkGeneralLimitConsoleOutput = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.limitConsoleOutput"));
 		txtGeneralConsoleBufferSize = new NumberTextField(false);
 		chkGeneralReportUsage = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.reportUsage"));
+		
+		qualityModel = new ImageQualityListModel();
+		cmbGeneralQuality = new ComboBox(qualityModel);
+		
 		
 		
 		sldPreviewingPreviewQuality = new Slider(1, 100);
@@ -147,6 +154,9 @@ public class PreferencesDialog extends Dialog
 		
 		//generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.userInterfaceColorTheme") + ":"));
 		//generalPanel.add(cmbGeneralColorTheme);
+		generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.quality") + ":"));
+		generalPanel.add(cmbGeneralQuality);
+		
 		
 		generalPanel.add(new Label(""));
 		generalPanel.add(chkGeneralDisplayToolbarText);
@@ -229,7 +239,7 @@ public class PreferencesDialog extends Dialog
 	public void setValuesToUserInterface()
 	{
 
-		
+		qualityModel.setSelectedItemByValue(JDem846Properties.getIntProperty("us.wthr.jdem846.general.view.imageScaling.quality"));
 		languageListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.i18n.default"));
 		colorThemeListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.jgoodies.theme"));
 		chkGeneralDisplayToolbarText.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.displayToolbarText"));
@@ -262,6 +272,9 @@ public class PreferencesDialog extends Dialog
 	public void setValuesFromUserInterface()
 	{
 		
+		
+		
+		JDem846Properties.setProperty("us.wthr.jdem846.general.view.imageScaling.quality", qualityModel.getSelectedItemValue());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.i18n.default", languageListModel.getSelectedItemValue());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.jgoodies.theme", colorThemeListModel.getSelectedItemValue());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.displayToolbarText", ""+chkGeneralDisplayToolbarText.getModel().isSelected());

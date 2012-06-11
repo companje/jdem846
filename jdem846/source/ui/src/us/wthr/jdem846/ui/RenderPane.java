@@ -20,6 +20,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.PropertiesChangeListener;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -151,20 +152,17 @@ public class RenderPane extends Panel implements Savable
 			}
 		});
 		
-		buttonBar.addOptionChangeListener(new OptionChangeListener() {
-			public void onImageQualityChanged(int quality) {
+
+		
+		JDem846Properties.addPropertiesChangeListener("us.wthr.jdem846.general.view.imageScaling.quality", new PropertiesChangeListener() {
+			public void onPropertyChanged(String property, String oldValue, String newValue)
+			{
 				RenderViewPane renderViewPane = getActiveRenderViewPane();
-				if (renderViewPane != null) {
-					renderViewPane.onImageQualityChanged(quality);
+				if (renderViewPane != null && property != null && property.equals("us.wthr.jdem846.general.view.imageScaling.quality")) {
+					renderViewPane.onImageQualityChanged(Integer.parseInt(newValue));
 				}
 			}
 		});
-		
-		
-		
-		
-		
-		
 		
 		
 		// Set Layout
@@ -177,6 +175,11 @@ public class RenderPane extends Panel implements Savable
 	}
 	
 	
+	public void dispose()
+	{
+		MainMenuBar.removeMenu(modelMenu);
+	}
+	
 	protected void setButtonBarAllDisabled()
 	{
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_SAVE, false);
@@ -184,7 +187,6 @@ public class RenderPane extends Panel implements Savable
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
-		buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);

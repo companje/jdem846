@@ -295,13 +295,10 @@ public class ImageDisplayPanel extends Panel
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		Color backgroundColor = getBackground();
-		
-		//if (backgroundColor != null) {
+
 		g.setColor(backgroundColor);
 		g.fillRect(0, 0, getWidth(), getHeight());
-		//}
-		
-		
+
 		Image displayImage = getDisplayImage();
 		if (displayImage != null) {
 			int scaleToWidth = (int) Math.floor((double)imageTrueWidth * (double) scalePercent);
@@ -334,7 +331,7 @@ public class ImageDisplayPanel extends Panel
 		Stroke origStroke = g2d.getStroke();
 		Font origFont = g2d.getFont();
 		if (status != null) {
-			g2d.setColor(new Color(0, 0, 0, 50));
+			g2d.setColor(new Color(00, 00, 00, 50));
 			g2d.fillRect(0, getHeight() - 20, getWidth(), 20);
 			
 			FontMetrics fm = g2d.getFontMetrics();

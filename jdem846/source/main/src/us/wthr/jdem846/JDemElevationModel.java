@@ -8,6 +8,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 import us.wthr.jdem846.canvas.AbstractBuffer;
 import us.wthr.jdem846.canvas.GeoRasterBuffer3d;
@@ -24,6 +30,7 @@ public class JDemElevationModel extends AbstractBuffer
 	
 	public final static float NO_VALUE = (float) DemConstants.ELEV_NO_DATA;
 	
+	private Map<String, String> properties = new HashMap<String, String>();
 	
 	private boolean[] maskBuffer;
 	private int[] rgbaBuffer;
@@ -33,12 +40,13 @@ public class JDemElevationModel extends AbstractBuffer
 	
 	private ElevationHistogramModel elevationHistogramModel;
 	
-	public JDemElevationModel(BufferedImage image, InputStream dataIn) throws IOException
+	public JDemElevationModel(BufferedImage image, InputStream dataIn, String properties) throws IOException
 	{
 		this(image.getWidth(), image.getHeight());
 		
 		this.readModelData(dataIn);
 		this.loadImageData(image);
+		this.readProperties(properties);
 		
 	}
 	
@@ -100,6 +108,25 @@ public class JDemElevationModel extends AbstractBuffer
 		}
 	}
 	
+	public boolean hasProperty(String key)
+	{
+		return properties.containsKey(key);
+	}
+	
+	public void setProperty(String key, String value)
+	{
+		properties.put(key, value);
+	}
+	
+	public String getProperty(String key)
+	{
+		return properties.get(key);
+	}
+	
+	public Map<String, String> getProperties()
+	{
+		return properties;
+	}
 	
 	public int getRgba(double x, double y)
 	{
@@ -355,7 +382,6 @@ public class JDemElevationModel extends AbstractBuffer
 				ByteConversions.intToBytes(skipLength, buffer4);
 				out.write(buffer4, 0, 4);
 				
-				//log.info("WRITE SKIP: " + skipLength);
 				i += skipLength;
 				
 			}
@@ -366,5 +392,55 @@ public class JDemElevationModel extends AbstractBuffer
 		log.info("JDEMELEVMDL Wrote " + pointsWritten + " with " + validWritten + " valid points");
 		
 	}
+	
+	
+	public void readProperties(String propertiesJson) throws IOException
+	{
+		if (propertiesJson == null) {
+			return;
+		}
+		
+		JSONObject json = (JSONObject) JSONSerializer.toJSON( propertiesJson );
+		
+		JSONObject propertiesObject = json.getJSONObject("properties");
+
+		JSONArray namesArray = propertiesObject.names();
+
+		for (Object o : namesArray) {
+			
+			String s = (String) o;
+			String v = propertiesObject.getString(s);
+			
+			properties.put(s, v);
+		}
+		
+		
+	}
+	
+	public void writeProperties(OutputStream out) throws IOException
+	{
+		JSONObject jsonObject = new JSONObject();
+		
+		JSONObject propertiesObject = new JSONObject();
+		
+		for (String key : properties.keySet()) {
+			
+			String value = properties.get(key);
+			
+			if (value != null) {
+				propertiesObject.element(key, value);
+			}
+			
+		}
+		
+		jsonObject.element("properties", propertiesObject);
+		
+		String json = jsonObject.toString(3);
+
+		out.write(json.getBytes());
+	}
+	
+	
+	
 	
 }

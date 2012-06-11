@@ -53,6 +53,13 @@ public class ZipProjectFileWriter
 			histogram.write(zos);
 			zos.closeEntry();
 		}
+		
+		
+		ZipEntry propertiesEntry = new ZipEntry("models/" + index + "/properties.json");
+		zos.putNextEntry(propertiesEntry);
+		model.writeProperties(zos);
+		zos.closeEntry();
+		
 	}
 	
 	protected static void writeJDemElevationModels(List<JDemElevationModel> modelList, ZipOutputStream zos) throws IOException

@@ -111,7 +111,6 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_OUT, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_ACTUAL, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_ZOOM_FIT, false);
-		buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, true);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, true);
 		buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
@@ -338,7 +337,6 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
-				buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, true);
 				setWorking(false);
 				//statusBar.setProgressVisible(false);
 				SharedStatusBar.removeControl(prgProgress);
@@ -365,7 +363,6 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_STOP, false);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_PAUSE, false);
 				buttonBar.setComponentEnabled(OutputImageViewButtonBar.BTN_RESUME, false);
-				buttonBar.setComponentEnabled(OutputImageViewButtonBar.OPTION_QUALITY, false);
 				setWorking(false);
 				//statusBar.setProgressVisible(false);
 				SharedStatusBar.removeControl(prgProgress);
