@@ -6,6 +6,7 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -17,6 +18,8 @@ public class ThreadedModelRenderer extends ModelRenderer
 {
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ThreadedModelRenderer.class);
+	
+	private ModelCanvas modelCanvas;
 	
 	public ThreadedModelRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
 	{
@@ -101,7 +104,12 @@ public class ThreadedModelRenderer extends ModelRenderer
 		modelCanvas.setMapProjection(mapProjection);
 		*/
 		//ModelCanvas modelCanvas = modelContext.createModelCanvas();
-		final ModelCanvas modelCanvas = modelContext.getModelCanvas();
+		try {
+			modelCanvas = modelContext.getModelCanvas();
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		on2DModelBefore(modelCanvas);
 		

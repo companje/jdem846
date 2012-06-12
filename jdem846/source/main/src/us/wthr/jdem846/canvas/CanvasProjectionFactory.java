@@ -4,9 +4,12 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.Projection;
+import us.wthr.jdem846.exception.CanvasException;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGridDimensions;
 import us.wthr.jdem846.model.ViewPerspective;
 
@@ -14,22 +17,29 @@ public class CanvasProjectionFactory
 {
 	
 	
-	public static CanvasProjection create(ModelContext modelContext)
+	public static CanvasProjection create(ModelContext modelContext) throws CanvasException
 	{
-		return create(modelContext.getModelOptions().getModelProjection(),
-				modelContext.getMapProjection(),
-				modelContext.getNorth(),
-				modelContext.getSouth(),
-				modelContext.getEast(),
-				modelContext.getWest(),
-				modelContext.getModelDimensions().getOutputWidth(),
-				modelContext.getModelDimensions().getOutputHeight(),
-				PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET)),
-				modelContext.getModelOptions().getElevationMultiple(),
-				modelContext.getRasterDataContext().getDataMinimumValue(),
-				modelContext.getRasterDataContext().getDataMaximumValue(),
-				modelContext.getModelDimensions(),
-				modelContext.getModelOptions().getProjection());
+		
+		GlobalOptionModel globalOptionModel = modelContext.getModelProcessManifest().getGlobalOptionModel();
+		
+		try {
+			return create(CanvasProjectionTypeEnum.getCanvasProjectionEnumFromIdentifier(globalOptionModel.getRenderProjection()),
+					globalOptionModel.getMapProjectionInstance(),
+					modelContext.getNorth(),
+					modelContext.getSouth(),
+					modelContext.getEast(),
+					modelContext.getWest(),
+					modelContext.getModelDimensions().getOutputWidth(),
+					modelContext.getModelDimensions().getOutputHeight(),
+					PlanetsRegistry.getPlanet(globalOptionModel.getPlanet()),
+					globalOptionModel.getElevationMultiple(),
+					modelContext.getRasterDataContext().getDataMinimumValue(),
+					modelContext.getRasterDataContext().getDataMaximumValue(),
+					modelContext.getModelDimensions(),
+					globalOptionModel.getViewAngle());
+		} catch (MapProjectionException ex) {
+			throw new CanvasException("Error fetching map project instance: " + ex.getMessage(), ex);
+		}
 		
 	}
 	

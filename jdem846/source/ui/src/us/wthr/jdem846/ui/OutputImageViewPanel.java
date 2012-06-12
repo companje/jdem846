@@ -35,6 +35,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
@@ -277,7 +278,12 @@ public class OutputImageViewPanel extends JdemPanel implements Savable
 				//OutputProduct<ModelCanvas> product = engine.generate(false, false);
 				elapsed = (System.currentTimeMillis() - start) / 1000;
 				
-				canvas = modelContext.getModelCanvas();
+				try {
+					canvas = modelContext.getModelCanvas();
+				} catch (ModelContextException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				synchronized(imageDisplay) {
 					imageDisplay.setImage(canvas.getImage());
 				}

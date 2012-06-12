@@ -328,7 +328,12 @@ public class TileRenderer extends InterruptibleProcess
 		solarElevation = modelContext.getLightingContext().getLightingElevation();
 		
 		//modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
-		projection = modelContext.getModelCanvas().getCanvasProjection();
+		try {
+			projection = modelContext.getModelCanvas().getCanvasProjection();
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		
@@ -386,7 +391,13 @@ public class TileRenderer extends InterruptibleProcess
 
 		log.info("Processing data points...");
 		
-		ModelCanvas modelCanvas = modelContext.getModelCanvas();
+		ModelCanvas modelCanvas = null;
+		try {
+			modelCanvas = modelContext.getModelCanvas();
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		try {
 			paintRasterPlot(modelCanvas);

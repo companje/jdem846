@@ -24,6 +24,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
@@ -632,12 +633,14 @@ public class RenderViewPane extends Panel
 			double longitude = jdemElevationModel.getLongitude(trueX, trueY);
 			double elevation = jdemElevationModel.getElevation(trueX, trueY);
 			
+
 			latitudeCoordinate.fromDecimal(latitude);
 			longitudeCoordinate.fromDecimal(longitude);
-			
+				
 			String status = ""+latitudeCoordinate + "  " + longitudeCoordinate + "  elev " + ((int)MathExt.round(elevation)) + "m";
-			
+				
 			imageDisplay.setStatus(status);
+
 		} else {
 			imageDisplay.setStatus(null);
 		}

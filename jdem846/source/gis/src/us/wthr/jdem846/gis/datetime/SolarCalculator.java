@@ -79,7 +79,7 @@ public class SolarCalculator
     
     public double obliquityCorrection(double t)
     {
-    	return meanObliquityOfEcliptic() + 0.00256 * Math.cos(Math.toRadians(125.04 - 1934.136 * t));
+    	return meanObliquityOfEcliptic() + 0.00256 * MathExt.cos(MathExt.radians(125.04 - 1934.136 * t));
     }
     
     public double geomMeanLongSun()

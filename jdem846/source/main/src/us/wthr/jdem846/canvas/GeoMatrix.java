@@ -1,9 +1,11 @@
 package us.wthr.jdem846.canvas;
 
+import us.wthr.jdem846.DemConstants;
+
 public class GeoMatrix extends AbstractBuffer
 {
 	
-	private final static float NO_VALUE = -999999.999f;
+	private final static float NO_VALUE = (float) DemConstants.ELEV_NO_DATA;
 	
 	
 	private float[] longitudeBuffer;

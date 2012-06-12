@@ -19,6 +19,7 @@ import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Slider;
 import us.wthr.jdem846.ui.base.TabPane;
+import us.wthr.jdem846.ui.base.TextField;
 import us.wthr.jdem846.ui.optionModels.ImageQualityListModel;
 import us.wthr.jdem846.ui.optionModels.JGoodiesColorThemeListModel;
 import us.wthr.jdem846.ui.optionModels.LanguageListModel;
@@ -69,6 +70,24 @@ public class PreferencesDialog extends Dialog
 	private ComboBox cmbPerfPrecacheStrategy;
 	private CheckBox chkPerfDoubleBuffered;
 	
+	private TextField txtDefaultsSubject;
+	private TextField txtDefaultsDescription;
+	private TextField txtDefaultsAuthor;
+	private TextField txtDefaultsAuthorContact;
+	private TextField txtDefaultsInstitution;
+	private TextField txtDefaultsInstitutionContact;
+	private TextField txtDefaultsInstitutionAddress;
+	
+	/*
+	 * us.wthr.jdem846.defaults.subject=
+us.wthr.jdem846.defaults.description=
+us.wthr.jdem846.defaults.author=
+us.wthr.jdem846.defaults.author-contact=
+us.wthr.jdem846.defaults.institution=
+us.wthr.jdem846.defaults.institution-contact=
+us.wthr.jdem846.defaults.institution-address=
+	 */
+	
 	
 	public PreferencesDialog()
 	{
@@ -114,6 +133,20 @@ public class PreferencesDialog extends Dialog
 		cmbPerfPrecacheStrategy = new ComboBox(precacheStrategyModel);
 		chkPerfDoubleBuffered = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.doubleBuffered"));
 		
+		
+		
+		txtDefaultsSubject = new TextField();
+		txtDefaultsDescription = new TextField();
+		txtDefaultsAuthor = new TextField();
+		txtDefaultsAuthorContact = new TextField();
+		txtDefaultsInstitution = new TextField();
+		txtDefaultsInstitutionContact = new TextField();
+		txtDefaultsInstitutionAddress = new TextField();
+		
+
+		
+		
+		
 		// Add listeners
 		btnOk.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
@@ -138,16 +171,17 @@ public class PreferencesDialog extends Dialog
 		FlexGridPanel performancePanel = new FlexGridPanel(2);
 		FlexGridPanel previewPanel = new FlexGridPanel(2);
 		FlexGridPanel generalPanel = new FlexGridPanel(2);
-
+		FlexGridPanel defaultsPanel = new FlexGridPanel(2);
+		
 		performancePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		previewPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		generalPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		
+		defaultsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		tabPane.add(generalPanel, I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.tab"));
 		tabPane.add(performancePanel, I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.tab"));
 		tabPane.add(previewPanel, I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.tab"));
-		
+		tabPane.add(defaultsPanel, I18N.get("us.wthr.jdem846.ui.preferencesDialog.defaults.tab"));
 		
 		generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.language") + ":"));
 		generalPanel.add(cmbGeneralLanguage);
@@ -220,6 +254,45 @@ public class PreferencesDialog extends Dialog
 		
 		
 		
+		/*
+		 * us.wthr.jdem846.defaults.subject=
+	us.wthr.jdem846.defaults.description=
+	us.wthr.jdem846.defaults.author=
+	us.wthr.jdem846.defaults.author-contact=
+	us.wthr.jdem846.defaults.institution=
+	us.wthr.jdem846.defaults.institution-contact=
+	us.wthr.jdem846.defaults.institution-address=
+	
+		txtDefaultsSubject
+		txtDefaultsDescription
+		txtDefaultsAuthor
+		txtDefaultsAuthorContact
+		txtDefaultsInstitution
+		txtDefaultsInstitutionContact
+		txtDefaultsInstitutionAddress
+		 */
+		
+		defaultsPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.defaults.author") + ":"));
+		defaultsPanel.add(txtDefaultsAuthor);
+		
+		defaultsPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.defaults.author-contact") + ":"));
+		defaultsPanel.add(txtDefaultsAuthorContact);
+		
+		defaultsPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.defaults.institution") + ":"));
+		defaultsPanel.add(txtDefaultsInstitution);
+		
+		defaultsPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.defaults.institution-contact") + ":"));
+		defaultsPanel.add(txtDefaultsInstitutionContact);
+		
+		defaultsPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.defaults.institution-address") + ":"));
+		defaultsPanel.add(txtDefaultsInstitutionAddress);
+		
+		defaultsPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.defaults.subject") + ":"));
+		defaultsPanel.add(txtDefaultsSubject);
+		
+		defaultsPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.defaults.description") + ":"));
+		defaultsPanel.add(txtDefaultsDescription);
+		
 		
 		Panel pnlButtons = new Panel();
 		pnlButtons.add(btnOk);
@@ -230,6 +303,7 @@ public class PreferencesDialog extends Dialog
 		performancePanel.closeGrid();
 		previewPanel.closeGrid();
 		generalPanel.closeGrid();
+		defaultsPanel.closeGrid();
 		
 		//this.pack();
 		
@@ -266,6 +340,15 @@ public class PreferencesDialog extends Dialog
 		chkPerfDoubleBuffered.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.doubleBuffered"));
 		
 		precacheStrategyModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy"));
+		
+		
+		txtDefaultsSubject.setText(JDem846Properties.getProperty("us.wthr.jdem846.defaults.subject"));
+		txtDefaultsDescription.setText(JDem846Properties.getProperty("us.wthr.jdem846.defaults.description"));
+		txtDefaultsAuthor.setText(JDem846Properties.getProperty("us.wthr.jdem846.defaults.author"));
+		txtDefaultsAuthorContact.setText(JDem846Properties.getProperty("us.wthr.jdem846.defaults.author-contact"));
+		txtDefaultsInstitution.setText(JDem846Properties.getProperty("us.wthr.jdem846.defaults.institution"));
+		txtDefaultsInstitutionContact.setText(JDem846Properties.getProperty("us.wthr.jdem846.defaults.institution-contact"));
+		txtDefaultsInstitutionAddress.setText(JDem846Properties.getProperty("us.wthr.jdem846.defaults.institution-address"));
 		
 	}
 	
@@ -305,6 +388,13 @@ public class PreferencesDialog extends Dialog
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.precacheStrategy", precacheStrategyModel.getSelectedItemValue());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.doubleBuffered", ""+chkPerfDoubleBuffered.getModel().isSelected());
 		
+		JDem846Properties.setProperty("us.wthr.jdem846.defaults.subject", txtDefaultsSubject.getText());
+		JDem846Properties.setProperty("us.wthr.jdem846.defaults.description", txtDefaultsDescription.getText());
+		JDem846Properties.setProperty("us.wthr.jdem846.defaults.author", txtDefaultsAuthor.getText());
+		JDem846Properties.setProperty("us.wthr.jdem846.defaults.author-contact", txtDefaultsAuthorContact.getText());
+		JDem846Properties.setProperty("us.wthr.jdem846.defaults.institution", txtDefaultsInstitution.getText());
+		JDem846Properties.setProperty("us.wthr.jdem846.defaults.institution-contact", txtDefaultsInstitutionContact.getText());
+		JDem846Properties.setProperty("us.wthr.jdem846.defaults.institution-address", txtDefaultsInstitutionAddress.getText());
 		
 	}
 	

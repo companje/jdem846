@@ -11,8 +11,8 @@ import us.wthr.jdem846.model.annotations.ValueBounds;
 public class ModelRenderOptionModel implements OptionModel
 {
 	
-	private String mapProjection = MapProjectionEnum.EQUIRECTANGULAR.identifier();
-	private ViewPerspective viewAngle = ViewPerspective.fromString("rotate:[30.0,0,0];shift:[0,0,0];zoom:[1.0]");
+	
+	
 	private int forceAlpha = 255;
 	
 	
@@ -22,41 +22,11 @@ public class ModelRenderOptionModel implements OptionModel
 		
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.ModelRenderOptionModel.mapProjection",
-			label="Map Projection",
-			tooltip="",
-			enabled=true,
-			listModel=MapProjectionListModel.class)
-	@Order(100)
-	public String getMapProjection()
-	{
-		return mapProjection;
-	}
-
-
-	public void setMapProjection(String mapProjection)
-	{
-		this.mapProjection = mapProjection;
-	}
+	
 
 
 
-
-	@ProcessOption(id="us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle",
-			label="View Angle",
-			tooltip="",
-			enabled=true)
-	@Order(200)
-	public ViewPerspective getViewAngle()
-	{
-		return viewAngle;
-	}
-
-
-	public void setViewAngle(ViewPerspective viewAngle)
-	{
-		this.viewAngle = viewAngle;
-	}
+	
 
 	
 	
@@ -81,8 +51,6 @@ public class ModelRenderOptionModel implements OptionModel
 	{
 		ModelRenderOptionModel copy = new ModelRenderOptionModel();
 		
-		copy.mapProjection = this.mapProjection;
-		copy.viewAngle = this.viewAngle.copy();
 		copy.forceAlpha = this.forceAlpha;
 		
 		return copy;

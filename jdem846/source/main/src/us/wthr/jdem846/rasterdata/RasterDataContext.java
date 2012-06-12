@@ -213,7 +213,7 @@ public class RasterDataContext implements DataContext
 
 		
 		
-		double a = MathExt.sqr(Math.sin(MathExt.radians(latitudeResolution)/2)) + MathExt.cos(MathExt.radians(latitude)) * MathExt.cos(MathExt.radians(latitude + latitudeResolution)) * MathExt.sqr(Math.sin(MathExt.radians(longitudeResolution)/2)); 
+		double a = MathExt.sqr(MathExt.sin(MathExt.radians(latitudeResolution)/2)) + MathExt.cos(MathExt.radians(latitude)) * MathExt.cos(MathExt.radians(latitude + latitudeResolution)) * MathExt.sqr(MathExt.sin(MathExt.radians(longitudeResolution)/2)); 
 		double d = meanRadius * (2 * MathExt.atan2(MathExt.sqrt(a), MathExt.sqrt(1-a))) * 1000;
 		
 		/*

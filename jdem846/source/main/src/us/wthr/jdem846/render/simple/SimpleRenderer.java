@@ -3,6 +3,7 @@ package us.wthr.jdem846.render.simple;
 import java.awt.Color;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.geom.Line;
@@ -21,6 +22,7 @@ import us.wthr.jdem846.render.render3.ModelBuilder;
 import us.wthr.jdem846.render.render3.ModelGrid;
 import us.wthr.jdem846.render.render3.ModelRenderer;
 
+@Deprecated
 public class SimpleRenderer 
 {
 
@@ -125,7 +127,12 @@ public class SimpleRenderer
 		modelBuilder.getGridHillshadeProcessor().setRayTraceShadows(false);
 		modelBuilder.getGridHillshadeProcessor().setRecalcLightOnEachPoint(false);
 	
-		projection = modelContext.getModelCanvas().getCanvasProjection();
+		try {
+			projection = modelContext.getModelCanvas().getCanvasProjection();
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		paintGlobalBaseGrid = true;//modelContext.getModelOptions().getBooleanOption("us.wthr.jdem846.modelOptions.simpleRenderer.paintGlobalBaseGrid");
 

@@ -100,10 +100,10 @@ public class RasterBuffer3d
 		
 
 		
-		rgba[0] = (int) Math.round((double) rgba[0] / MathExt.sqr(this.subpixelWidth));
-		rgba[1] = (int) Math.round((double) rgba[1] / MathExt.sqr(this.subpixelWidth));
-		rgba[2] = (int) Math.round((double) rgba[2] / MathExt.sqr(this.subpixelWidth));
-		rgba[3] = (int) Math.round((double) rgba[3] / MathExt.sqr(this.subpixelWidth));
+		rgba[0] = (int) MathExt.round((double) rgba[0] / MathExt.sqr(this.subpixelWidth));
+		rgba[1] = (int) MathExt.round((double) rgba[1] / MathExt.sqr(this.subpixelWidth));
+		rgba[2] = (int) MathExt.round((double) rgba[2] / MathExt.sqr(this.subpixelWidth));
+		rgba[3] = (int) MathExt.round((double) rgba[3] / MathExt.sqr(this.subpixelWidth));
 		//rgba[3] = 0xFF; // TODO: Mess with alpha later
 	}
 	

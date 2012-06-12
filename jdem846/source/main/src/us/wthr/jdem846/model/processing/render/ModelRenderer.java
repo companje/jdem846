@@ -4,6 +4,7 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.Projection;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.GeoTriangleStrip;
 import us.wthr.jdem846.geom.GeoVertex;
@@ -86,13 +87,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		MapProjection mapProjection = null;
 		
 		try {
-			mapProjection = MapProjectionProviderFactory.getMapProjection(optionModel.getMapProjection(), 
-					getGlobalOptionModel().getNorthLimit(), 
-					getGlobalOptionModel().getSouthLimit(), 
-					getGlobalOptionModel().getEastLimit(), 
-					getGlobalOptionModel().getWestLimit(), 
-					getGlobalOptionModel().getWidth(), 
-					getGlobalOptionModel().getHeight());
+			mapProjection = globalOptionModel.getMapProjectionInstance();
 		} catch (MapProjectionException ex) {
 			log.warn("Error creating map projection: " + ex.getMessage(), ex);
 		}
@@ -111,9 +106,13 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 				modelContext.getRasterDataContext().getDataMinimumValue(),
 				modelContext.getRasterDataContext().getDataMaximumValue(),
 				(ModelDimensions) modelDimensions,
-				optionModel.getViewAngle());
+				globalOptionModel.getViewAngle());
 		
-		modelContext.getModelCanvas().setCanvasProjection(projection);
+		try {
+			modelContext.getModelCanvas().setCanvasProjection(projection);
+		} catch (ModelContextException ex) {
+			throw new RenderEngineException("Error fetching model canvas: " + ex.getMessage(), ex);
+		}
 		//projection = modelContext.getModelCanvas().getCanvasProjection();
 		south = getGlobalOptionModel().getSouthLimit();
 	}
@@ -125,7 +124,11 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 			return;
 		}
 		
-		canvas = modelContext.getModelCanvas();
+		try {
+			canvas = modelContext.getModelCanvas();
+		} catch (ModelContextException ex) {
+			throw new RenderEngineException("Error fetching model canvas: " + ex.getMessage(), ex);
+		}
 		
 		super.process();
 		

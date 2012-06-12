@@ -1,6 +1,10 @@
 package us.wthr.jdem846.model;
 
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
+import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.gis.projections.MapProjectionEnum;
+import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
 import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 import us.wthr.jdem846.model.annotations.ValueBounds;
@@ -10,6 +14,7 @@ import us.wthr.jdem846.model.listModels.PlanetListModel;
 import us.wthr.jdem846.model.listModels.RenderProjectionListModel;
 import us.wthr.jdem846.model.listModels.SubpixelGridSizeListModel;
 import us.wthr.jdem846.model.processing.ModelHeightWidthValidator;
+import us.wthr.jdem846.model.processing.render.MapProjectionListModel;
 import us.wthr.jdem846.scaling.ElevationScalerEnum;
 
 public class GlobalOptionModel implements OptionModel
@@ -28,7 +33,9 @@ public class GlobalOptionModel implements OptionModel
 	private double westLimit = -180.0;
 	private RgbaColor backgroundColor = new RgbaColor(255, 255, 255, 255);
 	private double elevationMultiple = 1.0;
+	private ViewPerspective viewAngle = ViewPerspective.fromString("rotate:[30.0,0,0];shift:[0,0,0];zoom:[1.0]");
 	private String elevationScale = ElevationScalerEnum.LINEAR.identifier();
+	private String mapProjection = MapProjectionEnum.EQUIRECTANGULAR.identifier();
 	private String renderProjection = CanvasProjectionTypeEnum.PROJECT_FLAT.identifier();
 	private int subpixelGridSize = 1;
 	private int pixelStackDepth = 1;
@@ -44,6 +51,7 @@ public class GlobalOptionModel implements OptionModel
 	
 	private boolean useDiskCachedModelGrid = false;
 	private boolean disposeGridOnComplete = true;
+	private boolean createJdemElevationModel = true;
 	
 	public GlobalOptionModel()
 	{
@@ -280,12 +288,30 @@ public class GlobalOptionModel implements OptionModel
 		this.elevationScale = elevationScale;
 	}
 	
+	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.mapProjection",
+			label="Map Projection",
+			tooltip="",
+			enabled=true,
+			listModel=MapProjectionListModel.class)
+	@Order(14)
+	public String getMapProjection()
+	{
+		return mapProjection;
+	}
+
+
+	public void setMapProjection(String mapProjection)
+	{
+		this.mapProjection = mapProjection;
+	}
+
+	
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.renderProjection",
 			label="Render Projection",
 			tooltip="",
 			enabled=true,
 			listModel=RenderProjectionListModel.class)
-	@Order(14)
+	@Order(15)
 	public String getRenderProjection()
 	{
 		return renderProjection;
@@ -297,12 +323,30 @@ public class GlobalOptionModel implements OptionModel
 		this.renderProjection = renderProjection;
 	}
 
+	
+	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.viewAngle",
+			label="View Angle",
+			tooltip="",
+			enabled=true)
+	@Order(16)
+	public ViewPerspective getViewAngle()
+	{
+		return viewAngle;
+	}
+
+
+	public void setViewAngle(ViewPerspective viewAngle)
+	{
+		this.viewAngle = viewAngle;
+	}
+	
+	
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.subpixelGridSize",
 			label="Subpixel Grid Size",
 			tooltip="",
 			enabled=true,
 			listModel=SubpixelGridSizeListModel.class)
-	@Order(15)
+	@Order(17)
 	@ValueBounds(minimum=1, 
 				maximum=16)
 	public int getSubpixelGridSize()
@@ -322,7 +366,7 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true,
 			listModel=PixelStackDepthListModel.class)
-	@Order(16)
+	@Order(18)
 	@ValueBounds(minimum=0, 
 				maximum=32)
 	public int getPixelStackDepth()
@@ -430,7 +474,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Use Disk Cache",
 			tooltip="",
 			enabled=true)
-	@Order(16)
+	@Order(19)
 	public boolean getUseDiskCachedModelGrid()
 	{
 		return useDiskCachedModelGrid;
@@ -457,6 +501,32 @@ public class GlobalOptionModel implements OptionModel
 	}
 
 
+	public boolean getCreateJdemElevationModel()
+	{
+		return createJdemElevationModel;
+	}
+
+
+	public void setCreateJdemElevationModel(boolean createJdemElevationModel)
+	{
+		this.createJdemElevationModel = createJdemElevationModel;
+	}
+
+
+	public MapProjection getMapProjectionInstance() throws MapProjectionException
+	{
+		MapProjection mapProjection =  MapProjectionProviderFactory.getMapProjection(getMapProjection(), 
+																					getNorthLimit(), 
+																					getSouthLimit(), 
+																					getEastLimit(), 
+																					getWestLimit(), 
+																					getWidth(), 
+																					getHeight());
+
+		return mapProjection;
+	}
+	
+	
 	public GlobalOptionModel copy()
 	{
 		GlobalOptionModel copy = new GlobalOptionModel();
@@ -475,7 +545,9 @@ public class GlobalOptionModel implements OptionModel
 		copy.backgroundColor = this.backgroundColor.copy();
 		copy.elevationMultiple = this.elevationMultiple;
 		copy.elevationScale = this.elevationScale; 
+		copy.mapProjection = this.mapProjection;
 		copy.renderProjection = this.renderProjection;
+		copy.viewAngle = this.viewAngle.copy();
 		copy.subpixelGridSize = this.subpixelGridSize;
 		copy.pixelStackDepth = this.pixelStackDepth;
 		copy.longitudeSlices = this.longitudeSlices;
@@ -485,6 +557,9 @@ public class GlobalOptionModel implements OptionModel
 		copy.interpolateData = this.interpolateData;
 		copy.precacheStrategy = this.precacheStrategy;
 		copy.useDiskCachedModelGrid = this.useDiskCachedModelGrid;
+		copy.createJdemElevationModel = this.createJdemElevationModel;
+		copy.disposeGridOnComplete = this.disposeGridOnComplete;
+		
 		return copy;
 	}
 	

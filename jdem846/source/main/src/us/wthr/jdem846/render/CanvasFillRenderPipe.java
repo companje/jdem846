@@ -3,6 +3,7 @@ package us.wthr.jdem846.render;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.CanvasException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -26,7 +27,13 @@ public class CanvasFillRenderPipe extends InterruptibleProcess implements Render
 	{
 		boolean doLoop = true;
 		
-		ModelCanvas modelCanvas = modelContext.getModelCanvas();
+		ModelCanvas modelCanvas = null;
+		try {
+			modelCanvas = modelContext.getModelCanvas();
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		while(doLoop) {
 			

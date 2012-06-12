@@ -128,7 +128,13 @@ public class SolarUtilTest extends AbstractTestCase
 		}
 		
 		
-		ModelCanvas modelCanvas = modelContext.getModelCanvas(true);
+		ModelCanvas modelCanvas = null;
+		try {
+			modelCanvas = modelContext.getModelCanvas(true);
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		this.perspectives = new Perspectives();
 		

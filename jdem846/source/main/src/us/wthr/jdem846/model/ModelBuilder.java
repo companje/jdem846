@@ -7,6 +7,7 @@ import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.Projection;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
@@ -41,6 +42,7 @@ public class ModelBuilder extends InterruptibleProcess
 	private ModelPointGrid modelGrid;
 	private ModelGridDimensions modelDimensions;
 	private GlobalOptionModel globalOptionModel;
+	private ModelCanvas modelCanvas;
 	
 	private boolean runLoadProcessor = true;
 	private boolean runColorProcessor = true;
@@ -138,14 +140,20 @@ public class ModelBuilder extends InterruptibleProcess
 			}
 		}
 		
+		if (modelCanvas == null) {
+			modelCanvas = new ModelCanvas(modelDimensions.getOutputWidth(), 
+														modelDimensions.getOutputHeight(), 
+														globalOptionModel.getPixelStackDepth(),
+														globalOptionModel.getSubpixelGridSize(), 
+														globalOptionModel.getBackgroundColor(), 
+														null);
+			modelContext.setModelCanvas(modelCanvas);
+			
+			
+		} else {
+			modelCanvas.reset();
+		}
 
-		ModelCanvas modelCanvas = new ModelCanvas(modelDimensions.getOutputWidth(), 
-													modelDimensions.getOutputHeight(), 
-													globalOptionModel.getPixelStackDepth(),
-													globalOptionModel.getSubpixelGridSize(), 
-													globalOptionModel.getBackgroundColor(), 
-													null);
-		modelContext.setModelCanvas(modelCanvas);
 		
 		useScripting = globalOptionModel.getUseScripting();
 		
@@ -230,7 +238,11 @@ public class ModelBuilder extends InterruptibleProcess
 			if (this.isCancelled()) {
 				log.info("Model builder was cancelled. Exiting in incomplete state.");
 				setProcessing(false);
-				return modelContext.getModelCanvas().getJdemElevationModel();
+				try {
+					return modelContext.getModelCanvas().getJdemElevationModel();
+				} catch (ModelContextException ex) {
+					throw new RenderEngineException("Error fetching JDEM elevation model: " + ex.getMessage(), ex);
+				}
 			}
 		}
 		
@@ -251,8 +263,16 @@ public class ModelBuilder extends InterruptibleProcess
 		
 		setProcessing(false);
 		
-		JDemElevationModel elevationModel = modelContext.getModelCanvas().getJdemElevationModel();
-		setJDemElevationModelProperties(elevationModel);
+		JDemElevationModel elevationModel = null;
+		
+		if (globalOptionModel.getCreateJdemElevationModel()) {
+			try {
+				elevationModel = modelContext.getModelCanvas().getJdemElevationModel();
+			} catch (ModelContextException ex) {
+				throw new RenderEngineException("Error fetching JDEM elevation model: " + ex.getMessage(), ex);
+			}
+			setJDemElevationModelProperties(elevationModel);
+		}
 		
 		return elevationModel;
 	}
@@ -260,13 +280,15 @@ public class ModelBuilder extends InterruptibleProcess
 
 	protected void setJDemElevationModelProperties(JDemElevationModel elevationModel)
 	{
-		elevationModel.setProperty("subject", "");
-		elevationModel.setProperty("description", "");
-		elevationModel.setProperty("author", "");
-		elevationModel.setProperty("author-contact", "");
-		elevationModel.setProperty("institution", "");
-		elevationModel.setProperty("institution-contact", "");
-		elevationModel.setProperty("institution-address", "");
+
+		
+		elevationModel.setProperty("subject", JDem846Properties.getProperty("us.wthr.jdem846.defaults.subject"));
+		elevationModel.setProperty("description", JDem846Properties.getProperty("us.wthr.jdem846.defaults.description"));
+		elevationModel.setProperty("author", JDem846Properties.getProperty("us.wthr.jdem846.defaults.author"));
+		elevationModel.setProperty("author-contact", JDem846Properties.getProperty("us.wthr.jdem846.defaults.author-contact"));
+		elevationModel.setProperty("institution", JDem846Properties.getProperty("us.wthr.jdem846.defaults.institution"));
+		elevationModel.setProperty("institution-contact", JDem846Properties.getProperty("us.wthr.jdem846.defaults.institution-contact"));
+		elevationModel.setProperty("institution-address", JDem846Properties.getProperty("us.wthr.jdem846.defaults.institution-address"));
 		elevationModel.setProperty("render-date", (new Date()).toString());
 		elevationModel.setProperty("product-version", JDem846Properties.getProperty("us.wthr.jdem846.version"));
 		

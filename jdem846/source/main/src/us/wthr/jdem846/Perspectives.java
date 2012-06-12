@@ -16,6 +16,8 @@
 
 package us.wthr.jdem846;
 
+import us.wthr.jdem846.math.MathExt;
+
 
 /** Utility class for common three-dimensional projections calculations.
  * 
@@ -71,7 +73,7 @@ public class Perspectives
 
 	public  void normalize(double[] pt0, double[] no)
 	{
-		double len = (double) (Math.sqrt((pt0[0] * pt0[0]) + (pt0[1] * pt0[1]) + (pt0[2] * pt0[2])));
+		double len = (double) (MathExt.sqrt((pt0[0] * pt0[0]) + (pt0[1] * pt0[1]) + (pt0[2] * pt0[2])));
 		if (len == 0.0) 
 			len = 1.0;
 

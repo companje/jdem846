@@ -6,6 +6,7 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.logging.Log;
@@ -28,6 +29,8 @@ public class ModelRenderer extends InterruptibleProcess
 	
 	private TileRenderer tileRenderer = null;
 	private RenderPipeline renderPipeline;
+	
+	private ModelCanvas modelCanvas;
 	
 	public ModelRenderer(ModelContext modelContext, List<TileCompletionListener> tileCompletionListeners)
 	{
@@ -79,7 +82,12 @@ public class ModelRenderer extends InterruptibleProcess
 		
 		ModelColoring modelColoring = ColoringRegistry.getInstance(getModelOptions().getColoringType()).getImpl();
 
-		final ModelCanvas modelCanvas = modelContext.getModelCanvas();
+		try {
+			modelCanvas = modelContext.getModelCanvas();
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		on2DModelBefore(modelCanvas);

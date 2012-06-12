@@ -2,6 +2,7 @@ package us.wthr.jdem846.render.render3;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
@@ -23,6 +24,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	
 	protected CanvasProjection projection;
 	protected MapPoint point = new MapPoint();
+	protected ModelCanvas canvas;
 	
 	private int[] rgbaBuffer = new int[4];
 	
@@ -42,7 +44,12 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	{
 		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
 
-		projection = modelContext.getModelCanvas().getCanvasProjection();
+		try {
+			projection = modelContext.getModelCanvas().getCanvasProjection();
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		south = modelContext.getSouth();
 	}
 	
@@ -57,7 +64,12 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		
 		ModelPointCycler pointCycler = new ModelPointCycler(modelContext);
 		
-		final ModelCanvas canvas = modelContext.getModelCanvas();
+		try {
+			canvas = modelContext.getModelCanvas();
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		pointCycler.forEachModelPoint(new ModelPointAdapter() {

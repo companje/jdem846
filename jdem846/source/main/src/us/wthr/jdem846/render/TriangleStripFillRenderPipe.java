@@ -2,9 +2,11 @@ package us.wthr.jdem846.render;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+@Deprecated
 public class TriangleStripFillRenderPipe extends AbstractPipe
 {
 	private static Log log = Logging.getLog(TriangleStripFillRenderPipe.class);
@@ -24,7 +26,13 @@ public class TriangleStripFillRenderPipe extends AbstractPipe
 	{
 		boolean doLoop = true;
 		
-		ModelCanvas modelCanvas = modelContext.getModelCanvas();
+		ModelCanvas modelCanvas = null;
+		try {
+			modelCanvas = modelContext.getModelCanvas();
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		while(doLoop) {
 			

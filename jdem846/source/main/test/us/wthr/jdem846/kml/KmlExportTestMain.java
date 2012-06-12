@@ -161,7 +161,7 @@ public class KmlExportTestMain extends AbstractTestMain
 		
 		
 		ModelRenderOptionModel modelRenderOptionModel = new ModelRenderOptionModel();
-		modelRenderOptionModel.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR.identifier());
+		globalOptionModel.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR.identifier());
 		
 		
 		ModelProcessManifest modelProcessManifest = new ModelProcessManifest();

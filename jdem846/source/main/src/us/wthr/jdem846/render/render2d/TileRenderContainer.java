@@ -1,6 +1,7 @@
 package us.wthr.jdem846.render.render2d;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -54,7 +55,13 @@ public class TileRenderContainer
 		tileRenderer.renderTile();
 
 		tileRenderer = null;
-		ModelCanvas modelCanvas = modelContext.getModelCanvas();
+		ModelCanvas modelCanvas = null;
+		try {
+			modelCanvas = modelContext.getModelCanvas();
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		modelContext = null;
 				

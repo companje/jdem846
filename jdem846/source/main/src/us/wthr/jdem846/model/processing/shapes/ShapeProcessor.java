@@ -10,6 +10,7 @@ import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
@@ -306,9 +307,11 @@ public class ShapeProcessor extends InterruptibleProcess  implements GridProcess
 			
 			ShapeFill shapeFill = new ShapeFill(color, shapeType, path, lineStroke, fill);
 			try {
-				shapeFill.fill(getModelCanvas());
+				shapeFill.fill(modelContext.getModelCanvas());
 			} catch (CanvasException ex) {
 				throw new RenderEngineException("Shape fill error: " + shapeType);
+			} catch (ModelContextException ex) {
+				throw new RenderEngineException("Error fetching model canvas: " + ex.getMessage(), ex);
 			}
 
 		}	
@@ -320,11 +323,7 @@ public class ShapeProcessor extends InterruptibleProcess  implements GridProcess
 		return mapProjection;
 	}
 	
-	protected ModelCanvas getModelCanvas()
-	{
-		return modelContext.getModelCanvas();
-	}
-	
+
 	protected RasterDataContext getRasterDataContext()
 	{
 		return modelContext.getRasterDataContext();
