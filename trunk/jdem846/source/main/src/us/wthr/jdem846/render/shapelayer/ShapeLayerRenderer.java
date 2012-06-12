@@ -6,6 +6,7 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
@@ -80,7 +81,12 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 		}
 		
 		if (this.modelCanvas == null) {
-			this.modelCanvas = modelContext.getModelCanvas();
+			try {
+				this.modelCanvas = modelContext.getModelCanvas();
+			} catch (ModelContextException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		int numLayers = getShapeDataContext().getShapeDataListSize();
@@ -279,7 +285,12 @@ public class ShapeLayerRenderer extends InterruptibleProcess
 
 	public static void render(ModelContext modelContext) throws RenderEngineException
 	{
-		ShapeLayerRenderer.render(modelContext, modelContext.getModelCanvas(), null);
+		try {
+			ShapeLayerRenderer.render(modelContext, modelContext.getModelCanvas(), null);
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static void render(ModelContext modelContext, ModelCanvas modelCanvas) throws RenderEngineException

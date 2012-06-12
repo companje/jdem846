@@ -305,7 +305,7 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		
 		ModelRenderOptionModel modelRenderOptionModel = new ModelRenderOptionModel();
-		modelRenderOptionModel.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR.identifier());
+		globalOptionModel.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR.identifier());
 		
 		ViewPerspective viewPerspective = new ViewPerspective();
 		viewPerspective.setRotateX(30);
@@ -315,7 +315,7 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		viewPerspective.setShiftY(0);
 		viewPerspective.setShiftZ(0);
 		viewPerspective.setZoom(1.0);
-		modelRenderOptionModel.setViewAngle(viewPerspective);
+		globalOptionModel.setViewAngle(viewPerspective);
 		
 		
 		

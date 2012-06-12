@@ -1,5 +1,7 @@
 package us.wthr.jdem846.math;
 
+import org.apache.commons.math3.util.FastMath;
+
 public class MathExt
 {
 	public static final double PI = Math.PI;
@@ -23,59 +25,60 @@ public class MathExt
 	
 	public static double log(double a)
 	{
-		return Math.log(a);
+		return FastMath.log(a);
 	}
 	
 	public static double log10(double a)
 	{
-		return Math.log10(a);
+		return FastMath.log10(a);
 	}
 	
 	public static double log1p(double a)
 	{
-		return Math.log1p(a);
+		return FastMath.log1p(a);
 	}
 	
 	public static double abs(double a)
 	{
-		return Math.abs(a);
+		return FastMath.abs(a);
 	}
 	
 	public static double tan(double a)
     {
-    	return Math.tan(a);
+    	return FastMath.tan(a);
     }
     
     
     public static double sin(double a)
     {
-    	return Math.sin(a);
+    	return FastMath.sin(a);
     }
     
     public static double cos(double a)
     {
-    	return Math.cos(a);
+    	return FastMath.cos(a);
     }
     
     public static double radians(double a)
     {
-    	return Math.toRadians(a);
+    	return FastMath.toRadians(a);
     }
     
     public static double degrees(double a)
     {
-    	return Math.toDegrees(a);
+    	return FastMath.toDegrees(a);
     }
     
     public static double atan2(double y, double x)
     {
     	//return Math.atan2(y, x);
-    	return FastTrig.atan2(y, x);
+    	//return FastTrig.atan2(y, x);
+    	return FastMath.atan2(y, x);
     }
     
     public static double pow(double a, double b)
     {
-    	return Math.pow(a, b);
+    	return FastMath.pow(a, b);
     }
     
     /** Compute the square of a value. (a^2)
@@ -95,42 +98,43 @@ public class MathExt
      */
     public static double cube(double a)
     {
-    	return MathExt.pow(a, 3);
+    	//return MathExt.pow(a, 3);
+    	return FastMath.pow(a, 3);
     }
     
     public static double sqrt(double a)
     {
-    	return Math.sqrt(a);
+    	return FastMath.sqrt(a);
     }
     
     public static double cbrt(double a)
     {
-    	return Math.cbrt(a);
+    	return FastMath.cbrt(a);
     }
     
     public static double asin(double a)
     {
-    	return Math.asin(a);
+    	return FastMath.asin(a);
     }
     
     public static double acos(double a)
     {
-    	return Math.acos(a);
+    	return FastMath.acos(a);
     }
     
     public static double floor(double a)
     {
-    	return Math.floor(a);
+    	return FastMath.floor(a);
     }
     
     public static double ceil(double a)
     {
-    	return Math.ceil(a);
+    	return FastMath.ceil(a);
     }
     
     public static double round(double a)
     {
-    	return Math.round(a);
+    	return FastMath.round(a);
     }
 	/*
 	public static double min(double a, double b)
@@ -152,7 +156,7 @@ public class MathExt
 			if (Double.isNaN(m)) {
 				m = values[i];
 			} else {
-				m = Math.min(m, values[i]);
+				m = FastMath.min(m, values[i]);
 			}
 		}
 		return m;
@@ -166,7 +170,7 @@ public class MathExt
 			if (Double.isNaN(m)) {
 				m = values[i];
 			} else {
-				m = Math.max(m, values[i]);
+				m = FastMath.max(m, values[i]);
 			}
 
 		}
@@ -180,7 +184,7 @@ public class MathExt
 		double s10 = (double) i10;
 		double s11 = (double) i11;
 
-        return (int) Math.round(interpolate(s00, s01, s10, s11, xFrac, yFrac));
+        return (int) FastMath.round(interpolate(s00, s01, s10, s11, xFrac, yFrac));
 	}
 	
 	public static double interpolate(double s00, double s01, double s10, double s11, double xFrac, double yFrac)

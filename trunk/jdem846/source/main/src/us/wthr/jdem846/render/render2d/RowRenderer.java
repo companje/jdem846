@@ -12,6 +12,7 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
@@ -135,7 +136,12 @@ public class RowRenderer extends InterruptibleProcess
 	{
 		
 		if (modelCanvas == null) {
-			modelCanvas = modelContext.getModelCanvas();
+			try {
+				modelCanvas = modelContext.getModelCanvas();
+			} catch (ModelContextException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		

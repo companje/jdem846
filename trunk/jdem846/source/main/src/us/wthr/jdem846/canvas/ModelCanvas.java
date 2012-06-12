@@ -50,7 +50,7 @@ public class ModelCanvas
 	private Canvas3d canvas;
 	
 
-	public ModelCanvas(ModelContext modelContext)
+	public ModelCanvas(ModelContext modelContext) throws CanvasException
 	{
 		this(modelContext.getModelProcessManifest().getGlobalOptionModel().getWidth(), 
 				modelContext.getModelProcessManifest().getGlobalOptionModel().getHeight(), 
@@ -91,6 +91,11 @@ public class ModelCanvas
 		}
 	}
 
+	public void reset()
+	{
+		canvas.reset();
+	}
+	
 	public void setRenderPipeline(RenderPipeline pipeline)
 	{
 		this.canvas.setRenderPipeline(pipeline);

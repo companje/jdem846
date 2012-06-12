@@ -116,12 +116,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		relativeDarkIntensity = optionModel.getDarkIntensity();
 		spotExponent = optionModel.getSpotExponent();
 		
-		
-		try {
-			viewPerspective = (ViewPerspective) modelContext.getModelProcessManifest().getPropertyById("us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle");
-		} catch (ModelContainerException ex) {
-			log.warn("Error fetching view perspective: " + ex.getMessage(), ex);
-		}
+		viewPerspective = this.getGlobalOptionModel().getViewAngle();
 		
 		advancedLightingControl = optionModel.getAdvancedLightingControl();
 		advancedLightingCalculator = new LightingCalculator(optionModel.getEmmisive(), optionModel.getAmbient(), optionModel.getDiffuse(), optionModel.getSpecular(), optionModel.getShadowIntensity(), viewPerspective);
@@ -142,8 +137,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 
 		
-		double solarAzimuth = optionModel.getSourceLocation().getAzimuthAngle();
-		double solarElevation = optionModel.getSourceLocation().getElevationAngle();
+		
 		
 
 		LightSourceSpecifyTypeEnum lightSourceType = LightSourceSpecifyTypeEnum.getByOptionValue(optionModel.getSourceType());
@@ -159,7 +153,13 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 		sunlightPosition = new SunlightPositioning(modelContext, modelGrid, lightOnDate, viewPerspective);
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
+			
+			solarAzimuth = optionModel.getSourceLocation().getAzimuthAngle();
+			solarElevation = optionModel.getSourceLocation().getElevationAngle();
+			
 			sunlightPosition.getLightPositionByAngles(solarElevation, solarAzimuth, sunsource);
+			
+			recalcLightOnEachPoint = false;
 		}
 		
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME && !recalcLightOnEachPoint) {

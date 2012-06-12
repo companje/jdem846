@@ -32,12 +32,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -89,6 +91,8 @@ public class LightingPreviewPanel extends Panel
 	private ModelBuilder modelBuilder;
 	private ModelProcessManifest modelProcessManifest;
 
+	private HillshadingOptionModel hillshadingOptionModel;
+	
 	private List<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
 	private boolean isDisposed = false;
@@ -99,7 +103,7 @@ public class LightingPreviewPanel extends Panel
 		MouseAdapter mouseAdapter = new MouseAdapter() {
 			public void mouseDragged(MouseEvent e)
 			{
-				onMouseLocation(e.getX(), e.getY(), false);
+				onMouseLocation(e.getX(), e.getY(), true);
 			}
 
 			@Override
@@ -120,18 +124,12 @@ public class LightingPreviewPanel extends Panel
 		this.addMouseMotionListener(mouseAdapter);
 
 		try {
-			File tmpGridFloatData = TempFiles.getTemporaryFile("lghtprv", ".flt", JDem846Properties.getProperty("us.wthr.jdem846.previewData") + "/raster-data.flt");
 			
-			File tmpTempGridFloatHeader = TempFiles.getTemporaryFile("lghtprv", ".hdr", JDem846Properties.getProperty("us.wthr.jdem846.previewData") + "/raster-data.hdr");
+
 			
-			String tmpHdrPath = tmpGridFloatData.getAbsolutePath();
-			tmpHdrPath = tmpHdrPath.replaceAll("\\.flt", ".hdr");
-			log.info("New Header Path: " + tmpHdrPath);
-			File tmpGridFloatHeader = new File(tmpHdrPath);
-			
-			tmpTempGridFloatHeader.renameTo(tmpGridFloatHeader);
-			
-			RasterData rasterData = RasterDataProviderFactory.loadRasterData(tmpGridFloatData.getAbsolutePath());
+			String lightingPreviewDatasetPath = JDem846Properties.getProperty("us.wthr.jdem846.lightingPreviewData");
+			File lightingPreviewDatasetFile = JDemResourceLoader.getAsFile(lightingPreviewDatasetPath);
+			RasterData rasterData = RasterDataProviderFactory.loadRasterData(lightingPreviewDatasetFile.getAbsolutePath());
 			rasterDataContext = new RasterDataContext();
 			rasterDataContext.addRasterData(rasterData);
 			rasterDataContext.prepare();
@@ -144,7 +142,7 @@ public class LightingPreviewPanel extends Panel
 			GridLoadOptionModel gridLoadOptionModel = new GridLoadOptionModel();
 			SurfaceNormalsOptionModel surfaceNormalOptionModel = new SurfaceNormalsOptionModel();
 			HypsometricColorOptionModel hypsometricColorOptionModel = new HypsometricColorOptionModel();
-			HillshadingOptionModel hillshadingOptionModel = new HillshadingOptionModel();
+			hillshadingOptionModel = new HillshadingOptionModel();
 			ModelRenderOptionModel modelRenderOptionModel = new ModelRenderOptionModel();
 			
 			double quality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewQuality");
@@ -159,15 +157,27 @@ public class LightingPreviewPanel extends Panel
 			globalOptionModel.setLongitudeSlices(longitudeSlices);
 			globalOptionModel.setRenderProjection(CanvasProjectionTypeEnum.PROJECT_FLAT.identifier());
 			globalOptionModel.setElevationMultiple(3.0);
+			globalOptionModel.setAverageOverlappedData(false);
+			globalOptionModel.setCreateJdemElevationModel(false);
+			globalOptionModel.setDisposeGridOnComplete(false);
+			globalOptionModel.setGetStandardResolutionElevation(true);
+			globalOptionModel.setInterpolateData(false);
+			globalOptionModel.setPlanet("earth");
+			globalOptionModel.setPixelStackDepth(1);
+			globalOptionModel.setPrecacheStrategy("none");
+			globalOptionModel.setSubpixelGridSize(1);
 			
 			hypsometricColorOptionModel.setColorTint(JDem846Properties.getProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewColoring"));
 			
+			hillshadingOptionModel.setAdvancedLightingControl(true);
 			hillshadingOptionModel.setLightIntensity(0.75);
 			hillshadingOptionModel.setDarkIntensity(1.0);
 			hillshadingOptionModel.setRayTraceShadows(false);
 			hillshadingOptionModel.setLightMultiple(5.0);
-			
-			modelRenderOptionModel.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR.identifier());
+			hillshadingOptionModel.setSourceType(LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION.optionValue());
+			hillshadingOptionModel.setSourceLocation(new AzimuthElevationAngles(solarAzimuth, solarElevation));
+			hillshadingOptionModel.setRecalcLightForEachPoint(false);
+			globalOptionModel.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR.identifier());
 			
 			
 			modelProcessManifest = new ModelProcessManifest();
@@ -246,7 +256,10 @@ public class LightingPreviewPanel extends Panel
 			try {
 				log.info("Updating lighting preview model image");
 				log.info("****************************************");
-	
+				
+				//modelContext.resetModelCanvas();
+				
+				hillshadingOptionModel.setSourceLocation(new AzimuthElevationAngles(solarAzimuth, solarElevation));
 				modelBuilder.prepare(modelContext, modelProcessManifest);
 				modelBuilder.process();
 				

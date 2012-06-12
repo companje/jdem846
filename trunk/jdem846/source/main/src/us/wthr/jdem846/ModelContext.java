@@ -237,20 +237,24 @@ public class ModelContext
 		return modelDimensions;
 	}
 	
-	public ModelCanvas createModelCanvas()
+	public ModelCanvas createModelCanvas() throws ModelContextException
 	{
 		////log.info("****************************");
 		//log.info("Creating Model Canvas!!");
 		//log.info("****************************");
-		return new ModelCanvas(this);
+		try {
+			return new ModelCanvas(this);
+		} catch (CanvasException ex) {
+			throw new ModelContextException("Error creating model canvas: " + ex.getMessage(), ex);
+		}
 	}
 	
-	public ModelCanvas getModelCanvas()
+	public ModelCanvas getModelCanvas() throws ModelContextException
 	{
 		return getModelCanvas(true);
 	}
 	
-	public ModelCanvas getModelCanvas(boolean create)
+	public ModelCanvas getModelCanvas(boolean create) throws ModelContextException
 	{
 		if (this.modelCanvas == null && create) {
 			this.modelCanvas = createModelCanvas();

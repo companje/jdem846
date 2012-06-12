@@ -47,6 +47,8 @@ public class Canvas3d
 	private int subpixelWidth = 1;
 	private int pixelStackDepth = 1;
 	
+	private int backgroundColor = 0x0;
+	
 	private int[] rgbaBuffer = new int[4];
 	
 	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int pixelStackDepth, int subpixelWidth)
@@ -79,8 +81,14 @@ public class Canvas3d
 		this.clipFarZ = clipFarZ;
 		this.subpixelWidth = subpixelWidth;
 		this.pixelStackDepth = pixelStackDepth;
+		this.backgroundColor = backgroundColor;
 		
 		rasterBuffer = new GeoRasterBuffer3d(width, height, pixelStackDepth, subpixelWidth);
+		rasterBuffer.reset(backgroundColor);
+	}
+	
+	public void reset()
+	{
 		rasterBuffer.reset(backgroundColor);
 	}
 	

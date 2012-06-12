@@ -90,7 +90,13 @@ public class BaseMapProjectionTest extends TestCase
 			e.printStackTrace();
 		}
 		
-		ModelCanvas modelCanvas = modelContext.getModelCanvas(true);
+		ModelCanvas modelCanvas = null;
+		try {
+			modelCanvas = modelContext.getModelCanvas(true);
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		int[] pointColor = {0, 0, 0, 0xFF};
 		int[] lineColor = {255, 0, 0, 0xFF};

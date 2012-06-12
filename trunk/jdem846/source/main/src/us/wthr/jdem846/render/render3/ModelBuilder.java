@@ -1,6 +1,7 @@
 package us.wthr.jdem846.render.render3;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -129,7 +130,11 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 		setProcessing(true);
 		
 		if (useScripting) {
-			onTileBefore(modelContext.getModelCanvas());
+			try {
+				onTileBefore(modelContext.getModelCanvas());
+			} catch (ModelContextException ex) {
+				throw new RenderEngineException("Error fetching model canvas: " + ex.getMessage(), ex);
+			}
 		}
 		
 		if (runLoadProcessor()) {
@@ -169,7 +174,11 @@ public class ModelBuilder extends AbstractGridProcessor implements GridProcessor
 		}
 		
 		if (useScripting) {
-			onTileAfter(modelContext.getModelCanvas());
+			try {
+				onTileAfter(modelContext.getModelCanvas());
+			} catch (ModelContextException ex) {
+				throw new RenderEngineException("Error fetching model canvas: " + ex.getMessage(), ex);
+			}
 		}
 		
 		setProcessing(false);

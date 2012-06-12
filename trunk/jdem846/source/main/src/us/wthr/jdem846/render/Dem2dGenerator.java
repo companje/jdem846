@@ -439,7 +439,12 @@ public class Dem2dGenerator extends BasicRenderEngine
 	protected void fireTileCompletionListeners()
 	{
 		for (TileCompletionListener listener : tileCompletionListeners) {
-			listener.onTileCompleted(getModelContext().getModelCanvas(), 0);
+			try {
+				listener.onTileCompleted(getModelContext().getModelCanvas(), 0);
+			} catch (ModelContextException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

@@ -19,6 +19,7 @@ package us.wthr.jdem846.ui;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -26,10 +27,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -39,6 +42,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,6 +50,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import us.wthr.jdem846.color.ColorAdjustments;
+import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -81,6 +86,7 @@ public class ImageDisplayPanel extends Panel
 	private double minScalePercent;
 	private Slider sldZoomLevel;
 	
+	private boolean allowPanning = true;
 	private boolean allowZooming = true;
 	
 	private boolean imageShadow = true;
@@ -93,13 +99,18 @@ public class ImageDisplayPanel extends Panel
 	private int[] rgba0 = new int[4];
 	private int[] rgba1 = new int[4];
 	
+	private Image handOpenCursorImage;
+	
 	public ImageDisplayPanel()
 	{
 		// Set Properties
 		setLayout(new BorderLayout());
 		this.setOpaque(false);
-		
+		//setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		this.setBackground(Color.LIGHT_GRAY);
+		
+		setAllowPanning(true);
+
 		
 		// Create components
 		
@@ -149,17 +160,27 @@ public class ImageDisplayPanel extends Panel
 			}
 			public void mouseEntered(MouseEvent e) {
 				
+				
+				
 			}
 			public void mouseExited(MouseEvent e) {
 				
 			}
 			public void mousePressed(MouseEvent e) {
+				if (allowPanning) {
+					setCursor(CursorFactory.PREDEFINED_CLOSED_HAND);
+				}
+				
 				if (allowZooming) {
 					lastDragMouseX = e.getX();
 					lastDragMouseY = e.getY();
 				}
 			}
 			public void mouseReleased(MouseEvent e) {
+				if (allowPanning) {
+					setCursor(CursorFactory.PREDEFINED_OPEN_HAND);
+				}
+				
 				if (allowZooming) {
 					lastDragMouseX = -1;
 					lastDragMouseY = -1;
@@ -524,10 +545,27 @@ public class ImageDisplayPanel extends Panel
 		setScalePercent(1.0);
 	}
 	
+
 	
-	
-	
-	public boolean isAllowZooming()
+	public boolean getAllowPanning()
+	{
+		return allowPanning;
+	}
+
+
+	public void setAllowPanning(boolean allowPanning)
+	{
+		this.allowPanning = allowPanning;
+		
+		if (allowPanning) {
+			setCursor(CursorFactory.PREDEFINED_OPEN_HAND);
+		} else {
+			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+	}
+
+
+	public boolean getAllowZooming()
 	{
 		return allowZooming;
 	}

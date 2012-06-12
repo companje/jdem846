@@ -251,7 +251,13 @@ public class ModelPreviewPane extends RoundedPanel
 			// TODO Display error message
 			log.error("Exception updating model context: " + ex.getMessage(), ex);
 		}
-		ModelCanvas canvas = modelContext.getModelCanvas(true);
+		ModelCanvas canvas = null;
+		try {
+			canvas = modelContext.getModelCanvas(true);
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if (useSimpleRasterPreview && rasterPreviewEnabled) {// && renderShapes) {
 			try {
@@ -325,7 +331,13 @@ public class ModelPreviewPane extends RoundedPanel
 		
 		
 		
-		ModelCanvas canvas = modelContext.getModelCanvas(true);
+		ModelCanvas canvas = null;
+		try {
+			canvas = modelContext.getModelCanvas(true);
+		} catch (ModelContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//ModelCanvas canvas = modelContext.createModelCanvas();
 		

@@ -121,14 +121,7 @@ public class ModelVisualizationPanel extends Panel
 		
 		rerendering = new ReRenderRequestContainer();
 		
-		ViewPerspective viewAngle = null;
-		
-		try {
-			viewAngle = (ViewPerspective) modelContextActual.getModelProcessManifest().getPropertyById("us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle");
-		} catch (ModelContainerException ex) {
-			log.error("Error fetching value for view angle from model process manifest: " + ex.getMessage(), ex);
-		}
-		
+		ViewPerspective viewAngle = modelContextActual.getModelProcessManifest().getGlobalOptionModel().getViewAngle();
 
 		rotateX = (viewAngle != null) ? viewAngle.getRotateX() : 30;
 		rotateY = (viewAngle != null) ? viewAngle.getRotateY() : 0;
@@ -151,6 +144,7 @@ public class ModelVisualizationPanel extends Panel
 		// Create components
 		pnlModelDisplay = new ImageDisplayPanel();
 		pnlModelDisplay.setAllowZooming(false);
+		pnlModelDisplay.setAllowPanning(true);
 		pnlModelDisplay.setDisplayImageShadow(false);
 		pnlModelDisplay.zoomFit();
 		
@@ -339,8 +333,6 @@ public class ModelVisualizationPanel extends Panel
 	protected void onRasterPreviewCheckChanged()
 	{
 		rasterPreview = chkPreviewRaster.getModel().isSelected();
-		//update(false, false);
-		
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.rasterPreview", ""+rasterPreview);
 		
 	}
@@ -349,8 +341,6 @@ public class ModelVisualizationPanel extends Panel
 	{
 		double value = (double) sldQuality.getValue();
 		previewQuality = (value / 100);
-		//update(true, false);
-		
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewQuality", ""+previewQuality);
 	}
 	
@@ -368,6 +358,7 @@ public class ModelVisualizationPanel extends Panel
 		globalOptionModel.setUseDiskCachedModelGrid(false);
 		globalOptionModel.setDisposeGridOnComplete(false);
 		globalOptionModel.setPixelStackDepth(1);
+		globalOptionModel.setCreateJdemElevationModel(false);
 		
 		try {
 			modelContextWorkingCopy.updateContext();
@@ -420,7 +411,6 @@ public class ModelVisualizationPanel extends Panel
 			int deltaX = x - lastX;
 			int deltaY = y - lastY;
 			
-			//shiftZ += (deltaY * 5);
 			shiftX += (deltaX * .01);
 			shiftY -= (deltaY * .01);
 			
@@ -529,6 +519,28 @@ public class ModelVisualizationPanel extends Panel
 				log.error("Failed to copy model context: " + ex.getMessage(), ex);
 				return;
 			}
+			
+			
+			
+			try {
+				ViewPerspective viewPerspective = (ViewPerspective) modelContextWorkingCopy.getModelProcessManifest().getPropertyById("us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle");
+				
+				if (viewPerspective != null) {
+					rotateX = viewPerspective.getRotateX();
+					rotateY = viewPerspective.getRotateY();
+					rotateZ = viewPerspective.getRotateZ();
+					
+					shiftX = viewPerspective.getShiftX();
+					shiftY = viewPerspective.getShiftY();
+					shiftZ = viewPerspective.getShiftZ();
+					
+					zoom = viewPerspective.getZoom();
+				}
+				
+				
+			} catch (ModelContainerException ex) {
+				log.warn("Error fetching view perspective: " + ex.getMessage(), ex);
+			}
 		}
 		
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
@@ -554,13 +566,7 @@ public class ModelVisualizationPanel extends Panel
 														shiftZ,
 														zoom);
 
-
-		try {
-			modelContextWorkingCopy.getModelProcessManifest().setPropertyById("us.wthr.jdem846.model.ModelRenderOptionModel.viewAngle", viewAngle);
-		} catch (ModelContainerException ex) {
-			log.error("Error setting new projection values to option model: " + ex.getMessage(), ex);
-			// TODO: Display error dialog
-		}
+		globalOptionModel.setViewAngle(viewAngle);
 		
 		if (modelContextWorkingCopy.getRasterDataContext().getRasterDataListSize() == 0) {
 			modelContextWorkingCopy.setNorthLimit(90);
@@ -597,9 +603,6 @@ public class ModelVisualizationPanel extends Panel
 		
 		int maxPreviewSize = (int) MathExt.min((double)pnlModelDisplay.getWidth(), (double)pnlModelDisplay.getHeight()) - 10;
 		 
-
-		//GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
-		
 		double width = globalOptionModel.getWidth();
 		double height = globalOptionModel.getHeight();
 		
@@ -623,8 +626,6 @@ public class ModelVisualizationPanel extends Panel
 		globalOptionModel.setHeight((int)height);
 
 		if (globalOptionModel.getLimitCoordinates()) {
-			
-			
 			
 			double optNorthLimit = globalOptionModel.getNorthLimit();
 			double optSouthLimit = globalOptionModel.getSouthLimit();
@@ -675,12 +676,19 @@ public class ModelVisualizationPanel extends Panel
 		}
 		log.info("Done rendering vizualization model");
 		
-		ModelCanvas modelCanvas = modelContextWorkingCopy.getModelCanvas();
-
-		setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
-		pnlModelDisplay.setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
-		pnlModelDisplay.setImage(modelCanvas.getImage());
-		pnlModelDisplay.zoomFit();
+		ModelCanvas modelCanvas = null;
+		try {
+			modelCanvas = modelContextWorkingCopy.getModelCanvas();
+		} catch (ModelContextException ex) {
+			log.error("Error fetching model canvas: " + ex.getMessage(), ex);
+		}
+		
+		if (modelCanvas != null) {
+			setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
+			pnlModelDisplay.setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
+			pnlModelDisplay.setImage(modelCanvas.getImage());
+			pnlModelDisplay.zoomFit();
+		}
 		
 		
 	}
