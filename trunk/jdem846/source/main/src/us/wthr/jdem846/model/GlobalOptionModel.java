@@ -53,6 +53,8 @@ public class GlobalOptionModel implements OptionModel
 	private boolean disposeGridOnComplete = true;
 	private boolean createJdemElevationModel = true;
 	
+	private boolean previewRendering = false;
+	
 	public GlobalOptionModel()
 	{
 		
@@ -500,6 +502,19 @@ public class GlobalOptionModel implements OptionModel
 		this.disposeGridOnComplete = disposeGridOnComplete;
 	}
 
+	
+
+	public boolean isPreviewRendering()
+	{
+		return previewRendering;
+	}
+
+
+	public void setPreviewRendering(boolean previewRendering)
+	{
+		this.previewRendering = previewRendering;
+	}
+
 
 	public boolean getCreateJdemElevationModel()
 	{
@@ -559,6 +574,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.useDiskCachedModelGrid = this.useDiskCachedModelGrid;
 		copy.createJdemElevationModel = this.createJdemElevationModel;
 		copy.disposeGridOnComplete = this.disposeGridOnComplete;
+		copy.previewRendering = this.previewRendering;
 		
 		return copy;
 	}
