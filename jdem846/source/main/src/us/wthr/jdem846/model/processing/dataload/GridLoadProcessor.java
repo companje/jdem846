@@ -102,8 +102,28 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	@Override
 	public void process() throws RenderEngineException
 	{
+		
+		boolean fullCaching = getGlobalOptionModel().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
+		RasterDataContext dataContext = (dataRasterContextSubset != null) ? dataRasterContextSubset : modelContext.getRasterDataContext();
+		
+		if (fullCaching) {
+			try {
+				dataContext.fillBuffers();
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Error loading full data buffer: " + ex.getMessage(), ex);
+			}
+		}
+		
 		super.process();
 		
+		if (fullCaching) {
+			try {
+				dataContext.clearBuffers();
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Error clearing full data buffer: " + ex.getMessage(), ex);
+			}	
+		}
+
 		//modelContext.getRasterDataContext().setDataMaximumValue(maximumElevation);
 		//modelContext.getRasterDataContext().setDataMinimumValue(minimumElevation);
 		
