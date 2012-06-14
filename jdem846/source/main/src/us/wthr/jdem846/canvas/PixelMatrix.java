@@ -104,6 +104,10 @@ public class PixelMatrix extends AbstractBuffer
 	public void set(double x, double y, double z, int rgba)
 	{
 		
+		if ((0xFF & (rgba >>> 24)) == 0) {
+			return;
+		}
+		
 		int matrixIndex = this.getIndex(x, y);
 		
 		if (!isVisible(x, y, z)) {

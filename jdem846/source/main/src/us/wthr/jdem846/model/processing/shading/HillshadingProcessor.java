@@ -37,9 +37,12 @@ import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorOptionModel;
 import us.wthr.jdem846.model.processing.dataload.CornerEnum;
 import us.wthr.jdem846.model.processing.shading.RayTracing.RasterDataFetchHandler;
+import us.wthr.jdem846.model.processing.util.LightingCalculator;
 import us.wthr.jdem846.model.processing.util.SunlightPositioning;
 import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
+import us.wthr.jdem846.scripting.ScriptProxy;
+import us.wthr.jdem846.scripting.ScriptingContext;
 
 
 @GridProcessing(id="us.wthr.jdem846.model.processing.coloring.HillshadingProcessor",
@@ -118,8 +121,15 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 		viewPerspective = this.getGlobalOptionModel().getViewAngle();
 		
+		
+		ScriptingContext scriptingContext = modelContext.getScriptingContext();
+		ScriptProxy scriptProxy = null;
+		if (getGlobalOptionModel().getUseScripting() && scriptingContext != null) {
+			scriptProxy = scriptingContext.getScriptProxy();
+		}
+		
 		advancedLightingControl = optionModel.getAdvancedLightingControl();
-		advancedLightingCalculator = new LightingCalculator(optionModel.getEmmisive(), optionModel.getAmbient(), optionModel.getDiffuse(), optionModel.getSpecular(), optionModel.getShadowIntensity(), viewPerspective);
+		advancedLightingCalculator = new LightingCalculator(optionModel.getEmmisive(), optionModel.getAmbient(), optionModel.getDiffuse(), optionModel.getSpecular(), optionModel.getShadowIntensity(), viewPerspective, scriptProxy);
 		
 		advancedLightingCalculator.setUseDistanceAttenuation(optionModel.getUseDistanceAttenuation());
 		advancedLightingCalculator.setAttenuationRadius(optionModel.getAttenuationRadius());

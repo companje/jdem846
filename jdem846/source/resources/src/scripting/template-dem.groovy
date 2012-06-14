@@ -58,6 +58,11 @@ class JDemScript {
 		
 	}
 	
+	def onLightLevels = { latitude, longitude, lightingValues ->
+		
+		
+	}
+	
 	def destroy = { 
 	
 	}

@@ -8,6 +8,7 @@ import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelProcessContainer;
+import us.wthr.jdem846.model.processing.util.LightingValues;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
 public class GroovyScriptProxy implements ScriptProxy
@@ -26,6 +27,7 @@ public class GroovyScriptProxy implements ScriptProxy
 	private boolean hasOnGetElevationBefore = false;
 	private boolean hasOnGetElevationAfter = false;
 	private boolean hasOnGetPointColor = false;
+	private boolean hasOnLightLevels = false;
 	private boolean hasDestroy = false;
 	
 	private boolean hasModelContext = false;
@@ -43,6 +45,7 @@ public class GroovyScriptProxy implements ScriptProxy
 		hasOnGetElevationBefore = hasMethod("getOnGetElevationBefore");
 		hasOnGetElevationAfter = hasMethod("getOnGetElevationAfter");
 		hasOnGetPointColor = hasMethod("getOnGetPointColor");
+		hasOnLightLevels = hasMethod("getOnLightLevels");
 		hasDestroy = hasMethod("getDestroy");
 		
 		hasModelContext = hasMethod("getModelContext");
@@ -138,6 +141,13 @@ public class GroovyScriptProxy implements ScriptProxy
 		}
 	}
 	
+	@Override
+	public void onLightLevels(double latitude, double longitude, LightingValues lightingValues)
+	{
+		if (hasOnLightLevels) {
+			invokeMethod("onLightLevels", latitude, longitude, lightingValues);
+		}
+	}
 	
 	protected Object invokeMethod(String method, Object...args)
 	{
