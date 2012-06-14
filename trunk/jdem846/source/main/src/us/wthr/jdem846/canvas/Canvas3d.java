@@ -322,13 +322,15 @@ public class Canvas3d
 					double z = tri.getInterpolatedZ(x, y);
 					tri.getInterpolatedColor(x, y, rgba);
 					
-					if (geoTriangle == null) {
-						set(x, y, z, rgba);
-					} else {
-						set(x, y, z, rgba,
-								geoTriangle.getInterpolatedLatitude(x, y),
-								geoTriangle.getInterpolatedLongitude(x, y),
-								geoTriangle.getInterpolatedElevation(x, y));
+					if (rgba[3] > 0) {
+						if (geoTriangle == null) {
+							set(x, y, z, rgba);
+						} else {
+							set(x, y, z, rgba,
+									geoTriangle.getInterpolatedLatitude(x, y),
+									geoTriangle.getInterpolatedLongitude(x, y),
+									geoTriangle.getInterpolatedElevation(x, y));
+						}
 					}
 					
 				}

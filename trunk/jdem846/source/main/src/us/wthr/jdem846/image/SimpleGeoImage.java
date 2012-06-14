@@ -58,6 +58,8 @@ public class SimpleGeoImage
 	private int[] rgbaBuffer10 = new int[4];
 	private int[] rgbaBuffer11 = new int[4];
 	
+	private boolean hasAlphaChannel = false;
+	
 	public SimpleGeoImage()
 	{
 		
@@ -120,6 +122,12 @@ public class SimpleGeoImage
 		}
 		
 		raster = image.getRaster();
+		
+		if (image.getAlphaRaster() != null) {
+			hasAlphaChannel = true;
+		} else {
+			hasAlphaChannel = false;
+		}
 	}
 	
 	public void unload() throws DataSourceException
@@ -330,7 +338,7 @@ public class SimpleGeoImage
 		
 		raster.getPixel(x, y, rgba);
 		
-		if (image.getAlphaRaster() == null) {
+		if (!hasAlphaChannel) {
 			rgba[3] = 0xFF;
 		}
 		

@@ -186,69 +186,70 @@ public class ModelBuilder extends InterruptibleProcess
 		ProcessInterruptHandler interruptHandler = new ProcessInterruptHandler();
 		GlobalOptionModel globalOptionModel = modelProcessManifest.getGlobalOptionModel();
 		
-		if (useScripting) {
+		if (useScripting && !this.isCancelled()) {
 			this.onInitialize(modelContext);
 		}
 		
 		setProcessing(true);
 		
-		if (useScripting) {
+		if (useScripting && !this.isCancelled()) {
 			onModelBefore();
 		}
 		
 		
-		
-		for (ModelProcessContainer processContainer : modelProcessManifest.getProcessList()) {
-			
-			if (useScripting) {
-				onProcessBefore(processContainer);
-			}
-			
-			GridProcessor gridProcessor = processContainer.getGridProcessor();
-			OptionModel optionModel = processContainer.getOptionModel();
-			
-			GridProcessing annotation = gridProcessor.getClass().getAnnotation(GridProcessing.class);
-			String name = gridProcessor.getClass().getName();
-			if (annotation != null) {
-				name = annotation.name();
-			}
-			
-			if (annotation.type() == GridProcessingTypesEnum.DATA_LOAD && dataLoaded) {
-				continue;
-			}  
-			
-			
-			if (gridProcessor instanceof InterruptibleProcess) {
-				interruptHandler.setInterruptibleProcess((InterruptibleProcess)gridProcessor);
-			} else {
-				interruptHandler.setInterruptibleProcess(null);
-			}
-			
-			log.info("Preparing processor: '" + name + "'");
-			gridProcessor.setAndPrepare(modelContext, modelGrid, modelDimensions, globalOptionModel, optionModel);
-			
-			log.info("Executing processor: '" + name + "'");
-			gridProcessor.process();
-			
-			if (useScripting) {
-				onProcessAfter(processContainer);
-			}
-			
-			this.checkPause();
-			if (this.isCancelled()) {
-				log.info("Model builder was cancelled. Exiting in incomplete state.");
-				setProcessing(false);
-				try {
-					return modelContext.getModelCanvas().getJdemElevationModel();
-				} catch (ModelContextException ex) {
-					throw new RenderEngineException("Error fetching JDEM elevation model: " + ex.getMessage(), ex);
+		if (!this.isCancelled()) {
+			for (ModelProcessContainer processContainer : modelProcessManifest.getProcessList()) {
+				
+				if (useScripting && !this.isCancelled()) {
+					onProcessBefore(processContainer);
+				}
+				
+				GridProcessor gridProcessor = processContainer.getGridProcessor();
+				OptionModel optionModel = processContainer.getOptionModel();
+				
+				GridProcessing annotation = gridProcessor.getClass().getAnnotation(GridProcessing.class);
+				String name = gridProcessor.getClass().getName();
+				if (annotation != null) {
+					name = annotation.name();
+				}
+				
+				if (annotation.type() == GridProcessingTypesEnum.DATA_LOAD && dataLoaded) {
+					continue;
+				}  
+				
+				
+				if (gridProcessor instanceof InterruptibleProcess) {
+					interruptHandler.setInterruptibleProcess((InterruptibleProcess)gridProcessor);
+				} else {
+					interruptHandler.setInterruptibleProcess(null);
+				}
+				
+				log.info("Preparing processor: '" + name + "'");
+				gridProcessor.setAndPrepare(modelContext, modelGrid, modelDimensions, globalOptionModel, optionModel);
+				
+				log.info("Executing processor: '" + name + "'");
+				gridProcessor.process();
+				
+				if (useScripting && !this.isCancelled()) {
+					onProcessAfter(processContainer);
+				}
+				
+				this.checkPause();
+				if (this.isCancelled()) {
+					log.info("Model builder was cancelled. Exiting in incomplete state.");
+					setProcessing(false);
+					try {
+						return modelContext.getModelCanvas().getJdemElevationModel();
+					} catch (ModelContextException ex) {
+						throw new RenderEngineException("Error fetching JDEM elevation model: " + ex.getMessage(), ex);
+					}
 				}
 			}
 		}
 		
 		dataLoaded = true;
 		
-		if (useScripting) {
+		if (useScripting && !this.isCancelled()) {
 			onModelAfter();
 		}
 		

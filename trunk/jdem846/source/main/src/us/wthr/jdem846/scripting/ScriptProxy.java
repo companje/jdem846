@@ -19,6 +19,7 @@ package us.wthr.jdem846.scripting;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.model.ModelProcessContainer;
+import us.wthr.jdem846.model.processing.util.LightingValues;
 
 /** Describes a proxy interface for modeling engines to call user-provided scripts
  * 
@@ -43,6 +44,9 @@ public interface ScriptProxy
 	public Object onGetElevationAfter(double latitude, double longitude, double elevation);
 
 	public void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color);
+	
+	public void onLightLevels(double latitude, double longitude, LightingValues lightingValues);
+	
 	// TODO: Add copy()
 	
 	// getGradientColor
