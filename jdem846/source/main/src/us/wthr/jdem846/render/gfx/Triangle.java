@@ -19,8 +19,8 @@ package us.wthr.jdem846.render.gfx;
 
 import java.awt.geom.Path2D;
 
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
+import us.wthr.jdem846.math.Vectors;
 
 @Deprecated
 public class Triangle implements Renderable
@@ -31,8 +31,6 @@ public class Triangle implements Renderable
 	
 	private double[] normal = {0, 0, 0};
 	private boolean normalProvided = false;
-	
-	private Perspectives perspectives = new Perspectives();
 	
 	private BoundedArea boundedArea = null;
 	private Path2D.Double polygon = null;
@@ -142,9 +140,9 @@ public class Triangle implements Renderable
 		double p2Points[] = {p2.getX(), p2.getY(), p2.getZ()};;
 		
 		if (!this.normalProvided)
-			perspectives.calcNormal(p0Points, p1Points, p2Points, normal);
+			Vectors.calcNormal(p0Points, p1Points, p2Points, normal);
 		
-		double dot = perspectives.dotProduct(normal, lightSource);
+		double dot = Vectors.dotProduct(normal, lightSource);
 		dot = Math.pow(dot, specularExponent);
 
 		//ColorUtil.adjustBrightness(dot, setToColor);

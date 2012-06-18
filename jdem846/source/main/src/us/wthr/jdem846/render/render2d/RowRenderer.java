@@ -6,7 +6,6 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.DemPoint;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
@@ -17,6 +16,7 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.canvas.ModelCanvas;
@@ -33,7 +33,6 @@ public class RowRenderer extends InterruptibleProcess
 	private ModelContext modelContext;
 	private ModelColoring modelColoring;
 	private ModelCanvas modelCanvas;
-	private Perspectives perspectives;
 	
 	//protected RasterDataContext dataRasterContextSubset;
 	
@@ -84,7 +83,6 @@ public class RowRenderer extends InterruptibleProcess
 		this.modelColoring = modelColoring;
 		this.modelCanvas = modelCanvas;
 		//this.dataRasterContextSubset = dataRasterContextSubset;
-		this.perspectives = new Perspectives();
 		
 		if (this.modelColoring == null) {
 			this.modelColoring = ColoringRegistry.getInstance(modelContext.getModelOptions().getColoringType()).getImpl();
@@ -281,7 +279,7 @@ public class RowRenderer extends InterruptibleProcess
 	{
 		
 		
-		perspectives.calcNormal(p0, p1, p2, normal);
+		Vectors.calcNormal(p0, p1, p2, normal);
 		modelColoring.getGradientColor(pointElevation, elevationMin, elevationMax, reliefColor);
 		onGetPointColor(latitude, longitude, pointElevation, elevationMin, elevationMax, reliefColor);
 		
@@ -291,7 +289,7 @@ public class RowRenderer extends InterruptibleProcess
 			hillshadeColor[1] = reliefColor[1];
 			hillshadeColor[2] = reliefColor[2];
 			
-			double dot = perspectives.dotProduct(normal, sunsource);
+			double dot = Vectors.dotProduct(normal, sunsource);
 			dot = Math.pow(dot, spotExponent);
 			
 			if (rayTraceShadows) {

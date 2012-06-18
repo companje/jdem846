@@ -1,8 +1,9 @@
 package us.wthr.jdem846.model.processing.util;
 
-import us.wthr.jdem846.Perspectives;
+
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.ModelPoint;
 
 public class Aspect
@@ -13,8 +14,7 @@ public class Aspect
 	private static double[] normalBufferA = new double[3];
 	private static double[] normalBufferB = new double[3];
 	
-	private static Perspectives perspectives = new Perspectives();
-	
+
 	static {
 		NORTH[0] = 0;
 		NORTH[1] = 0;
@@ -27,7 +27,7 @@ public class Aspect
 		fill(normalBufferA, normal);
 		normalBufferA[1] = 0;
 		
-		double dot = perspectives.dotProduct(NORTH, normalBufferA);
+		double dot = Vectors.dotProduct(NORTH, normalBufferA);
 		double degrees = MathExt.degrees(MathExt.acos(dot));
 		
 		if (normalBufferA[0] < 0) {

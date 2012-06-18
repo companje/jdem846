@@ -6,7 +6,6 @@ import java.util.TimeZone;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -45,8 +44,6 @@ import us.wthr.jdem846.render.RayTracing.RasterDataFetchHandler;
 public class SurfaceNormalsProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
 {
 	private static Log log = Logging.getLog(SurfaceNormalsProcessor.class);
-
-	protected Perspectives perspectives = new Perspectives();
 
 	private SurfaceNormalCalculator normalsCalculator;
 

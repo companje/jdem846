@@ -5,7 +5,6 @@ import java.util.TimeZone;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
 import us.wthr.jdem846.gis.datetime.EarthDateTime;
@@ -41,9 +40,6 @@ public class SunlightPositioning
 	protected double solarZenith;
 	
 	protected int[] rgbaBuffer = new int[4];
-	
-	protected Perspectives perspectives = new Perspectives();
-
 	
 	private Planet planet;
 	
@@ -134,7 +130,8 @@ public class SunlightPositioning
 		solarCalculator.setLongitude(longitudeCoordinate);
 		
 		solarAzimuth = solarCalculator.solarAzimuthAngle();
-		solarElevation = solarCalculator.correctedSolarElevation();
+		solarElevation = solarCalculator.solarElevationAngle();
+		//solarElevation = solarCalculator.correctedSolarElevation();
 		solarZenith = solarCalculator.solarZenithAngle();
 		
 		//double declination = solarCalculator.declinationOfSun();

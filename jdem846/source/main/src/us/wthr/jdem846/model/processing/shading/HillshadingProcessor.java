@@ -7,7 +7,6 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.ModelOptionNamesEnum;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -72,8 +71,6 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	protected double solarZenith;
 	
 	protected int[] rgbaBuffer = new int[4];
-	
-	protected Perspectives perspectives = new Perspectives();
 
 	protected double lightZenith;
 	protected double darkZenith;
@@ -96,6 +93,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	
 	private SunlightPositioning sunlightPosition;
 	private ViewPerspective viewPerspective;
+	
+	private Planet planet;
 	
 	public HillshadingProcessor()
 	{
@@ -134,7 +133,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		advancedLightingCalculator.setUseDistanceAttenuation(optionModel.getUseDistanceAttenuation());
 		advancedLightingCalculator.setAttenuationRadius(optionModel.getAttenuationRadius());
 		
-		Planet planet = PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet());
+		planet = PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet());
 		if (planet != null) {
 			modelRadius = planet.getMeanRadius() * 1000;
 		} else {
@@ -267,7 +266,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	
 	protected double calculateDotProduct(double[] normal) throws RenderEngineException
 	{
-		double dot = perspectives.dotProduct(normal, sunsource);
+		double dot = Vectors.dotProduct(normal, sunsource);
 		
 		double lower = lightZenith;
 		double upper = darkZenith;

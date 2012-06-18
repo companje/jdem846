@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import us.wthr.jdem846.AbstractTestCase;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.ModelContextException;
@@ -16,6 +15,7 @@ import us.wthr.jdem846.gis.CardinalDirectionEnum;
 import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
+import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
 
@@ -28,7 +28,6 @@ public class SolarUtilTest extends AbstractTestCase
 	//private double p1[] = {0.0, 0.0, 0.0};
 	private int[] color = {0, 0, 0, 0};
 	private int[] baseColor = {0, 0, 0, 0};
-	private Perspectives perspectives;
 	
 	@Override
 	protected void setUp() throws Exception
@@ -136,8 +135,6 @@ public class SolarUtilTest extends AbstractTestCase
 			e.printStackTrace();
 		}
 		
-		this.perspectives = new Perspectives();
-		
 		SolarPosition position = new SolarPosition();
 		EarthDateTime datetime = new EarthDateTime(2011, 5, 2, 0, 0, 0, 0, false);
 
@@ -198,7 +195,7 @@ public class SolarUtilTest extends AbstractTestCase
 
 				setUpLightSource(position.getElevation(), position.getAzimuth());
 
-				double dot = perspectives.dotProduct(p0, sunsource);
+				double dot = Vectors.dotProduct(p0, sunsource);
 				
 				color[0] = baseColor[0];
 				color[1] = baseColor[1];

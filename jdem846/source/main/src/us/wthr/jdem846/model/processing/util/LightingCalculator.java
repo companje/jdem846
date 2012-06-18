@@ -1,7 +1,6 @@
 package us.wthr.jdem846.model.processing.util;
 
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -17,12 +16,17 @@ public class LightingCalculator
 	
 	private LightingValues lightingValues;
 
+	private double[] emmisiveColor = {1.0, 1.0, 1.0, 1.0};
+	private double[] ambientColor = {1.0, 1.0, 1.0, 1.0};
+	private double[] diffuseColor = {1.0, 1.0, 1.0, 1.0};
+	private double[] specularColor = {1.0, 1.0, 1.0, 1.0};
 	
 	private boolean useDistanceAttenuation = true;
 	private double attenuationRadius = 2000;
 	private double blockShadowIntensity = 0.4;
 
-	double eye[] = {0.000001,0.000001,0.000001};
+	//double eye[] = {0.000001,0.000001,0.000001};
+	double eye[] = {0.0, 0.0, 0.0};
 	
 	double[] P = new double[3];
 	double[] color = new double[4];
@@ -31,7 +35,6 @@ public class LightingCalculator
 	double[] V = new double[3];
 	double[] H = new double[3];
 	
-	protected Perspectives perspectives = new Perspectives();
 	protected ViewPerspective viewPerspective;
 	
 	protected ScriptProxy scriptProxy;
@@ -71,12 +74,15 @@ public class LightingCalculator
 		
 		setBlockShadowIntensity(blockShadowIntensity);
 		this.viewPerspective = viewPerspective;
+		
+		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, eye);
+		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, eye);
 	}
 
 	
 	public void calculateColor(double[] normal, double latitude, double longitude, double radius, double shininess, double blockDistance, double[] lightSource, int[] rgba)
 	{
-		Spheres.getPoint3D(longitude+180, latitude, radius, P);
+		Spheres.getPoint3D(longitude, latitude, radius, P);
 		
 		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, P);
 		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
@@ -91,15 +97,10 @@ public class LightingCalculator
 		color[1] = (double) rgba[1] / 255.0;
 		color[2] = (double) rgba[2] / 255.0;
 
-		
-		
-		
-		
 
-
-		perspectives.subtract(lightSource, P, L);
-		perspectives.normalize(L, L);
-		lightingValues.diffuseLight = perspectives.dotProduct(N, L);
+		Vectors.subtract(lightSource, P, L);
+		Vectors.normalize(L, L);
+		lightingValues.diffuseLight = MathExt.max(0, Vectors.dotProduct(N, L));
 		
 		
 		if (blockDistance > 0.0) {
@@ -110,16 +111,14 @@ public class LightingCalculator
 			double kL = 2.0 / r;
 			double kQ = 1.0 / (r * r);
 			
-			
-			double attenuation = (blockDistance > 0.0) ? 1.0 : 0.0;
-			
 			if (useDistanceAttenuation) {
+				double attenuation = (blockDistance > 0.0) ? 1.0 : 0.0;
 				attenuation = 1.0 / (kC + kL * d + kQ * d * d);
+				attenuation *= blockShadowIntensity;
+				lightingValues.diffuseLight = lightingValues.diffuseLight - (2 * attenuation * 1.0);
 			}
 			
-			attenuation *= blockShadowIntensity;
 			
-			lightingValues.diffuseLight = lightingValues.diffuseLight - (2 * attenuation * 1.0);
 			if (lightingValues.diffuseLight < -1.0) {
 				lightingValues.diffuseLight = -1.0;
 			}
@@ -128,14 +127,14 @@ public class LightingCalculator
 
 
 		
-		perspectives.subtract(eye, P, V);
-		perspectives.normalize(V, V);
-		perspectives.add(lightSource, V, H);
-		perspectives.normalize(H, H);
+		Vectors.subtract(eye, P, V);
+		Vectors.normalize(V, V);
+		Vectors.add(lightSource, V, H);
+		Vectors.normalize(H, H);
 		
 		double effectiveSpecular = (blockDistance > 0.0) ? 0.0 : lightingValues.specularLevel;
 		
-		lightingValues.specularLight = perspectives.dotProduct(N, H);
+		lightingValues.specularLight = Vectors.dotProduct(N, H);
 		lightingValues.specularLight = MathExt.pow(MathExt.max(0, lightingValues.specularLight), shininess);
 		if (lightingValues.diffuseLight <= 0) 
 			lightingValues.specularLight = 0;
@@ -148,7 +147,9 @@ public class LightingCalculator
 		lightingValues.emmisiveColor[0] = color[0] * lightingValues.emmisiveLight;
 		lightingValues.emmisiveColor[1] = color[1] * lightingValues.emmisiveLight;
 		lightingValues.emmisiveColor[2] = color[2] * lightingValues.emmisiveLight;
+		
 
+		
 		lightingValues.ambientColor[0] = color[0] * lightingValues.ambientLight;
 		lightingValues.ambientColor[1] = color[1] * lightingValues.ambientLight;
 		lightingValues.ambientColor[2] = color[2] * lightingValues.ambientLight;
@@ -157,9 +158,9 @@ public class LightingCalculator
 		lightingValues.diffuseColor[1] = lightingValues.diffuseLevel * color[1] * lightingValues.diffuseLight;
 		lightingValues.diffuseColor[2] = lightingValues.diffuseLevel * color[2] * lightingValues.diffuseLight;
 		
-		lightingValues.specularColor[0] = effectiveSpecular * 0.7 * lightingValues.specularLight;
-		lightingValues.specularColor[1] = effectiveSpecular * 0.7 * lightingValues.specularLight;
-		lightingValues.specularColor[2] = effectiveSpecular * 0.7 * lightingValues.specularLight;
+		lightingValues.specularColor[0] = effectiveSpecular * specularColor[0] * lightingValues.specularLight;
+		lightingValues.specularColor[1] = effectiveSpecular * specularColor[1] * lightingValues.specularLight;
+		lightingValues.specularColor[2] = effectiveSpecular * specularColor[2] * lightingValues.specularLight;
 
 
 		// Add and clamp color channels
