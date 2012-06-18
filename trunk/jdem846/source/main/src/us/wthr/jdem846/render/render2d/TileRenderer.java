@@ -8,7 +8,6 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
@@ -32,6 +31,7 @@ import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.rasterdata.ElevationDataMap;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.canvas.CanvasProjection;
@@ -103,7 +103,6 @@ public class TileRenderer extends InterruptibleProcess
 	protected ElevationScaler elevationScaler;
 	
 	protected MapPoint point = new MapPoint();
-	protected Perspectives perspectives = new Perspectives();
 	protected double normal[] = new double[3];
 	protected double backLeftPoints[] = new double[3];
 	protected double backRightPoints[] = new double[3];
@@ -367,8 +366,6 @@ public class TileRenderer extends InterruptibleProcess
 			elevationMap = null;
 		}
 		
-		
-		perspectives = null;
 		normal = null;
 		backLeftPoints = null;
 		backRightPoints = null;
@@ -693,13 +690,13 @@ public class TileRenderer extends InterruptibleProcess
 		frontRightPoints[1] = se * lightingMultiple;
 		
 		if (corner == CornerEnum.NORTHWEST) {
-			perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
+			Vectors.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
 		} else if (corner == CornerEnum.SOUTHWEST) {
-			perspectives.calcNormal(backLeftPoints, frontLeftPoints, frontRightPoints, normal);
+			Vectors.calcNormal(backLeftPoints, frontLeftPoints, frontRightPoints, normal);
 		} else if (corner == CornerEnum.SOUTHEAST) {
-			perspectives.calcNormal(frontLeftPoints, frontRightPoints, backRightPoints, normal);
+			Vectors.calcNormal(frontLeftPoints, frontRightPoints, backRightPoints, normal);
 		} else if (corner == CornerEnum.NORTHEAST) {
-			perspectives.calcNormal(backLeftPoints, frontRightPoints, backRightPoints, normal);
+			Vectors.calcNormal(backLeftPoints, frontRightPoints, backRightPoints, normal);
 		}
 		
 	}
@@ -745,7 +742,7 @@ public class TileRenderer extends InterruptibleProcess
 	{
 		
 		
-		double dot = perspectives.dotProduct(normal, sunsource);
+		double dot = Vectors.dotProduct(normal, sunsource);
 		
 		return dot;
 	}

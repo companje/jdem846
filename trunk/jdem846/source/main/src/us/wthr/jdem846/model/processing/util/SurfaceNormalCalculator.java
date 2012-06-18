@@ -1,7 +1,6 @@
 package us.wthr.jdem846.model.processing.util;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -22,9 +21,6 @@ public class SurfaceNormalCalculator
 	
 	private double latitudeResolution;
 	private double longitudeResolution;
-	
-	protected Perspectives perspectives = new Perspectives();
-
 
 	private double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
 	
@@ -164,16 +160,16 @@ public class SurfaceNormalCalculator
 		fillPointXYZ(xyzW, wLat, wLon, wElev);
 		fillPointXYZ(xyzC, latitude, longitude, midElev);
 		
-		perspectives.calcNormal(xyzN, xyzW, xyzC, normalNW); // NW
-		perspectives.calcNormal(xyzW, xyzS, xyzC, normalSW); // SW
-		perspectives.calcNormal(xyzC, xyzS, xyzE, normalSE); // SE
-		perspectives.calcNormal(xyzN, xyzC, xyzE, normalNE); // NE
+		Vectors.calcNormal(xyzN, xyzW, xyzC, normalNW); // NW
+		Vectors.calcNormal(xyzW, xyzS, xyzC, normalSW); // SW
+		Vectors.calcNormal(xyzC, xyzS, xyzE, normalSE); // SE
+		Vectors.calcNormal(xyzN, xyzC, xyzE, normalNE); // NE
 		
 		normal[0] = (normalNW[0] + normalSW[0] + normalSE[0] + normalNE[0]) / 4.0;
 		normal[1] = (normalNW[1] + normalSW[1] + normalSE[1] + normalNE[1]) / 4.0;
 		normal[2] = (normalNW[2] + normalSW[2] + normalSE[2] + normalNE[2]) / 4.0;
-		
 		*/
+		
 		
 		
 		
@@ -205,7 +201,7 @@ public class SurfaceNormalCalculator
 		normal[1] = normalBufferB[1] / 4.0;
 		normal[2] = normalBufferB[2] / 4.0;
 		
-	
+		
 	}
 	
 	
@@ -220,13 +216,13 @@ public class SurfaceNormalCalculator
 		frontRightPoints[1] = se;
 		
 		if (corner == CornerEnum.NORTHWEST) {
-			perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
+			Vectors.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
 		} else if (corner == CornerEnum.SOUTHWEST) {
-			perspectives.calcNormal(backLeftPoints, frontLeftPoints, frontRightPoints, normal);
+			Vectors.calcNormal(backLeftPoints, frontLeftPoints, frontRightPoints, normal);
 		} else if (corner == CornerEnum.SOUTHEAST) {
-			perspectives.calcNormal(frontLeftPoints, frontRightPoints, backRightPoints, normal);
+			Vectors.calcNormal(frontLeftPoints, frontRightPoints, backRightPoints, normal);
 		} else if (corner == CornerEnum.NORTHEAST) {
-			perspectives.calcNormal(backLeftPoints, frontRightPoints, backRightPoints, normal);
+			Vectors.calcNormal(backLeftPoints, frontRightPoints, backRightPoints, normal);
 		}
 		
 	}

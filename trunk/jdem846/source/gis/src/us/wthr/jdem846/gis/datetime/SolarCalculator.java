@@ -253,6 +253,7 @@ public class SolarCalculator
             return true_sol_time / 4.0 + 180.0;
     	else
             return true_sol_time / 4.0 - 180.0;
+        
     }
     
     public double solarZenithAngle()
@@ -347,6 +348,7 @@ public class SolarCalculator
     
     public double solarAzimuthAngle(double decl, double ha, double zenith)
     {
+    	
     	double latitude = this.latitude.toDecimal();
     	double azimuth;
     	double azDenom = ( MathExt.cos(MathExt.radians(latitude)) * MathExt.sin(MathExt.radians(zenith)) );
@@ -376,13 +378,14 @@ public class SolarCalculator
     	}
     	
     	return azimuth;
+    	
     	/*
     	double latitude = this.latitude.toDecimal();
     	double a = 0;
     	if (ha > 0)
-            a = degrees(acos(((sin(radians(latitude))*cos(radians(zenith)))-sin(radians(decl)))/(cos(radians(latitude))*sin(radians(zenith)))))+180;
+            a = MathExt.degrees(MathExt.acos(((MathExt.sin(MathExt.radians(latitude))*MathExt.cos(MathExt.radians(zenith)))-MathExt.sin(MathExt.radians(decl)))/(MathExt.cos(MathExt.radians(latitude))*MathExt.sin(MathExt.radians(zenith)))))+180;
     	else
-            a = 540-degrees(acos(((sin(radians(latitude))*cos(radians(zenith)))-sin(radians(decl)))/(cos(radians(latitude))*sin(radians(zenith)))));
+            a = 540-MathExt.degrees(MathExt.acos(((MathExt.sin(MathExt.radians(latitude))*MathExt.cos(MathExt.radians(zenith)))-MathExt.sin(MathExt.radians(decl)))/(MathExt.cos(MathExt.radians(latitude))*MathExt.sin(MathExt.radians(zenith)))));
    
 	    while (a > 360) {
             a -= 360.0;

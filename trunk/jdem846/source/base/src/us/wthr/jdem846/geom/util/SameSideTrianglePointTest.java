@@ -1,6 +1,7 @@
 package us.wthr.jdem846.geom.util;
 
 import us.wthr.jdem846.geom.Vertex;
+import us.wthr.jdem846.math.Vectors;
 
 
 /** Apologies to http://www.blackpawn.com/texts/pointinpoly/default.html
@@ -56,14 +57,14 @@ public class SameSideTrianglePointTest extends PointTest
 	protected boolean sameSide(double[] p0, double[] p1, double[] a, double[] b)
 	{
 		
-		perspectives.subtract(b, a, v0);
-		perspectives.subtract(p0, a, v1);
-		perspectives.crossProduct(v0, v1, cp0);
+		Vectors.subtract(b, a, v0);
+		Vectors.subtract(p0, a, v1);
+		Vectors.crossProduct(v0, v1, cp0);
 		
-		perspectives.subtract(p1, a, v1);
-		perspectives.crossProduct(v0, v1, cp1);
+		Vectors.subtract(p1, a, v1);
+		Vectors.crossProduct(v0, v1, cp1);
 		
-		if (perspectives.dotProduct(cp0, cp1) >= 0.0) {
+		if (Vectors.dotProduct(cp0, cp1) >= 0.0) {
 			return true;
 		} else {
 			return false;

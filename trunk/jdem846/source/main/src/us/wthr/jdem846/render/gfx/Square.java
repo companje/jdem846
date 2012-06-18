@@ -18,10 +18,10 @@ package us.wthr.jdem846.render.gfx;
 
 import java.awt.geom.Path2D;
 
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.Vectors;
 
 /** Defines a four-sided polygon existing in three-dimensional space.
  * 
@@ -43,8 +43,6 @@ public class Square implements Renderable
 	private double[] normal = {0, 0, 0};
 	private boolean normalProvided = false;
 	private double dotProduct = 0;
-	
-	private Perspectives perspectives = new Perspectives();
 	
 	private BoundedArea boundedArea = null;
 	private Path2D.Double polygon = null;
@@ -145,9 +143,9 @@ public class Square implements Renderable
 		p2Points[0] = vectors[2].getX(); p2Points[1] = vectors[2].getY(); p2Points[2] = vectors[2].getZ();
 
 		if (!this.normalProvided)
-			perspectives.calcNormal(p0Points, p1Points, p2Points, normal);
+			Vectors.calcNormal(p0Points, p1Points, p2Points, normal);
 		
-		double dot = perspectives.dotProduct(normal, lightSource);
+		double dot = Vectors.dotProduct(normal, lightSource);
 		double dotOrig = dot;
 		dot = Math.pow(dot, specularExponent);
 		

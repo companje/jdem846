@@ -6,7 +6,6 @@ import java.util.TimeZone;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
-import us.wthr.jdem846.Perspectives;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -51,9 +50,7 @@ public class GridHillshadeProcessor extends AbstractGridProcessor implements Gri
 	protected double solarZenith;
 	
 	protected int[] rgbaBuffer = new int[4];
-	
-	protected Perspectives perspectives = new Perspectives();
-	
+
 	private double lightingMultiple = 1.0;
 	
 	private Planet planet;
@@ -293,13 +290,13 @@ public class GridHillshadeProcessor extends AbstractGridProcessor implements Gri
 		frontRightPoints[1] = se * lightingMultiple;
 		
 		if (corner == CornerEnum.NORTHWEST) {
-			perspectives.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
+			Vectors.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
 		} else if (corner == CornerEnum.SOUTHWEST) {
-			perspectives.calcNormal(backLeftPoints, frontLeftPoints, frontRightPoints, normal);
+			Vectors.calcNormal(backLeftPoints, frontLeftPoints, frontRightPoints, normal);
 		} else if (corner == CornerEnum.SOUTHEAST) {
-			perspectives.calcNormal(frontLeftPoints, frontRightPoints, backRightPoints, normal);
+			Vectors.calcNormal(frontLeftPoints, frontRightPoints, backRightPoints, normal);
 		} else if (corner == CornerEnum.NORTHEAST) {
-			perspectives.calcNormal(backLeftPoints, frontRightPoints, backRightPoints, normal);
+			Vectors.calcNormal(backLeftPoints, frontRightPoints, backRightPoints, normal);
 		}
 		
 	}
@@ -308,7 +305,7 @@ public class GridHillshadeProcessor extends AbstractGridProcessor implements Gri
 	
 	protected void calculateDotProduct(ModelPoint modelPoint, double latitude, double longitude) throws RenderEngineException
 	{
-		double dot = perspectives.dotProduct(modelPoint.getNormal(), sunsource);
+		double dot = Vectors.dotProduct(modelPoint.getNormal(), sunsource);
 		
 		
 		double lower = lightZenith;
