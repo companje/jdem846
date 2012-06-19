@@ -129,10 +129,18 @@ public class SunlightPositioning
 		solarCalculator.setLatitude(latitudeCoordinate);
 		solarCalculator.setLongitude(longitudeCoordinate);
 		
-		solarAzimuth = solarCalculator.solarAzimuthAngle();
-		solarElevation = solarCalculator.solarElevationAngle();
+		double declination = solarCalculator.declinationOfSun();
+		double hourAngle = solarCalculator.hourAngle();
+		solarZenith = solarCalculator.solarZenithAngle(declination, hourAngle);
+		solarAzimuth = solarCalculator.solarAzimuthAngle(declination, hourAngle, solarZenith);
+		solarElevation = 90 - solarZenith;
+		
+		
+		
+		//solarAzimuth = solarCalculator.solarAzimuthAngle();
+		//solarElevation = solarCalculator.solarElevationAngle();
 		//solarElevation = solarCalculator.correctedSolarElevation();
-		solarZenith = solarCalculator.solarZenithAngle();
+		//solarZenith = solarCalculator.solarZenithAngle();
 		
 		//double declination = solarCalculator.declinationOfSun();
 		//double hourAngle = solarCalculator.hourAngle();

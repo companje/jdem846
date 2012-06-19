@@ -97,7 +97,10 @@ public class LightingCalculator
 		color[1] = (double) rgba[1] / 255.0;
 		color[2] = (double) rgba[2] / 255.0;
 
-
+		
+		lightingValues.emmisiveLight = lightingValues.emmisiveLevel;
+		lightingValues.ambientLight = lightingValues.ambientLevel;
+		
 		Vectors.subtract(lightSource, P, L);
 		Vectors.normalize(L, L);
 		lightingValues.diffuseLight = MathExt.max(0, Vectors.dotProduct(N, L));
