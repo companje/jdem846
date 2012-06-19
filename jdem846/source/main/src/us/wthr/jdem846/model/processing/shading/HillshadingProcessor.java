@@ -1,45 +1,28 @@
 package us.wthr.jdem846.model.processing.shading;
 
-import java.util.Calendar;
-import java.util.TimeZone;
-
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelDimensions;
-import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.gis.Coordinate;
-import us.wthr.jdem846.gis.CoordinateTypeEnum;
-import us.wthr.jdem846.gis.datetime.EarthDateTime;
-import us.wthr.jdem846.gis.datetime.SolarCalculator;
-import us.wthr.jdem846.gis.datetime.SolarPosition;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.ModelGrid;
-import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ModelPointHandler;
-import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.annotations.GridProcessing;
-import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
-import us.wthr.jdem846.model.processing.coloring.HypsometricColorOptionModel;
-import us.wthr.jdem846.model.processing.dataload.CornerEnum;
 import us.wthr.jdem846.model.processing.shading.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.model.processing.util.LightingCalculator;
 import us.wthr.jdem846.model.processing.util.SunlightPositioning;
 import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
-import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.scripting.ScriptingContext;
 
