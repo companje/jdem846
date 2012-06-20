@@ -46,7 +46,7 @@ public class Spheres
 									double[] points)
 	{
 
-		theta = MathExt.radians(fixThetaDegrees(theta));
+		theta = MathExt.radians(fixThetaDegrees(-theta));
 		phi = MathExt.radians(fixPhiDegrees(phi));
 		
 		double _y = MathExt.sqrt(MathExt.sqr(radius) - MathExt.sqr(radius * MathExt.cos(phi)));

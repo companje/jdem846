@@ -89,7 +89,7 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
 		//modelPoint.getNormal(normal);
-		normalsCalculator.calculateNormal(latitude, longitude, normal);
+		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
 		double degrees = Aspect.aspectInDegrees(normal);
 
 		getCategoryColor(degrees, rgbaBuffer);

@@ -132,9 +132,9 @@ public class SunlightPositioning
 		double declination = solarCalculator.declinationOfSun();
 		double hourAngle = solarCalculator.hourAngle();
 		solarZenith = solarCalculator.solarZenithAngle(declination, hourAngle);
-		solarAzimuth = solarCalculator.solarAzimuthAngle(declination, hourAngle, solarZenith);
-		solarElevation = 90 - solarZenith;
-		
+		//solarAzimuth = solarCalculator.solarAzimuthAngle(declination, hourAngle, solarZenith);
+		//solarElevation = 90 - solarZenith;
+		//double rtAscension = solarCalculator.sunRtAscension();
 		
 		
 		//solarAzimuth = solarCalculator.solarAzimuthAngle();
@@ -145,27 +145,120 @@ public class SunlightPositioning
 		//double declination = solarCalculator.declinationOfSun();
 		//double hourAngle = solarCalculator.hourAngle();
 		
-		if (solarZenith > darkZenith) {
-			sunIsUp = false;
-		} else {
-			sunIsUp = true;
-		}
+		//if (solarZenith > darkZenith) {
+		//	sunIsUp = false;
+		//} else {
+		//	sunIsUp = true;
+		//}
 		
 		//double rotateY = 180.0 - (((double) lightOnTime / 86400000.0) * 360.0);
 		//getLightPositionByAngles(declination, longitude-hourAngle, xyz);
-		getLightPositionByAngles(solarElevation, solarAzimuth, xyz);
+		//getLightPositionByAngles(solarElevation, solarAzimuth, xyz);
+		//getLightPositionByAngles(solarZenith, hourAngle-latitude-rtAscension, xyz);
+		
+		//if (longitude > 0) {
+		//	longitude = 180.0 + longitude;
+		//} else {
+		//	longitude = -1 * longitude;
+		//}
+		
+		//double rotateY = hourAngle - longitude - rtAscension;
+		//double rotateX = 0.0;//solarElevation;
+		
+		//double rotateY = rtAscension - 90;
+		double rotateY = hourAngle - longitude;//solarAzimuth - longitude;
+		double rotateX = 0;//declination;//solarElevation - latitude;
+		//double rotateX = 0;//declination;
+		
+		/*
+		double n = solarCalculator.getJulianCentury() - 2451545.0;
+		double L = 280.460 + 0.9856474 * n;
+		double g = 357.528 + 0.9856003 * n;
+		double e = solarCalculator.obliquityCorrection();
+		while (L > 360) {
+			L -= 360;
+		}
+		
+		while (g > 360) {
+			g -= 360;
+		}
+		
+		while(L < 0 ) {
+			L += 360;
+		}
+		
+		while (g < 0) {
+			g += 360;
+		}
+		
+		double eclipticLongitude = L + 1.915 * MathExt.degrees(MathExt.sin(MathExt.radians(g))) + 0.020 * MathExt.degrees(MathExt.sin(2 * MathExt.radians(g)));
+		double R = 1.00014 - 0.01671 * MathExt.cos(MathExt.radians(g)) - 0.00014 * MathExt.cos(2 * MathExt.radians(g));
+		
+		double X = R * MathExt.cos(MathExt.radians(eclipticLongitude));
+		double Y = R * MathExt.cos(MathExt.radians(e)) * MathExt.sin(MathExt.radians(eclipticLongitude));
+		double Z = R * MathExt.sin(MathExt.radians(e)) * MathExt.sin(MathExt.radians(eclipticLongitude));
+		
+		
+		//declination = MathExt.asin(MathExt.sin(solarCalculator.obliquityCorrection() * MathExt.sin(MathExt.radians(eclipticLongitude))));
+		
+		double rotateY = eclipticLongitude;
+		double rotateX = declination;
+		
+		
+		log.info("Lat: " + eclipticLongitude + ", R: " + R + ", X: " + X + ", Y: " + Y + ", Z: " + Z);
+		
+		sunsource[0] = X;
+		sunsource[1] = Y;
+		sunsource[2] = Z; // One AU in meters
+		*/
+		sunsource[0] = 149598000000.0;
+		sunsource[1] = 0.0;
+		sunsource[2] = 0; // One AU in meters
+		
+		//Vectors.rotate(0.0, , 0.0, sunsource);
+		//Vectors.rotate(, 0.0, 0.0, sunsource);
+		
+		//Vectors.rotate(0.0, , 0, sunsource);
+		
+		if (viewPerspective != null) {
+			rotateY += viewPerspective.getRotateY();
+			rotateX = viewPerspective.getRotateX() - rotateX;
+		}
+		
+		
+		Vectors.rotate(0.0, rotateY, 0.0, sunsource);
+		Vectors.rotate(rotateX, 0.0, 0.0, sunsource);
+		//Vectors.rotate(, 0.0, 0, sunsource);
+		
+		//sunsource[0] = 149598000000.0;
+		//sunsource[1] = 0.0;
+		//sunsource[2] = 0; // One AU in meters
+		
+		//Vectors.rotate(0.0, longitude, 0.0, sunsource);
+		//Vectors.rotate(latitude, 0.0, 0.0, sunsource);
+		
+		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, sunsource);
+		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, sunsource);
+		
+		xyz[0] = sunsource[0];
+		xyz[1] = sunsource[1];
+		xyz[2] = sunsource[2];
 	}
 	
 	public void getLightPositionByAngles(double solarElevation, double solarAzimuth, double[] xyz)
 	{
-		sunsource[0] = 0.0;
+		//sunsource[0] = 0.0;
+		//sunsource[1] = 0.0;
+		//sunsource[2] = -149598000000.0; // One AU in meters
+		
+		sunsource[0] = 149598000000.0;
 		sunsource[1] = 0.0;
-		sunsource[2] = -149598000000.0; // One AU in meters
-
+		sunsource[2] = 0; // One AU in meters
 		
 		//Vectors.rotate(0.0, viewPerspective.getRotateY()-90.0+solarAzimuth, 0.0, sunsource);
 		//Vectors.rotate(viewPerspective.getRotateX()+solarElevation, 0.0, 0.0, sunsource);
-		Vectors.rotate(solarElevation, -solarAzimuth, 0, sunsource);
+		Vectors.rotate(0.0, solarAzimuth, 0, sunsource);
+		Vectors.rotate(solarElevation, 0.0, 0, sunsource);
 		
 		xyz[0] = sunsource[0];
 		xyz[1] = sunsource[1];

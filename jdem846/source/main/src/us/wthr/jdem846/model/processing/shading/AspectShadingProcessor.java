@@ -80,7 +80,7 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 		
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 
-		normalsCalculator.calculateNormal(latitude, longitude, normal);
+		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
 		//modelPoint.getNormal(normal);
 		double degrees = Aspect.aspectInDegrees(normal);
 		if (degrees > 180) {

@@ -116,6 +116,14 @@ public class Vectors
 		return dot;
 	}
 
+	
+	public static void inverse(double [] v, double[] usr)
+	{
+        for (int i = 0; i<3; i++) {
+        	usr[i] = -v[i];
+        }
+	}
+	
 	public static void normalize(double[] pt0, double[] no)
 	{
 		double len = (double) (MathExt.sqrt((pt0[0] * pt0[0]) + (pt0[1] * pt0[1]) + (pt0[2] * pt0[2])));

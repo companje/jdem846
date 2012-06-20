@@ -76,8 +76,7 @@ public class SurfaceNormalCalculator
 		this.viewPerspective = viewPerspective;
 	}
 	
-	
-	public void calculateNormal(double latitude, double longitude, double[] normal)
+	public void calculateNormalSpherical(double latitude, double longitude, double[] normal)
 	{
 		
 		double eLat = latitude;
@@ -103,7 +102,7 @@ public class SurfaceNormalCalculator
 		wElev = (wElev == DemConstants.ELEV_NO_DATA) ? midElev : wElev;
 		nElev = (nElev == DemConstants.ELEV_NO_DATA) ? midElev : nElev;
 		
-		calculateNormal(latitude,
+		calculateNormalSpherical(latitude,
 						longitude,
 						midElev,
 						nElev,
@@ -113,13 +112,13 @@ public class SurfaceNormalCalculator
 						normal);
 	}
 	
-	public void calculateNormal(double latitude, 
+	public void calculateNormalSpherical(double latitude, 
 			double longitude, 
 			double elevation,
 			double[] normal)
 	{
 			
-		calculateNormal(latitude, 
+		calculateNormalSpherical(latitude, 
 				longitude,
 				elevation,
 				elevation,
@@ -130,7 +129,7 @@ public class SurfaceNormalCalculator
 	}
 	
 	
-	public void calculateNormal(double latitude, 
+	public void calculateNormalSpherical(double latitude, 
 								double longitude, 
 								double midElev,
 								double nElev,
@@ -141,7 +140,7 @@ public class SurfaceNormalCalculator
 	{
 		resetBuffers(latitude, longitude);
 
-		/*
+		
 		double eLat = latitude;
 		double eLon = longitude + longitudeResolution;
 		
@@ -168,11 +167,106 @@ public class SurfaceNormalCalculator
 		normal[0] = (normalNW[0] + normalSW[0] + normalSE[0] + normalNE[0]) / 4.0;
 		normal[1] = (normalNW[1] + normalSW[1] + normalSE[1] + normalNE[1]) / 4.0;
 		normal[2] = (normalNW[2] + normalSW[2] + normalSE[2] + normalNE[2]) / 4.0;
-		*/
+
 		
+	}
+	
+	
+	protected void fillPointXYZ(double[] P, double latitude, double longitude, double elevation)
+	{
+		double radius = meanRadius * 1000 + elevation;
+
+		Spheres.getPoint3D(longitude, latitude, radius, P);
 		
+		if (viewPerspective != null) {
+			Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, P);
+			Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void calculateNormalFlat(double latitude, double longitude, double[] normal)
+	{
 		
+		double eLat = latitude;
+		double eLon = longitude + longitudeResolution;
 		
+		double sLat = latitude - latitudeResolution;
+		double sLon = longitude;
+		
+		double wLat = latitude;
+		double wLon = longitude - longitudeResolution;
+		
+		double nLat = latitude + latitudeResolution;
+		double nLon = longitude;
+		
+		double midElev = modelGrid.getElevation(latitude, longitude);
+		double eElev = modelGrid.getElevation(eLat, eLon);
+		double sElev = modelGrid.getElevation(sLat, sLon);
+		double wElev = modelGrid.getElevation(wLat, wLon);
+		double nElev = modelGrid.getElevation(nLat, nLon);
+		
+		eElev = (eElev == DemConstants.ELEV_NO_DATA) ? midElev : eElev;
+		sElev = (sElev == DemConstants.ELEV_NO_DATA) ? midElev : sElev;
+		wElev = (wElev == DemConstants.ELEV_NO_DATA) ? midElev : wElev;
+		nElev = (nElev == DemConstants.ELEV_NO_DATA) ? midElev : nElev;
+		
+		calculateNormalFlat(latitude,
+						longitude,
+						midElev,
+						nElev,
+						sElev,
+						eElev,
+						wElev,
+						normal);
+	}
+	
+	public void calculateNormal(double latitude, 
+			double longitude, 
+			double elevation,
+			double[] normal)
+	{
+			
+		calculateNormalFlat(latitude, 
+				longitude,
+				elevation,
+				elevation,
+				elevation,
+				elevation,
+				elevation,
+				normal);
+	}
+	
+	
+	public void calculateNormalFlat(double latitude, 
+								double longitude, 
+								double midElev,
+								double nElev,
+								double sElev,
+								double eElev,
+								double wElev,
+								double[] normal)
+	{
+		resetBuffers(latitude, longitude);
+
+
 		
 		calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normalBufferA);
 		normalBufferB[0] = normalBufferA[0];
@@ -205,6 +299,24 @@ public class SurfaceNormalCalculator
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	protected void calculateNormal(double nw, double sw, double se, double ne, CornerEnum corner, double[] normal)
 	{
 		
@@ -227,17 +339,7 @@ public class SurfaceNormalCalculator
 		
 	}
 	
-	protected void fillPointXYZ(double[] P, double latitude, double longitude, double elevation)
-	{
-		double radius = meanRadius * 1000 + elevation;
-
-		Spheres.getPoint3D(longitude, latitude, radius, P);
-		
-		if (viewPerspective != null) {
-			Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, P);
-			Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
-		}
-	}
+	
 	
 	public void resetBuffers(double latitude, double longitude)
 	{
