@@ -121,7 +121,7 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
 		//modelPoint.getNormal(normal);
-		normalsCalculator.calculateNormal(latitude, longitude, normal);
+		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
 		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal[2]), -1));
 		
 		minSlope = MathExt.min(minSlope, slope);
@@ -136,7 +136,7 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
 		//modelPoint.getNormal(normal);
-		normalsCalculator.calculateNormal(latitude, longitude, normal);
+		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
 		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal[2]), -1));
 
 		double shade = 1.0 - (2.0 * ((slope - minSlope) / (maxSlope - minSlope)));

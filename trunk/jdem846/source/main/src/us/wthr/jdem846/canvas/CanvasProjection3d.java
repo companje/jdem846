@@ -186,7 +186,7 @@ public class CanvasProjection3d extends CanvasProjection
 		
 		projectTo(pointVector);
 		
-		point.column = -pointVector[0] + (getWidth()/2.0);
+		point.column = pointVector[0] + (getWidth()/2.0);
 		point.row = pointVector[1] + (getHeight()/2.0);
 		point.z = pointVector[2];
 		

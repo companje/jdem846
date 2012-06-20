@@ -18,6 +18,7 @@ package us.wthr.jdem846.scripting;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
+import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.model.ModelProcessContainer;
 import us.wthr.jdem846.model.processing.util.LightingValues;
 
@@ -31,21 +32,21 @@ public interface ScriptProxy
 	
 	public void setModelContext(ModelContext modelContext);
 	
-	public void initialize();
-	public void destroy();
+	public void initialize() throws ScriptingException;
+	public void destroy() throws ScriptingException;
 	
-	public void onModelBefore();
-	public void onModelAfter();
+	public void onModelBefore() throws ScriptingException;
+	public void onModelAfter() throws ScriptingException;
 	
-	public void onProcessBefore(ModelProcessContainer modelProcessContainer);
-	public void onProcessAfter(ModelProcessContainer modelProcessContainer);
+	public void onProcessBefore(ModelProcessContainer modelProcessContainer) throws ScriptingException;
+	public void onProcessAfter(ModelProcessContainer modelProcessContainer) throws ScriptingException;
 
-	public Object onGetElevationBefore(double latitude, double longitude);
-	public Object onGetElevationAfter(double latitude, double longitude, double elevation);
+	public Object onGetElevationBefore(double latitude, double longitude) throws ScriptingException;
+	public Object onGetElevationAfter(double latitude, double longitude, double elevation) throws ScriptingException;
 
-	public void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color);
+	public void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color) throws ScriptingException;
 	
-	public void onLightLevels(double latitude, double longitude, LightingValues lightingValues);
+	public void onLightLevels(double latitude, double longitude, LightingValues lightingValues) throws ScriptingException;
 	
 	// TODO: Add copy()
 	

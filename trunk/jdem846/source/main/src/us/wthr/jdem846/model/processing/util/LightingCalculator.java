@@ -1,6 +1,7 @@
 package us.wthr.jdem846.model.processing.util;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -26,8 +27,9 @@ public class LightingCalculator
 	private double blockShadowIntensity = 0.4;
 
 	//double eye[] = {0.000001,0.000001,0.000001};
-	double eye[] = {0.0, 0.0, 0.0};
+	double eye[] = {1.0, 0.0, 1.0};
 	
+	double[] E = new double[3];
 	double[] P = new double[3];
 	double[] color = new double[4];
 	double[] N = new double[3];
@@ -84,10 +86,26 @@ public class LightingCalculator
 	{
 		Spheres.getPoint3D(longitude, latitude, radius, P);
 		
-		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, P);
-		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
+		if (viewPerspective != null) {
+			Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, P);
+			Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
+		}
 		
-		//modelPoint.getNormal(N);
+		//E[0] = eye[0];
+		//E[1] = eye[1];
+		//E[2] = eye[2];
+		
+		//E[0] = eye[0];
+		//E[1] = eye[1];
+		//E[2] = eye[2];
+		
+		Spheres.getPoint3D(-90.0, 0, radius*10, E);
+		
+		//Vectors.rotate(0.0, longitude, 0.0, E);
+		//Vectors.rotate(latitude, 0.0, 0.0, E);
+		
+		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, E);
+		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, E);
 		
 		N[0] = normal[0];
 		N[1] = normal[1];
@@ -101,6 +119,8 @@ public class LightingCalculator
 		lightingValues.emmisiveLight = lightingValues.emmisiveLevel;
 		lightingValues.ambientLight = lightingValues.ambientLevel;
 		
+		
+		/*
 		Vectors.subtract(lightSource, P, L);
 		Vectors.normalize(L, L);
 		lightingValues.diffuseLight = MathExt.max(0, Vectors.dotProduct(N, L));
@@ -130,7 +150,7 @@ public class LightingCalculator
 
 
 		
-		Vectors.subtract(eye, P, V);
+		Vectors.subtract(E, P, V);
 		Vectors.normalize(V, V);
 		Vectors.add(lightSource, V, H);
 		Vectors.normalize(H, H);
@@ -142,7 +162,33 @@ public class LightingCalculator
 		if (lightingValues.diffuseLight <= 0) 
 			lightingValues.specularLight = 0;
 		
+		*/
 		
+		//Vectors.subtract(E, P, E);
+		//Vectors.normalize(E, E);
+		
+		
+		Vectors.inverse(lightSource, L);
+		///Vectors.normalize(P, P);
+		Vectors.subtract(L, P, L);
+		Vectors.normalize(L, L);
+		
+		double dot = Vectors.dotProduct(L, N);
+		double dp = Vectors.dotProduct(L, N) * 2.0;
+		for (int i = 0; i<3; i++) {
+            N[i] = N[i]*dp;
+        }
+		Vectors.subtract(N, L, H);
+		Vectors.normalize(H, H);
+		lightingValues.diffuseLight = MathExt.max(0, Vectors.dotProduct(N, L));
+		if (dot < 0) {
+			lightingValues.diffuseLight = 0;
+		}
+		lightingValues.specularLight = MathExt.pow(MathExt.max(0, Vectors.dotProduct(E, H)), shininess);
+		
+		if (lightingValues.diffuseLight <= 0) 
+			lightingValues.specularLight = 0;
+		double effectiveSpecular = 1.0;
 		
 		onLightLevels(latitude, longitude);
 		
@@ -182,7 +228,13 @@ public class LightingCalculator
 		return c;
 	}
 	
-	
+	public void setEye(double[] eye)
+	{
+		this.eye[0] = eye[0];
+		this.eye[1] = eye[1];
+		this.eye[2] = eye[2];
+		
+	}
 	
 	public double getEmmisive()
 	{
@@ -261,7 +313,11 @@ public class LightingCalculator
 	{
 		
 		if (scriptProxy != null) {
-			scriptProxy.onLightLevels(latitude, longitude, lightingValues);
+			try {
+				scriptProxy.onLightLevels(latitude, longitude, lightingValues);
+			} catch (ScriptingException ex) {
+				log.error("Error running light levels callback: " + ex.getMessage(), ex);
+			}
 		}
 	}
 	

@@ -1,10 +1,15 @@
 package us.wthr.jdem846.scripting.groovy;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.codehaus.groovy.runtime.metaclass.ClosureMetaClass;
+
+import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
+import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelProcessContainer;
@@ -16,40 +21,44 @@ public class GroovyScriptProxy implements ScriptProxy
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(GroovyScriptProxy.class);
 	
+	
 	private GroovyObject groovyObject;
 
 	
-	private boolean hasInitialize = false;
-	private boolean hasOnModelBefore = false;
-	private boolean hasOnProcessBefore = false;
-	private boolean hasOnProcessAfter = false;
-	private boolean hasOnModelAfter = false;
-	private boolean hasOnGetElevationBefore = false;
-	private boolean hasOnGetElevationAfter = false;
-	private boolean hasOnGetPointColor = false;
-	private boolean hasOnLightLevels = false;
-	private boolean hasDestroy = false;
+	
+	private CallBack initializeCallBack;
+	private CallBack destroyCallBack;
+	private CallBack onModelBeforeCallBack;
+	private CallBack onModelAfterCallBack;
+	private CallBack onProcessBeforeCallBack;
+	private CallBack onProcessAfterCallBack;
+	private CallBack onGetElevationBeforeCallBack;
+	private CallBack onGetElevationAfterCallBack;
+	private CallBack onGetPointColorCallBack;
+	private CallBack onLightLevelsCallBack;
 	
 	private boolean hasModelContext = false;
 	private boolean hasLog = false;
 	
-	public GroovyScriptProxy(GroovyObject groovyObject)
+	
+	public GroovyScriptProxy(GroovyObject groovyObject) throws ScriptingException
 	{
 		this.groovyObject = groovyObject;
 		
-		hasInitialize = hasMethod("getInitialize");
-		hasOnModelBefore = hasMethod("getOnModelBefore");
-		hasOnProcessBefore = hasMethod("getOnProcessBefore");
-		hasOnProcessAfter = hasMethod("getOnProcessAfter");
-		hasOnModelAfter = hasMethod("getOnModelAfter");
-		hasOnGetElevationBefore = hasMethod("getOnGetElevationBefore");
-		hasOnGetElevationAfter = hasMethod("getOnGetElevationAfter");
-		hasOnGetPointColor = hasMethod("getOnGetPointColor");
-		hasOnLightLevels = hasMethod("getOnLightLevels");
-		hasDestroy = hasMethod("getDestroy");
+		initializeCallBack = new CallBack(groovyObject, "getInitialize");
+		destroyCallBack = new CallBack(groovyObject, "getDestroy");
+		onModelBeforeCallBack = new CallBack(groovyObject, "getOnModelBefore");
+		onModelAfterCallBack = new CallBack(groovyObject, "getOnModelAfter");
+		onProcessBeforeCallBack = new CallBack(groovyObject, "getOnProcessBefore");
+		onProcessAfterCallBack = new CallBack(groovyObject, "getOnProcessAfter");
+		onGetElevationBeforeCallBack = new CallBack(groovyObject, "getOnGetElevationBefore");
+		onGetElevationAfterCallBack = new CallBack(groovyObject, "getOnGetElevationAfter");
+		onGetPointColorCallBack = new CallBack(groovyObject, "getOnGetPointColor");
+		onLightLevelsCallBack = new CallBack(groovyObject, "getOnLightLevels");
+
 		
-		hasModelContext = hasMethod("getModelContext");
-		hasLog = hasMethod("getLog");
+		hasModelContext = CallBack.hasMethod(groovyObject, "getModelContext");
+		hasLog = CallBack.hasMethod(groovyObject, "getLog");
 		
 		if (hasLog) {
 			invokeMethod("setLog", Logging.getLog(groovyObject.getClass()));
@@ -65,88 +74,63 @@ public class GroovyScriptProxy implements ScriptProxy
 	}
 	
 	@Override
-	public void initialize()
+	public void initialize() throws ScriptingException
 	{
-		if (hasInitialize) {
-			invokeMethod("initialize");
-		}
+		initializeCallBack.call();
 	}
 
 	@Override
-	public void destroy()
+	public void destroy() throws ScriptingException
 	{
-		if (hasDestroy) {
-			invokeMethod("destroy");
-		}
+		destroyCallBack.call();
 	}
 
 	@Override
-	public void onModelBefore()
+	public void onModelBefore() throws ScriptingException
 	{
-		if (hasOnModelBefore) {
-			invokeMethod("onModelBefore");
-		}
+		onModelBeforeCallBack.call();
 	}
 
 	@Override
-	public void onModelAfter()
+	public void onModelAfter() throws ScriptingException
 	{
-		if (hasOnModelAfter) {
-			invokeMethod("onModelAfter");
-		}
+		onModelAfterCallBack.call();
 	}
 
 	@Override
-	public void onProcessBefore(ModelProcessContainer modelProcessContainer)
+	public void onProcessBefore(ModelProcessContainer modelProcessContainer) throws ScriptingException
 	{
-		if (hasOnProcessBefore) {
-			invokeMethod("onProcessBefore", modelProcessContainer);
-		}
+		onProcessBeforeCallBack.call(modelProcessContainer);
 	}
 
 	@Override
-	public void onProcessAfter(ModelProcessContainer modelProcessContainer)
+	public void onProcessAfter(ModelProcessContainer modelProcessContainer) throws ScriptingException
 	{
-		if (hasOnProcessAfter) {
-			invokeMethod("onProcessAfter", modelProcessContainer);
-		}
+		onProcessAfterCallBack.call(modelProcessContainer);
 	}
 
 	@Override
-	public Object onGetElevationBefore(double latitude, double longitude)
+	public Object onGetElevationBefore(double latitude, double longitude) throws ScriptingException
 	{
-		
-		Object result = null;
-		if (hasOnGetElevationBefore) { 
-			invokeMethod("onGetElevationBefore", latitude, longitude);
-		}
-		return result;
+		return onGetElevationBeforeCallBack.call(latitude, longitude);
 	}
 
 	@Override
-	public Object onGetElevationAfter(double latitude, double longitude, double elevation)
+	public Object onGetElevationAfter(double latitude, double longitude, double elevation) throws ScriptingException
 	{
-		Object result = null;
-		if (hasOnGetElevationAfter) {
-			invokeMethod("onGetElevationAfter", latitude, longitude, elevation);
-		}
-		return result;
+		return onGetElevationAfterCallBack.call(latitude, longitude, elevation);
 	}
 	
 	@Override
-	public void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color)
+	public void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color) throws ScriptingException
 	{
-		if (hasOnGetPointColor) {
-			invokeMethod("onGetPointColor", latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
-		}
+		onGetPointColorCallBack.call(latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
 	}
 	
 	@Override
-	public void onLightLevels(double latitude, double longitude, LightingValues lightingValues)
+	public void onLightLevels(double latitude, double longitude, LightingValues lightingValues) throws ScriptingException
 	{
-		if (hasOnLightLevels) {
-			invokeMethod("onLightLevels", latitude, longitude, lightingValues);
-		}
+		onLightLevelsCallBack.call(latitude, longitude, lightingValues);
 	}
 	
 	protected Object invokeMethod(String method, Object...args)
@@ -154,23 +138,7 @@ public class GroovyScriptProxy implements ScriptProxy
 		return groovyObject.invokeMethod(method, args);
 	}
 	
+
 	
-	protected boolean hasMethod(String methodName)
-	{
-		if (getMethod(methodName) == null) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
-	protected Method getMethod(String methodName)
-	{
-		for (Method method : groovyObject.getClass().getMethods()) {
-			if (method.getName().equals(methodName)) {
-				return method;
-			}
-		}
-		return null;
-	}
+
 }
