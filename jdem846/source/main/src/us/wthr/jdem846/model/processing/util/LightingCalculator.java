@@ -188,7 +188,7 @@ public class LightingCalculator
 		
 		if (lightingValues.diffuseLight <= 0) 
 			lightingValues.specularLight = 0;
-		double effectiveSpecular = 1.0;
+		double effectiveSpecular = lightingValues.specularLevel;
 		
 		onLightLevels(latitude, longitude);
 		
