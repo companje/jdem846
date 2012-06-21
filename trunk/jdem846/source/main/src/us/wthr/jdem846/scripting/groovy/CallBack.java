@@ -3,6 +3,7 @@ package us.wthr.jdem846.scripting.groovy;
 import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import us.wthr.jdem846.exception.ScriptingException;
@@ -28,24 +29,26 @@ public class CallBack
 	
 	public CallBack(GroovyObject groovyObject, String methodName) throws ScriptingException
 	{
-		this(groovyObject, getCallBack(groovyObject, methodName));
+		this(groovyObject, methodName, getCallBackType(groovyObject, methodName));
+
 	}
 	
-	public CallBack(GroovyObject groovyObject, Object callback) throws ScriptingException
+	public CallBack(GroovyObject groovyObject, String methodName, CallBackType callbackType) throws ScriptingException
 	{
-		this(groovyObject, callback, getCallBackType(callback));
-	}
-	
-	public CallBack(GroovyObject groovyObject, Object callback, CallBackType callbackType) throws ScriptingException
-	{
+		
 		this.groovyObject = groovyObject;
 		this.callbackType = callbackType;
+		
 		if (callbackType == CallBackType.Closure) {
-			closure = (Closure) callback;
+			closure = getClosure(groovyObject, methodName);
+			log.info("CLOSURE: " + methodName + ", " + closure);
 		} else if (callbackType == CallBackType.Method) {
-			method = (Method) callback;
+			method = getMethod(groovyObject, methodName);
+			log.info("METHOD: " + methodName + ", " + method);
 		}
+		
 	}
+
 
 	public boolean isValid()
 	{
@@ -65,6 +68,10 @@ public class CallBack
 	
 	public Object call(Object ... args) throws ScriptingException
 	{
+		if (!isValid()) {
+			return null;
+		}
+		
 		try {
 			if (callbackType == CallBackType.Closure) {
 				return closure.call(args);
@@ -78,21 +85,17 @@ public class CallBack
 		}
 	}
 	
-	protected static CallBackType getCallBackType(Object m) throws ScriptingException
-	{		
-		if (m == null) {
-			return CallBackType.NA;
-		}
+	protected static CallBackType getCallBackType(GroovyObject groovyObject, String methodName) throws ScriptingException
+	{	
 		
-		if (m instanceof Closure) {
-			return CallBackType.Closure;
-		} else if (m instanceof Method) {
+		if (hasMethod(groovyObject, methodName)) {
 			return CallBackType.Method;
+		} else if (hasMethod(groovyObject, methodNameToCallbackGetter(methodName))) {
+			return CallBackType.Closure;
 		} else {
 			return CallBackType.NA;
 		}
-		
-		
+
 	}
 	
 	
@@ -115,24 +118,37 @@ public class CallBack
 		return null;
 	}
 	
-	protected static Object getCallBack(GroovyObject groovyObject, String methodName) throws ScriptingException
+	protected static Closure getClosure(GroovyObject groovyObject, String methodName) throws ScriptingException
 	{
-		if (!hasMethod(groovyObject, methodName)) {
-			return null;
+		String closureName = methodNameToCallbackGetter(methodName);
+		Method m = null;
+		Closure c = null;
+		
+		for (Method method : groovyObject.getClass().getMethods()) {
+			if (method.getName().equals(closureName)) {
+				m = method;
+				break;
+			}
 		}
-		Method get = getMethod(groovyObject, methodName);
 		
-		if (get == null) {
-			return null;
+		if (m != null) {
+			try {
+				Object o = m.invoke(groovyObject);
+				c = (Closure) o;
+			} catch (Exception ex) {
+				throw new ScriptingException("Error fetching closure " + methodName + ": " + ex.getMessage(), ex);
+			}
 		}
 		
-		Object m;
-		try {
-			m = get.invoke(groovyObject);
-		} catch (Exception ex) {
-			throw new ScriptingException("Error fetching method from script: " + ex.getMessage(), ex);
-		} 
+		return c;
+	}
+	
+
+	protected static String methodNameToCallbackGetter(String methodName)
+	{
 		
-		return m;
+		String s = "get" + methodName.toUpperCase().charAt(0) + methodName.substring(1);
+		log.info("Method Name " + methodName + " to closure getter: " + s);
+		return s;
 	}
 }

@@ -45,16 +45,16 @@ public class GroovyScriptProxy implements ScriptProxy
 	{
 		this.groovyObject = groovyObject;
 		
-		initializeCallBack = new CallBack(groovyObject, "getInitialize");
-		destroyCallBack = new CallBack(groovyObject, "getDestroy");
-		onModelBeforeCallBack = new CallBack(groovyObject, "getOnModelBefore");
-		onModelAfterCallBack = new CallBack(groovyObject, "getOnModelAfter");
-		onProcessBeforeCallBack = new CallBack(groovyObject, "getOnProcessBefore");
-		onProcessAfterCallBack = new CallBack(groovyObject, "getOnProcessAfter");
-		onGetElevationBeforeCallBack = new CallBack(groovyObject, "getOnGetElevationBefore");
-		onGetElevationAfterCallBack = new CallBack(groovyObject, "getOnGetElevationAfter");
-		onGetPointColorCallBack = new CallBack(groovyObject, "getOnGetPointColor");
-		onLightLevelsCallBack = new CallBack(groovyObject, "getOnLightLevels");
+		initializeCallBack = new CallBack(groovyObject, "initialize");
+		destroyCallBack = new CallBack(groovyObject, "destroy");
+		onModelBeforeCallBack = new CallBack(groovyObject, "onModelBefore");
+		onModelAfterCallBack = new CallBack(groovyObject, "onModelAfter");
+		onProcessBeforeCallBack = new CallBack(groovyObject, "onProcessBefore");
+		onProcessAfterCallBack = new CallBack(groovyObject, "onProcessAfter");
+		onGetElevationBeforeCallBack = new CallBack(groovyObject, "onGetElevationBefore");
+		onGetElevationAfterCallBack = new CallBack(groovyObject, "onGetElevationAfter");
+		onGetPointColorCallBack = new CallBack(groovyObject, "onGetPointColor");
+		onLightLevelsCallBack = new CallBack(groovyObject, "onLightLevels");
 
 		
 		hasModelContext = CallBack.hasMethod(groovyObject, "getModelContext");
