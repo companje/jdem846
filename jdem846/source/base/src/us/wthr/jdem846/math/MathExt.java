@@ -48,7 +48,11 @@ public class MathExt
     	return FastMath.tan(a);
     }
     
-    
+	public static double atan(double a)
+    {
+    	return FastMath.atan(a);
+    }
+	
     public static double sin(double a)
     {
     	return FastMath.sin(a);

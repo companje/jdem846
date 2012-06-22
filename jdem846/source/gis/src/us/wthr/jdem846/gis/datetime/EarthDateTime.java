@@ -103,6 +103,7 @@ public class EarthDateTime implements Cloneable
     	return hour * 60.0 + minute + (second / 60.0);
     }
     
+    
     public void fromMinutes(double dayMinutes)
     {
     	double hour = Math.floor(dayMinutes / 60.0);
