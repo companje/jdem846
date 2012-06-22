@@ -144,6 +144,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 
 		
 		sunlightPosition = new SunlightPositioning(modelContext, modelGrid, lightOnDate, viewPerspective);
+		
+		
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
 			
 			solarAzimuth = optionModel.getSourceLocation().getAzimuthAngle();
@@ -152,8 +154,11 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			sunlightPosition.getLightPositionByAngles(solarElevation, solarAzimuth, sunsource);
 			
 			recalcLightOnEachPoint = false;
+		} else {
+			sunlightPosition.getLightPositionByCoordinates(0.0, 0.0, sunsource);
 		}
 		
+		/*
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME && !recalcLightOnEachPoint) {
 			
 			double north = getGlobalOptionModel().getNorthLimit();
@@ -167,7 +172,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			sunlightPosition.getLightPositionByCoordinates(latitude, longitude, sunsource);
 
 		}
-
+		*/
 		
 		rayTraceShadows = optionModel.isRayTraceShadows();
 		shadowIntensity = optionModel.getShadowIntensity();
@@ -292,7 +297,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, sunsource);
 		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, sunsource);
 		if (recalcLightOnEachPoint) {
-			sunlightPosition.getLightPositionByCoordinates(latitude, longitude, sunsource);
+			//sunlightPosition.getLightPositionByCoordinates(latitude, longitude, sunsource);
 		}
 		
 		modelGrid.getRgba(latitude, longitude, rgbaBuffer);

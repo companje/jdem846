@@ -5,6 +5,7 @@ import java.util.TimeZone;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.gis.CardinalDirectionEnum;
 import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
 import us.wthr.jdem846.gis.datetime.EarthDateTime;
@@ -26,6 +27,11 @@ import us.wthr.jdem846.model.processing.shading.RayTracing;
 public class SunlightPositioning
 {
 	private static Log log = Logging.getLog(SunlightPositioning.class);
+	
+	
+	private static double SUN_RADIUS = 0.26667;
+	
+	
 	
 	private ModelContext modelContext;
 	private ModelPointGrid modelGrid;
@@ -119,11 +125,185 @@ public class SunlightPositioning
 	}
 	
 	
+	
+	protected double limitDegrees(double degrees)
+	{
+		double limited;
+		degrees /= 360.0;
+		limited = 360.0 * (degrees - MathExt.floor(degrees));
+		if (limited < 0)
+			limited += 360.0;
+		return limited;
+	}
+	
+
+	protected double julianDay(EarthDateTime datetime)
+	{
+		return julianDay(datetime.getYear(), 
+						datetime.getMonth(), 
+						datetime.getDay(),
+						datetime.getHour(), 
+						datetime.getMinute(), 
+						datetime.getSecond(),
+						datetime.getTimezone());
+	}
+	
+	protected double julianDay(int year, int month, int day, int hour, int minute, int second, double tz)
+	{
+		double day_decimal, julian_day, a;
+		
+		day_decimal = day + (hour - tz + (minute + second/60.0)/60.0)/24.0;
+		
+		if (month < 3) {
+			month += 12;
+			year--;
+		}
+		
+		julian_day = MathExt.floor(365.25*(year+4716.0)) + MathExt.floor(30.6001*(month+1)) + day_decimal - 1524.5;
+		if (julian_day > 2299160.0) {
+			a = MathExt.floor(year/100);
+			julian_day += (2 - a + MathExt.floor(a/4));
+		}
+		
+		return julian_day;
+	}
+	
+	double julianCentury(double jd)
+	{
+		return (jd-2451545.0)/36525.0;
+	}
+	
+	
 	public void getLightPositionByCoordinates(double latitude, double longitude, double[] xyz)
 	{
-		latitudeCoordinate.fromDecimal(latitude);
-		longitudeCoordinate.fromDecimal(longitude);
+		latitude = 0;
+		longitude = 0;
 
+	    double jd = julianDay(datetime);
+	    double jc = julianCentury(jd);
+
+		double n = jd - 2451545.0; // Number of days from J2000.0
+		double L = 280.460 + 0.9856474 * n; // Mean longitude of the Sun, corrected for the aberration of light
+		double g = 357.528 + 0.9856003 * n; // Mean anomaly of the sun
+		L = limitDegrees(L);
+		g = limitDegrees(g);
+		
+		
+		
+		//double _2g = MathExt.radians(g * 2);
+		double _g = MathExt.radians(g);
+		double _L = MathExt.radians(L);
+
+		double eclipticLongitude = L + 1.915 * MathExt.sin(_g) + 0.020 * MathExt.sin(2 * _g);
+		double eclipticLatitude = 0;
+		
+		// Distance of the sun in astronomical units
+		double R = 1.00014 - 0.01671 * MathExt.cos(_g) - 0.00014 * MathExt.cos(2 * _g); 
+		
+		// Obliquity of the ecliptic
+		double e = 23.439 - 0.0000004 * n;
+		
+		
+		double eccentricityEarthOrbit = 0.016708634 - jc * (0.000042037 + 0.0000001267 * jc);
+
+		double _eclipticLongitude = MathExt.radians(eclipticLongitude);
+		double _eclipticLatitude = MathExt.radians(eclipticLatitude);
+		
+		double _e = MathExt.radians(e);
+
+		double N = datetime.dayOfYear();
+		
+		double rightAscension = MathExt.atan((MathExt.sin(_eclipticLongitude) * MathExt.cos(_e) - MathExt.tan(_eclipticLatitude) * MathExt.sin(_e)) / MathExt.cos(_eclipticLongitude));
+		double declination = MathExt.atan((MathExt.sin(_e) * MathExt.sin(_eclipticLongitude) * MathExt.cos(_eclipticLatitude) + MathExt.cos(_e) * MathExt.sin(_eclipticLatitude)));
+		double o = -e * (MathExt.cos(MathExt.radians((360.0 / 365.0) * (N + 10.0))));
+		
+		
+		//o = MathExt.degrees(-MathExt.asin(MathExt.radians(0.39779 * MathExt.cos(MathExt.radians(0.98565 * (N + 10) + 1.914 * MathExt.sin(MathExt.radians(0.98565 * (N - 2))))))));
+		
+		
+		double obliquityCorrection = e + 0.00256 * MathExt.cos(MathExt.radians(125.04 - 1934.136 * jc));
+        double y = MathExt.pow(MathExt.tan(MathExt.radians(obliquityCorrection)/2.0), 2);
+     
+        double equationOfTime = MathExt.degrees(y * MathExt.sin(2.0 * _L) - 2.0 * eccentricityEarthOrbit * MathExt.sin(_g) + 4.0 * eccentricityEarthOrbit * y * MathExt.sin(_g) * MathExt.cos(2.0 * _L) - 0.5 * y * y * MathExt.sin(4.0 * _L) - 1.25 * eccentricityEarthOrbit * eccentricityEarthOrbit * MathExt.sin(2.0 * _g)) * 4.0;    // in minutes of time
+        
+        double tod = datetime.toMinutes();
+        double trueSolarTime = (tod+ equationOfTime + 4.0 * longitude - 60.0 * datetime.getTimezone());
+		
+        double ha = 0;
+        if (trueSolarTime / 4.0 < 0.0)
+            ha = trueSolarTime / 4.0 + 180.0;
+    	else
+            ha = trueSolarTime / 4.0 - 180.0;
+
+
+		xyz[0] = R * 149598000000.0; // R (AU) in meters
+		xyz[1] = 0.0;
+		xyz[2] = 0.0; 
+		
+		double rotateY = rightAscension + (ha - longitude);
+		double rotateX = declination;
+		
+		if (viewPerspective != null) {
+			rotateY = viewPerspective.getRotateY() + rotateY;
+			rotateX = viewPerspective.getRotateX() - rotateX;
+		}
+		
+		//Vectors.rotate(0.0, 0.0, obliquityCorrection, xyz);
+		Vectors.rotate(0.0, 0.0, o, xyz);
+		Vectors.rotate(0.0, rotateY, 0.0, xyz);
+		Vectors.rotate(rotateX, 0.0, 0.0, xyz);
+
+
+		
+	}
+	
+	protected double boundAngle(double a)
+	{
+		while (a > 360) {
+			a -= 360.0;
+		}
+		
+		while (a < 360) {
+			a += 360.0;
+		}
+		
+		return a;
+	}
+	
+	public void __getLightPositionByCoordinates(double latitude, double longitude, double[] xyz)
+	{
+		//latitudeCoordinate.fromDecimal(0);
+		//longitudeCoordinate.fromDecimal(0);
+		
+		double lonTime = (longitude / 180.0) * 12.0;
+		//double minutes = (lonTime + 12) * 60;
+		//datetime.fromMinutes(minutes);
+		double hour = datetime.getHour();
+		//double minute = datetime.getMinute();
+		//double second = datetime.getSecond();
+
+		double timezone = -1 * (12 - hour);
+		//datetime.setTimezone(lonTime);
+		
+		
+		latitudeCoordinate.fromDecimal(latitude);
+		if (latitude < 0) {
+			latitudeCoordinate.setDirection(CardinalDirectionEnum.SOUTH);
+		} else {
+			latitudeCoordinate.setDirection(CardinalDirectionEnum.NORTH);
+		}
+		
+		
+		
+		
+		longitudeCoordinate.fromDecimal(longitude);
+		if (longitude < 0) {
+			longitudeCoordinate.setDirection(CardinalDirectionEnum.WEST);
+		} else {
+			longitudeCoordinate.setDirection(CardinalDirectionEnum.EAST);
+		}
+		//latitudeCoordinate.fromDecimal(0);
+		//longitudeCoordinate.fromDecimal(0);
 		
 		solarCalculator.update();
 		solarCalculator.setLatitude(latitudeCoordinate);
@@ -132,11 +312,15 @@ public class SunlightPositioning
 		double declination = solarCalculator.declinationOfSun();
 		double hourAngle = solarCalculator.hourAngle();
 		solarZenith = solarCalculator.solarZenithAngle(declination, hourAngle);
-		//solarAzimuth = solarCalculator.solarAzimuthAngle(declination, hourAngle, solarZenith);
-		//solarElevation = 90 - solarZenith;
+		solarAzimuth = solarCalculator.solarAzimuthAngle(declination, hourAngle, solarZenith);
+		solarElevation = 90 - solarZenith;
 		//double rtAscension = solarCalculator.sunRtAscension();
 		
-		
+
+		//latitudeCoordinate.fromDecimal(latitude);
+	///longitudeCoordinate.fromDecimal(longitude);
+
+
 		//solarAzimuth = solarCalculator.solarAzimuthAngle();
 		//solarElevation = solarCalculator.solarElevationAngle();
 		//solarElevation = solarCalculator.correctedSolarElevation();
@@ -166,8 +350,40 @@ public class SunlightPositioning
 		//double rotateX = 0.0;//solarElevation;
 		
 		//double rotateY = rtAscension - 90;
-		double rotateY = hourAngle - longitude;//solarAzimuth - longitude;
-		double rotateX = 0;//declination;//solarElevation - latitude;
+		//double rotateY = hourAngle - longitude;//solarAzimuth - longitude;
+		//double rotateY = hourAngle;
+		//double rotateX = 0.0;//declination;//solarElevation - latitude;s
+		//double rotateX = solarCalculator.correctedSolarElevation() + solarCalculator.obliquityCorrection() - 90 ;
+		//solarCalculator.solarZenithAngle();//
+		//double rotateY = solarCalculator.solarAzimuthAngle();
+		//double rotateX = solarCalculator.solarElevationAngle();
+		
+		double e = solarCalculator.meanObliquityOfEcliptic();
+		
+		double rotateY = hourAngle;
+		double rotateX = solarCalculator.declinationOfSun();
+		
+		
+		
+		
+		
+		
+		//rotateY = rotateY - longitude;
+		//rotateX = rotateX - latitude;
+		
+		boolean doLog = false;
+		if (doLog) {
+		log.info("Latitude: " + latitude 
+				+ ", Longitude: " + longitude 
+				+ ", Obliquity: " + solarCalculator.obliquityCorrection() 
+				+ ", Declination: " + declination 
+				+ ", Elevation: " + solarCalculator.correctedSolarElevation()
+				+ ", Azimuth: " + solarCalculator.solarAzimuthAngle()
+				+ ", Zenith: " + solarCalculator.solarZenithAngle());
+		}
+		//double rotateX = solarCalculator.solarElevationAngle();
+		//double rotateX = declination - solarCalculator.obliquityCorrection();;
+		//double rotateX = 23.4 + solarCalculator.obliquityCorrection();
 		//double rotateX = 0;//declination;
 		
 		/*
@@ -215,14 +431,18 @@ public class SunlightPositioning
 		sunsource[1] = 0.0;
 		sunsource[2] = 0; // One AU in meters
 		
+		//sunsource[0] = 0.0;
+		//sunsource[1] = 0.0;
+		//sunsource[2] = -149598000000.0; // One AU in meters
+		
 		//Vectors.rotate(0.0, , 0.0, sunsource);
 		//Vectors.rotate(, 0.0, 0.0, sunsource);
 		
 		//Vectors.rotate(0.0, , 0, sunsource);
 		
 		if (viewPerspective != null) {
-			rotateY += viewPerspective.getRotateY();
-			rotateX = viewPerspective.getRotateX() - rotateX;
+			//rotateY += viewPerspective.getRotateY();
+			//rotateX = viewPerspective.getRotateX() + rotateX;
 		}
 		
 		
@@ -266,6 +486,5 @@ public class SunlightPositioning
 	}
 	
 
-	
 	
 }
