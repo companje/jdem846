@@ -58,26 +58,25 @@ public class Vectors
 	public static void rotate(double x, double y, double z, double[] xyz) 
 	{
 		
-		double _x = MathExt.radians(x);
-		double _y = MathExt.radians(y);
-		double _z = MathExt.radians(z);
+		double _x = (x != 0) ? MathExt.radians(x) : 0;
+		double _y = (y != 0) ? MathExt.radians(y) : 0;
+		double _z = (z != 0) ? MathExt.radians(z) : 0;
+
+		double sinAX = (x != 0) ? MathExt.sin(-_x) : 0;
+		double sinAY = (y != 0) ? MathExt.sin(-_y) : 0;
+		double sinAZ = (z != 0) ? MathExt.sin(-_z) : 0;
+
+		double cosAX = (x != 0) ? MathExt.cos(-_x) : 1;
+		double cosAY = (y != 0) ? MathExt.cos(-_y) : 1;
+		double cosAZ = (z != 0) ? MathExt.cos(-_z) : 1;
 		
-		double sinAX = MathExt.sin(-_x);
-		double sinAY = MathExt.sin(-_y);
-		double sinAZ = MathExt.sin(-_z);
+		double rx = ((cosAY * cosAZ) * xyz[0]) + ((-sinAX*-sinAY*cosAZ+cosAX*sinAZ) * xyz[1]) + ((cosAX*-sinAY*cosAZ+sinAX*sinAZ) * xyz[2]);
+		double ry = ((cosAY * -sinAZ) * xyz[0]) + ((-sinAX*-sinAY*-sinAZ+cosAX*cosAZ) * xyz[1]) + ((cosAX*-sinAY*-sinAZ+sinAX*cosAZ) * xyz[2]);
+		double rz = (sinAY * xyz[0]) + ((-sinAX*cosAY) * xyz[1]) + ((cosAX*cosAY) * xyz[2]);
 		
-		double cosAX = MathExt.cos(-_x);
-		double cosAY = MathExt.cos(-_y);
-		double cosAZ = MathExt.cos(-_z);
-		
-		double rX = ((cosAY * cosAZ) * xyz[0]) + ((-sinAX*-sinAY*cosAZ+cosAX*sinAZ) * xyz[1]) + ((cosAX*-sinAY*cosAZ+sinAX*sinAZ) * xyz[2]);
-		double rY = ((cosAY * -sinAZ) * xyz[0]) + ((-sinAX*-sinAY*-sinAZ+cosAX*cosAZ) * xyz[1]) + ((cosAX*-sinAY*-sinAZ+sinAX*cosAZ) * xyz[2]);
-		double rZ = (sinAY * xyz[0]) + ((-sinAX*cosAY) * xyz[1]) + ((cosAX*cosAY) * xyz[2]);
-		
-		xyz[0] = rX;
-		xyz[1] = rY;
-		xyz[2] = rZ;
-		
+		xyz[0] = rx;
+		xyz[1] = ry;
+		xyz[2] = rz;
 	}
 	
 	
