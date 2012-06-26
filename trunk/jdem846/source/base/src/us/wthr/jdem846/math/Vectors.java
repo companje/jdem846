@@ -25,9 +25,9 @@ public class Vectors
 			{0, 0, 0, 1}
 	};
 	
-	private static double buffer0[] = new double[3];
-	private static double buffer1[] = new double[3];
-	private static double buffer2[] = new double[3];
+	//private static double buffer0[] = new double[3];
+	//private static double buffer1[] = new double[3];
+	//private static double buffer2[] = new double[3];
 	
 	public static void translate(double x, double y, double z, double[] xyz)
 	{
@@ -107,6 +107,9 @@ public class Vectors
 	{
 		double dot = 0.0f;
 		
+		double[] buffer0 = new double[3];
+		double[] buffer1 = new double[3];
+		
 		normalize(pt0, buffer0);
 		normalize(pt1, buffer1);
 
@@ -141,6 +144,10 @@ public class Vectors
 	        no[1] = pt0[0] * pt1[2] - pt1[0] * pt0[2];
 	        no[2] = pt0[0] * pt1[1] - pt1[0] * pt0[1];
 		} else {
+			
+			double[] buffer0 = new double[3];
+			double[] buffer1 = new double[3];
+			double[] buffer2 = new double[3];
 			
 			subtract(pt0, pt1, buffer0);
 			subtract(pt1, pt2, buffer1);
