@@ -4,8 +4,12 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
@@ -59,6 +63,36 @@ public class ImageWriter
 	 */
 	public static void saveImage(BufferedImage image, String fileName, ImageTypeEnum format) throws ImageException
 	{
+		File writeTo = new File(fileName);
+		
+		OutputStream out = null;
+		
+		try {
+			out = new BufferedOutputStream(new FileOutputStream(writeTo), 1048576);
+		} catch (FileNotFoundException ex) {
+			throw new ImageException("Target file '" + fileName + "' not found: " + ex.getMessage(), ex);
+		}
+		
+		
+		saveImage(image, out, format);
+		
+		try {
+			out.flush();
+		} catch (IOException ex) {
+			throw new ImageException("Error flushing output stream: " + ex.getMessage(), ex);
+		}
+		
+	}
+	
+	/** Saves an image to disk. 
+	 * 
+	 * @param image Image to save to disk.
+	 * @param out Target output stream
+	 * @param format Format number.
+	 * @throws ImageException If the format is invalid or there is a write error.
+	 */
+	public static void saveImage(BufferedImage image, OutputStream out, ImageTypeEnum format) throws ImageException
+	{
 		
 		if (!ImageTypeEnum.isSupportedFormat(format)) {
 			throw new ImageException("Unsupported format: " + format);
@@ -73,16 +107,18 @@ public class ImageWriter
 			throw new ImageException("Format string not found for type: " + format);
 		}
 		
-		File writeTo = new File(fileName);
+		//File writeTo = new File(fileName);
 		
 		try {
-			ImageIO.write(image, formatName, writeTo);
+			ImageIO.write(image, formatName, out);
 		} catch (IOException ex) {
 			throw new ImageException("Error writing image to disk: " + ex.getMessage(), ex);
 		}
 		
 		
 	}
+	
+	
 	
 
 	/** Rerenders an image in a format supported by the JPEG specification.

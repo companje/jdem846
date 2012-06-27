@@ -78,8 +78,8 @@ public class ModelCanvas
 		this.height = height;
 		
 		// I know this is wrong.
-		double clipNearZ = width * 5;
-		double clipFarZ = -width;
+		double clipNearZ = width * 50;
+		double clipFarZ = -width * 50;
 		
 
 		canvas = new Canvas3d(width, height, clipNearZ, clipFarZ, pixelStackDepth, subpixelWidth, backgroundColor);

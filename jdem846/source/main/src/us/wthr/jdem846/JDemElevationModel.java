@@ -3,6 +3,7 @@ package us.wthr.jdem846;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,6 +12,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -18,6 +21,9 @@ import net.sf.json.JSONSerializer;
 import us.wthr.jdem846.canvas.AbstractBuffer;
 import us.wthr.jdem846.canvas.GeoRasterBuffer3d;
 import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.exception.ImageException;
+import us.wthr.jdem846.image.ImageTypeEnum;
+import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -29,6 +35,9 @@ public class JDemElevationModel extends AbstractBuffer
 	private static Log log = Logging.getLog(JDemElevationModel.class);
 	
 	public final static float NO_VALUE = (float) DemConstants.ELEV_NO_DATA;
+	
+	
+	private static int defaultWriteBufferSize = 1048576; // 1MB
 	
 	private Map<String, String> properties = new HashMap<String, String>();
 	
@@ -230,11 +239,16 @@ public class JDemElevationModel extends AbstractBuffer
 		int h = raster.getHeight();
 		
 		int[] rgbaBuffer = new int[4];
-
+		
+		boolean supportsAlpha = image.getColorModel().hasAlpha();
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				raster.getPixel(x, y, rgbaBuffer);
+				
+				if (!supportsAlpha) {
+					rgbaBuffer[3] = 0xFF;
+				}
 				
 				int i = getIndex(x, y);
 				
@@ -244,6 +258,19 @@ public class JDemElevationModel extends AbstractBuffer
 			}
 		}
 		
+	}
+	
+	
+	public void writeImageData(OutputStream out, ImageTypeEnum imageFormat) throws IOException
+	{
+		BufferedImage image = getImage();
+		
+		try {
+			ImageWriter.saveImage(image, out, imageFormat);
+		} catch (ImageException ex) {
+			throw new IOException("Error writing image to output stream: " + ex.getMessage(), ex);
+		}
+
 	}
 	
 	protected void readModelData(InputStream in) throws IOException
@@ -345,20 +372,24 @@ public class JDemElevationModel extends AbstractBuffer
 		int pointsWritten = 0;
 		int validWritten = 0;
 		
+		
+		BufferedOutputStream bufferedOut = new BufferedOutputStream(out, defaultWriteBufferSize);
+		
+		
 		for (int i = 0; i < this.getBufferLength(); i++) {
 			
 			if (maskBuffer[i] == true) {
 			
-				out.write(0x01);
+				bufferedOut.write(0x01);
 				
 				ByteConversions.floatToBytes(latitudeBuffer[i], buffer4);
-				out.write(buffer4, 0, 4);
+				bufferedOut.write(buffer4, 0, 4);
 				
 				ByteConversions.floatToBytes(longitudeBuffer[i], buffer4);
-				out.write(buffer4, 0, 4);
+				bufferedOut.write(buffer4, 0, 4);
 				
 				ByteConversions.floatToBytes(elevationBuffer[i], buffer4);
-				out.write(buffer4, 0, 4);
+				bufferedOut.write(buffer4, 0, 4);
 	
 				
 	
@@ -368,7 +399,7 @@ public class JDemElevationModel extends AbstractBuffer
 				}
 				
 			} else {
-				out.write(0x00);
+				bufferedOut.write(0x00);
 				int skipLength = 0;
 				
 				for (int j = i; j < getBufferLength(); j++) {
@@ -380,15 +411,15 @@ public class JDemElevationModel extends AbstractBuffer
 				}
 				
 				ByteConversions.intToBytes(skipLength, buffer4);
-				out.write(buffer4, 0, 4);
+				bufferedOut.write(buffer4, 0, 4);
 				
 				i += skipLength;
 				
 			}
 		}
 		
+		bufferedOut.flush();
 		out.flush();
-		
 		log.info("JDEMELEVMDL Wrote " + pointsWritten + " with " + validWritten + " valid points");
 		
 	}

@@ -42,6 +42,24 @@ public enum ImageTypeEnum {
 		
 	}
 	
+	
+	public static ImageTypeEnum imageTypeFromFormatName(String formatName)
+	{
+		if (formatName == null) {
+			return ImageTypeEnum.UNDEFINED_TYPE;
+		}
+		
+		for (ImageTypeEnum type : ImageTypeEnum.values()) {
+			if (type.formatName != null && type.formatName.equalsIgnoreCase(formatName)) {
+				return type;
+			}
+		}
+		
+		return ImageTypeEnum.UNDEFINED_TYPE;
+		
+	}
+	
+	
 	/** Determines if the specified format type number is supported by this class.
 	 * 
 	 * @param format A format type number.

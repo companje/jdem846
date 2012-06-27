@@ -102,9 +102,11 @@ public class SplashScreen extends Window
 	public static void addIcon(Image image, String text)
 	{
 		if (SplashScreen.instance != null) {
-			SplashScreen.splashIcons.add(new SplashIcon(text, image));
-			if (SplashScreen.instance.isVisible()) {
-				SplashScreen.instance.repaint();
+			synchronized(SplashScreen.splashIcons) {
+				SplashScreen.splashIcons.add(new SplashIcon(text, image));
+				if (SplashScreen.instance.isVisible()) {
+					SplashScreen.instance.repaint();
+				}
 			}
 		}
 	}
@@ -140,17 +142,19 @@ public class SplashScreen extends Window
 		
 		
 		g2d.setColor(Color.WHITE);
-		for (SplashIcon splashIcon : splashIcons) {
-			
-			g2d.drawImage(splashIcon.getImage(), iconX, iconPaddingY, this);
-			
-			int strWidth = fontMetrics.stringWidth(splashIcon.getText());
-			int strX = (int) ( iconX + ((double)splashIcon.getImageWidth() / 2) - ((double)strWidth / 2));
-			
-			g2d.drawString(splashIcon.getText(), strX, splashIcon.getImageHeight() + (iconPaddingY * 2));
-			
-			iconX += splashIcon.getImageWidth() + iconPaddingX;
-			
+		synchronized(SplashScreen.splashIcons) {
+			for (SplashIcon splashIcon : splashIcons) {
+				
+				g2d.drawImage(splashIcon.getImage(), iconX, iconPaddingY, this);
+				
+				int strWidth = fontMetrics.stringWidth(splashIcon.getText());
+				int strX = (int) ( iconX + ((double)splashIcon.getImageWidth() / 2) - ((double)strWidth / 2));
+				
+				g2d.drawString(splashIcon.getText(), strX, splashIcon.getImageHeight() + (iconPaddingY * 2));
+				
+				iconX += splashIcon.getImageWidth() + iconPaddingX;
+				
+			}
 		}
 		
 		int rectY = getHeight() - 10 - (notifyList.notifications.length * 17) + 3;

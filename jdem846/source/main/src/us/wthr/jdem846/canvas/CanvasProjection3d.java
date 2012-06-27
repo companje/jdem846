@@ -43,8 +43,7 @@ public class CanvasProjection3d extends CanvasProjection
 	protected double max = 0;
 	protected double resolution = 0;
 	
-	
-	
+
 	protected double elevationMultiple = 1.0;
 	
 	
@@ -132,6 +131,30 @@ public class CanvasProjection3d extends CanvasProjection
 			meanRadius = planet.getMeanRadius();
 		}
 		
+		/*
+		double r = meanRadius * 1000;
+		double a = MathExt.pow(MathExt.tan(MathExt.radians((minSideLength/2.0) / 0.635)), -1.0);
+		double d = r / MathExt.degrees(MathExt.tan(MathExt.radians(a)));
+		
+		cameraVector[2] = 0.635;
+		eyeVector[2] = d - r - 0.635;
+		
+		log.info("Angle: " + a);
+		log.info("Distance: " + d);
+		log.info("Camera Vector: " + cameraVector[2]);
+		log.info("Eye Vector: " + eyeVector[2]);
+		*/
+		cameraVector[2] = meanRadius/projection.getZoom();			// Camera position
+		eyeVector[2] = ((meanRadius/2.0)/projection.getZoom());	// Viewer's position relative to the display surface
+		
+		log.info("Zoom: " + projection.getZoom());
+		log.info("Camera: " + cameraVector[2]);
+		log.info("Eye: " + eyeVector[2]);
+		
+		//cameraVector[2] = minSideLength;			// Camera position
+		//eyeVector[2] = ((minSideLength/2.0));	// Viewer's position relative to the display surface
+		
+		
 		//resolution = modelContext.getRasterDataContext().getMetersResolution(meanRadius);
 		resolution = modelDimensions.getMetersResolution(meanRadius);
 		resolution = resolution / (latRes / effLatRes);
@@ -176,11 +199,11 @@ public class CanvasProjection3d extends CanvasProjection
 		double shiftPixelsX = shiftX * getWidth();
 		double shiftPixelsY = shiftY * getHeight();
 		//double shiftPixelsZ = shiftZ * radius;
-		
+
 		//Vector.scale(1.0, elevationMultiple, 1.0, pointVector);
 		Vectors.rotate(0, rotateY, 0, pointVector);
 		Vectors.rotate(rotateX, 0, 0, pointVector);
-		Vectors.translate(shiftPixelsX, shiftPixelsY, 0.0, pointVector);
+		Vectors.translate(shiftPixelsX, shiftPixelsY, -0.0, pointVector);
 		Vectors.scale(scaleX, scaleY, scaleZ, pointVector);
 		
 		
