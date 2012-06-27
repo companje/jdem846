@@ -12,8 +12,11 @@ import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.JDemResourceLoader;
+import us.wthr.jdem846.exception.ImageException;
+import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ElevationHistogramModel;
@@ -31,12 +34,10 @@ public class ZipProjectFileWriter
 	
 	protected static void writeJDemElevationModel(JDemElevationModel model, int index, ZipOutputStream zos) throws IOException
 	{
-		ZipEntry imageEntry = new ZipEntry("models/" + index + "/image.png");
+		//ZipEntry imageEntry = new ZipEntry("models/" + index + "/image.png");
+		ZipEntry imageEntry = new ZipEntry("models/" + index + "/image.jpg");
 		zos.putNextEntry(imageEntry);
-		
-		BufferedImage image = model.getImage();
-		ImageIO.write(image, "PNG", zos);
-		
+		model.writeImageData(zos, ImageTypeEnum.imageTypeFromFormatName(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.defaultImageFormat")));
 		zos.closeEntry();
 		
 		

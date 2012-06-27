@@ -1,6 +1,8 @@
 package us.wthr.jdem846.project;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,8 +62,15 @@ public class ZipProjectFileReader
 	
 	protected static JDemElevationModel loadElevationModelFromZip(int index, ZipFile zipFile) throws IOException
 	{
+		boolean supportsAlpha = true;
 		ZipEntry imageFile = zipFile.getEntry("models/" + index + "/image.png");
 		
+		
+		
+		if (imageFile == null) {
+			imageFile = zipFile.getEntry("models/" + index + "/image.jpg");
+			supportsAlpha = false;
+		}
 		
 		if (imageFile == null) {
 			return null;
@@ -71,7 +80,7 @@ public class ZipProjectFileReader
 		InputStream imageInStream = zipFile.getInputStream(imageFile);
 		BufferedImage image = ImageIO.read(imageInStream);
 		imageInStream.close();
-		
+
 		
 		// Properties JSON
 		//String jsonPropertiesTxt = IOUtils.toString( in );

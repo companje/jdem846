@@ -20,6 +20,7 @@ import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Slider;
 import us.wthr.jdem846.ui.base.TabPane;
 import us.wthr.jdem846.ui.base.TextField;
+import us.wthr.jdem846.ui.optionModels.ImageFormatListModel;
 import us.wthr.jdem846.ui.optionModels.ImageQualityListModel;
 import us.wthr.jdem846.ui.optionModels.JGoodiesColorThemeListModel;
 import us.wthr.jdem846.ui.optionModels.LanguageListModel;
@@ -39,10 +40,11 @@ public class PreferencesDialog extends Dialog
 	
 	private LanguageListModel languageListModel;
 	private PrecacheStrategyOptionsListModel precacheStrategyModel;
-	
+	private ImageFormatListModel imageFormatListModel;
 	
 	
 	private ComboBox cmbGeneralLanguage;
+	private ComboBox cmbGeneralDefaultImageFormat;
 	private JGoodiesColorThemeListModel colorThemeListModel;
 	private ComboBox cmbGeneralColorTheme;
 	private CheckBox chkGeneralDisplayToolbarText;
@@ -103,6 +105,10 @@ us.wthr.jdem846.defaults.institution-address=
 
 		languageListModel = new LanguageListModel();
 		cmbGeneralLanguage = new ComboBox(languageListModel);
+		
+		imageFormatListModel = new ImageFormatListModel();
+		cmbGeneralDefaultImageFormat = new ComboBox(imageFormatListModel);
+		
 		colorThemeListModel = new JGoodiesColorThemeListModel();
 		cmbGeneralColorTheme = new ComboBox(colorThemeListModel);
 		chkGeneralDisplayToolbarText = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.displayToolbarText"));
@@ -190,6 +196,9 @@ us.wthr.jdem846.defaults.institution-address=
 		//generalPanel.add(cmbGeneralColorTheme);
 		generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.quality") + ":"));
 		generalPanel.add(cmbGeneralQuality);
+		
+		generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.defaultImageFormat") + ":"));
+		generalPanel.add(cmbGeneralDefaultImageFormat);
 		
 		
 		generalPanel.add(new Label(""));
@@ -315,6 +324,7 @@ us.wthr.jdem846.defaults.institution-address=
 
 		qualityModel.setSelectedItemByValue(JDem846Properties.getIntProperty("us.wthr.jdem846.general.view.imageScaling.quality"));
 		languageListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.i18n.default"));
+		imageFormatListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.defaultImageFormat"));
 		colorThemeListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.jgoodies.theme"));
 		chkGeneralDisplayToolbarText.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.displayToolbarText"));
 		chkGeneralAntialiasedScriptEditorText.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.scriptEditorPane.textAA"));
@@ -355,8 +365,8 @@ us.wthr.jdem846.defaults.institution-address=
 	public void setValuesFromUserInterface()
 	{
 		
-		
-		
+
+		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.defaultImageFormat", imageFormatListModel.getSelectedItem());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.view.imageScaling.quality", qualityModel.getSelectedItemValue());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.i18n.default", languageListModel.getSelectedItemValue());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.jgoodies.theme", colorThemeListModel.getSelectedItemValue());

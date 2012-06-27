@@ -73,7 +73,7 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 	{
 
 		double minSideLength = MathExt.min(getWidth(), getHeight()) - 20;
-		double radius = (minSideLength / 2.0)  * scaleX;
+		double radius = (minSideLength)  * scaleX;
 
 
 		//double maxMultiplied = max * elevationMultiple;
