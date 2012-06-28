@@ -39,6 +39,9 @@ import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.simple.SimpleRenderer;
+import us.wthr.jdem846.tasks.RunnableTask;
+import us.wthr.jdem846.tasks.TaskControllerService;
+import us.wthr.jdem846.tasks.TaskStatusListener;
 import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
@@ -61,6 +64,8 @@ public class ModelVisualizationPanel extends Panel
 	private ToolbarButton btnUpdate;
 	private CheckBox chkAutoUpdate;
 	private CheckBox chkScripting;
+	
+	private ProcessWorkingSpinner previewRenderingSpinner;
 	
 	int buttonDown = -1;
 	int downX = -1;
@@ -101,6 +106,8 @@ public class ModelVisualizationPanel extends Panel
 	private ModelBuilder modelBuilder = null;
 	
 	private ReRenderRequestContainer rerendering;
+	
+	private static PreviewRunTask previewRunTaskInstance = null;
 	
 	
 	public ModelVisualizationPanel(ModelContext modelContext)
@@ -158,6 +165,8 @@ public class ModelVisualizationPanel extends Panel
 				update(true, true, true);
 			}
 		});
+		
+		previewRenderingSpinner = new ProcessWorkingSpinner();
 		
 		chkPreviewRaster.setOpaque(false);
 		chkAutoUpdate.setOpaque(false);
@@ -296,6 +305,8 @@ public class ModelVisualizationPanel extends Panel
 		buttonBar.addSeparator();
 		buttonBar.add(chkAutoUpdate);
 		buttonBar.add(btnUpdate);
+		buttonBar.add(previewRenderingSpinner);
+		
 		
 		
 		// Set Layout
@@ -304,6 +315,9 @@ public class ModelVisualizationPanel extends Panel
 		add(buttonBar, BorderLayout.SOUTH);
 		
 		setControlState();
+		
+		
+		
 	}
 	
 	
@@ -472,21 +486,24 @@ public class ModelVisualizationPanel extends Panel
 	protected void rerender()
 	{
 
-		rerendering.setRendererWorking(true);
 		
-		while(rerendering.isReRenderNeeded()) {
+		
+		if(rerendering.isReRenderNeeded()) {
 			boolean dataModelChanged = rerendering.isDataModelChanged();
 			boolean optionsChanged = rerendering.isOptionsChanged();
 			boolean force = rerendering.isForce();
 			
-			rerendering.setReRenderCaptured();
 			
-			__rerender(dataModelChanged, optionsChanged, force);
 			
-			repaint();
+			if (__rerenderThreaded(dataModelChanged, optionsChanged, force)) {
+				rerendering.setReRenderCaptured();
+			}
+			//__rerender(dataModelChanged, optionsChanged, force);
+			
+			//repaint();
 		}
 
-		rerendering.setRendererWorking(false);
+		//rerendering.setRendererWorking(false);
 		
 		
 		
@@ -496,6 +513,26 @@ public class ModelVisualizationPanel extends Panel
 		//	update(rerendering.isDataModelChanged(), rerendering.isOptionsChanged(), rerendering.isForce());
 		//} 
 	}
+	
+	
+	
+	protected boolean __rerenderThreaded(boolean dataModelChanged, boolean optionsChanged, boolean force)
+	{
+		PreviewRunTask task = createPreviewRunTask(dataModelChanged, optionsChanged, force);
+		if (task == null) {
+			return false;
+		}
+		
+		//PreviewRunTask task = new PreviewRunTask(dataModelChanged, optionsChanged, force);
+		PreviewRenderTaskStatusListener listener = new PreviewRenderTaskStatusListener();
+		
+		TaskControllerService.addTask(task, listener);
+		
+		return true;
+	}
+	//
+	
+	
 	
 	protected void __rerender(boolean dataModelChange, boolean optionsChanged, boolean force)
 	{
@@ -690,7 +727,7 @@ public class ModelVisualizationPanel extends Panel
 			pnlModelDisplay.zoomFit();
 		}
 		
-		
+		repaint();
 	}
 	
 	public void addProjectionChangeListener(ProjectionChangeListener listener)
@@ -798,5 +835,125 @@ public class ModelVisualizationPanel extends Panel
 	}
 
 	
+	
+	
+	public PreviewRunTask createPreviewRunTask(boolean dataModelChange, boolean optionsChanged, boolean force)
+	{
+		
+		if (previewRunTaskInstance == null) {
+			previewRunTaskInstance = new PreviewRunTask(dataModelChange, optionsChanged, force);
+			return previewRunTaskInstance;
+		} else {
+			return null;
+		}
+
+		
+	}
+	
+	class PreviewRunTask extends RunnableTask 
+	{
+
+		
+		private boolean dataModelChange;
+		private boolean optionsChanged;
+		private boolean force;
+		
+		private boolean active = false;
+		
+		public PreviewRunTask(boolean dataModelChange, boolean optionsChanged, boolean force)
+		{
+			super("Model Preview Render Task");
+			
+			this.dataModelChange = dataModelChange;
+			this.optionsChanged = optionsChanged;
+			this.force = force;
+		}
+		
+		
+		
+		
+		@Override
+		public void run() throws Exception
+		{
+			active = true;
+			__rerender(dataModelChange, optionsChanged, force);
+			active = false;
+		}
+		
+		
+		public boolean isActive()
+		{
+			return active;
+		}
+		
+		@Override
+		public void cancel()
+		{
+			
+		}
+		
+		@Override
+		public void pause()
+		{
+			
+		}
+		
+		@Override
+		public void resume()
+		{
+			
+		}
+		
+	}
+	
+	public class PreviewRenderTaskStatusListener implements TaskStatusListener
+	{
+
+		@Override
+		public void taskStarting(RunnableTask task)
+		{
+			previewRenderingSpinner.start();
+			rerendering.setRendererWorking(true);
+		}
+
+		@Override
+		public void taskFailed(RunnableTask task, Throwable thrown)
+		{
+			log.warn("Preview render failed: " + thrown.getMessage(), thrown);
+			taskCompleted(task);
+		}
+
+		@Override
+		public void taskCompleted(RunnableTask task)
+		{
+			previewRenderingSpinner.stop();
+			rerendering.setRendererWorking(false);
+			
+			//synchronized(previewRunTaskInstance) {
+				previewRunTaskInstance = null;
+				
+			rerender();
+			//}
+		}
+
+		@Override
+		public void taskCancelled(RunnableTask task)
+		{
+			taskCompleted(task);
+		}
+
+		@Override
+		public void taskPaused(RunnableTask task)
+		{
+			taskCompleted(task);
+		}
+
+		@Override
+		public void taskResumed(RunnableTask task)
+		{
+			taskStarting(task);
+		}
+		
+	}
 	
 }
