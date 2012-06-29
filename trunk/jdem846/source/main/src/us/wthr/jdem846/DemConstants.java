@@ -30,7 +30,7 @@ public class DemConstants {
 	public static final double MOON_MEAN_RADIUS = 1737.1;
 	
 	
-	public static final double ELEV_NO_DATA = -99999.99;
+	public static final double ELEV_NO_DATA = -1000000;
 	
 	
 	// Status Codes

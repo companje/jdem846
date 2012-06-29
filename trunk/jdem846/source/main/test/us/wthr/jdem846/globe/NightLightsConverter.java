@@ -36,13 +36,16 @@ private static Log log = null;
 		
 		log = Logging.getLog(NightLightsConverter.class);
 		
-		String imageFilePath = "C:\\srv\\elevation\\Earth\\nightearth.gif";
-		String binaryFilePath = "C:\\srv\\elevation\\Earth\\nightearth.21601x10801.bin";
+		//String imageFilePath = "C:\\srv\\elevation\\Earth\\nightearth.gif";
+		//String binaryFilePath = "C:\\srv\\elevation\\Earth\\nightearth.21601x10801.bin";
+		
+		String imageFilePath = "C:\\srv\\elevation\\Earth\\cloud.E.2001210.21600x21600.png";
+		String binaryFilePath = "C:\\srv\\elevation\\Earth\\cloud.E.2001210.10800x10800.bin";
 		
 		try {
 			NightLightsConverter testMain = new NightLightsConverter();
-			//testMain.process(imageFilePath, binaryFilePath);
-			testMain.validate(binaryFilePath, 21601, 10801);
+			testMain.process(imageFilePath, binaryFilePath, 10800, 10800);
+			testMain.validate(binaryFilePath, 10800, 10800);
 		} catch (Exception ex) {
 			log.error("Uncaught exception while running test main: " + ex.getMessage(), ex);
 		}
@@ -91,7 +94,7 @@ private static Log log = null;
 	}
 	
 	
-	public void process(String imageFilePath, String binaryFilePath) throws Exception
+	public void process(String imageFilePath, String binaryFilePath, int resizeWidth, int resizeHeight) throws Exception
 	{
 		
 		
@@ -101,8 +104,17 @@ private static Log log = null;
 		log.info("Loading...");
 		BufferedImage imageFullSize = ImageIO.read(in);
 		
-		log.info("Resizing...");
-		BufferedImage image = ImageUtilities.getScaledInstance(imageFullSize, 21601, 10801, RenderingHints.VALUE_INTERPOLATION_BILINEAR, true);
+		BufferedImage image = null;
+		
+		if (resizeWidth > 0 && resizeHeight > 0) {
+		
+			log.info("Resizing...");
+			image = ImageUtilities.getScaledInstance(imageFullSize, resizeWidth, resizeHeight, RenderingHints.VALUE_INTERPOLATION_BILINEAR, true);
+
+		} else {
+			image = imageFullSize;
+		}
+		
 		
 		log.info("Width: " + image.getWidth());
 		log.info("Height: " + image.getHeight());

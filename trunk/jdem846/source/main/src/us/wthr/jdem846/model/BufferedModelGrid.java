@@ -48,7 +48,7 @@ public class BufferedModelGrid extends ModelPointGrid
 		
 		for (int i = 0; i < gridLength; i++) {
 			elevationGrid[i] = (float) DemConstants.ELEV_NO_DATA;
-			rgbaGrid[i] = 0xFF;
+			rgbaGrid[i] = 0xFFFFFFFF;
 		}
 		
 	}

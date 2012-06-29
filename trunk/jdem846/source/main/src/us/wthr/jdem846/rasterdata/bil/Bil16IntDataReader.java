@@ -154,8 +154,8 @@ public class Bil16IntDataReader
 		
 		open();
 		
-		long pos = (row * columns) + column;
-		long seekStart = skipBytes + (pos * (16 / 8));
+		long pos = ((long)row * (long)columns) + (long)column;
+		long seekStart = (long)skipBytes + (pos * (16l / 8l));
 		long length = 0;
 		
 		try {
