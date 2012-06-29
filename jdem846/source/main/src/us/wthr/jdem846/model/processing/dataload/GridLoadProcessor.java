@@ -261,6 +261,12 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 					elevation = ((BigDecimal)after).doubleValue();
 				} else if (after instanceof Integer) {
 					elevation = ((Integer)after).doubleValue();
+				} else {
+					
+					if (after != null) {
+						int i = 0;
+					}
+					
 				}
 				
 			} catch (Exception ex) {

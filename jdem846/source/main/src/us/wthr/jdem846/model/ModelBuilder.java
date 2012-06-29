@@ -127,7 +127,7 @@ public class ModelBuilder extends InterruptibleProcess
 						modelDimensions.getOutputLongitudeResolution(),
 						modelContext.getRasterDataContext().getDataMinimumValue(),
 						modelContext.getRasterDataContext().getDataMaximumValue());
-				
+				modelGrid.reset();
 				
 				/*
 				modelGrid = new ModelGrid(globalOptionModel.getNorthLimit(), 

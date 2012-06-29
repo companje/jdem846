@@ -47,7 +47,7 @@ public class ElevationHistogramModel
 	public void add(double elevation)
 	{
 		int index = getIndex(elevation);
-		if (index < distribution.length)
+		if (index >= 0 && index < distribution.length)
 			distribution[index]++;
 	}
 	
