@@ -175,13 +175,31 @@ public class SurfaceNormalCalculator
 	protected void fillPointXYZ(double[] P, double latitude, double longitude, double elevation)
 	{
 		double radius = meanRadius * 1000 + elevation;
-
-		Spheres.getPoint3D(longitude, latitude, radius, P);
+			
+		double _latitude = latitude;
+		double _longitude = longitude;
 		
+		if (_latitude >= 90) {
+			_latitude = 90 - (_latitude - 90.0);
+			if (_longitude < 0) {
+				_longitude += 180.0;
+			} else {
+				_longitude -= 180.0;
+			}
+			
+			
+			//longitude += 180.0;
+		}
+		
+		
+		Spheres.getPoint3D(_longitude, _latitude, radius, P);
+
 		if (viewPerspective != null) {
 			Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, P);
 			Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
 		}
+		
+		
 	}
 	
 	

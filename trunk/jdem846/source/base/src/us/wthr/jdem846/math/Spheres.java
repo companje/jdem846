@@ -29,6 +29,7 @@ public class Spheres
 	protected static double fixPhiDegrees(double phi)
 	{
 		
+		/*
 		while (phi < -90.0) {
 			phi += 180.0;
 		}
@@ -36,7 +37,15 @@ public class Spheres
 		while (phi >= 90.0) {
 			phi -= 180.0;
 		}
-		
+		*/
+		while (phi < -90.0 || phi > 90.0) {
+            if (phi > 90.0) {
+                phi = phi - 90.0;
+            }
+            if (phi < -90.0) {
+                phi = phi + 90.0;
+            }
+        }
 		return phi;
 	}
 	
@@ -45,9 +54,10 @@ public class Spheres
 									double radius, 
 									double[] points)
 	{
-
+		
 		theta = MathExt.radians(fixThetaDegrees(-theta));
 		phi = MathExt.radians(fixPhiDegrees(phi));
+
 		
 		double _y = MathExt.sqrt(MathExt.sqr(radius) - MathExt.sqr(radius * MathExt.cos(phi)));
         double r0 = MathExt.sqrt(MathExt.sqr(radius) - MathExt.sqr(_y));
@@ -75,7 +85,16 @@ public class Spheres
         points[0] = _x;
         points[1] = _y;
         points[2] = _z;
+        
+        
+        points[0] = MathExt.min(radius, points[0]);
+        points[0] = MathExt.max(-radius, points[0]);
 
+        points[1] = MathExt.min(radius, points[1]);
+        points[1] = MathExt.max(-radius, points[1]);
+        
+        points[2] = MathExt.min(radius, points[2]);
+        points[2] = MathExt.max(-radius, points[2]);
 	}
 	
 	
