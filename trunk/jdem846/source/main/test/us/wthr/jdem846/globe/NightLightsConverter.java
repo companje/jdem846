@@ -36,16 +36,24 @@ private static Log log = null;
 		
 		log = Logging.getLog(NightLightsConverter.class);
 		
-		//String imageFilePath = "C:\\srv\\elevation\\Earth\\nightearth.gif";
-		//String binaryFilePath = "C:\\srv\\elevation\\Earth\\nightearth.21601x10801.bin";
+		//String basePath = "C:\\srv\\elevation\\Earth\\";
+		String basePath = "F:\\bluemarble\\";
 		
-		String imageFilePath = "C:\\srv\\elevation\\Earth\\cloud.E.2001210.21600x21600.png";
-		String binaryFilePath = "C:\\srv\\elevation\\Earth\\cloud.E.2001210.10800x10800.bin";
+		String imageFilePath = basePath + "nightearth.gif";
+		String binaryFilePath = basePath + "nightearth.21601x10801.bin";
+		int scaleToWidth = 21601;
+		int scaleToHeight = 10801;
+		
+		//String imageFilePath = basePath + "cloud.W.2001210.21600x21600.png";
+		//String binaryFilePath = basePath + "cloud.W.2001210.10800x10800.bin";
+		//int scaleToWidth = 10800;
+		//int scaleToHeight = 10800;
+		
 		
 		try {
 			NightLightsConverter testMain = new NightLightsConverter();
-			testMain.process(imageFilePath, binaryFilePath, 10800, 10800);
-			testMain.validate(binaryFilePath, 10800, 10800);
+			testMain.process(imageFilePath, binaryFilePath, scaleToWidth, scaleToHeight);
+			testMain.validate(binaryFilePath, scaleToWidth, scaleToHeight);
 		} catch (Exception ex) {
 			log.error("Uncaught exception while running test main: " + ex.getMessage(), ex);
 		}
