@@ -165,7 +165,7 @@ public class ShapeProcessor extends InterruptibleProcess  implements GridProcess
 				modelContext.getRasterDataContext().getDataMinimumValue(),
 				modelContext.getRasterDataContext().getDataMaximumValue(),
 				(ModelDimensions) modelDimensions,
-				new ViewPerspective());
+				globalOptionModel.getViewAngle());
 	}
 
 

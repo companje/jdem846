@@ -95,8 +95,8 @@ public class ModelGridDimensions extends ModelDimensions
 		outputHeight = globalOptionModel.getHeight();
 		outputWidth = globalOptionModel.getWidth();
 
-		double scaleX = 1.0;//modelContext.getModelOptions().getProjection().getZoom();
-		
+		//double scaleX = 1.0;//modelContext.getModelOptions().getProjection().getZoom();
+		double scaleX = globalOptionModel.getViewAngle().getZoom();
 		
 		
 		LatLonResolution latLonOutputRes = null;
