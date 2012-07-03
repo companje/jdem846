@@ -74,12 +74,6 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 
 		double minSideLength = MathExt.min(getWidth(), getHeight()) - 20;
 		double radius = (minSideLength)  * scaleX;
-
-
-		//double maxMultiplied = max * elevationMultiple;
-		//double ratio = (elevation - min) / (max - min);
-		//elevation = min + (maxMultiplied - min) * ratio;
-
 		double radiusAdjusted = (radius / meanRadius) * (meanRadius + elevation);
 		
 
@@ -115,8 +109,14 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 			double longitudeResolution,
 			double scaleFactor)
 	{
+		//double minSideLength = MathExt.min(outputWidth, outputHeight) - 20;
+		//double radius = (minSideLength / 2.0)  * scaleFactor;
+		double meanRadius = DemConstants.EARTH_MEAN_RADIUS * 1000;
+		
 		double minSideLength = MathExt.min(outputWidth, outputHeight) - 20;
-		double radius = (minSideLength / 2.0)  * scaleFactor;
+		double radius = minSideLength * scaleFactor;
+		//double radiusAdjusted = (radius / meanRadius) * (meanRadius + 0);
+		
 		
 		double circumference = 2 * MathExt.PI * radius;
 		

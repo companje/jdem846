@@ -95,13 +95,13 @@ public class CanvasProjection3d extends CanvasProjection
 		cameraVector[0] = 0; cameraVector[1] = 0;
 		eyeVector[0] = 0; eyeVector[1] = 0;
 		
-		double minSideLength = MathExt.min(getWidth(), getHeight()) - 20;
+		//double minSideLength = MathExt.min(getWidth(), getHeight()) - 20;
 		
 		//cameraVector[2] = getWidth();			// Camera position
 		//eyeVector[2] = (getWidth()/2.0f);	// Viewer's position relative to the display surface
 		
-		cameraVector[2] = minSideLength;			// Camera position
-		eyeVector[2] = (minSideLength/2.0f);	// Viewer's position relative to the display surface
+		//cameraVector[2] = minSideLength;			// Camera position
+		//eyeVector[2] = (minSideLength/2.0f);	// Viewer's position relative to the display surface
 		
 		this.elevationMultiple = elevationMultiple;
 		//elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
@@ -131,19 +131,7 @@ public class CanvasProjection3d extends CanvasProjection
 			meanRadius = planet.getMeanRadius();
 		}
 		
-		/*
-		double r = meanRadius * 1000;
-		double a = MathExt.pow(MathExt.tan(MathExt.radians((minSideLength/2.0) / 0.635)), -1.0);
-		double d = r / MathExt.degrees(MathExt.tan(MathExt.radians(a)));
-		
-		cameraVector[2] = 0.635;
-		eyeVector[2] = d - r - 0.635;
-		
-		log.info("Angle: " + a);
-		log.info("Distance: " + d);
-		log.info("Camera Vector: " + cameraVector[2]);
-		log.info("Eye Vector: " + eyeVector[2]);
-		*/
+
 		cameraVector[2] = meanRadius/projection.getZoom();			// Camera position
 		eyeVector[2] = ((meanRadius/2.0)/projection.getZoom());	// Viewer's position relative to the display surface
 		
@@ -218,6 +206,23 @@ public class CanvasProjection3d extends CanvasProjection
 	
 	public void projectTo(double[] vector) //Vector eye, Vector near)
 	{
+		CanvasProjection3d.projectTo(vector, eyeVector, cameraVector);
+	}
+	
+
+	public static void projectTo(double[] vector, double meanRadius, double zoom)
+	{
+		double[] cameraVector = {0.0, 0.0, 0.0};
+		double[] eyeVector = {0.0, 0.0, 0.0};
+		
+		cameraVector[2] = meanRadius / zoom;			// Camera position
+		eyeVector[2] = ((meanRadius / 2.0) / zoom);	// Viewer's position relative to the display surface
+		
+		CanvasProjection3d.projectTo(vector, eyeVector, cameraVector);
+	}
+	
+	public static void projectTo(double[] vector, double[] eyeVector, double[] cameraVector)
+	{
 		double[] a = vector;   // 3D position of points being projected
 		double[] e = eyeVector;     // Viewer's position relative to the display surface
 		double[] c = cameraVector;      // Camera position
@@ -236,11 +241,7 @@ public class CanvasProjection3d extends CanvasProjection
 		//double thetaY = 0;//MathExt.radians(45);
 		//double thetaZ = 0;
 		
-		
-		
-		
-		
-		
+
 		double sinTX = 0.0;//MathExt.sin(thetaX);
 		double sinTY = 0.0;//MathExt.sin(thetaY);
 		double sinTZ = 0.0;//MathExt.sin(thetaZ);
@@ -257,12 +258,7 @@ public class CanvasProjection3d extends CanvasProjection
 		vector[0] = (dX - e[0]) * (e[2] / dZ);
 		vector[1] = (dY - e[1]) * (e[2] / dZ);
 		vector[2] = (dZ - e[2]) * (e[2] / dZ);
-		
-		//vector[0] = dX;
-		//vector[1] = dY;
-		//vector[2] = dZ;
-		
-		
+
 	}
 	
 	public static LatLonResolution calculateOutputResolutions(double outputWidth,
