@@ -114,6 +114,10 @@ public class PixelMatrix extends AbstractBuffer
 			return;
 		}
 		
+		//if (isColorOpaque(rgba)) {
+			
+		//}
+		
 		if (isPixelDepthLimited() && stackDepth == 1 && overlayTransparentColors()) {
 			
 			if (zMatrix[matrixIndex][0] < z) {
@@ -132,7 +136,7 @@ public class PixelMatrix extends AbstractBuffer
 		} else {
 		
 			
-			int stackIndex = determineStackIndex(x, y, z);
+			int stackIndex = determineStackIndex(x, y, z, rgba);
 			
 			if (isPixelDepthLimited() && stackIndex >= stackDepth) {
 				return;
@@ -163,9 +167,24 @@ public class PixelMatrix extends AbstractBuffer
 		
 	}
 
-	protected int determineStackIndex(double x, double y, double z)
+	
+	protected boolean isColorOpaque(int rgba)
 	{
+		if ((0xFF & (rgba >>> 24)) == 0xFF) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	protected int determineStackIndex(double x, double y, double z, int rgba)
+	{
+		//if (isColorOpaque(rgba)) {
+		//	return 0;
+		//}
+		
 		int matrixIndex = this.getIndex(x, y);
+	
 		
 		for (int i = 0; i < zMatrix[matrixIndex].length; i++) {
 			if (z > zMatrix[matrixIndex][i]) {
