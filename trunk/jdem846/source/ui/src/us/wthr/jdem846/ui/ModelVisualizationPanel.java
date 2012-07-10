@@ -425,7 +425,7 @@ public class ModelVisualizationPanel extends Panel
 			int deltaX = x - lastX;
 			int deltaY = y - lastY;
 			
-			shiftX += (deltaX * .01);
+			shiftX -= (deltaX * .01);
 			shiftY -= (deltaY * .01);
 			
 		}
