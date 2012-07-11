@@ -2,6 +2,7 @@ package us.wthr.jdem846.model.processing.shading;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -103,6 +104,16 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 		viewPerspective = this.getGlobalOptionModel().getViewAngle();
 		
+		
+		if (CanvasProjectionTypeEnum.PROJECT_FLAT.identifier().equals(getGlobalOptionModel().getRenderProjection())) {
+			viewPerspective.setRotateX(0.0);
+			viewPerspective.setRotateY(0.0);
+			viewPerspective.setRotateZ(0.0);
+			viewPerspective.setShiftX(0.0);
+			viewPerspective.setShiftY(0.0);
+			viewPerspective.setShiftZ(0.0);
+			viewPerspective.setZoom(1.0);
+		}
 		
 		ScriptingContext scriptingContext = modelContext.getScriptingContext();
 		ScriptProxy scriptProxy = null;
@@ -326,6 +337,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			
 			
 		} else {
+			
 			double dot = calculateDotProduct(normal);
 			
 			
