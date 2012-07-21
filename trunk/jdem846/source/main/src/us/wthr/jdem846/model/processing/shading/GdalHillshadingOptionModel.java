@@ -3,12 +3,16 @@ package us.wthr.jdem846.model.processing.shading;
 import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
+import us.wthr.jdem846.model.annotations.ValueBounds;
 
 public class GdalHillshadingOptionModel implements OptionModel {
 
 	private double azimuth = 315.0;
 	private double altitude = 45.0;
 	private boolean preserveColor = false;
+	
+	private double lightIntensity = 0.75;
+	private double darkIntensity = 1.0;
 	
 	
 	public GdalHillshadingOptionModel()
@@ -63,7 +67,44 @@ public class GdalHillshadingOptionModel implements OptionModel {
 
 
 
+	@ProcessOption(id="us.wthr.jdem846.model.GdalHillshadingOptionModel.lightIntensity",
+			label="Light Intensity",
+			tooltip="",
+			enabled=true)
+	@Order(30)
+	@ValueBounds(minimum=0,
+			maximum=1.0,
+			stepSize=0.05)
+	public double getLightIntensity()
+	{
+		return lightIntensity;
+	}
 
+	public void setLightIntensity(double lightIntensity)
+	{
+		this.lightIntensity = lightIntensity;
+	}
+	
+	@ProcessOption(id="us.wthr.jdem846.model.GdalHillshadingOptionModel.darkIntensity",
+			label="Dark Intensity",
+			tooltip="",
+			enabled=true)
+	@Order(40)
+	@ValueBounds(minimum=0,
+			maximum=1.0,
+			stepSize=0.05)
+	public double getDarkIntensity()
+	{
+		return darkIntensity;
+	}
+
+	public void setDarkIntensity(double darkIntensity)
+	{
+		this.darkIntensity = darkIntensity;
+	}
+	
+	
+	
 
 	@Override
 	public OptionModel copy() {

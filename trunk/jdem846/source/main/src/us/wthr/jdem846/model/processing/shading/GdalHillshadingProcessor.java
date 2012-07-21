@@ -31,6 +31,9 @@ public class GdalHillshadingProcessor extends AbstractGridProcessor implements G
 	double scale;
 	boolean preserveColor;
 	
+	double lightIntensity;
+	double darkIntensity;
+	
 	double latitudeResolution;
 	double longitudeResolution;
 	
@@ -46,6 +49,8 @@ public class GdalHillshadingProcessor extends AbstractGridProcessor implements G
 		this.preserveColor = optionModel.getPreserveColor();
 		this.scale = this.getGlobalOptionModel().getElevationMultiple();
 		
+		this.lightIntensity = optionModel.getLightIntensity();
+		this.darkIntensity = optionModel.getDarkIntensity();
 		
 		this.latitudeResolution = this.getModelDimensions().outputLatitudeResolution;
 		this.longitudeResolution = this.getModelDimensions().outputLongitudeResolution;
@@ -100,6 +105,12 @@ public class GdalHillshadingProcessor extends AbstractGridProcessor implements G
 		cang = (cang <= 0) ? 1.0 : (1.0 + (254.0 * cang));
 
 		double f = ((cang / 180.0) * 2) - 1.0;
+		
+		if (f > 0) {
+			f *= lightIntensity;
+		} else if (f < 0) {
+			f *= darkIntensity;
+		}
 		
 		this.modelGrid.getRgba(latitude, longitude, rgba);
 
