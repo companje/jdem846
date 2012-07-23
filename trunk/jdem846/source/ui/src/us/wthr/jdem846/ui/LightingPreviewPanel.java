@@ -146,15 +146,16 @@ public class LightingPreviewPanel extends Panel
 			ModelRenderOptionModel modelRenderOptionModel = new ModelRenderOptionModel();
 			
 			double quality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewQuality");
-			double latitudeSlices = quality * (double) rasterData.getRows();
-			double longitudeSlices = quality * (double) rasterData.getColumns();
+			//double latitudeSlices = quality * (double) rasterData.getRows();
+			//double longitudeSlices = quality * (double) rasterData.getColumns();
 			
 			globalOptionModel.setUseScripting(false);
 			globalOptionModel.setBackgroundColor(new RgbaColor(0, 0, 0, 0));
 			globalOptionModel.setWidth(300);
 			globalOptionModel.setHeight(300);
-			globalOptionModel.setLatitudeSlices(latitudeSlices);
-			globalOptionModel.setLongitudeSlices(longitudeSlices);
+			globalOptionModel.setModelQuality(quality);
+			//globalOptionModel.setLatitudeSlices(latitudeSlices);
+			//globalOptionModel.setLongitudeSlices(longitudeSlices);
 			globalOptionModel.setRenderProjection(CanvasProjectionTypeEnum.PROJECT_FLAT.identifier());
 			globalOptionModel.setElevationMultiple(3.0);
 			globalOptionModel.setAverageOverlappedData(false);

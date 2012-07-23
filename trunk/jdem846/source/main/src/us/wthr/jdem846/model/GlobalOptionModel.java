@@ -40,8 +40,8 @@ public class GlobalOptionModel implements OptionModel
 	private int subpixelGridSize = 1;
 	private int pixelStackDepth = 1;
 	
-	private double latitudeSlices = -1;
-	private double longitudeSlices = -1;
+	private double modelQuality = 1.0;
+	
 	
 	private boolean getStandardResolutionElevation = false;
 	private boolean interpolateData = true;
@@ -381,30 +381,27 @@ public class GlobalOptionModel implements OptionModel
 	{
 		this.pixelStackDepth = pixelStackDepth;
 	}
-
-
-	public double getLatitudeSlices()
+	
+	
+	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.modelQuality",
+			label="Model Quality",
+			tooltip="",
+			enabled=true)
+	@Order(19)
+	@ValueBounds(minimum=0, 
+				maximum=1.0,
+				stepSize=0.05)
+	public double getModelQuality()
 	{
-		return latitudeSlices;
+		return modelQuality;
 	}
 
 
-	public void setLatitudeSlices(double latitudeSlices)
+	public void setModelQuality(double modelQuality)
 	{
-		this.latitudeSlices = latitudeSlices;
+		this.modelQuality = modelQuality;
 	}
 
-
-	public double getLongitudeSlices()
-	{
-		return longitudeSlices;
-	}
-
-
-	public void setLongitudeSlices(double longitudeSlices)
-	{
-		this.longitudeSlices = longitudeSlices;
-	}
 
 	
 
@@ -565,8 +562,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.viewAngle = this.viewAngle.copy();
 		copy.subpixelGridSize = this.subpixelGridSize;
 		copy.pixelStackDepth = this.pixelStackDepth;
-		copy.longitudeSlices = this.longitudeSlices;
-		copy.latitudeSlices = this.latitudeSlices;
+		copy.modelQuality = this.modelQuality;
 		copy.averageOverlappedData = this.averageOverlappedData;
 		copy.getStandardResolutionElevation = this.getStandardResolutionElevation;
 		copy.interpolateData = this.interpolateData;

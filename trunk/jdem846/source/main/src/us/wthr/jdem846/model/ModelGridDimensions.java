@@ -131,6 +131,14 @@ public class ModelGridDimensions extends ModelDimensions
 		outputLatitudeResolution = latLonOutputRes.latitudeResolution;
 		outputLongitudeResolution = latLonOutputRes.longitudeResolution;
 		
+		outputLatitudeResolutionTrue = latLonOutputRes.latitudeResolution;
+		outputLongitudeResolutionTrue = latLonOutputRes.longitudeResolution;
+		
+		double modelQuality = globalOptionModel.getModelQuality();
+		
+		outputLatitudeResolution /= modelQuality;
+		outputLongitudeResolution /= modelQuality;
+		/*
 		double latitudeSlices = globalOptionModel.getLatitudeSlices();
 		double longitudeSlices = globalOptionModel.getLongitudeSlices();
 		
@@ -142,7 +150,7 @@ public class ModelGridDimensions extends ModelDimensions
 		if (longitudeSlices != -1) {
 			outputLongitudeResolution = (east - west - outputLongitudeResolution) / longitudeSlices;
 		}
-		
+		*/
 		/*
 		if (outputLongitudeResolution < longitudeResolution)
 			outputLongitudeResolution = longitudeResolution;

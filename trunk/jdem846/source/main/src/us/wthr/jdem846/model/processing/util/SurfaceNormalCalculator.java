@@ -138,7 +138,7 @@ public class SurfaceNormalCalculator
 								double wElev,
 								double[] normal)
 	{
-		resetBuffers(latitude, longitude);
+		//resetBuffers(latitude, longitude);
 
 		
 		double eLat = latitude;

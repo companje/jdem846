@@ -127,8 +127,9 @@ public class KmlExportTestMain extends AbstractTestMain
 		globalOptionModel.setElevationScale(ElevationScalerEnum.LINEAR.identifier());
 		globalOptionModel.setRenderProjection(CanvasProjectionTypeEnum.PROJECT_FLAT.identifier());
 		globalOptionModel.setSubpixelGridSize(1);
-		globalOptionModel.setLatitudeSlices(-1);
-		globalOptionModel.setLongitudeSlices(-1);
+		globalOptionModel.setModelQuality(1.0);
+		//globalOptionModel.setLatitudeSlices(-1);
+		//globalOptionModel.setLongitudeSlices(-1);
 		
 		
 		GridLoadOptionModel gridLoadOptionModel = new GridLoadOptionModel();

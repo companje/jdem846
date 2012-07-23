@@ -43,9 +43,10 @@ public class CanvasProjection3d extends CanvasProjection
 	protected double max = 0;
 	protected double resolution = 0;
 	
-
+	protected ModelDimensions modelDimensions;
 	protected double elevationMultiple = 1.0;
-	
+	protected double minSideLength = 1.0;
+	protected double modelRadius;
 	
 	public CanvasProjection3d(MapProjection mapProjection,
 			double north,
@@ -91,18 +92,10 @@ public class CanvasProjection3d extends CanvasProjection
 		pointVector = new double[3];
 		
 		
-		
+		this.modelDimensions = modelDimensions;
 		cameraVector[0] = 0; cameraVector[1] = 0;
 		eyeVector[0] = 0; eyeVector[1] = 0;
-		
-		//double minSideLength = MathExt.min(getWidth(), getHeight()) - 20;
-		
-		//cameraVector[2] = getWidth();			// Camera position
-		//eyeVector[2] = (getWidth()/2.0f);	// Viewer's position relative to the display surface
-		
-		//cameraVector[2] = minSideLength;			// Camera position
-		//eyeVector[2] = (minSideLength/2.0f);	// Viewer's position relative to the display surface
-		
+
 		this.elevationMultiple = elevationMultiple;
 		//elevationMultiple = modelContext.getModelOptions().getElevationMultiple();
 		rotateX = projection.getRotateX();
@@ -118,35 +111,41 @@ public class CanvasProjection3d extends CanvasProjection
 		
 		min = minimumValue;
 		max = maximumValue;
-		//min = modelContext.getRasterDataContext().getDataMinimumValue();
-		//max = modelContext.getRasterDataContext().getDataMaximumValue();
-		
-		double latRes = modelDimensions.getLatitudeResolution();
-		double effLatRes = modelDimensions.getOutputLatitudeResolution();
-		
-		//Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
+
+		this.minSideLength = MathExt.min(getWidth(), getHeight()) - 20;
+
 		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
 		
 		if (planet != null) {
 			meanRadius = planet.getMeanRadius();
 		}
 		
-
-		cameraVector[2] = meanRadius/projection.getZoom();			// Camera position
-		eyeVector[2] = ((meanRadius/2.0)/projection.getZoom());	// Viewer's position relative to the display surface
 		
+
+		double yWid = modelDimensions.dataRows * (modelDimensions.latitudeResolution / modelDimensions.outputLatitudeResolutionTrue);
+		double xWid = modelDimensions.dataColumns * (modelDimensions.longitudeResolution / modelDimensions.outputLongitudeResolutionTrue);
+		
+		double fov = 18.0;
+		//fov = 38.0;
+		double a = (fov / 2.0);
+		this.modelRadius = MathExt.sqrt(MathExt.sqr(xWid) + MathExt.sqr(yWid));
+		double R = modelRadius / 2.0;
+
+		
+		double D = R / MathExt.tan(MathExt.radians(a));
+		double d = (minSideLength / 2.0) / MathExt.tan(MathExt.radians(a));
+		
+		cameraVector[2] = D - d;
+		eyeVector[2] = d;
+		
+
 		log.info("Zoom: " + projection.getZoom());
 		log.info("Camera: " + cameraVector[2]);
 		log.info("Eye: " + eyeVector[2]);
 		
-		//cameraVector[2] = minSideLength;			// Camera position
-		//eyeVector[2] = ((minSideLength/2.0));	// Viewer's position relative to the display surface
 		
-		
-		//resolution = modelContext.getRasterDataContext().getMetersResolution(meanRadius);
-		resolution = modelDimensions.getMetersResolution(meanRadius);
-		resolution = resolution / (latRes / effLatRes);
-		
+		resolution = modelDimensions.getMetersTrueOutputResolution(meanRadius);
+
 		if (Double.isNaN(resolution) || resolution == 0.0) {
 			resolution = 1.0;
 		}
@@ -159,15 +158,6 @@ public class CanvasProjection3d extends CanvasProjection
 		
 
 		
-		//double maxMultiplied = max * elevationMultiple;
-		//double ratio = (elevation - min) / (max - min);
-		
-		/*
-		double elev = elevation;// = min + (maxMultiplied - min) * ratio;
-		elev -= ((max + min) / 2.0);
-		elev = (elev / resolution);
-		*/
-		
 		double elev = (elevation - ((max + min) / 2.0)) / resolution;
 		
 
@@ -175,29 +165,21 @@ public class CanvasProjection3d extends CanvasProjection
 		pointVector[1] = elev;
 		pointVector[2] = point.row - (getHeight() / 2.0);
 		
-		/*
-		Vector.scale(1.0, elevationMultiple, 1.0, pointVector);
-		Vector.rotate(0, rotateY, 0, pointVector);
-		Vector.rotate(rotateX, 0, 0, pointVector);
-		Vector.translate(shiftX, shiftY, shiftZ, pointVector);
-		Vector.scale(scaleX, scaleY , scaleZ, pointVector);
-		*/
-		
-		
+
 		double shiftPixelsX = shiftX * getWidth();
 		double shiftPixelsY = shiftY * getHeight();
-		//double shiftPixelsZ = shiftZ * radius;
+		double shiftPixelsZ = shiftZ + -(modelRadius);
 
-		//Vector.scale(1.0, elevationMultiple, 1.0, pointVector);
+		
 		Vectors.rotate(0, rotateY, 0, pointVector);
 		Vectors.rotate(rotateX, 0, 0, pointVector);
-		Vectors.translate(shiftPixelsX, shiftPixelsY, -0.0, pointVector);
+		Vectors.translate(shiftPixelsX, shiftPixelsY, shiftPixelsZ, pointVector);
 		Vectors.scale(scaleX, scaleY, scaleZ, pointVector);
 		
 		
 		projectTo(pointVector);
 		
-		point.column = pointVector[0] + (getWidth()/2.0);
+		point.column = -pointVector[0] + (getWidth()/2.0);
 		point.row = pointVector[1] + (getHeight()/2.0);
 		point.z = pointVector[2];
 		

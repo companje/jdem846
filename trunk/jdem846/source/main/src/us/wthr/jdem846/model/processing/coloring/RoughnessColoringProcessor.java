@@ -104,45 +104,50 @@ public class RoughnessColoringProcessor extends AbstractGridProcessor implements
 	public void onModelPoint(double latitude, double longitude)
 			throws RenderEngineException
 	{
-		
-		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
-		
+
 		if (pass == 0) {
-			firstPass(modelPoint, latitude, longitude);
+			firstPass(latitude, longitude);
 		} else {
-			secondPass(modelPoint, latitude, longitude);
+			secondPass(latitude, longitude);
 		}
 		
 	}
 	
-	protected void firstPass(ModelPoint modelPoint, double latitude, double longitude)
+	protected void firstPass(double latitude, double longitude)
 	{
-		double r = calculateRoughness(modelPoint, latitude, longitude);
-		
-		min = MathExt.min(min, r);
-		max = MathExt.max(max, r);
+		double r = calculateRoughness(latitude, longitude);
+		if (r != DemConstants.ELEV_NO_DATA) {
+			min = MathExt.min(min, r);
+			max = MathExt.max(max, r);
+		}
 	}
 	
-	protected void secondPass(ModelPoint modelPoint, double latitude, double longitude)
+	protected void secondPass(double latitude, double longitude)
 	{
-		double r = calculateRoughness(modelPoint, latitude, longitude);
-		
-		double ratio = (r - min) / (max - min);
-		
-		ColorAdjustments.interpolateColor(minColor, maxColor, colorBuffer, ratio);
-		modelPoint.setRgba(colorBuffer);
+		double r = calculateRoughness(latitude, longitude);
+		if (r != DemConstants.ELEV_NO_DATA) {
+			double ratio = (r - min) / (max - min);
+			
+			ColorAdjustments.interpolateColor(minColor, maxColor, colorBuffer, ratio);
+			modelGrid.setRgba(latitude, longitude, colorBuffer);
+		} else {
+			colorBuffer[3] = 0x0;
+			modelGrid.setRgba(latitude, longitude, colorBuffer);
+		}
 	}
 	
-	protected double calculateRoughness(ModelPoint modelPoint, double latitude, double longitude)
+	protected double calculateRoughness(double latitude, double longitude)
 	{
+		double c = modelGrid.getElevation(latitude, longitude);
+		if (c == DemConstants.ELEV_NO_DATA) {
+			return DemConstants.ELEV_NO_DATA;
+		}
 		
 		double north = latitude + (latitudeResolution * bandHalf);
 		double south = latitude - (latitudeResolution * bandHalf);
 		
 		double east = longitude + (longitudeResolution * bandHalf);
 		double west = longitude - (longitudeResolution * bandHalf);
-		
-		double c = modelPoint.getElevation();
 
 		double elevationPoint = 0.0;
 		
@@ -151,7 +156,7 @@ public class RoughnessColoringProcessor extends AbstractGridProcessor implements
 		for (double lat = north; lat >= south; lat-=latitudeResolution) {
 			
 			for (double lon = west; lon <= east; lon+=longitudeResolution) {
-				elevationPoint = getElevationAtPoint(lat, lon);
+				elevationPoint =  modelGrid.getElevation(lat, lon);
 				
 				if (elevationPoint != DemConstants.ELEV_NO_DATA) {
 					maxDiff = MathExt.max(maxDiff, MathExt.sqr(elevationPoint - c));

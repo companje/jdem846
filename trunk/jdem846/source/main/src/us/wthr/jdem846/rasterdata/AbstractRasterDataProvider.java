@@ -154,22 +154,22 @@ public abstract class AbstractRasterDataProvider implements RasterData
 	}
 	
 	
-	protected double latitudeToRow(double latitude)
+	public double latitudeToRow(double latitude)
 	{
 		return ((north - latitude) / this.getLatitudeResolution());
 	}
 	
-	protected double rowToLatitude(int row)
+	public double rowToLatitude(int row)
 	{
 		return (north - ((double)row * this.getLatitudeResolution()));
 	}
 	
-	protected double longitudeToColumn(double longitude)
+	public double longitudeToColumn(double longitude)
 	{
 		return ((longitude - west) / this.getLongitudeResolution());
 	}
 	
-	protected double columnToLongitude(int column)
+	public double columnToLongitude(int column)
 	{
 		return west + ((double)column * this.getLongitudeResolution());
 	}
