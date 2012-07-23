@@ -147,7 +147,7 @@ public class LightingCalculator
 		
 		
 		lightingValues.specularLight = 0;
-		//if (lightingValues.diffuseLight > 0) {
+		if (lightingValues.diffuseLight > 0) {
 			
 			Vectors.subtract(N, L, H);
 			Vectors.normalize(H, H);
@@ -160,7 +160,7 @@ public class LightingCalculator
 			lightingValues.specularLight = specDot;
 			
 			
-		//}
+		}
 		
 		
 		//lightingValues.specularLight = MathExt.pow(Vectors.dotProduct(E, H), shininess);

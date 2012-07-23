@@ -113,43 +113,44 @@ public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcess
 	public void onModelPoint(double latitude, double longitude)
 			throws RenderEngineException
 	{
-		
-		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
-		
 		if (pass == 0) {
-			firstPass(modelPoint, latitude, longitude);
+			firstPass(latitude, longitude);
 		} else {
-			secondPass(modelPoint, latitude, longitude);
+			secondPass(latitude, longitude);
 		}
 		
 	}
 	
-	protected void firstPass(ModelPoint modelPoint, double latitude, double longitude)
+	protected void firstPass(double latitude, double longitude)
 	{
-		double tri = calculateTri(modelPoint, latitude, longitude);
-		
-		minTri = MathExt.min(minTri, tri);
-		maxTri = MathExt.max(maxTri, tri);
+		double tri = calculateTri(latitude, longitude);
+		if (tri != DemConstants.ELEV_NO_DATA) {
+			minTri = MathExt.min(minTri, tri);
+			maxTri = MathExt.max(maxTri, tri);
+		}
 	}
 	
-	protected void secondPass(ModelPoint modelPoint, double latitude, double longitude)
+	protected void secondPass(double latitude, double longitude)
 	{
-		double tri = calculateTri(modelPoint, latitude, longitude);
+		double tri = calculateTri(latitude, longitude);
+		if (tri != DemConstants.ELEV_NO_DATA) {
+			double ratio = (tri - minTri) / (maxTri - minTri);
+			modelColoring.getColorByPercent(ratio, colorBuffer);
+		} else {
+			colorBuffer[3] = 0x0;
+		}
 		
-		double ratio = (tri - minTri) / (maxTri - minTri);
-
-		modelColoring.getColorByPercent(ratio, colorBuffer);
-		
-		
-		modelPoint.setRgba(colorBuffer);
+		modelGrid.setRgba(latitude, longitude, colorBuffer);
 	}
 	
-	protected double calculateTri(ModelPoint modelPoint, double latitude, double longitude)
+	protected double calculateTri(double latitude, double longitude)
 	{
 		
 		
-		double c = modelPoint.getElevation();
-		
+		double c = modelGrid.getElevation(latitude, longitude);
+		if (c == DemConstants.ELEV_NO_DATA) {
+			return DemConstants.ELEV_NO_DATA;
+		}
 		
 		double north = latitude + (latitudeResolution * bandHalf);
 		double south = latitude - (latitudeResolution * bandHalf);
@@ -164,8 +165,7 @@ public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcess
 		for (double lat = north; lat >= south; lat-=latitudeResolution) {
 			
 			for (double lon = west; lon <= east; lon+=longitudeResolution) {
-				elevationPoint = getElevationAtPoint(lat, lon);
-				
+				elevationPoint = modelGrid.getElevation(lat, lon);
 				if (elevationPoint != DemConstants.ELEV_NO_DATA) {
 					elevationSum += MathExt.sqr(elevationPoint - c);;
 					samples++;

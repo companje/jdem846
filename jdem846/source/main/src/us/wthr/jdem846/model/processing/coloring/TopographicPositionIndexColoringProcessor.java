@@ -109,39 +109,45 @@ public class TopographicPositionIndexColoringProcessor extends AbstractGridProce
 	public void onModelPoint(double latitude, double longitude)
 			throws RenderEngineException
 	{
-		
-		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
-		
+
 		if (pass == 0) {
-			firstPass(modelPoint, latitude, longitude);
+			firstPass(latitude, longitude);
 		} else {
-			secondPass(modelPoint, latitude, longitude);
+			secondPass(latitude, longitude);
 		}
 		
 	}
 	
 	
-	protected void firstPass(ModelPoint modelPoint, double latitude, double longitude)
+	protected void firstPass(double latitude, double longitude)
 	{
-		double tpi = calculateTpi(modelPoint, latitude, longitude);
-		
-		minTpi = MathExt.min(minTpi, tpi);
-		maxTpi = MathExt.max(maxTpi, tpi);
+		double tpi = calculateTpi(latitude, longitude);
+		if (tpi != DemConstants.ELEV_NO_DATA) {
+			minTpi = MathExt.min(minTpi, tpi);
+			maxTpi = MathExt.max(maxTpi, tpi);
+		}
 	}
 	
-	protected void secondPass(ModelPoint modelPoint, double latitude, double longitude)
+	protected void secondPass(double latitude, double longitude)
 	{
-		double tpi = calculateTpi(modelPoint, latitude, longitude);
-		
-		double ratio = (tpi - minTpi) / (maxTpi - minTpi);
-		
-		ColorAdjustments.interpolateColor(minTpiColor, maxTpiColor, colorBuffer, ratio);
-		modelPoint.setRgba(colorBuffer);
+		double tpi = calculateTpi(latitude, longitude);
+		if (tpi != DemConstants.ELEV_NO_DATA) {
+			double ratio = (tpi - minTpi) / (maxTpi - minTpi);
+			ColorAdjustments.interpolateColor(minTpiColor, maxTpiColor, colorBuffer, ratio);
+		} else {
+			colorBuffer[3] = 0x0;
+		}
+		modelGrid.setRgba(latitude, longitude, colorBuffer);
 	}
 	
 	
-	protected double calculateTpi(ModelPoint modelPoint, double latitude, double longitude)
+	protected double calculateTpi(double latitude, double longitude)
 	{
+		
+		double c = modelGrid.getElevation(latitude, longitude);
+		if (c == DemConstants.ELEV_NO_DATA) {
+			return DemConstants.ELEV_NO_DATA;
+		}
 		
 		double north = latitude + (latitudeResolution * bandHalf);
 		double south = latitude - (latitudeResolution * bandHalf);
@@ -153,13 +159,10 @@ public class TopographicPositionIndexColoringProcessor extends AbstractGridProce
 		double elevationSum = 0.0;
 		double elevationPoint = 0.0;
 		
-		double c = modelPoint.getElevation();
-		
-		
 		for (double lat = north; lat >= south; lat-=latitudeResolution) {
 			
 			for (double lon = west; lon <= east; lon+=longitudeResolution) {
-				elevationPoint = getElevationAtPoint(lat, lon);
+				elevationPoint = modelGrid.getElevation(lat, lon);
 				
 				if (elevationPoint != DemConstants.ELEV_NO_DATA) {
 					elevationSum += MathExt.sqr(elevationPoint);

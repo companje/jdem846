@@ -448,7 +448,7 @@ public class ModelVisualizationPanel extends Panel
 			
 
 			rotateX += ((deltaY * 1) / zoom);
-			rotateY -= ((deltaX * 1) / zoom);
+			rotateY += ((deltaX * 1) / zoom);
 		}
 		
 		lastX = x;
@@ -581,12 +581,12 @@ public class ModelVisualizationPanel extends Panel
 		}
 		
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
+		globalOptionModel.setModelQuality(previewQuality);
+		//longitudeSlices = this.minPreviewSlices + (previewQuality * (this.maxPreviewSlices - this.minPreviewSlices));
+		//latitudeSlices = longitudeSlices;
 		
-		longitudeSlices = this.minPreviewSlices + (previewQuality * (this.maxPreviewSlices - this.minPreviewSlices));
-		latitudeSlices = longitudeSlices;
-		
-		globalOptionModel.setLatitudeSlices(latitudeSlices);
-		globalOptionModel.setLongitudeSlices(longitudeSlices);
+		//globalOptionModel.setLatitudeSlices(latitudeSlices);
+		//globalOptionModel.setLongitudeSlices(longitudeSlices);
 		
 		// Only disable scripting if it's already enabled. Don't enable it if the user turned it off via the 
 		// global option model

@@ -79,7 +79,12 @@ public class Vectors
 		xyz[2] = rz;
 	}
 	
-	
+	public static void copy(double[] src, double[] dst)
+	{
+		dst[0] = src[0];
+		dst[1] = src[1];
+		dst[2] = src[2];
+	}
 	
 	
 	public static void subtract(double[] pt0, double[] pt1, double[] usr)

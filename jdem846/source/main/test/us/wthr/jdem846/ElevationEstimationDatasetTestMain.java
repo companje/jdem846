@@ -46,8 +46,11 @@ public class ElevationEstimationDatasetTestMain extends AbstractTestMain
 		List<String> inputDataList = new LinkedList<String>();
 		
 		//inputDataList.add("F:\\GEBCO_08\\gebco_08.flt");
-		String saveOutputTo = "C:\\srv\\elevation\\Wet Mars\\mola64_oc180\\elevation-minmax-samples.csv";
-		inputDataList.add("C:\\srv\\elevation\\Wet Mars\\mola64_oc180\\mola64_oc180.flt");
+		//String saveOutputTo = "C:\\srv\\elevation\\Wet Mars\\mola64_oc180\\elevation-minmax-samples.csv";
+		String saveOutputTo = "C:\\srv\\visual studio 2010\\Projects\\DemKit\\elevation-minmax-samples.csv";
+		//inputDataList.add("C:\\srv\\elevation\\Wet Mars\\mola64_oc180\\mola64_oc180.flt");
+		inputDataList.add("C:\\srv\\elevation\\Earth\\srtm_ramp2.world.86400x43200.bil");
+		//inputDataList.add("C:\\srv\\elevation\\Earth\\gebco_08.flt");
 		//String saveOutputTo = JDem846Properties.getProperty("us.wthr.jdem846.testOutputPath") + "/elevation-minmax-samples.csv";
 		
 		File csvFile = new File(saveOutputTo);

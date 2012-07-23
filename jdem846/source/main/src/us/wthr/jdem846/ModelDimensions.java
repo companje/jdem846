@@ -31,6 +31,10 @@ public abstract class ModelDimensions
 	
 	public int outputWidth;
 	public int outputHeight;
+	
+	public double outputLongitudeResolutionTrue;
+	public double outputLatitudeResolutionTrue;
+	
 	public double outputLongitudeResolution;
 	public double outputLatitudeResolution;
 	
@@ -50,6 +54,24 @@ public abstract class ModelDimensions
 		double lat = (getNorth() - getSouth()) / 2.0;
 		double lon = (getEast() - getWest()) / 2.0;
 		return getMetersResolution(meanRadius, lat, lon, getLatitudeResolution(), getLongitudeResolution());
+
+	}
+	
+	public double getMetersOutputResolution(double meanRadius)
+	{
+		
+		double lat = (getNorth() - getSouth()) / 2.0;
+		double lon = (getEast() - getWest()) / 2.0;
+		return getMetersResolution(meanRadius, lat, lon, getOutputLatitudeResolution(), getOutputLongitudeResolution());
+
+	}
+	
+	public double getMetersTrueOutputResolution(double meanRadius)
+	{
+		
+		double lat = (getNorth() - getSouth()) / 2.0;
+		double lon = (getEast() - getWest()) / 2.0;
+		return getMetersResolution(meanRadius, lat, lon, getOutputLatitudeResolutionTrue(), getOutputLongitudeResolutionTrue());
 
 	}
 	
@@ -147,4 +169,27 @@ public abstract class ModelDimensions
 		return outputLatitudeResolution;
 	}
 
+	public double getOutputLongitudeResolutionTrue()
+	{
+		return outputLongitudeResolutionTrue;
+	}
+
+	public void setOutputLongitudeResolutionTrue(
+			double outputLongitudeResolutionTrue)
+	{
+		this.outputLongitudeResolutionTrue = outputLongitudeResolutionTrue;
+	}
+
+	public double getOutputLatitudeResolutionTrue()
+	{
+		return outputLatitudeResolutionTrue;
+	}
+
+	public void setOutputLatitudeResolutionTrue(double outputLatitudeResolutionTrue)
+	{
+		this.outputLatitudeResolutionTrue = outputLatitudeResolutionTrue;
+	}
+	
+	
+	
 }

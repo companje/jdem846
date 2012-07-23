@@ -1263,15 +1263,17 @@ public class DemProjectPane extends JdemPanel implements Savable
 		} catch (Exception ex) {
 			log.error("Error retrieving model process manifest from configuration panel: " + ex.getMessage(), ex);
 		}
-		modelProcessManifest.getGlobalOptionModel().setLatitudeSlices(-1);
-		modelProcessManifest.getGlobalOptionModel().setLongitudeSlices(-1);
+		//modelProcessManifest.getGlobalOptionModel().setLatitudeSlices(-1);
+		//modelProcessManifest.getGlobalOptionModel().setLongitudeSlices(-1);
 		modelProcessManifest.getGlobalOptionModel().setGetStandardResolutionElevation(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.standardResolutionRetrieval"));
 		modelProcessManifest.getGlobalOptionModel().setInterpolateData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.interpolateToHigherResolution"));
 		modelProcessManifest.getGlobalOptionModel().setAverageOverlappedData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData"));
 		modelProcessManifest.getGlobalOptionModel().setPrecacheStrategy(JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy"));
 		modelProcessManifest.getGlobalOptionModel().setTileSize(JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize"));
 
-		
+		//modelProcessManifest.getGlobalOptionModel().getViewAngle().setRotateX(0.0);
+		//modelProcessManifest.getGlobalOptionModel().getViewAngle().setRotateY(0.0);
+		//modelProcessManifest.getGlobalOptionModel().getViewAngle().setRotateZ(0.0);
 		
 		ModelContext modelContextCopy = null;
 		try {

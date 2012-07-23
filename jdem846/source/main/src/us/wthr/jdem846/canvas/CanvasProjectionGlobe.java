@@ -1,5 +1,7 @@
 package us.wthr.jdem846.canvas;
 
+import java.util.Arrays;
+
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
@@ -26,6 +28,11 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 	
 	
 	private double meanRadius; // In meters
+	private double D; // In meters
+	private double fov;
+	private double aspect;
+	private double zNear;
+	private double zFar;
 	
 	public CanvasProjectionGlobe(MapProjection mapProjection,
 			double north,
@@ -59,31 +66,104 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		//Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
 		
 		
-		if (planet != null) {
-			meanRadius = planet.getMeanRadius() * 1000;
-		} else {
-			meanRadius = DemConstants.EARTH_MEAN_RADIUS * 1000;
-		}
+		//if (planet != null) {
+		//	meanRadius = planet.getMeanRadius() * 1000;
+		//} else {
+		//	meanRadius = DemConstants.EARTH_MEAN_RADIUS * 1000;
+		//}
 	}
 	
-	
+
+	public void setUp3d(Planet planet,
+			double elevationMultiple,
+			double minimumValue,
+			double maximumValue,
+			ModelDimensions modelDimensions,
+			ViewPerspective projection)
+	{
+		eyeVector = new double[3];
+		cameraVector = new double[3];
+		pointVector = new double[3];
+
+		
+		cameraVector[0] = 0; cameraVector[1] = 0;
+		eyeVector[0] = 0; eyeVector[1] = 0;
+
+		this.elevationMultiple = elevationMultiple;
+		
+		rotateX = projection.getRotateX();
+		rotateY = projection.getRotateY();
+		
+		shiftX = projection.getShiftX();
+		shiftY = projection.getShiftY();
+		shiftZ = projection.getShiftZ();
+		
+		scaleX = projection.getZoom();
+		scaleY = projection.getZoom();
+		scaleZ = projection.getZoom();
+		
+		min = minimumValue;
+		max = maximumValue;
+		
+		this.minSideLength = MathExt.min(getWidth(), getHeight()) - 20;
+		
+		double latRes = modelDimensions.getLatitudeResolution();
+		double effLatRes = modelDimensions.getOutputLatitudeResolution();
+		
+		//Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
+		meanRadius = DemConstants.EARTH_MEAN_RADIUS;// * 1000.0;
+		if (planet != null) {
+			meanRadius = planet.getMeanRadius();// * 1000.0;
+		}
+		
+
+		resolution = modelDimensions.getMetersResolution(meanRadius);
+		resolution = resolution / effLatRes;
+
+		if (Double.isNaN(resolution) || resolution == 0.0) {
+			resolution = 1.0;
+		}
+
+		aspect = (double)getWidth() / (double)getHeight();
+		
+		fov = 18.0;
+		//fov = 38.0;
+		double a = (fov / 2.0);
+		double R = ((meanRadius * 1000.0));
+		
+		D = R / MathExt.tan(MathExt.radians(a));
+		double d = (minSideLength / 2.0) / MathExt.tan(MathExt.radians(a));
+
+		cameraVector[2] = D - d;
+		eyeVector[2] = d;
+
+		log.info("Zoom: " + projection.getZoom());
+		log.info("Camera: " + cameraVector[2]);
+		log.info("Eye: " + eyeVector[2]);
+		log.info("Fov: " + fov);
+		log.info("Aspect: " + aspect);
+		
+
+		
+	}
 	
 	@Override
 	public void getPoint(double latitude, double longitude, double elevation, MapPoint point) throws MapProjectionException
 	{
 
 		double minSideLength = MathExt.min(getWidth(), getHeight()) - 20;
-		double radius = (minSideLength)  * scaleX;
-		double radiusAdjusted = (radius / meanRadius) * (meanRadius + elevation);
+		//double radius = (minSideLength)  * scaleX;
+		//double radiusAdjusted = (radius / (meanRadius * 1000.0)) * ((meanRadius * 1000.0) + elevation);
 		
-
-		Spheres.getPoint3D(longitude, latitude, radiusAdjusted, pointVector);
-
+		double radius = meanRadius * 1000;
+		//double radiusAdjusted = radius;// * resolution;
+		
+		Spheres.getPoint3D(longitude, latitude, radius, pointVector);
 
 		Vectors.rotate(0, rotateY, 0, pointVector);
 		Vectors.rotate(rotateX, 0, 0, pointVector);
-		//Vector.translate(shiftX, shiftY, shiftZ, pointVector);
-		
+
+		Vectors.scale(scaleX, scaleY, scaleZ, pointVector);
 		
 		double shiftPixelsX = shiftX * radius;
 		double shiftPixelsY = shiftY * radius;
@@ -129,6 +209,52 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		
 		LatLonResolution latLonRes = new LatLonResolution(outputLatitudeResolution, outputLongitudeResolution);
 		return latLonRes;
+	}
+	
+	
+	
+	protected double[] matrix()
+	{
+		double[] matrix = new double[16];
+		Arrays.fill(matrix, 0);
+		return matrix;
+	}
+	
+	protected double[] identityMatrix()
+	{
+		double[] matrix = matrix();
+		matrix[0] = matrix[5] = matrix[10] = matrix[15] = 1.0;
+		return matrix;
+	}
+	
+	protected double[] multiplyMatrix(double[] m0, double[] m1)
+	{
+		double[] matrix = matrix();
+		int col = 0;
+		
+		for (int y = 0; y < 4; y++) {
+			col = y * 4;
+			
+			for (int x = 0; x < 4; x++) {
+				for (int i = 0; i < 4; i++) {
+					matrix[x+col] += m1[i+col] * m0[x+i*4];
+				}
+			}
+		}
+		
+		return matrix;
+	}
+	
+	protected double[] multiplyVectorAndMatrix(double[] v, double[] m)
+	{
+		double[] vec = new double[4];
+		
+		vec[0] = v[0] * m[0] + v[1] * m[4] + v[2] * m[8] + v[3] * m[12];
+		vec[1] = v[0] * m[1] + v[1] * m[5] + v[2] * m[9] + v[3] * m[13];
+		vec[2] = v[0] * m[2] + v[1] * m[6] + v[2] * m[10] + v[3] * m[14];
+		vec[3] = v[0] * m[3] + v[1] * m[7] + v[2] * m[11] + v[3] * m[15];
+		
+		return vec;
 	}
 	
 }

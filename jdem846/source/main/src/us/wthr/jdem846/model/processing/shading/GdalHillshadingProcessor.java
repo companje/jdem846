@@ -73,25 +73,21 @@ public class GdalHillshadingProcessor extends AbstractGridProcessor implements G
 		// First Slope ...
 		x = ((
 				this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude - this.longitudeResolution)
-				+ this.modelGrid.getElevation(latitude, longitude - this.longitudeResolution)
-				+ this.modelGrid.getElevation(latitude, longitude - this.longitudeResolution)
+				+ (this.modelGrid.getElevation(latitude, longitude - this.longitudeResolution) * 2)
 				+ this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude - this.longitudeResolution)
 			) - (
 				this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude + this.longitudeResolution)
-				+ this.modelGrid.getElevation(latitude, longitude + this.longitudeResolution)
-				+ this.modelGrid.getElevation(latitude, longitude + this.longitudeResolution)
+				+ (this.modelGrid.getElevation(latitude, longitude + this.longitudeResolution) * 2)
 				+ this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude + this.longitudeResolution)
 			)) / (8.0 * this.longitudeResolution * this.scale);
 
 		y = ((
 				this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude - this.longitudeResolution)
-				+ this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude)
-				+ this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude)
+				+ (this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude) * 2)
 				+ this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude + this.longitudeResolution)
 			) - (
 				this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude - this.longitudeResolution)
-				+ this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude)
-				+ this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude)
+				+ (this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude) * 2)
 				+ this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude + this.longitudeResolution)
 			)) / (8.0 * this.latitudeResolution * this.scale);
 
