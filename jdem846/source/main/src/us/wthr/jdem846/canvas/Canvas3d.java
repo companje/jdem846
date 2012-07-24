@@ -524,11 +524,14 @@ public class Canvas3d
 	
 	private boolean isValidZCoordinate(double z)
 	{
+		return true;
+		/*
 		if (z < clipFarZ || z > clipNearZ) {
 			return false;
 		} else {
 			return true;
 		}
+		*/
 	}
 	
 	public int get(int x, int y)

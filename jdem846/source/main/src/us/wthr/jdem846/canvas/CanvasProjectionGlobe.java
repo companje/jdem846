@@ -155,7 +155,7 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		//double radius = (minSideLength)  * scaleX;
 		//double radiusAdjusted = (radius / (meanRadius * 1000.0)) * ((meanRadius * 1000.0) + elevation);
 		
-		double radius = meanRadius * 1000;
+		double radius = meanRadius * 1000 + elevation;
 		//double radiusAdjusted = radius;// * resolution;
 		
 		Spheres.getPoint3D(longitude, latitude, radius, pointVector);
@@ -171,12 +171,13 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		
 		Vectors.translate(shiftPixelsX, shiftPixelsY, shiftPixelsZ, pointVector);
 
+		double z = pointVector[2];
 		
 		projectTo(pointVector);
 		
 		point.column = pointVector[0] + (minSideLength/2.0);
 		point.row = pointVector[1] + (minSideLength/2.0);
-		point.z = pointVector[2];
+		point.z = z;
 		
 		
 	}

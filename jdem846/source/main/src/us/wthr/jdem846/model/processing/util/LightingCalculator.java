@@ -191,6 +191,10 @@ public class LightingCalculator
 		lightingValues.diffuseColor[1] = lightingValues.diffuseLevel * color[1] * lightingValues.diffuseLight;
 		lightingValues.diffuseColor[2] = lightingValues.diffuseLevel * color[2] * lightingValues.diffuseLight;
 		
+		//lightingValues.specularColor[0] = lightingValues.specularLevel * color[0] * lightingValues.specularLight;
+		//lightingValues.specularColor[1] = lightingValues.specularLevel * color[1] * lightingValues.specularLight;
+		//lightingValues.specularColor[2] = lightingValues.specularLevel * color[2] * lightingValues.specularLight;
+		
 		lightingValues.specularColor[0] = lightingValues.specularLevel * specularColor[0] * lightingValues.specularLight;
 		lightingValues.specularColor[1] = lightingValues.specularLevel * specularColor[1] * lightingValues.specularLight;
 		lightingValues.specularColor[2] = lightingValues.specularLevel * specularColor[2] * lightingValues.specularLight;
@@ -447,5 +451,15 @@ public class LightingCalculator
 		}
 	}
 	
+	
+	public void setSpecularColor(double[] specularColor)
+	{
+		this.specularColor = specularColor;
+	}
+	
+	public double[] getSpecularColor()
+	{
+		return this.specularColor;
+	}
 	
 }	
