@@ -64,7 +64,7 @@ public class SameSideTrianglePointTest extends PointTest
 		Vectors.subtract(p1, a, v1);
 		Vectors.crossProduct(v0, v1, cp1);
 		
-		if (Vectors.dotProduct(cp0, cp1) >= 0.0) {
+		if (Vectors.dotProduct(cp0, cp1) > 0.0) {
 			return true;
 		} else {
 			return false;
