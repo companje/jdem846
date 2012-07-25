@@ -165,7 +165,7 @@ public class ModelBuilder extends InterruptibleProcess
 		
 		
 		if (useScripting) {
-			onInitialize(modelContext);
+			onInitialize();
 		}
 		
 		prepared = true;
@@ -186,10 +186,7 @@ public class ModelBuilder extends InterruptibleProcess
 		ProcessInterruptHandler interruptHandler = new ProcessInterruptHandler();
 		GlobalOptionModel globalOptionModel = modelProcessManifest.getGlobalOptionModel();
 		
-		if (useScripting && !this.isCancelled()) {
-			this.onInitialize(modelContext);
-		}
-		
+
 		setProcessing(true);
 		
 		if (useScripting && !this.isCancelled()) {
@@ -254,7 +251,7 @@ public class ModelBuilder extends InterruptibleProcess
 		}
 		
 		if (useScripting) {
-			onDestroy(modelContext);
+			onDestroy();
 		}
 		
 		if (globalOptionModel.getDisposeGridOnComplete()) {
@@ -360,20 +357,9 @@ public class ModelBuilder extends InterruptibleProcess
 		return prepared;
 	}
 	
-	protected void onDestroy(ModelContext modelContext) throws RenderEngineException
-	{
-		try {
-			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
-			if (scriptProxy != null) {
-				scriptProxy.destroy();
-			}
-		} catch (Exception ex) {
-			throw new RenderEngineException("Exception thrown in user script", ex);
-		}
-		
-	}
+
 	
-	protected void onInitialize(ModelContext modelContext) throws RenderEngineException
+	protected void onInitialize() throws RenderEngineException
 	{
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
@@ -438,7 +424,19 @@ public class ModelBuilder extends InterruptibleProcess
 		
 	}
 
-
+	protected void onDestroy() throws RenderEngineException
+	{
+		try {
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
+			if (scriptProxy != null) {
+				scriptProxy.destroy();
+			}
+		} catch (Exception ex) {
+			throw new RenderEngineException("Exception thrown in user script", ex);
+		}
+		
+	}
+	
 	public boolean runLoadProcessor()
 	{
 		return runLoadProcessor;

@@ -14,7 +14,7 @@ public class ScriptingContext implements Context
 	
 	private ScriptProxy scriptProxy = null;
 	private String userScript = null;
-	private ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.GROOVY;
+	private ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.SCALA;
 	
 	
 	private boolean disposed = false;

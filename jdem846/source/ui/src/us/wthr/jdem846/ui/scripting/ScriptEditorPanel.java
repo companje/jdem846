@@ -224,5 +224,7 @@ public class ScriptEditorPanel extends Panel
 	public void setScriptLanguage(ScriptLanguageEnum scriptLanguage)
 	{
 		this.scriptLanguage = scriptLanguage;
+		this.buttonBar.setScriptingLanguage(scriptLanguage);
+		
 	}
 }

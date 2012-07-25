@@ -3,7 +3,8 @@ package us.wthr.jdem846.scripting;
 public enum ScriptLanguageEnum
 {
 	JYTHON("jython", "text/jython"),
-	GROOVY("groovy", "text/groovy");
+	GROOVY("groovy", "text/groovy"),
+	SCALA("scala", "text/scala");
 	
 	private final String text;
 	private final String mime;

@@ -236,12 +236,18 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 			try {
 				Object before = onGetElevationBefore(latitude, longitude);
 				
+				double value = DemConstants.ELEV_UNDETERMINED;
+				
 				if (before instanceof Double) {
-					return (Double) before;
+					value = (Double) before;
 				} else if (before instanceof BigDecimal) {
-					return ((BigDecimal)before).doubleValue();
+					value = ((BigDecimal)before).doubleValue();
 				} else if (before instanceof Integer) {
-					return ((Integer)before).doubleValue();
+					value = ((Integer)before).doubleValue();
+				}
+				
+				if (value != DemConstants.ELEV_UNDETERMINED) {
+					return value;
 				}
 				
 			} catch (Exception ex) {
