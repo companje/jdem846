@@ -448,7 +448,7 @@ public class ModelVisualizationPanel extends Panel
 			
 
 			rotateX += ((deltaY * 1) / zoom);
-			rotateY -= ((deltaX * 1) / zoom);
+			rotateY += ((deltaX * 1) / zoom);
 		}
 		
 		lastX = x;

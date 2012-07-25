@@ -414,10 +414,12 @@ public class DemProjectPane extends JdemPanel implements Savable
 																zoom);
 				
 				
-				modelProcessManifest.getGlobalOptionModel().setViewAngle(viewAngle);
-				
-				applyOptionsToUI();
-				onDataModelChanged(false, false, false, true);
+				try {
+					modelConfigurationPanel.getGlobalOptionModelContainer().setPropertyValueById("us.wthr.jdem846.model.GlobalOptionModel.viewAngle", viewAngle);
+				} catch (ModelContainerException ex) {
+					// TODO: Display an error dialog
+					log.warn("Error setting view angle: " + ex.getMessage(), ex);
+				}
 				
 			}
 		});
@@ -616,6 +618,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 				scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.groovy.template");
 			} else if (scriptingContext.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
 				scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.jython.template");
+			} else if (scriptingContext.getScriptLanguage() == ScriptLanguageEnum.SCALA) {
+				scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.scala.template");
 			} else {
 				// fail silently for now
 				// TODO: Don't fail silently
@@ -1246,6 +1250,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		try {
 			scriptingContext = this.scriptingContext.copy();
 			scriptingContext.setUserScript(scriptPane.getScriptContent());
+			scriptingContext.setScriptLanguage(scriptPane.getScriptLanguage());
 			scriptingContext.prepare();
 		} catch (Exception ex) {
 			log.warn("Error compiling script: " + ex.getMessage(), ex);

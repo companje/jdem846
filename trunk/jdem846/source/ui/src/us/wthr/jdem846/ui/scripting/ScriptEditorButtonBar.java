@@ -8,6 +8,7 @@ import java.util.List;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.ui.ComponentButtonBar;
 import us.wthr.jdem846.ui.base.ComboBox;
 import us.wthr.jdem846.ui.base.Label;
@@ -86,5 +87,10 @@ public class ScriptEditorButtonBar extends ComponentButtonBar
 		public void onButtonClicked(ScriptEditButtons button);
 	}
 	
+	
+	public void setScriptingLanguage(ScriptLanguageEnum scriptLanguage)
+	{
+		languageModel.setSelectedItemByValue(scriptLanguage.text());
+	}
 	
 }

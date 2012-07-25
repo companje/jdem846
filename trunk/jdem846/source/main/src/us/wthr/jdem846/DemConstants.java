@@ -31,7 +31,7 @@ public class DemConstants {
 	
 	
 	public static final double ELEV_NO_DATA = -1000000;
-	
+	public static final double ELEV_UNDETERMINED = -1000001;
 	
 	// Status Codes
 	public static final int STAT_SUCCESSFUL           = 100;

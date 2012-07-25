@@ -120,6 +120,11 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 	}
 	
 	
+	public OptionModelContainer getGlobalOptionModelContainer()
+	{
+		return this.globalOptionModelContainer;
+	}
+	
 	public ModelProcessManifest getModelProcessManifest() throws Exception
 	{
 		ModelProcessManifest modelProcessManifest = new ModelProcessManifest();
