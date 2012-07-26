@@ -32,6 +32,16 @@ class JDemScript {
 	var modelContext : ModelContext = null
 	
 	
+	def setLog(l:Log)
+	{
+		log = l
+	}
+	
+	def setModelContext(mc:ModelContext)
+	{
+		modelContext = mc
+	}
+	
 	def initialize() 
 	{
 		
