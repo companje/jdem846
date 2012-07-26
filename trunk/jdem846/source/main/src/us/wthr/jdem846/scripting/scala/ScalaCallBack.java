@@ -39,7 +39,11 @@ public class ScalaCallBack
 		}
 		
 		try {
-			return this.method.invoke(this.scalaObject, args);
+			if (args == null) {
+				return this.method.invoke(this.scalaObject);
+			} else {
+				return this.method.invoke(this.scalaObject, args);
+			}
 		} catch (Exception ex) {
 			throw new ScriptingException("Error invoking callback: " + ex.getMessage(), ex);
 		} 

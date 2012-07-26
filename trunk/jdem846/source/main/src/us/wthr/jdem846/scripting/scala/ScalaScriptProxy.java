@@ -20,6 +20,7 @@ public class ScalaScriptProxy implements ScriptProxy
 	
 	private Object scalaObject;
 	
+	
 	private ScalaCallBack initializeCallBack;
 	private ScalaCallBack destroyCallBack;
 	private ScalaCallBack onModelBeforeCallBack;
@@ -30,6 +31,9 @@ public class ScalaScriptProxy implements ScriptProxy
 	private ScalaCallBack onGetElevationAfterCallBack;
 	private ScalaCallBack onGetPointColorCallBack;
 	private ScalaCallBack onLightLevelsCallBack;
+	
+	private ScalaCallBack setModelContextCallBack;
+	private ScalaCallBack setLogCallBack;
 	
 	private boolean hasModelContext = false;
 	private boolean hasLog = false;
@@ -51,6 +55,9 @@ public class ScalaScriptProxy implements ScriptProxy
 		onGetPointColorCallBack = new ScalaCallBack(scalaObject, getMethod("onGetPointColor"));
 		onLightLevelsCallBack = new ScalaCallBack(scalaObject, getMethod("onLightLevels"));
 		
+		setModelContextCallBack = new ScalaCallBack(scalaObject, getMethod("setModelContext"));
+		setLogCallBack = new ScalaCallBack(scalaObject, getMethod("setLog"));
+		
 		this.hasModelContext = hasField("modelContext");
 		
 		this.hasLog = hasField("log");
@@ -61,6 +68,16 @@ public class ScalaScriptProxy implements ScriptProxy
 
 	protected void setLog(Log log)
 	{
+		if (setLogCallBack != null) {
+			try {
+				setLogCallBack.call(log);
+			} catch (ScriptingException ex) {
+				log.warn("Error calling method 'setLog': " + ex.getMessage(), ex);
+			}
+		} else {
+			log.warn("Script does not have a 'setLog()' method");
+		}
+		/*
 		if (hasLog) {
 			Field f = null;
 			
@@ -78,11 +95,22 @@ public class ScalaScriptProxy implements ScriptProxy
 			} 
 
 		}
+		*/
 	}
 	
 	@Override
 	public void setModelContext(ModelContext modelContext)
 	{
+		if (setModelContextCallBack != null) {
+			try {
+				setModelContextCallBack.call(modelContext);
+			} catch (ScriptingException ex) {
+				log.warn("Error calling method 'setModelContext': " + ex.getMessage(), ex);
+			}
+		} else {
+			log.warn("Script does not have the method 'setModelContext(ModelContext)'");
+		}
+		/*
 		if (hasModelContext) {
 			Field f = null;
 			
@@ -100,6 +128,7 @@ public class ScalaScriptProxy implements ScriptProxy
 			} 
 
 		}
+		*/
 	}
 	
 	@Override
