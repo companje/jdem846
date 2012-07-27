@@ -154,7 +154,7 @@ public class ModelContext
 			
 			
 			
-			if (estimateMinMax && planet.getElevationSamplesPath() != null) {
+			if (estimateMinMax && planet != null && planet.getElevationSamplesPath() != null) {
 				
 				log.info("Fetching estimated elevation min/max");
 				try {

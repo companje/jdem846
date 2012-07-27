@@ -6,6 +6,20 @@ public class Vectors
 	public static final int Y_AXIS = 1;
 	public static final int Z_AXIS = 2;
 	
+	public static final int XYZ = 0;
+	public static final int XZY = 1;
+	
+	public static final int YXZ = 2;
+	public static final int YZX = 3;
+	
+	public static final int ZXY = 4;
+	public static final int ZYX = 5;
+	
+	
+	private static double[] buffer0 = new double[3];
+	private static double[] buffer1 = new double[3];
+	private static double[] buffer2 = new double[3];
+	
 	
 	@SuppressWarnings("unused")
 	private static double[] tmpPoints1 = {0, 0, 0};
@@ -58,10 +72,11 @@ public class Vectors
 	public static void rotate(double x, double y, double z, double[] xyz) 
 	{
 		
+		
 		double _x = (x != 0) ? MathExt.radians(x) : 0;
 		double _y = (y != 0) ? MathExt.radians(y) : 0;
 		double _z = (z != 0) ? MathExt.radians(z) : 0;
-
+		
 		double sinAX = (x != 0) ? MathExt.sin(-_x) : 0;
 		double sinAY = (y != 0) ? MathExt.sin(-_y) : 0;
 		double sinAZ = (z != 0) ? MathExt.sin(-_z) : 0;
@@ -78,6 +93,121 @@ public class Vectors
 		xyz[1] = ry;
 		xyz[2] = rz;
 	}
+	
+	
+	public static void rotate(double x, double y, double z, double[] xyz, int order) 
+	{
+		
+		switch(order) {
+		case XYZ:
+			rotateX(x, xyz);
+			rotateY(y, xyz);
+			rotateZ(z, xyz);
+			break;
+		case XZY:
+			rotateX(x, xyz);
+			rotateZ(z, xyz);
+			rotateY(y, xyz);
+			break;
+		case YXZ:
+			rotateY(y, xyz);
+			rotateX(x, xyz);
+			rotateZ(z, xyz);
+			break;
+		case YZX:
+			rotateY(y, xyz);
+			rotateZ(z, xyz);
+			rotateX(x, xyz);
+			break;
+		case ZXY:
+			rotateZ(z, xyz);
+			rotateX(x, xyz);
+			rotateY(y, xyz);
+			break;
+		case ZYX:
+			rotateZ(z, xyz);
+			rotateY(y, xyz);
+			rotateX(x, xyz);
+		}
+		
+	}
+	
+	public static void rotateX(double x, double[] xyz) 
+	{
+		if (x != 0.0) {
+			
+			x = MathExt.radians(x);
+
+			double cosX = MathExt.cos(x);
+			double sinX = MathExt.sin(x);
+			
+			//xyz[0] = xyz[0] * 1.0;
+			//xyz[1] = xyz[1] * cosX + xyz[1] * sinX;
+			//xyz[2] = xyz[2] * -sinX + xyz[2] * cosX;
+			
+			//xyz[0] = xyz[0] * 1.0;
+			//xyz[1] = cosX * xyz[1] + -sinX * xyz[1];
+			//xyz[2] = sinX * xyz[2] + cosX * xyz[2];
+			
+			
+			//xyz[0] = xyz[0] * 1.0;
+			xyz[1] = cosX * xyz[1] + -sinX * xyz[2];
+			xyz[2] = sinX * xyz[1] + cosX * xyz[2];
+		}
+	}
+	
+	
+	
+	
+	public static void rotateY(double y, double[] xyz) 
+	{
+		if (y != 0.0) {
+			
+			y = MathExt.radians(y);
+			
+			double cosY = MathExt.cos(y);
+			double sinY = MathExt.sin(y);
+			
+			//xyz[0] = xyz[0] * cosY + xyz[0] * -sinY;
+			//xyz[1] = xyz[1];
+			//xyz[2] = xyz[2] * sinY + xyz[2] * cosY;
+			
+			//xyz[0] = xyz[0] * cosY + xyz[0] * sinY;
+			//xyz[1] = xyz[1] * 1.0;
+			//xyz[2] = xyz[2] * -sinY + xyz[2] * cosY;
+			
+			xyz[0] = cosY * xyz[0] + sinY * xyz[2];
+			//xyz[1] = xyz[1] * 1.0;
+			xyz[2] = -sinY * xyz[0] + cosY * xyz[2];
+			
+		}
+	}
+	
+	public static void rotateZ(double z, double[] xyz) 
+	{
+		if (z != 0.0) {
+			
+			z = MathExt.radians(z);
+			
+			double cosZ = MathExt.cos(z);
+			double sinZ = MathExt.sin(z);
+			
+			//xyz[0] = xyz[0] * cosZ + xyz[0] * sinZ;
+			//xyz[1] = xyz[1] * -sinZ + xyz[1] * cosZ;
+			//xyz[2] = xyz[2];
+			
+			//xyz[0] = cosZ * xyz[0] + -sinZ * xyz[0];
+			//xyz[1] = sinZ * xyz[1] + cosZ * xyz[1];
+			//xyz[2] = xyz[2] * 1.0;
+			
+			
+			xyz[0] = cosZ * xyz[0] + -sinZ * xyz[1];
+			xyz[1] = sinZ * xyz[0] + cosZ * xyz[1];
+			//xyz[2] = xyz[2] * 1.0;
+			
+		}
+	}
+	
 	
 	public static void copy(double[] src, double[] dst)
 	{
@@ -110,17 +240,13 @@ public class Vectors
 
 	public static double dotProduct(double[] pt0, double[] pt1)
 	{
-		double dot = 0.0f;
-		
-		double[] buffer0 = new double[3];
-		double[] buffer1 = new double[3];
+		//double[] buffer0 = new double[3];
+		//double[] buffer1 = new double[3];
 		
 		normalize(pt0, buffer0);
 		normalize(pt1, buffer1);
 
-		dot = buffer0[0] * buffer1[0] + buffer0[1] * buffer1[1] + buffer0[2] * buffer1[2];
-
-		return dot;
+		return  buffer0[0] * buffer1[0] + buffer0[1] * buffer1[1] + buffer0[2] * buffer1[2];
 	}
 
 	
@@ -133,7 +259,7 @@ public class Vectors
 	
 	public static void normalize(double[] pt0, double[] no)
 	{
-		double len = (double) (MathExt.sqrt((pt0[0] * pt0[0]) + (pt0[1] * pt0[1]) + (pt0[2] * pt0[2])));
+		double len = MathExt.sqrt((pt0[0] * pt0[0]) + (pt0[1] * pt0[1]) + (pt0[2] * pt0[2]));
 		if (len == 0.0) 
 			len = 1.0;
 
@@ -150,9 +276,9 @@ public class Vectors
 	        no[2] = pt0[0] * pt1[1] - pt1[0] * pt0[1];
 		} else {
 			
-			double[] buffer0 = new double[3];
-			double[] buffer1 = new double[3];
-			double[] buffer2 = new double[3];
+			//double[] buffer0 = new double[3];
+			//double[] buffer1 = new double[3];
+			//double[] buffer2 = new double[3];
 			
 			subtract(pt0, pt1, buffer0);
 			subtract(pt1, pt2, buffer1);

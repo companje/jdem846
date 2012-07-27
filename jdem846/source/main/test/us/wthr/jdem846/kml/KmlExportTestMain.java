@@ -141,12 +141,12 @@ public class KmlExportTestMain extends AbstractTestMain
 		
 		HillshadingOptionModel hillshadingOptionModel = new HillshadingOptionModel();
 		hillshadingOptionModel.setLightingEnabled(true);
-		hillshadingOptionModel.setSourceType(LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME.optionValue());
-		hillshadingOptionModel.setSourceLocation(new AzimuthElevationAngles(270, 20));
-		hillshadingOptionModel.setRecalcLightForEachPoint(false);
-		hillshadingOptionModel.setDarkZenith(108.0);
-		hillshadingOptionModel.setLightZenith(90.0);
-		hillshadingOptionModel.setLightMultiple(6.0);
+		//hillshadingOptionModel.setSourceType(LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME.optionValue());
+		//hillshadingOptionModel.setSourceLocation(new AzimuthElevationAngles(270, 20));
+		//hillshadingOptionModel.setRecalcLightForEachPoint(false);
+		//hillshadingOptionModel.setDarkZenith(108.0);
+		//hillshadingOptionModel.setLightZenith(90.0);
+		//hillshadingOptionModel.setLightMultiple(6.0);
 		hillshadingOptionModel.setLightIntensity(0.6);
 		hillshadingOptionModel.setDarkIntensity(1.0);
 		hillshadingOptionModel.setSpotExponent(1);

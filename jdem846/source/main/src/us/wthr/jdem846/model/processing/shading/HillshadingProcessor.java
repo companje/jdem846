@@ -12,6 +12,7 @@ import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPointHandler;
@@ -56,11 +57,11 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	
 	protected int[] rgbaBuffer = new int[4];
 
-	protected double lightZenith;
-	protected double darkZenith;
+	//protected double lightZenith;
+	//protected double darkZenith;
 
 
-	protected boolean recalcLightOnEachPoint;
+	//protected boolean recalcLightOnEachPoint;
 
 	
 	private boolean advancedLightingControl = false;
@@ -115,6 +116,14 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			viewPerspective.setZoom(1.0);
 		}
 		
+		
+		planet = PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet());
+		if (planet != null) {
+			modelRadius = planet.getMeanRadius() * 1000;
+		} else {
+			modelRadius = DemConstants.EARTH_MEAN_RADIUS * 1000;
+		}
+		
 		ScriptingContext scriptingContext = modelContext.getScriptingContext();
 		ScriptProxy scriptProxy = null;
 		if (getGlobalOptionModel().getUseScripting() && scriptingContext != null) {
@@ -124,15 +133,14 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		advancedLightingControl = optionModel.getAdvancedLightingControl();
 		advancedLightingCalculator = new LightingCalculator(optionModel.getEmmisive(), optionModel.getAmbient(), optionModel.getDiffuse(), optionModel.getSpecular(), optionModel.getShadowIntensity(), viewPerspective, scriptProxy);
 		
+		double[] eye = new double[3];
+		Spheres.getPoint3D(-90.0, 0, modelRadius*10, eye);
+		advancedLightingCalculator.setEye(eye);
+		
 		advancedLightingCalculator.setUseDistanceAttenuation(optionModel.getUseDistanceAttenuation());
 		advancedLightingCalculator.setAttenuationRadius(optionModel.getAttenuationRadius());
 		
-		planet = PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet());
-		if (planet != null) {
-			modelRadius = planet.getMeanRadius() * 1000;
-		} else {
-			modelRadius = DemConstants.EARTH_MEAN_RADIUS * 1000;
-		}
+		
 
 
 		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
@@ -143,31 +151,31 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 		
 
-		LightSourceSpecifyTypeEnum lightSourceType = LightSourceSpecifyTypeEnum.getByOptionValue(optionModel.getSourceType());
+		//LightSourceSpecifyTypeEnum lightSourceType = LightSourceSpecifyTypeEnum.getByOptionValue(optionModel.getSourceType());
 		
 		long lightOnTime = optionModel.getSunlightTime().getTime();
 		long lightOnDate = optionModel.getSunlightDate().getDate();
 		lightOnDate += lightOnTime;
 		
-		recalcLightOnEachPoint = optionModel.isRecalcLightForEachPoint();
-		lightZenith = optionModel.getLightZenith();
-		darkZenith = optionModel.getDarkZenith();
+		//recalcLightOnEachPoint = optionModel.isRecalcLightForEachPoint();
+		//lightZenith = optionModel.getLightZenith();
+		//darkZenith = optionModel.getDarkZenith();
 
 		
 		sunlightPosition = new SunlightPositioning(modelContext, modelGrid, lightOnDate, viewPerspective);
 		
 		
-		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
+		//if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
 			
-			solarAzimuth = optionModel.getSourceLocation().getAzimuthAngle();
-			solarElevation = optionModel.getSourceLocation().getElevationAngle();
+		//	solarAzimuth = optionModel.getSourceLocation().getAzimuthAngle();
+		//	solarElevation = optionModel.getSourceLocation().getElevationAngle();
 			
-			sunlightPosition.getLightPositionByAngles(solarElevation, solarAzimuth, sunsource);
+		//	sunlightPosition.getLightPositionByAngles(solarElevation, solarAzimuth, sunsource);
 			
-			recalcLightOnEachPoint = false;
-		} else {
-			sunlightPosition.getLightPositionByCoordinates(0.0, 0.0, sunsource);
-		}
+		//	recalcLightOnEachPoint = false;
+		//} else {
+		sunlightPosition.getLightPositionByCoordinates(0.0, 0.0, sunsource);
+		//}
 		
 		/*
 		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME && !recalcLightOnEachPoint) {
@@ -267,6 +275,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	{
 		double dot = Vectors.dotProduct(normal, sunsource);
 		
+		/*
 		double lower = lightZenith;
 		double upper = darkZenith;
 		
@@ -279,11 +288,13 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		if (dot < -1.0) {
 			dot = -1.0;
 		}
+		*/
 		
 		return dot;
 
 		
 	}
+	
 	
 	protected double calculateRayTracedShadow(double elevation, double latitude, double longitude) throws RayTracingException
 	{
@@ -307,9 +318,9 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		//sunsource = new double[]{100000000.0, 0, 0};
 		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, sunsource);
 		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, sunsource);
-		if (recalcLightOnEachPoint) {
+		//if (recalcLightOnEachPoint) {
 			//sunlightPosition.getLightPositionByCoordinates(latitude, longitude, sunsource);
-		}
+		//}
 		
 		modelGrid.getRgba(latitude, longitude, rgbaBuffer);
 		normalsCalculator.calculateNormalSpherical(latitude, longitude, normal);
@@ -365,29 +376,6 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	
 
 
-
-	public boolean rayTraceShadows()
-	{
-		return rayTraceShadows;
-	}
-
-	public void setRayTraceShadows(boolean rayTraceShadows)
-	{
-		this.rayTraceShadows = rayTraceShadows;
-	}
-
-	public boolean recalcLightOnEachPoint()
-	{
-		return recalcLightOnEachPoint;
-	}
-
-	public void setRecalcLightOnEachPoint(boolean recalcLightOnEachPoint)
-	{
-		this.recalcLightOnEachPoint = recalcLightOnEachPoint;
-	}
-	
-	
-	
 	
 	
 }

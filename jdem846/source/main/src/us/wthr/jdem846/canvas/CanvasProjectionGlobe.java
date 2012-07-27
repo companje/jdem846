@@ -159,9 +159,14 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		//double radiusAdjusted = radius;// * resolution;
 		
 		Spheres.getPoint3D(longitude, latitude, radius, pointVector);
-
-		Vectors.rotate(0, rotateY, 0, pointVector);
-		Vectors.rotate(rotateX, 0, 0, pointVector);
+			
+		Vectors.rotate(rotateX, rotateY, 0, pointVector, Vectors.YXZ);
+		
+		//Vectors.rotateY(rotateY, pointVector);
+		//Vectors.rotateX(rotateX, pointVector);
+		
+		//Vectors.rotate(0, rotateY, 0, pointVector);
+		//Vectors.rotate(rotateX, 0, 0, pointVector);
 
 		Vectors.scale(scaleX, scaleY, scaleZ, pointVector);
 		

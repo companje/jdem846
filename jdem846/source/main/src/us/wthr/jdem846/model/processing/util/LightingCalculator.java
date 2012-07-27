@@ -88,8 +88,9 @@ public class LightingCalculator
 		Spheres.getPoint3D(longitude, latitude, radius, P);
 		
 		if (viewPerspective != null) {
-			Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, P);
-			Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
+			//Vectors.rotate(viewPerspective.getRotateX(), viewPerspective.getRotateY(), 0.0, P);
+			Vectors.rotate(viewPerspective.getRotateX(), viewPerspective.getRotateY(), 0.0, P, Vectors.YXZ);
+			//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
 		}
 		
 		//E[0] = eye[0];
@@ -100,7 +101,7 @@ public class LightingCalculator
 		//E[1] = eye[1];
 		//E[2] = eye[2];
 		
-		Spheres.getPoint3D(-90.0, 0, radius*10, E);
+		//Spheres.getPoint3D(-90.0, 0, radius*10, E);
 		
 		//Vectors.rotate(0.0, longitude, 0.0, E);
 		//Vectors.rotate(latitude, 0.0, 0.0, E);
@@ -360,9 +361,9 @@ public class LightingCalculator
 	
 	public void setEye(double[] eye)
 	{
-		this.eye[0] = eye[0];
-		this.eye[1] = eye[1];
-		this.eye[2] = eye[2];
+		this.E[0] = eye[0];
+		this.E[1] = eye[1];
+		this.E[2] = eye[2];
 		
 	}
 	

@@ -6,31 +6,46 @@ public class RgbaTriangleInterpolator
 {
 	
 	
-	private TriangleInterpolator rInterpolator;
-	private TriangleInterpolator gInterpolator;
-	private TriangleInterpolator bInterpolator;
-	private TriangleInterpolator aInterpolator;
+	private TriangleInterpolator rInterpolator = new TriangleInterpolator();
+	private TriangleInterpolator gInterpolator = new TriangleInterpolator();
+	private TriangleInterpolator bInterpolator = new TriangleInterpolator();
+	private TriangleInterpolator aInterpolator = new TriangleInterpolator();
+	
+	
+	public RgbaTriangleInterpolator()
+	{
+		
+	}
 	
 	public RgbaTriangleInterpolator(double x00, double y00, int[] rgba00,
 									double x01, double y01, int[] rgba01,
 									double x10, double y10, int[] rgba10)
 	{
+		set(x00, y00, rgba00,
+			x01, y01, rgba01,
+			x10, y10, rgba10);
 		
-		rInterpolator = new TriangleInterpolator(x00, y00, rgba00[0],
-												 x01, y01, rgba01[0],
-												 x10, y10, rgba10[0]);
+	}
+	
+	public void set(double x00, double y00, int[] rgba00,
+									double x01, double y01, int[] rgba01,
+									double x10, double y10, int[] rgba10)
+	{
+		rInterpolator.set(x00, y00, rgba00[0],
+							x01, y01, rgba01[0],
+							x10, y10, rgba10[0]);
 		
-		gInterpolator = new TriangleInterpolator(x00, y00, rgba00[1],
-												 x01, y01, rgba01[1],
-												 x10, y10, rgba10[1]);
+		gInterpolator.set(x00, y00, rgba00[1],
+							x01, y01, rgba01[1],
+							x10, y10, rgba10[1]);
 		
-		bInterpolator = new TriangleInterpolator(x00, y00, rgba00[2],
-												 x01, y01, rgba01[2],
-												 x10, y10, rgba10[2]);
+		bInterpolator.set(x00, y00, rgba00[2],
+							x01, y01, rgba01[2],
+							x10, y10, rgba10[2]);
 		
-		aInterpolator = new TriangleInterpolator(x00, y00, rgba00[3],
-												 x01, y01, rgba01[3],
-												 x10, y10, rgba10[3]);
+		aInterpolator.set(x00, y00, rgba00[3],
+							x01, y01, rgba01[3],
+							x10, y10, rgba10[3]);
 		
 
 	}
