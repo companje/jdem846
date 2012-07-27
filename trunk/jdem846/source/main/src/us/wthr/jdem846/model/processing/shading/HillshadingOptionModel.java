@@ -13,14 +13,14 @@ public class HillshadingOptionModel implements OptionModel
 {
 	
 	private boolean lightingEnabled = true;
-	private String sourceType = LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION.optionValue();
-	private AzimuthElevationAngles sourceLocation = new AzimuthElevationAngles(315.0, 25.0); 
+	//private String sourceType = LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION.optionValue();
+	//private AzimuthElevationAngles sourceLocation = new AzimuthElevationAngles(315.0, 25.0); 
 	private LightingDate sunlightDate = new LightingDate(System.currentTimeMillis());
 	private LightingTime sunlightTime = new LightingTime(System.currentTimeMillis());
-	private boolean recalcLightForEachPoint = true;
-	private double lightZenith = 90.0;
-	private double darkZenith = 108.0;
-	private double lightMultiple = 1.0;
+	//private boolean recalcLightForEachPoint = true;
+	//private double lightZenith = 90.0;
+	//private double darkZenith = 108.0;
+	//private double lightMultiple = 1.0;
 	private double lightIntensity = 0.75;
 	private double darkIntensity = 1.0;
 	
@@ -58,7 +58,7 @@ public class HillshadingOptionModel implements OptionModel
 	}
 
 	
-
+	/*
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.sourceType",
 			label="Source Type",
 			tooltip="",
@@ -89,7 +89,8 @@ public class HillshadingOptionModel implements OptionModel
 	{
 		this.sourceLocation = sourceLocation;
 	}
-
+	*/
+	
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.sunlightDate",
 			label="Sunlight Date (GMT)",
 			tooltip="",
@@ -120,6 +121,7 @@ public class HillshadingOptionModel implements OptionModel
 		this.sunlightTime = sunlightTime;
 	}
 	
+	/*
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.recalcLightForEachPoint",
 			label="Recalc Light For Each Point",
 			tooltip="",
@@ -134,6 +136,7 @@ public class HillshadingOptionModel implements OptionModel
 	{
 		this.recalcLightForEachPoint = recalcLightForEachPoint;
 	}
+	
 	
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.lightZenith",
 			label="Light Zenith",
@@ -164,7 +167,8 @@ public class HillshadingOptionModel implements OptionModel
 	{
 		this.darkZenith = darkZenith;
 	}
-
+	
+	
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.lightMultiple",
 			label="Light Multiple",
 			tooltip="",
@@ -181,7 +185,7 @@ public class HillshadingOptionModel implements OptionModel
 	{
 		this.lightMultiple = lightMultiple;
 	}
-	
+	*/
 	
 
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.lightIntensity",
@@ -405,14 +409,14 @@ public class HillshadingOptionModel implements OptionModel
 		HillshadingOptionModel copy = new HillshadingOptionModel();
 		
 		copy.lightingEnabled = this.lightingEnabled;
-		copy.sourceType = this.sourceType;
-		copy.sourceLocation = this.sourceLocation.copy();
+		//copy.sourceType = this.sourceType;
+		//copy.sourceLocation = this.sourceLocation.copy();
 		copy.sunlightDate = this.sunlightDate.copy();
 		copy.sunlightTime = this.sunlightTime.copy();
-		copy.recalcLightForEachPoint = this.recalcLightForEachPoint;
-		copy.lightZenith = this.lightZenith;
-		copy.darkZenith = this.darkZenith;
-		copy.lightMultiple = this.lightMultiple;
+		//copy.recalcLightForEachPoint = this.recalcLightForEachPoint;
+		//copy.lightZenith = this.lightZenith;
+		//copy.darkZenith = this.darkZenith;
+		//copy.lightMultiple = this.lightMultiple;
 		copy.lightIntensity = this.lightIntensity;
 		copy.darkIntensity = this.darkIntensity;
 		copy.spotExponent = this.spotExponent;

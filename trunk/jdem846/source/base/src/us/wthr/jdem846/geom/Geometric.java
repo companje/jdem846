@@ -66,11 +66,11 @@ public abstract class Geometric extends RenderableShape
 		
 		
 		for (Edge edge : edges) {
-			minY = MathExt.min(minY, edge.p0.y, edge.p1.y);
-			maxY = MathExt.max(maxY, edge.p0.y, edge.p1.y);
+			minY = MathExt.min(minY, edge.p0.y(), edge.p1.y());
+			maxY = MathExt.max(maxY, edge.p0.y(), edge.p1.y());
 			
-			minX = MathExt.min(minX, edge.p0.x, edge.p1.x);
-			maxX = MathExt.max(maxX, edge.p0.x, edge.p1.x);
+			minX = MathExt.min(minX, edge.p0.x(), edge.p1.x());
+			maxX = MathExt.max(maxX, edge.p0.x(), edge.p1.x());
 		}
 		
 		Bounds bounds = new Bounds(minX, minY, (maxX - minX), (maxY - minY));

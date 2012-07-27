@@ -123,9 +123,9 @@ public class ShapePath extends Geometric //java.awt.Shape // Path2D.Double
 
 		for (Edge edge : edges) {
 			
-			coords[0] = edge.p0.x;
-			coords[1] = edge.p0.y;
-			coords[2] = edge.p0.z;
+			coords[0] = edge.p0.x();
+			coords[1] = edge.p0.y();
+			coords[2] = edge.p0.z();
 			
 			translateHandler.translatePoint(coords);
 			
@@ -133,9 +133,9 @@ public class ShapePath extends Geometric //java.awt.Shape // Path2D.Double
 			double y0 = coords[1];
 			double z0 = coords[2];
 			
-			coords[0] = edge.p1.x;
-			coords[1] = edge.p1.y;
-			coords[2] = edge.p1.z;
+			coords[0] = edge.p1.x();
+			coords[1] = edge.p1.y();
+			coords[2] = edge.p1.z();
 			
 			translateHandler.translatePoint(coords);
 			

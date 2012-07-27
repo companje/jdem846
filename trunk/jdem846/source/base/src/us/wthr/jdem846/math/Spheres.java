@@ -11,19 +11,27 @@ public class Spheres
 	
 	
 	
-	protected static double fixThetaDegrees(double theta)
+	protected static double fixThetaDegrees(double degrees)
 	{
 		
-		while (theta < 0.0) {
-			theta += 360.0;
+		while (degrees < 0.0) {
+			degrees += 360.0;
 		}
 		
-		while (theta >= 360.0) {
-			theta -= 360.0;
+		while (degrees >= 360.0) {
+			degrees -= 360.0;
 		}
 		
+		return degrees;
 		
-		return theta;
+		/*
+		double limited;
+		degrees /= 360.0;
+		limited = 360.0 * (degrees - MathExt.floor(degrees));
+		if (limited < 0)
+			limited += 360.0;
+		return limited;
+		*/
 	}
 	
 	protected static double fixPhiDegrees(double phi)

@@ -12,9 +12,9 @@ import us.wthr.jdem846.math.Vectors;
 public class SameSideTrianglePointTest extends PointTest
 {
 
-	double[] A;
-	double[] B;
-	double[] C;
+	//double[] A;
+	//double[] B;
+	//double[] C;
 	double[] P;
 	
 	double[] v0;
@@ -25,9 +25,9 @@ public class SameSideTrianglePointTest extends PointTest
 	
 	public SameSideTrianglePointTest()
 	{
-		A = new double[3];
-		B = new double[3];
-		C = new double[3];
+		//A = new double[3];
+		//B = new double[3];
+		//C = new double[3];
 		P = new double[3];
 	
 		v0 = new double[3];
@@ -42,11 +42,7 @@ public class SameSideTrianglePointTest extends PointTest
 		
 		fill(x, y, z, P);
 		
-		fill(p0.x, p0.y, p0.z, A);
-		fill(p1.x, p1.y, p1.z, B);
-		fill(p2.x, p2.y, p2.z, C);
-		
-		if (sameSide(P, A, B, C) && sameSide(P, B, A, C) && sameSide(P, C, A, B)) {
+		if (sameSide(P, p0.xyz, p1.xyz, p2.xyz) && sameSide(P, p1.xyz, p0.xyz, p2.xyz) && sameSide(P, p2.xyz, p0.xyz, p1.xyz)) {
 			return true;
 		} else {
 			return false;
@@ -64,7 +60,7 @@ public class SameSideTrianglePointTest extends PointTest
 		Vectors.subtract(p1, a, v1);
 		Vectors.crossProduct(v0, v1, cp1);
 		
-		if (Vectors.dotProduct(cp0, cp1) > 0.0) {
+		if (Vectors.dotProduct(cp0, cp1) >= 0.0) {
 			return true;
 		} else {
 			return false;

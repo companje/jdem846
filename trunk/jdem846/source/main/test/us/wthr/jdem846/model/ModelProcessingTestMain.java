@@ -91,7 +91,7 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		ModelProcessManifest modelProcessManifest = new ModelProcessManifest();
 		
 		HillshadingOptionModel hillshadingOptionModel = new HillshadingOptionModel();
-		hillshadingOptionModel.setLightZenith(47.0);
+		//hillshadingOptionModel.setLightZenith(47.0);
 		modelProcessManifest.addProcessor("us.wthr.jdem846.model.processing.coloring.HillshadingProcessor", hillshadingOptionModel);
 		
 		List<OptionModel> optionModelList = new LinkedList<OptionModel>();
@@ -288,12 +288,12 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		HillshadingOptionModel hillshadingOptionModel = new HillshadingOptionModel();
 		hillshadingOptionModel.setLightingEnabled(true);
-		hillshadingOptionModel.setSourceType(LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION.optionValue());
-		hillshadingOptionModel.setSourceLocation(new AzimuthElevationAngles(270, 20));
-		hillshadingOptionModel.setRecalcLightForEachPoint(false);
-		hillshadingOptionModel.setDarkZenith(108.0);
-		hillshadingOptionModel.setLightZenith(90.0);
-		hillshadingOptionModel.setLightMultiple(6.0);
+		//hillshadingOptionModel.setSourceType(LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION.optionValue());
+		//hillshadingOptionModel.setSourceLocation(new AzimuthElevationAngles(270, 20));
+		//hillshadingOptionModel.setRecalcLightForEachPoint(false);
+		//hillshadingOptionModel.setDarkZenith(108.0);
+		//hillshadingOptionModel.setLightZenith(90.0);
+		//hillshadingOptionModel.setLightMultiple(6.0);
 		hillshadingOptionModel.setLightIntensity(0.6);
 		hillshadingOptionModel.setDarkIntensity(1.0);
 		hillshadingOptionModel.setSpotExponent(1);

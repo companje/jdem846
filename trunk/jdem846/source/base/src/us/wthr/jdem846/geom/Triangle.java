@@ -15,10 +15,11 @@ public class Triangle extends RenderableShape
 	public Vertex p1;
 	public Vertex p2;
 	
-	private TriangleInterpolator zInterpolator;
-	private RgbaTriangleInterpolator rgbaInterpolator;
+	private TriangleInterpolator zInterpolator = new TriangleInterpolator();
+	private RgbaTriangleInterpolator rgbaInterpolator = new RgbaTriangleInterpolator();
 
 	private static PointTest pointTest = new SameSideTrianglePointTest();
+	//private static PointTest pointTest = new BarycentricTrianglePointTest();
 	
 	public Triangle()
 	{
@@ -37,13 +38,13 @@ public class Triangle extends RenderableShape
 	public void initialize()
 	{
 
-		zInterpolator = new TriangleInterpolator(p0.x, p0.y, p0.z,
-												 p1.x, p1.y, p1.z,
-												 p2.x, p2.y, p2.z);
+		zInterpolator.set(p0.x(), p0.y(), p0.z(),
+							p1.x(), p1.y(), p1.z(),
+							p2.x(), p2.y(), p2.z());
 		
-		rgbaInterpolator = new RgbaTriangleInterpolator(p0.x, p0.y, p0.rgba,
-														p1.x, p1.y, p1.rgba,
-														p2.x, p2.y, p2.rgba);
+		rgbaInterpolator.set(p0.x(), p0.y(), p0.rgba,
+							p1.x(), p1.y(), p1.rgba,
+							p2.x(), p2.y(), p2.rgba);
 		
 
 	}
@@ -62,10 +63,10 @@ public class Triangle extends RenderableShape
 	@Override
 	public Bounds getBounds()
 	{
-		double maxX = MathExt.max(p0.x, p1.x, p2.x);
-		double minX = MathExt.min(p0.x, p1.x, p2.x);
-		double maxY = MathExt.max(p0.y, p1.y, p2.y);
-		double minY = MathExt.min(p0.y, p1.y, p2.y);
+		double maxX = MathExt.max(p0.x(), p1.x(), p2.x());
+		double minX = MathExt.min(p0.x(), p1.x(), p2.x());
+		double maxY = MathExt.max(p0.y(), p1.y(), p2.y());
+		double minY = MathExt.min(p0.y(), p1.y(), p2.y());
 		
 		Bounds bounds = new Bounds(minX, minY, (maxX - minX), (maxY - minY));
 		return bounds;

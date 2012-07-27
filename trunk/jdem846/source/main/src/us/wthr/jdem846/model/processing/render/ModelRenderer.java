@@ -27,6 +27,7 @@ import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
+import us.wthr.jdem846.model.processing.util.StripRenderQueue;
 import us.wthr.jdem846.canvas.CanvasProjection;
 import us.wthr.jdem846.canvas.CanvasProjectionFactory;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
@@ -57,7 +58,10 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	double lastElevation = 0;
 	ModelCanvas canvas;
 	
+	private StripRenderQueue renderQueue;
 	private ModelRenderOptionModel optionModel;
+	
+	private boolean useRenderQueue = false;
 	
 	public ModelRenderer()
 	{
@@ -139,8 +143,15 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	public void onCycleStart() throws RenderEngineException
 	{
 		lastElevation = modelContext.getRasterDataContext().getDataMaximumValue();
+		
+		if (useRenderQueue) {
+			renderQueue = new StripRenderQueue(canvas);
+			renderQueue.start();
+		}
+		
+		
 	}
-
+	
 	@Override
 	public void onModelLatitudeStart(double latitude)
 	{
@@ -157,7 +168,11 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 			if (elev != DemConstants.ELEV_NO_DATA) {
 				lastElevation = elev;
 			} else {
-				canvas.fillShape(strip);
+				if (useRenderQueue) {
+					renderQueue.add(strip);
+				} else {
+					canvas.fillShape(strip);
+				}
 				strip.reset();
 			}
 		} catch (Exception ex) {
@@ -169,10 +184,37 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	@Override
 	public void onModelLatitudeEnd(double latitude)
 	{
-		canvas.fillShape(strip);
+		if (useRenderQueue) {
+			renderQueue.add(strip);
+		} else {
+			canvas.fillShape(strip);
+		}
+		
 	}
 		
-
+	@Override
+	public void onCycleEnd() throws RenderEngineException
+	{
+		
+		if (useRenderQueue) {
+			log.info("Stopping triangle strip queue...");
+	        
+			
+	        renderQueue.stopRendering();
+	        
+	        while(!renderQueue.isCompleted()) {
+	
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException ex) {
+					throw new RenderEngineException("Error waiting for render queue to complete: " + ex.getMessage(), ex);
+				}
+	        	
+	        }
+	        
+	        log.info("Render queue completed");
+		}
+	}
 	
 	protected double createPointVertexes(TriangleStrip strip, double latitude, double longitude, double lastElevation) throws Exception
 	{

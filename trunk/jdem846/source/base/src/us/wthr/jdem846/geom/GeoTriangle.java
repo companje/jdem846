@@ -5,9 +5,9 @@ import us.wthr.jdem846.geom.util.TriangleInterpolator;
 public class GeoTriangle extends Triangle
 {
 	
-	private TriangleInterpolator latitudeInterpolator;
-	private TriangleInterpolator longitudeInterpolator;
-	private TriangleInterpolator elevationInterpolator;
+	private TriangleInterpolator latitudeInterpolator = new TriangleInterpolator();
+	private TriangleInterpolator longitudeInterpolator = new TriangleInterpolator();
+	private TriangleInterpolator elevationInterpolator = new TriangleInterpolator();
 	
 	
 	public GeoTriangle()
@@ -26,17 +26,17 @@ public class GeoTriangle extends Triangle
 		super.initialize();
 		
 		
-		latitudeInterpolator = new TriangleInterpolator(p0.x, p0.y, ((GeoVertex)p0).latitude,
-														p1.x, p1.y, ((GeoVertex)p1).latitude,
-														p2.x, p2.y, ((GeoVertex)p2).latitude);
+		latitudeInterpolator.set(p0.x(), p0.y(), ((GeoVertex)p0).latitude,
+								p1.x(), p1.y(), ((GeoVertex)p1).latitude,
+								p2.x(), p2.y(), ((GeoVertex)p2).latitude);
 		
-		longitudeInterpolator = new TriangleInterpolator(p0.x, p0.y, ((GeoVertex)p0).longitude,
-														 p1.x, p1.y, ((GeoVertex)p1).longitude,
-														 p2.x, p2.y, ((GeoVertex)p2).longitude);
+		longitudeInterpolator.set(p0.x(), p0.y(), ((GeoVertex)p0).longitude,
+								p1.x(), p1.y(), ((GeoVertex)p1).longitude,
+								p2.x(), p2.y(), ((GeoVertex)p2).longitude);
 		
-		elevationInterpolator = new TriangleInterpolator(p0.x, p0.y, ((GeoVertex)p0).elevation,
-														 p1.x, p1.y, ((GeoVertex)p1).elevation,
-														 p2.x, p2.y, ((GeoVertex)p2).elevation);
+		elevationInterpolator.set(p0.x(), p0.y(), ((GeoVertex)p0).elevation,
+								p1.x(), p1.y(), ((GeoVertex)p1).elevation,
+								p2.x(), p2.y(), ((GeoVertex)p2).elevation);
 		
 	}
 	

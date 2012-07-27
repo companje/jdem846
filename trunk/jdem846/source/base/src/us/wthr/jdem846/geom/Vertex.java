@@ -2,15 +2,17 @@ package us.wthr.jdem846.geom;
 
 public class Vertex implements Comparable<Vertex>
 {
-	public double x;
-	public double y;
-	public double z;
+	public static final int X = 0;
+	public static final int Y = 1;
+	public static final int Z = 2;
 	
+
+	public double[] xyz = new double[3];
 	public int[] rgba = null;
 	
 	public Vertex(Vertex copy)
 	{
-		this(copy.x, copy.y, copy.z, copy.rgba);
+		this(copy.xyz, copy.rgba);
 	}
 	
 	public Vertex(double x, double y)
@@ -23,12 +25,17 @@ public class Vertex implements Comparable<Vertex>
 		this(x, y, z, null);
 	}
 	
+	public Vertex(double[] xyz, int[] rgba)
+	{
+		this(xyz[0], xyz[1], xyz[2], rgba);
+	}
+	
 	public Vertex(double x, double y, double z, int[] rgba)
 	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		
+		this.xyz[X] = x;
+		this.xyz[Y] = y;
+		this.xyz[Z] = z;
+
 		if (rgba != null && rgba.length >= 4) {
 			this.rgba = new int[4];
 			this.rgba[0] = rgba[0];
@@ -46,16 +53,49 @@ public class Vertex implements Comparable<Vertex>
 
 	public int compareToY(Vertex other)
 	{
-		Double y0 = (Double) this.y;
-		Double y1 = (Double) other.y;
+		Double y0 = (Double) this.xyz[Y];
+		Double y1 = (Double) other.xyz[Y];
 		return y0.compareTo(y1);
 	}
 	
 	public int compareToX(Vertex other)
 	{
-		Double x0 = (Double) this.x;
-		Double x1 = (Double) other.x;
+		Double x0 = (Double) this.xyz[X];
+		Double x1 = (Double) other.xyz[X];
 		return x0.compareTo(x1);
+	}
+	
+	
+	public void x(double x)
+	{
+		this.xyz[X] = x;
+	}
+	
+	public double x()
+	{
+		return this.xyz[X];
+	}
+	
+	
+	public void y(double y)
+	{
+		this.xyz[Y] = y;
+	}
+	
+	public double y()
+	{
+		return this.xyz[Y];
+	}
+	
+	
+	public void z(double z)
+	{
+		this.xyz[Z] = z;
+	}
+	
+	public double z()
+	{
+		return this.xyz[Z];
 	}
 	
 }

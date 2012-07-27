@@ -155,25 +155,25 @@ public class Canvas3d
 		}
 		
 		
-		double x0 = edge.p0.x;
-		double y0 = edge.p0.y;
+		double x0 = edge.p0.x();
+		double y0 = edge.p0.y();
 		
-		double x1 = edge.p1.x;
-		double y1 = edge.p1.y;
+		double x1 = edge.p1.x();
+		double y1 = edge.p1.y();
 		
 		if (edge.p0.compareTo(edge.p1) < 0) {
-			x0 = edge.p1.x;
-			y0 = edge.p1.y;
+			x0 = edge.p1.x();
+			y0 = edge.p1.y();
 			
-			x1 = edge.p0.x;
-			y1 = edge.p0.y;
+			x1 = edge.p0.x();
+			y1 = edge.p0.y();
 			
 		} else {
-			x0 = edge.p0.x;
-			y0 = edge.p0.y;
+			x0 = edge.p0.x();
+			y0 = edge.p0.y();
 			
-			x1 = edge.p1.x;
-			y1 = edge.p1.y;
+			x1 = edge.p1.x();
+			y1 = edge.p1.y();
 		}
 		
 
@@ -278,17 +278,17 @@ public class Canvas3d
 	public void fill(Triangle tri)
 	{
 		
-		if (!isValidZCoordinate(tri.p0.z) && !isValidZCoordinate(tri.p1.z) && !isValidZCoordinate(tri.p2.z)) {
+		if (!isValidZCoordinate(tri.p0.z()) && !isValidZCoordinate(tri.p1.z()) && !isValidZCoordinate(tri.p2.z())) {
 			return;
 		}
 		
 		
 		//Bounds bounds = tri.getBounds();
 		
-		double maxX = MathExt.ceil(MathExt.max(tri.p0.x, tri.p1.x, tri.p2.x));
-		double minX = MathExt.floor(MathExt.min(tri.p0.x, tri.p1.x, tri.p2.x));
-		double maxY = MathExt.ceil(MathExt.max(tri.p0.y, tri.p1.y, tri.p2.y));
-		double minY = MathExt.floor(MathExt.min(tri.p0.y, tri.p1.y, tri.p2.y));
+		double maxX = MathExt.ceil(MathExt.max(tri.p0.x(), tri.p1.x(), tri.p2.x()));
+		double minX = MathExt.floor(MathExt.min(tri.p0.x(), tri.p1.x(), tri.p2.x()));
+		double maxY = MathExt.ceil(MathExt.max(tri.p0.y(), tri.p1.y(), tri.p2.y()));
+		double minY = MathExt.floor(MathExt.min(tri.p0.y(), tri.p1.y(), tri.p2.y()));
 
 		
 		if (maxX < 0 || minX >= getWidth() || maxY < 0 || minY >= getHeight()) {
@@ -353,10 +353,10 @@ public class Canvas3d
 		Edge[] edgeArray = shape.getEdges(true);
 		
 		for (int i = 0; i < edgeArray.length; i++) {
-			if (maxY < (int)edgeArray[i].p1.y)
-				maxY = (int)edgeArray[i].p1.y;
+			if (maxY < (int)edgeArray[i].p1.y())
+				maxY = (int)edgeArray[i].p1.y();
 		}
-		minY = (int)edgeArray[0].p0.y;
+		minY = (int)edgeArray[0].p0.y();
 			
 			
 		if (minY >= getHeight() || maxY < 0 || minY == maxY)
@@ -381,8 +381,8 @@ public class Canvas3d
 			
 			for (int i = 0; i < edgeArray.length; i++) {
 
-				if (y == edgeArray[i].p0.y) {
-                    if (y == edgeArray[i].p1.y) {
+				if (y == edgeArray[i].p0.y()) {
+                    if (y == edgeArray[i].p1.y()) {
                         // the current edge is horizontal, so we add both vertices
                     	edgeArray[i].deactivate(y);
                     	xList.add((int) edgeArray[i].curX);
@@ -397,7 +397,7 @@ public class Canvas3d
                 }
                 
                 // here the scanline intersects the bigger vertice
-                if (y == edgeArray[i].p1.y) {
+                if (y == edgeArray[i].p1.y()) {
                 	edgeArray[i].deactivate(y);
                 	xList.add((int) edgeArray[i].curX);
                 	zList.add((int) edgeArray[i].curZ);
@@ -406,7 +406,7 @@ public class Canvas3d
                 }
                 
                 // here the scanline intersects the edge, so calc intersection point
-                if (y > edgeArray[i].p0.y && y < edgeArray[i].p1.y) {
+                if (y > edgeArray[i].p0.y() && y < edgeArray[i].p1.y()) {
                 	edgeArray[i].update(y);
                 	xList.add((int) edgeArray[i].curX);
                 	zList.add((int) edgeArray[i].curZ);

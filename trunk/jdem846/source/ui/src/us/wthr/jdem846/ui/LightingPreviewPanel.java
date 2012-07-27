@@ -174,10 +174,10 @@ public class LightingPreviewPanel extends Panel
 			hillshadingOptionModel.setLightIntensity(0.75);
 			hillshadingOptionModel.setDarkIntensity(1.0);
 			hillshadingOptionModel.setRayTraceShadows(false);
-			hillshadingOptionModel.setLightMultiple(5.0);
-			hillshadingOptionModel.setSourceType(LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION.optionValue());
-			hillshadingOptionModel.setSourceLocation(new AzimuthElevationAngles(solarAzimuth, solarElevation));
-			hillshadingOptionModel.setRecalcLightForEachPoint(false);
+			//hillshadingOptionModel.setLightMultiple(5.0);
+			//hillshadingOptionModel.setSourceType(LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION.optionValue());
+			//hillshadingOptionModel.setSourceLocation(new AzimuthElevationAngles(solarAzimuth, solarElevation));
+			//hillshadingOptionModel.setRecalcLightForEachPoint(false);
 			globalOptionModel.setMapProjection(MapProjectionEnum.EQUIRECTANGULAR.identifier());
 			
 			
@@ -260,7 +260,7 @@ public class LightingPreviewPanel extends Panel
 				
 				//modelContext.resetModelCanvas();
 				
-				hillshadingOptionModel.setSourceLocation(new AzimuthElevationAngles(solarAzimuth, solarElevation));
+				//hillshadingOptionModel.setSourceLocation(new AzimuthElevationAngles(solarAzimuth, solarElevation));
 				modelBuilder.prepare(modelContext, modelProcessManifest);
 				modelBuilder.process();
 				
