@@ -42,6 +42,7 @@ public class ColorUtil
 		if (rgba.length >= 4) {
 			rgba[3] = 0xFF & (c >>> 24);
 		}
+		
 	}
 	
 	
@@ -58,10 +59,39 @@ public class ColorUtil
 	
 	public static void overlayColor(int[] rgbaA, int[] rgbaB, int[] fill)
 	{
-		double r = 1.0 - ((double)rgbaA[3] / 255.0);
-		int a = Math.max(rgbaA[3], rgbaB[3]);
-		ColorAdjustments.interpolateColor(rgbaA, rgbaB, fill, r);
-		fill[3] = a;
+		if (rgbaA[3] == 0) {
+			fill[0] = rgbaB[0];
+			fill[1] = rgbaB[1];
+			fill[2] = rgbaB[2];
+			fill[3] = rgbaB[3];
+		} else if (rgbaA[3] == 255) {
+			fill[0] = rgbaA[0];
+			fill[1] = rgbaA[1];
+			fill[2] = rgbaA[2];
+			fill[3] = rgbaA[3];
+		} else {
+			double r = 1.0 - ((double)rgbaA[3] / 255.0);
+			if (r > 1.0)
+				r = 1.0;
+			if (r < 0.0) {
+				r = 0.0;
+			}
+			int a = Math.max(rgbaA[3], rgbaB[3]);
+			ColorAdjustments.interpolateColor(rgbaA, rgbaB, fill, r);
+			fill[3] = a;
+		}
+	}
+	
+	
+	public static void clamp(int[] rgba)
+	{
+		for (int i = 0; i < 4; i++) {
+			if (rgba[i] < 0)
+				rgba[i] = 0;
+			if (rgba[i] > 255)
+				rgba[i] = 255;
+			
+		}
 	}
 	
 }
