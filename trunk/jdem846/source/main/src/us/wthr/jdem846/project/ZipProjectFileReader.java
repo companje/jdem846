@@ -154,6 +154,8 @@ public class ZipProjectFileReader
 			scriptEntry = zipFile.getEntry("script.groovy");
 		} else if (projectMarshall.getScriptLanguage() == ScriptLanguageEnum.JYTHON) {
 			scriptEntry = zipFile.getEntry("script.py");
+		} else if (projectMarshall.getScriptLanguage() == ScriptLanguageEnum.SCALA) {
+			scriptEntry = zipFile.getEntry("script.scala");
 		}
 		
 		loadElevationModelsFromZip(projectMarshall, zipFile);

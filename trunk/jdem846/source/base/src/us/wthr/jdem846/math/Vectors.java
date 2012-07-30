@@ -71,8 +71,8 @@ public class Vectors
 	
 	public static void rotate(double x, double y, double z, double[] xyz) 
 	{
-		
-		
+		rotate(x, y, z, xyz, XYZ); 
+		/*
 		double _x = (x != 0) ? MathExt.radians(x) : 0;
 		double _y = (y != 0) ? MathExt.radians(y) : 0;
 		double _z = (z != 0) ? MathExt.radians(z) : 0;
@@ -92,6 +92,7 @@ public class Vectors
 		xyz[0] = rx;
 		xyz[1] = ry;
 		xyz[2] = rz;
+		*/
 	}
 	
 	
@@ -151,8 +152,11 @@ public class Vectors
 			
 			
 			//xyz[0] = xyz[0] * 1.0;
-			xyz[1] = cosX * xyz[1] + -sinX * xyz[2];
-			xyz[2] = sinX * xyz[1] + cosX * xyz[2];
+			double ry = cosX * xyz[1] + -sinX * xyz[2];
+			double rz = sinX * xyz[1] + cosX * xyz[2];
+			
+			xyz[1] = ry;
+			xyz[2] = rz;
 		}
 	}
 	
@@ -176,10 +180,12 @@ public class Vectors
 			//xyz[1] = xyz[1] * 1.0;
 			//xyz[2] = xyz[2] * -sinY + xyz[2] * cosY;
 			
-			xyz[0] = cosY * xyz[0] + sinY * xyz[2];
+			double rx = cosY * xyz[0] + sinY * xyz[2];
 			//xyz[1] = xyz[1] * 1.0;
-			xyz[2] = -sinY * xyz[0] + cosY * xyz[2];
+			double rz = -sinY * xyz[0] + cosY * xyz[2];
 			
+			xyz[0] = rx;
+			xyz[2] = rz;
 		}
 	}
 	
@@ -201,10 +207,12 @@ public class Vectors
 			//xyz[2] = xyz[2] * 1.0;
 			
 			
-			xyz[0] = cosZ * xyz[0] + -sinZ * xyz[1];
-			xyz[1] = sinZ * xyz[0] + cosZ * xyz[1];
+			double rx = cosZ * xyz[0] + -sinZ * xyz[1];
+			double ry = sinZ * xyz[0] + cosZ * xyz[1];
 			//xyz[2] = xyz[2] * 1.0;
 			
+			xyz[0] = rx;
+			xyz[1] = ry;
 		}
 	}
 	
