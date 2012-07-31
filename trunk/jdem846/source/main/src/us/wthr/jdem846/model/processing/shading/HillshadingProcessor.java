@@ -14,6 +14,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vectors;
+import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPointHandler;
 import us.wthr.jdem846.model.ViewPerspective;
@@ -96,6 +97,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	{
 		
 		HillshadingOptionModel optionModel = (HillshadingOptionModel) this.getProcessOptionModel();
+		GlobalOptionModel globalOptionModel = this.getGlobalOptionModel();
 		
 		lightingEnabled = optionModel.isLightingEnabled();
 		
@@ -133,8 +135,17 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		advancedLightingControl = optionModel.getAdvancedLightingControl();
 		advancedLightingCalculator = new LightingCalculator(optionModel.getEmmisive(), optionModel.getAmbient(), optionModel.getDiffuse(), optionModel.getSpecular(), optionModel.getShadowIntensity(), viewPerspective, scriptProxy);
 		
+		double minSideLength = MathExt.min(globalOptionModel.getWidth(), globalOptionModel.getHeight()) - 20;
+		double fov = 18.0;
+		double a = (fov / 2.0);
+		double R = modelRadius;
+		
+		double D = R / MathExt.tan(MathExt.radians(a));
+		double d = (minSideLength / 2.0) / MathExt.tan(MathExt.radians(a));
+		
 		double[] eye = new double[3];
-		Spheres.getPoint3D(-90.0, 0, modelRadius*10, eye);
+		//Spheres.getPoint3D(-90.0, 0, modelRadius*10, eye);
+		Spheres.getPoint3D(+90.0, 0, D, eye);
 		advancedLightingCalculator.setEye(eye);
 		
 		advancedLightingCalculator.setUseDistanceAttenuation(optionModel.getUseDistanceAttenuation());

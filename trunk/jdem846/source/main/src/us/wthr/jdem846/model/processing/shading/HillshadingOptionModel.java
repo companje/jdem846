@@ -24,13 +24,13 @@ public class HillshadingOptionModel implements OptionModel
 	private double lightIntensity = 0.75;
 	private double darkIntensity = 1.0;
 	
-	private boolean advancedLightingControl = false;
+	private boolean advancedLightingControl = true;
 	private double emmisive = 0.0;
 	private double ambient = 0.4;
 	private double diffuse = 0.7;
 	private double specular = 0.6;
 	
-	private int spotExponent = 1;
+	private int spotExponent = 10;
 	private boolean rayTraceShadows = false;
 	private double shadowIntensity = 0.4;
 	

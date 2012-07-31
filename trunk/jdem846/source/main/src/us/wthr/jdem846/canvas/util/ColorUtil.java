@@ -85,13 +85,21 @@ public class ColorUtil
 	
 	public static void clamp(int[] rgba)
 	{
-		for (int i = 0; i < 4; i++) {
-			if (rgba[i] < 0)
-				rgba[i] = 0;
-			if (rgba[i] > 255)
-				rgba[i] = 255;
-			
+		if (rgba != null) {
+			for (int i = 0; i < 4; i++) {
+				if (rgba.length >= i + 1)
+					rgba[i] = clamp(rgba[i]);
+			}
 		}
 	}
 	
+	
+	public static int clamp(int c)
+	{
+		if (c > 255)
+			c = 255;
+		if (c < 0)
+			c = 0;
+		return c;
+	}
 }

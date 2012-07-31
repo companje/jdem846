@@ -250,10 +250,10 @@ public class SunlightPositioning
 		
 		//Vectors.rotate(0.0, 0.0, obliquityCorrection, xyz);
 		//Vectors.rotate(rotateX, rotateY, o, xyz, Vectors.ZYX);
-		//Vectors.rotate(rotateX, rotateY, o, xyz, Vectors.ZYX);
-		Vectors.rotate(0.0, 0.0, o, xyz);
-		Vectors.rotate(0.0, rotateY, 0.0, xyz);
-		Vectors.rotate(rotateX, 0.0, 0.0, xyz);
+		Vectors.rotate(rotateX, rotateY, o, xyz, Vectors.ZYX);
+		//Vectors.rotate(0.0, 0.0, o, xyz);
+		//Vectors.rotate(0.0, rotateY, 0.0, xyz);
+		//Vectors.rotate(rotateX, 0.0, 0.0, xyz);
 
 
 		
