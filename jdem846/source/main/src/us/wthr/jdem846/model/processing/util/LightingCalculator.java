@@ -78,6 +78,8 @@ public class LightingCalculator
 		setBlockShadowIntensity(blockShadowIntensity);
 		this.viewPerspective = viewPerspective;
 		
+		//Spheres.getPoint3D(-90.0, 0, modelRadius*10, eye);
+		
 		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, eye);
 		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, eye);
 	}
@@ -88,27 +90,10 @@ public class LightingCalculator
 		Spheres.getPoint3D(longitude, latitude, radius, P);
 		
 		if (viewPerspective != null) {
-			//Vectors.rotate(viewPerspective.getRotateX(), viewPerspective.getRotateY(), 0.0, P);
 			Vectors.rotate(viewPerspective.getRotateX(), viewPerspective.getRotateY(), 0.0, P, Vectors.YXZ);
-			//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
 		}
 		
-		//E[0] = eye[0];
-		//E[1] = eye[1];
-		//E[2] = eye[2];
-		
-		//E[0] = eye[0];
-		//E[1] = eye[1];
-		//E[2] = eye[2];
-		
-		//Spheres.getPoint3D(-90.0, 0, radius*10, E);
-		
-		//Vectors.rotate(0.0, longitude, 0.0, E);
-		//Vectors.rotate(latitude, 0.0, 0.0, E);
-		
-		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, E);
-		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, E);
-		
+
 		N[0] = normal[0];
 		N[1] = normal[1];
 		N[2] = normal[2];
@@ -153,13 +138,13 @@ public class LightingCalculator
 			Vectors.subtract(N, L, H);
 			Vectors.normalize(H, H);
 			
-			double specDot = Vectors.dotProduct(E, H);
+			//double specDot = Vectors.dotProduct(E, H);
+			double specDot = Vectors.dotProduct(H, E);
 			if (shininess != 1.0) {
 				specDot = MathExt.pow(specDot, shininess);
 			}
 			
 			lightingValues.specularLight = specDot;
-			
 			
 		}
 		
@@ -208,147 +193,6 @@ public class LightingCalculator
 
 	}
 	
-	
-	/*
-	 * 
-	 * 
-	public void calculateColor(double[] normal, double latitude, double longitude, double radius, double shininess, double blockDistance, double[] lightSource, int[] rgba)
-	{
-		Spheres.getPoint3D(longitude, latitude, radius, P);
-		
-		if (viewPerspective != null) {
-			Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, P);
-			Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
-		}
-		
-		//E[0] = eye[0];
-		//E[1] = eye[1];
-		//E[2] = eye[2];
-		
-		//E[0] = eye[0];
-		//E[1] = eye[1];
-		//E[2] = eye[2];
-		
-		Spheres.getPoint3D(-90.0, 0, radius*10, E);
-		
-		//Vectors.rotate(0.0, longitude, 0.0, E);
-		//Vectors.rotate(latitude, 0.0, 0.0, E);
-		
-		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, E);
-		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, E);
-		
-		N[0] = normal[0];
-		N[1] = normal[1];
-		N[2] = normal[2];
-		
-		color[0] = (double) rgba[0] / 255.0;
-		color[1] = (double) rgba[1] / 255.0;
-		color[2] = (double) rgba[2] / 255.0;
-
-		
-		lightingValues.emmisiveLight = lightingValues.emmisiveLevel;
-		lightingValues.ambientLight = lightingValues.ambientLevel;
-		
-		
-		/-*
-		Vectors.subtract(lightSource, P, L);
-		Vectors.normalize(L, L);
-		lightingValues.diffuseLight = MathExt.max(0, Vectors.dotProduct(N, L));
-		
-		
-		if (blockDistance > 0.0) {
-			
-			double r = attenuationRadius;
-			double d = blockDistance;
-			double kC = 1.0;
-			double kL = 2.0 / r;
-			double kQ = 1.0 / (r * r);
-			
-			if (useDistanceAttenuation) {
-				double attenuation = (blockDistance > 0.0) ? 1.0 : 0.0;
-				attenuation = 1.0 / (kC + kL * d + kQ * d * d);
-				attenuation *= blockShadowIntensity;
-				lightingValues.diffuseLight = lightingValues.diffuseLight - (2 * attenuation * 1.0);
-			}
-			
-			
-			if (lightingValues.diffuseLight < -1.0) {
-				lightingValues.diffuseLight = -1.0;
-			}
-
-		}
-
-
-		
-		Vectors.subtract(E, P, V);
-		Vectors.normalize(V, V);
-		Vectors.add(lightSource, V, H);
-		Vectors.normalize(H, H);
-		
-		double effectiveSpecular = (blockDistance > 0.0) ? 0.0 : lightingValues.specularLevel;
-		
-		lightingValues.specularLight = Vectors.dotProduct(N, H);
-		lightingValues.specularLight = MathExt.pow(MathExt.max(0, lightingValues.specularLight), shininess);
-		if (lightingValues.diffuseLight <= 0) 
-			lightingValues.specularLight = 0;
-		
-		*-/
-		
-		//Vectors.subtract(E, P, E);
-		//Vectors.normalize(E, E);
-		
-		
-		Vectors.inverse(lightSource, L);
-		///Vectors.normalize(P, P);
-		Vectors.subtract(L, P, L);
-		Vectors.normalize(L, L);
-		
-		double dot = Vectors.dotProduct(L, N);
-		double dp = Vectors.dotProduct(L, N) * 2.0;
-		for (int i = 0; i<3; i++) {
-            N[i] = N[i]*dp;
-        }
-		Vectors.subtract(N, L, H);
-		Vectors.normalize(H, H);
-		lightingValues.diffuseLight = MathExt.max(0, Vectors.dotProduct(N, L));
-		if (dot < 0) {
-			lightingValues.diffuseLight = 0;
-		}
-		lightingValues.specularLight = MathExt.pow(MathExt.max(0, Vectors.dotProduct(E, H)), shininess);
-		
-		if (lightingValues.diffuseLight <= 0) 
-			lightingValues.specularLight = 0;
-		double effectiveSpecular = lightingValues.specularLevel;
-		
-		onLightLevels(latitude, longitude);
-		
-		
-		lightingValues.emmisiveColor[0] = color[0] * lightingValues.emmisiveLight;
-		lightingValues.emmisiveColor[1] = color[1] * lightingValues.emmisiveLight;
-		lightingValues.emmisiveColor[2] = color[2] * lightingValues.emmisiveLight;
-		
-
-		
-		lightingValues.ambientColor[0] = color[0] * lightingValues.ambientLight;
-		lightingValues.ambientColor[1] = color[1] * lightingValues.ambientLight;
-		lightingValues.ambientColor[2] = color[2] * lightingValues.ambientLight;
-		
-		lightingValues.diffuseColor[0] = lightingValues.diffuseLevel * color[0] * lightingValues.diffuseLight;
-		lightingValues.diffuseColor[1] = lightingValues.diffuseLevel * color[1] * lightingValues.diffuseLight;
-		lightingValues.diffuseColor[2] = lightingValues.diffuseLevel * color[2] * lightingValues.diffuseLight;
-		
-		lightingValues.specularColor[0] = effectiveSpecular * specularColor[0] * lightingValues.specularLight;
-		lightingValues.specularColor[1] = effectiveSpecular * specularColor[1] * lightingValues.specularLight;
-		lightingValues.specularColor[2] = effectiveSpecular * specularColor[2] * lightingValues.specularLight;
-
-
-		// Add and clamp color channels
-		rgba[0] = (int) clamp(255.0 * (lightingValues.emmisiveColor[0] + lightingValues.ambientColor[0] + lightingValues.diffuseColor[0] + lightingValues.specularColor[0]));
-		rgba[1] = (int) clamp(255.0 * (lightingValues.emmisiveColor[1] + lightingValues.ambientColor[1] + lightingValues.diffuseColor[1] + lightingValues.specularColor[1]));
-		rgba[2] = (int) clamp(255.0 * (lightingValues.emmisiveColor[2] + lightingValues.ambientColor[2] + lightingValues.diffuseColor[2] + lightingValues.specularColor[2]));
-
-	}
-	 */
 	
 	protected double clamp(double c)
 	{

@@ -52,7 +52,7 @@ public class Canvas3d
 	private int[] rgbaBuffer = new int[4];
 	
 	private boolean useSmoothing = false;
-	private int smoothingGridWidth = 8;
+	private int smoothingGridWidth = 4;
 	
 	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int pixelStackDepth, int subpixelWidth)
 	{
@@ -267,7 +267,7 @@ public class Canvas3d
 	{
 		
 		int count = strip.getTriangleCount();
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < count; i+=2) {
 			Triangle tri = strip.getTriangle(i);
 			
 			if (tri == null) {
@@ -288,10 +288,15 @@ public class Canvas3d
 		
 		//Bounds bounds = tri.getBounds();
 		
-		double maxX = MathExt.ceil(MathExt.max(tri.p0.x(), tri.p1.x(), tri.p2.x()));
-		double minX = MathExt.floor(MathExt.min(tri.p0.x(), tri.p1.x(), tri.p2.x()));
-		double maxY = MathExt.ceil(MathExt.max(tri.p0.y(), tri.p1.y(), tri.p2.y()));
-		double minY = MathExt.floor(MathExt.min(tri.p0.y(), tri.p1.y(), tri.p2.y()));
+		double _maxX = MathExt.max(tri.p0.x(), tri.p1.x(), tri.p2.x());
+		double _minX = MathExt.min(tri.p0.x(), tri.p1.x(), tri.p2.x());
+		double _maxY = MathExt.max(tri.p0.y(), tri.p1.y(), tri.p2.y());
+		double _minY = MathExt.min(tri.p0.y(), tri.p1.y(), tri.p2.y());
+		
+		double maxX = MathExt.ceil(_maxX);
+		double minX = MathExt.floor(_minX);
+		double maxY = MathExt.ceil(_maxY);
+		double minY = MathExt.floor(_minY);
 
 		
 		if (maxX < 0 || minX >= getWidth() || maxY < 0 || minY >= getHeight()) {
@@ -326,8 +331,8 @@ public class Canvas3d
 		
 		
 		
-		for (double y = minY; y <= maxY; y+=f) {
-			for (double x = minX; x <= maxX; x+=f) {
+		for (double y = minY; y < maxY; y+=f) {
+			for (double x = minX; x < maxX; x+=f) {
 				
 				if (useSmoothing) {
 					
@@ -336,6 +341,7 @@ public class Canvas3d
 					int top = 0;
 					int bottom = 0;
 					int totalInTriangle = 0;
+					int totalTested = 0;
 					double z = 0;
 					
 					rgbaB[0] = 0;
@@ -343,25 +349,42 @@ public class Canvas3d
 					rgbaB[2] = 0;
 					rgbaB[3] = 0;
 					
+					
+					
 					for (int v = 0; v < pixelWidth; v++) {
 						
 						
 						int rowCount = 0;
 						
+						double _y = y + (step * (double)v);
+						if (_y < _minY || _y > _maxY) {
+							continue;
+						}
 						
 						for (int h = 0; h < pixelWidth; h++) {
 							
-							double _y = y + (step * (double)v);
 							double _x = x + (step * (double)h);
+							
+							if (_x < _minX || _x > _maxX) {
+								continue;
+							}
+							
+							totalTested++;
+							
 							if (tri.contains(_x, _y)) {
 								totalInTriangle++;
 								
 								tri.getInterpolatedColor(_x, _y, rgbaA);
 								z += tri.getInterpolatedZ(_x, _y);
+								
+								
 								rgbaB[0] += rgbaA[0];
 								rgbaB[1] += rgbaA[1];
 								rgbaB[2] += rgbaA[2];
 								rgbaB[3] += rgbaA[3];
+								
+								
+								
 								
 								rowCount++;
 								if (h < (double)pixelWidth / 2.0) {
@@ -401,37 +424,10 @@ public class Canvas3d
 						}
 						
 						
-						if ((left + right) != (top + bottom)) {
-							int i = 0;
-						}
 						
-						double horizCover = (double)(left + right) / MathExt.sqr(pixelWidth);
-						double vertCover = (double)(top + bottom) / MathExt.sqr(pixelWidth);
-						
-						
-						
-						
-						//double horizCover = (double)(left) / (double)(left+ right);// / MathExt.sqr(pixelWidth);
-						//double vertCover = (double)(top) / (double)(top + bottom);// / MathExt.sqr(pixelWidth);
-						
-						if (left < right && horizCover != 1.0) {
-							//horizCover = 1.0 - horizCover;
-						} 
-						
-						if (top < bottom && vertCover != 1.0) {
-							//vertCover = 1.0 - vertCover;
-						}
-						
-						
-						if (horizCover == 0 && vertCover != 0) {
-							int i = 0;
-						}
-						
-						if (horizCover != 0 && vertCover == 0) {
-							int i = 0;
-						}
-						
-						
+						double horizCover = (double)(left + right) / totalTested;
+						double vertCover = (double)(top + bottom) / totalTested ;
+
 						byte horizPattern = PixelCoverPattern.getPattern(horizBias, horizCover);
 						byte vertPattern = PixelCoverPattern.getPattern(vertBias, vertCover);
 						

@@ -30,20 +30,20 @@ public class PixelReconsituter
 	{
 		this.reset();
 		
-		for (int i = rgbaStack.length - 1; i >= 0; i--) {
+		double coverage = 0;
+		for (int i = rgbaStack.length - 1; i >= 0; --i) {
 			if (zStack[i] != PixelMatrix.NO_Z_VALUE) {
-				fill(rgbaStack[i], horizBiasStack[i], vertBiasStack[i]);
+				coverage = MathExt.max(coverage, fill(rgbaStack[i], horizBiasStack[i], vertBiasStack[i]));
 			}
-			
 		}
 		
 		
 		int[] rgbaA = {0, 0, 0, 0};
 		int[] rgbaB = {0, 0, 0, 0};
 		
-		for (int v = 1; v <= this.gridWidth; v++) {
-			for (int h = 1; h <= this.gridWidth; h++) {
-				ColorUtil.intToRGBA(this.grid[v - 1][h - 1], rgbaA);
+		for (int v = 0; v < this.gridWidth; v++) {
+			for (int h = 0; h < this.gridWidth; h++) {
+				ColorUtil.intToRGBA(this.grid[v][h], rgbaA);
 				rgbaB[0] += rgbaA[0];
 				rgbaB[1] += rgbaA[1];
 				rgbaB[2] += rgbaA[2];
@@ -56,17 +56,26 @@ public class PixelReconsituter
 		rgbaB[2] = (int)MathExt.round((double)rgbaB[2] / (double)(MathExt.sqr(gridWidth)));
 		rgbaB[3] = (int)MathExt.round((double)rgbaB[3] / (double)(MathExt.sqr(gridWidth)));
 		
+		/*
+		if (coverage > 0 && coverage < 1.0) {
+			rgbaB[0] = 255;
+			rgbaB[1] = 0;
+			rgbaB[2] = 0;
+			rgbaB[3] = 255;
+		}
+		*/
+		
 		return ColorUtil.rgbaToInt(rgbaB);
 	}
 	
 	
-	protected void fill(int rgba, byte horizBias, byte vertBias)
+	protected double fill(int rgba, byte horizBias, byte vertBias)
 	{
 		
 		double horizCoverage = PixelCoverPattern.getCoverage(horizBias);
 		double vertCoverage = PixelCoverPattern.getCoverage(vertBias);
 		
-
+		
 		
 		boolean top = (vertBias & PixelCoverPattern.LEFT_TOP_BIAS) == PixelCoverPattern.LEFT_TOP_BIAS;
 		boolean left = (horizBias & PixelCoverPattern.LEFT_TOP_BIAS) == PixelCoverPattern.LEFT_TOP_BIAS;
@@ -98,15 +107,13 @@ public class PixelReconsituter
 						grid[v - 1][h - 1] = ColorUtil.overlayColor(rgba, grid[v - 1][h - 1]);
 					}
 				}
-				
-				
 			}
 			
 		}
 		
 		
 		
-		
+		return MathExt.max(horizCoverage, vertCoverage);
 		
 		
 	}

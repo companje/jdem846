@@ -160,7 +160,7 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		
 		Spheres.getPoint3D(longitude, latitude, radius, pointVector);
 			
-		Vectors.rotate(rotateX, rotateY, 0, pointVector, Vectors.YXZ);
+		Vectors.rotate(rotateX, -rotateY, 0, pointVector, Vectors.YXZ);
 		
 		//Vectors.rotateY(rotateY, pointVector);
 		//Vectors.rotateX(rotateX, pointVector);
