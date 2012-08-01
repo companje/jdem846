@@ -12,7 +12,7 @@ public class RasterBuffer3d
 	private int subpixelWidth;
 	private int pixelStackDepth;
 	
-	private boolean useSmoothing = true;
+	private boolean useSmoothing = false;
 	private int smoothingGridWidth = 8;
 	private PixelReconsituter pixelBuilder;
 	
@@ -20,8 +20,11 @@ public class RasterBuffer3d
 	
 	private boolean isDisposed = false;
 	
-	private int[] rgbaBuffer = new int[4];
+	private int[] rgbaBufferA = new int[4];
+	private int[] rgbaBufferB = new int[4];
 	private int backgroundColor = 0x0;
+	
+	private AntiAliasPixelResampler pixelResampler;
 	
 	public RasterBuffer3d(int width, int height, int pixelStackDepth, int subpixelWidth)
 	{
@@ -36,10 +39,17 @@ public class RasterBuffer3d
 		this.pixelStackDepth = pixelStackDepth;
 		this.useSmoothing = useSmoothing;
 		this.smoothingGridWidth = smoothingGridWidth;
-
-		if (this.useSmoothing) {
-			this.pixelBuilder = new PixelReconsituter(smoothingGridWidth, this.backgroundColor);
-		}
+		
+		this.pixelResampler = new AntiAliasPixelResampler(subpixelWidth, new AntiAliasPixelResampler.ColorFetcher() {
+			public int get(double x, double y)
+			{
+				return _get(x, y);
+			}
+		});
+		
+		//if (this.useSmoothing) {
+		//	this.pixelBuilder = new PixelReconsituter(smoothingGridWidth, this.backgroundColor);
+		//}
 		
 		pixelMatrix = new PixelMatrix(width, height, pixelStackDepth, subpixelWidth);
 	}
@@ -110,16 +120,19 @@ public class RasterBuffer3d
 	
 	public int get(int x, int y)
 	{
-		this.get(x, y, rgbaBuffer);
-		return ColorUtil.rgbaToInt(rgbaBuffer);
+		this.get(x, y, rgbaBufferA);
+		return ColorUtil.rgbaToInt(rgbaBufferA);
 	}
 	
 	public void get(int x, int y, int[] rgba)
 	{
 		//ColorUtil.intToRGBA(backgroundColor, rgba);
-		rgba[0] = rgba[1] = rgba[2] = rgba[3] = 0x0;
+		//rgba[0] = rgba[1] = rgba[2] = rgba[3] = 0x0;
 		
 		
+		pixelResampler.get(x, y, rgba);
+		
+		/*
 		// Simple average color downsampling formula.
 		double f = 1.0 / this.subpixelWidth;
 
@@ -129,12 +142,12 @@ public class RasterBuffer3d
 				double _x = (double)x + xS;
 				double _y = (double)y + yS;
 				
-				get(_x, _y, this.rgbaBuffer);
+				get(_x, _y, this.rgbaBufferB);
 				
-				rgba[0] += this.rgbaBuffer[0];
-				rgba[1] += this.rgbaBuffer[1];
-				rgba[2] += this.rgbaBuffer[2];
-				rgba[3] += this.rgbaBuffer[3];
+				rgba[0] += this.rgbaBufferB[0];
+				rgba[1] += this.rgbaBufferB[1];
+				rgba[2] += this.rgbaBufferB[2];
+				rgba[3] += this.rgbaBufferB[3];
 
 			}
 		}
@@ -145,9 +158,11 @@ public class RasterBuffer3d
 		rgba[1] = (int) MathExt.floor((double) rgba[1] / MathExt.sqr(this.subpixelWidth));
 		rgba[2] = (int) MathExt.floor((double) rgba[2] / MathExt.sqr(this.subpixelWidth));
 		rgba[3] = (int) MathExt.floor((double) rgba[3] / MathExt.sqr(this.subpixelWidth));
-
+		
 		ColorUtil.clamp(rgba);
 		//rgba[3] = 0xFF; // TODO: Mess with alpha later
+		 
+		 */
 	}
 	
 	public void get(double x, double y, int[] rgba)
@@ -156,8 +171,12 @@ public class RasterBuffer3d
 	}
 	
 
-	
 	public int get(double x, double y)
+	{
+		return _get(x, y);
+	}
+	
+	public int _get(double x, double y)
 	{
 		
 		int[] rgbaStack = pixelMatrix.getRgbaStack(x, y);
@@ -174,9 +193,9 @@ public class RasterBuffer3d
 			int rgba = backgroundColor;
 			
 			for (int i = rgbaStack.length - 1; i >= 0; i--) {
-				if (zStack[i] != PixelMatrix.NO_Z_VALUE) {
+				//if (zStack[i] != PixelMatrix.NO_Z_VALUE) {
 					rgba = ColorUtil.overlayColor(rgbaStack[i], rgba);
-				}
+				//}
 			}
 			
 			return rgba;

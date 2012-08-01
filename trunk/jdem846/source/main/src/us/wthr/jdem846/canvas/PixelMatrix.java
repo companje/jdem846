@@ -16,8 +16,8 @@ public class PixelMatrix extends AbstractBuffer
 	private int stackDepth = DEFAULT_STACK_DEPTH;
 	private int[][] rgbaMatrix;
 	private float[][] zMatrix;
-	private byte[][] horizBiasMatrix;
-	private byte[][] vertBiasMatrix;
+	//private byte[][] horizBiasMatrix;
+	//private byte[][] vertBiasMatrix;
 	
 	private int[] rgbaBufferA = new int[4];
 	private int[] rgbaBufferB = new int[4];
@@ -34,8 +34,8 @@ public class PixelMatrix extends AbstractBuffer
 		this.stackDepth = stackDepth;
 		rgbaMatrix = new int[getBufferLength()][];
 		zMatrix = new float[getBufferLength()][];
-		horizBiasMatrix = new byte[getBufferLength()][];
-		vertBiasMatrix = new byte[getBufferLength()][];
+		//horizBiasMatrix = new byte[getBufferLength()][];
+		//vertBiasMatrix = new byte[getBufferLength()][];
 		
 		// Set default rendering hints
 		
@@ -81,6 +81,7 @@ public class PixelMatrix extends AbstractBuffer
 				zMatrix[i] = new float[1];
 				zMatrix[i][0] = NO_Z_VALUE;
 			}
+			/*
 			if (horizBiasMatrix != null) {
 				horizBiasMatrix[i] = new byte[1];
 				horizBiasMatrix[i][0] = PixelCoverPattern.NULL_COVER;
@@ -89,6 +90,7 @@ public class PixelMatrix extends AbstractBuffer
 				vertBiasMatrix[i] = new byte[1];
 				vertBiasMatrix[i][0] = PixelCoverPattern.NULL_COVER;
 			}
+			*/
 		}
 		
 		
@@ -109,14 +111,14 @@ public class PixelMatrix extends AbstractBuffer
 	
 	public byte[] getHorizontalBiasStack(double x, double y)
 	{
-		int matrixIndex = this.getIndex(x, y);
-		return this.horizBiasMatrix[matrixIndex];
+		//int matrixIndex = this.getIndex(x, y);
+		return null;//this.horizBiasMatrix[matrixIndex];
 	}
 	
 	public byte[] getVerticalBiasStack(double x, double y)
 	{
-		int matrixIndex = this.getIndex(x, y);
-		return this.vertBiasMatrix[matrixIndex];
+		//int matrixIndex = this.getIndex(x, y);
+		return null;//this.vertBiasMatrix[matrixIndex];
 	}
 	
 	public boolean isPixelFilled(double x, double y)
@@ -163,8 +165,8 @@ public class PixelMatrix extends AbstractBuffer
 				
 				rgbaMatrix[matrixIndex][0] = rgba;
 				zMatrix[matrixIndex][0] = (float) z;
-				horizBiasMatrix[matrixIndex][0] = horizBias;
-				vertBiasMatrix[matrixIndex][0] = vertBias;
+				//horizBiasMatrix[matrixIndex][0] = horizBias;
+				//vertBiasMatrix[matrixIndex][0] = vertBias;
 			}
 
 			
@@ -181,34 +183,34 @@ public class PixelMatrix extends AbstractBuffer
 				float[] newZStack = new float[zMatrix[matrixIndex].length + 1];
 				int[] newRgbaStack = new int[rgbaMatrix[matrixIndex].length + 1];
 				
-				byte[] newHorizBiasStack = new byte[horizBiasMatrix[matrixIndex].length + 1];
-				byte[] newVertBiasStack = new byte[horizBiasMatrix[matrixIndex].length + 1];
+				//byte[] newHorizBiasStack = new byte[horizBiasMatrix[matrixIndex].length + 1];
+				//byte[] newVertBiasStack = new byte[horizBiasMatrix[matrixIndex].length + 1];
 				
 				for (int i = 0; i < zMatrix[matrixIndex].length; i++) {
 					newZStack[i] = zMatrix[matrixIndex][i];
 					newRgbaStack[i] = rgbaMatrix[matrixIndex][i];
 					
-					newHorizBiasStack[i] = horizBiasMatrix[matrixIndex][i];
-					newVertBiasStack[i] = vertBiasMatrix[matrixIndex][i];
+					//newHorizBiasStack[i] = horizBiasMatrix[matrixIndex][i];
+					//newVertBiasStack[i] = vertBiasMatrix[matrixIndex][i];
 				}
 				
 				zMatrix[matrixIndex] = newZStack;
 				rgbaMatrix[matrixIndex] = newRgbaStack;
-				horizBiasMatrix[matrixIndex] = newHorizBiasStack;
-				vertBiasMatrix[matrixIndex] = newVertBiasStack;
+				//horizBiasMatrix[matrixIndex] = newHorizBiasStack;
+				//vertBiasMatrix[matrixIndex] = newVertBiasStack;
 			}
 			
 			for (int i = zMatrix[matrixIndex].length - 1; i > stackIndex; i--) {
 				rgbaMatrix[matrixIndex][i] = rgbaMatrix[matrixIndex][i - 1];
 				zMatrix[matrixIndex][i] = zMatrix[matrixIndex][i - 1];
-				horizBiasMatrix[matrixIndex][i] = horizBiasMatrix[matrixIndex][i - 1];
-				vertBiasMatrix[matrixIndex][i] = vertBiasMatrix[matrixIndex][i - 1];
+				//horizBiasMatrix[matrixIndex][i] = horizBiasMatrix[matrixIndex][i - 1];
+				//vertBiasMatrix[matrixIndex][i] = vertBiasMatrix[matrixIndex][i - 1];
 			}
 			
 			zMatrix[matrixIndex][stackIndex] = (float) z;
 			rgbaMatrix[matrixIndex][stackIndex] = rgba;
-			horizBiasMatrix[matrixIndex][stackIndex] = horizBias;
-			vertBiasMatrix[matrixIndex][stackIndex] = vertBias;
+			//horizBiasMatrix[matrixIndex][stackIndex] = horizBias;
+			//vertBiasMatrix[matrixIndex][stackIndex] = vertBias;
 
 		}
 		

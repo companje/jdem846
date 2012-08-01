@@ -265,6 +265,7 @@ public class ModelBuilder extends InterruptibleProcess
 		
 		if (globalOptionModel.getCreateJdemElevationModel()) {
 			try {
+				log.info("Compiling final elevation model");
 				elevationModel = modelContext.getModelCanvas().getJdemElevationModel();
 			} catch (ModelContextException ex) {
 				throw new RenderEngineException("Error fetching JDEM elevation model: " + ex.getMessage(), ex);
