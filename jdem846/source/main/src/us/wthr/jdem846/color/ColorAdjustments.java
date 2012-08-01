@@ -16,6 +16,9 @@
 
 package us.wthr.jdem846.color;
 
+import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.math.MathExt;
+
 /** Facility for several simple image and color adjustment algorithms.
  * 
  * see: http://en.wikipedia.org/wiki/Image_editing
@@ -83,6 +86,57 @@ public class ColorAdjustments
 			color[1] = 0;
 		if (color[2] < 0)
 			color[2] = 0;
+	}
+	
+	
+	
+	public static int interpolateColor(int c00, int c01, int c10, int c11, double xFrac, double yFrac)
+	{
+		int[] _c00 = {0, 0, 0, 0};
+		int[] _c01 = {0, 0, 0, 0};
+		int[] _c10 = {0, 0, 0, 0};
+		int[] _c11 = {0, 0, 0, 0};
+		int[] _o = {0, 0, 0, 0};
+		
+		ColorUtil.intToRGBA(c00, _c00);
+		ColorUtil.intToRGBA(c01, _c01);
+		ColorUtil.intToRGBA(c10, _c10);
+		ColorUtil.intToRGBA(c11, _c11);
+		
+		interpolateColor(_c00, _c01, _c10, _c11, _o, xFrac, yFrac);
+		
+		return ColorUtil.rgbaToInt(_o);
+	}
+	
+	public static void interpolateColor(int[] c00, int[] c01, int[] c10, int[] c11, int[] out, double xFrac, double yFrac)
+	{
+		interpolateColorChannel(c00, c01, c10, c11, 0, out, xFrac, yFrac);
+		interpolateColorChannel(c00, c01, c10, c11, 1, out, xFrac, yFrac);
+		interpolateColorChannel(c00, c01, c10, c11, 2, out, xFrac, yFrac);
+		interpolateColorChannel(c00, c01, c10, c11, 3, out, xFrac, yFrac);
+	}
+	
+	
+	public static void interpolateColorChannel(int[] c00, int[] c01, int[] c10, int[] c11, int channel, int[] out, double xFrac, double yFrac)
+	{
+		int c = (int) MathExt.round(MathExt.interpolate((double)c00[channel], (double)c01[channel], (double)c10[channel], (double)c11[channel], xFrac, yFrac));
+		c = ColorUtil.clamp(c);
+		out[channel] = c;
+	}
+	
+	public static int interpolateColor(int c0, int c1, double ratio)
+	{
+		
+		int[] _c0 = {0, 0, 0, 0};
+		int[] _c1 = {0, 0, 0, 0};
+		int[] _o = {0, 0, 0, 0};
+		
+		ColorUtil.intToRGBA(c0, _c0);
+		ColorUtil.intToRGBA(c1, _c1);
+		
+		interpolateColor(_c0, _c1, _o, ratio);
+		
+		return ColorUtil.rgbaToInt(_o);
 	}
 	
 	

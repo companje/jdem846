@@ -7,7 +7,7 @@ public class GeoRasterBuffer3d extends RasterBuffer3d
 	
 	public GeoRasterBuffer3d(int width, int height, int pixelStackDepth, int subpixelWidth)
 	{
-		this(width, height, pixelStackDepth, subpixelWidth, true, 8);
+		this(width, height, pixelStackDepth, subpixelWidth, false, 8);
 	}
 	
 	public GeoRasterBuffer3d(int width, int height, int pixelStackDepth, int subpixelWidth, boolean useSmoothing, int smoothingGridWidth)

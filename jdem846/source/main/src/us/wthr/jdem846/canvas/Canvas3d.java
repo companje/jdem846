@@ -330,10 +330,31 @@ public class Canvas3d
 		byte vertBias;
 		
 		
-		
-		for (double y = minY; y <= maxY; y+=f) {
-			for (double x = minX; x <= maxX; x+=f) {
+		//double yOffset = _minY - minY;
+		//double xOffset = _minX - minX;
+		for (double y = minY; y < _maxY; y+=f) {
+			for (double x = minX; x < _maxX; x+=f) {
 				
+				if (tri.contains(x, y)) {
+					
+					double z = tri.getInterpolatedZ(x, y);
+					tri.getInterpolatedColor(x, y, rgbaA);
+					
+					if (rgbaA[3] > 0) {
+						if (geoTriangle == null) {
+							set(x, y, z, rgbaA);
+						} else {
+							set(x, y, z, rgbaA,
+									geoTriangle.getInterpolatedLatitude(x, y),
+									geoTriangle.getInterpolatedLongitude(x, y),
+									geoTriangle.getInterpolatedElevation(x, y));
+						}
+					}
+					
+				}
+			
+				
+				/*
 				if (useSmoothing) {
 					
 					int left = 0;
@@ -475,6 +496,7 @@ public class Canvas3d
 					}
 				
 				}
+				*/
 			}
 		}
 
