@@ -267,7 +267,7 @@ public class Canvas3d
 	{
 		
 		int count = strip.getTriangleCount();
-		for (int i = 0; i < count; i+=2) {
+		for (int i = 0; i < count; i++) {
 			Triangle tri = strip.getTriangle(i);
 			
 			if (tri == null) {
@@ -324,15 +324,15 @@ public class Canvas3d
 		}
 		
 		int pixelWidth = this.smoothingGridWidth;
-		double step = 1.0 / (double) pixelWidth;
+		double step = f / (double) pixelWidth;
 
 		byte horizBias;
 		byte vertBias;
 		
 		
 		
-		for (double y = minY; y < maxY; y+=f) {
-			for (double x = minX; x < maxX; x+=f) {
+		for (double y = minY; y <= maxY; y+=f) {
+			for (double x = minX; x <= maxX; x+=f) {
 				
 				if (useSmoothing) {
 					
@@ -357,7 +357,7 @@ public class Canvas3d
 						int rowCount = 0;
 						
 						double _y = y + (step * (double)v);
-						if (_y < _minY || _y > _maxY) {
+						if (_y < _minY || _y >= _maxY) {
 							continue;
 						}
 						
@@ -365,7 +365,7 @@ public class Canvas3d
 							
 							double _x = x + (step * (double)h);
 							
-							if (_x < _minX || _x > _maxX) {
+							if (_x < _minX || _x >= _maxX) {
 								continue;
 							}
 							
