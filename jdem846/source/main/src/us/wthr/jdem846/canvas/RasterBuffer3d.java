@@ -108,10 +108,19 @@ public class RasterBuffer3d
 		return pixelMatrix.isPixelFilled(x, y);
 	}
 	
+	public int get(int x, int y)
+	{
+		this.get(x, y, rgbaBuffer);
+		return ColorUtil.rgbaToInt(rgbaBuffer);
+	}
+	
 	public void get(int x, int y, int[] rgba)
 	{
+		//ColorUtil.intToRGBA(backgroundColor, rgba);
 		rgba[0] = rgba[1] = rgba[2] = rgba[3] = 0x0;
 		
+		
+		// Simple average color downsampling formula.
 		double f = 1.0 / this.subpixelWidth;
 
 		for (double xS = 0; xS < 1; xS += f) {
@@ -136,6 +145,7 @@ public class RasterBuffer3d
 		rgba[1] = (int) MathExt.floor((double) rgba[1] / MathExt.sqr(this.subpixelWidth));
 		rgba[2] = (int) MathExt.floor((double) rgba[2] / MathExt.sqr(this.subpixelWidth));
 		rgba[3] = (int) MathExt.floor((double) rgba[3] / MathExt.sqr(this.subpixelWidth));
+
 		ColorUtil.clamp(rgba);
 		//rgba[3] = 0xFF; // TODO: Mess with alpha later
 	}
