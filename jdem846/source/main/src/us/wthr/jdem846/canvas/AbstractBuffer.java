@@ -29,11 +29,15 @@ public abstract class AbstractBuffer
 	public abstract void reset();
 	
 	
-	protected int getIndex(double x, double y)
+	protected int getIndex(double X, double Y)
 	{
+		
+		if (X < 0 || X > this.width || Y < 0 || Y > this.height)
+			return -1;
+		
 		double f = 1.0 / this.subpixelWidth;
-		x = MathExt.round(x / f) * f;
-		y = MathExt.round(y / f) * f;
+		double x = MathExt.round(X / f) * f;
+		double y = MathExt.round(Y / f) * f;
 		
 		//x = MathExt.floor(x / f) * f;
 		//y = MathExt.floor(y / f) * f;
@@ -41,8 +45,8 @@ public abstract class AbstractBuffer
 		int _x = (int) MathExt.floor(x);
 		int _y = (int) MathExt.floor(y);
 		
-		int _xSub = (int) MathExt.floor((x - (double)_x) / f);
-		int _ySub = (int) MathExt.floor((y - (double)_y) / f);
+		int _xSub = (int) ((x - (double)_x) / f);
+		int _ySub = (int) ((y - (double)_y) / f);
 		
 		int index = ((_y * this.width) * this.subpixelWidth) + _ySub + (_x * this.subpixelWidth + _xSub);
 		return index;

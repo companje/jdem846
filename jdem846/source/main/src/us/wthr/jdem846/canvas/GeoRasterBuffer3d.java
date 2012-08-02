@@ -5,14 +5,10 @@ public class GeoRasterBuffer3d extends RasterBuffer3d
 	
 	private GeoMatrix geoMatrix;
 	
+
 	public GeoRasterBuffer3d(int width, int height, int pixelStackDepth, int subpixelWidth)
 	{
-		this(width, height, pixelStackDepth, subpixelWidth, false, 8);
-	}
-	
-	public GeoRasterBuffer3d(int width, int height, int pixelStackDepth, int subpixelWidth, boolean useSmoothing, int smoothingGridWidth)
-	{
-		super(width, height, pixelStackDepth, subpixelWidth, useSmoothing, smoothingGridWidth);
+		super(width, height, pixelStackDepth, subpixelWidth);
 		
 		geoMatrix = new GeoMatrix(width, height);
 		
@@ -34,17 +30,13 @@ public class GeoRasterBuffer3d extends RasterBuffer3d
 		super.dispose();
 	}
 	
+
 	public void set(double x, double y, double z, int rgba, double latitude, double longitude, double elevation)
-	{
-		set(x, y, z, rgba, latitude, longitude, elevation, PixelCoverPattern.FULL_COVER, PixelCoverPattern.FULL_COVER);
-	}
-	
-	public void set(double x, double y, double z, int rgba, double latitude, double longitude, double elevation, byte horizBias, byte vertBias)
 	{
 		if (pixelMatrix.isVisibleAbsolute(x, y, z)) {
 			geoMatrix.set(x, y, latitude, longitude, elevation);
 		}
-		super.set(x, y, z, rgba, horizBias, vertBias);
+		super.set(x, y, z, rgba);
 	}
 	
 	

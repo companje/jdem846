@@ -126,6 +126,7 @@ public class CanvasProjection3d extends CanvasProjection
 		double xWid = modelDimensions.dataColumns * (modelDimensions.longitudeResolution / modelDimensions.outputLongitudeResolutionTrue);
 		
 		double fov = 18.0;
+		//double fov = 38.0;
 		//fov = 38.0;
 		double a = (fov / 2.0);
 		this.modelRadius = MathExt.sqrt(MathExt.sqr(xWid) + MathExt.sqr(yWid));
@@ -168,11 +169,12 @@ public class CanvasProjection3d extends CanvasProjection
 
 		double shiftPixelsX = shiftX * getWidth();
 		double shiftPixelsY = shiftY * getHeight();
-		double shiftPixelsZ = shiftZ + -(modelRadius);
+		double shiftPixelsZ = (shiftZ * modelRadius) - modelRadius;
 
 		
-		Vectors.rotate(0, rotateY, 0, pointVector);
-		Vectors.rotate(rotateX, 0, 0, pointVector);
+		//Vectors.rotate(0, rotateY, 0, pointVector);
+		//Vectors.rotate(rotateX, 0, 0, pointVector);
+		Vectors.rotate(rotateX, rotateY, 0, pointVector, Vectors.YXZ);
 		Vectors.translate(shiftPixelsX, shiftPixelsY, shiftPixelsZ, pointVector);
 		Vectors.scale(scaleX, scaleY, scaleZ, pointVector);
 		

@@ -409,10 +409,18 @@ public class ModelVisualizationPanel extends Panel
 	
 	protected void onMouseDraggedRightButton(MouseEvent e)
 	{
+		int x = e.getX();
+		int y = e.getY();
 		
-		lastX = e.getX();
-		lastY = e.getY();
-		pnlModelDisplay.repaint();
+		if (lastX != -1 && lastY != -1) {
+			int deltaY = y - lastY;
+			shiftZ += (deltaY * .01);
+		}
+		
+		lastX = x;
+		lastY = y;
+			
+		update(false, false);
 	}
 	
 	protected void onMouseDraggedMiddleButton(MouseEvent e)
@@ -447,8 +455,8 @@ public class ModelVisualizationPanel extends Panel
 			int deltaY = y - lastY;
 			
 
-			rotateX += ((deltaY * 1) / zoom);
-			rotateY += ((deltaX * 1) / zoom);
+			rotateX += (deltaY / zoom);
+			rotateY += (deltaX / zoom);
 		}
 		
 		lastX = x;

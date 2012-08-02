@@ -126,7 +126,8 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 
 		aspect = (double)getWidth() / (double)getHeight();
 		
-		fov = 18.0;
+		//fov = 18.0;
+		fov = 38.0;
 		//fov = 38.0;
 		double a = (fov / 2.0);
 		double R = ((meanRadius * 1000.0));

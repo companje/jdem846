@@ -1,5 +1,6 @@
 package us.wthr.jdem846.canvas;
 
+import scala.actors.threadpool.Arrays;
 import us.wthr.jdem846.DemConstants;
 
 public class GeoMatrix extends AbstractBuffer
@@ -20,7 +21,7 @@ public class GeoMatrix extends AbstractBuffer
 		latitudeBuffer = new float[getBufferLength()];
 		elevationBuffer = new float[getBufferLength()];
 		
-		reset();
+		//reset();
 	}
 	
 	
@@ -33,21 +34,16 @@ public class GeoMatrix extends AbstractBuffer
 	
 	public void reset()
 	{
-
+		if (longitudeBuffer != null)
+			Arrays.fill(longitudeBuffer, NO_VALUE);
 		
-		for (int i = 0; i < getBufferLength(); i++) {
-			if (longitudeBuffer != null) {
-				longitudeBuffer[i] = NO_VALUE;
-			}
-			
-			if (latitudeBuffer != null) {
-				latitudeBuffer[i] = NO_VALUE;
-			}
-			
-			if (elevationBuffer != null) {
-				elevationBuffer[i] = NO_VALUE;
-			}
-		}
+		if (latitudeBuffer != null)
+			Arrays.fill(latitudeBuffer, NO_VALUE);
+		
+		if (elevationBuffer != null)
+			Arrays.fill(elevationBuffer, NO_VALUE);
+		
+
 	}
 	
 	

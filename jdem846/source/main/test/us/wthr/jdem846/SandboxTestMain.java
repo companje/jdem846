@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 
+import us.wthr.jdem846.geom.util.TriangleInterpolator;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ByteConversions;
@@ -27,6 +28,23 @@ public class SandboxTestMain extends AbstractTestMain
 		
 		log = Logging.getLog(SandboxTestMain.class);
 		
+		TriangleInterpolator interpolator = new TriangleInterpolator();
+		interpolator.set(2, 0, 0,
+						0, 3, 1,
+						4, 3, 2);
+		
+		double v00 = interpolator.getInterpolatedValue(0, 0);
+		System.out.println("0, 0: " + v00);
+		
+		double v01 = interpolator.getInterpolatedValue(4, 0);
+		System.out.println("4, 0: " + v01);
+		
+		double v10 = interpolator.getInterpolatedValue(0, 4);
+		System.out.println("0, 4: " + v10);
+		
+		double v11 = interpolator.getInterpolatedValue(4, 4);
+		System.out.println("4, 4: " + v11);
+		/*
 		SandboxTestMain sandbox = new SandboxTestMain();
 		
 		File inputFile = new File("F:\\GEBCO_08\\gebco_08.asc");
@@ -39,6 +57,7 @@ public class SandboxTestMain extends AbstractTestMain
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 	}
 	
 	public SandboxTestMain() 
