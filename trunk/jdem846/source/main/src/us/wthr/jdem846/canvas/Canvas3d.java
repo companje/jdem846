@@ -51,8 +51,8 @@ public class Canvas3d
 	
 	private int[] rgbaBuffer = new int[4];
 	
-	private boolean useSmoothing = false;
-	private int smoothingGridWidth = 4;
+	//private boolean useSmoothing = false;
+	//private int smoothingGridWidth = 4;
 	
 	public Canvas3d(int width, int height, double clipNearZ, double clipFarZ, int pixelStackDepth, int subpixelWidth)
 	{
@@ -313,38 +313,33 @@ public class Canvas3d
 		if (maxY >= getHeight())
 			maxY = getHeight() - 1;
 		
-		int[] rgbaA = {0, 0, 0, 255};
-		int[] rgbaB = {0, 0, 0, 0};
-		
 		double f = 1.0 / this.subpixelWidth;
 
 		GeoTriangle geoTriangle = null;
 		if (tri instanceof GeoTriangle) {
 			geoTriangle = (GeoTriangle) tri;
 		}
-		
-		int pixelWidth = this.smoothingGridWidth;
-		double step = f / (double) pixelWidth;
 
-		byte horizBias;
-		byte vertBias;
+		minX = MathExt.floor(_minX / f) * f;
+		minY = MathExt.floor(_minY / f) * f;
+		
+		maxX = MathExt.ceil(_maxX / f) * f;
+		maxY = MathExt.ceil(_maxY / f) * f;
 		
 		
-		//double yOffset = _minY - minY;
-		//double xOffset = _minX - minX;
-		for (double y = minY; y < _maxY; y+=f) {
-			for (double x = minX; x < _maxX; x+=f) {
+		for (double y = minY; y < maxY; y+=f) {
+			for (double x = minX; x < maxX; x+=f) {
 				
 				if (tri.contains(x, y)) {
 					
 					double z = tri.getInterpolatedZ(x, y);
-					tri.getInterpolatedColor(x, y, rgbaA);
-					
-					if (rgbaA[3] > 0) {
+					tri.getInterpolatedColor(x, y, rgbaBuffer);
+
+					if (rgbaBuffer[3] > 0) {
 						if (geoTriangle == null) {
-							set(x, y, z, rgbaA);
+							set(x, y, z, rgbaBuffer);
 						} else {
-							set(x, y, z, rgbaA,
+							set(x, y, z, rgbaBuffer,
 									geoTriangle.getInterpolatedLatitude(x, y),
 									geoTriangle.getInterpolatedLongitude(x, y),
 									geoTriangle.getInterpolatedElevation(x, y));
@@ -354,149 +349,6 @@ public class Canvas3d
 				}
 			
 				
-				/*
-				if (useSmoothing) {
-					
-					int left = 0;
-					int right = 0;
-					int top = 0;
-					int bottom = 0;
-					int totalInTriangle = 0;
-					int totalTested = 0;
-					double z = 0;
-					
-					rgbaB[0] = 0;
-					rgbaB[1] = 0;
-					rgbaB[2] = 0;
-					rgbaB[3] = 0;
-					
-					
-					
-					for (int v = 0; v < pixelWidth; v++) {
-						
-						
-						int rowCount = 0;
-						
-						double _y = y + (step * (double)v);
-						if (_y < _minY || _y >= _maxY) {
-							continue;
-						}
-						
-						for (int h = 0; h < pixelWidth; h++) {
-							
-							double _x = x + (step * (double)h);
-							
-							if (_x < _minX || _x >= _maxX) {
-								continue;
-							}
-							
-							totalTested++;
-							
-							if (tri.contains(_x, _y)) {
-								totalInTriangle++;
-								
-								tri.getInterpolatedColor(_x, _y, rgbaA);
-								z += tri.getInterpolatedZ(_x, _y);
-								
-								
-								rgbaB[0] += rgbaA[0];
-								rgbaB[1] += rgbaA[1];
-								rgbaB[2] += rgbaA[2];
-								rgbaB[3] += rgbaA[3];
-								
-								
-								
-								
-								rowCount++;
-								if (h < (double)pixelWidth / 2.0) {
-									left++;
-								} else {
-									right++;
-								}
-								
-							}
-
-							
-						}
-						
-						
-						if (v < (double)pixelWidth / 2.0) {
-							top += rowCount;
-						} else {
-							bottom += rowCount;
-						}
-						
-					}
-					
-					//if (top == 0 && bottom == 0 && left == 0 && right == 0) {
-					if (totalInTriangle > 0) {
-						
-						
-						if (left > right) {
-							horizBias = PixelCoverPattern.LEFT_TOP_BIAS;
-						} else {
-							horizBias = PixelCoverPattern.RIGHT_BOTTOM_BIAS;
-						}
-						
-						if (top > bottom) {
-							vertBias = PixelCoverPattern.LEFT_TOP_BIAS;
-						} else {
-							vertBias = PixelCoverPattern.RIGHT_BOTTOM_BIAS;
-						}
-						
-						
-						
-						double horizCover = (double)(left + right) / totalTested;
-						double vertCover = (double)(top + bottom) / totalTested ;
-
-						byte horizPattern = PixelCoverPattern.getPattern(horizBias, horizCover);
-						byte vertPattern = PixelCoverPattern.getPattern(vertBias, vertCover);
-						
-						
-						//double z = tri.getInterpolatedZ(x, y);
-						z = z / (double)(top + bottom);
-						rgbaA[0] = (int) Math.round((double) rgbaB[0] / (double)(top + bottom));
-						rgbaA[1] = (int) Math.round((double) rgbaB[1] / (double)(top + bottom));
-						rgbaA[2] = (int) Math.round((double) rgbaB[2] / (double)(top + bottom));
-						rgbaA[3] = (int) Math.round((double) rgbaB[3] / (double)(top + bottom));
-						
-						
-						if (rgbaA[3] > 0) {
-							if (geoTriangle == null) {
-								set(x, y, z, rgbaA, horizPattern, vertPattern);
-							} else {
-								set(x, y, z, rgbaA,
-										geoTriangle.getInterpolatedLatitude(x, y),
-										geoTriangle.getInterpolatedLongitude(x, y),
-										geoTriangle.getInterpolatedElevation(x, y),
-										horizPattern, vertPattern);
-							}
-						}
-						
-					}
-					
-				} else {
-				
-					if (tri.contains(x, y)) {
-						
-						double z = tri.getInterpolatedZ(x, y);
-						tri.getInterpolatedColor(x, y, rgbaA);
-						
-						if (rgbaA[3] > 0) {
-							if (geoTriangle == null) {
-								set(x, y, z, rgbaA);
-							} else {
-								set(x, y, z, rgbaA,
-										geoTriangle.getInterpolatedLatitude(x, y),
-										geoTriangle.getInterpolatedLongitude(x, y),
-										geoTriangle.getInterpolatedElevation(x, y));
-							}
-						}
-						
-					}
-				
-				}
-				*/
 			}
 		}
 
@@ -662,29 +514,8 @@ public class Canvas3d
 	}
 	
 	
-	// Width Anti-Aliasing/Subpixel
-	public void set(double x, double y, double z, int[] rgba, double latitude, double longitude, double elevation, byte horizPattern, byte vertPattern)
-	{
-		set(x, y, z, ColorUtil.rgbaToInt(rgba), latitude, longitude, elevation, horizPattern, vertPattern);
-	}
-	
-	public void set(double x, double y, double z, int[] rgba, byte horizPattern, byte vertPattern)
-	{
-		set(x, y, z, ColorUtil.rgbaToInt(rgba), horizPattern, vertPattern);
-	}
-	
-	public void set(double x, double y, double z, int rgba, byte horizPattern, byte vertPattern)
-	{
-		this.rasterBuffer.set(x, y, z, rgba, horizPattern, vertPattern);
-	}
-	
-	public void set(double x, double y, double z, int rgba, double latitude, double longitude, double elevation, byte horizPattern, byte vertPattern)
-	{
-		this.rasterBuffer.set(x, y, z, rgba, latitude, longitude, elevation, horizPattern, vertPattern);
-	}
 	
 	
-	// normal
 	public void set(double x, double y, double z, int[] rgba, double latitude, double longitude, double elevation)
 	{
 		set(x, y, z, ColorUtil.rgbaToInt(rgba), latitude, longitude, elevation);
@@ -708,14 +539,14 @@ public class Canvas3d
 	
 	private boolean isValidZCoordinate(double z)
 	{
-		return true;
-		/*
+		//return true;
+		
 		if (z < clipFarZ || z > clipNearZ) {
 			return false;
 		} else {
 			return true;
 		}
-		*/
+		
 	}
 	
 	public int get(int x, int y)

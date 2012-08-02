@@ -389,7 +389,7 @@ public class GlobalOptionModel implements OptionModel
 			enabled=true)
 	@Order(19)
 	@ValueBounds(minimum=0, 
-				maximum=1.0,
+				maximum=10.0,
 				stepSize=0.05)
 	public double getModelQuality()
 	{

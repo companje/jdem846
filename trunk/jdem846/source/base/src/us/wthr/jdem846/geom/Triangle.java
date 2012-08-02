@@ -5,6 +5,7 @@ import us.wthr.jdem846.geom.util.BarycentricTrianglePointTest;
 import us.wthr.jdem846.geom.util.PointTest;
 import us.wthr.jdem846.geom.util.RgbaTriangleInterpolator;
 import us.wthr.jdem846.geom.util.SameSideTrianglePointTest;
+import us.wthr.jdem846.geom.util.SignTrianglePointTest;
 import us.wthr.jdem846.geom.util.TriangleInterpolator;
 import us.wthr.jdem846.math.MathExt;
 
@@ -18,8 +19,9 @@ public class Triangle extends RenderableShape
 	private TriangleInterpolator zInterpolator = new TriangleInterpolator();
 	private RgbaTriangleInterpolator rgbaInterpolator = new RgbaTriangleInterpolator();
 
-	private static PointTest pointTest = new SameSideTrianglePointTest();
+	//private static PointTest pointTest = new SameSideTrianglePointTest();
 	//private static PointTest pointTest = new BarycentricTrianglePointTest();
+	private static PointTest pointTest = new SignTrianglePointTest();
 	
 	public Triangle()
 	{

@@ -6,6 +6,7 @@ import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 
 public class AntiAliasPixelResampler
 {
@@ -58,9 +59,6 @@ public class AntiAliasPixelResampler
 		
 		double f = 1.0 / (double)this.samplingWidth;
 
-		//for (double xS = 0; xS < 1; xS += f) {
-		//	for (double yS = 0; yS < 1; yS += f) {
-		
 		for (int gY = 0; gY < samplingWidth; gY++) {
 			for (int gX = 0; gX < samplingWidth; gX++) {
 				
@@ -74,27 +72,59 @@ public class AntiAliasPixelResampler
 			}
 		}
 		
+
+		int downSampledGrid = downSample(grid);
+
+		ColorUtil.intToRGBA(downSampledGrid, rgba);
+
 		
-		//ColorAdjustments.interpolateColor(c00, c01, c10, c11, xFrac, yFrac)
 		/*
-		grid2x2[0][0] = ColorAdjustments.interpolateColor(grid[0][0], grid[0][1], grid[1][0], grid[1][1], 0.5, 0.5);
-		grid2x2[0][1] = ColorAdjustments.interpolateColor(grid[0][2], grid[0][3], grid[1][2], grid[1][3], 0.5, 0.5);
-		grid2x2[1][0] = ColorAdjustments.interpolateColor(grid[2][0], grid[2][1], grid[3][0], grid[3][1], 0.5, 0.5);
-		grid2x2[1][1] = ColorAdjustments.interpolateColor(grid[2][2], grid[2][3], grid[3][2], grid[3][3], 0.5, 0.5);
-		
-		int c = ColorAdjustments.interpolateColor(grid2x2[0][0], grid2x2[0][1], grid2x2[1][0], grid2x2[1][1], 0.5, 0.5);
-		*/
-		
-		
 		int[][] downSampledGrid = downSample(grid);
 		if (downSampledGrid != null) {
 			ColorUtil.intToRGBA(downSampledGrid[0][0], rgba);
 		} else {
 			ColorUtil.intToRGBA(0x0, rgba);
 		}
+		*/
 	}
 	
-	protected int[][] downSample(int[][] grid)
+	
+	protected int downSample(int[][] grid)
+	{
+		int l = grid.length;
+		if (l == 1) {
+			return grid[0][0];
+		}
+		
+		int halfL = (int) ((double)grid.length / 2.0);
+		
+		
+		int x00 = (int)MathExt.round((random.nextDouble() * (double)(halfL - 1)));
+		int y00 = (int)MathExt.round((random.nextDouble() * (double)(halfL - 1)));
+		
+		int x01 = (int)MathExt.round((random.nextDouble() * (double)(halfL - 1))) + halfL;
+		int y01 = (int)MathExt.round((random.nextDouble() * (double)(halfL - 1)));
+		
+		int x10 = (int)MathExt.round((random.nextDouble() * (double)(halfL - 1)));
+		int y10 = (int)MathExt.round((random.nextDouble() * (double)(halfL - 1))) + halfL;
+		
+		int x11 = (int)MathExt.round((random.nextDouble() * (double)(halfL - 1))) + halfL;
+		int y11 = (int)MathExt.round((random.nextDouble() * (double)(halfL - 1))) + halfL;
+		
+		double xJitter = random.nextDouble();
+		double yJitter = random.nextDouble();
+		
+		int c = ColorAdjustments.interpolateColor(grid[x00][y00]
+												, grid[x01][y01]
+												, grid[x10][y10]
+												, grid[x11][y11]
+												, xJitter
+												, yJitter);
+		
+		return c;
+	}
+	
+	protected int[][] ___downSample(int[][] grid)
 	{
 		
 		int[][] downGrid;
@@ -139,7 +169,7 @@ public class AntiAliasPixelResampler
 		}
 		
 		if (downWidth > 1) {
-			return downSample(downGrid);
+			return ___downSample(downGrid);
 		} else {
 			return downGrid;
 		}

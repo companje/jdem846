@@ -145,7 +145,9 @@ public class LightingCalculator
 			}
 			
 			lightingValues.specularLight = specDot;
-			
+			if (lightingValues.specularLight < 0) {
+				lightingValues.specularLight = 0;
+			}
 		}
 		
 		
