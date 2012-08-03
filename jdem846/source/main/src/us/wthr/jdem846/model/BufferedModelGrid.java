@@ -21,6 +21,8 @@ public class BufferedModelGrid extends ModelPointGrid
 	{
 		super(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum);
 		
+		log.info("Allocating elevation and RGBA grid buffers of length " + gridLength);
+		
 		elevationGrid = new float[gridLength];
 		rgbaGrid = new int[gridLength];
 		
