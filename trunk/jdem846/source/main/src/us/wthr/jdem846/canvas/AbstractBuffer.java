@@ -32,7 +32,7 @@ public abstract class AbstractBuffer
 	protected int getIndex(double X, double Y)
 	{
 		
-		if (X < 0 || X > this.width || Y < 0 || Y > this.height)
+		if (X < 0 || X >= this.width || Y < 0 || Y >= this.height)
 			return -1;
 		
 		double f = 1.0 / this.subpixelWidth;

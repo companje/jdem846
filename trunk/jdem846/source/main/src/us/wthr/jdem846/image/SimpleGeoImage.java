@@ -22,6 +22,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.canvas.CanvasProjection;
+import us.wthr.jdem846.color.ColorAdjustments;
 
 public class SimpleGeoImage 
 {
@@ -143,23 +144,6 @@ public class SimpleGeoImage
 	public boolean contains(double latitude, double longitude)
 	{
 		return coordinateSpaceAdjuster.contains(latitude, longitude);
-		/*
-		// If point falls within stated bounds
-		if (latitude <= north 
-				&& latitude >= south
-				&& longitude >= west
-				&& longitude <= east)
-			return true;
-		
-		if (longitude < west && east > 180) {
-			return contains(latitude, longitude+360);
-		} else if (longitude > east && west < -180) {
-			return contains(latitude, longitude-360);
-		}
-		
-		
-		return false;
-		*/
 	}
 	
 	protected Dimension fetchImageDimensions() throws IOException
@@ -208,15 +192,6 @@ public class SimpleGeoImage
 			return false;
 		}
 		
-		/*
-		try {
-			adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude);
-			adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude);
-		} catch (CoordinateSpaceException ex) {
-			return false;
-		}
-		*/
-		
 		return _getColor(adjLatitude, adjLongitude, effectiveLatitudeResolution, effectiveLongitudeResolution, rgba);
 		
 	}
@@ -231,6 +206,13 @@ public class SimpleGeoImage
 			throw new DataSourceException("Image data not loaded");
 		}
 		
+		if (effectiveLatitudeResolution == DemConstants.ELEV_UNDETERMINED) {
+			effectiveLatitudeResolution = latitudeResolution;
+		}
+		
+		if (effectiveLongitudeResolution == DemConstants.ELEV_UNDETERMINED) {
+			effectiveLongitudeResolution = longitudeResolution;
+		}
 		
 		if (latitude >= south && latitude <= north && longitude >= west && longitude <= east) {
 			
@@ -245,23 +227,54 @@ public class SimpleGeoImage
 			
 			double samples = 0;
 			
-			for (double x = west; x <= east; x+=longitudeResolution) {
-				for (double y = north; y >= south; y-=latitudeResolution) {
-					if (getColorBilinear(y, x, rgbaBuffer0)) {
-						rgba[0] += rgbaBuffer0[0];
-						rgba[1] += rgbaBuffer0[1];
-						rgba[2] += rgbaBuffer0[2];
-						rgba[3] += rgbaBuffer0[3];
-						samples++;
+			double rows = (north - south) / latitudeResolution;
+			double columns = (east - west) / longitudeResolution;
+			
+			if (rows < 1 && columns < 1) {
+				
+				
+				getColorBilinear(latitude, longitude, rgba);
+				
+				/*
+				try {
+					canvasProjection.getPoint(latitude, longitude, 0.0, mapPoint);
+				} catch (MapProjectionException ex) {
+					throw new DataSourceException("Error getting x/y point from coordinates: " + ex.getMessage(), ex);
+				}
+				
+				double x00 = MathExt.floor(mapPoint.column);
+				double y00 = MathExt.floor(mapPoint.row);
+				
+
+				double x11 = MathExt.ceil(mapPoint.column);
+				double y11 = MathExt.ceil(mapPoint.row);
+				
+				if (x11 == x00)
+					x11 += 1;
+				if (y11 == y00)
+					y11 += 1;
+				*/
+				
+			} else {
+			
+				for (double x = west; x <= east; x+=longitudeResolution) {
+					for (double y = north; y >= south; y-=latitudeResolution) {
+						if (getColorBilinear(y, x, rgbaBuffer0)) {
+							rgba[0] += rgbaBuffer0[0];
+							rgba[1] += rgbaBuffer0[1];
+							rgba[2] += rgbaBuffer0[2];
+							rgba[3] += rgbaBuffer0[3];
+							samples++;
+						}
 					}
 				}
-			}
-			
-			if (samples > 0) {
-				rgba[0] = (int) MathExt.round((double)rgba[0] / samples);
-				rgba[1] = (int) MathExt.round((double)rgba[1] / samples);
-				rgba[2] = (int) MathExt.round((double)rgba[2] / samples);
-				rgba[3] = (int) MathExt.round((double)rgba[3] / samples);
+				
+				if (samples > 0) {
+					rgba[0] = (int) MathExt.round((double)rgba[0] / samples);
+					rgba[1] = (int) MathExt.round((double)rgba[1] / samples);
+					rgba[2] = (int) MathExt.round((double)rgba[2] / samples);
+					rgba[3] = (int) MathExt.round((double)rgba[3] / samples);
+				}
 			}
 			
 			return true;
@@ -269,6 +282,8 @@ public class SimpleGeoImage
 			return false;
 		}
 	}
+	
+
 	
 	public boolean getColorBilinear(double latitude, double longitude, int[] rgba) throws DataSourceException
 	{
@@ -298,11 +313,14 @@ public class SimpleGeoImage
 		getPixel((int) x00, (int) y00 + 1, rgbaBuffer10);
 		getPixel((int) x00 + 1, (int) y00 + 1, rgbaBuffer11);
 		
-		rgba[0] = MathExt.interpolate(rgbaBuffer00[0], rgbaBuffer01[0], rgbaBuffer10[0], rgbaBuffer11[0], xFrac, yFrac);
-		rgba[1] = MathExt.interpolate(rgbaBuffer00[1], rgbaBuffer01[1], rgbaBuffer10[1], rgbaBuffer11[1], xFrac, yFrac);
-		rgba[2] = MathExt.interpolate(rgbaBuffer00[2], rgbaBuffer01[2], rgbaBuffer10[2], rgbaBuffer11[2], xFrac, yFrac);
-		rgba[3] = MathExt.interpolate(rgbaBuffer00[3], rgbaBuffer01[3], rgbaBuffer10[3], rgbaBuffer11[3], xFrac, yFrac);
 		
+		ColorAdjustments.interpolateColor(rgbaBuffer00
+											, rgbaBuffer01
+											, rgbaBuffer10
+											, rgbaBuffer11
+											, rgba
+											, xFrac, yFrac);
+
 		return true;
 	}
 	
