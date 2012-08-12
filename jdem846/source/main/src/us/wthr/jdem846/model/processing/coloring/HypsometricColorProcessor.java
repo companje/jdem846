@@ -14,6 +14,7 @@ import us.wthr.jdem846.model.ModelPointHandler;
 import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
+import us.wthr.jdem846.model.processing.GridPointFilter;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsOptionModel;
@@ -24,9 +25,10 @@ import us.wthr.jdem846.scripting.ScriptProxy;
 					name="Hypsometric Color Process",
 					type=GridProcessingTypesEnum.COLORING,
 					optionModel=HypsometricColorOptionModel.class,
-					enabled=true
+					enabled=true,
+					isFilter=true
 					)
-public class HypsometricColorProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+public class HypsometricColorProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler, GridPointFilter
 {
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(HypsometricColorProcessor.class);
@@ -47,6 +49,8 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 	private int[] rgbaBufferB = new int[4];
 	
 	private boolean useScripting = true;
+	
+	protected boolean nearestNeighbor = false;
 	
 	public HypsometricColorProcessor()
 	{
@@ -83,6 +87,7 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 		modelColoring = ColoringRegistry.getInstance(optionModel.getColorTint()).getImpl();
 		modelColoring.setElevationScaler(modelContext.getRasterDataContext().getElevationScaler());
 		
+		nearestNeighbor = getGlobalOptionModel().getStandardResolutionElevation();
 		
 	}
 
@@ -145,7 +150,7 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 		
 		boolean imageOverlayed = false;
 		if (modelContext.getImageDataContext() != null
-				&& modelContext.getImageDataContext().getColor(latitude, longitude, modelDimensions.outputLatitudeResolution, modelDimensions.outputLongitudeResolution, rgba)) {
+				&& modelContext.getImageDataContext().getColor(latitude, longitude, modelDimensions.outputLatitudeResolution, modelDimensions.outputLongitudeResolution, rgba, nearestNeighbor)) {
 			imageOverlayed = true;
 		} 
 		

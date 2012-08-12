@@ -327,6 +327,12 @@ public class Canvas3d
 		maxY = MathExt.ceil(_maxY / f) * f;
 		
 		
+		minX = MathExt.max(0, minX);
+		maxX = MathExt.min(getWidth(), maxX);
+		
+		minY = MathExt.max(0, minY);
+		maxY = MathExt.min(getHeight(), maxY);
+		
 		for (double y = minY; y < maxY; y+=f) {
 			for (double x = minX; x < maxX; x+=f) {
 				

@@ -94,10 +94,20 @@ public class ImageDataContext implements DataContext
 	
 	public boolean getColor(double latitude, double longitude, int[] rgba) throws DataSourceException
 	{
-		return getColor(latitude, longitude, DemConstants.ELEV_UNDETERMINED, DemConstants.ELEV_UNDETERMINED, rgba);
+		return getColor(latitude, longitude, rgba, false);
+	}
+	
+	public boolean getColor(double latitude, double longitude, int[] rgba, boolean nearestNeighbor) throws DataSourceException
+	{
+		return getColor(latitude, longitude, DemConstants.ELEV_UNDETERMINED, DemConstants.ELEV_UNDETERMINED, rgba, nearestNeighbor);
 	}
 	
 	public boolean getColor(double latitude, double longitude, double latitudeResolution, double longitudeResolution, int[] rgba) throws DataSourceException
+	{
+		return getColor(latitude, longitude, latitudeResolution, longitudeResolution, rgba, false);
+	}
+	
+	public boolean getColor(double latitude, double longitude, double latitudeResolution, double longitudeResolution, int[] rgba, boolean nearestNeighbor) throws DataSourceException
 	{
 		boolean pixelLoaded = false;
 		int i = 0;
@@ -105,7 +115,7 @@ public class ImageDataContext implements DataContext
 		for (SimpleGeoImage image : imageList) {
 			if (image.contains(latitude, longitude)) {
 				try {
-					image.getColor(latitude, longitude, latitudeResolution, longitudeResolution, rgbaBufferA);
+					image.getColor(latitude, longitude, latitudeResolution, longitudeResolution, rgbaBufferA, nearestNeighbor);
 				} catch (DataSourceException ex) {
 					throw new DataSourceException("Error retrieving color values: " + ex.getMessage(), ex);
 				}

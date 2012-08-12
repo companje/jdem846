@@ -20,7 +20,7 @@ public abstract class ModelPointGrid
 	protected int width;
 	protected int height;
 	
-	protected int gridLength;
+	protected long gridLength;
 
 	private ElevationHistogramModel elevationHistogramModel;
 	
@@ -39,7 +39,7 @@ public abstract class ModelPointGrid
 		this.height = (int) MathExt.ceil(_height);
 		this.width = (int) MathExt.ceil(_width);
 		
-		gridLength = height * width;
+		gridLength = (long)height * (long)width;
 		
 		elevationHistogramModel = new ElevationHistogramModel(500, minimum, maximum);
 		

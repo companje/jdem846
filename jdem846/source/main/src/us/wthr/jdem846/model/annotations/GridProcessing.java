@@ -22,4 +22,5 @@ public @interface GridProcessing
 	
 	boolean enabled() default true;
 	
+	boolean isFilter() default false;
 }

@@ -23,8 +23,8 @@ public class BufferedModelGrid extends ModelPointGrid
 		
 		log.info("Allocating elevation and RGBA grid buffers of length " + gridLength);
 		
-		elevationGrid = new float[gridLength];
-		rgbaGrid = new int[gridLength];
+		elevationGrid = new float[(int)gridLength];
+		rgbaGrid = new int[(int)gridLength];
 		
 		changeHandler = new ModelPointChangedHandler();
 		
@@ -49,8 +49,8 @@ public class BufferedModelGrid extends ModelPointGrid
 	{
 		
 		for (int i = 0; i < gridLength; i++) {
-			elevationGrid[i] = (float) DemConstants.ELEV_NO_DATA;
-			rgbaGrid[i] = 0xFFFFFFFF;
+			elevationGrid[i] = (float) DemConstants.ELEV_UNDETERMINED;
+			rgbaGrid[i] = 0x0;
 		}
 		
 	}

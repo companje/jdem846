@@ -52,7 +52,7 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 	@Override
 	public void process() throws RenderEngineException
 	{
-		super.process();
+		//super.process();
 	}
 	
 	@Override
