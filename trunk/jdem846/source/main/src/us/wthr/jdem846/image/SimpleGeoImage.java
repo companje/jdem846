@@ -172,13 +172,24 @@ public class SimpleGeoImage
 	
 	public boolean getColor(double latitude, double longitude, int[] rgba) throws DataSourceException
 	{
+		return getColor(latitude, longitude, rgba, false);
+	}
+	
+	public boolean getColor(double latitude, double longitude, int[] rgba, boolean nearestNeighbor) throws DataSourceException
+	{
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
 		}
-		return getColor(latitude, longitude, latitudeResolution, longitudeResolution, rgba);
+		return getColor(latitude, longitude, latitudeResolution, longitudeResolution, rgba, nearestNeighbor);
 	}
 	
+	
 	public boolean getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba) throws DataSourceException
+	{
+		return getColor(latitude, longitude, effectiveLatitudeResolution, effectiveLongitudeResolution, rgba, false);
+	}
+	
+	public boolean getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba, boolean nearestNeighbor) throws DataSourceException
 	{
 		
 		double adjLatitude = 0;//coordinateSpaceAdjuster.adjustLatitude(latitude);
@@ -192,15 +203,18 @@ public class SimpleGeoImage
 			return false;
 		}
 		
-		return _getColor(adjLatitude, adjLongitude, effectiveLatitudeResolution, effectiveLongitudeResolution, rgba);
+		return _getColor(adjLatitude, adjLongitude, effectiveLatitudeResolution, effectiveLongitudeResolution, rgba, nearestNeighbor);
 		
 	}
 	
 	
 	
-	
-	
 	protected boolean _getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba) throws DataSourceException
+	{
+		return _getColor(latitude, longitude, effectiveLatitudeResolution, effectiveLongitudeResolution, rgba, false);
+	}
+	
+	protected boolean _getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba, boolean nearestNeighbor) throws DataSourceException
 	{
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
@@ -216,67 +230,52 @@ public class SimpleGeoImage
 		
 		if (latitude >= south && latitude <= north && longitude >= west && longitude <= east) {
 			
-			double north = latitude + (effectiveLatitudeResolution / 2.0);
-			double south = latitude - (effectiveLatitudeResolution / 2.0);
-			
-			double west = longitude - (effectiveLongitudeResolution / 2.0);
-			double east = longitude + (effectiveLongitudeResolution / 2.0);
 			
 			
-			resetRgbaBuffer(rgba);
-			
-			double samples = 0;
-			
-			double rows = (north - south) / latitudeResolution;
-			double columns = (east - west) / longitudeResolution;
-			
-			if (rows < 1 && columns < 1) {
-				
-				
-				getColorBilinear(latitude, longitude, rgba);
-				
-				/*
-				try {
-					canvasProjection.getPoint(latitude, longitude, 0.0, mapPoint);
-				} catch (MapProjectionException ex) {
-					throw new DataSourceException("Error getting x/y point from coordinates: " + ex.getMessage(), ex);
-				}
-				
-				double x00 = MathExt.floor(mapPoint.column);
-				double y00 = MathExt.floor(mapPoint.row);
-				
-
-				double x11 = MathExt.ceil(mapPoint.column);
-				double y11 = MathExt.ceil(mapPoint.row);
-				
-				if (x11 == x00)
-					x11 += 1;
-				if (y11 == y00)
-					y11 += 1;
-				*/
-				
+			if (nearestNeighbor) {
+				getColorNearestNeighbor(latitude, longitude, rgba);
 			} else {
 			
-				for (double x = west; x <= east; x+=longitudeResolution) {
-					for (double y = north; y >= south; y-=latitudeResolution) {
-						if (getColorBilinear(y, x, rgbaBuffer0)) {
-							rgba[0] += rgbaBuffer0[0];
-							rgba[1] += rgbaBuffer0[1];
-							rgba[2] += rgbaBuffer0[2];
-							rgba[3] += rgbaBuffer0[3];
-							samples++;
+				
+				double north = latitude + (effectiveLatitudeResolution / 2.0);
+				double south = latitude - (effectiveLatitudeResolution / 2.0);
+				
+				double west = longitude - (effectiveLongitudeResolution / 2.0);
+				double east = longitude + (effectiveLongitudeResolution / 2.0);
+				
+				
+				resetRgbaBuffer(rgba);
+				
+				double samples = 0;
+				
+				double rows = (north - south) / latitudeResolution;
+				double columns = (east - west) / longitudeResolution;
+				
+				
+				if (rows < 1 && columns < 1) {
+					getColorBilinear(latitude, longitude, rgba);
+				} else {
+				
+					for (double x = west; x <= east; x+=longitudeResolution) {
+						for (double y = north; y >= south; y-=latitudeResolution) {
+							if (getColorBilinear(y, x, rgbaBuffer0)) {
+								rgba[0] += rgbaBuffer0[0];
+								rgba[1] += rgbaBuffer0[1];
+								rgba[2] += rgbaBuffer0[2];
+								rgba[3] += rgbaBuffer0[3];
+								samples++;
+							}
 						}
 					}
-				}
-				
-				if (samples > 0) {
-					rgba[0] = (int) MathExt.round((double)rgba[0] / samples);
-					rgba[1] = (int) MathExt.round((double)rgba[1] / samples);
-					rgba[2] = (int) MathExt.round((double)rgba[2] / samples);
-					rgba[3] = (int) MathExt.round((double)rgba[3] / samples);
+					
+					if (samples > 0) {
+						rgba[0] = (int) MathExt.round((double)rgba[0] / samples);
+						rgba[1] = (int) MathExt.round((double)rgba[1] / samples);
+						rgba[2] = (int) MathExt.round((double)rgba[2] / samples);
+						rgba[3] = (int) MathExt.round((double)rgba[3] / samples);
+					}
 				}
 			}
-			
 			return true;
 		} else {
 			return false;

@@ -373,6 +373,7 @@ public class ModelVisualizationPanel extends Panel
 		globalOptionModel.setDisposeGridOnComplete(false);
 		globalOptionModel.setPixelStackDepth(1);
 		globalOptionModel.setCreateJdemElevationModel(false);
+		globalOptionModel.setForceResetAndRunFilters(true);
 		
 		try {
 			modelContextWorkingCopy.updateContext();

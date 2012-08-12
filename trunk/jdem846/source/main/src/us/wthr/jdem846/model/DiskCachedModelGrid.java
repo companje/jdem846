@@ -8,11 +8,13 @@ import java.util.Arrays;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.BufferedModelGrid.ModelPointChangedHandler;
 import us.wthr.jdem846.model.WatchableModelPoint.ModelPointChangedListener;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.util.ByteConversions;
 import us.wthr.jdem846.util.TempFiles;
 
@@ -49,14 +51,16 @@ public class DiskCachedModelGrid extends ModelPointGrid
 	private byte[] buffer4 = new byte[4];
 	private byte[] buffer8 = new byte[8];
 
+	private boolean dirty = false;
+
+
+	
 	public DiskCachedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum) throws Exception
 	{
 		super(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum);
-		
-		
-		
+
 		bufferColumns = (int) MathExt.ceil((east - west) / longitudeResolution);
-		bufferSize = bufferColumns * bufferRows;
+		bufferSize = (int) MathExt.ceil(bufferColumns * (bufferRows + 5));
 		log.info("Creating model point buffer of size " + bufferSize);
 		elevationGrid = new float[bufferSize];
 		rgbaGrid = new int[bufferSize];
@@ -64,8 +68,9 @@ public class DiskCachedModelGrid extends ModelPointGrid
 		readBuffer = new byte[bufferSize * MODEL_POINT_SIZE_FLOAT];
 		
 		cacheFile = TempFiles.getTemporaryFile("jdem_grid_");
+		log.info("Creating cache file at " + cacheFile.getAbsolutePath());
 		
-		cacheSize = this.gridLength * MODEL_POINT_SIZE_FLOAT;
+		cacheSize = (long)this.gridLength * (long)MODEL_POINT_SIZE_FLOAT;
 		initializeCache();
 
 	}
@@ -74,16 +79,33 @@ public class DiskCachedModelGrid extends ModelPointGrid
 	protected void initializeCache() throws Exception
 	{
 		closeFilePointer();
+		log.info("Initializing cache file to " + cacheSize + " bytes");
 		
 		FileOutputStream out = new FileOutputStream(cacheFile);
 		
-		byte[] writeBuffer = new byte[2048];
-		Arrays.fill(writeBuffer, (byte)0x0);
+		byte[] writeBuffer = new byte[1048576];
 
-		for (long i = 0; i < cacheSize; i+=2048) {
+		byte[] buffer4 = new byte[4];
+		ByteConversions.floatToBytes((float)DemConstants.ELEV_UNDETERMINED, buffer4);
+		
+		for (int i = 0; i < 1048576; i+=8) {
+			writeBuffer[i] = buffer4[0];
+			writeBuffer[i+1] = buffer4[1];
+			writeBuffer[i+2] = buffer4[2];
+			writeBuffer[i+3] = buffer4[3];
+			writeBuffer[i+4] = 0;
+			writeBuffer[i+5] = 0;
+			writeBuffer[i+6] = 0;
+			writeBuffer[i+7] = 0;
+		}
+		
+
+
+		for (long i = 0; i < cacheSize + 1048576; i+=1048576) {
 			out.write(writeBuffer);
 		}
 		
+		out.flush();
 		out.close();
 	}
 	
@@ -135,30 +157,54 @@ public class DiskCachedModelGrid extends ModelPointGrid
 	
 	protected void fillBuffer(double north) throws Exception
 	{
-		bufferNorth = north;
-		bufferSouth = north - (this.bufferRows * this.longitudeResolution);
+		bufferNorth = MathExt.min(north, this.north);
+		bufferSouth = bufferNorth - (this.bufferRows * this.latitudeResolution);
 		if (bufferSouth < this.south) {
 			bufferSouth = this.south;
 		}
 		
 		RandomAccessFile raf = getFilePointer(true);
 		
-		long index = getIndex(north, west);
+		long index = getIndexL(this.north, bufferNorth, west);
 		
-		long seek = index * MODEL_POINT_SIZE_FLOAT;
-		raf.seek(seek);
+		long seek = index * (long)MODEL_POINT_SIZE_FLOAT;
 		
-		long readPoints = (long) MathExt.ceil(((bufferNorth - bufferSouth) / this.latitudeResolution) * this.bufferColumns);
+		if (seek < 0) {
+			log.warn("Negative seek offset for read: " + seek + " for north: " + north + ", buffer north: " + bufferNorth + ", west: " + west + ", index: " + index);
+			throw new IOException("Negative seek offset: " + seek);
+		}
 		
-		long readLength = (readPoints * MODEL_POINT_SIZE_FLOAT);
-		log.info("Reading " + readLength + " into model grid buffer");
+		try {
+			raf.seek(seek);
+		} catch (Exception ex) {
+			log.warn("Error seeking in file: " + ex.getMessage());
+			ex.printStackTrace();
+			return;
+		}
 		
-		raf.read(readBuffer, 0, (int) readLength);
+		long readPoints = (long) MathExt.round(((bufferNorth - bufferSouth + this.latitudeResolution) / this.latitudeResolution) * this.bufferColumns);
+		
+		long readLength = (readPoints * (long)MODEL_POINT_SIZE_FLOAT);
 		
 		
-		for (int i = 0; i < readPoints / 2; i++) {
+		if (readLength > readBuffer.length)
+			readLength = readBuffer.length;
+		
+		log.info("Reading " + readLength + " bytes for " + readPoints + " points at position " + seek + " into grid from " + bufferNorth + " to " + bufferSouth);
+		
+		Arrays.fill(readBuffer, (byte)0x0);
+		
+		try {
+			raf.readFully(readBuffer, 0, (int) readLength);
+		} catch (Exception ex) {
+			log.warn("Error reading from file: " + ex.getMessage());
+			ex.printStackTrace();
+			return;
+		}
+		
+		for (int i = 0; i < readPoints; i++) {
 			
-			int idx = i * 2;
+			int idx = i * 8;
 			
 			float elevation = ByteConversions.bytesToFloat(readBuffer[idx], readBuffer[idx+1], readBuffer[idx+2], readBuffer[idx+3], ByteConversions.DEFAULT_BYTE_ORDER);
 			int rgba = ByteConversions.bytesToInt(readBuffer[idx+4], readBuffer[idx+5], readBuffer[idx+6], readBuffer[idx+7], ByteConversions.DEFAULT_BYTE_ORDER);
@@ -169,7 +215,8 @@ public class DiskCachedModelGrid extends ModelPointGrid
 			
 		}
 		
-		
+		this.dirty = false;
+		log.info("Done read");
 	}
 	
 	protected void writeBuffer() throws Exception
@@ -180,28 +227,67 @@ public class DiskCachedModelGrid extends ModelPointGrid
 		
 		RandomAccessFile raf = getFilePointer(true);
 		
-		long index = getIndex(north, west);
+		long index = getIndexL(this.north, bufferNorth, west);
 		
-		long seek = index * MODEL_POINT_SIZE_FLOAT;
-		raf.seek(seek);
+		long seek = index * (long)MODEL_POINT_SIZE_FLOAT;
 		
-		long writePoints = (long) MathExt.ceil(((bufferNorth - bufferSouth) / this.latitudeResolution) * this.bufferColumns);
-		
-		long writeLength = (writePoints * MODEL_POINT_SIZE_FLOAT);
-		log.info("Reading " + writeLength + " into model grid buffer");
-		
-		
-		for (int i = 0; i < writePoints / 2; i++) {
-			
-			int idx = i * 2;
-			
-			ByteConversions.floatToBytes(elevationGrid[i], buffer4, ByteConversions.DEFAULT_BYTE_ORDER);
-			raf.write(buffer4, 0, 4);
-			
-			ByteConversions.intToBytes(rgbaGrid[i], buffer4, ByteConversions.DEFAULT_BYTE_ORDER);
-			raf.write(buffer4, 0, 4);
+		if (seek < 0) {
+			log.warn("Negative seek offset for write: " + seek + " for north: " + this.north + ", buffer north: " + bufferNorth + ", west: " + west + ", index: " + index);
+			throw new IOException("Negative seek offset: " + seek);
 		}
 		
+		
+		try {
+			raf.seek(seek);
+		} catch (Exception ex) {
+			log.info("Error seeking to position " + seek);
+			ex.printStackTrace();
+			throw ex;
+		}
+		
+		long writePoints = (long) MathExt.round(((bufferNorth - bufferSouth + this.latitudeResolution) / this.latitudeResolution) * this.bufferColumns);
+		
+		long writeLength = (writePoints * (long)MODEL_POINT_SIZE_FLOAT);
+		//log.info("Writing " + writeLength + " into model grid disk cache");
+		
+		if (writeLength > readBuffer.length)
+			writeLength = readBuffer.length;
+		
+		
+		log.info("Writing " + writeLength + " bytes for " + writePoints + " points at position " + seek + " from grid from " + bufferNorth + " to " + bufferSouth);
+		
+		Arrays.fill(readBuffer, (byte)0x0);
+		
+		for (int i = 0; i < writePoints; i++) {
+			
+			int idx = i * 8;
+			
+			ByteConversions.floatToBytes(elevationGrid[i], buffer4, ByteConversions.DEFAULT_BYTE_ORDER);
+			readBuffer[idx] = buffer4[0];
+			readBuffer[idx+1] = buffer4[1];
+			readBuffer[idx+2] = buffer4[2];
+			readBuffer[idx+3] = buffer4[3];
+			//raf.write(buffer4, 0, 4);
+			
+			ByteConversions.intToBytes(rgbaGrid[i], buffer4, ByteConversions.DEFAULT_BYTE_ORDER);
+			readBuffer[idx+4] = buffer4[0];
+			readBuffer[idx+5] = buffer4[1];
+			readBuffer[idx+6] = buffer4[2];
+			readBuffer[idx+7] = buffer4[3];
+			//raf.write(buffer4, 0, 4);
+		}
+		
+		
+		try {
+			//raf.read(readBuffer, 0, (int) writeLength);
+			raf.write(readBuffer, 0, (int)writeLength);
+		} catch (Exception ex) {
+			log.warn("Error writing file: " + ex.getMessage());
+			ex.printStackTrace();
+			return;
+		}
+		
+		log.info("Done write");
 	}
 
 	protected boolean isBufferFilled()
@@ -213,9 +299,11 @@ public class DiskCachedModelGrid extends ModelPointGrid
 	{
 		// Hmmmmm.. Best way to handle this.... hmmmmmm.
 		
-		if (!isBufferFilled() || latitude > bufferNorth || latitude < bufferSouth) {
+		if ((!isBufferFilled() || latitude > bufferNorth || latitude < bufferSouth) && latitude <= this.north && latitude >= this.south) {
 			
-			writeBuffer();
+			if (this.dirty) {
+				writeBuffer();
+			}
 			
 			double loadNorth = latitude + (this.bufferMarginRows * this.latitudeResolution);
 			fillBuffer(loadNorth);
@@ -244,6 +332,7 @@ public class DiskCachedModelGrid extends ModelPointGrid
 	{
 		this.elevationGrid[(int)index] = (float) modelPoint.getElevation();
 		this.rgbaGrid[(int)index] = modelPoint.getRgba();
+		this.dirty = true;
 	}
 
 	@Override
@@ -262,7 +351,10 @@ public class DiskCachedModelGrid extends ModelPointGrid
 			return DemConstants.ELEV_NO_DATA;
 		}
 		
-		return elevationGrid[index];
+		double elev =  elevationGrid[index];
+		
+		return elev;
+		
 	}
 
 
@@ -280,6 +372,7 @@ public class DiskCachedModelGrid extends ModelPointGrid
 		
 		if (index >= 0 && index < elevationGrid.length) {
 			elevationGrid[index] = (float) elevation;
+			this.dirty = true;
 		}
 	}
 
@@ -325,6 +418,7 @@ public class DiskCachedModelGrid extends ModelPointGrid
 		
 		if (index >= 0 && index < rgbaGrid.length) {
 			rgbaGrid[index] = rgba;
+			this.dirty = true;
 		}
 	}
 
@@ -345,8 +439,13 @@ public class DiskCachedModelGrid extends ModelPointGrid
 	
 	protected int getIndex(double latitude, double longitude)
 	{
-		int column = (int) Math.round((longitude - west) / longitudeResolution);
-		int row = (int) Math.round((bufferNorth - latitude) / latitudeResolution);
+		return (int) getIndexL(bufferNorth, latitude, longitude);
+	}
+	
+	protected long getIndexL(double useNorth, double latitude, double longitude)
+	{
+		long column = (long) Math.round((longitude - west) / longitudeResolution);
+		long row = (long) Math.round((useNorth - latitude) / latitudeResolution);
 		
 		if (column < 0 || column >= width) {
 			return -1;
@@ -357,7 +456,7 @@ public class DiskCachedModelGrid extends ModelPointGrid
 		}
 		
 		
-		int index = row * width + column;
+		long index = row * (long)width + column;
 		return index;
 	}
 	

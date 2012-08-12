@@ -42,6 +42,12 @@ public class RasterDataContext implements DataContext
 
 	private ElevationScaler elevationScaler;
 	
+	
+	private boolean avgOfAllRasterValues = false;
+	private boolean interpolate = false;
+	private boolean scaled = true;
+	
+	
 	public RasterDataContext()
 	{
 		
@@ -309,18 +315,18 @@ public class RasterDataContext implements DataContext
 	
 	public double getData(double latitude, double longitude) throws DataSourceException
 	{
-		return getData(latitude, longitude, true);
+		return getData(latitude, longitude, scaled);
 	}
 	
 	public double getData(double latitude, double longitude, boolean scaled) throws DataSourceException
 	{
-		return getData(latitude, longitude, false, false, scaled);
+		return getData(latitude, longitude, avgOfAllRasterValues, interpolate, scaled);
 	}
 	
 	
 	public double getData(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
 	{
-		return getData(latitude, longitude, avgOfAllRasterValues, interpolate, true);
+		return getData(latitude, longitude, avgOfAllRasterValues, interpolate, scaled);
 	}
 	
 	public double getData(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate, boolean scaled) throws DataSourceException
@@ -334,7 +340,7 @@ public class RasterDataContext implements DataContext
 	
 	public double getDataStandardResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
 	{
-		return getDataStandardResolution(latitude, longitude, avgOfAllRasterValues, interpolate, true);
+		return getDataStandardResolution(latitude, longitude, avgOfAllRasterValues, interpolate, scaled);
 	}
 	
 	public double getDataStandardResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate, boolean scaled) throws DataSourceException
@@ -384,7 +390,7 @@ public class RasterDataContext implements DataContext
 	
 	public double getDataAtEffectiveResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate) throws DataSourceException
 	{
-		return getDataAtEffectiveResolution(latitude, longitude, avgOfAllRasterValues, interpolate, true);
+		return getDataAtEffectiveResolution(latitude, longitude, avgOfAllRasterValues, interpolate, scaled);
 	}
 	
 	public double getDataAtEffectiveResolution(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate, boolean scaled) throws DataSourceException
@@ -614,13 +620,56 @@ public class RasterDataContext implements DataContext
 		this.elevationScaler = elevationScaler;
 	}
 
+	
+	
+	
+	
+	public boolean isAvgOfAllRasterValues() 
+	{
+		return avgOfAllRasterValues;
+	}
+
+	public void setAvgOfAllRasterValues(boolean avgOfAllRasterValues) 
+	{
+		this.avgOfAllRasterValues = avgOfAllRasterValues;
+	}
+
+	public boolean getInterpolate() 
+	{
+		return interpolate;
+	}
+
+	public void setInterpolate(boolean interpolate)
+	{
+		this.interpolate = interpolate;
+	}
+
+	public boolean isScaled() 
+	{
+		return scaled;
+	}
+
+	public void setScaled(boolean scaled) 
+	{
+		this.scaled = scaled;
+	}
+
 	public RasterDataContext copy() throws DataSourceException
 	{
 		if (isDisposed()) {
 			throw new DataSourceException("Cannot copy object: already disposed");
 		}
+		return copy(new RasterDataContext());
 		
-		RasterDataContext clone = new RasterDataContext();
+	}
+	
+	public RasterDataContext copy(RasterDataContext clone) throws DataSourceException
+	{
+		if (isDisposed()) {
+			throw new DataSourceException("Cannot copy object: already disposed");
+		}
+		
+
 		clone.north = getNorth();
 		clone.south = getSouth();
 		clone.east = getEast();
@@ -633,6 +682,9 @@ public class RasterDataContext implements DataContext
 		clone.dataMinimumValue = getDataMinimumValue();
 		clone.isDisposed = isDisposed(); // Should be false at this point...		
 		clone.metersResolution = getMetersResolution();
+		clone.avgOfAllRasterValues = this.avgOfAllRasterValues;
+		clone.interpolate = this.interpolate;
+		clone.scaled = this.scaled;
 		
 		for (RasterData rasterData : rasterDataList) {
 			clone.rasterDataList.add(rasterData.copy());

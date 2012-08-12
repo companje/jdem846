@@ -17,6 +17,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
+import us.wthr.jdem846.model.processing.GridPointFilter;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor;
@@ -25,6 +26,7 @@ import us.wthr.jdem846.model.processing.dataload.GridLoadProcessor;
 import us.wthr.jdem846.canvas.CanvasProjection;
 import us.wthr.jdem846.canvas.CanvasProjectionFactory;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.ProcessInterruptListener;
@@ -39,10 +41,11 @@ public class ModelBuilder extends InterruptibleProcess
 
 	private ModelProcessManifest modelProcessManifest;
 	private ModelContext modelContext;
-	private ModelPointGrid modelGrid;
+	private FillControlledModelGrid modelGrid;
 	private ModelGridDimensions modelDimensions;
 	private GlobalOptionModel globalOptionModel;
 	private ModelCanvas modelCanvas;
+	private BufferControlledRasterDataContainer bufferControlledRasterDataContainer;
 	
 	private boolean runLoadProcessor = true;
 	private boolean runColorProcessor = true;
@@ -101,12 +104,21 @@ public class ModelBuilder extends InterruptibleProcess
 		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
 		
 		
+		modelContext.getRasterDataContext().setAvgOfAllRasterValues(globalOptionModel.getAverageOverlappedData());
+		modelContext.getRasterDataContext().setInterpolate(globalOptionModel.getInterpolateData());
+		modelContext.getRasterDataContext().setScaled(true);
+		
+		
+		bufferControlledRasterDataContainer = new BufferControlledRasterDataContainer(modelContext.getRasterDataContext(), globalOptionModel.getPrecacheStrategy(), modelDimensions.getLatitudeResolution(), globalOptionModel.getTileSize());
+		modelContext.setRasterDataContext(bufferControlledRasterDataContainer);
+		
 		boolean useDiskCachedModelGrid = globalOptionModel.getUseDiskCachedModelGrid();
-	
+		
+		ModelPointGrid innerModelGrid = null;
 		if (modelGrid == null) {
 			if (useDiskCachedModelGrid) {
 				try {
-					modelGrid = new DiskCachedModelGrid(globalOptionModel.getNorthLimit(), 
+					innerModelGrid = new DiskCachedModelGrid(globalOptionModel.getNorthLimit(), 
 							globalOptionModel.getSouthLimit(), 
 							globalOptionModel.getEastLimit(), 
 							globalOptionModel.getWestLimit(), 
@@ -119,7 +131,7 @@ public class ModelBuilder extends InterruptibleProcess
 				}
 			} else {
 				
-				modelGrid = new BufferedModelGrid(globalOptionModel.getNorthLimit(), 
+				innerModelGrid = new BufferedModelGrid(globalOptionModel.getNorthLimit(), 
 						globalOptionModel.getSouthLimit(), 
 						globalOptionModel.getEastLimit(), 
 						globalOptionModel.getWestLimit(), 
@@ -127,17 +139,25 @@ public class ModelBuilder extends InterruptibleProcess
 						modelDimensions.getOutputLongitudeResolution(),
 						modelContext.getRasterDataContext().getDataMinimumValue(),
 						modelContext.getRasterDataContext().getDataMaximumValue());
-				modelGrid.reset();
-				
-				/*
-				modelGrid = new ModelGrid(globalOptionModel.getNorthLimit(), 
-						globalOptionModel.getSouthLimit(), 
-						globalOptionModel.getEastLimit(), 
-						globalOptionModel.getWestLimit(), 
-						modelDimensions.getOutputLatitudeResolution(), 
-						modelDimensions.getOutputLongitudeResolution());
-				*/
+						//modelContext.getRasterDataContext());
+				innerModelGrid.reset();
+
 			}
+			
+			
+			modelGrid = new FillControlledModelGrid(globalOptionModel.getNorthLimit(), 
+							globalOptionModel.getSouthLimit(), 
+							globalOptionModel.getEastLimit(), 
+							globalOptionModel.getWestLimit(), 
+							modelDimensions.getOutputLatitudeResolution(), 
+							modelDimensions.getOutputLongitudeResolution(),
+							modelContext.getRasterDataContext().getDataMinimumValue(),
+							modelContext.getRasterDataContext().getDataMaximumValue(),
+							(modelContext.getImageDataContext().getImageListSize() > 0),
+							modelContext.getRasterDataContext(),
+							innerModelGrid,
+							(globalOptionModel.getUseScripting() ? modelContext.getScriptingContext().getScriptProxy() : null));
+			modelGrid.setForceResetAndRunFilters(globalOptionModel.getForceResetAndRunFilters());
 		}
 		
 		if (modelCanvas == null) {
@@ -210,7 +230,11 @@ public class ModelBuilder extends InterruptibleProcess
 					name = annotation.name();
 				}
 				
-				if (annotation.type() == GridProcessingTypesEnum.DATA_LOAD && dataLoaded) {
+				//if (annotation.type() != GridProcessingTypesEnum.RENDER) {// && dataLoaded) {
+				//	continue;
+				//}  
+				
+				if (annotation.type() == GridProcessingTypesEnum.DATA_LOAD) {// && dataLoaded) {
 					continue;
 				}  
 				
@@ -224,12 +248,20 @@ public class ModelBuilder extends InterruptibleProcess
 				log.info("Preparing processor: '" + name + "'");
 				gridProcessor.setAndPrepare(modelContext, modelGrid, modelDimensions, globalOptionModel, optionModel);
 				
-				log.info("Executing processor: '" + name + "'");
-				gridProcessor.process();
 				
-				if (useScripting && !this.isCancelled()) {
-					onProcessAfter(processContainer);
+				if (annotation.isFilter() && gridProcessor instanceof GridPointFilter) {
+					modelGrid.addGridFilter((GridPointFilter)gridProcessor);
 				}
+				
+			//	
+				
+				
+				
+				
+				
+			//	if (useScripting && !this.isCancelled()) {
+			//		onProcessAfter(processContainer);
+			//	}
 				
 				this.checkPause();
 				if (this.isCancelled()) {
@@ -240,6 +272,55 @@ public class ModelBuilder extends InterruptibleProcess
 					} catch (ModelContextException ex) {
 						throw new RenderEngineException("Error fetching JDEM elevation model: " + ex.getMessage(), ex);
 					}
+				}
+			}
+		}
+		
+		
+		
+		if (!this.isCancelled()) {
+			for (ModelProcessContainer processContainer : modelProcessManifest.getProcessList()) {
+				
+				if (useScripting && !this.isCancelled()) {
+					onProcessBefore(processContainer);
+				}
+				
+				GridProcessor gridProcessor = processContainer.getGridProcessor();
+				OptionModel optionModel = processContainer.getOptionModel();
+				
+				GridProcessing annotation = gridProcessor.getClass().getAnnotation(GridProcessing.class);
+				String name = gridProcessor.getClass().getName();
+				if (annotation != null) {
+					name = annotation.name();
+				}
+				
+				if (!annotation.isFilter() && annotation.enabled()) {
+					log.info("Executing processor: '" + name + "'");
+					gridProcessor.process();
+				}
+			}
+		}
+		
+		
+		
+		if (!this.isCancelled()) {
+			for (ModelProcessContainer processContainer : modelProcessManifest.getProcessList()) {
+				
+				if (useScripting && !this.isCancelled()) {
+					onProcessBefore(processContainer);
+				}
+				
+				GridProcessor gridProcessor = processContainer.getGridProcessor();
+				OptionModel optionModel = processContainer.getOptionModel();
+				
+				GridProcessing annotation = gridProcessor.getClass().getAnnotation(GridProcessing.class);
+				String name = gridProcessor.getClass().getName();
+				if (annotation != null) {
+					name = annotation.name();
+				}
+				
+				if (useScripting && !this.isCancelled() && annotation.enabled()) {
+					onProcessAfter(processContainer);
 				}
 			}
 		}

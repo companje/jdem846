@@ -54,6 +54,7 @@ public class GlobalOptionModel implements OptionModel
 	private boolean createJdemElevationModel = true;
 	
 	private boolean previewRendering = false;
+	private boolean forceResetAndRunFilters = false;
 	
 	public GlobalOptionModel()
 	{
@@ -524,6 +525,20 @@ public class GlobalOptionModel implements OptionModel
 		this.createJdemElevationModel = createJdemElevationModel;
 	}
 
+	
+	
+	
+	public boolean getForceResetAndRunFilters() 
+	{
+		return forceResetAndRunFilters;
+	}
+
+
+	public void setForceResetAndRunFilters(boolean forceResetAndRunFilters) 
+	{
+		this.forceResetAndRunFilters = forceResetAndRunFilters;
+	}
+
 
 	public MapProjection getMapProjectionInstance() throws MapProjectionException
 	{
@@ -571,7 +586,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.createJdemElevationModel = this.createJdemElevationModel;
 		copy.disposeGridOnComplete = this.disposeGridOnComplete;
 		copy.previewRendering = this.previewRendering;
-		
+		copy.forceResetAndRunFilters = this.forceResetAndRunFilters;
 		return copy;
 	}
 	

@@ -69,6 +69,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	@Override
 	public void prepare() throws RenderEngineException
 	{
+		/*
 		GridLoadOptionModel optionModel = (GridLoadOptionModel) this.getProcessOptionModel();
 	
 		useScripting = getGlobalOptionModel().getUseScripting();
@@ -97,12 +98,13 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 		
 		minimumElevation = Double.NaN;
 		maximumElevation = Double.NaN;
+		*/
 	}
 
 	@Override
 	public void process() throws RenderEngineException
 	{
-		
+		/*
 		boolean fullCaching = getGlobalOptionModel().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
 		RasterDataContext dataContext = (dataRasterContextSubset != null) ? dataRasterContextSubset : modelContext.getRasterDataContext();
 		
@@ -129,7 +131,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 		
 		log.info("Found Minimum Elevation: " + minimumElevation);
 		log.info("Found Maximum Elevation: " + maximumElevation);
-		
+		*/
 	}
 	
 	public void onCycleStart() throws RenderEngineException
@@ -140,6 +142,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	@Override
 	public void onModelLatitudeStart(double latitude) throws RenderEngineException
 	{
+		/*
 		if (latitude <= nextCachePoint && tiledPrecaching) {
 			
 			double southCache = latitude - cacheHeight - latitudeResolution;
@@ -152,11 +155,13 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 			
 			nextCachePoint = latitude - cacheHeight;
 		}
+		*/
 	}
 	
 	@Override
 	public void onModelPoint(double latitude, double longitude) throws RenderEngineException
 	{
+		/*
 		try {
 			double elev = getElevation(latitude, longitude);
 			if (elev != DemConstants.ELEV_NO_DATA) {
@@ -184,7 +189,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 			throw new RenderEngineException("Error processing point elevation: " + ex.getMessage(), ex);
 		}
 		
-		
+		*/
 	}
 	
 	@Override
@@ -195,9 +200,11 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	
 	public void onCycleEnd() throws RenderEngineException
 	{
+		/*
 		if (tiledPrecaching) {
 			unloadDataBuffers();
 		}
+		*/
 	}
 
 	protected double getRasterDataRaw(double latitude, double longitude) throws DataSourceException

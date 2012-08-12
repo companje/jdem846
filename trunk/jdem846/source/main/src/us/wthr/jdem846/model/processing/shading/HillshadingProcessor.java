@@ -20,6 +20,7 @@ import us.wthr.jdem846.model.ModelPointHandler;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
+import us.wthr.jdem846.model.processing.GridPointFilter;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.shading.RayTracing.RasterDataFetchHandler;

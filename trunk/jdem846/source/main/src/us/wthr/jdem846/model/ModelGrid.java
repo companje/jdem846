@@ -17,7 +17,7 @@ public class ModelGrid extends ModelPointGrid
 	{
 		super(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum);
 
-		grid = new ModelPoint[gridLength];
+		grid = new ModelPoint[(int)gridLength];
 		
 		log.info("Model Grid Width/Height: " + width + "/" + height + ", Length: " + gridLength);
 		
