@@ -331,7 +331,7 @@ public class RasterDataContext implements DataContext
 	
 	public double getData(double latitude, double longitude, boolean avgOfAllRasterValues, boolean interpolate, boolean scaled) throws DataSourceException
 	{
-		if (effectiveLatitudeResolution == NOT_SET && effectiveLongitudeResolution == NOT_SET) {
+		if (effectiveLatitudeResolution == NOT_SET && effectiveLongitudeResolution == NOT_SET || !interpolate) {
 			return getDataStandardResolution(latitude, longitude, avgOfAllRasterValues, interpolate, scaled);
 		} else {
 			return getDataAtEffectiveResolution(latitude, longitude, avgOfAllRasterValues, interpolate, scaled);

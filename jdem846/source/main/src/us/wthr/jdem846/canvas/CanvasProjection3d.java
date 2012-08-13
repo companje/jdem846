@@ -125,7 +125,7 @@ public class CanvasProjection3d extends CanvasProjection
 		double yWid = modelDimensions.dataRows * (modelDimensions.latitudeResolution / modelDimensions.outputLatitudeResolutionTrue);
 		double xWid = modelDimensions.dataColumns * (modelDimensions.longitudeResolution / modelDimensions.outputLongitudeResolutionTrue);
 		
-		double fov = 18.0;
+		double fov = 38.0;
 		//double fov = 38.0;
 		//fov = 38.0;
 		double a = (fov / 2.0);
