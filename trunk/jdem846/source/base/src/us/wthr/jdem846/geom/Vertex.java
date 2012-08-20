@@ -10,6 +10,11 @@ public class Vertex implements Comparable<Vertex>
 	public double[] xyz = new double[3];
 	public int[] rgba = null;
 	
+	public Vertex()
+	{
+		
+	}
+	
 	public Vertex(Vertex copy)
 	{
 		this(copy.xyz, copy.rgba);
@@ -31,6 +36,12 @@ public class Vertex implements Comparable<Vertex>
 	}
 	
 	public Vertex(double x, double y, double z, int[] rgba)
+	{
+		set(x, y, z, rgba);
+	}
+	
+	
+	public void set(double x, double y, double z, int[] rgba)
 	{
 		this.xyz[X] = x;
 		this.xyz[Y] = y;
