@@ -63,6 +63,8 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	
 	private boolean useRenderQueue = false;
 	
+	private TriVertex triVertex = new TriVertex();
+	
 	public ModelRenderer()
 	{
 		
@@ -144,10 +146,10 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	{
 		lastElevation = modelContext.getRasterDataContext().getDataMaximumValue();
 		
-		if (useRenderQueue) {
-			renderQueue = new StripRenderQueue(canvas);
-			renderQueue.start();
-		}
+		//if (useRenderQueue) {
+		//	renderQueue = new StripRenderQueue(canvas);
+		//	renderQueue.start();
+		//}
 		
 		
 	}
@@ -155,7 +157,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	@Override
 	public void onModelLatitudeStart(double latitude)
 	{
-		strip = new GeoTriangleStrip();
+		//strip = new GeoTriangleStrip();
 	}
 
 	@Override
@@ -168,12 +170,13 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 			if (elev != DemConstants.ELEV_NO_DATA) {
 				lastElevation = elev;
 			} else {
+				triVertex.reset();
 				if (useRenderQueue) {
-					renderQueue.add(strip);
+					//renderQueue.add(strip);
 				} else {
-					canvas.fillShape(strip);
+					//canvas.fillShape(strip);
 				}
-				strip.reset();
+				//strip.reset();
 			}
 		} catch (Exception ex) {
 			log.error("Error creating vertexes: " + ex.getMessage(), ex);
@@ -184,18 +187,19 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	@Override
 	public void onModelLatitudeEnd(double latitude)
 	{
-		if (useRenderQueue) {
-			renderQueue.add(strip);
-		} else {
-			canvas.fillShape(strip);
-		}
+		triVertex.reset();
+		//if (useRenderQueue) {
+			//renderQueue.add(strip);
+		//} else {
+			//canvas.fillShape(strip);
+		//}
 		
 	}
 		
 	@Override
 	public void onCycleEnd() throws RenderEngineException
 	{
-		
+		/*
 		if (useRenderQueue) {
 			log.info("Stopping triangle strip queue...");
 	        
@@ -214,14 +218,20 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	        
 	        log.info("Render queue completed");
 		}
+		*/
 	}
 	
 	protected double createPointVertexes(TriangleStrip strip, double latitude, double longitude, double lastElevation) throws Exception
 	{
 		
 		double nwElev = createPointVertex(strip, latitude, longitude, lastElevation);
+		if (triVertex.canRender()) {
+			canvas.fillShape(triVertex.getTriangle());
+		}
 		double swElev = createPointVertex(strip, latitude - latitudeResolution, longitude, nwElev);
-		
+		if (triVertex.canRender()) {
+			canvas.fillShape(triVertex.getTriangle());
+		}
 		return (nwElev != DemConstants.ELEV_NO_DATA) ? nwElev : swElev;
 	}
 	
@@ -243,7 +253,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		
 		Vertex nwVtx = createVertex(latitude, longitude, elev, rgbaBuffer);
 		
-		strip.addVertex(nwVtx);
+		//strip.addVertex(nwVtx);
 		
 		return elev;
 	}
@@ -257,7 +267,10 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
     	double y = point.row;
     	double z = point.z;
 		
-    	Vertex v = new GeoVertex(x, y, z, rgba, lat, lon, elev);
+    	//Vertex v = new GeoVertex(x, y, z, rgba, lat, lon, elev);
+    	this.triVertex.advance();
+    	Vertex v = triVertex.v2;
+    	v.set(x, y, z, rgba);
     	return v;
 	}
 
