@@ -1,6 +1,7 @@
 package us.wthr.jdem846.geom.util;
 
 import us.wthr.jdem846.geom.Vertex;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.math.Vectors;
 
 
@@ -12,22 +13,17 @@ import us.wthr.jdem846.math.Vectors;
 public class SameSideTrianglePointTest extends PointTest
 {
 
-	//double[] A;
-	//double[] B;
-	//double[] C;
-	double[] P;
+	Vector P = new Vector();
 	
-	double[] v0;
-	double[] v1;
+	Vector v0 = new Vector();
+	Vector v1 = new Vector();
 	
-	double[] cp0;
-	double[] cp1;
+	Vector cp0 = new Vector();
+	Vector cp1 = new Vector();
 	
 	public SameSideTrianglePointTest()
 	{
-		//A = new double[3];
-		//B = new double[3];
-		//C = new double[3];
+		/*
 		P = new double[3];
 	
 		v0 = new double[3];
@@ -35,6 +31,7 @@ public class SameSideTrianglePointTest extends PointTest
 
 		cp0 = new double[3];
 		cp1 = new double[3];
+		*/
 	}
 	
 	public boolean contains(Vertex p0, Vertex p1, Vertex p2, double x, double y, double z)
@@ -42,7 +39,7 @@ public class SameSideTrianglePointTest extends PointTest
 		
 		fill(x, y, z, P);
 		
-		if (sameSide(P, p0.xyz, p1.xyz, p2.xyz) && sameSide(P, p1.xyz, p0.xyz, p2.xyz) && sameSide(P, p2.xyz, p0.xyz, p1.xyz)) {
+		if (sameSide(P, p0.vector, p1.vector, p2.vector) && sameSide(P, p1.vector, p0.vector, p2.vector) && sameSide(P, p2.vector, p0.vector, p1.vector)) {
 			return true;
 		} else {
 			return false;
@@ -50,7 +47,7 @@ public class SameSideTrianglePointTest extends PointTest
 		
 	}
 	
-	protected boolean sameSide(double[] p0, double[] p1, double[] a, double[] b)
+	protected boolean sameSide(Vector p0, Vector p1, Vector a, Vector b)
 	{
 		
 		Vectors.subtract(b, a, v0);

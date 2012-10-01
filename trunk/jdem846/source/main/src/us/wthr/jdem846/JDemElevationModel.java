@@ -22,6 +22,7 @@ import us.wthr.jdem846.canvas.AbstractBuffer;
 import us.wthr.jdem846.canvas.GeoRasterBuffer3d;
 import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.ImageException;
+import us.wthr.jdem846.graphics.ImageCapture;
 import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
@@ -30,7 +31,7 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 import us.wthr.jdem846.util.ByteConversions;
 
-public class JDemElevationModel extends AbstractBuffer
+public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 {
 	private static Log log = Logging.getLog(JDemElevationModel.class);
 	
@@ -57,6 +58,25 @@ public class JDemElevationModel extends AbstractBuffer
 		this.loadImageData(image);
 		this.readProperties(properties);
 		
+	}
+	
+	public JDemElevationModel(ImageCapture imageCapture)
+	{
+		this(imageCapture.getWidth(), imageCapture.getHeight());
+		
+		for (int y = 0; y < getHeight(); y++) {
+			for (int x = 0; x < getWidth(); x++) {
+				int index = getIndex(x, y);
+				
+				rgbaBuffer[index] = imageCapture.get(x, y);
+				maskBuffer[index] = rgbaBuffer[index] != 0x0;
+				
+				latitudeBuffer[index] = 0;
+				longitudeBuffer[index] = 0;
+				elevationBuffer[index] = 0;
+			}
+			
+		}
 	}
 	
 	public JDemElevationModel(GeoRasterBuffer3d geoRasterBuffer)

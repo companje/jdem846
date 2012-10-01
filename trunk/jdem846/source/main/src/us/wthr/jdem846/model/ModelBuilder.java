@@ -2,16 +2,24 @@ package us.wthr.jdem846.model;
 
 import java.util.Date;
 
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.Projection;
+import us.wthr.jdem846.SimpleImageElevationModel;
 import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.graphics.GraphicsRenderer;
+import us.wthr.jdem846.graphics.ImageCapture;
+import us.wthr.jdem846.graphics.RenderProcess;
+import us.wthr.jdem846.graphics.View;
+import us.wthr.jdem846.graphics.ViewFactory;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.annotations.GridProcessing;
@@ -192,7 +200,7 @@ public class ModelBuilder extends InterruptibleProcess
 	}
 	
 	
-	public JDemElevationModel process() throws RenderEngineException
+	public ElevationModel process() throws RenderEngineException
 	{
 		if (!isPrepared()) {
 			throw new RenderEngineException("Model builder not yet prepared!");
@@ -298,11 +306,16 @@ public class ModelBuilder extends InterruptibleProcess
 					log.info("Executing processor: '" + name + "'");
 					gridProcessor.process();
 				}
+				
+				
+				if (useScripting && !this.isCancelled() && annotation.enabled()) {
+					onProcessAfter(processContainer);
+				}
 			}
 		}
 		
 		
-		
+		/*
 		if (!this.isCancelled()) {
 			for (ModelProcessContainer processContainer : modelProcessManifest.getProcessList()) {
 				
@@ -324,12 +337,51 @@ public class ModelBuilder extends InterruptibleProcess
 				}
 			}
 		}
-		
+		*/
 		dataLoaded = true;
 		
 		if (useScripting && !this.isCancelled()) {
 			onModelAfter();
 		}
+		
+		
+		
+		log.info("Initializing final rendering...");
+		MapProjection mapProjection = null;
+		
+		try {
+			
+			mapProjection = globalOptionModel.getMapProjectionInstance();
+			
+		} catch (MapProjectionException ex) {
+			throw new RenderEngineException("Error creating map projection: " + ex.getMessage(), ex);
+		}
+		
+		View view = ViewFactory.getViewInstance(modelContext
+				, globalOptionModel
+				, modelDimensions
+				, mapProjection
+				, modelContext.getScriptingContext().getScriptProxy()
+				, modelGrid);
+		
+		
+		RenderProcess renderProcess = new RenderProcess(view);
+		renderProcess.setModelContext(modelContext);
+		renderProcess.setGlobalOptionModel(globalOptionModel);
+		renderProcess.setModelDimensions(modelDimensions);
+		renderProcess.setMapProjection(mapProjection);
+		renderProcess.setScript(modelContext.getScriptingContext().getScriptProxy());
+		renderProcess.setModelGrid(modelGrid);
+		
+		log.info("Running final rendering...");
+		renderProcess.prepare();
+		renderProcess.run();
+		ImageCapture imageCapture = renderProcess.capture();
+		
+		log.info("Completed final rendering, disposing...");
+		renderProcess.dispose();
+		
+		
 		
 		if (useScripting) {
 			onDestroy();
@@ -340,25 +392,31 @@ public class ModelBuilder extends InterruptibleProcess
 		}
 		
 		
+		
+		
+		
 		setProcessing(false);
 		
-		JDemElevationModel elevationModel = null;
+		ElevationModel elevationModel = null;
 		
 		if (globalOptionModel.getCreateJdemElevationModel()) {
-			try {
+			//try {
 				log.info("Compiling final elevation model");
-				elevationModel = modelContext.getModelCanvas().getJdemElevationModel();
-			} catch (ModelContextException ex) {
-				throw new RenderEngineException("Error fetching JDEM elevation model: " + ex.getMessage(), ex);
-			}
+				//elevationModel = modelContext.getModelCanvas().getJdemElevationModel();
+				elevationModel = new JDemElevationModel(imageCapture);
+			//} catch (ModelContextException ex) {
+			//	throw new RenderEngineException("Error fetching JDEM elevation model: " + ex.getMessage(), ex);
+			//}
 			setJDemElevationModelProperties(elevationModel);
+		} else {
+			elevationModel = new SimpleImageElevationModel(imageCapture);
 		}
 		
 		return elevationModel;
 	}
 	
 
-	protected void setJDemElevationModelProperties(JDemElevationModel elevationModel)
+	protected void setJDemElevationModelProperties(ElevationModel elevationModel)
 	{
 
 		

@@ -233,7 +233,7 @@ public class RenderViewPane extends Panel
 					
 					log.info("Processing...");
 					start = System.currentTimeMillis();
-					JDemElevationModel jdemElevationModel = modelBuilder.process();
+					JDemElevationModel jdemElevationModel = (JDemElevationModel) modelBuilder.process();
 					
 	
 					elapsed = (System.currentTimeMillis() - start) / 1000;

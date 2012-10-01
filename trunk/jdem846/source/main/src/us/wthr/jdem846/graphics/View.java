@@ -3,8 +3,10 @@ package us.wthr.jdem846.graphics;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGrid;
+import us.wthr.jdem846.model.ModelPointGrid;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
 public interface View {
@@ -15,7 +17,7 @@ public interface View {
 	public void setMapProjection(MapProjection arg);
 
 	public void setScript(ScriptProxy arg);
-	public void setModelGrid(ModelGrid arg);
+	public void setModelGrid(ModelPointGrid arg);
 	
 	public double radius();
 	public double horizFieldOfView();
@@ -24,5 +26,5 @@ public interface View {
 	public double farClipDistance();
 	public double eyeZ();
 	
-	
+	public void project(double latitude, double longitude, double elevation, Vector point);
 }

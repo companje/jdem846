@@ -171,6 +171,9 @@ public class FrameBuffer
 		}
 		
 		int rgba = this.overlay(this.buffer[idx], 0x0);
+		if (rgba != -16777216) {
+			int i = 0;
+		}
 		return rgba;
 	}
 	

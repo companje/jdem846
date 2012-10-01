@@ -91,11 +91,11 @@ public class SurfaceNormalCalculator
 		double nLat = latitude + latitudeResolution;
 		double nLon = longitude;
 		
-		double midElev = modelGrid.getElevation(latitude, longitude);
-		double eElev = modelGrid.getElevation(eLat, eLon);
-		double sElev = modelGrid.getElevation(sLat, sLon);
-		double wElev = modelGrid.getElevation(wLat, wLon);
-		double nElev = modelGrid.getElevation(nLat, nLon);
+		double midElev = modelGrid.getElevation(latitude, longitude, true);
+		double eElev = modelGrid.getElevation(eLat, eLon, true);
+		double sElev = modelGrid.getElevation(sLat, sLon, true);
+		double wElev = modelGrid.getElevation(wLat, wLon, true);
+		double nElev = modelGrid.getElevation(nLat, nLon, true);
 		
 		eElev = (eElev == DemConstants.ELEV_NO_DATA) ? midElev : eElev;
 		sElev = (sElev == DemConstants.ELEV_NO_DATA) ? midElev : sElev;
@@ -236,11 +236,11 @@ public class SurfaceNormalCalculator
 		double nLat = latitude + latitudeResolution;
 		double nLon = longitude;
 		
-		double midElev = modelGrid.getElevation(latitude, longitude);
-		double eElev = modelGrid.getElevation(eLat, eLon);
-		double sElev = modelGrid.getElevation(sLat, sLon);
-		double wElev = modelGrid.getElevation(wLat, wLon);
-		double nElev = modelGrid.getElevation(nLat, nLon);
+		double midElev = modelGrid.getElevation(latitude, longitude, true);
+		double eElev = modelGrid.getElevation(eLat, eLon, true);
+		double sElev = modelGrid.getElevation(sLat, sLon, true);
+		double wElev = modelGrid.getElevation(wLat, wLon, true);
+		double nElev = modelGrid.getElevation(nLat, nLon, true);
 		
 		eElev = (eElev == DemConstants.ELEV_NO_DATA) ? midElev : eElev;
 		sElev = (sElev == DemConstants.ELEV_NO_DATA) ? midElev : sElev;

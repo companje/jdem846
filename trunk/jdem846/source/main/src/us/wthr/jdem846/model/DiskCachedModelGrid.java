@@ -136,6 +136,13 @@ public class DiskCachedModelGrid extends ModelPointGrid
 		
 	}
 	
+	@Override
+	public int[] getModelTexture()
+	{
+		return null;
+		// TODO: Complete getModelTexture() for DiskCachedModelGrid
+	}
+	
 	protected void closeFilePointer() throws Exception
 	{
 		RandomAccessFile filePointer = getFilePointer(false);
@@ -336,7 +343,7 @@ public class DiskCachedModelGrid extends ModelPointGrid
 	}
 
 	@Override
-	public double getElevation(double latitude, double longitude)
+	public double getElevation(double latitude, double longitude, boolean basic)
 	{
 		try {
 			checkBufferRegion(latitude, longitude);

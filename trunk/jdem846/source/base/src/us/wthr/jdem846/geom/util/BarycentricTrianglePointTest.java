@@ -1,6 +1,7 @@
 package us.wthr.jdem846.geom.util;
 
 import us.wthr.jdem846.geom.Vertex;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.math.Vectors;
 
 /** Apologies to http://www.blackpawn.com/texts/pointinpoly/default.html
@@ -10,7 +11,16 @@ import us.wthr.jdem846.math.Vectors;
  */
 public class BarycentricTrianglePointTest extends PointTest
 {
-
+	Vector A = new Vector();
+	Vector B = new Vector();
+	Vector C = new Vector();
+	Vector P = new Vector();
+	
+	Vector v0 = new Vector();
+	Vector v1 = new Vector();
+	Vector v2 = new Vector();
+	
+	/*
 	double[] A;
 	double[] B;
 	double[] C;
@@ -19,9 +29,11 @@ public class BarycentricTrianglePointTest extends PointTest
 	double[] v0;
 	double[] v1;
 	double[] v2;
+	*/
 	
 	public BarycentricTrianglePointTest()
 	{
+		/*
 		A = new double[3];
 		B = new double[3];
 		C = new double[3];
@@ -30,6 +42,7 @@ public class BarycentricTrianglePointTest extends PointTest
 		v0 = new double[3];
 		v1 = new double[3];
 		v2 = new double[3];
+		*/
 	}
 	
 	public boolean contains(Vertex p0, Vertex p1, Vertex p2, double x, double y, double z)
@@ -40,9 +53,9 @@ public class BarycentricTrianglePointTest extends PointTest
 		
 		fill(x, y, z, P);
 		
-		Vectors.subtract(p2.xyz, p0.xyz, v0);
-		Vectors.subtract(p1.xyz, p0.xyz, v1);
-		Vectors.subtract(P, p0.xyz, v2);
+		Vectors.subtract(p2.vector, p0.vector, v0);
+		Vectors.subtract(p1.vector, p0.vector, v1);
+		Vectors.subtract(P, p0.vector, v2);
 		
 		double dot00 = Vectors.dotProduct(v0, v0);
 		double dot01 = Vectors.dotProduct(v0, v1);

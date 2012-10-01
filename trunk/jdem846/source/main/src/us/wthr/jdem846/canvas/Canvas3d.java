@@ -145,15 +145,9 @@ public class Canvas3d
 			//rgba0 = edge.p0.rgba;
 			//rgba1 = edge.p1.rgba;
 			//int i = 0;
-			rgba0[0] = edge.p0.rgba[0];
-			rgba0[1] = edge.p0.rgba[1];
-			rgba0[2] = edge.p0.rgba[2];
-			rgba0[3] = edge.p0.rgba[3];
-			
-			rgba1[0] = edge.p1.rgba[0];
-			rgba1[1] = edge.p1.rgba[1];
-			rgba1[2] = edge.p1.rgba[2];
-			rgba1[3] = edge.p1.rgba[3];
+			ColorUtil.intToRGBA(edge.p0.rgba, rgba0);
+			ColorUtil.intToRGBA(edge.p1.rgba, rgba1);
+
 			
 		}
 		

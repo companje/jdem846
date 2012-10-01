@@ -146,7 +146,12 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 		double[] eye = new double[3];
 		//Spheres.getPoint3D(-90.0, 0, modelRadius*10, eye);
-		Spheres.getPoint3D(+90.0, 0, D, eye);
+		Spheres.getPoint3D(-90.0, 0, DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH, eye);
+		Vectors.rotate(-viewPerspective.getRotateX()
+				, -viewPerspective.getRotateY()
+				, -viewPerspective.getRotateZ()
+				, eye
+				, Vectors.YXZ);
 		advancedLightingCalculator.setEye(eye);
 		
 		advancedLightingCalculator.setUseDistanceAttenuation(optionModel.getUseDistanceAttenuation());
@@ -334,16 +339,20 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			//sunlightPosition.getLightPositionByCoordinates(latitude, longitude, sunsource);
 		//}
 		
+		double blockAmt = 0;
+		try {
+			double elevation = modelGrid.getElevation(latitude, longitude, false);
+			
+			blockAmt = calculateRayTracedShadow(elevation, latitude, longitude);
+		} catch (RayTracingException ex) {
+			throw new RenderEngineException("Error running ray tracing: " + ex.getMessage(), ex);
+		}
+		
 		modelGrid.getRgba(latitude, longitude, rgbaBuffer);
 		normalsCalculator.calculateNormalSpherical(latitude, longitude, normal);
 		
 		
-		double blockAmt = 0;
-		try {
-			blockAmt = calculateRayTracedShadow(modelGrid.getElevation(latitude, longitude), latitude, longitude);
-		} catch (RayTracingException ex) {
-			throw new RenderEngineException("Error running ray tracing: " + ex.getMessage(), ex);
-		}
+		
 		
 
 		

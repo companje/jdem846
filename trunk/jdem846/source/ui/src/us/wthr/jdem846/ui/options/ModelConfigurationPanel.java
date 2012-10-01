@@ -151,7 +151,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		modelProcessManifest.addProcessor(shadingProcessId, shadingOptionModel);
 		
 		modelProcessManifest.addProcessor(defaultShapesProcessor, new ShapeOptionModel());
-		modelProcessManifest.addProcessor(renderProcessId, renderOptionModel);
+		//modelProcessManifest.addProcessor(renderProcessId, renderOptionModel);
 		
 		return modelProcessManifest;
 	}
