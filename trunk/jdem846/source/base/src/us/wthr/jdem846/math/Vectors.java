@@ -1,5 +1,6 @@
 package us.wthr.jdem846.math;
 
+
 public class Vectors
 {
 	public static final int X_AXIS = 0;
@@ -20,6 +21,9 @@ public class Vectors
 	private static double[] buffer1 = new double[3];
 	private static double[] buffer2 = new double[3];
 	
+	private static Vector vector0 = new Vector();
+	private static Vector vector1 = new Vector();
+	private static Vector vector2 = new Vector();
 	
 	@SuppressWarnings("unused")
 	private static double[] tmpPoints1 = {0, 0, 0};
@@ -58,6 +62,12 @@ public class Vectors
 		xyz[2] = tZ;
 	}
 	
+	public static void translate(double x, double y, double z, Vector v)
+	{
+		v.x += x;
+		v.y += y;
+		v.z += z;
+	}
 	
 	
 	public static void scale(double x, double y, double z, double[] xyz)
@@ -67,32 +77,22 @@ public class Vectors
 		xyz[2] = xyz[2] * z;
 	}
 	
+	public static void scale(double x, double y, double z, Vector v)
+	{
+		v.x *= x;
+		v.y *= y;
+		v.z *= z;
+	}
 	
 	
 	public static void rotate(double x, double y, double z, double[] xyz) 
 	{
 		rotate(x, y, z, xyz, XYZ); 
-		/*
-		double _x = (x != 0) ? MathExt.radians(x) : 0;
-		double _y = (y != 0) ? MathExt.radians(y) : 0;
-		double _z = (z != 0) ? MathExt.radians(z) : 0;
-		
-		double sinAX = (x != 0) ? MathExt.sin(-_x) : 0;
-		double sinAY = (y != 0) ? MathExt.sin(-_y) : 0;
-		double sinAZ = (z != 0) ? MathExt.sin(-_z) : 0;
-
-		double cosAX = (x != 0) ? MathExt.cos(-_x) : 1;
-		double cosAY = (y != 0) ? MathExt.cos(-_y) : 1;
-		double cosAZ = (z != 0) ? MathExt.cos(-_z) : 1;
-		
-		double rx = ((cosAY * cosAZ) * xyz[0]) + ((-sinAX*-sinAY*cosAZ+cosAX*sinAZ) * xyz[1]) + ((cosAX*-sinAY*cosAZ+sinAX*sinAZ) * xyz[2]);
-		double ry = ((cosAY * -sinAZ) * xyz[0]) + ((-sinAX*-sinAY*-sinAZ+cosAX*cosAZ) * xyz[1]) + ((cosAX*-sinAY*-sinAZ+sinAX*cosAZ) * xyz[2]);
-		double rz = (sinAY * xyz[0]) + ((-sinAX*cosAY) * xyz[1]) + ((cosAX*cosAY) * xyz[2]);
-		
-		xyz[0] = rx;
-		xyz[1] = ry;
-		xyz[2] = rz;
-		*/
+	}
+	
+	public static void rotate(double x, double y, double z, Vector v)
+	{
+		rotate(x, y, z, v, XYZ);
 	}
 	
 	
@@ -133,6 +133,42 @@ public class Vectors
 		
 	}
 	
+	public static void rotate(double x, double y, double z, Vector v, int order) 
+	{
+		
+		switch(order) {
+		case XYZ:
+			rotateX(x, v);
+			rotateY(y, v);
+			rotateZ(z, v);
+			break;
+		case XZY:
+			rotateX(x, v);
+			rotateZ(z, v);
+			rotateY(y, v);
+			break;
+		case YXZ:
+			rotateY(y, v);
+			rotateX(x, v);
+			rotateZ(z, v);
+			break;
+		case YZX:
+			rotateY(y, v);
+			rotateZ(z, v);
+			rotateX(x, v);
+			break;
+		case ZXY:
+			rotateZ(z, v);
+			rotateX(x, v);
+			rotateY(y, v);
+			break;
+		case ZYX:
+			rotateZ(z, v);
+			rotateY(y, v);
+			rotateX(x, v);
+		}
+	}
+	
 	public static void rotateX(double x, double[] xyz) 
 	{
 		if (x != 0.0) {
@@ -151,6 +187,23 @@ public class Vectors
 		}
 	}
 	
+	public static void rotateX(double x, Vector v) 
+	{
+		if (x != 0.0) {
+			
+			x = MathExt.radians(x);
+
+			double cosX = MathExt.cos(x);
+			double sinX = MathExt.sin(x);
+			
+			//xyz[0] = xyz[0] * 1.0;
+			double ry = cosX * v.y + -sinX * v.z;
+			double rz = sinX * v.y + cosX * v.z;
+			
+			v.y = ry;
+			v.z = rz;
+		}
+	}
 	
 	
 	
@@ -172,6 +225,24 @@ public class Vectors
 		}
 	}
 	
+	public static void rotateY(double y, Vector v) 
+	{
+		if (y != 0.0) {
+			
+			y = MathExt.radians(y);
+			
+			double cosY = MathExt.cos(y);
+			double sinY = MathExt.sin(y);
+			
+			double rx = cosY * v.x + sinY * v.z;
+			//xyz[1] = xyz[1] * 1.0;
+			double rz = -sinY * v.x + cosY * v.z;
+			
+			v.x = rx;
+			v.z = rz;
+		}
+	}
+	
 	public static void rotateZ(double z, double[] xyz) 
 	{
 		if (z != 0.0) {
@@ -190,12 +261,37 @@ public class Vectors
 		}
 	}
 	
+	public static void rotateZ(double z, Vector v) 
+	{
+		if (z != 0.0) {
+			
+			z = MathExt.radians(z);
+			
+			double cosZ = MathExt.cos(z);
+			double sinZ = MathExt.sin(z);
+			
+			double rx = cosZ * v.x + -sinZ * v.y;
+			double ry = sinZ * v.x + cosZ * v.y;
+			//xyz[2] = xyz[2] * 1.0;
+			
+			v.x = rx;
+			v.y = ry;
+		}
+	}
 	
 	public static void copy(double[] src, double[] dst)
 	{
 		dst[0] = src[0];
 		dst[1] = src[1];
 		dst[2] = src[2];
+	}
+	
+	public static void copy(Vector from, Vector to)
+	{
+		to.x = from.x;
+		to.y = from.y;
+		to.z = from.z;
+		to.w = from.w;
 	}
 	
 	
@@ -206,11 +302,27 @@ public class Vectors
 		usr[2] = pt0[2] - pt1[2];
 	}
 	
+	public static void subtract(Vector a, Vector b, Vector to)
+	{
+		to.x = a.x - b.x;
+		to.y = a.y - b.y;
+		to.z = a.z - b.z;
+		to.w = a.w - b.w;
+	}
+	
 	public static void add(double[] pt0, double[] pt1, double[] usr)
 	{
 		usr[0] = pt0[0] + pt1[0];
 		usr[1] = pt0[1] + pt1[1];
 		usr[2] = pt0[2] + pt1[2];
+	}
+	
+	public static void add(Vector a, Vector b, Vector to)
+	{
+		to.x = a.x + b.x;
+		to.y = a.y + b.y;
+		to.z = a.z + b.z;
+		to.w = a.w + b.w;
 	}
 
 	public static void crossProduct(double[] pt0, double[] pt1, double[] usr)
@@ -219,6 +331,14 @@ public class Vectors
 		usr[1] = pt0[2] * pt1[0] - pt1[2] * pt0[0];
 		usr[2] = pt0[0] * pt1[1] - pt1[0] * pt0[1];
 	}
+	
+	public static void crossProduct(Vector a, Vector b, Vector to)
+	{
+		to.x = a.y * b.z - b.y * a.z;
+		to.y = a.z * b.x - b.z * a.x;
+		to.z = a.x * b.y - b.x * a.y;
+	}
+	
 
 	public static double dotProduct(double[] pt0, double[] pt1)
 	{
@@ -230,6 +350,14 @@ public class Vectors
 
 		return  buffer0[0] * buffer1[0] + buffer0[1] * buffer1[1] + buffer0[2] * buffer1[2];
 	}
+	
+	public static double dotProduct(Vector a, Vector b)
+	{
+		normalize(a, vector0);
+		normalize(b, vector1);
+		
+		return vector0.x * vector1.x + vector0.y * vector1.y + vector0.z * vector1.z;
+	}
 
 	
 	public static void inverse(double [] v, double[] usr)
@@ -237,6 +365,18 @@ public class Vectors
         for (int i = 0; i<3; i++) {
         	usr[i] = -v[i];
         }
+	}
+	
+	public static void inverse(Vector v, Vector into)
+	{
+		v.x *= -1;
+		v.y *= -1;
+		v.z *= -1;
+	}
+	
+	public static void inverse(Vector v)
+	{
+		inverse(v, v);
 	}
 	
 	public static void normalize(double[] pt0, double[] no)
@@ -250,6 +390,22 @@ public class Vectors
 		no[2] = pt0[2] / len;
 	}
 
+	public static void normalize(Vector v, Vector into)
+	{
+		double len = MathExt.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+		if (len == 0.0)
+			len = 1.0;
+		
+		into.x = v.x / len;
+		into.y = v.y / len;
+		into.z = v.z / len;
+	}
+	
+	public static void normalize(Vector v)
+	{
+		normalize(v, v);
+	}
+	
 	public static void calcNormal(double[] pt0, double[] pt1, double[] pt2, double[] no)
 	{
 		if (pt2 == null) {
@@ -268,6 +424,24 @@ public class Vectors
 			normalize(buffer2, no);
 
 		}
+		
+	}
+	
+	
+	public static void calcNormal(Vector a, Vector b, Vector norm)
+	{
+		norm.x = a.y * b.z - b.z * a.z;
+		norm.y = a.x * b.z - b.x * a.z;
+		norm.z = a.x * b.y - b.x * a.y;
+	}
+	
+	public static void calcNormal(Vector a, Vector b, Vector c, Vector norm)
+	{
+		subtract(a, b, vector0);
+		subtract(b, c, vector1);
+		
+		crossProduct(vector0, vector1, vector2);
+		normalize(vector2, norm);
 		
 	}
 }
