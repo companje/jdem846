@@ -239,7 +239,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	protected double createPointVertex(TriangleStrip strip, double latitude, double longitude, double lastElevation) throws Exception
 	{
 
-		double elev = modelGrid.getElevation(latitude, longitude);
+		double elev = modelGrid.getElevation(latitude, longitude, true);
 		
 		if (elev == DemConstants.ELEV_NO_DATA) {
 			return DemConstants.ELEV_NO_DATA;

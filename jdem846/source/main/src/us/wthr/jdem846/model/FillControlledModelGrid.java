@@ -99,16 +99,17 @@ public class FillControlledModelGrid extends ModelPointGrid
 	}
 	
 	
+
 	
 	@Override
-	public double getElevation(double latitude, double longitude)
+	public double getElevation(double latitude, double longitude, boolean basic)
 	{
 		double elevation = modelGrid.getElevation(latitude, longitude);
 		boolean doFilters = forceResetAndRunFilters;
 		if (elevation == DemConstants.ELEV_UNDETERMINED) {
 			try {
 				elevation = getRasterData(latitude, longitude);
-				//elevation = rasterDataContext.getData(latitude, longitude);
+
 			} catch (Exception ex) {
 				// TODO: Add a throw or something similar here
 				log.warn("Error fetching elevation: " + ex.getMessage(), ex);
@@ -119,7 +120,7 @@ public class FillControlledModelGrid extends ModelPointGrid
 		}
 		
 		
-		if (doFilters) {
+		if (doFilters && !basic) {
 			
 			if (forceResetAndRunFilters) {
 				modelGrid.setRgba(latitude, longitude, 0x0);
@@ -134,31 +135,31 @@ public class FillControlledModelGrid extends ModelPointGrid
 	@Override
 	public void setElevation(double latitude, double longitude, double elevation)
 	{
-		super.setElevation(latitude, longitude, elevation);
+		modelGrid.setElevation(latitude, longitude, elevation);
 	}
 
 	@Override
 	public void getRgba(double latitude, double longitude, int[] fill)
 	{
-		super.getRgba(latitude, longitude, fill);
+		modelGrid.getRgba(latitude, longitude, fill);
 	}
 
 	@Override
 	public int getRgba(double latitude, double longitude)
 	{
-		return super.getRgba(latitude, longitude);
+		return modelGrid.getRgba(latitude, longitude);
 	}
 
 	@Override
 	public void setRgba(double latitude, double longitude, int rgba) 
 	{
-		super.setRgba(latitude, longitude, rgba);
+		modelGrid.setRgba(latitude, longitude, rgba);
 	}
 
 	@Override
 	public void setRgba(double latitude, double longitude, int[] rgba) 
 	{
-		super.setRgba(latitude, longitude, rgba);
+		modelGrid.setRgba(latitude, longitude, rgba);
 	}
 
 
@@ -278,6 +279,13 @@ public class FillControlledModelGrid extends ModelPointGrid
 		}
 		
 		return result;
+	}
+
+
+	@Override
+	public int[] getModelTexture()
+	{
+		return this.modelGrid.getModelTexture();
 	}
 	
 	

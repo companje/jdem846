@@ -1,14 +1,13 @@
 package us.wthr.jdem846.geom;
 
+import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.math.Vector;
+
 public class Vertex implements Comparable<Vertex>
 {
-	public static final int X = 0;
-	public static final int Y = 1;
-	public static final int Z = 2;
-	
 
-	public double[] xyz = new double[3];
-	public int[] rgba = null;
+	public Vector vector = new Vector();
+	public int rgba = 0x0;
 	
 	public Vertex()
 	{
@@ -17,7 +16,7 @@ public class Vertex implements Comparable<Vertex>
 	
 	public Vertex(Vertex copy)
 	{
-		this(copy.xyz, copy.rgba);
+		this(copy.vector, copy.rgba);
 	}
 	
 	public Vertex(double x, double y)
@@ -37,23 +36,42 @@ public class Vertex implements Comparable<Vertex>
 	
 	public Vertex(double x, double y, double z, int[] rgba)
 	{
-		set(x, y, z, rgba);
+		set(x, y, z, ColorUtil.rgbaToInt(rgba));
 	}
 	
 	
+	public Vertex(Vector v, int rgba)
+	{
+		set(v.x, v.y, v.z, rgba);
+	}
+	
+	public Vertex(Vector v)
+	{
+		set(v.x, v.y, v.z, 0x0);
+	}
+	
+	
+	public void set(Vector v, int rgba)
+	{
+		set(v.x, v.y, v.z, rgba);
+	}
+	
 	public void set(double x, double y, double z, int[] rgba)
 	{
-		this.xyz[X] = x;
-		this.xyz[Y] = y;
-		this.xyz[Z] = z;
-
-		if (rgba != null && rgba.length >= 4) {
-			this.rgba = new int[4];
-			this.rgba[0] = rgba[0];
-			this.rgba[1] = rgba[1];
-			this.rgba[2] = rgba[2];
-			this.rgba[3] = rgba[3];
+		set(x, y, z, ColorUtil.rgbaToInt(rgba));
+	}
+	
+	public void set(double x, double y, double z, int rgba)
+	{
+		if (this.vector == null) {
+			this.vector = new Vector(x, y, z);
+		} else {
+			this.vector.x = x;
+			this.vector.y = y;
+			this.vector.z = z;
 		}
+		this.rgba = rgba;
+
 	}
 
 	@Override
@@ -64,49 +82,49 @@ public class Vertex implements Comparable<Vertex>
 
 	public int compareToY(Vertex other)
 	{
-		Double y0 = (Double) this.xyz[Y];
-		Double y1 = (Double) other.xyz[Y];
+		Double y0 = (Double) this.vector.y;
+		Double y1 = (Double) other.vector.y;
 		return y0.compareTo(y1);
 	}
 	
 	public int compareToX(Vertex other)
 	{
-		Double x0 = (Double) this.xyz[X];
-		Double x1 = (Double) other.xyz[X];
+		Double x0 = (Double) this.vector.x;
+		Double x1 = (Double) other.vector.x;
 		return x0.compareTo(x1);
 	}
 	
 	
 	public void x(double x)
 	{
-		this.xyz[X] = x;
+		this.vector.x = x;
 	}
 	
 	public double x()
 	{
-		return this.xyz[X];
+		return this.vector.x;
 	}
 	
 	
 	public void y(double y)
 	{
-		this.xyz[Y] = y;
+		this.vector.y = y;
 	}
 	
 	public double y()
 	{
-		return this.xyz[Y];
+		return this.vector.y;
 	}
 	
 	
 	public void z(double z)
 	{
-		this.xyz[Z] = z;
+		this.vector.z = z;
 	}
 	
 	public double z()
 	{
-		return this.xyz[Z];
+		return this.vector.z;
 	}
 	
 }

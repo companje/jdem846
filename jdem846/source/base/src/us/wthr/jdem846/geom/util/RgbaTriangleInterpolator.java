@@ -1,5 +1,6 @@
 package us.wthr.jdem846.geom.util;
 
+import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.math.MathExt;
 
 public class RgbaTriangleInterpolator
@@ -26,6 +27,35 @@ public class RgbaTriangleInterpolator
 			x10, y10, rgba10);
 		
 	}
+	
+	
+	public RgbaTriangleInterpolator(double x00, double y00, int rgba00,
+			double x01, double y01, int rgba01,
+			double x10, double y10, int rgba10)
+	{
+		set(x00, y00, rgba00,
+			x01, y01, rgba01,
+			x10, y10, rgba10);
+	}
+	
+	public void set(double x00, double y00, int rgba00,
+			double x01, double y01, int rgba01,
+			double x10, double y10, int rgba10)
+	{
+		int[] _rgba00 = {0, 0, 0, 0};
+		ColorUtil.intToRGBA(rgba00, _rgba00);
+		
+		int[] _rgba01 = {0, 0, 0, 0};
+		ColorUtil.intToRGBA(rgba01, _rgba01);
+		
+		int[] _rgba10 = {0, 0, 0, 0};
+		ColorUtil.intToRGBA(rgba10, _rgba10);
+		
+		set(x00, y00, _rgba00
+			, x01, y01, _rgba01
+			, x10, y10, _rgba10);
+	}
+	
 	
 	public void set(double x00, double y00, int[] rgba00,
 									double x01, double y01, int[] rgba01,

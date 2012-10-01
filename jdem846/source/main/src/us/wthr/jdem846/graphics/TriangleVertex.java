@@ -8,7 +8,7 @@ public class TriangleVertex
 	public int rgba = 0x0;
 	public boolean useTexture = false;
 	public double left = 0;
-	public double right = 0;
+	public double front = 0;
 	
 	
 	public TriangleVertex()

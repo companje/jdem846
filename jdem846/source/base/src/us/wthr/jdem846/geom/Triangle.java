@@ -1,6 +1,7 @@
 package us.wthr.jdem846.geom;
 
 
+import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.geom.util.BarycentricTrianglePointTest;
 import us.wthr.jdem846.geom.util.PointTest;
 import us.wthr.jdem846.geom.util.RgbaTriangleInterpolator;
@@ -30,25 +31,24 @@ public class Triangle extends RenderableShape
 	
 	public Triangle(Vertex p0, Vertex p1, Vertex p2)
 	{
+		setVerteces(p0, p1, p2);
+
+	}
+	
+
+	public void setVerteces(Vertex p0, Vertex p1, Vertex p2)
+	{
 		this.p0 = new Vertex(p0);
 		this.p1 = new Vertex(p1);
 		this.p2 = new Vertex(p2);
-
-		initialize();
-	}
-	
-	public void initialize()
-	{
-
+		
 		zInterpolator.set(p0.x(), p0.y(), p0.z(),
-							p1.x(), p1.y(), p1.z(),
-							p2.x(), p2.y(), p2.z());
-		
-		rgbaInterpolator.set(p0.x(), p0.y(), p0.rgba,
-							p1.x(), p1.y(), p1.rgba,
-							p2.x(), p2.y(), p2.rgba);
-		
+				p1.x(), p1.y(), p1.z(),
+				p2.x(), p2.y(), p2.z());
 
+		rgbaInterpolator.set(p0.x(), p0.y(), p0.rgba,
+				p1.x(), p1.y(), p1.rgba,
+				p2.x(), p2.y(), p2.rgba);
 	}
 	
 	
@@ -81,6 +81,12 @@ public class Triangle extends RenderableShape
 	}
 	
 	
+	private int[] rgba = {0, 0, 0, 0};
+	public int getInterpolatedColor(double x, double y)
+	{
+		rgbaInterpolator.getInterpolatedColor(x, y, rgba);
+		return ColorUtil.rgbaToInt(rgba);
+	}
 
 	
 	@Override

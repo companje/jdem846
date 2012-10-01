@@ -43,10 +43,7 @@ public class TriVertex {
 	
 	Triangle getTriangle()
 	{
-		this.triangle.p0 = v0;
-		this.triangle.p1 = v1;
-		this.triangle.p2 = v2;
-		this.triangle.initialize();
+		this.triangle.setVerteces(v0, v1, v2);
 		return this.triangle;
 	}
 	

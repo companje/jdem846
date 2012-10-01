@@ -54,7 +54,13 @@ public class BufferedModelGrid extends ModelPointGrid
 		}
 		
 	}
-
+	
+	@Override
+	public int[] getModelTexture()
+	{
+		return rgbaGrid;
+	}
+	
 	@Override
 	public ModelPoint get(double latitude, double longitude)
 	{
@@ -91,7 +97,7 @@ public class BufferedModelGrid extends ModelPointGrid
 	}
 	
 	@Override
-	public double getElevation(double latitude, double longitude)
+	public double getElevation(double latitude, double longitude, boolean basic)
 	{
 		int index = getIndex(latitude, longitude);
 		if (index >= 0 && index < this.gridLength) {

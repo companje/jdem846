@@ -5,7 +5,7 @@ public class Texture {
 	public int width = 0;
 	public int height = 0;
 	public double left = 0;
-	public double right = 0;
+	public double front = 0;
 	
 	
 	public Texture(int width, int height, int[] texture)

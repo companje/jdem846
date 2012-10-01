@@ -82,7 +82,7 @@ public class Matrix
 	}
 	
 	
-	protected int index(int x, int y)
+	protected static int index(int x, int y)
 	{
 		return (y * 4) + x;
 	}
@@ -185,19 +185,34 @@ public class Matrix
 	*/
 	static void matmul4(double[] product, double[] a, double[] b)
 	{
-
+		/*
+		for (int i = 0; i < 16; i++) {
+			product[i] = 0;
+		}
+		 
 		for (int i = 0; i < 4; i++) {
-			double ai0 = a[(0<<2)+i];
-			double ai1 = a[(1<<2)+i];
-			double ai2 = a[(2<<2)+i];
-			double ai3 = a[(3<<2)+i];
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                	product[index(i, j)] += a[index(i, k)] * b[index(k, j)];
+                	//C[i][j] += A.get(i).get(k) * B.get(k).get(j);
+                }
+            }
+		}
+		*/
+		
+		for (int row = 0; row < 4; row++) {
+			double ai0 = a[(0<<2)+row];
+			double ai1 = a[(1<<2)+row];
+			double ai2 = a[(2<<2)+row];
+			double ai3 = a[(3<<2)+row];
 
-			product[(0<<2)+i] = ai0 * b[(0<<2)+0] + ai1 * b[(0<<2)+1] + ai2 * b[(0<<2)+2] + ai3 * b[(0<<2)+3];
-			product[(1<<2)+i] = ai0 * b[(1<<2)+0] + ai1 * b[(1<<2)+1] + ai2 * b[(1<<2)+2] + ai3 * b[(1<<2)+3];
-			product[(2<<2)+i] = ai0 * b[(2<<2)+0] + ai1 * b[(2<<2)+1] + ai2 * b[(2<<2)+2] + ai3 * b[(2<<2)+3];
-			product[(3<<2)+i] = ai0 * b[(3<<2)+0] + ai1 * b[(3<<2)+1] + ai2 * b[(3<<2)+2] + ai3 * b[(3<<2)+3];
+			product[(0<<2)+row] = ai0 * b[(0<<2)+0] + ai1 * b[(0<<2)+1] + ai2 * b[(0<<2)+2] + ai3 * b[(0<<2)+3];
+			product[(1<<2)+row] = ai0 * b[(1<<2)+0] + ai1 * b[(1<<2)+1] + ai2 * b[(1<<2)+2] + ai3 * b[(1<<2)+3];
+			product[(2<<2)+row] = ai0 * b[(2<<2)+0] + ai1 * b[(2<<2)+1] + ai2 * b[(2<<2)+2] + ai3 * b[(2<<2)+3];
+			product[(3<<2)+row] = ai0 * b[(3<<2)+0] + ai1 * b[(3<<2)+1] + ai2 * b[(3<<2)+2] + ai3 * b[(3<<2)+3];
 
 		}
+		
 	}
 	
 	public void multiply(Matrix other)

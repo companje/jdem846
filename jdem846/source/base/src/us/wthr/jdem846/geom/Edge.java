@@ -137,7 +137,7 @@ public class Edge implements Comparable<Edge>
     	
     	double frac = ((xFrac + yFrac) / 2.0);
     	
-    	getInterpolatedColor(p0.rgba, p1.rgba, frac, rgba);
+    	//getInterpolatedColor(p0.rgba, p1.rgba, frac, rgba);
 
     }
     
@@ -145,6 +145,8 @@ public class Edge implements Comparable<Edge>
     
     public void getInterpolatedColor(int[] rgba0, int[] rgba1, double frac, int[] rgba)
     {
+    	// TODO: Reimplement
+    	/*
     	if (rgba0 != null && rgba1 != null) {
     		ColorAdjustments.interpolateColor(rgba0, rgba1, rgba, frac);
     	} else if (rgba0 == null && p1.rgba != null) {
@@ -158,8 +160,14 @@ public class Edge implements Comparable<Edge>
     		rgba[2] = rgba0[2];
     		rgba[3] = rgba0[3];
     	}
+    	*/
     	
-    	
+    }
+    
+    
+    public int getInterpolatedColor(int rgba0, int rgba1, double frac)
+    {
+    	return ColorAdjustments.interpolateColor(rgba0, rgba1, frac);
     }
     
  

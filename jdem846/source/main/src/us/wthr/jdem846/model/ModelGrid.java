@@ -53,6 +53,12 @@ public class ModelGrid extends ModelPointGrid
 		
 	}
 	
+	public int[] getModelTexture()
+	{
+		return null;
+		// TODO: Complete getModelTexture for ModelGrid
+	}
+	
 	public ModelPoint get(double latitude, double longitude)
 	{
 		int index = getIndex(latitude, longitude);

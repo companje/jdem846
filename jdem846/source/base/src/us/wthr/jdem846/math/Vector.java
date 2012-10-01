@@ -12,6 +12,14 @@ public class Vector
 		
 	}
 	
+	public Vector(Vector copy)
+	{
+		this.x = copy.x;
+		this.y = copy.y;
+		this.z = copy.z;
+		this.w = copy.w;
+	}
+	
 	public Vector(double x, double y, double z)
 	{
 		this.x = x;

@@ -21,6 +21,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
@@ -713,26 +714,28 @@ public class ModelVisualizationPanel extends Panel
 			// TODO Display error message
 		}
 
-		
+		ElevationModel elevationModel = null;
 		log.info("Rendering vizualization model...");
 		try {
-			modelBuilder.process();
+			elevationModel = modelBuilder.process();
 		} catch (RenderEngineException ex) {
 			log.error("Error rendering preview model: " + ex.getMessage(), ex);
 		}
 		log.info("Done rendering vizualization model");
 		
+		/*
 		ModelCanvas modelCanvas = null;
 		try {
 			modelCanvas = modelContextWorkingCopy.getModelCanvas();
 		} catch (ModelContextException ex) {
 			log.error("Error fetching model canvas: " + ex.getMessage(), ex);
 		}
+		*/
 		
-		if (modelCanvas != null) {
+		if (elevationModel != null) {
 			setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
 			pnlModelDisplay.setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
-			pnlModelDisplay.setImage(modelCanvas.getImage());
+			pnlModelDisplay.setImage(elevationModel.getImage());
 			pnlModelDisplay.zoomFit();
 		}
 		

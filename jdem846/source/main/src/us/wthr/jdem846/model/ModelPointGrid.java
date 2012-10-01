@@ -45,6 +45,8 @@ public abstract class ModelPointGrid
 		
 	}
 	
+	public abstract int[] getModelTexture();
+	
 	public abstract void dispose();
 	public abstract boolean isDisposed();
 	public abstract void reset();
@@ -70,8 +72,12 @@ public abstract class ModelPointGrid
 		return index;
 	}
 	
-	
 	public double getElevation(double latitude, double longitude)
+	{
+		return getElevation(latitude, longitude, false);
+	}
+	
+	public double getElevation(double latitude, double longitude, boolean basic)
 	{
 		ModelPoint mp = get(latitude, longitude);
 		if (mp != null) {
@@ -132,6 +138,14 @@ public abstract class ModelPointGrid
 	}
 
 	
+	public int getWidth()
+	{
+		return width;
+	}
 	
+	public int getHeight()
+	{
+		return height;
+	}
 
 }

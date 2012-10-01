@@ -57,10 +57,29 @@ public class Spheres
 		return phi;
 	}
 	
+	private static Vector vec = new Vector();
 	public static void getPoint3D(double theta, // Longitude, in degrees
 									double phi, // Latitude, in degrees
 									double radius, 
 									double[] points)
+	{
+		vec.x = points[0];
+		vec.y = points[1];
+		vec.z = points[2];
+		
+		getPoint3D(theta, phi, radius, vec);
+		
+		points[0] = vec.x;
+		points[1] = vec.y;
+		points[2] = vec.z;
+		
+		
+	}
+	
+	public static void getPoint3D(double theta, // Longitude, in degrees
+			double phi, // Latitude, in degrees
+			double radius, 
+			Vector v)
 	{
 		
 		theta = MathExt.radians(fixThetaDegrees(-theta));
@@ -90,19 +109,19 @@ public class Spheres
 	    	_y = MathExt.abs(_y) * -1;
 	    }
 
-        points[0] = _x;
-        points[1] = _y;
-        points[2] = _z;
+        v.x = _x;
+        v.y = _y;
+        v.z = _z;
         
         
-        points[0] = MathExt.min(radius, points[0]);
-        points[0] = MathExt.max(-radius, points[0]);
+        v.x = MathExt.min(radius, v.x);
+        v.x = MathExt.max(-radius, v.x);
 
-        points[1] = MathExt.min(radius, points[1]);
-        points[1] = MathExt.max(-radius, points[1]);
+        v.y = MathExt.min(radius, v.y);
+        v.y = MathExt.max(-radius, v.y);
         
-        points[2] = MathExt.min(radius, points[2]);
-        points[2] = MathExt.max(-radius, points[2]);
+        v.z = MathExt.min(radius, v.z);
+        v.z = MathExt.max(-radius, v.z);
 	}
 	
 	

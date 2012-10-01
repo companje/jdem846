@@ -1,6 +1,7 @@
 package us.wthr.jdem846.geom.util;
 
 import us.wthr.jdem846.geom.Vertex;
+import us.wthr.jdem846.math.Vector;
 
 public abstract class PointTest
 {
@@ -13,6 +14,13 @@ public abstract class PointTest
 		v[0] = x;
 		v[1] = y;
 		v[2] = z;
+	}
+	
+	protected void fill(double x, double y, double z, Vector v)
+	{
+		v.x = x;
+		v.y = y;
+		v.z = z;
 	}
 	
 }
