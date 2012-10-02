@@ -114,9 +114,10 @@ public class FillControlledModelGrid extends ModelPointGrid
 				// TODO: Add a throw or something similar here
 				log.warn("Error fetching elevation: " + ex.getMessage(), ex);
 			}
-			modelGrid.setElevation(latitude, longitude, elevation);
-			doFilters = true;
-			
+			if (!basic) {
+				modelGrid.setElevation(latitude, longitude, elevation);
+				doFilters = true;
+			}
 		}
 		
 		

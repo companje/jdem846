@@ -380,6 +380,7 @@ public class GraphicsRenderer
 	
 	public boolean project(Vector v)
 	{
+
 		Vector in = new Vector(v);
 		in.w = 1.0;
 		
@@ -401,6 +402,8 @@ public class GraphicsRenderer
 		in.y = in.y * 0.5 + 0.5;
 		//in.z = in.z * 0.5 + 0.5;
 		
+
+		
 		in.x = in.x * (double)this.frameBuffer.getWidth();
 		in.y = in.y * (double)this.frameBuffer.getHeight();
 		
@@ -408,11 +411,14 @@ public class GraphicsRenderer
 		v.y = in.y;
 		v.z = in.z;
 		
+		
+		
 		//if (-v.z > this.far || -v.z < this.near) {
 		//	return false;
 		//}
 		
 		return true;
+		
 	}
 	
 	public FrameBuffer getFrameBuffer()

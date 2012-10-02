@@ -367,6 +367,11 @@ public class Vectors
         }
 	}
 	
+	public static void inverse(double [] v)
+	{
+		inverse(v, v);
+	}
+	
 	public static void inverse(Vector v, Vector into)
 	{
 		v.x *= -1;

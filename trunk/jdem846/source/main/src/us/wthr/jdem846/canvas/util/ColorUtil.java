@@ -8,6 +8,27 @@ public class ColorUtil
 	private static int[] bufferB = new int[4];
 	private static int[] bufferC = new int[4];
 	
+	public static final int BLACK = -16777216;
+	public static final int WHITE = -1;
+	public static final int RED = -65536;
+	public static final int GREEN = -16711936;
+	public static final int BLUE = -16776961;
+	public static final int TRANSPARENT = 0x0;
+	
+	public static int setOverlayChannel(int c, int value, int channel)
+	{
+		if (channel < 0 || channel > 3) {
+			return c;
+		}
+		
+		int[] rgba = {0x0, 0x0, 0x0, 0x0};
+		ColorUtil.intToRGBA(c, rgba);
+		rgba[channel] = clamp(value);
+		return ColorUtil.rgbaToInt(rgba);
+	}
+	
+	
+	
 	public static int rgbaToInt(int[] rgba)
 	{
 		int r = rgba[0];

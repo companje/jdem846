@@ -89,9 +89,9 @@ public class LightingCalculator
 	{
 		Spheres.getPoint3D(longitude, latitude, radius, P);
 		
-		if (viewPerspective != null) {
-			Vectors.rotate(viewPerspective.getRotateX(), viewPerspective.getRotateY(), 0.0, P, Vectors.YXZ);
-		}
+		//if (viewPerspective != null) {
+		//	Vectors.rotate(viewPerspective.getRotateX(), viewPerspective.getRotateY(), 0.0, P, Vectors.YXZ);
+		//}
 		
 
 		N[0] = normal[0];

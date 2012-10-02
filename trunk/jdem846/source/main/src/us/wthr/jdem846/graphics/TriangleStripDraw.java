@@ -1,5 +1,6 @@
 package us.wthr.jdem846.graphics;
 
+import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.geom.util.SignTrianglePointTest;
 import us.wthr.jdem846.math.MathExt;
 
@@ -93,22 +94,23 @@ public class TriangleStripDraw extends PrimitiveDraw
 		minY = MathExt.max(0, minY);
 		maxY = MathExt.min(frameBuffer.getHeight() - 1, maxY);
 
-		int c;
+		
 		for (double y = minY; y <= maxY; y += 1.0) {
 			for (double x = minX; x <= maxX; x += 1.0) {
 			
-				if (SignTrianglePointTest.contains(tri.p0.vector, tri.p1.vector, tri.p2.vector, maxY, y, 0)) {
+				if (SignTrianglePointTest.contains(tri.p0.vector, tri.p1.vector, tri.p2.vector, x, y, 0)) {
 					double z = tri.getInterpolatedZ(x, y);
 
 					double left = tri.getInterpolatedLeft(x, y);
 					double front = tri.getInterpolatedFront(x, y);
-
+					
+					int c = ColorUtil.TRANSPARENT;
 					if (left >= 0 && front >= 0 && texture != null) {
-						c = this.textureColor(left, front,true);
+						c = this.textureColor(left, front, true);
 					} else {
 						c = tri.getInterpolatedColor(x, y);
 					}
-
+					
 					frameBuffer.set(x, y, z, c);
 				}
 			}
