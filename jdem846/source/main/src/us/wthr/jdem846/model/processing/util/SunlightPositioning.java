@@ -244,13 +244,14 @@ public class SunlightPositioning
 		double rotateX = declination;
 		
 		if (viewPerspective != null) {
-			rotateY = viewPerspective.getRotateY() + rotateY;
-			rotateX = viewPerspective.getRotateX() - rotateX;
+			//rotateY = viewPerspective.getRotateY() + rotateY;
+			//rotateX = viewPerspective.getRotateX() - rotateX;
 		}
 		
 		//Vectors.rotate(0.0, 0.0, obliquityCorrection, xyz);
 		//Vectors.rotate(rotateX, rotateY, o, xyz, Vectors.ZYX);
-		Vectors.rotate(rotateX, rotateY, o, xyz, Vectors.ZYX);
+		Vectors.rotate(rotateX, -rotateY, o, xyz, Vectors.ZYX);
+		Vectors.inverse(xyz);
 		//Vectors.rotate(0.0, 0.0, o, xyz);
 		//Vectors.rotate(0.0, rotateY, 0.0, xyz);
 		//Vectors.rotate(rotateX, 0.0, 0.0, xyz);
@@ -366,7 +367,8 @@ public class SunlightPositioning
 		double rotateX = solarCalculator.declinationOfSun();
 		
 		
-		
+		//real rotateY = rightAscension + (ha - longitude);
+		//real rotateX = declination;
 		
 		
 		
@@ -446,10 +448,11 @@ public class SunlightPositioning
 			//rotateY += viewPerspective.getRotateY();
 			//rotateX = viewPerspective.getRotateX() + rotateX;
 		}
+		Vectors.rotate(rotateX, rotateY, 0.0, sunsource, Vectors.ZYX);
+		Vectors.inverse(sunsource);
 		
-		
-		Vectors.rotate(0.0, rotateY, 0.0, sunsource);
-		Vectors.rotate(rotateX, 0.0, 0.0, sunsource);
+		//Vectors.rotate(0.0, rotateY, 0.0, sunsource);
+		//Vectors.rotate(rotateX, 0.0, 0.0, sunsource);
 		//Vectors.rotate(, 0.0, 0, sunsource);
 		
 		//sunsource[0] = 149598000000.0;

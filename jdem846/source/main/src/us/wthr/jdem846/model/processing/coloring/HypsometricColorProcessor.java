@@ -119,7 +119,7 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 		
 		//ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		
-		double elevation = modelGrid.getElevation(latitude, longitude);
+		double elevation = modelGrid.getElevation(latitude, longitude, true);
 		try {
 			getPointColor(latitude, longitude, elevation, rgbaBufferA);
 		} catch (DataSourceException ex) {

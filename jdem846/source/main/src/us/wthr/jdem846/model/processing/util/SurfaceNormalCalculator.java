@@ -194,11 +194,9 @@ public class SurfaceNormalCalculator
 		
 		Spheres.getPoint3D(_longitude, _latitude, radius, P);
 
-		if (viewPerspective != null) {
-			Vectors.rotate(viewPerspective.getRotateX(), viewPerspective.getRotateY(), 0.0, P, Vectors.YXZ);
-			//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, P);
-			//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, P);
-		}
+		//if (viewPerspective != null) {
+			//Vectors.rotate(viewPerspective.getRotateX(), viewPerspective.getRotateY(), 0.0, P, Vectors.YXZ);
+		//}
 		
 		
 	}

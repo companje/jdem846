@@ -61,6 +61,17 @@ public class Matrix
 		
 	}
 	
+	public Matrix(double[] values)
+	{
+		if (values != null && values.length >= 16) {
+			for (int i = 0; i < 16; i++) {
+				this.matrix[i] = values[i];
+			}
+		} else {
+			fill(0);
+		}
+	}
+	
 	public Matrix()
 	{
 		this.fill(0);
@@ -183,22 +194,8 @@ public class Matrix
 	/*
 	 Code borrowed from Mesa3d /src/mesa/math/m_matrix.c
 	*/
-	static void matmul4(double[] product, double[] a, double[] b)
+	public static void matmul4(double[] product, double[] a, double[] b)
 	{
-		/*
-		for (int i = 0; i < 16; i++) {
-			product[i] = 0;
-		}
-		 
-		for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                for (int k = 0; k < 4; k++) {
-                	product[index(i, j)] += a[index(i, k)] * b[index(k, j)];
-                	//C[i][j] += A.get(i).get(k) * B.get(k).get(j);
-                }
-            }
-		}
-		*/
 		
 		for (int row = 0; row < 4; row++) {
 			double ai0 = a[(0<<2)+row];
@@ -257,6 +254,17 @@ public class Matrix
 					in.w * this.matrix[3 * 4 + 3];
 
 
+	}
+	
+	public void multiply(double[] in, double[] out)
+	{
+		for (int i = 0; i < 4; i++) {
+			out[i] = 
+					in[0] * this.matrix[0 * 4 + i] + 
+					in[1] * this.matrix[1 * 4 + i] + 
+					in[2] * this.matrix[2 * 4 + i] + 
+					in[3] * this.matrix[3 * 4 + i];
+		}
 	}
 	
 }

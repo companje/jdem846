@@ -106,11 +106,34 @@ public class MathExt
     	return FastMath.pow(a, 3);
     }
     
-    public static double sqrt(double a)
+    public static final long SQRT_MAGIC_D = 0x5fe6eb50c7b537a9L;
+    public static final long SQRT_MAGIC_F = 0x5f3759dfL;
+    
+    public static double sqrt(double x)
     {
-    	return FastMath.sqrt(a);
+    	//return FastMath.sqrt(x);
+    	
+    	double orig = x;
+    	double xhalf = 0.5f*x;
+    	
+        long bitValue = Double.doubleToRawLongBits(x);
+        bitValue = SQRT_MAGIC_D - (bitValue >> 1);
+        x = Double.longBitsToDouble(bitValue);
+        x = x*(1.5d - xhalf*x*x);
+        x = x*(1.5d - xhalf*x*x);
+        // iterate for more accuratcy or not.
+          // inlined for speed-speed
+       //   x = x*(1.5f - xhalf*x*x);
+        //x = x*(1.5f - xhalf*x*x);
+        //x = x*(1.5f - xhalf*x*x);
+        return x * orig;
+        
     }
     
+    
+    
+    
+
     public static double cbrt(double a)
     {
     	return FastMath.cbrt(a);

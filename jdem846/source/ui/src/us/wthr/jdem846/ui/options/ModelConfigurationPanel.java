@@ -144,8 +144,8 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		String renderProcessId = renderConfiguration.getCurrentProcessId();
 		OptionModel renderOptionModel = renderConfiguration.getCurrentOptionModel();
 		
-		modelProcessManifest.addProcessor(defaultLoadProcessor, new GridLoadOptionModel());
-		modelProcessManifest.addProcessor(defaultSurfaceNormalsProcessor, new SurfaceNormalsOptionModel());
+		//modelProcessManifest.addProcessor(defaultLoadProcessor, new GridLoadOptionModel());
+		//modelProcessManifest.addProcessor(defaultSurfaceNormalsProcessor, new SurfaceNormalsOptionModel());
 		
 		modelProcessManifest.addProcessor(coloringProcessId, coloringOptionModel);
 		modelProcessManifest.addProcessor(shadingProcessId, shadingOptionModel);

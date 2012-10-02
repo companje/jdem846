@@ -28,9 +28,9 @@ public class SignTrianglePointTest extends PointTest
 		P.y = y;
 		P.z = z;
 		
-		boolean b0 = (sign(P, p0, p1) < 0.0);
-		boolean b1 = (sign(P, p1, p2) < 0.0);
-		boolean b2 = (sign(P, p2, p0) < 0.0);
+		boolean b0 = (sign(P, p0, p1) <= 0.0);
+		boolean b1 = (sign(P, p1, p2) <= 0.0);
+		boolean b2 = (sign(P, p2, p0) <= 0.0);
 
 		return ((b0 == b1) && (b1 == b2));
 		
@@ -38,10 +38,7 @@ public class SignTrianglePointTest extends PointTest
 	
 	protected static double sign(Vector v0, Vector v1, Vector v2)
 	{
-		
 		return (v0.x - v2.x) * (v1.y - v2.y) - (v1.x - v2.x) * (v0.y - v2.y);
-		
-		
 	}
 	
 	

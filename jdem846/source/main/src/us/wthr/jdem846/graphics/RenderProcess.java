@@ -3,6 +3,7 @@ package us.wthr.jdem846.graphics;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
+import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
@@ -106,10 +107,11 @@ public class RenderProcess
 		double aspect = (double)width / (double)height;
 		double near = this.modelView.nearClipDistance();
 		double far = this.modelView.farClipDistance();
+		double eyeZ = this.modelView.eyeZ();
 		
 		double radius = this.modelView.radius() + this.modelContext.getRasterDataContext().getDataMaximumValue();
 		
-		//this.renderer.perspective(horizFieldOfView, aspect, near, far);
+		
 		
 		this.renderer.ortho(-radius		// Left
 							, radius	// Right
@@ -117,19 +119,22 @@ public class RenderProcess
 							, radius	// Top
 							, -radius	// Near
 							, radius);	// Far
+							
+		
 		
 		/*
+		this.renderer.perspective(horizFieldOfView, aspect, near, far);
 		this.renderer.lookAt(0							// Eye X
 							, 0							// Eye Y
-							, this.modelView.eyeZ()		// Eye Z
+							, eyeZ						// Eye Z
 							, 0							// Center X
 							, 0							// Center Y
 							, 0							// Center Z
 							, 0							// Up X
 							, 1							// Up Y
 							, 0);						// Up Z
-		*/
 		
+		*/
 	}
 	
 	protected void render()
@@ -155,21 +160,24 @@ public class RenderProcess
 		}
 		
 		ViewPerspective view = this.globalOptionModel.getViewAngle();
+		
 		if (view != null) {
+			//this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
+			//this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
 			
-			this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
-			this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
-			this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
+			//this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
 			
+			/*
 			this.renderer.scale(view.getZoom(), view.getZoom(), view.getZoom());
 			
 			double meanRadius = (this.planet != null) ? this.planet.getMeanRadius() : DemConstants.EARTH_MEAN_RADIUS;
 			this.renderer.translate(view.getShiftX() * meanRadius * 1000
 									, view.getShiftY() * meanRadius * 1000
 									, view.getShiftZ() * meanRadius * 1000);
-			
+			*/
 			
 		}
+		
 		
 		this.renderer.pushMatrix();
 		if (this.scriptProxy != null) {
@@ -178,7 +186,8 @@ public class RenderProcess
 		this.renderer.popMatrix();
 		
 		this.bindTexture();
-		this.renderer.color(0x0);
+		int[] c = {0, 0, 0, 0xFF};
+		this.renderer.color(ColorUtil.rgbaToInt(c));
 		
 		double latitudeResolution = this.modelDimensions.outputLatitudeResolution;
 		double longitudeResolution = this.modelDimensions.outputLongitudeResolution;
@@ -216,7 +225,8 @@ public class RenderProcess
 	{
 		double elevation = this.modelGrid.getElevation(latitude, longitude);
 		if (elevation == DemConstants.ELEV_NO_DATA) {
-			elevation = this.lastElevation;
+			//elevation = this.lastElevation;
+			return;
 		} else {
 			this.lastElevation = elevation;
 		}
@@ -232,6 +242,8 @@ public class RenderProcess
 		double front = (north - latitude) / (north - south);
 		
 		this.renderer.texCoord(left, front);
+		
+		//pointVector.z = -pointVector.z;
 		this.renderer.vertex(pointVector);
 		
 		
@@ -250,7 +262,7 @@ public class RenderProcess
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
 					int c = fb.get(x, y);
-					this.image.set(x, y, c);
+					this.image.set(x, height - y - 1, c);
 				}
 			}
 			

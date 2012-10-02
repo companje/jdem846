@@ -23,6 +23,12 @@ public class FrameBuffer
 		}
 	}
 	
+	
+	protected int index(double x, double y)
+	{
+		return index((int) MathExt.floor(x), (int) MathExt.floor(y));
+	}
+	
 	protected int index(int x, int y)
 	{
 		if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
@@ -47,7 +53,8 @@ public class FrameBuffer
 		}
 		
 		if (point.z >= FB_MINIMUM_Z_INDEX) {
-			rgba = ColorUtil.overlayColor(point.rgba, rgba);
+			rgba = point.rgba;
+			//rgba = ColorUtil.overlayColor(point.rgba, rgba);
 		}
 		
 		if (point.right != null) {
@@ -85,7 +92,7 @@ public class FrameBuffer
 			return false;
 		}
 		
-		int idx = this.index((int)MathExt.round(x), (int)MathExt.round(y));
+		int idx = this.index(x, y);
 		if (idx < 0 || idx >= this.bufferLength || this.buffer == null) {
 			return false;
 		}
@@ -144,7 +151,7 @@ public class FrameBuffer
 			return;
 		}
 		
-		int idx = this.index((int) MathExt.round(x), (int) MathExt.round(y));
+		int idx = this.index(x, y);
 		
 		if (idx < 0 || idx >= this.bufferLength || this.buffer == null) {
 			return;
@@ -161,7 +168,7 @@ public class FrameBuffer
 	
 	public int get(double x, double y)
 	{
-		int idx = this.index((int) MathExt.round(x), (int) MathExt.round(y));
+		int idx = this.index(x, y);
 		if (idx < 0 || idx >= this.bufferLength || this.buffer == null) {
 			return 0x0;
 		}
@@ -170,10 +177,8 @@ public class FrameBuffer
 			return 0x0;
 		}
 		
-		int rgba = this.overlay(this.buffer[idx], 0x0);
-		if (rgba != -16777216) {
-			int i = 0;
-		}
+		int rgba = this.overlay(this.buffer[idx], ColorUtil.BLACK);
+
 		return rgba;
 	}
 	

@@ -82,7 +82,7 @@ public class Spheres
 			Vector v)
 	{
 		
-		theta = MathExt.radians(fixThetaDegrees(-theta));
+		theta = MathExt.radians(fixThetaDegrees(theta));
 		phi = MathExt.radians(fixPhiDegrees(phi));
 
 		
@@ -122,6 +122,7 @@ public class Spheres
         
         v.z = MathExt.min(radius, v.z);
         v.z = MathExt.max(-radius, v.z);
+        
 	}
 	
 	
