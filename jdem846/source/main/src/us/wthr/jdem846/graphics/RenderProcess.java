@@ -162,19 +162,19 @@ public class RenderProcess
 		ViewPerspective view = this.globalOptionModel.getViewAngle();
 		
 		if (view != null) {
-			//this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
-			//this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
+			this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
+			this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
 			
-			//this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
+			this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
 			
-			/*
+			
 			this.renderer.scale(view.getZoom(), view.getZoom(), view.getZoom());
 			
 			double meanRadius = (this.planet != null) ? this.planet.getMeanRadius() : DemConstants.EARTH_MEAN_RADIUS;
 			this.renderer.translate(view.getShiftX() * meanRadius * 1000
 									, view.getShiftY() * meanRadius * 1000
 									, view.getShiftZ() * meanRadius * 1000);
-			*/
+			
 			
 		}
 		
@@ -223,7 +223,7 @@ public class RenderProcess
 	private Vector pointVector = new Vector();
 	protected void renderPointVertex(double latitude, double longitude)
 	{
-		double elevation = this.modelGrid.getElevation(latitude, longitude);
+		double elevation = this.modelGrid.getElevation(latitude, longitude, true);
 		if (elevation == DemConstants.ELEV_NO_DATA) {
 			//elevation = this.lastElevation;
 			return;
