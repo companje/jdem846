@@ -5,6 +5,7 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.geom.TriangleStrip;
+import us.wthr.jdem846.graphics.GraphicsRenderer;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelProcessContainer;
@@ -68,6 +69,16 @@ public class OutterGlobeScript implements ScriptProxy
 		//upperAtmosphereGlobeScript.destroy();
 	}
 
+	public void preRender(GraphicsRenderer renderer) throws ScriptingException
+	{
+		
+	}
+	
+	public void postRender(GraphicsRenderer renderer) throws ScriptingException
+	{
+		
+	}
+	
 
 	@Override
 	public void onModelBefore() throws ScriptingException

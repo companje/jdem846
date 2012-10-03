@@ -124,8 +124,8 @@ public class Dem2dGenerator extends BasicRenderEngine
 				getModelContext().getSouth(), 
 				getModelContext().getEast(), 
 				getModelContext().getWest(), 
-				getModelContext().getModelDimensions().getOutputLatitudeResolution(), 
-				getModelContext().getModelDimensions().getOutputLongitudeResolution());
+				getModelContext().getModelDimensions().getTextureLatitudeResolution(), 
+				getModelContext().getModelDimensions().getTextureLongitudeResolution());
 		modelBuilder = new ModelBuilder(getModelContext(), modelGrid);
 		modelBuilder.prepare();
 		

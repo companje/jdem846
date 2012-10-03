@@ -88,7 +88,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		optionModel = (ModelRenderOptionModel) this.getProcessOptionModel();
 		GlobalOptionModel globalOptionModel = modelContext.getModelProcessManifest().getGlobalOptionModel();
 		
-		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
+		latitudeResolution = getModelDimensions().getTextureLatitudeResolution();
 		
 		MapProjection mapProjection = null;
 		

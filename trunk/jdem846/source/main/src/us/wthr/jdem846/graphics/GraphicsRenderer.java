@@ -1,6 +1,8 @@
 package us.wthr.jdem846.graphics;
 
 import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Matrix;
 import us.wthr.jdem846.math.MatrixStack;
@@ -9,6 +11,8 @@ import us.wthr.jdem846.math.Vectors;
 
 public class GraphicsRenderer
 {
+	private static Log log = Logging.getLog(GraphicsRenderer.class);
+	
 	public static final int RENDER_MAXIMUM_WIDTH = 5000;
 	public static final int RENDER_MAXIMUM_HEIGHT = 5000;
 	
@@ -258,22 +262,28 @@ public class GraphicsRenderer
 		Matrix m = new Matrix(true);
 		
 		double _a = MathExt.radians(angle);
+		double c = MathExt.cos(_a);
+		double s = MathExt.sin(_a);
+		
 		
 		if (axis == AxisEnum.X_AXIS) {
-			m.set(1, 1, MathExt.cos(_a));
-			m.set(1, 2, -MathExt.sin(_a));
-			m.set(2, 1, MathExt.sin(_a));
-			m.set(2, 2, MathExt.cos(_a));
+			m.set(1, 1, c);
+			m.set(2, 2, c);
+			
+			m.set(2, 1, -s);
+			m.set(1, 2, s);
 		} else if (axis == AxisEnum.Y_AXIS) {
-			m.set(0, 0, MathExt.cos(_a));
-			m.set(0, 2, MathExt.sin(_a));
-			m.set(2, 0, -MathExt.sin(_a));
-			m.set(2, 2, MathExt.cos(_a));
+			m.set(0, 0, c);
+			m.set(2, 2, c);
+			
+			m.set(2, 0, s);
+			m.set(0, 2, -s);
 		} else if (axis == AxisEnum.Z_AXIS) {
-			m.set(0, 0, MathExt.cos(_a));
-			m.set(0, 1, -MathExt.sin(_a));
-			m.set(1, 0, MathExt.sin(_a));
-			m.set(1, 1, MathExt.cos(_a));
+			m.set(0, 0, c);
+			m.set(1, 1, c);
+			
+			m.set(0, 1, s);
+			m.set(1, 0, -s);
 		} else {
 			this.error = RenderCodesEnum.RENDER_ERR_INVALID_ENUM;
 			return;
@@ -396,11 +406,11 @@ public class GraphicsRenderer
 		
 		in.x /= in.w;
 		in.y /= in.w;
-		//in.z /= in.w;
+		in.z /= in.w;
 		
 		in.x = in.x * 0.5 + 0.5;
 		in.y = in.y * 0.5 + 0.5;
-		//in.z = in.z * 0.5 + 0.5;
+		in.z = in.z * 0.5 + 0.5;
 		
 
 		

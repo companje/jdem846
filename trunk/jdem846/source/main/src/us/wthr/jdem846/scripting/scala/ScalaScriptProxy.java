@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.ScriptingException;
+import us.wthr.jdem846.graphics.GraphicsRenderer;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelProcessContainer;
@@ -31,6 +32,8 @@ public class ScalaScriptProxy implements ScriptProxy
 	private ScalaCallBack onGetElevationAfterCallBack;
 	private ScalaCallBack onGetPointColorCallBack;
 	private ScalaCallBack onLightLevelsCallBack;
+	private ScalaCallBack preRenderCallBack;
+	private ScalaCallBack postRenderCallBack;
 	
 	private ScalaCallBack setModelContextCallBack;
 	private ScalaCallBack setLogCallBack;
@@ -54,6 +57,8 @@ public class ScalaScriptProxy implements ScriptProxy
 		onGetElevationAfterCallBack = new ScalaCallBack(scalaObject, getMethod("onGetElevationAfter"));
 		onGetPointColorCallBack = new ScalaCallBack(scalaObject, getMethod("onGetPointColor"));
 		onLightLevelsCallBack = new ScalaCallBack(scalaObject, getMethod("onLightLevels"));
+		preRenderCallBack = new ScalaCallBack(scalaObject, getMethod("preRender"));
+		postRenderCallBack = new ScalaCallBack(scalaObject, getMethod("postRender"));
 		
 		setModelContextCallBack = new ScalaCallBack(scalaObject, getMethod("setModelContext"));
 		setLogCallBack = new ScalaCallBack(scalaObject, getMethod("setLog"));
@@ -191,7 +196,15 @@ public class ScalaScriptProxy implements ScriptProxy
 		onLightLevelsCallBack.call(latitude, longitude, lightingValues);
 	}
 	
+	public void preRender(GraphicsRenderer renderer) throws ScriptingException
+	{
+		preRenderCallBack.call(renderer);
+	}
 	
+	public void postRender(GraphicsRenderer renderer) throws ScriptingException
+	{
+		postRenderCallBack.call(renderer);
+	}
 	
 	protected boolean hasField(String fieldName)
 	{

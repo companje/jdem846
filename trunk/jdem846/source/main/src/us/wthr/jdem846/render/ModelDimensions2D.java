@@ -150,14 +150,14 @@ public class ModelDimensions2D extends ModelDimensions
 															scaleX);
 		}
 		
-		outputLatitudeResolution = latLonOutputRes.latitudeResolution;
-		outputLongitudeResolution = latLonOutputRes.longitudeResolution;
+		textureLatitudeResolution = latLonOutputRes.latitudeResolution;
+		textureLongitudeResolution = latLonOutputRes.longitudeResolution;
 		
-		if (outputLongitudeResolution < longitudeResolution)
-			outputLongitudeResolution = longitudeResolution;
+		if (textureLongitudeResolution < longitudeResolution)
+			textureLongitudeResolution = longitudeResolution;
 		
-		if (outputLatitudeResolution < latitudeResolution)
-			outputLatitudeResolution = latitudeResolution;
+		if (textureLatitudeResolution < latitudeResolution)
+			textureLatitudeResolution = latitudeResolution;
 		
 	}
 	
@@ -182,8 +182,8 @@ public class ModelDimensions2D extends ModelDimensions
 		copy.longitudeResolution = this.longitudeResolution;
 		copy.outputHeight = this.outputHeight;
 		copy.outputWidth = this.outputWidth;
-		copy.outputLatitudeResolution = this.outputLatitudeResolution;
-		copy.outputLongitudeResolution = this.outputLongitudeResolution;
+		copy.textureLatitudeResolution = this.textureLatitudeResolution;
+		copy.textureLongitudeResolution = this.textureLongitudeResolution;
 
 		return copy;
 	}

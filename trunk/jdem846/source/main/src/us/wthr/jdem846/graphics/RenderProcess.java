@@ -4,11 +4,14 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGrid;
@@ -19,6 +22,7 @@ import us.wthr.jdem846.scripting.ScriptProxy;
 
 public class RenderProcess
 {
+	private static Log log = Logging.getLog(RenderProcess.class);
 	
 	protected ModelContext modelContext = null;
 	protected GlobalOptionModel globalOptionModel = null;
@@ -99,7 +103,7 @@ public class RenderProcess
 		int height = this.globalOptionModel.getHeight();
 		
 		double horizFieldOfView = this.modelView.horizFieldOfView();
-		
+
 		this.renderer.viewPort(width, height);
 		this.renderer.matrixMode(MatrixModeEnum.PROJECTION);
 		this.renderer.loadIdentity();
@@ -119,22 +123,25 @@ public class RenderProcess
 							, radius	// Top
 							, -radius	// Near
 							, radius);	// Far
-							
 		
 		
 		/*
 		this.renderer.perspective(horizFieldOfView, aspect, near, far);
 		this.renderer.lookAt(0							// Eye X
-							, 0							// Eye Y
-							, eyeZ						// Eye Z
-							, 0							// Center X
-							, 0							// Center Y
-							, 0							// Center Z
-							, 0							// Up X
-							, 1							// Up Y
-							, 0);						// Up Z
-		
+				, 0							// Eye Y
+				, eyeZ						// Eye Z
+				, 0							// Center X
+				, 0							// Center Y
+				, 0							// Center Z
+				, 0							// Up X
+				, 1							// Up Y
+				, 0);						// Up Z
 		*/
+		
+		
+		
+		
+		
 	}
 	
 	protected void render()
@@ -143,6 +150,7 @@ public class RenderProcess
 		
 		this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
 		this.renderer.loadIdentity();
+		
 		
 		
 		this.renderer.pushMatrix();
@@ -162,12 +170,12 @@ public class RenderProcess
 		ViewPerspective view = this.globalOptionModel.getViewAngle();
 		
 		if (view != null) {
+			
 			this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
 			this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
+			//this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
 			
-			this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
-			
-			
+			/*
 			this.renderer.scale(view.getZoom(), view.getZoom(), view.getZoom());
 			
 			double meanRadius = (this.planet != null) ? this.planet.getMeanRadius() : DemConstants.EARTH_MEAN_RADIUS;
@@ -175,13 +183,17 @@ public class RenderProcess
 									, view.getShiftY() * meanRadius * 1000
 									, view.getShiftZ() * meanRadius * 1000);
 			
-			
+			*/
 		}
 		
 		
 		this.renderer.pushMatrix();
-		if (this.scriptProxy != null) {
-			//this.scriptProxy.preRender(this.renderer);
+		if (this.globalOptionModel.getUseScripting() && this.scriptProxy != null) {
+			try {
+				this.scriptProxy.preRender(this.renderer);
+			} catch (ScriptingException ex) {
+				log.warn("Exception thrown in user script: " + ex.getMessage(), ex);
+			}
 		}
 		this.renderer.popMatrix();
 		
@@ -189,8 +201,8 @@ public class RenderProcess
 		int[] c = {0, 0, 0, 0xFF};
 		this.renderer.color(ColorUtil.rgbaToInt(c));
 		
-		double latitudeResolution = this.modelDimensions.outputLatitudeResolution;
-		double longitudeResolution = this.modelDimensions.outputLongitudeResolution;
+		double latitudeResolution = this.modelDimensions.modelLatitudeResolution;
+		double longitudeResolution = this.modelDimensions.modelLongitudeResolution;
 		for (double latitude = north; latitude > south; latitude -= latitudeResolution) {
 			
 			this.renderer.begin(PrimitiveModeEnum.TRIANGLE_STRIP);
@@ -207,8 +219,12 @@ public class RenderProcess
 		this.renderer.unbindTexture();
 		
 		this.renderer.pushMatrix();
-		if (this.scriptProxy != null) {
-			//this.scriptProxy.postRender(this.renderer);
+		if (this.globalOptionModel.getUseScripting() && this.scriptProxy != null) {
+			try {
+				this.scriptProxy.postRender(this.renderer);
+			} catch (ScriptingException ex) {
+				log.warn("Exception thrown in user script: " + ex.getMessage(), ex);
+			}
 		}
 		this.renderer.popMatrix();
 		
@@ -243,7 +259,7 @@ public class RenderProcess
 		
 		this.renderer.texCoord(left, front);
 		
-		//pointVector.z = -pointVector.z;
+		pointVector.z = -pointVector.z;
 		this.renderer.vertex(pointVector);
 		
 		

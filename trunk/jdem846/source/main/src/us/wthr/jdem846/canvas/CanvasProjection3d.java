@@ -122,8 +122,8 @@ public class CanvasProjection3d extends CanvasProjection
 		
 		
 
-		double yWid = modelDimensions.dataRows * (modelDimensions.latitudeResolution / modelDimensions.outputLatitudeResolutionTrue);
-		double xWid = modelDimensions.dataColumns * (modelDimensions.longitudeResolution / modelDimensions.outputLongitudeResolutionTrue);
+		double yWid = modelDimensions.dataRows * (modelDimensions.latitudeResolution / modelDimensions.textureLatitudeResolutionTrue);
+		double xWid = modelDimensions.dataColumns * (modelDimensions.longitudeResolution / modelDimensions.textureLongitudeResolutionTrue);
 		
 		double fov = 38.0;
 		//double fov = 38.0;
@@ -145,7 +145,7 @@ public class CanvasProjection3d extends CanvasProjection
 		log.info("Eye: " + eyeVector[2]);
 		
 		
-		resolution = modelDimensions.getMetersTrueOutputResolution(meanRadius);
+		resolution = modelDimensions.getMetersTrueTextureResolution(meanRadius);
 
 		if (Double.isNaN(resolution) || resolution == 0.0) {
 			resolution = 1.0;

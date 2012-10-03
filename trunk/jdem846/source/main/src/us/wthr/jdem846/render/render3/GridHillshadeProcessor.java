@@ -93,8 +93,8 @@ public class GridHillshadeProcessor extends AbstractGridProcessor implements Gri
 		relativeDarkIntensity = modelContext.getLightingContext().getRelativeDarkIntensity();
 		spotExponent = modelContext.getLightingContext().getSpotExponent();
 
-		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
-		longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
+		latitudeResolution = modelContext.getModelDimensions().getTextureLatitudeResolution();
+		longitudeResolution = modelContext.getModelDimensions().getTextureLongitudeResolution();
 		
 		north = modelContext.getNorth();
 		south = modelContext.getSouth();

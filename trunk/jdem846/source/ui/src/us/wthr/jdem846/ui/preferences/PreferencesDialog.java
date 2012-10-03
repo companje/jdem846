@@ -59,10 +59,14 @@ public class PreferencesDialog extends Dialog
 	private ComboBox cmbGeneralQuality;
 	private ImageQualityListModel qualityModel;
 	
-	private Slider sldPreviewingPreviewQuality;
+	
+	
+	private Slider sldPreviewingPreviewModelQuality;
+	private Slider sldPreviewingPreviewTextureQuality;
 	private CheckBox chkPreviewingIncludeRasterDataInPreview;
 	private CheckBox chkPreviewAutoUpdate;
 	private CheckBox chkPreviewScripting;
+	
 	
 	private CheckBox chkPerfPipelineRendering;
 	private CheckBox chkPerfNearestNeighborDataRetrieval;
@@ -125,7 +129,8 @@ us.wthr.jdem846.defaults.institution-address=
 		
 		
 		
-		sldPreviewingPreviewQuality = new Slider(1, 100);
+		sldPreviewingPreviewModelQuality = new Slider(1, 100);
+		sldPreviewingPreviewTextureQuality = new Slider(1, 100);
 		chkPreviewingIncludeRasterDataInPreview = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.includeRasterDataInPreview"));
 		chkPreviewAutoUpdate = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.autoUpdate"));
 		chkPreviewScripting = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.scripting"));
@@ -226,8 +231,11 @@ us.wthr.jdem846.defaults.institution-address=
 		generalPanel.add(chkGeneralReportUsage);
 		
 		
-		previewPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.previewQuality") + ":"));
-		previewPanel.add(sldPreviewingPreviewQuality);
+		previewPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.previewTextureQuality") + ":"));
+		previewPanel.add(sldPreviewingPreviewTextureQuality);
+		
+		previewPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.previewModelQuality") + ":"));
+		previewPanel.add(sldPreviewingPreviewModelQuality);
 		
 		previewPanel.add(new Label(""));
 		previewPanel.add(chkPreviewingIncludeRasterDataInPreview);
@@ -337,7 +345,9 @@ us.wthr.jdem846.defaults.institution-address=
 		txtGeneralConsoleBufferSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.console.bufferSize"));
 		
 		
-		sldPreviewingPreviewQuality.setValue((int)(JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewQuality") * 100.0));
+		sldPreviewingPreviewModelQuality.setValue((int)(JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewModelQuality") * 100.0));
+		sldPreviewingPreviewTextureQuality.setValue((int)(JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewTextureQuality") * 100.0));
+		
 		chkPreviewingIncludeRasterDataInPreview.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.rasterPreview"));
 		chkPreviewAutoUpdate.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.autoUpdate"));
 		chkPreviewScripting.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.scripting"));
@@ -382,8 +392,11 @@ us.wthr.jdem846.defaults.institution-address=
 		
 		
 		
-		double quality = (double)sldPreviewingPreviewQuality.getValue() / 100.0;
-		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewQuality", ""+quality);
+		double modelQuality = (double)sldPreviewingPreviewModelQuality.getValue() / 100.0;
+		double textureQuality = (double)sldPreviewingPreviewTextureQuality.getValue() / 100.0;
+		
+		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewModelQuality", ""+modelQuality);
+		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewTextureQuality", ""+textureQuality);
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.rasterPreview", ""+chkPreviewingIncludeRasterDataInPreview.getModel().isSelected()); 
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.autoUpdate", ""+chkPreviewAutoUpdate.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.scripting", ""+chkPreviewScripting.getModel().isSelected());

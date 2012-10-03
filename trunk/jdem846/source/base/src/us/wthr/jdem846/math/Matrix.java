@@ -214,14 +214,14 @@ public class Matrix
 	
 	public void multiply(Matrix other)
 	{
-		matmul4(this.matrix, other.matrix, this.matrix);
+		matmul4(this.matrix, this.matrix, other.matrix);
 	}
 
 	
 
 	public void multiply(Matrix in, Matrix out)
 	{
-		matmul4(out.matrix, in.matrix, this.matrix);
+		matmul4(out.matrix, this.matrix, in.matrix);
 	}
 	
 	public void multiply(Vector in, Vector out)

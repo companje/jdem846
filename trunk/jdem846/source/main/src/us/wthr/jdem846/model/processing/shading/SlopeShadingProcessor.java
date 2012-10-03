@@ -65,8 +65,8 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		
 		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
 				PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet()), 
-				getModelDimensions().getOutputLatitudeResolution(), 
-				getModelDimensions().getOutputLongitudeResolution());
+				getModelDimensions().getTextureLatitudeResolution(), 
+				getModelDimensions().getTextureLongitudeResolution());
 	}
 	
 	@Override

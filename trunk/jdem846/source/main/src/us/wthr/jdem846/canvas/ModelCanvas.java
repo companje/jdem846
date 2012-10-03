@@ -32,6 +32,7 @@ import us.wthr.jdem846.render.RenderPipeline;
 import us.wthr.jdem846.render.render2d.ScanlinePath;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
+@Deprecated
 public class ModelCanvas
 {
 	private static Log log = Logging.getLog(ModelCanvas.class);

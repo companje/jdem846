@@ -116,8 +116,8 @@ public class ModelGridTestMain extends AbstractTestMain
 											modelContext.getSouth(), 
 											modelContext.getEast(), 
 											modelContext.getWest(), 
-											modelContext.getModelDimensions().getOutputLatitudeResolution(), 
-											modelContext.getModelDimensions().getOutputLongitudeResolution());
+											modelContext.getModelDimensions().getTextureLatitudeResolution(), 
+											modelContext.getModelDimensions().getTextureLongitudeResolution());
 		
 		double startTime = System.currentTimeMillis();
 		

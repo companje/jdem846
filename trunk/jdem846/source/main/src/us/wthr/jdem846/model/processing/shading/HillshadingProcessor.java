@@ -160,8 +160,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 
 
-		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
-		longitudeResolution = getModelDimensions().getOutputLongitudeResolution();
+		latitudeResolution = getModelDimensions().getTextureLatitudeResolution();
+		longitudeResolution = getModelDimensions().getTextureLongitudeResolution();
 		
 
 		
@@ -235,8 +235,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 
 		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
 				planet, 
-				getModelDimensions().getOutputLatitudeResolution(), 
-				getModelDimensions().getOutputLongitudeResolution(),
+				getModelDimensions().getTextureLatitudeResolution(), 
+				getModelDimensions().getTextureLongitudeResolution(),
 				viewPerspective);
 
 	}

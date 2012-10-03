@@ -42,7 +42,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
+		latitudeResolution = modelContext.getModelDimensions().getTextureLatitudeResolution();
 
 		try {
 			projection = modelContext.getModelCanvas().getCanvasProjection();
