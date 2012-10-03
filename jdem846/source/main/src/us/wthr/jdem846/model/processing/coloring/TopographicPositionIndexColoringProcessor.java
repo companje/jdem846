@@ -76,8 +76,8 @@ public class TopographicPositionIndexColoringProcessor extends AbstractGridProce
 	{
 		TopographicPositionIndexColoringOptionModel optionModel = (TopographicPositionIndexColoringOptionModel) this.getProcessOptionModel();
 		
-		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
-		longitudeResolution = getModelDimensions().getOutputLongitudeResolution();
+		latitudeResolution = getModelDimensions().getTextureLatitudeResolution();
+		longitudeResolution = getModelDimensions().getTextureLongitudeResolution();
 		
 		modelColoring = ColoringRegistry.getInstance(optionModel.getColorTint()).getImpl();
 		

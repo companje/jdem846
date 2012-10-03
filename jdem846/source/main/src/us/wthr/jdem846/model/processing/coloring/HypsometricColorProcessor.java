@@ -150,7 +150,7 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 		
 		boolean imageOverlayed = false;
 		if (modelContext.getImageDataContext() != null
-				&& modelContext.getImageDataContext().getColor(latitude, longitude, modelDimensions.outputLatitudeResolution, modelDimensions.outputLongitudeResolution, rgba, nearestNeighbor)) {
+				&& modelContext.getImageDataContext().getColor(latitude, longitude, modelDimensions.textureLatitudeResolution, modelDimensions.textureLongitudeResolution, rgba, nearestNeighbor)) {
 			imageOverlayed = true;
 		} 
 		

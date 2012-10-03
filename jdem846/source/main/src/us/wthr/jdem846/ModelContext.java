@@ -127,8 +127,8 @@ public class ModelContext
 			modelDimensions = ModelDimensions2D.getModelDimensions(this);
 		}
 		
-		rasterDataContext.setEffectiveLatitudeResolution(modelDimensions.outputLatitudeResolution);
-		rasterDataContext.setEffectiveLongitudeResolution(modelDimensions.outputLongitudeResolution);
+		rasterDataContext.setEffectiveLatitudeResolution(modelDimensions.textureLatitudeResolution);
+		rasterDataContext.setEffectiveLongitudeResolution(modelDimensions.textureLongitudeResolution);
 		
 		/*
 		try {

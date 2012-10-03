@@ -29,7 +29,7 @@ public class ThreeDimensionalView extends FlatView implements View
 	{
 		double dataCols = this.modelDimensions.dataColumns;
 		double longitudeResolution = this.modelDimensions.longitudeResolution;
-		double modelLongitudeResolution = this.modelDimensions.outputLongitudeResolutionTrue;
+		double modelLongitudeResolution = this.modelDimensions.textureLongitudeResolutionTrue;
 		double xWid = dataCols * (longitudeResolution / modelLongitudeResolution);
 		return xWid;
 	}
@@ -38,7 +38,7 @@ public class ThreeDimensionalView extends FlatView implements View
 	{
 		double dataRows = this.modelDimensions.dataRows;
 		double latitudeResolution = this.modelDimensions.latitudeResolution;
-		double modelLatitudeResolution = this.modelDimensions.outputLatitudeResolutionTrue;
+		double modelLatitudeResolution = this.modelDimensions.textureLatitudeResolutionTrue;
 		double yWid = dataRows * (latitudeResolution / modelLatitudeResolution);
 		return yWid;
 	}

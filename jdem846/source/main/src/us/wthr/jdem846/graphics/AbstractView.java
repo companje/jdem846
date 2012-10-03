@@ -71,7 +71,7 @@ public abstract class AbstractView implements View
 		
 		if (arg != null) {
 			double meanRadius = (planet != null) ? planet.getMeanRadius() : DemConstants.ELEV_NO_DATA;
-			this.resolution = arg.getMetersOutputResolution(meanRadius);
+			this.resolution = arg.getMetersTextureResolution(meanRadius);
 		}
 	}
 	

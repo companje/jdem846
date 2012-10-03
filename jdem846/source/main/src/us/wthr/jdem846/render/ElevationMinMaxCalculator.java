@@ -41,8 +41,8 @@ public class ElevationMinMaxCalculator
 			this.cancelIndicator = new CancelIndicator();
 		}
 		
-		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
-		longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
+		latitudeResolution = modelContext.getModelDimensions().getTextureLatitudeResolution();
+		longitudeResolution = modelContext.getModelDimensions().getTextureLongitudeResolution();
 		
 		getStandardResolutionElevation = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.standardResolutionRetrieval");
 		interpolateData = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.interpolateToHigherResolution");

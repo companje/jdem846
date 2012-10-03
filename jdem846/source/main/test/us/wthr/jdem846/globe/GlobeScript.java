@@ -21,6 +21,7 @@ import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.geom.*;
 import us.wthr.jdem846.gis.planets.*;
+import us.wthr.jdem846.graphics.GraphicsRenderer;
 import us.wthr.jdem846.model.*;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.processing.util.*;
@@ -123,7 +124,15 @@ public class GlobeScript implements ScriptProxy
 	}
 
 
-
+    public void preRender(GraphicsRenderer renderer) throws ScriptingException
+    {
+    	
+    }
+    
+	public void postRender(GraphicsRenderer renderer) throws ScriptingException
+	{
+		
+	}
 
 	public void initialize()
     {
@@ -176,12 +185,12 @@ public class GlobeScript implements ScriptProxy
         sunlightPosition.getLightPositionByCoordinates(0.0, 0.0, sunsource);
 
         normalsCalculator = new SurfaceNormalCalculator(planet,
-                               modelDimensions.getOutputLatitudeResolution(),
-                               modelDimensions.getOutputLongitudeResolution(),
+                               modelDimensions.getTextureLatitudeResolution(),
+                               modelDimensions.getTextureLongitudeResolution(),
                                viewPerspective);
 
-        latitudeResolution = modelDimensions.getOutputLatitudeResolution();
-        longitudeResolution = modelDimensions.getOutputLongitudeResolution();
+        latitudeResolution = modelDimensions.getTextureLatitudeResolution();
+        longitudeResolution = modelDimensions.getTextureLongitudeResolution();
 
         cloudElevation = modelContext.getRasterDataContext().getElevationScaler().scale(3000);
         seaLevelElevation = modelContext.getRasterDataContext().getElevationScaler().scale(0);
@@ -384,8 +393,8 @@ public class GlobeScript implements ScriptProxy
         
 
         
-        latitudeResolution = modelDimensions.getOutputLatitudeResolution();
-        longitudeResolution = modelDimensions.getOutputLongitudeResolution();
+        latitudeResolution = modelDimensions.getTextureLatitudeResolution();
+        longitudeResolution = modelDimensions.getTextureLongitudeResolution();
         cycleCoordinates(renderMethods);
         
         /*

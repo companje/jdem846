@@ -108,7 +108,7 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		this.minSideLength = MathExt.min(getWidth(), getHeight()) - 20;
 		
 		double latRes = modelDimensions.getLatitudeResolution();
-		double effLatRes = modelDimensions.getOutputLatitudeResolutionTrue();
+		double effLatRes = modelDimensions.getTextureLatitudeResolutionTrue();
 		
 		//Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));
 		meanRadius = DemConstants.EARTH_MEAN_RADIUS;// * 1000.0;

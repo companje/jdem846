@@ -20,8 +20,8 @@ public class ModelPointCycler extends InterruptibleProcess
 	
 	public ModelPointCycler(ModelContext modelContext, ModelGridDimensions modelDimensions)
 	{
-		latitudeResolution = modelDimensions.getOutputLatitudeResolution();
-		longitudeResolution = modelDimensions.getOutputLongitudeResolution();
+		latitudeResolution = modelDimensions.getTextureLatitudeResolution();
+		longitudeResolution = modelDimensions.getTextureLongitudeResolution();
 		
 		north = modelContext.getModelProcessManifest().getGlobalOptionModel().getNorthLimit();
 		south = modelContext.getModelProcessManifest().getGlobalOptionModel().getSouthLimit();

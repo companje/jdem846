@@ -71,8 +71,8 @@ public class RoughnessColoringProcessor extends AbstractGridProcessor implements
 	{
 		RoughnessColoringOptionModel optionModel = (RoughnessColoringOptionModel) this.getProcessOptionModel();
 		
-		latitudeResolution = getModelDimensions().getOutputLatitudeResolution();
-		longitudeResolution = getModelDimensions().getOutputLongitudeResolution();
+		latitudeResolution = getModelDimensions().getTextureLatitudeResolution();
+		longitudeResolution = getModelDimensions().getTextureLongitudeResolution();
 		
 		modelColoring = ColoringRegistry.getInstance(optionModel.getColorTint()).getImpl();
 		

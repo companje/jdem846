@@ -10,6 +10,7 @@ import groovy.lang.GroovyObject;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.ScriptingException;
+import us.wthr.jdem846.graphics.GraphicsRenderer;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelProcessContainer;
@@ -36,6 +37,8 @@ public class GroovyScriptProxy implements ScriptProxy
 	private CallBack onGetElevationAfterCallBack;
 	private CallBack onGetPointColorCallBack;
 	private CallBack onLightLevelsCallBack;
+	private CallBack preRenderCallBack;
+	private CallBack postRenderCallBack;
 	
 	private boolean hasModelContext = false;
 	private boolean hasLog = false;
@@ -55,7 +58,8 @@ public class GroovyScriptProxy implements ScriptProxy
 		onGetElevationAfterCallBack = new CallBack(groovyObject, "onGetElevationAfter");
 		onGetPointColorCallBack = new CallBack(groovyObject, "onGetPointColor");
 		onLightLevelsCallBack = new CallBack(groovyObject, "onLightLevels");
-
+		preRenderCallBack = new CallBack(groovyObject, "preRender");
+		postRenderCallBack = new CallBack(groovyObject, "postRender");
 		
 		hasModelContext = CallBack.hasMethod(groovyObject, "getModelContext");
 		hasLog = CallBack.hasMethod(groovyObject, "getLog");
@@ -131,6 +135,18 @@ public class GroovyScriptProxy implements ScriptProxy
 	public void onLightLevels(double latitude, double longitude, LightingValues lightingValues) throws ScriptingException
 	{
 		onLightLevelsCallBack.call(latitude, longitude, lightingValues);
+	}
+	
+	@Override
+	public void preRender(GraphicsRenderer renderer) throws ScriptingException
+	{
+		preRenderCallBack.call(renderer);
+	}
+	
+	@Override
+	public void postRender(GraphicsRenderer renderer) throws ScriptingException
+	{
+		postRenderCallBack.call(renderer);
 	}
 	
 	protected Object invokeMethod(String method, Object...args)

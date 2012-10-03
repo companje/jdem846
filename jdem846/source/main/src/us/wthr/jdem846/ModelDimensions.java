@@ -32,12 +32,15 @@ public abstract class ModelDimensions
 	public int outputWidth;
 	public int outputHeight;
 	
-	public double outputLongitudeResolutionTrue;
-	public double outputLatitudeResolutionTrue;
+	public double modelLongitudeResolutionTrue;
+	public double modelLatitudeResolutionTrue;
+	public double modelLongitudeResolution;
+	public double modelLatitudeResolution;
 	
-	public double outputLongitudeResolution;
-	public double outputLatitudeResolution;
-	
+	public double textureLongitudeResolutionTrue;
+	public double textureLatitudeResolutionTrue;
+	public double textureLongitudeResolution;
+	public double textureLatitudeResolution;
 	
 	public ModelDimensions()
 	{
@@ -57,23 +60,40 @@ public abstract class ModelDimensions
 
 	}
 	
-	public double getMetersOutputResolution(double meanRadius)
+	public double getMetersTextureResolution(double meanRadius)
 	{
 		
 		double lat = (getNorth() - getSouth()) / 2.0;
 		double lon = (getEast() - getWest()) / 2.0;
-		return getMetersResolution(meanRadius, lat, lon, getOutputLatitudeResolution(), getOutputLongitudeResolution());
-
+		return getMetersResolution(meanRadius, lat, lon, getTextureLatitudeResolution(), getTextureLongitudeResolution());
 	}
 	
-	public double getMetersTrueOutputResolution(double meanRadius)
+	public double getMetersTrueTextureResolution(double meanRadius)
 	{
 		
 		double lat = (getNorth() - getSouth()) / 2.0;
 		double lon = (getEast() - getWest()) / 2.0;
-		return getMetersResolution(meanRadius, lat, lon, getOutputLatitudeResolutionTrue(), getOutputLongitudeResolutionTrue());
-
+		return getMetersResolution(meanRadius, lat, lon, getTextureLatitudeResolutionTrue(), getTextureLongitudeResolutionTrue());
 	}
+	
+	
+	public double getMetersModelResolution(double meanRadius)
+	{
+		
+		double lat = (getNorth() - getSouth()) / 2.0;
+		double lon = (getEast() - getWest()) / 2.0;
+		return getMetersResolution(meanRadius, lat, lon, getModelLatitudeResolution(), getModelLongitudeResolution());
+	}
+	
+	public double getMetersTrueModelResolution(double meanRadius)
+	{
+		
+		double lat = (getNorth() - getSouth()) / 2.0;
+		double lon = (getEast() - getWest()) / 2.0;
+		return getMetersResolution(meanRadius, lat, lon, getModelLatitudeResolutionTrue(), getModelLongitudeResolutionTrue());
+	}
+	
+	
 	
 	public double getMetersResolution(double meanRadius, double latitude, double longitude)
 	{
@@ -157,39 +177,87 @@ public abstract class ModelDimensions
 		return outputHeight;
 	}
 
-
-	public double getOutputLongitudeResolution()
+	public double getModelLongitudeResolutionTrue()
 	{
-		return outputLongitudeResolution;
+		return modelLongitudeResolutionTrue;
 	}
 
-
-	public double getOutputLatitudeResolution()
+	public void setModelLongitudeResolutionTrue(double modelLongitudeResolutionTrue)
 	{
-		return outputLatitudeResolution;
+		this.modelLongitudeResolutionTrue = modelLongitudeResolutionTrue;
 	}
 
-	public double getOutputLongitudeResolutionTrue()
+	public double getModelLatitudeResolutionTrue()
 	{
-		return outputLongitudeResolutionTrue;
+		return modelLatitudeResolutionTrue;
 	}
 
-	public void setOutputLongitudeResolutionTrue(
-			double outputLongitudeResolutionTrue)
+	public void setModelLatitudeResolutionTrue(double modelLatitudeResolutionTrue)
 	{
-		this.outputLongitudeResolutionTrue = outputLongitudeResolutionTrue;
+		this.modelLatitudeResolutionTrue = modelLatitudeResolutionTrue;
 	}
 
-	public double getOutputLatitudeResolutionTrue()
+	public double getModelLongitudeResolution()
 	{
-		return outputLatitudeResolutionTrue;
+		return modelLongitudeResolution;
 	}
 
-	public void setOutputLatitudeResolutionTrue(double outputLatitudeResolutionTrue)
+	public void setModelLongitudeResolution(double modelLongitudeResolution)
 	{
-		this.outputLatitudeResolutionTrue = outputLatitudeResolutionTrue;
+		this.modelLongitudeResolution = modelLongitudeResolution;
 	}
-	
-	
+
+	public double getModelLatitudeResolution()
+	{
+		return modelLatitudeResolution;
+	}
+
+	public void setModelLatitudeResolution(double modelLatitudeResolution)
+	{
+		this.modelLatitudeResolution = modelLatitudeResolution;
+	}
+
+	public double getTextureLongitudeResolutionTrue()
+	{
+		return textureLongitudeResolutionTrue;
+	}
+
+	public void setTextureLongitudeResolutionTrue(
+			double textureLongitudeResolutionTrue)
+	{
+		this.textureLongitudeResolutionTrue = textureLongitudeResolutionTrue;
+	}
+
+	public double getTextureLatitudeResolutionTrue()
+	{
+		return textureLatitudeResolutionTrue;
+	}
+
+	public void setTextureLatitudeResolutionTrue(
+			double textureLatitudeResolutionTrue)
+	{
+		this.textureLatitudeResolutionTrue = textureLatitudeResolutionTrue;
+	}
+
+	public double getTextureLongitudeResolution()
+	{
+		return textureLongitudeResolution;
+	}
+
+	public void setTextureLongitudeResolution(double textureLongitudeResolution)
+	{
+		this.textureLongitudeResolution = textureLongitudeResolution;
+	}
+
+	public double getTextureLatitudeResolution()
+	{
+		return textureLatitudeResolution;
+	}
+
+	public void setTextureLatitudeResolution(double textureLatitudeResolution)
+	{
+		this.textureLatitudeResolution = textureLatitudeResolution;
+	}
+
 	
 }

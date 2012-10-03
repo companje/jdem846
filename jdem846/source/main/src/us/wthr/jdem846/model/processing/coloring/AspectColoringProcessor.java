@@ -69,8 +69,8 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 		
 		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
 				PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet()), 
-				getModelDimensions().getOutputLatitudeResolution(), 
-				getModelDimensions().getOutputLongitudeResolution());
+				getModelDimensions().getTextureLatitudeResolution(), 
+				getModelDimensions().getTextureLongitudeResolution());
 	}
 	
 	

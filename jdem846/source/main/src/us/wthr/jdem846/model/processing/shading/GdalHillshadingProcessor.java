@@ -52,8 +52,8 @@ public class GdalHillshadingProcessor extends AbstractGridProcessor implements G
 		this.lightIntensity = optionModel.getLightIntensity();
 		this.darkIntensity = optionModel.getDarkIntensity();
 		
-		this.latitudeResolution = this.getModelDimensions().outputLatitudeResolution;
-		this.longitudeResolution = this.getModelDimensions().outputLongitudeResolution;
+		this.latitudeResolution = this.getModelDimensions().textureLatitudeResolution;
+		this.longitudeResolution = this.getModelDimensions().textureLongitudeResolution;
 		
 	}
 	

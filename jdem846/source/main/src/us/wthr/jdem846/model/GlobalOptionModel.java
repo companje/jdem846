@@ -41,7 +41,7 @@ public class GlobalOptionModel implements OptionModel
 	private int pixelStackDepth = 1;
 	
 	private double modelQuality = 1.0;
-	
+	private double textureQuality = 1.0;
 	
 	private boolean getStandardResolutionElevation = false;
 	private boolean interpolateData = true;
@@ -384,11 +384,34 @@ public class GlobalOptionModel implements OptionModel
 	}
 	
 	
+	
+	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.textureQuality",
+			label="Texture Quality",
+			tooltip="",
+			enabled=true)
+	@Order(19)
+	@ValueBounds(minimum=0, 
+				maximum=10.0,
+				stepSize=0.05)
+	public double getTextureQuality()
+	{
+		return textureQuality;
+	}
+
+
+	public void setTextureQuality(double textureQuality)
+	{
+		this.textureQuality = textureQuality;
+	}
+	
+	
+	
+	
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.modelQuality",
 			label="Model Quality",
 			tooltip="",
 			enabled=true)
-	@Order(19)
+	@Order(20)
 	@ValueBounds(minimum=0, 
 				maximum=10.0,
 				stepSize=0.05)
@@ -474,7 +497,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Use Disk Cache",
 			tooltip="",
 			enabled=true)
-	@Order(19)
+	@Order(21)
 	public boolean getUseDiskCachedModelGrid()
 	{
 		return useDiskCachedModelGrid;
@@ -578,6 +601,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.subpixelGridSize = this.subpixelGridSize;
 		copy.pixelStackDepth = this.pixelStackDepth;
 		copy.modelQuality = this.modelQuality;
+		copy.textureQuality = this.textureQuality;
 		copy.averageOverlappedData = this.averageOverlappedData;
 		copy.getStandardResolutionElevation = this.getStandardResolutionElevation;
 		copy.interpolateData = this.interpolateData;

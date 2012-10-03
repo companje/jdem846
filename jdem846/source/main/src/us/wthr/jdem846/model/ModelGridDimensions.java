@@ -128,16 +128,24 @@ public class ModelGridDimensions extends ModelDimensions
 															scaleX);
 		}
 		
-		outputLatitudeResolution = latLonOutputRes.latitudeResolution;
-		outputLongitudeResolution = latLonOutputRes.longitudeResolution;
+		modelLatitudeResolution = latLonOutputRes.latitudeResolution;
+		modelLongitudeResolution = latLonOutputRes.longitudeResolution;
+		modelLatitudeResolutionTrue = latLonOutputRes.latitudeResolution;
+		modelLongitudeResolutionTrue = latLonOutputRes.longitudeResolution;
 		
-		outputLatitudeResolutionTrue = latLonOutputRes.latitudeResolution;
-		outputLongitudeResolutionTrue = latLonOutputRes.longitudeResolution;
+		textureLatitudeResolution = latLonOutputRes.latitudeResolution;
+		textureLongitudeResolution = latLonOutputRes.longitudeResolution;
+		textureLatitudeResolutionTrue = latLonOutputRes.latitudeResolution;
+		textureLongitudeResolutionTrue = latLonOutputRes.longitudeResolution;
 		
 		double modelQuality = globalOptionModel.getModelQuality();
+		double textureQuality = globalOptionModel.getTextureQuality();
 		
-		outputLatitudeResolution /= modelQuality;
-		outputLongitudeResolution /= modelQuality;
+		modelLatitudeResolution /= modelQuality;
+		modelLongitudeResolution /= modelQuality;
+		
+		textureLatitudeResolution /= modelQuality;
+		textureLongitudeResolution /= modelQuality;
 		/*
 		double latitudeSlices = globalOptionModel.getLatitudeSlices();
 		double longitudeSlices = globalOptionModel.getLongitudeSlices();
@@ -187,8 +195,10 @@ public class ModelGridDimensions extends ModelDimensions
 		copy.longitudeResolution = this.longitudeResolution;
 		copy.outputHeight = this.outputHeight;
 		copy.outputWidth = this.outputWidth;
-		copy.outputLatitudeResolution = this.outputLatitudeResolution;
-		copy.outputLongitudeResolution = this.outputLongitudeResolution;
+		copy.modelLatitudeResolution = this.modelLatitudeResolution;
+		copy.modelLongitudeResolution = this.modelLongitudeResolution;
+		copy.textureLatitudeResolution = this.textureLatitudeResolution;
+		copy.textureLongitudeResolution = this.textureLongitudeResolution;
 
 		return copy;
 	}

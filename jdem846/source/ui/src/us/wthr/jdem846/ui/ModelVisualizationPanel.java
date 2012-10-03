@@ -60,7 +60,7 @@ public class ModelVisualizationPanel extends Panel
 	private ModelContext modelContextWorkingCopy;
 	
 	private ImageDisplayPanel pnlModelDisplay;
-	private Slider sldQuality;
+	private Slider sldTextureQuality;
 	private CheckBox chkPreviewRaster;
 	private ToolbarButton btnUpdate;
 	private CheckBox chkAutoUpdate;
@@ -88,7 +88,8 @@ public class ModelVisualizationPanel extends Panel
 	boolean rasterPreview = true;
 	double maxPreviewSlices = 300;
 	double minPreviewSlices = 10;
-	double previewQuality = 0.25;
+	double previewTextureQuality = 0.25;
+	double previewModelQuality = 0.25;
 	double latitudeSlices;
 	double longitudeSlices;
 
@@ -122,7 +123,8 @@ public class ModelVisualizationPanel extends Panel
 				
 		maxPreviewSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.modelVisualizationPanel.maxPreviewSlices");
 		minPreviewSlices = JDem846Properties.getDoubleProperty("us.wthr.jdem846.ui.modelVisualizationPanel.minPreviewSlices");
-		previewQuality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewQuality");
+		previewModelQuality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewModelQuality");
+		previewTextureQuality = JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewTextureQuality");
 		rasterPreview = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.rasterPreview");
 		autoUpdate = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.autoUpdate");
 		useScripting = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.scripting");
@@ -156,7 +158,7 @@ public class ModelVisualizationPanel extends Panel
 		pnlModelDisplay.setDisplayImageShadow(false);
 		pnlModelDisplay.zoomFit();
 		
-		sldQuality = new Slider(1, 100);
+		sldTextureQuality = new Slider(1, 100);
 		chkPreviewRaster = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.previewRaster.label"));
 		chkAutoUpdate = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.autoUpdate.label"));
 		chkScripting = new CheckBox(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.scripting.label"));
@@ -171,12 +173,12 @@ public class ModelVisualizationPanel extends Panel
 		
 		chkPreviewRaster.setOpaque(false);
 		chkAutoUpdate.setOpaque(false);
-		sldQuality.setOpaque(false);
+		sldTextureQuality.setOpaque(false);
 		chkScripting.setOpaque(false);
 		
 		// Set Tooltips
 		
-		sldQuality.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.quality.tooltip"));
+		sldTextureQuality.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.quality.tooltip"));
 		chkPreviewRaster.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.previewRaster.tooltip"));
 		chkAutoUpdate.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.autoUpdate.tooltip"));
 		chkScripting.setToolTipText(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.scripting.tooltip"));
@@ -184,7 +186,7 @@ public class ModelVisualizationPanel extends Panel
 		
 		// Add listeners
 		
-		sldQuality.addChangeListener(new ChangeListener() {
+		sldTextureQuality.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e)
 			{
 				JSlider source = (JSlider) e.getSource();
@@ -277,8 +279,12 @@ public class ModelVisualizationPanel extends Panel
 					rasterPreview = Boolean.parseBoolean(newValue);
 					update(false, false);
 					setControlState();
-				} else if (property.equals("us.wthr.jdem846.previewing.ui.previewQuality")) {
-					previewQuality = Double.parseDouble(newValue);
+				} else if (property.equals("us.wthr.jdem846.previewing.ui.previewModelQuality")) {
+					previewModelQuality = Double.parseDouble(newValue);
+					update(false, false);
+					setControlState();
+				} else if (property.equals("us.wthr.jdem846.previewing.ui.previewTextureQuality")) {
+					previewTextureQuality = Double.parseDouble(newValue);
 					update(false, false);
 					setControlState();
 				} else if (property.equals("us.wthr.jdem846.previewing.ui.autoUpdate")) {
@@ -298,7 +304,7 @@ public class ModelVisualizationPanel extends Panel
 		
 		
 		buttonBar.add(new Label(I18N.get("us.wthr.jdem846.ui.modelVisualizationPanel.quality.label") + ":"));
-		buttonBar.add(sldQuality);
+		buttonBar.add(sldTextureQuality);
 		buttonBar.addSeparator();
 		buttonBar.add(chkPreviewRaster);
 		buttonBar.addSeparator();
@@ -324,8 +330,8 @@ public class ModelVisualizationPanel extends Panel
 	
 	protected void setControlState()
 	{
-		int value = (int) Math.round(previewQuality * 100);
-		sldQuality.setValue(value);
+		int value = (int) Math.round(previewTextureQuality * 100);
+		sldTextureQuality.setValue(value);
 		
 		chkPreviewRaster.setSelected(rasterPreview);
 		chkAutoUpdate.setSelected(autoUpdate);
@@ -354,9 +360,9 @@ public class ModelVisualizationPanel extends Panel
 	
 	protected void onQualitySliderChanged()
 	{
-		double value = (double) sldQuality.getValue();
-		previewQuality = (value / 100);
-		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewQuality", ""+previewQuality);
+		double value = (double) sldTextureQuality.getValue();
+		previewTextureQuality = (value / 100);
+		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewQuality", ""+previewTextureQuality);
 	}
 	
 	protected void setWorkingCopyOptions()
@@ -591,7 +597,8 @@ public class ModelVisualizationPanel extends Panel
 		}
 		
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
-		globalOptionModel.setModelQuality(previewQuality);
+		globalOptionModel.setModelQuality(previewModelQuality);
+		globalOptionModel.setTextureQuality(previewTextureQuality);
 		//longitudeSlices = this.minPreviewSlices + (previewQuality * (this.maxPreviewSlices - this.minPreviewSlices));
 		//latitudeSlices = longitudeSlices;
 		

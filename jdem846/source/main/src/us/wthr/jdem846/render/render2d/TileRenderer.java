@@ -216,8 +216,8 @@ public class TileRenderer extends InterruptibleProcess
 		
 		//latitudeResolution = modelContext.getLatitudeResolution();
 		//longitudeResolution = modelContext.getLongitudeResolution();
-		latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
-		longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
+		latitudeResolution = modelContext.getModelDimensions().getTextureLatitudeResolution();
+		longitudeResolution = modelContext.getModelDimensions().getTextureLongitudeResolution();
 		
 		//latitudeResolution = modelContext.getRasterDataContext().getEffectiveLatitudeResolution();
 		//longitudeResolution = modelContext.getRasterDataContext().getEffectiveLongitudeResolution();
@@ -236,8 +236,8 @@ public class TileRenderer extends InterruptibleProcess
 					southLimit - latitudeResolution, 
 					eastLimit + longitudeResolution, 
 					westLimit, 
-					modelContext.getModelDimensions().getOutputLatitudeResolution(),
-					modelContext.getModelDimensions().getOutputLongitudeResolution());
+					modelContext.getModelDimensions().getTextureLatitudeResolution(),
+					modelContext.getModelDimensions().getTextureLongitudeResolution());
 		}
 		
 

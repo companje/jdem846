@@ -52,7 +52,7 @@ public class ModelBuilder extends InterruptibleProcess
 	private FillControlledModelGrid modelGrid;
 	private ModelGridDimensions modelDimensions;
 	private GlobalOptionModel globalOptionModel;
-	private ModelCanvas modelCanvas;
+	//private ModelCanvas modelCanvas;
 	private BufferControlledRasterDataContainer bufferControlledRasterDataContainer;
 	
 	private boolean runLoadProcessor = true;
@@ -130,8 +130,8 @@ public class ModelBuilder extends InterruptibleProcess
 							globalOptionModel.getSouthLimit(), 
 							globalOptionModel.getEastLimit(), 
 							globalOptionModel.getWestLimit(), 
-							modelDimensions.getOutputLatitudeResolution(), 
-							modelDimensions.getOutputLongitudeResolution(),
+							modelDimensions.getTextureLatitudeResolution(), 
+							modelDimensions.getTextureLongitudeResolution(),
 							modelContext.getRasterDataContext().getDataMinimumValue(),
 							modelContext.getRasterDataContext().getDataMaximumValue());
 				} catch (Exception ex) {
@@ -143,8 +143,8 @@ public class ModelBuilder extends InterruptibleProcess
 						globalOptionModel.getSouthLimit(), 
 						globalOptionModel.getEastLimit(), 
 						globalOptionModel.getWestLimit(), 
-						modelDimensions.getOutputLatitudeResolution(), 
-						modelDimensions.getOutputLongitudeResolution(),
+						modelDimensions.getTextureLatitudeResolution(), 
+						modelDimensions.getTextureLongitudeResolution(),
 						modelContext.getRasterDataContext().getDataMinimumValue(),
 						modelContext.getRasterDataContext().getDataMaximumValue());
 						//modelContext.getRasterDataContext());
@@ -157,8 +157,8 @@ public class ModelBuilder extends InterruptibleProcess
 							globalOptionModel.getSouthLimit(), 
 							globalOptionModel.getEastLimit(), 
 							globalOptionModel.getWestLimit(), 
-							modelDimensions.getOutputLatitudeResolution(), 
-							modelDimensions.getOutputLongitudeResolution(),
+							modelDimensions.getTextureLatitudeResolution(), 
+							modelDimensions.getTextureLongitudeResolution(),
 							modelContext.getRasterDataContext().getDataMinimumValue(),
 							modelContext.getRasterDataContext().getDataMaximumValue(),
 							(modelContext.getImageDataContext().getImageListSize() > 0),
@@ -168,6 +168,7 @@ public class ModelBuilder extends InterruptibleProcess
 			modelGrid.setForceResetAndRunFilters(globalOptionModel.getForceResetAndRunFilters());
 		}
 		
+		/*
 		if (modelCanvas == null) {
 			modelCanvas = new ModelCanvas(modelDimensions.getOutputWidth(), 
 														modelDimensions.getOutputHeight(), 
@@ -181,7 +182,8 @@ public class ModelBuilder extends InterruptibleProcess
 		} else {
 			modelCanvas.reset();
 		}
-
+		*/
+		
 		
 		useScripting = globalOptionModel.getUseScripting();
 		
@@ -446,8 +448,11 @@ public class ModelBuilder extends InterruptibleProcess
 		elevationModel.setProperty("max-data-longitude", ""+modelContext.getEast());
 		elevationModel.setProperty("min-data-longitude", ""+modelContext.getWest());
 		
-		elevationModel.setProperty("model-resolution-latitude", ""+modelDimensions.outputLatitudeResolution);
-		elevationModel.setProperty("model-resolution-longitude", ""+modelDimensions.outputLongitudeResolution);
+		elevationModel.setProperty("model-resolution-latitude", ""+modelDimensions.modelLatitudeResolution);
+		elevationModel.setProperty("model-resolution-longitude", ""+modelDimensions.modelLongitudeResolution);
+		
+		elevationModel.setProperty("texture-resolution-latitude", ""+modelDimensions.textureLatitudeResolution);
+		elevationModel.setProperty("texture-resolution-longitude", ""+modelDimensions.textureLongitudeResolution);
 
 		elevationModel.setProperty("data-resolution-latitude", ""+modelDimensions.latitudeResolution);
 		elevationModel.setProperty("data-resolution-longitude", ""+modelDimensions.longitudeResolution);

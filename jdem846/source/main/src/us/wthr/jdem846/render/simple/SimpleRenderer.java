@@ -69,14 +69,14 @@ public class SimpleRenderer
 		
 		
 		
-		double latitudeResolution = modelContext.getModelDimensions().getOutputLatitudeResolution();
-		double longitudeResolution = modelContext.getModelDimensions().getOutputLongitudeResolution();
+		double latitudeResolution = modelContext.getModelDimensions().getTextureLatitudeResolution();
+		double longitudeResolution = modelContext.getModelDimensions().getTextureLongitudeResolution();
 		
 		latitudeResolution = (north - south - latitudeResolution) / latitudeSlices;
 		longitudeResolution = (east - west - longitudeResolution) / longitudeSlices;
 		
-		modelContext.getModelDimensions().outputLatitudeResolution = latitudeResolution;
-		modelContext.getModelDimensions().outputLongitudeResolution = longitudeResolution;
+		modelContext.getModelDimensions().textureLatitudeResolution = latitudeResolution;
+		modelContext.getModelDimensions().textureLongitudeResolution = longitudeResolution;
 		
 		
 		
@@ -90,8 +90,8 @@ public class SimpleRenderer
 					modelContext.getSouth(), 
 					modelContext.getEast(), 
 					modelContext.getWest(), 
-					modelContext.getModelDimensions().getOutputLatitudeResolution(), 
-					modelContext.getModelDimensions().getOutputLongitudeResolution());
+					modelContext.getModelDimensions().getTextureLatitudeResolution(), 
+					modelContext.getModelDimensions().getTextureLongitudeResolution());
 		}
 		
 		
