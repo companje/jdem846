@@ -34,4 +34,11 @@ public class Vector
 		this.z = z;
 		this.w = w;
 	}
+	
+	public void copyTo(Vector v)
+	{
+		v.x = this.x;
+		v.y = this.y;
+		v.z = this.z;
+	}
 }

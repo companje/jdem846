@@ -5,6 +5,7 @@ import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Spheres;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPointGrid;
@@ -76,7 +77,7 @@ public class SurfaceNormalCalculator
 		this.viewPerspective = viewPerspective;
 	}
 	
-	public void calculateNormalSpherical(double latitude, double longitude, double[] normal)
+	public void calculateNormalSpherical(double latitude, double longitude, Vector normal)
 	{
 		
 		double eLat = latitude;
@@ -115,7 +116,7 @@ public class SurfaceNormalCalculator
 	public void calculateNormalSpherical(double latitude, 
 			double longitude, 
 			double elevation,
-			double[] normal)
+			Vector normal)
 	{
 			
 		calculateNormalSpherical(latitude, 
@@ -136,7 +137,7 @@ public class SurfaceNormalCalculator
 								double sElev,
 								double eElev,
 								double wElev,
-								double[] normal)
+								Vector normal)
 	{
 		//resetBuffers(latitude, longitude);
 
@@ -164,9 +165,9 @@ public class SurfaceNormalCalculator
 		Vectors.calcNormal(xyzC, xyzS, xyzE, normalSE); // SE
 		Vectors.calcNormal(xyzN, xyzC, xyzE, normalNE); // NE
 		
-		normal[0] = (normalNW[0] + normalSW[0] + normalSE[0] + normalNE[0]) / 4.0;
-		normal[1] = (normalNW[1] + normalSW[1] + normalSE[1] + normalNE[1]) / 4.0;
-		normal[2] = (normalNW[2] + normalSW[2] + normalSE[2] + normalNE[2]) / 4.0;
+		normal.x = (normalNW[0] + normalSW[0] + normalSE[0] + normalNE[0]) / 4.0;
+		normal.y = (normalNW[1] + normalSW[1] + normalSE[1] + normalNE[1]) / 4.0;
+		normal.z = (normalNW[2] + normalSW[2] + normalSE[2] + normalNE[2]) / 4.0;
 
 		
 	}
@@ -219,7 +220,7 @@ public class SurfaceNormalCalculator
 	
 	
 	
-	public void calculateNormalFlat(double latitude, double longitude, double[] normal)
+	public void calculateNormalFlat(double latitude, double longitude, Vector normal)
 	{
 		
 		double eLat = latitude;
@@ -258,7 +259,7 @@ public class SurfaceNormalCalculator
 	public void calculateNormal(double latitude, 
 			double longitude, 
 			double elevation,
-			double[] normal)
+			Vector normal)
 	{
 			
 		calculateNormalFlat(latitude, 
@@ -279,7 +280,7 @@ public class SurfaceNormalCalculator
 								double sElev,
 								double eElev,
 								double wElev,
-								double[] normal)
+								Vector normal)
 	{
 		resetBuffers(latitude, longitude);
 
@@ -308,9 +309,9 @@ public class SurfaceNormalCalculator
 		normalBufferB[1] += normalBufferA[1];
 		normalBufferB[2] += normalBufferA[2];
 		
-		normal[0] = normalBufferB[0] / 4.0;
-		normal[1] = normalBufferB[1] / 4.0;
-		normal[2] = normalBufferB[2] / 4.0;
+		normal.x = normalBufferB[0] / 4.0;
+		normal.y = normalBufferB[1] / 4.0;
+		normal.z = normalBufferB[2] / 4.0;
 		
 		
 	}

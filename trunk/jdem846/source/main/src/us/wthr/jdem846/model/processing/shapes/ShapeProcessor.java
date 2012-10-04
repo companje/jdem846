@@ -51,17 +51,13 @@ import us.wthr.jdem846.shapefile.modeling.LineStroke;
 				optionModel=ShapeOptionModel.class,
 				enabled=true
 )
-public class ShapeProcessor extends InterruptibleProcess  implements GridProcessor
+public class ShapeProcessor extends GridProcessor
 {
 	private static Log log = Logging.getLog(ShapeProcessor.class);
 	
 	private ShapeOptionModel optionModel;
-	private GlobalOptionModel globalOptionModel;
-	
-	private ModelGridDimensions modelDimensions;
-	private ModelContext modelContext;
-	private ModelPointGrid modelGrid;
-	
+
+
 	private MapProjection mapProjection;
 	private CanvasProjection canvasProjection;
 	
@@ -72,64 +68,11 @@ public class ShapeProcessor extends InterruptibleProcess  implements GridProcess
 		
 	}
 	
-	
-	public ShapeProcessor(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		this.modelContext = modelContext;
-		this.modelGrid = modelGrid;
-	}
 
 
-	public void setAndPrepare(ModelContext modelContext, ModelPointGrid modelGrid, ModelGridDimensions modelDimensions, GlobalOptionModel globalOptionModel, OptionModel processOptionModel) throws RenderEngineException
-	{
-		this.setModelContext(modelContext);
-		this.setModelGrid(modelGrid);
-		this.setModelDimensions(modelDimensions);
-		this.setGlobalOptionModel(globalOptionModel);
-		this.setProcessOptionModel(processOptionModel);
-		this.prepare();
-	}
-	
-	@Override
-	public boolean isProcessing()
-	{
-		return processing;
-	}
 
 
-	@Override
-	public void setModelContext(ModelContext modelContext)
-	{
-		this.modelContext = modelContext;
-	}
 
-
-	@Override
-	public void setModelGrid(ModelPointGrid modelGrid)
-	{
-		this.modelGrid = modelGrid;
-	}
-
-
-	@Override
-	public void setModelDimensions(ModelGridDimensions modelDimensions)
-	{
-		this.modelDimensions = modelDimensions;
-	}
-
-
-	@Override
-	public void setGlobalOptionModel(GlobalOptionModel globalOptionModel)
-	{
-		this.globalOptionModel = globalOptionModel;
-	}
-
-
-	@Override
-	public void setProcessOptionModel(OptionModel processOptionModel)
-	{
-		optionModel = (ShapeOptionModel) processOptionModel;
-	}
 
 
 	@Override
@@ -169,14 +112,14 @@ public class ShapeProcessor extends InterruptibleProcess  implements GridProcess
 	}
 
 
-	@Override
+	
 	public void process() throws RenderEngineException
 	{
 		log.info("Running Shape Rendering Process");
-		if (isCancelled()) {
-			log.warn("Render process cancelled, model not complete.");
-			return;
-		}
+		//if (isCancelled()) {
+		//	log.warn("Render process cancelled, model not complete.");
+		//	return;
+		//}
 		
 		
 		
@@ -201,11 +144,11 @@ public class ShapeProcessor extends InterruptibleProcess  implements GridProcess
 				throw new RenderEngineException("Error occured rendering shape files", ex);
 			}
 			
-			checkPause();
-			if (isCancelled()) {
-				log.warn("Render process cancelled, model not complete.");
-				break;
-			}
+			//checkPause();
+			//if (isCancelled()) {
+			//	log.warn("Render process cancelled, model not complete.");
+			//	break;
+			//}
 		}
 		
 		log.info("Completed shapefile rendering");
@@ -253,14 +196,7 @@ public class ShapeProcessor extends InterruptibleProcess  implements GridProcess
 		return shapeLayer;
 	}
 	
-	protected double getElevationAtPoint(double latitude, double longitude) throws DataSourceException
-	{
-		double data = 0.0;
-		if (getRasterDataContext() != null) {
-			data = getRasterDataContext().getData(latitude, longitude, false, true);
-		}
-		return data;
-	}
+
 	
 	public void renderLayer(ShapeLayer shapeLayer) throws RenderEngineException
 	{
@@ -270,11 +206,11 @@ public class ShapeProcessor extends InterruptibleProcess  implements GridProcess
 		for (ShapePath path : shapeLayer.getShapePaths()) {		
 			renderPath(shapeType, path);
 			
-			checkPause();
-			if (isCancelled()) {
-				log.warn("Render process cancelled, model not complete.");
-				break;
-			}
+			//checkPause();
+			//if (isCancelled()) {
+			//	log.warn("Render process cancelled, model not complete.");
+			//	break;
+			//}
 		}
 	}
 	
@@ -332,5 +268,58 @@ public class ShapeProcessor extends InterruptibleProcess  implements GridProcess
 	protected ShapeDataContext getShapeDataContext()
 	{
 		return modelContext.getShapeDataContext();
+	}
+
+
+
+
+
+
+
+
+	@Override
+	public void onLatitudeStart(double latitude) throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onLatitudeEnd(double latitude) throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProcessBefore() throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onModelPoint(double latitude, double longitude)
+			throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void dispose() throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

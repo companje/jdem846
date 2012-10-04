@@ -44,7 +44,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 	
 	private ProcessTypeConfigurationPanel coloringConfiguration;
 	private ProcessTypeConfigurationPanel shadingConfiguration;
-	private ProcessTypeConfigurationPanel renderConfiguration;
+	//private ProcessTypeConfigurationPanel renderConfiguration;
 	private DynamicOptionsPanel globalOptionsPanel;
 	
 	private GlobalOptionModel globalOptionModel;
@@ -86,7 +86,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		globalOptionsPanel = new DynamicOptionsPanel(globalOptionModelContainer);
 		coloringConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.COLORING, defaultColoringProcessor, optionModelList);
 		shadingConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.SHADING, defaultShadingProcessor, optionModelList);
-		renderConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.RENDER, defaultRenderProcessor, optionModelList);
+		//renderConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.RENDER, defaultRenderProcessor, optionModelList);
 		
 		
 		// Add Listeners
@@ -99,7 +99,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 
 		coloringConfiguration.addModelConfigurationChangeListener(this);
 		shadingConfiguration.addModelConfigurationChangeListener(this);
-		renderConfiguration.addModelConfigurationChangeListener(this);
+		//renderConfiguration.addModelConfigurationChangeListener(this);
 		
 		
 		ScrollPane globalOptionsScroll = new ScrollPane(globalOptionsPanel);
@@ -110,7 +110,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		tabPane.add("General", globalOptionsScroll);
 		tabPane.add("Coloring", coloringConfiguration);
 		tabPane.add("Shading", shadingConfiguration);
-		tabPane.add("Rendering", renderConfiguration);
+		//tabPane.add("Rendering", renderConfiguration);
 		
 		setLayout(new BorderLayout());
 		add(tabPane, BorderLayout.CENTER);
@@ -131,8 +131,8 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		
 		modelProcessManifest.setGlobalOptionModel(this.globalOptionModel.copy());
 		
-		String defaultLoadProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.loadProcessor.default");
-		String defaultSurfaceNormalsProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.normalsProcessor.default");
+		//String defaultLoadProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.loadProcessor.default");
+		//String defaultSurfaceNormalsProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.normalsProcessor.default");
 		String defaultShapesProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.shapesProcessor.default");
 		
 		String coloringProcessId = coloringConfiguration.getCurrentProcessId();
@@ -141,16 +141,16 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		String shadingProcessId = shadingConfiguration.getCurrentProcessId();
 		OptionModel shadingOptionModel = shadingConfiguration.getCurrentOptionModel();
 		
-		String renderProcessId = renderConfiguration.getCurrentProcessId();
-		OptionModel renderOptionModel = renderConfiguration.getCurrentOptionModel();
+		//String renderProcessId = renderConfiguration.getCurrentProcessId();
+		//OptionModel renderOptionModel = renderConfiguration.getCurrentOptionModel();
 		
 		//modelProcessManifest.addProcessor(defaultLoadProcessor, new GridLoadOptionModel());
 		//modelProcessManifest.addProcessor(defaultSurfaceNormalsProcessor, new SurfaceNormalsOptionModel());
 		
-		modelProcessManifest.addProcessor(coloringProcessId, coloringOptionModel);
-		modelProcessManifest.addProcessor(shadingProcessId, shadingOptionModel);
+		modelProcessManifest.addWorker(coloringProcessId, coloringOptionModel);
+		modelProcessManifest.addWorker(shadingProcessId, shadingOptionModel);
 		
-		modelProcessManifest.addProcessor(defaultShapesProcessor, new ShapeOptionModel());
+		//modelProcessManifest.addWorker(defaultShapesProcessor, new ShapeOptionModel());
 		//modelProcessManifest.addProcessor(renderProcessId, renderOptionModel);
 		
 		return modelProcessManifest;
@@ -161,7 +161,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 	{
 		coloringConfiguration.refreshUI();
 		shadingConfiguration.refreshUI();
-		renderConfiguration.refreshUI();
+		//renderConfiguration.refreshUI();
 		globalOptionsPanel.refreshUI();
 	}
 	
@@ -169,7 +169,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 	{
 		coloringConfiguration.setControlErrorDisplayed(id, display, message);
 		shadingConfiguration.setControlErrorDisplayed(id, display, message);
-		renderConfiguration.setControlErrorDisplayed(id, display, message);
+		//renderConfiguration.setControlErrorDisplayed(id, display, message);
 		globalOptionsPanel.setControlErrorDisplayed(id, display, message);
 	}
 	
@@ -185,18 +185,20 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		containers.add(globalOptionModelContainer);
 		containers.add(coloringConfiguration.getCurrentOptionModelContainer());
 		containers.add(shadingConfiguration.getCurrentOptionModelContainer());
-		containers.add(renderConfiguration.getCurrentOptionModelContainer());
+		//containers.add(renderConfiguration.getCurrentOptionModelContainer());
 		
 		
 		List<OptionValidationException> validationExceptions = new LinkedList<OptionValidationException>();
 		
 		for (OptionModelContainer container : containers) {
-			log.info("Performing validation on container for " + container.getOptionModel().getClass().getName());
-			
-			try {
-				results.addAll(container.validateOptions(modelContext));
-			} catch (ModelContainerException ex) {
-				log.error("Model container error during validation: " + ex.getMessage(), ex);
+			if (container != null && container.getOptionModel() != null) {
+				log.info("Performing validation on container for " + container.getOptionModel().getClass().getName());
+				
+				try {
+					results.addAll(container.validateOptions(modelContext));
+				} catch (ModelContainerException ex) {
+					log.error("Model container error during validation: " + ex.getMessage(), ex);
+				}
 			}
 			
 		}

@@ -49,6 +49,8 @@ public class GlobalOptionModel implements OptionModel
 	private String precacheStrategy = "tiled";
 	private int tileSize = 1000;
 	
+	private int numberOfThreads = 1;
+	
 	private boolean useDiskCachedModelGrid = false;
 	private boolean disposeGridOnComplete = true;
 	private boolean createJdemElevationModel = true;
@@ -512,6 +514,28 @@ public class GlobalOptionModel implements OptionModel
 	
 	
 	
+	
+	
+	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.numberOfThreads",
+			label="Number of Threads",
+			tooltip="",
+			enabled=true)
+	@Order(22)
+	@ValueBounds(minimum=1, 
+				maximum=10,
+				stepSize=1)
+	public int getNumberOfThreads()
+	{
+		return numberOfThreads;
+	}
+
+
+	public void setNumberOfThreads(int numberOfThreads)
+	{
+		this.numberOfThreads = numberOfThreads;
+	}
+
+
 	public boolean getDisposeGridOnComplete()
 	{
 		return disposeGridOnComplete;
@@ -611,6 +635,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.disposeGridOnComplete = this.disposeGridOnComplete;
 		copy.previewRendering = this.previewRendering;
 		copy.forceResetAndRunFilters = this.forceResetAndRunFilters;
+		copy.numberOfThreads = this.numberOfThreads;
 		return copy;
 	}
 	

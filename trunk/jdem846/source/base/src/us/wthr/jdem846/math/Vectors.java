@@ -17,13 +17,13 @@ public class Vectors
 	public static final int ZYX = 5;
 	
 	
-	private static double[] buffer0 = new double[3];
-	private static double[] buffer1 = new double[3];
-	private static double[] buffer2 = new double[3];
+	//private static double[] buffer0 = new double[3];
+	//private static double[] buffer1 = new double[3];
+	//private static double[] buffer2 = new double[3];
 	
-	private static Vector vector0 = new Vector();
-	private static Vector vector1 = new Vector();
-	private static Vector vector2 = new Vector();
+	//private static Vector vector0 = new Vector();
+	//private static Vector vector1 = new Vector();
+	//private static Vector vector2 = new Vector();
 	
 	@SuppressWarnings("unused")
 	private static double[] tmpPoints1 = {0, 0, 0};
@@ -342,8 +342,10 @@ public class Vectors
 
 	public static double dotProduct(double[] pt0, double[] pt1)
 	{
-		//double[] buffer0 = new double[3];
-		//double[] buffer1 = new double[3];
+		double[] buffer0 = new double[3];
+		double[] buffer1 = new double[3];
+		
+		
 		
 		normalize(pt0, buffer0);
 		normalize(pt1, buffer1);
@@ -353,6 +355,9 @@ public class Vectors
 	
 	public static double dotProduct(Vector a, Vector b)
 	{
+		Vector vector0 = new Vector();
+		Vector vector1 = new Vector();
+		
 		normalize(a, vector0);
 		normalize(b, vector1);
 		
@@ -374,9 +379,9 @@ public class Vectors
 	
 	public static void inverse(Vector v, Vector into)
 	{
-		v.x *= -1;
-		v.y *= -1;
-		v.z *= -1;
+		into.x = v.x * -1;
+		into.y = v.y * -1;
+		into.z = v.z * -1;
 	}
 	
 	public static void inverse(Vector v)
@@ -419,9 +424,9 @@ public class Vectors
 	        no[2] = pt0[0] * pt1[1] - pt1[0] * pt0[1];
 		} else {
 			
-			//double[] buffer0 = new double[3];
-			//double[] buffer1 = new double[3];
-			//double[] buffer2 = new double[3];
+			double[] buffer0 = new double[3];
+			double[] buffer1 = new double[3];
+			double[] buffer2 = new double[3];
 			
 			subtract(pt0, pt1, buffer0);
 			subtract(pt1, pt2, buffer1);
@@ -442,6 +447,10 @@ public class Vectors
 	
 	public static void calcNormal(Vector a, Vector b, Vector c, Vector norm)
 	{
+		Vector vector0 = new Vector();
+		Vector vector1 = new Vector();
+		Vector vector2 = new Vector();
+		
 		subtract(a, b, vector0);
 		subtract(b, c, vector1);
 		

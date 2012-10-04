@@ -51,6 +51,10 @@ public class GradientColoring implements ModelColoring
 	}
 	
 
+	public ModelColoring copy() throws Exception
+	{
+		return new GradientColoring(configFile);
+	}
 	
 	
 	@Override

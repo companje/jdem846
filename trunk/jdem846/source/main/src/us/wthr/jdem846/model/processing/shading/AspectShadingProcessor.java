@@ -7,6 +7,7 @@ import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ModelPointHandler;
@@ -24,12 +25,12 @@ import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 				optionModel=AspectShadingOptionModel.class,
 				enabled=true
 )
-public class AspectShadingProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+public class AspectShadingProcessor extends GridProcessor
 {
 	private static Log log = Logging.getLog(AspectShadingProcessor.class);
 	
 	protected int[] rgbaBuffer = new int[4];
-	private double[] normal = new double[3];
+	private Vector normal = new Vector();
 	private SurfaceNormalCalculator normalsCalculator;
 	
 	protected double relativeLightIntensity;
@@ -43,16 +44,13 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 		
 	}
 	
-	public AspectShadingProcessor(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		super(modelContext, modelGrid);
-	}
+
 	
 	@Override
 	public void prepare() throws RenderEngineException
 	{
 		
-		AspectShadingOptionModel optionModel = (AspectShadingOptionModel) this.getProcessOptionModel();
+		AspectShadingOptionModel optionModel = (AspectShadingOptionModel) this.getOptionModel();
 		
 		
 		lightingMultiple = optionModel.getLightMultiple();
@@ -66,12 +64,6 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 				getModelDimensions().getTextureLongitudeResolution());
 	}
 	
-	@Override
-	public void process() throws RenderEngineException
-	{
-		super.process();
-	}
-
 
 	@Override
 	public void onModelPoint(double latitude, double longitude)
@@ -112,6 +104,46 @@ public class AspectShadingProcessor extends AbstractGridProcessor implements Gri
 		modelPoint.getRgba(rgbaBuffer);
 		ColorAdjustments.adjustBrightness(rgbaBuffer, shade);
 		modelPoint.setRgba(rgbaBuffer);
+	}
+
+
+
+	@Override
+	public void onLatitudeStart(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void onLatitudeEnd(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void onProcessBefore() throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void dispose() throws RenderEngineException
+	{
+		
 	}
 	
 

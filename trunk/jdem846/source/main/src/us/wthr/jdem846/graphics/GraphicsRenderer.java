@@ -1,6 +1,7 @@
 package us.wthr.jdem846.graphics;
 
 import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -91,7 +92,7 @@ public class GraphicsRenderer
 	
 	}
 	
-	public void matrixMode(MatrixModeEnum mode)
+	public void matrixMode(MatrixModeEnum mode) throws GraphicsRenderException
 	{
 		
 		if (mode == MatrixModeEnum.PROJECTION) {
@@ -101,6 +102,7 @@ public class GraphicsRenderer
 		} else {
 			this.currentMatrixStack = null;
 			this.error = RenderCodesEnum.RENDER_ERR_INVALID_ENUM;
+			throw new GraphicsRenderException("Invalid or unsupported matrix mode specified", RenderCodesEnum.RENDER_ERR_INVALID_ENUM);
 		}
 			
 	}

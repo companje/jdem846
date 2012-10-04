@@ -22,7 +22,7 @@ import us.wthr.jdem846.model.processing.GridProcessor;
 				optionModel=GdalHillshadingOptionModel.class,
 				enabled=true
 				)
-public class GdalHillshadingProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+public class GdalHillshadingProcessor extends GridProcessor
 {
 	private static Log log = Logging.getLog(GdalHillshadingProcessor.class);
 	
@@ -42,7 +42,7 @@ public class GdalHillshadingProcessor extends AbstractGridProcessor implements G
 	@Override
 	public void prepare() throws RenderEngineException 
 	{
-		GdalHillshadingOptionModel optionModel = (GdalHillshadingOptionModel) this.getProcessOptionModel();
+		GdalHillshadingOptionModel optionModel = (GdalHillshadingOptionModel) this.getOptionModel();
 		
 		this.azimuth = optionModel.getAzimuth();
 		this.altitude = optionModel.getAltitude();
@@ -56,12 +56,7 @@ public class GdalHillshadingProcessor extends AbstractGridProcessor implements G
 		this.longitudeResolution = this.getModelDimensions().textureLongitudeResolution;
 		
 	}
-	
-	@Override
-	public void process() throws RenderEngineException
-	{
-		super.process();
-	}
+
 	
 	@Override
 	public void onModelPoint(double latitude, double longitude)
@@ -121,6 +116,41 @@ public class GdalHillshadingProcessor extends AbstractGridProcessor implements G
 		ColorAdjustments.adjustBrightness(rgba, f);
 		this.modelGrid.setRgba(latitude, longitude, rgba);
 		//this->_modelGrid->color(latitude, longitude, c);
+	}
+
+
+	@Override
+	public void onLatitudeStart(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+
+	@Override
+	public void onLatitudeEnd(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+
+	@Override
+	public void onProcessBefore() throws RenderEngineException
+	{
+		
+	}
+
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
+	{
+		
+	}
+
+
+	@Override
+	public void dispose() throws RenderEngineException
+	{
+		
 	}
 
 }

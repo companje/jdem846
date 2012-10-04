@@ -135,7 +135,7 @@ public class BufferControlledRasterDataContainer extends RasterDataContext
 		super.copy(clone);
 		
 		
-		clone.rasterDataContext = this.rasterDataContext;
+		clone.rasterDataContext = this.rasterDataContext.copy();
 		clone.bufferStrategy = this.bufferStrategy;
 		
 		clone.buffersFilled = this.buffersFilled;

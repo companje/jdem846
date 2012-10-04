@@ -23,7 +23,7 @@ public class GridFloatDataReader
 	
 	private RandomAccessFile dataReader = null;
 	
-	private byte[] buffer4 = {0, 0, 0, 0};
+	private byte[] buffer4 = new byte[4];
 
 	private byte[] readBuffer;
 	

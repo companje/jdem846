@@ -80,4 +80,8 @@ public class GrayTint implements ModelColoring
 		
 	}
 	
+	public ModelColoring copy() throws Exception
+	{
+		return new GrayTint();
+	}
 }

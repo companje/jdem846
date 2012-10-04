@@ -9,7 +9,9 @@ import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
+import us.wthr.jdem846.model.processing.GridFilter;
 import us.wthr.jdem846.model.processing.GridProcessor;
+import us.wthr.jdem846.model.processing.GridWorker;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
 
@@ -20,7 +22,7 @@ public class ModelProcessManifest
 	
 	private OptionModelContainer globalOptionModelContainer;
 	
-	private List<ModelProcessContainer> processList = new LinkedList<ModelProcessContainer>();
+	private List<ModelProcessContainer> workerList = new LinkedList<ModelProcessContainer>();
 	
 	public ModelProcessManifest() throws ProcessContainerException
 	{
@@ -39,56 +41,72 @@ public class ModelProcessManifest
 		this.globalOptionModelContainer = globalOptionModelContainer;
 	}
 	
-	public void addProcessor(String processId)
+	public ModelProgram createModelProgram() throws Exception
 	{
-		ProcessInstance processInstance = ModelProcessRegistry.getInstance(processId);
-		Class<?> clazz = (Class<?>) processInstance.getProcessorClass();
+		ModelProgram modelProgram = new ModelProgram();
 		
+		for (ModelProcessContainer container : workerList) {
+			
+			GridWorker worker = container.getGridWorker().getClass().newInstance();
+			OptionModel optionModel = container.getOptionModel();
+			
+			worker.setOptionModel(optionModel);
+			modelProgram.addWorker(worker);
+
+			
+		}
 		
+		return modelProgram;
 	}
 	
-	public void addProcessor(String processId, OptionModel optionModel) throws ProcessContainerException
+	
+	public void addWorker(String processId) throws ProcessContainerException
+	{
+		addWorker(processId, (OptionModel) null);
+	}
+	
+	public void addWorker(String processId, OptionModel optionModel) throws ProcessContainerException
 	{
 		ProcessInstance processInstance = ModelProcessRegistry.getInstance(processId);
 		Class<?> clazz = (Class<?>) processInstance.getProcessorClass();
 		
 		
-		GridProcessor gridProcessor = null;
+		GridWorker gridWorker = null;
 		try {
-			gridProcessor = (GridProcessor) clazz.newInstance();
+			gridWorker = (GridWorker) clazz.newInstance();
 		} catch (Exception ex) {
 			// TODO: Throw up
-			log.error("Error creating processor instance: " + ex.getMessage(), ex);
+			log.error("Error creating grid worker instance: " + ex.getMessage(), ex);
 			return;
 		}
 		
-		addProcessor(gridProcessor, optionModel);
+		addWorker(gridWorker, optionModel);
 		
 	}
 	
-	public void addProcessor(GridProcessor gridProcessor, OptionModel optionModel) throws ProcessContainerException
+	public void addWorker(GridWorker gridWorker, OptionModel optionModel) throws ProcessContainerException
 	{
-		addProcessContainer(new ModelProcessContainer(gridProcessor, optionModel));
+		addProcessContainer(new ModelProcessContainer(gridWorker, optionModel));
 	}
 	
 	public void addProcessContainer(ModelProcessContainer processContainer)
 	{
-		processList.add(processContainer);
+		workerList.add(processContainer);
 	}
 	
 	public List<ModelProcessContainer> getProcessList()
 	{
-		return processList;
+		return workerList;
 	}
 	
 	public int getProcessListSize()
 	{
-		return processList.size();
+		return workerList.size();
 	}
 	
 	public ModelProcessContainer getProcessContainerByIndex(int index)
 	{
-		return processList.get(index);
+		return workerList.get(index);
 	}
 
 	public GlobalOptionModel getGlobalOptionModel()
@@ -117,7 +135,7 @@ public class ModelProcessManifest
 			return globalOptionModelContainer;
 		}
 		
-		for (ModelProcessContainer processContainer : this.processList) {
+		for (ModelProcessContainer processContainer : this.workerList) {
 			OptionModelContainer optionModelContainer = processContainer.getOptionModelContainer();
 			if (optionModelContainer != null && optionModelContainer.hasPropertyByName(name)) {
 				return optionModelContainer;
@@ -134,7 +152,7 @@ public class ModelProcessManifest
 			return globalOptionModelContainer;
 		}
 		
-		for (ModelProcessContainer processContainer : this.processList) {
+		for (ModelProcessContainer processContainer : this.workerList) {
 			OptionModelContainer optionModelContainer = processContainer.getOptionModelContainer();
 			if (optionModelContainer != null && optionModelContainer.hasPropertyById(id)) {
 				return optionModelContainer;
@@ -204,8 +222,8 @@ public class ModelProcessManifest
 		}
 		
 		
-		for (ModelProcessContainer processContainer : this.processList) {
-			copy.addProcessContainer(new ModelProcessContainer(processContainer.getGridProcessor(), processContainer.getOptionModel()));
+		for (ModelProcessContainer processContainer : this.workerList) {
+			copy.addProcessContainer(new ModelProcessContainer(processContainer.getGridWorker(), processContainer.getOptionModel()));
 		}
 		
 		return copy;

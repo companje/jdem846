@@ -14,6 +14,7 @@ import us.wthr.jdem846.model.ModelPointHandler;
 import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
+import us.wthr.jdem846.model.processing.GridFilter;
 import us.wthr.jdem846.model.processing.GridPointFilter;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
@@ -28,7 +29,7 @@ import us.wthr.jdem846.scripting.ScriptProxy;
 					enabled=true,
 					isFilter=true
 					)
-public class HypsometricColorProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler, GridPointFilter
+public class HypsometricColorProcessor extends GridFilter
 {
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(HypsometricColorProcessor.class);
@@ -57,15 +58,11 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 		
 	}
 	
-	public HypsometricColorProcessor(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		super(modelContext, modelGrid);
-	}
 
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		HypsometricColorOptionModel optionModel = (HypsometricColorOptionModel) this.getProcessOptionModel();
+		HypsometricColorOptionModel optionModel = (HypsometricColorOptionModel) this.getOptionModel();
 		
 		
 		
@@ -84,33 +81,17 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 		maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
 		
 		
-		modelColoring = ColoringRegistry.getInstance(optionModel.getColorTint()).getImpl();
+		try {
+			modelColoring = ColoringRegistry.getInstance(optionModel.getColorTint()).getImpl().copy();
+		} catch (Exception ex) {
+			throw new RenderEngineException("Failed to create coloring instance copy: " + ex.getMessage(), ex);
+		}
 		modelColoring.setElevationScaler(modelContext.getRasterDataContext().getElevationScaler());
 		
 		nearestNeighbor = getGlobalOptionModel().getStandardResolutionElevation();
 		
 	}
 
-	@Override
-	public void process() throws RenderEngineException
-	{
-		super.process();
-	}
-	
-	
-	
-	@Override
-	public void onCycleStart() throws RenderEngineException
-	{
-		
-	}
-
-	@Override
-	public void onModelLatitudeStart(double latitude)
-			throws RenderEngineException
-	{
-		
-	}
 
 	@Override
 	public void onModelPoint(double latitude, double longitude)
@@ -131,18 +112,6 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 
 	}
 
-	@Override
-	public void onModelLatitudeEnd(double latitude)
-			throws RenderEngineException
-	{
-		
-	}
-
-	@Override
-	public void onCycleEnd() throws RenderEngineException
-	{
-		
-	}
 
 	protected void getPointColor(double latitude, double longitude, double elevation, int[] rgba) throws DataSourceException, RenderEngineException
 	{
@@ -184,15 +153,27 @@ public class HypsometricColorProcessor extends AbstractGridProcessor implements 
 
 	}
 
-	public boolean useScripting()
+
+	@Override
+	public void onProcessBefore() throws RenderEngineException
 	{
-		return useScripting;
+		
 	}
 
-	public void setUseScripting(boolean useScripting)
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
 	{
-		this.useScripting = useScripting;
+		
 	}
+
+
+	@Override
+	public void dispose() throws RenderEngineException
+	{
+		
+	}
+
 	
 	
 	

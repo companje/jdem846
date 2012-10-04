@@ -13,6 +13,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGrid;
@@ -37,7 +38,7 @@ import us.wthr.jdem846.scripting.ScriptingContext;
 				optionModel=HillshadingOptionModel.class,
 				enabled=true
 				)
-public class HillshadingProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+public class HillshadingProcessor extends GridProcessor
 {
 	private static Log log = Logging.getLog(HillshadingProcessor.class);
 
@@ -50,20 +51,13 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	private double latitudeResolution;
 	private double longitudeResolution;
 	
-	
-	
-	protected double sunsource[] = new double[3];
+
+	protected Vector sunsource = new Vector();
 	protected double solarElevation;
 	protected double solarAzimuth;
 	protected double solarZenith;
 	
 	protected int[] rgbaBuffer = new int[4];
-
-	//protected double lightZenith;
-	//protected double darkZenith;
-
-
-	//protected boolean recalcLightOnEachPoint;
 
 	
 	private boolean advancedLightingControl = false;
@@ -74,8 +68,8 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	protected boolean rayTraceShadows;
 	protected double shadowIntensity;
 	
-	
-	private double[] normal = new double[3];
+
+	private Vector normal = new Vector();
 	private SurfaceNormalCalculator normalsCalculator;
 	
 	private SunlightPositioning sunlightPosition;
@@ -88,16 +82,11 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 	}
 	
-	public HillshadingProcessor(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		super(modelContext, modelGrid);
-	}
-	
 	@Override
 	public void prepare() throws RenderEngineException
 	{
 		
-		HillshadingOptionModel optionModel = (HillshadingOptionModel) this.getProcessOptionModel();
+		HillshadingOptionModel optionModel = (HillshadingOptionModel) this.getOptionModel();
 		GlobalOptionModel globalOptionModel = this.getGlobalOptionModel();
 		
 		lightingEnabled = optionModel.isLightingEnabled();
@@ -144,8 +133,7 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		double D = R / MathExt.tan(MathExt.radians(a));
 		double d = (minSideLength / 2.0) / MathExt.tan(MathExt.radians(a));
 		
-		double[] eye = new double[3];
-		//Spheres.getPoint3D(-90.0, 0, modelRadius*10, eye);
+		Vector eye = new Vector();
 		Spheres.getPoint3D(-90.0, 0, DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH, eye);
 		Vectors.rotate(-viewPerspective.getRotateX()
 				, -viewPerspective.getRotateY()
@@ -173,43 +161,11 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		long lightOnTime = optionModel.getSunlightTime().getTime();
 		long lightOnDate = optionModel.getSunlightDate().getDate();
 		lightOnDate += lightOnTime;
-		
-		//recalcLightOnEachPoint = optionModel.isRecalcLightForEachPoint();
-		//lightZenith = optionModel.getLightZenith();
-		//darkZenith = optionModel.getDarkZenith();
 
 		
 		sunlightPosition = new SunlightPositioning(modelContext, modelGrid, lightOnDate, viewPerspective);
-		
-		
-		//if (lightSourceType == LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION) {
-			
-		//	solarAzimuth = optionModel.getSourceLocation().getAzimuthAngle();
-		//	solarElevation = optionModel.getSourceLocation().getElevationAngle();
-			
-		//	sunlightPosition.getLightPositionByAngles(solarElevation, solarAzimuth, sunsource);
-			
-		//	recalcLightOnEachPoint = false;
-		//} else {
 		sunlightPosition.getLightPositionByCoordinates(0.0, 0.0, sunsource);
-		//}
-		
-		/*
-		if (lightSourceType == LightSourceSpecifyTypeEnum.BY_DATE_AND_TIME && !recalcLightOnEachPoint) {
-			
-			double north = getGlobalOptionModel().getNorthLimit();
-			double south = getGlobalOptionModel().getSouthLimit();
-			double east = getGlobalOptionModel().getEastLimit();
-			double west = getGlobalOptionModel().getWestLimit();
-			
-			double latitude = (north + south) / 2.0;
-			double longitude = (east + west) / 2.0;
-				
-			sunlightPosition.getLightPositionByCoordinates(latitude, longitude, sunsource);
 
-		}
-		*/
-		
 		rayTraceShadows = optionModel.isRayTraceShadows();
 		shadowIntensity = optionModel.getShadowIntensity();
 		if (rayTraceShadows) {
@@ -234,29 +190,16 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		
 
 		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
-				planet, 
-				getModelDimensions().getTextureLatitudeResolution(), 
-				getModelDimensions().getTextureLongitudeResolution(),
-				viewPerspective);
+														planet, 
+														getModelDimensions().getTextureLatitudeResolution(), 
+														getModelDimensions().getTextureLongitudeResolution(),
+														viewPerspective);
 
 	}
 
-	@Override
-	public void process() throws RenderEngineException
-	{
-		super.process();
-	}
-	
-	@Override
-	public void onCycleStart() throws RenderEngineException
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
-	public void onModelLatitudeStart(double latitude)
-			throws RenderEngineException
+	public void onLatitudeStart(double latitude) throws RenderEngineException
 	{
 		// TODO Auto-generated method stub
 		
@@ -270,46 +213,20 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 	}
 
 	@Override
-	public void onModelLatitudeEnd(double latitude)
-			throws RenderEngineException
-	{
-		
-		
-	}
-
-	@Override
-	public void onCycleEnd() throws RenderEngineException
+	public void onLatitudeEnd(double latitude) throws RenderEngineException
 	{
 		
 		
 	}
 
 
+
 	
 
 	
-	protected double calculateDotProduct(double[] normal) throws RenderEngineException
+	protected double calculateDotProduct(Vector normal) throws RenderEngineException
 	{
-		double dot = Vectors.dotProduct(normal, sunsource);
-		
-		/*
-		double lower = lightZenith;
-		double upper = darkZenith;
-		
-		if (solarZenith > lower && solarZenith <= upper) {
-			double range = (solarZenith - lower) / (upper - lower);
-			dot = dot - (2 * range);
-		} else if (solarZenith > upper) {
-			dot = dot - (2 * 1.0);
-		}
-		if (dot < -1.0) {
-			dot = -1.0;
-		}
-		*/
-		
-		return dot;
-
-		
+		return Vectors.dotProduct(normal, sunsource);
 	}
 	
 	
@@ -330,14 +247,6 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 		if (!lightingEnabled) {
 			return;
 		}
-		
-		
-		//sunsource = new double[]{100000000.0, 0, 0};
-		//Vectors.rotate(0.0, viewPerspective.getRotateY(), 0.0, sunsource);
-		//Vectors.rotate(viewPerspective.getRotateX(), 0.0, 0.0, sunsource);
-		//if (recalcLightOnEachPoint) {
-			//sunlightPosition.getLightPositionByCoordinates(latitude, longitude, sunsource);
-		//}
 		
 		double blockAmt = 0;
 		try {
@@ -392,7 +301,28 @@ public class HillshadingProcessor extends AbstractGridProcessor implements GridP
 			ColorAdjustments.adjustBrightness(rgbaBuffer, dot);
 		}
 
-		modelGrid.setRgba(latitude, longitude, rgbaBuffer);
+		//modelGrid.setRgba(latitude, longitude, rgbaBuffer);
+	}
+
+	@Override
+	public void onProcessBefore() throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dispose() throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
 	}
 	
 

@@ -92,7 +92,7 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		
 		HillshadingOptionModel hillshadingOptionModel = new HillshadingOptionModel();
 		//hillshadingOptionModel.setLightZenith(47.0);
-		modelProcessManifest.addProcessor("us.wthr.jdem846.model.processing.coloring.HillshadingProcessor", hillshadingOptionModel);
+		modelProcessManifest.addWorker("us.wthr.jdem846.model.processing.coloring.HillshadingProcessor", hillshadingOptionModel);
 		
 		List<OptionModel> optionModelList = new LinkedList<OptionModel>();
 		
@@ -327,17 +327,17 @@ public class ModelProcessingTestMain extends AbstractTestMain
 		ModelProcessManifest modelProcessManifest = new ModelProcessManifest();
 		modelProcessManifest.setGlobalOptionModel(globalOptionModel);
 		
-		modelProcessManifest.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
-		modelProcessManifest.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
+		modelProcessManifest.addWorker(new GridLoadProcessor(), gridLoadOptionModel);
+		modelProcessManifest.addWorker(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
 		//modelProcessManifest.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
 		//modelProcessManifest.addProcessor(new AspectColoringProcessor(), aspectColoringOptionModel);
 		//modelProcessManifest.addProcessor(new TerrainRuggednessIndexColoringProcessor(), terrainRuggednessIndexColoringOptionModel);
-		modelProcessManifest.addProcessor(new TopographicPositionIndexColoringProcessor(), topographicPositionIndexColoringOptionModel);
+		modelProcessManifest.addWorker(new TopographicPositionIndexColoringProcessor(), topographicPositionIndexColoringOptionModel);
 		//modelProcessManifest.addProcessor(new RoughnessColoringProcessor(), roughnessColoringOptionModel);
-		modelProcessManifest.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
+		modelProcessManifest.addWorker(new HillshadingProcessor(), hillshadingOptionModel);
 		//modelProcessManifest.addProcessor(new SlopeShadingProcessor(), slopeShadingOptionModel);
 		//modelProcessManifest.addProcessor(new AspectShadingProcessor(), aspectShadingOptionModel);
-		modelProcessManifest.addProcessor(new ModelRenderer(), modelRenderOptionModel);
+		modelProcessManifest.addWorker(new ModelRenderer(), modelRenderOptionModel);
 		
 		
 		

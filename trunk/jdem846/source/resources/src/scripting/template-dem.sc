@@ -47,23 +47,13 @@ class JDemScript {
 		
 	}
 	
-	def onModelBefore() 
-	{ 
-		
-	}
-	
-	def onProcessBefore(modelProcessContainer : ModelProcessContainer)
+	def onProcessBefore()
 	{
 			
 	}
 	
-	def onProcessAfter(modelProcessContainer : ModelProcessContainer) 
+	def onProcessAfter() 
 	{
-	
-	}
-	
-	def onModelAfter()
-	{ 
 	
 	}
 	

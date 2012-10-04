@@ -42,5 +42,13 @@ public abstract class AbstractElevationScaler implements ElevationScaler
 	
 	@Override
 	public abstract double scale(double elevation);
-
+	
+	
+	
+	protected void copyTo(AbstractElevationScaler scaler)
+	{
+		scaler.elevationMaximum = this.elevationMaximum;
+		scaler.elevationMinimum = this.elevationMinimum;
+		scaler.elevationMultiple = this.elevationMultiple;
+	}
 }

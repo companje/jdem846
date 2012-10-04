@@ -34,4 +34,6 @@ public interface ModelColoring
 	
 	public double getMinimumSupported();
 	public double getMaximumSupported();
+	
+	public ModelColoring copy() throws Exception;
 }

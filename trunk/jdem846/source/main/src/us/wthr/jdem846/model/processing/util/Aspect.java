@@ -3,34 +3,30 @@ package us.wthr.jdem846.model.processing.util;
 
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.ModelPoint;
 
 public class Aspect
 {
 	
-	private static double[] NORTH = new double[3];
+	private static Vector NORTH = new Vector(0, 0, -1);
 	
-	private static double[] normalBufferA = new double[3];
-	private static double[] normalBufferB = new double[3];
+	private static Vector normalBufferA = new Vector();
+	private static Vector normalBufferB = new Vector();
 	
 
-	static {
-		NORTH[0] = 0;
-		NORTH[1] = 0;
-		NORTH[2] = -1;
-	}
 	
 	
-	public static double aspectInDegrees(double[] normal)
+	public static double aspectInDegrees(Vector normal)
 	{
-		fill(normalBufferA, normal);
-		normalBufferA[1] = 0;
+		normal.copyTo(normalBufferA);
+		normalBufferA.y = 0;
 		
 		double dot = Vectors.dotProduct(NORTH, normalBufferA);
 		double degrees = MathExt.degrees(MathExt.acos(dot));
 		
-		if (normalBufferA[0] < 0) {
+		if (normalBufferA.x < 0) {
 			degrees += 180.0;
 		}
 		
@@ -42,18 +38,12 @@ public class Aspect
 	
 	public static double aspectInDegrees(double x, double z)
 	{
-		normalBufferB[0] = x;
-		normalBufferB[1] = 0.0;
-		normalBufferB[2] = z;
+		normalBufferB.x = x;
+		normalBufferB.y = 0.0;
+		normalBufferB.z = z;
 		double degrees = aspectInDegrees(normalBufferB);
 		return degrees;
 	}
-	
-	protected static void fill(double[] fill, double with[])
-	{
-		fill[0] = with[0];
-		fill[1] = with[1];
-		fill[2] = with[2];
-	}
+
 	
 }

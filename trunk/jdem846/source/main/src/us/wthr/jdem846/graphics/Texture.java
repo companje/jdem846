@@ -117,4 +117,30 @@ public class Texture {
 		
 	}
 	
+	/** Creates a copy of this texture object with the option to either use the same memory address for the
+	 * texture bits or create a new array in memory
+	 * 
+	 * @param copyTexture Creates a new array in memory with the texture data copied over if true, otherwise the
+	 * object returned will contain a reference to the same memory space.
+	 * @return
+	 */
+	public Texture copy(boolean copyTexture)
+	{
+		int[] textureBits = null;
+		
+		if (copyTexture && texture != null) {
+			
+			textureBits = new int[texture.length];
+			for (int i = 0; i < texture.length; i++) {
+				textureBits[i] = texture[i];
+			}
+			
+		} else {
+			textureBits = texture;
+		}
+		
+		Texture copy = new Texture(width, height, textureBits);
+		
+		return copy;
+	}
 }

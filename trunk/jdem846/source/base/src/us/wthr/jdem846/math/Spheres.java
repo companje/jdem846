@@ -57,12 +57,13 @@ public class Spheres
 		return phi;
 	}
 	
-	private static Vector vec = new Vector();
+	//private static Vector vec = new Vector();
 	public static void getPoint3D(double theta, // Longitude, in degrees
 									double phi, // Latitude, in degrees
 									double radius, 
 									double[] points)
 	{
+		Vector vec = new Vector();
 		vec.x = points[0];
 		vec.y = points[1];
 		vec.z = points[2];

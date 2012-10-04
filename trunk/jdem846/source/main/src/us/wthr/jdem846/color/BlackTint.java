@@ -63,4 +63,10 @@ public class BlackTint implements ModelColoring
 	{
 		
 	}
+	
+	
+	public ModelColoring copy() throws Exception
+	{
+		return new BlackTint();
+	}
 }

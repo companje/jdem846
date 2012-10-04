@@ -38,9 +38,9 @@ import us.wthr.jdem846.canvas.ModelCanvas;
 				name="Rendering Process",
 				type=GridProcessingTypesEnum.RENDER,
 				optionModel=ModelRenderOptionModel.class,
-				enabled=true
+				enabled=false
 				)
-public class ModelRenderer extends AbstractGridProcessor implements GridProcessor
+public class ModelRenderer extends GridProcessor
 {
 	private static Log log = Logging.getLog(ModelRenderer.class);
 	
@@ -70,12 +70,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		
 	}
 	
-	
-	public ModelRenderer(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		super(modelContext, modelGrid);
 
-	}
 	
 	public void dispose()
 	{
@@ -85,7 +80,7 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		optionModel = (ModelRenderOptionModel) this.getProcessOptionModel();
+		optionModel = (ModelRenderOptionModel) this.getOptionModel();
 		GlobalOptionModel globalOptionModel = modelContext.getModelProcessManifest().getGlobalOptionModel();
 		
 		latitudeResolution = getModelDimensions().getTextureLatitudeResolution();
@@ -121,41 +116,13 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 		}
 		//projection = modelContext.getModelCanvas().getCanvasProjection();
 		south = getGlobalOptionModel().getSouthLimit();
-	}
-	
-	public void process() throws RenderEngineException
-	{
-		if (!this.modelContainsData()) {
-			log.info("Model contains no data. Skipping render process.");
-			return;
-		}
 		
-		try {
-			canvas = modelContext.getModelCanvas();
-		} catch (ModelContextException ex) {
-			throw new RenderEngineException("Error fetching model canvas: " + ex.getMessage(), ex);
-		}
-		
-		super.process();
-		
-	}
-	
-		
-	@Override
-	public void onCycleStart() throws RenderEngineException
-	{
 		lastElevation = modelContext.getRasterDataContext().getDataMaximumValue();
-		
-		//if (useRenderQueue) {
-		//	renderQueue = new StripRenderQueue(canvas);
-		//	renderQueue.start();
-		//}
-		
-		
 	}
+
 	
 	@Override
-	public void onModelLatitudeStart(double latitude)
+	public void onLatitudeStart(double latitude)
 	{
 		//strip = new GeoTriangleStrip();
 	}
@@ -185,41 +152,12 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
 	}
 
 	@Override
-	public void onModelLatitudeEnd(double latitude)
+	public void onLatitudeEnd(double latitude)
 	{
 		triVertex.reset();
-		//if (useRenderQueue) {
-			//renderQueue.add(strip);
-		//} else {
-			//canvas.fillShape(strip);
-		//}
-		
+
 	}
 		
-	@Override
-	public void onCycleEnd() throws RenderEngineException
-	{
-		/*
-		if (useRenderQueue) {
-			log.info("Stopping triangle strip queue...");
-	        
-			
-	        renderQueue.stopRendering();
-	        
-	        while(!renderQueue.isCompleted()) {
-	
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException ex) {
-					throw new RenderEngineException("Error waiting for render queue to complete: " + ex.getMessage(), ex);
-				}
-	        	
-	        }
-	        
-	        log.info("Render queue completed");
-		}
-		*/
-	}
 	
 	protected double createPointVertexes(TriangleStrip strip, double latitude, double longitude, double lastElevation) throws Exception
 	{
@@ -272,6 +210,22 @@ public class ModelRenderer extends AbstractGridProcessor implements GridProcesso
     	Vertex v = triVertex.v2;
     	v.set(x, y, z, rgba);
     	return v;
+	}
+
+
+
+	@Override
+	public void onProcessBefore() throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
+	{
+		
 	}
 
 

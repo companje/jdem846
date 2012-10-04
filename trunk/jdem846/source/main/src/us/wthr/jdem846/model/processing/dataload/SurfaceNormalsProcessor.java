@@ -17,9 +17,9 @@ import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 				name="Surface Normals Process",
 				type=GridProcessingTypesEnum.DATA_LOAD,
 				optionModel=SurfaceNormalsOptionModel.class,
-				enabled=true
+				enabled=false
 				)
-public class SurfaceNormalsProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+public class SurfaceNormalsProcessor extends GridProcessor
 {
 	private static Log log = Logging.getLog(SurfaceNormalsProcessor.class);
 
@@ -31,16 +31,11 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 	{
 		
 	}
-	
-	public SurfaceNormalsProcessor(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		super(modelContext, modelGrid);
-	}
-	
+
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		SurfaceNormalsOptionModel optionModel = (SurfaceNormalsOptionModel) this.getProcessOptionModel();
+		SurfaceNormalsOptionModel optionModel = (SurfaceNormalsOptionModel) this.getOptionModel();
 
 		normalsCalculator = new SurfaceNormalCalculator(modelGrid, 
 														PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet()), 
@@ -49,21 +44,10 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 		
 	}
 
-	@Override
-	public void process() throws RenderEngineException
-	{
-		//super.process();
-	}
-	
-	@Override
-	public void onCycleStart() throws RenderEngineException
-	{
-		// TODO Auto-generated method stub
-		
-	}
+
 
 	@Override
-	public void onModelLatitudeStart(double latitude)
+	public void onLatitudeStart(double latitude)
 			throws RenderEngineException
 	{
 		// TODO Auto-generated method stub
@@ -80,19 +64,30 @@ public class SurfaceNormalsProcessor extends AbstractGridProcessor implements Gr
 	}
 
 	@Override
-	public void onModelLatitudeEnd(double latitude)
+	public void onLatitudeEnd(double latitude)
 			throws RenderEngineException
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCycleEnd() throws RenderEngineException
+	public void onProcessBefore() throws RenderEngineException
 	{
-		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
+	{
+		
+	}
+
+	@Override
+	public void dispose() throws RenderEngineException
+	{
+		
+	}
+
 
 
 

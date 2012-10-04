@@ -29,8 +29,6 @@ public class GroovyScriptProxy implements ScriptProxy
 	
 	private CallBack initializeCallBack;
 	private CallBack destroyCallBack;
-	private CallBack onModelBeforeCallBack;
-	private CallBack onModelAfterCallBack;
 	private CallBack onProcessBeforeCallBack;
 	private CallBack onProcessAfterCallBack;
 	private CallBack onGetElevationBeforeCallBack;
@@ -50,8 +48,6 @@ public class GroovyScriptProxy implements ScriptProxy
 		
 		initializeCallBack = new CallBack(groovyObject, "initialize");
 		destroyCallBack = new CallBack(groovyObject, "destroy");
-		onModelBeforeCallBack = new CallBack(groovyObject, "onModelBefore");
-		onModelAfterCallBack = new CallBack(groovyObject, "onModelAfter");
 		onProcessBeforeCallBack = new CallBack(groovyObject, "onProcessBefore");
 		onProcessAfterCallBack = new CallBack(groovyObject, "onProcessAfter");
 		onGetElevationBeforeCallBack = new CallBack(groovyObject, "onGetElevationBefore");
@@ -89,28 +85,17 @@ public class GroovyScriptProxy implements ScriptProxy
 		destroyCallBack.call();
 	}
 
+
 	@Override
-	public void onModelBefore() throws ScriptingException
+	public void onProcessBefore() throws ScriptingException
 	{
-		onModelBeforeCallBack.call();
+		onProcessBeforeCallBack.call();
 	}
 
 	@Override
-	public void onModelAfter() throws ScriptingException
+	public void onProcessAfter() throws ScriptingException
 	{
-		onModelAfterCallBack.call();
-	}
-
-	@Override
-	public void onProcessBefore(ModelProcessContainer modelProcessContainer) throws ScriptingException
-	{
-		onProcessBeforeCallBack.call(modelProcessContainer);
-	}
-
-	@Override
-	public void onProcessAfter(ModelProcessContainer modelProcessContainer) throws ScriptingException
-	{
-		onProcessAfterCallBack.call(modelProcessContainer);
+		onProcessAfterCallBack.call();
 	}
 
 	@Override

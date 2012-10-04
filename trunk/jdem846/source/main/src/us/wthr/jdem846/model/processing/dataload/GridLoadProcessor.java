@@ -26,9 +26,9 @@ import us.wthr.jdem846.scripting.ScriptProxy;
 				name="Data Grid Load Process",
 				type=GridProcessingTypesEnum.DATA_LOAD,
 				optionModel=GridLoadOptionModel.class,
-				enabled=true
+				enabled=false
 				)
-public class GridLoadProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+public class GridLoadProcessor extends GridProcessor
 {
 	private static Log log = Logging.getLog(GridLoadProcessor.class);
 	
@@ -59,12 +59,7 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	{
 		
 	}
-	
-	
-	public GridLoadProcessor(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		super(modelContext, modelGrid);
-	}
+
 	
 	@Override
 	public void prepare() throws RenderEngineException
@@ -101,46 +96,14 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 		*/
 	}
 
-	@Override
-	public void process() throws RenderEngineException
-	{
-		/*
-		boolean fullCaching = getGlobalOptionModel().getPrecacheStrategy().equalsIgnoreCase(DemConstants.PRECACHE_STRATEGY_FULL);
-		RasterDataContext dataContext = (dataRasterContextSubset != null) ? dataRasterContextSubset : modelContext.getRasterDataContext();
-		
-		if (fullCaching) {
-			try {
-				dataContext.fillBuffers();
-			} catch (DataSourceException ex) {
-				throw new RenderEngineException("Error loading full data buffer: " + ex.getMessage(), ex);
-			}
-		}
-		
-		super.process();
-		
-		if (fullCaching) {
-			try {
-				dataContext.clearBuffers();
-			} catch (DataSourceException ex) {
-				throw new RenderEngineException("Error clearing full data buffer: " + ex.getMessage(), ex);
-			}	
-		}
 
-		//modelContext.getRasterDataContext().setDataMaximumValue(maximumElevation);
-		//modelContext.getRasterDataContext().setDataMinimumValue(minimumElevation);
-		
-		log.info("Found Minimum Elevation: " + minimumElevation);
-		log.info("Found Maximum Elevation: " + maximumElevation);
-		*/
-	}
-	
 	public void onCycleStart() throws RenderEngineException
 	{
 		
 	}
 	
 	@Override
-	public void onModelLatitudeStart(double latitude) throws RenderEngineException
+	public void onLatitudeStart(double latitude) throws RenderEngineException
 	{
 		/*
 		if (latitude <= nextCachePoint && tiledPrecaching) {
@@ -193,19 +156,12 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 	}
 	
 	@Override
-	public void onModelLatitudeEnd(double latitude) throws RenderEngineException
+	public void onLatitudeEnd(double latitude) throws RenderEngineException
 	{
 		
 	}
 	
-	public void onCycleEnd() throws RenderEngineException
-	{
-		/*
-		if (tiledPrecaching) {
-			unloadDataBuffers();
-		}
-		*/
-	}
+
 
 	protected double getRasterDataRaw(double latitude, double longitude) throws DataSourceException
 	{
@@ -357,59 +313,28 @@ public class GridLoadProcessor extends AbstractGridProcessor implements GridProc
 		
 		return result;
 	}
-	
-	
-	
-	public boolean tiledPrecaching()
+
+
+	@Override
+	public void onProcessBefore() throws RenderEngineException
 	{
-		return tiledPrecaching;
+		
 	}
 
-	public void setTiledPrecaching(boolean tiledPrecaching)
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
 	{
-		this.tiledPrecaching = tiledPrecaching;
+		
 	}
 
-	public boolean useScripting()
-	{
-		return useScripting;
-	}
 
-	public void setUseScripting(boolean useScripting)
+	@Override
+	public void dispose() throws RenderEngineException
 	{
-		this.useScripting = useScripting;
-	}
-
-	public boolean isGetStandardResolutionElevation()
-	{
-		return getStandardResolutionElevation;
-	}
-
-	public void setGetStandardResolutionElevation(
-			boolean getStandardResolutionElevation)
-	{
-		this.getStandardResolutionElevation = getStandardResolutionElevation;
-	}
-
-	public boolean interpolateData()
-	{
-		return interpolateData;
-	}
-
-	public void setInterpolateData(boolean interpolateData)
-	{
-		this.interpolateData = interpolateData;
-	}
-
-	public boolean averageOverlappedData()
-	{
-		return averageOverlappedData;
-	}
-
-	public void setAverageOverlappedData(boolean averageOverlappedData)
-	{
-		this.averageOverlappedData = averageOverlappedData;
+		
 	}
 	
 	
+
 }

@@ -8,5 +8,6 @@ public interface ElevationScaler
 	public void setElevationMaximum(double elevationMaximum);
 	public double scale(double elevation);
 	
+	public ElevationScaler copy();
 	
 }

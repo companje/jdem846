@@ -19,5 +19,12 @@ public class LinearScaler extends AbstractElevationScaler
 		
 		return elevation;
 	}
-
+	
+	
+	public ElevationScaler copy()
+	{
+		LinearScaler scaler = new LinearScaler();
+		super.copyTo(scaler);
+		return scaler;
+	}
 }

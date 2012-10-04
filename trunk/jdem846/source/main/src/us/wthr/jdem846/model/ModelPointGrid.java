@@ -22,6 +22,10 @@ public abstract class ModelPointGrid
 	
 	protected long gridLength;
 
+	
+	protected double minimum;
+	protected double maximum;
+	
 	private ElevationHistogramModel elevationHistogramModel;
 	
 	public ModelPointGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum)
@@ -32,6 +36,8 @@ public abstract class ModelPointGrid
 		this.west = west;
 		this.latitudeResolution = latitudeResolution;
 		this.longitudeResolution = longitudeResolution;
+		this.minimum = minimum;
+		this.maximum = maximum;
 		
 		double _height = (this.north - this.south) / latitudeResolution;
 		double _width = (this.east - this.west) / longitudeResolution;

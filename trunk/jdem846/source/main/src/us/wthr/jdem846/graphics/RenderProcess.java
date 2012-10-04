@@ -4,6 +4,7 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.geom.Vertex;
 import us.wthr.jdem846.gis.planets.Planet;
@@ -76,9 +77,14 @@ public class RenderProcess
 	}
 	
 	
-	public void run()
+	public void run() throws GraphicsRenderException
 	{
-		render();
+		try {
+			render();
+		} catch (GraphicsRenderException ex) {
+			throw new GraphicsRenderException("Error rendering model: " + ex.getMessage(), ex, ex.getRenderCode());
+		}
+
 		capture();
 		setRenderCompleted(true);
 	}
@@ -96,8 +102,10 @@ public class RenderProcess
 		
 	}
 	
+
 	
-	protected void setPerspective()
+	
+	protected void setPerspective() throws GraphicsRenderException
 	{
 		int width = this.globalOptionModel.getWidth();
 		int height = this.globalOptionModel.getHeight();
@@ -144,7 +152,7 @@ public class RenderProcess
 		
 	}
 	
-	protected void render()
+	protected void render() throws GraphicsRenderException
 	{
 		this.setPerspective();
 		
