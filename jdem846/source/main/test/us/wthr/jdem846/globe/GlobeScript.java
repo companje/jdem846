@@ -30,9 +30,9 @@ import us.wthr.jdem846.scripting.ScriptProxy;
 
 
 
-public class GlobeScript implements ScriptProxy
+public class GlobeScript///implements ScriptProxy
 {
-
+/*
 	private static Log log = Logging.getLog(GlobeScript.class);
 	
     ModelContext modelContext;
@@ -266,18 +266,7 @@ public class GlobeScript implements ScriptProxy
         
     }
     
-    /*
-    def onModelBefore = {
 
-
-    }
-
-    def onProcessBefore = { modelProcessContainer ->
-
-
-    }
-    */
-    
 
     public void onLightLevels(double latitude, double longitude, LightingValues lightingValues)
     {
@@ -294,10 +283,7 @@ public class GlobeScript implements ScriptProxy
             lightingValues.emmisiveLight = 0.0;
         }
         
-        /*if (dot < -0.05) {
-            lightingValues.specularLight = 0;
-            lightingValues.diffuseLight = 0;
-        } else */if (doCloudRender) {
+        if (doCloudRender) {
         	try {
         		cloudImage.getColor(latitude, longitude, latitudeResolution, longitudeResolution, rgbaBufferB);
         	} catch (DataSourceException ex) {
@@ -397,37 +383,7 @@ public class GlobeScript implements ScriptProxy
         longitudeResolution = modelDimensions.getTextureLongitudeResolution();
         cycleCoordinates(renderMethods);
         
-        /*
-        for (LayerRenderThread layerThread : renderThreads) {
-        	log.info("Starting layer thread");
-        	layerThread.start();
-        }
-        
-        
-        boolean keepRunning = true;
-        
-        while (keepRunning) {
-        	
-        	keepRunning = false;
-        	for (LayerRenderThread layerThread : renderThreads) {
-        		if (!layerThread.isCompleted()) {
-        			keepRunning = true;
-        			break;
-        		}
-        	}
-        	
-        	
-        	try {
-				Thread.sleep(500);
-				Thread.yield();
-			} catch (InterruptedException ez) {
-				ez.printStackTrace();
-			}
-        }
-        
-        
-        log.info("Layer threads completed");
-    	*/
+
 
     }
 
@@ -762,24 +718,6 @@ public class GlobeScript implements ScriptProxy
 		
 	}
 
-	@Override
-	public void onModelBefore() throws ScriptingException
-	{
-		
-	}
-
-	@Override
-	public void onModelAfter() throws ScriptingException
-	{
-		
-	}
-
-	@Override
-	public void onProcessBefore(ModelProcessContainer modelProcessContainer)
-			throws ScriptingException
-	{
-		
-	}
 
 	@Override
 	public Object onGetElevationBefore(double latitude, double longitude)
@@ -826,6 +764,26 @@ public class GlobeScript implements ScriptProxy
 	}
 
 
+
+
+	@Override
+	public void onProcessBefore() throws ScriptingException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	public void onProcessAfter() throws ScriptingException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	*/
     
 
 }

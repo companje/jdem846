@@ -7,6 +7,7 @@ import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ModelPointHandler;
@@ -21,14 +22,14 @@ import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 				name="Slope Shading Process",
 				type=GridProcessingTypesEnum.SHADING,
 				optionModel=SlopeShadingOptionModel.class,
-				enabled=true
+				enabled=false
 )
-public class SlopeShadingProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+public class SlopeShadingProcessor extends GridProcessor
 {	
 	private static Log log = Logging.getLog(SlopeShadingProcessor.class);
 	
 	protected int[] rgbaBuffer = new int[4];
-	private double[] normal = new double[3];
+	private Vector normal = new Vector();
 	private SurfaceNormalCalculator normalsCalculator;
 	
 	private int pass = 0;
@@ -46,17 +47,13 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		
 	}
 	
-	public SlopeShadingProcessor(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		super(modelContext, modelGrid);
-	}
 	
 	
 	@Override
 	public void prepare() throws RenderEngineException
 	{
 		
-		SlopeShadingOptionModel optionModel = (SlopeShadingOptionModel) this.getProcessOptionModel();
+		SlopeShadingOptionModel optionModel = (SlopeShadingOptionModel) this.getOptionModel();
 		
 		lightingMultiple = optionModel.getLightMultiple();
 		relativeLightIntensity = optionModel.getLightIntensity();
@@ -69,30 +66,25 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 				getModelDimensions().getTextureLongitudeResolution());
 	}
 	
-	@Override
+	
 	public void process() throws RenderEngineException
 	{
 		log.info("Slope Shading Processor 1st Pass...");
-		super.process();
+		//super.process();
 		
 		log.info("Max Slope: " + maxSlope);
 		log.info("Min Slope: " + minSlope);
 		
 		log.info("Slope Shading Processor 2nd Pass...");
 		pass++;
-		super.process();
+		//super.process();
 	}
 	
 	
-	@Override
-	public void onCycleStart() throws RenderEngineException
-	{
-		// TODO Auto-generated method stub
-		
-	}
+
 
 	@Override
-	public void onModelLatitudeStart(double latitude)
+	public void onLatitudeStart(double latitude)
 			throws RenderEngineException
 	{
 		// TODO Auto-generated method stub
@@ -122,7 +114,7 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		
 		//modelPoint.getNormal(normal);
 		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
-		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal[2]), -1));
+		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal.z), -1));
 		
 		minSlope = MathExt.min(minSlope, slope);
 		maxSlope = MathExt.max(maxSlope, slope);
@@ -137,7 +129,7 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 		
 		//modelPoint.getNormal(normal);
 		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
-		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal[2]), -1));
+		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal.z), -1));
 
 		double shade = 1.0 - (2.0 * ((slope - minSlope) / (maxSlope - minSlope)));
 		
@@ -164,15 +156,30 @@ public class SlopeShadingProcessor extends AbstractGridProcessor implements Grid
 	
 	
 	@Override
-	public void onModelLatitudeEnd(double latitude)
+	public void onLatitudeEnd(double latitude)
 			throws RenderEngineException
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
+
 	@Override
-	public void onCycleEnd() throws RenderEngineException
+	public void onProcessBefore() throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dispose() throws RenderEngineException
 	{
 		// TODO Auto-generated method stub
 		

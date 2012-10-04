@@ -52,12 +52,14 @@ public class SimpleGeoImage
 	
 	private MapPoint mapPoint = new MapPoint();
 	
+	/*
 	private int[] rgbaBuffer0 = new int[4];
 	
 	private int[] rgbaBuffer00 = new int[4];
 	private int[] rgbaBuffer01 = new int[4];
 	private int[] rgbaBuffer10 = new int[4];
 	private int[] rgbaBuffer11 = new int[4];
+	*/
 	
 	private boolean hasAlphaChannel = false;
 	
@@ -228,6 +230,10 @@ public class SimpleGeoImage
 			effectiveLongitudeResolution = longitudeResolution;
 		}
 		
+		
+		int[] rgbaBuffer0 = new int[4];
+
+		
 		if (latitude >= south && latitude <= north && longitude >= west && longitude <= east) {
 			
 			
@@ -298,6 +304,12 @@ public class SimpleGeoImage
 		} catch (MapProjectionException ex) {
 			throw new DataSourceException("Error getting x/y point from coordinates: " + ex.getMessage(), ex);
 		}
+		
+
+		int[] rgbaBuffer00 = new int[4];
+		int[] rgbaBuffer01 = new int[4];
+		int[] rgbaBuffer10 = new int[4];
+		int[] rgbaBuffer11 = new int[4];
 		
 		x00 = (int) mapPoint.column;
 		y00 = (int) mapPoint.row;

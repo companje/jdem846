@@ -22,7 +22,7 @@ import us.wthr.jdem846.model.processing.GridProcessor;
 	name="Roughness Color Process",
 	type=GridProcessingTypesEnum.COLORING,
 	optionModel=RoughnessColoringOptionModel.class,
-	enabled=true
+	enabled=false
 )
 /** Calculates a roughness ratio based on the largest difference between a
  * central elevation value and each surrounding point. If a surrounding
@@ -33,7 +33,7 @@ import us.wthr.jdem846.model.processing.GridProcessor;
  * @author Kevin M. Gill
  *
  */
-public class RoughnessColoringProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+public class RoughnessColoringProcessor extends GridProcessor
 {
 	private static Log log = Logging.getLog(RoughnessColoringProcessor.class);
 	
@@ -61,15 +61,11 @@ public class RoughnessColoringProcessor extends AbstractGridProcessor implements
 		
 	}
 	
-	public RoughnessColoringProcessor(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		super(modelContext, modelGrid);
-	}
 	
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		RoughnessColoringOptionModel optionModel = (RoughnessColoringOptionModel) this.getProcessOptionModel();
+		RoughnessColoringOptionModel optionModel = (RoughnessColoringOptionModel) this.getOptionModel();
 		
 		latitudeResolution = getModelDimensions().getTextureLatitudeResolution();
 		longitudeResolution = getModelDimensions().getTextureLongitudeResolution();
@@ -86,18 +82,18 @@ public class RoughnessColoringProcessor extends AbstractGridProcessor implements
 		pass = 0;
 	}
 	
-	@Override
+	//@Override
 	public void process() throws RenderEngineException
 	{
 		log.info("Roughness Processor 1st Pass...");
-		super.process();
+		//super.process();
 		
 		log.info("Minimum: " + min);
 		log.info("Maximum: " + max);
 		
 		log.info("Roughness Processor 2nd Pass...");
 		pass++;
-		super.process();
+		//super.process();
 	}
 	
 	@Override
@@ -166,6 +162,41 @@ public class RoughnessColoringProcessor extends AbstractGridProcessor implements
 		}
 		return MathExt.sqrt(maxDiff);
 
+	}
+
+
+	@Override
+	public void onLatitudeStart(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+
+	@Override
+	public void onLatitudeEnd(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+
+	@Override
+	public void onProcessBefore() throws RenderEngineException
+	{
+		
+	}
+
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
+	{
+		
+	}
+
+
+	@Override
+	public void dispose() throws RenderEngineException
+	{
+		
 	}
 	
 	

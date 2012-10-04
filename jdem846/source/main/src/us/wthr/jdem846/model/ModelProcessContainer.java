@@ -5,17 +5,18 @@ import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessor;
+import us.wthr.jdem846.model.processing.GridWorker;
 
 public class ModelProcessContainer
 {
 	
-	private GridProcessor gridProcessor;
+	private GridWorker gridWorker;
 	private OptionModel optionModel;
 	private OptionModelContainer optionModelContainer;
 	
-	public ModelProcessContainer(GridProcessor gridProcessor, OptionModel optionModel) throws ProcessContainerException
+	public ModelProcessContainer(GridWorker gridWorker, OptionModel optionModel) throws ProcessContainerException
 	{
-		this.gridProcessor = gridProcessor;
+		this.gridWorker = gridWorker;
 		this.optionModel = optionModel;
 		
 		try {
@@ -27,12 +28,12 @@ public class ModelProcessContainer
 	
 	public String getProcessId()
 	{
-		return gridProcessor.getClass().getAnnotation(GridProcessing.class).id();
+		return gridWorker.getClass().getAnnotation(GridProcessing.class).id();
 	}
 
-	public GridProcessor getGridProcessor()
+	public GridWorker getGridWorker()
 	{
-		return gridProcessor;
+		return gridWorker;
 	}
 
 	public OptionModel getOptionModel()

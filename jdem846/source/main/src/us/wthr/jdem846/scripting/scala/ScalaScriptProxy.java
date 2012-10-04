@@ -24,8 +24,6 @@ public class ScalaScriptProxy implements ScriptProxy
 	
 	private ScalaCallBack initializeCallBack;
 	private ScalaCallBack destroyCallBack;
-	private ScalaCallBack onModelBeforeCallBack;
-	private ScalaCallBack onModelAfterCallBack;
 	private ScalaCallBack onProcessBeforeCallBack;
 	private ScalaCallBack onProcessAfterCallBack;
 	private ScalaCallBack onGetElevationBeforeCallBack;
@@ -49,8 +47,6 @@ public class ScalaScriptProxy implements ScriptProxy
 		
 		initializeCallBack = new ScalaCallBack(scalaObject, getMethod("initialize"));
 		destroyCallBack = new ScalaCallBack(scalaObject, getMethod("destroy"));
-		onModelBeforeCallBack = new ScalaCallBack(scalaObject, getMethod("onModelBefore"));
-		onModelAfterCallBack = new ScalaCallBack(scalaObject, getMethod("onModelAfter"));
 		onProcessBeforeCallBack = new ScalaCallBack(scalaObject, getMethod("onProcessBefore"));
 		onProcessAfterCallBack = new ScalaCallBack(scalaObject, getMethod("onProcessAfter"));
 		onGetElevationBeforeCallBack = new ScalaCallBack(scalaObject, getMethod("onGetElevationBefore"));
@@ -148,28 +144,17 @@ public class ScalaScriptProxy implements ScriptProxy
 		destroyCallBack.call();
 	}
 
+
 	@Override
-	public void onModelBefore() throws ScriptingException
+	public void onProcessBefore() throws ScriptingException
 	{
-		onModelBeforeCallBack.call();
+		onProcessBeforeCallBack.call();
 	}
 
 	@Override
-	public void onModelAfter() throws ScriptingException
+	public void onProcessAfter() throws ScriptingException
 	{
-		onModelAfterCallBack.call();
-	}
-
-	@Override
-	public void onProcessBefore(ModelProcessContainer modelProcessContainer) throws ScriptingException
-	{
-		onProcessBeforeCallBack.call(modelProcessContainer);
-	}
-
-	@Override
-	public void onProcessAfter(ModelProcessContainer modelProcessContainer) throws ScriptingException
-	{
-		onProcessAfterCallBack.call(modelProcessContainer);
+		onProcessAfterCallBack.call();
 	}
 
 	@Override

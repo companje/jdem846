@@ -17,6 +17,14 @@ public class MatrixStack {
 		}
 	}
 	
+	public MatrixStack(Matrix top)
+	{
+		if (top != null) {
+			Matrix copy = top.copy();
+			push(copy);
+		}
+	}
+	
 	public int depth()
 	{
 		return depth;
@@ -33,20 +41,27 @@ public class MatrixStack {
 	
 	public Matrix push()
 	{
-		StackNode newNode = new StackNode();
-		newNode.matrix = new Matrix();
-		
+		Matrix matrix = new Matrix();
 		if (this.top != null) {
-			this.top.matrix.copyTo(newNode.matrix);
+			this.top.matrix.copyTo(matrix);
 		} else {
-			newNode.matrix.loadIdentity();
+			matrix.loadIdentity();
 		}
+		
+		push(matrix);
+		return matrix;
+	}
+	
+	public void push(Matrix add)
+	{
+		StackNode newNode = new StackNode();
+		newNode.matrix = add;
 		
 		newNode.next = this.top;
 		this.top = newNode;
 		this.depth++;
-		return newNode.matrix;
 	}
+	
 	
 	public Matrix pop()
 	{

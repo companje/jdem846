@@ -168,11 +168,11 @@ public class KmlExportTestMain extends AbstractTestMain
 		ModelProcessManifest modelProcessManifest = new ModelProcessManifest();
 		modelProcessManifest.setGlobalOptionModel(globalOptionModel);
 		
-		modelProcessManifest.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
-		modelProcessManifest.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
-		modelProcessManifest.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
-		modelProcessManifest.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
-		modelProcessManifest.addProcessor(new ModelRenderer(), modelRenderOptionModel);
+		//modelProcessManifest.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
+		//modelProcessManifest.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
+		//modelProcessManifest.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
+	//	modelProcessManifest.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
+		//modelProcessManifest.addProcessor(new ModelRenderer(), modelRenderOptionModel);
 		
 		ModelContext modelContext = ModelContext.createInstance(dataProxy, null, imageDataContext, modelProcessManifest);
 		modelContext.updateContext(true, globalOptionModel.isEstimateElevationRange());

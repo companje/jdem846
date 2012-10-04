@@ -19,5 +19,12 @@ public class CubicScaler extends AbstractElevationScaler
 		double elevationScaled = min + (maxMulitiplied - min) * (MathExt.cube((elevationMultiplied - min)) / MathExt.cube(maxMulitiplied - min));
 		return elevationScaled;
 	}
+	
+	public ElevationScaler copy()
+	{
+		CubicScaler scaler = new CubicScaler();
+		super.copyTo(scaler);
+		return scaler;
+	}
 
 }

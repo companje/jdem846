@@ -82,4 +82,9 @@ public class GreenTint implements ModelColoring
 		
 	}
 	
+	
+	public ModelColoring copy() throws Exception
+	{
+		return new GreenTint();
+	}
 }

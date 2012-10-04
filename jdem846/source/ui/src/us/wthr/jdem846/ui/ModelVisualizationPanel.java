@@ -381,6 +381,7 @@ public class ModelVisualizationPanel extends Panel
 		globalOptionModel.setPixelStackDepth(1);
 		globalOptionModel.setCreateJdemElevationModel(false);
 		globalOptionModel.setForceResetAndRunFilters(true);
+		globalOptionModel.setNumberOfThreads(1);
 		
 		try {
 			modelContextWorkingCopy.updateContext();

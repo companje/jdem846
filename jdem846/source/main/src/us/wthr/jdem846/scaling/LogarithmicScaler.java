@@ -37,5 +37,12 @@ public class LogarithmicScaler extends AbstractElevationScaler
 		*/
 		return scaledElevation;
 	}
-
+	
+	
+	public ElevationScaler copy()
+	{
+		LogarithmicScaler scaler = new LogarithmicScaler();
+		super.copyTo(scaler);
+		return scaler;
+	}
 }

@@ -40,7 +40,13 @@ public class StandardModelColoring implements ModelColoring
 		bathymetric = new GradientColoring(bathymetricFile.getAbsolutePath());
 		
 	}
-
+	
+	
+	public ModelColoring copy() throws Exception
+	{
+		return new StandardModelColoring();
+	}
+	
 	@Override
 	public void reset()
 	{

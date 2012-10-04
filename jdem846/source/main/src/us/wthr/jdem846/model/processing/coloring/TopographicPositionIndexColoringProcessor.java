@@ -22,7 +22,7 @@ import us.wthr.jdem846.model.processing.GridProcessor;
 	name="TPI Color Process",
 	type=GridProcessingTypesEnum.COLORING,
 	optionModel=TopographicPositionIndexColoringOptionModel.class,
-	enabled=true
+	enabled=false
 )
 /** TPI (Topographic Position Index) is the difference between the central
  * elevation and the mean of it's surrounding points. If any given point
@@ -36,7 +36,7 @@ import us.wthr.jdem846.model.processing.GridProcessor;
  * @author Kevin M. Gill
  *
  */
-public class TopographicPositionIndexColoringProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+public class TopographicPositionIndexColoringProcessor extends GridProcessor
 {
 	private static Log log = Logging.getLog(TopographicPositionIndexColoringProcessor.class);
 	
@@ -65,16 +65,12 @@ public class TopographicPositionIndexColoringProcessor extends AbstractGridProce
 		
 	}
 	
-	public TopographicPositionIndexColoringProcessor(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		super(modelContext, modelGrid);
-	}
-	
+
 	
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		TopographicPositionIndexColoringOptionModel optionModel = (TopographicPositionIndexColoringOptionModel) this.getProcessOptionModel();
+		TopographicPositionIndexColoringOptionModel optionModel = (TopographicPositionIndexColoringOptionModel) this.getOptionModel();
 		
 		latitudeResolution = getModelDimensions().getTextureLatitudeResolution();
 		longitudeResolution = getModelDimensions().getTextureLongitudeResolution();
@@ -91,18 +87,18 @@ public class TopographicPositionIndexColoringProcessor extends AbstractGridProce
 		pass = 0;
 	}
 	
-	@Override
+
 	public void process() throws RenderEngineException
 	{
 		log.info("TPI Processor 1st Pass...");
-		super.process();
+		//super.process();
 		
 		log.info("Minimum TPI: " + minTpi);
 		log.info("Maximum TPI: " + maxTpi);
 		
 		log.info("TPI Processor 2nd Pass...");
 		pass++;
-		super.process();
+		//super.process();
 	}
 	
 	@Override
@@ -180,6 +176,46 @@ public class TopographicPositionIndexColoringProcessor extends AbstractGridProce
 		
 		return tri;
 
+	}
+
+
+
+	@Override
+	public void onLatitudeStart(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void onLatitudeEnd(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void onProcessBefore() throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void dispose() throws RenderEngineException
+	{
+		
 	}
 	
 	

@@ -12,8 +12,9 @@ import us.wthr.jdem846.model.ModelProcessContainer;
 import us.wthr.jdem846.model.processing.util.LightingValues;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
-public class OutterGlobeScript implements ScriptProxy
+public class OutterGlobeScript //implements ScriptProxy
 {
+	/*
 	private static Log log = Logging.getLog(OutterGlobeScript.class);
 	
 	ModelContext modelContext;
@@ -80,29 +81,8 @@ public class OutterGlobeScript implements ScriptProxy
 	}
 	
 
-	@Override
-	public void onModelBefore() throws ScriptingException
-	{
-		oceanGlobeScript.onModelBefore();
-	}
 
-
-	@Override
-	public void onModelAfter() throws ScriptingException
-	{
-		oceanGlobeScript.onModelAfter();
-	}
-
-
-	@Override
-	public void onProcessBefore(ModelProcessContainer modelProcessContainer)
-			throws ScriptingException
-	{
-		oceanGlobeScript.onProcessBefore(modelProcessContainer);
-	}
-
-
-	@Override
+	
 	public void onProcessAfter(ModelProcessContainer modelProcessContainer)
 			throws ScriptingException
 	{
@@ -138,43 +118,7 @@ public class OutterGlobeScript implements ScriptProxy
 		//middleAtmosphereGlobeScript.onProcessAfter(modelProcessContainer);
 		//upperAtmosphereGlobeScript.onProcessAfter(modelProcessContainer);
 		
-		/*
-		OnProcessAfterThread[] threads = new OnProcessAfterThread[2];
-		threads[0] = new OnProcessAfterThread(oceanGlobeScript, modelProcessContainer);
-		threads[1] = new OnProcessAfterThread(cloudGlobeScript, modelProcessContainer);
-		//threads[2] = new OnProcessAfterThread(lowerAtmosphereGlobeScript, modelProcessContainer);
-		//threads[3] = new OnProcessAfterThread(middleAtmosphereGlobeScript, modelProcessContainer);
-		//threads[4] = new OnProcessAfterThread(upperAtmosphereGlobeScript, modelProcessContainer);
-		
-		
-		for (OnProcessAfterThread thread : threads) {
-			thread.start();
-		}
-		
-		
-		
-		boolean keepRunning = true;
-        
-        while (keepRunning) {
-        	
-        	keepRunning = false;
-        	for (OnProcessAfterThread layerThread : threads) {
-        		if (!layerThread.isCompleted()) {
-        			keepRunning = true;
-        			break;
-        		}
-        	}
-        	
-        	
-        	try {
-				Thread.sleep(500);
-				Thread.yield();
-			} catch (InterruptedException ez) {
-				ez.printStackTrace();
-			}
-        }
-		*/
-		
+
         log.info("Stopping triangle strip queue...");
         stripQueue.stopRendering();
         
@@ -252,5 +196,22 @@ public class OutterGlobeScript implements ScriptProxy
 		}
 		
 	}
+
+
+	@Override
+	public void onProcessBefore() throws ScriptingException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onProcessAfter() throws ScriptingException
+	{
+		// TODO Auto-generated method stub
+		
+	}
 	
+	*/
 }

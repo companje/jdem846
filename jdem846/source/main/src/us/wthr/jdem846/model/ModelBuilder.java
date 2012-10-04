@@ -1,6 +1,8 @@
 package us.wthr.jdem846.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDem846Properties;
@@ -9,6 +11,8 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.Projection;
 import us.wthr.jdem846.SimpleImageElevationModel;
+import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
@@ -22,10 +26,13 @@ import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.graphics.ViewFactory;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.processing.AbstractGridProcessor;
+import us.wthr.jdem846.model.processing.GridFilterMethodStack;
 import us.wthr.jdem846.model.processing.GridPointFilter;
+import us.wthr.jdem846.model.processing.GridProcessMethodStack;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor;
@@ -47,11 +54,16 @@ public class ModelBuilder extends InterruptibleProcess
 {
 	private static Log log = Logging.getLog(ModelBuilder.class);
 
+	private ModelProgram modelProgram = null;
+	
+	private List<ModelProgram> modelPrograms = new ArrayList<ModelProgram>();
+	
 	private ModelProcessManifest modelProcessManifest;
 	private ModelContext modelContext;
 	private FillControlledModelGrid modelGrid;
 	private ModelGridDimensions modelDimensions;
 	private GlobalOptionModel globalOptionModel;
+	private LatitudeProcessedList latitudeProcessedList = null;
 	//private ModelCanvas modelCanvas;
 	private BufferControlledRasterDataContainer bufferControlledRasterDataContainer;
 	
@@ -80,6 +92,8 @@ public class ModelBuilder extends InterruptibleProcess
 	
 	public void prepare(ModelContext modelContext,  ModelProcessManifest modelProcessManifest) throws RenderEngineException
 	{
+		
+		modelPrograms.clear();
 		
 		globalOptionModel = modelProcessManifest.getGlobalOptionModel();
 		
@@ -166,6 +180,11 @@ public class ModelBuilder extends InterruptibleProcess
 							innerModelGrid,
 							(globalOptionModel.getUseScripting() ? modelContext.getScriptingContext().getScriptProxy() : null));
 			modelGrid.setForceResetAndRunFilters(globalOptionModel.getForceResetAndRunFilters());
+		
+		
+			
+			int dataRows = (int) MathExt.round((globalOptionModel.getNorthLimit() - globalOptionModel.getSouthLimit()) / modelDimensions.getTextureLatitudeResolution());
+			this.latitudeProcessedList = new LatitudeProcessedList(globalOptionModel.getNorthLimit(), modelDimensions.getTextureLatitudeResolution(), dataRows);
 		}
 		
 		/*
@@ -194,6 +213,63 @@ public class ModelBuilder extends InterruptibleProcess
 		}
 		
 		
+		int numberOfThreads = globalOptionModel.getNumberOfThreads();
+		for (int i = 0; i < numberOfThreads; i++) {
+			ModelProgram modelProgram;
+			try {
+				modelProgram = modelProcessManifest.createModelProgram();
+			} catch (Exception ex) {
+				throw new RenderEngineException("Error creating model program: " + ex.getMessage(), ex);
+			}
+			
+			RasterDataContext programRasterInstance = null;
+			try {
+				programRasterInstance = modelContext.getRasterDataContext().copy();
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Error creating raster data context copy: " + ex.getMessage(), ex);
+			}
+			FillControlledModelGrid programModelGrid = modelGrid.createDependentInstance(programRasterInstance);
+			
+			
+			GridFilterMethodStack filterStack = modelProgram.getFilterStack();
+			GridProcessMethodStack processStack = modelProgram.getProcessStack();
+			
+			programModelGrid.setGridFilters(filterStack);
+			
+			try {
+				modelProgram.setRasterDataContext(programRasterInstance);
+				modelProgram.setModelContext(modelContext);
+				modelProgram.setModelGrid(programModelGrid);
+				modelProgram.setModelDimensions(modelDimensions);
+				modelProgram.setGlobalOptionModel(globalOptionModel);
+				
+				if (useScripting 
+						&& modelContext.getScriptingContext() != null 
+						&& modelContext.getScriptingContext().getScriptProxy() != null) {
+					
+					modelProgram.setScript(modelContext.getScriptingContext().getScriptProxy());
+				} else {
+					modelProgram.setScript(null);
+				}
+				
+				
+				modelProgram.prepare();
+				
+				modelPrograms.add(modelProgram);
+			} catch (Exception ex) {
+				throw new RenderEngineException("Error creating model program: " + ex.getMessage(), ex);
+			}
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		if (useScripting) {
 			onInitialize();
 		}
@@ -201,6 +277,9 @@ public class ModelBuilder extends InterruptibleProcess
 		prepared = true;
 	}
 	
+	
+	
+
 	
 	public ElevationModel process() throws RenderEngineException
 	{
@@ -218,135 +297,91 @@ public class ModelBuilder extends InterruptibleProcess
 		
 
 		setProcessing(true);
+		onProcessBefore();
 		
-		if (useScripting && !this.isCancelled()) {
-			onModelBefore();
+		int numberOfThreads = globalOptionModel.getNumberOfThreads();
+		double north = globalOptionModel.getNorthLimit();
+		double south = globalOptionModel.getSouthLimit();
+		double east = globalOptionModel.getEastLimit();
+		double west = globalOptionModel.getWestLimit();
+		
+		double latitudeResolution = modelDimensions.getTextureLatitudeResolution();
+		double longitudeResolution = modelDimensions.getTextureLongitudeResolution();
+		
+		int dataCols = (int) MathExt.round((east - west) / longitudeResolution);
+		int dataRows = (int) MathExt.round((north - south) / latitudeResolution);
+		
+		int colsPerBatch = (int) MathExt.ceil((double)dataCols / (double)numberOfThreads);
+		int batchHeight = (int) ((double)numberOfThreads * latitudeResolution);
+		
+		int rowsPerThread = (int) MathExt.ceil((double)dataRows / (double)numberOfThreads);
+		
+		double chunkNorth = 0;
+		double chunkSouth = 0;
+		double chunkEast = 0;
+		double chunkWest = 0;
+		
+		
+		GridProcessChunkThread[] threads = new GridProcessChunkThread[numberOfThreads];
+		
+		
+		int threadNumber = 0;
+		for (int y = 0; y < dataRows; y+=rowsPerThread) {
+			
+			chunkNorth = north - ((double)y * latitudeResolution);
+			chunkSouth = chunkNorth - ((double)rowsPerThread * latitudeResolution);
+			
+			if (chunkSouth < south) {
+				chunkSouth = south;
+			}
+			
+			if (threadNumber >= 0 && threadNumber < modelPrograms.size()) {
+				ModelProgram modelProgram = this.modelPrograms.get(threadNumber);
+				threads[threadNumber] = new GridProcessChunkThread(this.latitudeProcessedList
+																	, modelProgram
+																	, threadNumber
+																	, chunkNorth
+																	, chunkSouth
+																	, east
+																	, west
+																	, latitudeResolution
+																	, longitudeResolution);
+				
+				
+				threads[threadNumber].start();
+			} else {
+				log.warn("Invalid thread number: " + threadNumber);
+			}
+
+			threadNumber++;
+			//processCycleChunk(0, chunkNorth, chunkSouth, east, west, latitudeResolution, longitudeResolution);
+			
 		}
 		
 		
-		if (!this.isCancelled()) {
-			for (ModelProcessContainer processContainer : modelProcessManifest.getProcessList()) {
-				
-				if (useScripting && !this.isCancelled()) {
-					onProcessBefore(processContainer);
+		boolean threadsActive = true;
+		
+		while (threadsActive) {
+			threadsActive = false;
+			
+			for (GridProcessChunkThread thread : threads) {
+				if (thread != null && !thread.isCompleted()) {
+					threadsActive = true;
+					break;
 				}
-				
-				GridProcessor gridProcessor = processContainer.getGridProcessor();
-				OptionModel optionModel = processContainer.getOptionModel();
-				
-				GridProcessing annotation = gridProcessor.getClass().getAnnotation(GridProcessing.class);
-				String name = gridProcessor.getClass().getName();
-				if (annotation != null) {
-					name = annotation.name();
-				}
-				
-				//if (annotation.type() != GridProcessingTypesEnum.RENDER) {// && dataLoaded) {
-				//	continue;
-				//}  
-				
-				if (annotation.type() == GridProcessingTypesEnum.DATA_LOAD) {// && dataLoaded) {
-					continue;
-				}  
-				
-				
-				if (gridProcessor instanceof InterruptibleProcess) {
-					interruptHandler.setInterruptibleProcess((InterruptibleProcess)gridProcessor);
-				} else {
-					interruptHandler.setInterruptibleProcess(null);
-				}
-				
-				log.info("Preparing processor: '" + name + "'");
-				gridProcessor.setAndPrepare(modelContext, modelGrid, modelDimensions, globalOptionModel, optionModel);
-				
-				
-				if (annotation.isFilter() && gridProcessor instanceof GridPointFilter) {
-					modelGrid.addGridFilter((GridPointFilter)gridProcessor);
-				}
-				
-			//	
-				
-				
-				
-				
-				
-			//	if (useScripting && !this.isCancelled()) {
-			//		onProcessAfter(processContainer);
-			//	}
-				
-				this.checkPause();
-				if (this.isCancelled()) {
-					log.info("Model builder was cancelled. Exiting in incomplete state.");
-					setProcessing(false);
-					try {
-						return modelContext.getModelCanvas().getJdemElevationModel();
-					} catch (ModelContextException ex) {
-						throw new RenderEngineException("Error fetching JDEM elevation model: " + ex.getMessage(), ex);
-					}
-				}
+			}
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException ex) {
+				log.warn("Thread sleep interrupted while waiting for grid process threads to complete: " + ex.getMessage(), ex);
 			}
 		}
 		
 		
-		
-		if (!this.isCancelled()) {
-			for (ModelProcessContainer processContainer : modelProcessManifest.getProcessList()) {
-				
-				if (useScripting && !this.isCancelled()) {
-					onProcessBefore(processContainer);
-				}
-				
-				GridProcessor gridProcessor = processContainer.getGridProcessor();
-				OptionModel optionModel = processContainer.getOptionModel();
-				
-				GridProcessing annotation = gridProcessor.getClass().getAnnotation(GridProcessing.class);
-				String name = gridProcessor.getClass().getName();
-				if (annotation != null) {
-					name = annotation.name();
-				}
-				
-				if (!annotation.isFilter() && annotation.enabled()) {
-					log.info("Executing processor: '" + name + "'");
-					gridProcessor.process();
-				}
-				
-				
-				if (useScripting && !this.isCancelled() && annotation.enabled()) {
-					onProcessAfter(processContainer);
-				}
-			}
-		}
-		
-		
-		/*
-		if (!this.isCancelled()) {
-			for (ModelProcessContainer processContainer : modelProcessManifest.getProcessList()) {
-				
-				if (useScripting && !this.isCancelled()) {
-					onProcessBefore(processContainer);
-				}
-				
-				GridProcessor gridProcessor = processContainer.getGridProcessor();
-				OptionModel optionModel = processContainer.getOptionModel();
-				
-				GridProcessing annotation = gridProcessor.getClass().getAnnotation(GridProcessing.class);
-				String name = gridProcessor.getClass().getName();
-				if (annotation != null) {
-					name = annotation.name();
-				}
-				
-				if (useScripting && !this.isCancelled() && annotation.enabled()) {
-					onProcessAfter(processContainer);
-				}
-			}
-		}
-		*/
+
+		onProcessAfter();
+
 		dataLoaded = true;
-		
-		if (useScripting && !this.isCancelled()) {
-			onModelAfter();
-		}
-		
-		
 		
 		log.info("Initializing final rendering...");
 		MapProjection mapProjection = null;
@@ -377,7 +412,14 @@ public class ModelBuilder extends InterruptibleProcess
 		
 		log.info("Running final rendering...");
 		renderProcess.prepare();
-		renderProcess.run();
+		
+		
+		try {
+			renderProcess.run();
+		} catch (GraphicsRenderException ex) {
+			throw new RenderEngineException("Error rendering model: " + ex.getMessage(), ex);
+		}
+		
 		ImageCapture imageCapture = renderProcess.capture();
 		
 		log.info("Completed final rendering, disposing...");
@@ -418,6 +460,58 @@ public class ModelBuilder extends InterruptibleProcess
 	}
 	
 
+	public void processCycleChunk(int threadNumber, double north, double south, double east, double west, double latitudeResolution, double longitudeResolution) throws RenderEngineException
+	{
+		if (threadNumber < 0 || threadNumber >= modelPrograms.size()) {
+			log.warn("Invalid thread number: " + threadNumber);
+			return;
+		}
+		
+		ModelProgram modelProgram = this.modelPrograms.get(threadNumber);
+		
+		GridProcessMethodStack processStack = modelProgram.getProcessStack();
+		
+		for (double latitude = north; latitude >= south; latitude -= latitudeResolution) {
+			
+			if (this.latitudeProcessedList != null) {
+				if (this.latitudeProcessedList.isLatitudeProcessed(latitude)) {
+					continue;
+				} else {
+					this.latitudeProcessedList.setLatitudeProcessed(latitude);
+				}
+			}
+			
+			try {
+				processStack.onLatitudeStart(latitude);
+			} catch (Exception ex) {
+				throw new RenderEngineException("Error invoking onLatitudeStart: " + ex.getMessage(), ex);
+			}
+			
+			for (double longitude = west; longitude <= east; longitude += longitudeResolution) {
+				try {
+					processStack.onModelPoint(latitude, longitude);
+				} catch (Exception ex) {
+					throw new RenderEngineException("Error invoking onModelPoint: " + ex.getMessage(), ex);
+				}
+			}
+			
+			try {
+				processStack.onLatitudeEnd(latitude);
+			} catch (Exception ex) {
+				throw new RenderEngineException("Error invoking onLatitudeEnd: " + ex.getMessage(), ex);
+			}
+			
+			//checkPause();
+			//if (isCancelled()) {
+			//	log.warn("Render process cancelled, model not complete.");
+			//	break;
+			//}
+		}
+		
+		
+	}
+	
+	
 	protected void setJDemElevationModelProperties(ElevationModel elevationModel)
 	{
 
@@ -496,6 +590,10 @@ public class ModelBuilder extends InterruptibleProcess
 	}
 	
 	
+	
+
+	
+	
 
 	public boolean isPrepared()
 	{
@@ -516,13 +614,30 @@ public class ModelBuilder extends InterruptibleProcess
 		}
 		
 	}
+
 	
-	protected void onModelBefore() throws RenderEngineException
+	protected void onProcessBefore() throws RenderEngineException
 	{
+		for (ModelProgram modelProgram : modelPrograms) {
+			
+			GridFilterMethodStack filterStack = modelProgram.getFilterStack();
+			GridProcessMethodStack processStack = modelProgram.getProcessStack();
+			
+			
+			try {
+				filterStack.onProcessBefore();
+				processStack.onProcessBefore();
+			} catch (Exception ex) {
+				throw new RenderEngineException("Exception thrown model worker during 'onProcessBefore': " + ex.getMessage(), ex);
+			}
+			
+		}
+		
+		
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onModelBefore();
+				scriptProxy.onProcessBefore();
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
@@ -530,38 +645,27 @@ public class ModelBuilder extends InterruptibleProcess
 		
 	}
 	
-	protected void onModelAfter() throws RenderEngineException
+	protected void onProcessAfter() throws RenderEngineException
 	{
-		try {
-			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
-			if (scriptProxy != null) {
-				scriptProxy.onModelAfter();
+		for (ModelProgram modelProgram : modelPrograms) {
+			
+			GridFilterMethodStack filterStack = modelProgram.getFilterStack();
+			GridProcessMethodStack processStack = modelProgram.getProcessStack();
+			
+			
+			try {
+				filterStack.onProcessAfter();
+				processStack.onProcessAfter();
+			} catch (Exception ex) {
+				throw new RenderEngineException("Exception thrown model worker during 'onProcessAfter': " + ex.getMessage(), ex);
 			}
-		} catch (Exception ex) {
-			throw new RenderEngineException("Exception thrown in user script", ex);
+			
 		}
 		
-	}
-	
-	protected void onProcessBefore(ModelProcessContainer modelProcessContainer) throws RenderEngineException
-	{
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
 			if (scriptProxy != null) {
-				scriptProxy.onProcessBefore(modelProcessContainer);
-			}
-		} catch (Exception ex) {
-			throw new RenderEngineException("Exception thrown in user script", ex);
-		}
-		
-	}
-	
-	protected void onProcessAfter(ModelProcessContainer modelProcessContainer) throws RenderEngineException
-	{
-		try {
-			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
-			if (scriptProxy != null) {
-				scriptProxy.onProcessAfter(modelProcessContainer);
+				scriptProxy.onProcessAfter();
 			}
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);

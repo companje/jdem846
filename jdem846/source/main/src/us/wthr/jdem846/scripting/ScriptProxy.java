@@ -36,11 +36,8 @@ public interface ScriptProxy
 	public void initialize() throws ScriptingException;
 	public void destroy() throws ScriptingException;
 	
-	public void onModelBefore() throws ScriptingException;
-	public void onModelAfter() throws ScriptingException;
-	
-	public void onProcessBefore(ModelProcessContainer modelProcessContainer) throws ScriptingException;
-	public void onProcessAfter(ModelProcessContainer modelProcessContainer) throws ScriptingException;
+	public void onProcessBefore() throws ScriptingException;
+	public void onProcessAfter() throws ScriptingException;
 
 	public Object onGetElevationBefore(double latitude, double longitude) throws ScriptingException;
 	public Object onGetElevationAfter(double latitude, double longitude, double elevation) throws ScriptingException;

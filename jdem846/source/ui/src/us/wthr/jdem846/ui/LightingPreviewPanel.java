@@ -184,11 +184,11 @@ public class LightingPreviewPanel extends Panel
 			modelProcessManifest = new ModelProcessManifest();
 			modelProcessManifest.setGlobalOptionModel(globalOptionModel);
 			
-			modelProcessManifest.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
-			modelProcessManifest.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
-			modelProcessManifest.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
-			modelProcessManifest.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
-			modelProcessManifest.addProcessor(new ModelRenderer(), modelRenderOptionModel);
+			//modelProcessManifest.addProcessor(new GridLoadProcessor(), gridLoadOptionModel);
+			//modelProcessManifest.addProcessor(new SurfaceNormalsProcessor(), surfaceNormalOptionModel);
+			//modelProcessManifest.addProcessor(new HypsometricColorProcessor(), hypsometricColorOptionModel);
+			//modelProcessManifest.addProcessor(new HillshadingProcessor(), hillshadingOptionModel);
+			//modelProcessManifest.addProcessor(new ModelRenderer(), modelRenderOptionModel);
 			
 			modelContext = ModelContext.createInstance(rasterDataContext, modelProcessManifest);
 			modelContext.updateContext(true, globalOptionModel.isEstimateElevationRange());

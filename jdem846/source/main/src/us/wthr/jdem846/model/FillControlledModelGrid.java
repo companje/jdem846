@@ -9,6 +9,8 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.processing.GridFilter;
+import us.wthr.jdem846.model.processing.GridFilterMethodStack;
 import us.wthr.jdem846.model.processing.GridPointFilter;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
@@ -24,7 +26,8 @@ public class FillControlledModelGrid extends ModelPointGrid
 	
 	private boolean forceResetAndRunFilters = false;
 	
-	private List<GridPointFilter> gridFilters = new ArrayList<GridPointFilter>();
+	//private List<GridPointFilter> gridFilters = new ArrayList<GridPointFilter>();
+	private GridFilterMethodStack gridFilters = new GridFilterMethodStack();
 	
 	private boolean zeroInCaseOfNoRaster = false;
 	
@@ -49,11 +52,14 @@ public class FillControlledModelGrid extends ModelPointGrid
 	}
 	
 	
-	public void addGridFilter(GridPointFilter gridProcessor)
+	public void setGridFilters(GridFilterMethodStack gridFilters)
 	{
-		if (!gridFilters.contains(gridProcessor)) {
-			gridFilters.add(gridProcessor);
-		}
+		this.gridFilters = gridFilters;
+	}
+	
+	public void addGridFilter(GridFilter gridFilter)
+	{
+		gridFilters.add(gridFilter);
 	}
 	
 	@Override
@@ -87,13 +93,11 @@ public class FillControlledModelGrid extends ModelPointGrid
 	{
 		boolean f = forceResetAndRunFilters;
 		forceResetAndRunFilters = false;
-		for (GridPointFilter filter : this.gridFilters) {
-			try {
-				filter.onModelPoint(latitude, longitude);
-			} catch (RenderEngineException ex) {
-				// TODO Add better handling
-				log.warn("Error processing point: " + ex.getMessage(), ex);
-			}
+		try {
+			gridFilters.onModelPoint(latitude, longitude);
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
 		}
 		forceResetAndRunFilters = f;
 	}
@@ -290,5 +294,22 @@ public class FillControlledModelGrid extends ModelPointGrid
 	}
 	
 	
+	public FillControlledModelGrid createDependentInstance(RasterDataContext rasterDataContext)
+	{
+		FillControlledModelGrid instance = new FillControlledModelGrid(north, 
+																		south, 
+																		east,
+																		west, 
+																		latitudeResolution, 
+																		longitudeResolution,
+																		minimum, 
+																		maximum,
+																		zeroInCaseOfNoRaster,
+																		rasterDataContext,
+																		modelGrid,
+																		scriptProxy);
+		return instance;
+		
+	}
 	
 }

@@ -22,7 +22,7 @@ import us.wthr.jdem846.model.processing.GridProcessor;
 				name="TRI Color Process",
 				type=GridProcessingTypesEnum.COLORING,
 				optionModel=TerrainRuggednessIndexColoringOptionModel.class,
-				enabled=true
+				enabled=false
 )
 /** TRI (Terrain Ruggedness Index) is calculated using difference in the 
  * elevation of the eight surrounding points to the center. If a particular
@@ -36,7 +36,7 @@ import us.wthr.jdem846.model.processing.GridProcessor;
  * @author Kevin M. Gill
  *
  */
-public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+public class TerrainRuggednessIndexColoringProcessor extends GridProcessor
 {
 
 	private static Log log = Logging.getLog(TerrainRuggednessIndexColoringProcessor.class);
@@ -69,15 +69,12 @@ public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcess
 		
 	}
 	
-	public TerrainRuggednessIndexColoringProcessor(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		super(modelContext, modelGrid);
-	}
+
 	
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		optionModel = (TerrainRuggednessIndexColoringOptionModel) this.getProcessOptionModel();
+		optionModel = (TerrainRuggednessIndexColoringOptionModel) this.getOptionModel();
 		
 		latitudeResolution = getModelDimensions().getTextureLatitudeResolution();
 		longitudeResolution = getModelDimensions().getTextureLongitudeResolution();
@@ -95,18 +92,18 @@ public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcess
 	}
 	
 	
-	@Override
+	//@Override
 	public void process() throws RenderEngineException
 	{
 		log.info("TRI Processor 1st Pass...");
-		super.process();
+		//super.process();
 		
 		log.info("Minimum TRI: " + minTri);
 		log.info("Maximum TRI: " + maxTri);
 		
 		log.info("TRI Processor 2nd Pass...");
 		pass++;
-		super.process();
+		//super.process();
 	}
 	
 	@Override
@@ -213,6 +210,46 @@ public class TerrainRuggednessIndexColoringProcessor extends AbstractGridProcess
 		return tri;
 		
 		*/
+	}
+
+
+
+	@Override
+	public void onLatitudeStart(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void onLatitudeEnd(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void onProcessBefore() throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
+	{
+		
+	}
+
+
+
+	@Override
+	public void dispose() throws RenderEngineException
+	{
+		
 	}
 	
 }

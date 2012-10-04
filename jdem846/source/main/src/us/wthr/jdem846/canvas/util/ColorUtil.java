@@ -4,9 +4,9 @@ import us.wthr.jdem846.color.ColorAdjustments;
 
 public class ColorUtil
 {
-	private static int[] bufferA = new int[4];
-	private static int[] bufferB = new int[4];
-	private static int[] bufferC = new int[4];
+	//private static int[] bufferA = new int[4];
+	//private static int[] bufferB = new int[4];
+	//private static int[] bufferC = new int[4];
 	
 	public static final int BLACK = -16777216;
 	public static final int WHITE = -1;
@@ -69,6 +69,10 @@ public class ColorUtil
 	
 	public static int overlayColor(int rgbaA, int rgbaB)
 	{
+		int[] bufferA = new int[4];
+		int[] bufferB = new int[4];
+		int[] bufferC = new int[4];
+		
 		intToRGBA(rgbaA, bufferA);
 		intToRGBA(rgbaB, bufferB);
 		

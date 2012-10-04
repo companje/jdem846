@@ -685,7 +685,7 @@ public class RasterDataContext implements DataContext
 		clone.avgOfAllRasterValues = this.avgOfAllRasterValues;
 		clone.interpolate = this.interpolate;
 		clone.scaled = this.scaled;
-		
+		clone.elevationScaler = (this.elevationScaler != null) ? this.elevationScaler.copy() : null;
 		for (RasterData rasterData : rasterDataList) {
 			clone.rasterDataList.add(rasterData.copy());
 		}

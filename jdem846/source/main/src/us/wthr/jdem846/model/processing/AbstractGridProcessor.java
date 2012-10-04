@@ -16,7 +16,8 @@ import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ProcessInterruptListener;
 
-public abstract class AbstractGridProcessor extends InterruptibleProcess implements GridProcessor, ModelPointHandler
+@Deprecated
+public abstract class AbstractGridProcessor extends InterruptibleProcess// implements GridProcessor, ModelPointHandler
 {
 	
 	@SuppressWarnings("unused")
@@ -49,10 +50,10 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 		setModelDimensions(modelDimensions);
 		setGlobalOptionModel(globalOptionModel);
 		setProcessOptionModel(processOptionModel);
-		prepare();
+		//prepare();
 	}
 	
-	@Override
+	//@Override
 	public void process() throws RenderEngineException
 	{
 		final ModelPointCycler pointCycler = new ModelPointCycler(modelContext, modelDimensions);
@@ -74,7 +75,7 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 		
 		this.setProcessing(true);
 		
-		pointCycler.forEachModelPoint(this);
+		//pointCycler.forEachModelPoint(this);
 		
 		this.setProcessing(false);
 	}
@@ -149,7 +150,7 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 		}
 	}
 
-	@Override
+	//@Override
 	public void onCycleStart() throws RenderEngineException
 	{
 		// TODO Auto-generated method stub
@@ -157,7 +158,7 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 	}
 
 
-	@Override
+	//@Override
 	public void onModelLatitudeStart(double latitude)
 			throws RenderEngineException
 	{
@@ -166,7 +167,7 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 	}
 
 
-	@Override
+	//@Override
 	public void onModelPoint(double latitude, double longitude)
 			throws RenderEngineException
 	{
@@ -175,7 +176,7 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 	}
 
 
-	@Override
+//	@Override
 	public void onModelLatitudeEnd(double latitude)
 			throws RenderEngineException
 	{
@@ -184,7 +185,7 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess impleme
 	}
 
 
-	@Override
+	//@Override
 	public void onCycleEnd() throws RenderEngineException
 	{
 		// TODO Auto-generated method stub

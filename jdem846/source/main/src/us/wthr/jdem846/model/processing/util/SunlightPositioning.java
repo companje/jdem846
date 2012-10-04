@@ -17,6 +17,7 @@ import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGridDimensions;
@@ -174,7 +175,7 @@ public class SunlightPositioning
 	}
 	
 	
-	public void getLightPositionByCoordinates(double latitude, double longitude, double[] xyz)
+	public void getLightPositionByCoordinates(double latitude, double longitude, Vector xyz)
 	{
 		latitude = 0;
 		longitude = 0;
@@ -235,10 +236,12 @@ public class SunlightPositioning
     	else
             ha = trueSolarTime / 4.0 - 180.0;
 
-
-		xyz[0] = R * 149598000000.0; // R (AU) in meters
-		xyz[1] = 0.0;
-		xyz[2] = 0.0; 
+        xyz.x = 149598000000.0; // R (AU) in meters
+        xyz.y = 0.0;
+        xyz.z = 0.0;
+		//xyz[0] = R * 149598000000.0; // R (AU) in meters
+		//xyz[1] = 0.0;
+		//xyz[2] = 0.0; 
 		
 		double rotateY = rightAscension + (ha - longitude);
 		double rotateX = declination;

@@ -9,6 +9,7 @@ import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ModelPointHandler;
@@ -26,13 +27,13 @@ import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 				optionModel=AspectColoringOptionModel.class,
 				enabled=true
 )
-public class AspectColoringProcessor extends AbstractGridProcessor implements GridProcessor, ModelPointHandler
+public class AspectColoringProcessor extends GridProcessor
 {
 	private static Log log = Logging.getLog(AspectColoringProcessor.class);
 	
 	private int[] rgbaBuffer = new int[4];
 	
-	private double[] normal = new double[3];
+	private Vector normal = new Vector();
 	private SurfaceNormalCalculator normalsCalculator;
 	
 	private List<AspectColorCategory> colorCategoryList = new LinkedList<AspectColorCategory>();
@@ -41,16 +42,11 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 	{
 		
 	}
-	
-	public AspectColoringProcessor(ModelContext modelContext, ModelGrid modelGrid)
-	{
-		super(modelContext, modelGrid);
-	}
-	
+
 	@Override
 	public void prepare() throws RenderEngineException
 	{
-		AspectColoringOptionModel optionModel = (AspectColoringOptionModel) this.getProcessOptionModel();
+		AspectColoringOptionModel optionModel = (AspectColoringOptionModel) this.getOptionModel();
 		
 		colorCategoryList.clear();
 		
@@ -73,12 +69,7 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 				getModelDimensions().getTextureLongitudeResolution());
 	}
 	
-	
-	@Override
-	public void process() throws RenderEngineException
-	{
-		super.process();
-	}
+
 	
 	
 	@Override
@@ -96,11 +87,6 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 		modelPoint.setRgba(rgbaBuffer);
 	}
 	
-	@Override
-	public void onCycleEnd() throws RenderEngineException
-	{
-
-	}
 	
 	
 	public void getCategoryColor(double degrees, int[] rgba)
@@ -120,6 +106,36 @@ public class AspectColoringProcessor extends AbstractGridProcessor implements Gr
 		rgba[1] = 0;
 		rgba[2] = 0;
 		rgba[3] = 255;
+		
+	}
+
+	@Override
+	public void onLatitudeStart(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+	@Override
+	public void onLatitudeEnd(double latitude) throws RenderEngineException
+	{
+		
+	}
+
+	@Override
+	public void onProcessBefore() throws RenderEngineException
+	{
+		
+	}
+
+	@Override
+	public void onProcessAfter() throws RenderEngineException
+	{
+		
+	}
+
+	@Override
+	public void dispose() throws RenderEngineException
+	{
 		
 	}
 	

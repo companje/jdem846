@@ -33,7 +33,7 @@ public class GraphicsRendererTestMain extends AbstractTestMain
 	}
 	
 	
-	public void doTest()
+	public void doTest() throws Exception
 	{
 		
 		double[] a = new double[16];

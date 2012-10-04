@@ -23,25 +23,17 @@ class JDemScript {
 		
 	}
 	
-	def onModelBefore = { 
+	
+	def onProcessBefore = { ->
 		
 		
 	}
 	
-	def onProcessBefore = { modelProcessContainer ->
-		
-		
-	}
-	
-	def onProcessAfter = { modelProcessContainer ->
+	def onProcessAfter = { ->
 	
 	
 	}
 	
-	def onModelAfter = { 
-	
-	
-	}
 	
 	def onGetElevationBefore = {latitude, longitude ->
 		

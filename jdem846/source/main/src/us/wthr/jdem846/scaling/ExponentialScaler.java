@@ -28,5 +28,12 @@ public class ExponentialScaler extends AbstractElevationScaler
 		double elevationScaled = min + (range * elevExp / rangeExp);
 		return elevationScaled;
 	}
+	
+	public ElevationScaler copy()
+	{
+		ExponentialScaler scaler = new ExponentialScaler();
+		super.copyTo(scaler);
+		return scaler;
+	}
 
 }
