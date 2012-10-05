@@ -10,13 +10,14 @@ import java.awt.image._
 import us.wthr.jdem846.color._
 import us.wthr.jdem846.gis.projections._
 import us.wthr.jdem846.canvas._
+import us.wthr.jdem846.canvas.util._
 import us.wthr.jdem846.geom._
 import us.wthr.jdem846.gis.planets._
 import us.wthr.jdem846.model._
 import us.wthr.jdem846.model.processing.util._
 import us.wthr.jdem846.model.processing.shading._
 import us.wthr.jdem846.globe._
-
+import us.wthr.jdem846.graphics._
 
 /**
  * Note: I know next to nothing about programming in Scala... 
@@ -30,6 +31,9 @@ class JDemScript {
 	
 	var log : Log = null
 	var modelContext : ModelContext = null
+    var globalOptionModel : GlobalOptionModel = null
+    var modelGrid : ModelPointGrid = null
+    var modelDimensions : ModelDimensions = null
 	
 	
 	def setLog(l:Log)
@@ -74,6 +78,17 @@ class JDemScript {
 	def onLightLevels(latitude: Double, longitude: Double, lightingValues: LightingValues)
 	{	
 		
+	}
+	
+	
+	def preRender(renderer : GraphicsRenderer, view : View)
+	{
+	
+	}
+	
+	def postRender(renderer : GraphicsRenderer, view : View)
+	{
+	
 	}
 	
 	def destroy()

@@ -342,8 +342,8 @@ public class Vectors
 
 	public static double dotProduct(double[] pt0, double[] pt1)
 	{
-		double[] buffer0 = new double[3];
-		double[] buffer1 = new double[3];
+		double[] buffer0 = {0.0, 0.0, 0.0};//new double[3];
+		double[] buffer1 = {0.0, 0.0, 0.0};//new double[3];
 		
 		
 		
@@ -424,9 +424,9 @@ public class Vectors
 	        no[2] = pt0[0] * pt1[1] - pt1[0] * pt0[1];
 		} else {
 			
-			double[] buffer0 = new double[3];
-			double[] buffer1 = new double[3];
-			double[] buffer2 = new double[3];
+			double[] buffer0 = {0.0, 0.0, 0.0};//new double[3];
+			double[] buffer1 = {0.0, 0.0, 0.0};//new double[3];
+			double[] buffer2 = {0.0, 0.0, 0.0};//new double[3];
 			
 			subtract(pt0, pt1, buffer0);
 			subtract(pt1, pt2, buffer1);

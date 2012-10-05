@@ -20,6 +20,7 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.graphics.GraphicsRenderer;
+import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.model.ModelProcessContainer;
 import us.wthr.jdem846.model.processing.util.LightingValues;
 
@@ -30,7 +31,7 @@ import us.wthr.jdem846.model.processing.util.LightingValues;
  */
 public interface ScriptProxy
 {
-	
+	public void setProperty(String name, Object value) throws ScriptingException;
 	public void setModelContext(ModelContext modelContext);
 	
 	public void initialize() throws ScriptingException;
@@ -42,12 +43,12 @@ public interface ScriptProxy
 	public Object onGetElevationBefore(double latitude, double longitude) throws ScriptingException;
 	public Object onGetElevationAfter(double latitude, double longitude, double elevation) throws ScriptingException;
 	
-	public void preRender(GraphicsRenderer renderer) throws ScriptingException;
-	public void postRender(GraphicsRenderer renderer) throws ScriptingException;
+	public void preRender(GraphicsRenderer renderer, View view) throws ScriptingException;
+	public void postRender(GraphicsRenderer renderer, View view) throws ScriptingException;
 	
 	public void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color) throws ScriptingException;
 	
-	public void onLightLevels(double latitude, double longitude, LightingValues lightingValues) throws ScriptingException;
+	public void onLightLevels(double latitude, double longitude, double elevation, LightingValues lightingValues) throws ScriptingException;
 	
 	// TODO: Add copy()
 	

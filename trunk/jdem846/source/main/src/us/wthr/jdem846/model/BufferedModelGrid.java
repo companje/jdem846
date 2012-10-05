@@ -137,16 +137,20 @@ public class BufferedModelGrid extends ModelPointGrid
 	@Override
 	public void setRgba(double latitude, double longitude, int rgba)
 	{
+
 		int index = getIndex(latitude, longitude);
 		if (index >= 0 && index < this.gridLength) {
 			rgbaGrid[index] = rgba;
 		}
+
 	}
 	
 	@Override
 	public void setRgba(double latitude, double longitude, int[] rgba)
 	{
+
 		this.setRgba(latitude, longitude, ColorUtil.rgbaToInt(rgba));
+
 	}
 	
 

@@ -92,11 +92,11 @@ public class ColorAdjustments
 	
 	public static int interpolateColor(int c00, int c01, int c10, int c11, double xFrac, double yFrac)
 	{
-		int[] _c00 = new int[4];//{0, 0, 0, 0};
-		int[] _c01 = new int[4];//{0, 0, 0, 0};
-		int[] _c10 = new int[4];//{0, 0, 0, 0};
-		int[] _c11 = new int[4];//{0, 0, 0, 0};
-		int[] _o = new int[4];//{0, 0, 0, 0};
+		int[] _c00 = {0, 0, 0, 0};
+		int[] _c01 = {0, 0, 0, 0};
+		int[] _c10 = {0, 0, 0, 0};
+		int[] _c11 = {0, 0, 0, 0};
+		int[] _o = {0, 0, 0, 0};
 		
 		ColorUtil.intToRGBA(c00, _c00);
 		ColorUtil.intToRGBA(c01, _c01);
@@ -127,9 +127,9 @@ public class ColorAdjustments
 	public static int interpolateColor(int c0, int c1, double ratio)
 	{
 		
-		int[] _c0 = new int[4];//{0, 0, 0, 0};
-		int[] _c1 = new int[4];//{0, 0, 0, 0};
-		int[] _o = new int[4];//{0, 0, 0, 0};
+		int[] _c0 = {0, 0, 0, 0};
+		int[] _c1 = {0, 0, 0, 0};
+		int[] _o = {0, 0, 0, 0};
 		
 		ColorUtil.intToRGBA(c0, _c0);
 		ColorUtil.intToRGBA(c1, _c1);

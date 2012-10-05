@@ -19,6 +19,7 @@ public class ViewPerspective
 		
 	}
 	
+	
 	public ViewPerspective(double rotateX, 
 							double rotateY, 
 							double rotateZ,

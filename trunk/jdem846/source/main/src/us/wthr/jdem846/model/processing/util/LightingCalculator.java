@@ -81,7 +81,7 @@ public class LightingCalculator
 	}
 
 	
-	public void calculateColor(Vector normal, double latitude, double longitude, double radius, double shininess, double blockDistance, Vector lightSource, int[] rgba)
+	public void calculateColor(Vector normal, double latitude, double longitude, double elevation, double radius, double shininess, double blockDistance, Vector lightSource, int[] rgba)
 	{
 		Spheres.getPoint3D(longitude, latitude, radius, P);
 		
@@ -128,7 +128,7 @@ public class LightingCalculator
 		}
 		
 		
-		onLightLevels(latitude, longitude);
+		onLightLevels(latitude, longitude, elevation);
 		
 		
 		lightingValues.emmisiveColor[0] = color[0] * lightingValues.emmisiveLight;
@@ -254,12 +254,12 @@ public class LightingCalculator
 	}
 
 	
-	protected void onLightLevels(double latitude, double longitude)
+	protected void onLightLevels(double latitude, double longitude, double elevation)
 	{
 		
 		if (scriptProxy != null) {
 			try {
-				scriptProxy.onLightLevels(latitude, longitude, lightingValues);
+				scriptProxy.onLightLevels(latitude, longitude, elevation, lightingValues);
 			} catch (ScriptingException ex) {
 				log.error("Error running light levels callback: " + ex.getMessage(), ex);
 			}

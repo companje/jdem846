@@ -14,7 +14,7 @@ public class ScalaScriptLoader
 	{
 		log.info("Compiling Scala script...");
 		
-		EmbeddedInterpreter interpreter = new EmbeddedInterpreter();
+		EmbeddedScalaInterpreter interpreter = new EmbeddedScalaInterpreter();
 		
 		
 		Class cls = null;

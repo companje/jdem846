@@ -1,6 +1,7 @@
 package us.wthr.jdem846.model.processing.coloring;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
@@ -97,19 +98,16 @@ public class HypsometricColorProcessor extends GridFilter
 	public void onModelPoint(double latitude, double longitude)
 			throws RenderEngineException
 	{
-		
-		//ModelPoint modelPoint = modelGrid.get(latitude, longitude);
-		
+
 		double elevation = modelGrid.getElevation(latitude, longitude, true);
 		try {
 			getPointColor(latitude, longitude, elevation, rgbaBufferA);
 		} catch (DataSourceException ex) {
 			throw new RenderEngineException("Error getting point color: " + ex.getMessage(), ex);
 		}
-		
-		modelGrid.setRgba(latitude, longitude, rgbaBufferA);
-		//modelPoint.setRgba(rgbaBufferA);
 
+		modelGrid.setRgba(latitude, longitude, rgbaBufferA);
+		
 	}
 
 

@@ -69,9 +69,9 @@ public class ColorUtil
 	
 	public static int overlayColor(int rgbaA, int rgbaB)
 	{
-		int[] bufferA = new int[4];
-		int[] bufferB = new int[4];
-		int[] bufferC = new int[4];
+		int[] bufferA = {0, 0, 0, 0};//new int[4];
+		int[] bufferB = {0, 0, 0, 0};//new int[4];
+		int[] bufferC = {0, 0, 0, 0};//new int[4];
 		
 		intToRGBA(rgbaA, bufferA);
 		intToRGBA(rgbaB, bufferB);

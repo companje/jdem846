@@ -80,7 +80,7 @@ public class GraphicsRendererTestMain extends AbstractTestMain
 		
 		GraphicsRenderer renderer = new GraphicsRenderer();
 		
-		renderer.viewPort(500, 500);
+		renderer.viewPort(0, 0, 500, 500);
 		renderer.matrixMode(MatrixModeEnum.PROJECTION);
 		
 		double radius = DemConstants.EARTH_MEAN_RADIUS * 1000;
