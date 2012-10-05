@@ -249,8 +249,9 @@ public class HillshadingProcessor extends GridProcessor
 		}
 		
 		double blockAmt = 0;
+		double elevation = 0;
 		try {
-			double elevation = modelGrid.getElevation(latitude, longitude, false);
+			elevation = modelGrid.getElevation(latitude, longitude, false);
 			
 			blockAmt = calculateRayTracedShadow(elevation, latitude, longitude);
 		} catch (RayTracingException ex) {
@@ -270,6 +271,7 @@ public class HillshadingProcessor extends GridProcessor
 			advancedLightingCalculator.calculateColor(normal, 
 													latitude, 
 													longitude, 
+													elevation,
 													modelRadius, 
 													spotExponent,
 													blockAmt,

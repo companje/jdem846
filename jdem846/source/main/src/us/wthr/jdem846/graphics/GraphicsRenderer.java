@@ -22,6 +22,7 @@ public class GraphicsRenderer
 	protected Texture currentTexture = null;
 	protected RenderCodesEnum error = RenderCodesEnum.RENDER_NO_ERROR;
 	
+	protected ViewPort viewPort = null;
 	protected FrameBuffer frameBuffer = null;
 	
 	protected boolean inPrimitiveDraw = false;
@@ -78,17 +79,15 @@ public class GraphicsRenderer
 	}
 	
 	
-	public void viewPort(double width, double height)
+	public void viewPort(int x, int y, int width, int height)
 	{
-		int _width = (int) MathExt.round(width);
-		int _height = (int) MathExt.round(height);
-		
-		if (_width <= 0 || _width > GraphicsRenderer.RENDER_MAXIMUM_WIDTH || _height <= 0 || _height > GraphicsRenderer.RENDER_MAXIMUM_HEIGHT) {
+
+		if (width <= 0 || width > GraphicsRenderer.RENDER_MAXIMUM_WIDTH || height <= 0 || height > GraphicsRenderer.RENDER_MAXIMUM_HEIGHT) {
 			this.error = RenderCodesEnum.RENDER_ERR_INVALID_DIMENSIONS;
 			return;
 		}
-		
-		this.frameBuffer = new FrameBuffer(_width, _height);
+		this.viewPort = new ViewPort(x, y, width, height);
+		this.frameBuffer = new FrameBuffer(width, height);
 	
 	}
 	
@@ -416,8 +415,8 @@ public class GraphicsRenderer
 		
 
 		
-		in.x = in.x * (double)this.frameBuffer.getWidth();
-		in.y = in.y * (double)this.frameBuffer.getHeight();
+		in.x = in.x * (double)this.viewPort.getWidth() + this.viewPort.getX();
+		in.y = in.y * (double)this.viewPort.getHeight() + this.viewPort.getY();
 		
 		v.x = in.x;
 		v.y = in.y;

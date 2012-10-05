@@ -23,14 +23,30 @@ public class FlatView extends AbstractView implements View
 			latitude = mapPoint.row;
 			
 		} 
-			
-		point.x = longitudeToColumn(longitude);
-		point.y = latitudeToRow(latitude);
-		point.z = elevation;
+		
+		
+		//point.x = longitudeToColumn(longitude);
+		//point.y = latitudeToRow(latitude);
+		//point.z = elevation;
+		
+		point.x = -(0.5 - longitudeToColumn(longitude));
+		point.z = (0.5 / this.resolution) - ((maxElevation - elevation) / (maxElevation - minElevation) / this.resolution);
+		point.y = (0.5 - latitudeToRow(latitude));
 		
 	}
 	
+	protected double latitudeToRow(double latitude)
+	{
+		return (((this.north - latitude) / (this.north - this.south)));
+	}
 	
+	protected double longitudeToColumn(double longitude)
+	{
+		return (((longitude - this.west) / (this.east - this.west)));
+	}
+	
+	
+	/*
 	protected double latitudeToRow(double latitude)
 	{
 		return (this.height * ((this.north - latitude) / (this.north - this.south)));
@@ -40,14 +56,14 @@ public class FlatView extends AbstractView implements View
 	{
 		return (this.width * ((longitude - this.west) / (this.east - this.west)));
 	}
-	
+	*/
 	
 	
 	@Override
 	public double radius()
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		return 0.5;
 	}
 
 	@Override

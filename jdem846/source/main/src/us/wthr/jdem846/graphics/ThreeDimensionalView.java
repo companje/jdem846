@@ -10,45 +10,34 @@ import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
-public class ThreeDimensionalView extends FlatView implements View
+public class ThreeDimensionalView extends AbstractView implements View
 {
 
-	
 	public void project(double latitude, double longitude, double elevation, Vector point)
 	{
-		super.project(latitude, longitude, elevation, point);
-		
-		double elev = (elevation - ((this.maxElevation + this.minElevation) / 2.0)) / this.resolution;
-		point.x = point.x - (this.width / 2.0);
-		point.y = point.y - (this.height / 2.0);
-		point.z = elev;
+
+		point.x = -(0.5 - longitudeToColumn(longitude));
+		point.z = (0.5 - latitudeToRow(latitude));
+		point.y = (0.5 / this.resolution) - ((maxElevation - elevation) / (maxElevation - minElevation) / this.resolution);
 	}
 	
-	
-	protected double xWid()
+	protected double latitudeToRow(double latitude)
 	{
-		double dataCols = this.modelDimensions.dataColumns;
-		double longitudeResolution = this.modelDimensions.longitudeResolution;
-		double modelLongitudeResolution = this.modelDimensions.textureLongitudeResolutionTrue;
-		double xWid = dataCols * (longitudeResolution / modelLongitudeResolution);
-		return xWid;
+		return (((this.north - latitude) / (this.north - this.south)));
 	}
 	
-	protected double yWid()
+	protected double longitudeToColumn(double longitude)
 	{
-		double dataRows = this.modelDimensions.dataRows;
-		double latitudeResolution = this.modelDimensions.latitudeResolution;
-		double modelLatitudeResolution = this.modelDimensions.textureLatitudeResolutionTrue;
-		double yWid = dataRows * (latitudeResolution / modelLatitudeResolution);
-		return yWid;
+		return (((longitude - this.west) / (this.east - this.west)));
 	}
+	
+
 	
 	
 	@Override
 	public double radius() 
 	{
-		double radius = MathExt.sqrt(MathExt.sqr(xWid()) + MathExt.sqr(yWid()));
-		return radius;
+		return 0.5;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.graphics.GraphicsRenderer;
+import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelProcessContainer;
@@ -61,9 +62,19 @@ public class ScalaScriptProxy implements ScriptProxy
 		
 		this.hasModelContext = hasField("modelContext");
 		
+		
 		this.hasLog = hasField("log");
 		setLog(Logging.getLog(scalaObject.getClass()));
 		
+	}
+	
+	public void setProperty(String name, Object value) throws ScriptingException
+	{
+		String methodName = name + "_$eq";
+		if (hasMethod(methodName)) {
+			log.info("Setting property value for field '" + name + "'");
+			invokeMethod(methodName, value);
+		}
 	}
 	
 
@@ -78,25 +89,7 @@ public class ScalaScriptProxy implements ScriptProxy
 		} else {
 			log.warn("Script does not have a 'setLog()' method");
 		}
-		/*
-		if (hasLog) {
-			Field f = null;
-			
-			try {
-				f = getField("log");
-				
-				if (f.getType() != us.wthr.jdem846.logging.Log.class) {
-					throw new ScriptingException("Field 'log' is of incorrect type");
-				}
-				
-				f.set(this.scalaObject, log);
-				
-			} catch (Exception ex) {
-				log.warn("Failed to set log: " + ex.getMessage(), ex);
-			} 
 
-		}
-		*/
 	}
 	
 	@Override
@@ -111,25 +104,7 @@ public class ScalaScriptProxy implements ScriptProxy
 		} else {
 			log.warn("Script does not have the method 'setModelContext(ModelContext)'");
 		}
-		/*
-		if (hasModelContext) {
-			Field f = null;
-			
-			try {
-				f = getField("modelContext");
-				
-				if (f.getType() != us.wthr.jdem846.ModelContext.class) {
-					throw new ScriptingException("Field 'modelContext' is of incorrect type");
-				}
-				
-				f.set(this.scalaObject, modelContext);
-				
-			} catch (Exception ex) {
-				log.warn("Failed to set model context: " + ex.getMessage(), ex);
-			} 
 
-		}
-		*/
 	}
 	
 	@Override
@@ -176,19 +151,19 @@ public class ScalaScriptProxy implements ScriptProxy
 	}
 	
 	@Override
-	public void onLightLevels(double latitude, double longitude, LightingValues lightingValues) throws ScriptingException
+	public void onLightLevels(double latitude, double longitude, double elevation, LightingValues lightingValues) throws ScriptingException
 	{
-		onLightLevelsCallBack.call(latitude, longitude, lightingValues);
+		onLightLevelsCallBack.call(latitude, longitude, elevation, lightingValues);
 	}
 	
-	public void preRender(GraphicsRenderer renderer) throws ScriptingException
+	public void preRender(GraphicsRenderer renderer, View view) throws ScriptingException
 	{
-		preRenderCallBack.call(renderer);
+		preRenderCallBack.call(renderer, view);
 	}
 	
-	public void postRender(GraphicsRenderer renderer) throws ScriptingException
+	public void postRender(GraphicsRenderer renderer, View view) throws ScriptingException
 	{
-		postRenderCallBack.call(renderer);
+		postRenderCallBack.call(renderer, view);
 	}
 	
 	protected boolean hasField(String fieldName)
@@ -212,6 +187,15 @@ public class ScalaScriptProxy implements ScriptProxy
 			throw new ScriptingException("Field '" + fieldName + "' not found: " + ex.getMessage(), ex);
 		} 
 		return field;
+	}
+	
+	protected boolean hasMethod(String methodName)
+	{
+		if (getMethod(methodName) != null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	protected Method getMethod(String methodName)

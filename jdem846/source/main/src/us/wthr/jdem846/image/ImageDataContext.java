@@ -30,7 +30,7 @@ public class ImageDataContext implements DataContext
 	private int columns;
 	private int rows;
 	
-	private int[] rgbaBufferA = new int[4];
+	//private int[] rgbaBufferA = new int[4];
 	
 	private List<SimpleGeoImage> imageList = new ArrayList<SimpleGeoImage>();
 	
@@ -111,6 +111,8 @@ public class ImageDataContext implements DataContext
 	{
 		boolean pixelLoaded = false;
 		int i = 0;
+		
+		int[] rgbaBufferA = {0, 0, 0, 0};//new int[4];
 		
 		for (SimpleGeoImage image : imageList) {
 			if (image.contains(latitude, longitude)) {

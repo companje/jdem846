@@ -15,6 +15,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
@@ -206,11 +207,7 @@ public class ModelBuilder extends InterruptibleProcess
 		
 		useScripting = globalOptionModel.getUseScripting();
 		
-		if (useScripting 
-				&& modelContext.getScriptingContext() != null 
-				&& modelContext.getScriptingContext().getScriptProxy() != null) {
-			modelContext.getScriptingContext().getScriptProxy().setModelContext(modelContext);
-		}
+		
 		
 		
 		int numberOfThreads = globalOptionModel.getNumberOfThreads();
@@ -266,7 +263,24 @@ public class ModelBuilder extends InterruptibleProcess
 		
 		
 		
-		
+		if (useScripting 
+				&& modelContext.getScriptingContext() != null 
+				&& modelContext.getScriptingContext().getScriptProxy() != null) {
+			//modelContext.getScriptingContext().getScriptProxy().setModelContext(modelContext);
+			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
+			
+			
+			try {
+				scriptProxy.setProperty("modelContext", modelContext);
+				scriptProxy.setProperty("modelGrid", modelGrid);
+				scriptProxy.setProperty("globalOptionModel", globalOptionModel);
+				scriptProxy.setProperty("modelDimensions", modelDimensions);
+			} catch (ScriptingException ex) {
+				throw new RenderEngineException("Error setting script properties: " + ex.getMessage(), ex);
+			}
+			
+			
+		}
 		
 		
 		
@@ -326,7 +340,7 @@ public class ModelBuilder extends InterruptibleProcess
 		
 		
 		int threadNumber = 0;
-		for (int y = 0; y < dataRows; y+=rowsPerThread) {
+		for (int y = 0; y <= dataRows; y+=rowsPerThread) {
 			
 			chunkNorth = north - ((double)y * latitudeResolution);
 			chunkSouth = chunkNorth - ((double)rowsPerThread * latitudeResolution);

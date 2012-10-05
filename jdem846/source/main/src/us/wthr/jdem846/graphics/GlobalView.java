@@ -12,16 +12,20 @@ public class GlobalView extends AbstractView implements View
 	{
 		double radius = this.radius() + elevation;
 		Spheres.getPoint3D(longitude, latitude, radius, point);
+		point.z *= -1.0;
 	}
 	
 	@Override
 	public double radius()
 	{
+		double radius = 0;
 		if (planet != null) {
-			return planet.getMeanRadius() * 1000.0;
+			radius = planet.getMeanRadius() * 1000.0;
 		} else {
-			return DemConstants.EARTH_MEAN_RADIUS * 1000.0;
+			radius = DemConstants.EARTH_MEAN_RADIUS * 1000.0;
 		}
+		
+		return radius + (modelContext.getRasterDataContext().getDataMaximumValue() * globalOptionModel.getElevationMultiple());
 	}
 
 	@Override

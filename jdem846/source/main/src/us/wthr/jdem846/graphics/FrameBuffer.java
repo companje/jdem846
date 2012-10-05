@@ -53,8 +53,8 @@ public class FrameBuffer
 		}
 		
 		if (point.z >= FB_MINIMUM_Z_INDEX) {
-			rgba = point.rgba;
-			//rgba = ColorUtil.overlayColor(point.rgba, rgba);
+			//rgba = point.rgba;
+			rgba = ColorUtil.overlayColor(point.rgba, rgba);
 		}
 		
 		if (point.right != null) {

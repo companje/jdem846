@@ -112,7 +112,7 @@ public class RenderProcess
 		
 		double horizFieldOfView = this.modelView.horizFieldOfView();
 
-		this.renderer.viewPort(width, height);
+		this.renderer.viewPort(0, 0, width, height);
 		this.renderer.matrixMode(MatrixModeEnum.PROJECTION);
 		this.renderer.loadIdentity();
 		
@@ -121,7 +121,7 @@ public class RenderProcess
 		double far = this.modelView.farClipDistance();
 		double eyeZ = this.modelView.eyeZ();
 		
-		double radius = this.modelView.radius() + this.modelContext.getRasterDataContext().getDataMaximumValue();
+		double radius = this.modelView.radius();// + this.modelContext.getRasterDataContext().getDataMaximumValue();
 		
 		
 		
@@ -135,6 +135,9 @@ public class RenderProcess
 		
 		/*
 		this.renderer.perspective(horizFieldOfView, aspect, near, far);
+		
+		
+		
 		this.renderer.lookAt(0							// Eye X
 				, 0							// Eye Y
 				, eyeZ						// Eye Z
@@ -156,9 +159,9 @@ public class RenderProcess
 	{
 		this.setPerspective();
 		
+		
 		this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
 		this.renderer.loadIdentity();
-		
 		
 		
 		this.renderer.pushMatrix();
@@ -181,9 +184,9 @@ public class RenderProcess
 			
 			this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
 			this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
-			//this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
+			this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
 			
-			/*
+			
 			this.renderer.scale(view.getZoom(), view.getZoom(), view.getZoom());
 			
 			double meanRadius = (this.planet != null) ? this.planet.getMeanRadius() : DemConstants.EARTH_MEAN_RADIUS;
@@ -191,14 +194,14 @@ public class RenderProcess
 									, view.getShiftY() * meanRadius * 1000
 									, view.getShiftZ() * meanRadius * 1000);
 			
-			*/
+			
 		}
 		
 		
 		this.renderer.pushMatrix();
 		if (this.globalOptionModel.getUseScripting() && this.scriptProxy != null) {
 			try {
-				this.scriptProxy.preRender(this.renderer);
+				this.scriptProxy.preRender(this.renderer, this.modelView);
 			} catch (ScriptingException ex) {
 				log.warn("Exception thrown in user script: " + ex.getMessage(), ex);
 			}
@@ -229,7 +232,7 @@ public class RenderProcess
 		this.renderer.pushMatrix();
 		if (this.globalOptionModel.getUseScripting() && this.scriptProxy != null) {
 			try {
-				this.scriptProxy.postRender(this.renderer);
+				this.scriptProxy.postRender(this.renderer, this.modelView);
 			} catch (ScriptingException ex) {
 				log.warn("Exception thrown in user script: " + ex.getMessage(), ex);
 			}
@@ -267,7 +270,7 @@ public class RenderProcess
 		
 		this.renderer.texCoord(left, front);
 		
-		pointVector.z = -pointVector.z;
+		//pointVector.z = -pointVector.z;
 		this.renderer.vertex(pointVector);
 		
 		
