@@ -301,7 +301,7 @@ public class HillshadingProcessor extends GridProcessor
 			ColorAdjustments.adjustBrightness(rgbaBuffer, dot);
 		}
 
-		//modelGrid.setRgba(latitude, longitude, rgbaBuffer);
+		modelGrid.setRgba(latitude, longitude, rgbaBuffer);
 	}
 
 	@Override
