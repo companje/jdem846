@@ -19,4 +19,9 @@ public class BufferPoint {
 		this.z = z;
 	}
 	
+	public boolean isOpaque()
+	{
+		return (0xFF & (rgba >>> 24)) == 0xFF;
+	}
+	
 }
