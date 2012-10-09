@@ -160,8 +160,10 @@ public class FrameBuffer
 		BufferPoint point = new BufferPoint(rgba, z);
 		if (this.buffer[idx] == null) {
 			this.buffer[idx] = point;
-		} else if (this.buffer[idx] != null && point.isOpaque() && buffer[idx].z < z) {
+		} else if (this.buffer[idx] != null && point.isOpaque() && buffer[idx].z < z) { 
+			BufferPoint reapply = buffer[idx].right;
 			this.buffer[idx] = point;
+			this.set(this.buffer[idx], reapply);
 		} else {
 			this.set(this.buffer[idx], point);
 		}
