@@ -126,6 +126,15 @@ public class DockingContainerPanel extends Panel
 
 	}
 	
+	public int getSelectedCenterTabIndex()
+	{
+		return centerTabPanel.getSelectedIndex();
+	}
+	
+	public int getSelectedSouthTabIndex()
+	{
+		return southTabPanel.getSelectedIndex();
+	}
 	
 	protected boolean containerHasComponent(Container container, Component comp)
 	{
