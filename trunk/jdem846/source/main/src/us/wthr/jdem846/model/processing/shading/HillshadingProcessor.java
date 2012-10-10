@@ -210,6 +210,7 @@ public class HillshadingProcessor extends GridProcessor
 			throws RenderEngineException
 	{
 		processPointColor(latitude, longitude);
+		//double elevation = modelGrid.getElevation(latitude, longitude, false);
 	}
 
 	@Override

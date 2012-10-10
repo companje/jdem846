@@ -393,7 +393,15 @@ public class DemProjectPane extends JdemPanel implements Savable
 				}
 				
 				// TODO: On configuration changed
-				onConfigurationChanged();
+				
+				
+				if (e.getPropertyId().equalsIgnoreCase("us.wthr.jdem846.model.GlobalOptionModel.viewAngle")) {
+					onConfigurationChanged(false, true);
+				} else {
+					onConfigurationChanged();
+				}
+				
+				
 			}			
 		});
 		
@@ -497,6 +505,14 @@ public class DemProjectPane extends JdemPanel implements Savable
 		this.addCenter(I18N.get("us.wthr.jdem846.ui.projectPane.tab.script"), scriptPane);
 		this.addCenter("Render", renderPane);
 		
+		
+		scriptPane.addComponentListener(new ComponentAdapter() {
+			public void componentHidden(ComponentEvent e)
+			{
+				log.info("TAB PANE HIDDEN!");
+				updateScriptingContext();
+			}
+		});
 		
 		
 		ComponentListener setLeftRightWidthsAdapter = new ComponentAdapter() {
@@ -776,16 +792,27 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 	}
 	
-
 	protected void onConfigurationChanged()
+	{
+		onConfigurationChanged(false, true);
+	}
+	
+	protected void onConfigurationChanged(boolean updateScript, boolean doQuickPreviewUpdate)
 	{
 		if (ignoreValueChanges)
 			return;
 		
-
-		applyOptionsToUI();
-		updateScriptingContext();
-		onDataModelChanged(false, false, false, true);
+		if (!doQuickPreviewUpdate) {
+			applyOptionsToUI();
+			if (updateScript) {
+				updateScriptingContext();
+			}
+			onDataModelChanged(false, false, false, true);
+		} else {
+			updatePreviewPane(false, false, false, true);
+		}
+		
+		
 	}
 
 	
