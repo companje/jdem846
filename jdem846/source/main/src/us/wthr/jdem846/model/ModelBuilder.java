@@ -322,74 +322,85 @@ public class ModelBuilder extends InterruptibleProcess
 		double latitudeResolution = modelDimensions.getTextureLatitudeResolution();
 		double longitudeResolution = modelDimensions.getTextureLongitudeResolution();
 		
-		int dataCols = (int) MathExt.round((east - west) / longitudeResolution);
-		int dataRows = (int) MathExt.round((north - south) / latitudeResolution);
-		
-		int colsPerBatch = (int) MathExt.ceil((double)dataCols / (double)numberOfThreads);
-		int batchHeight = (int) ((double)numberOfThreads * latitudeResolution);
-		
-		int rowsPerThread = (int) MathExt.ceil((double)dataRows / (double)numberOfThreads);
-		
-		double chunkNorth = 0;
-		double chunkSouth = 0;
-		double chunkEast = 0;
-		double chunkWest = 0;
 		
 		
-		GridProcessChunkThread[] threads = new GridProcessChunkThread[numberOfThreads];
 		
-		
-		int threadNumber = 0;
-		for (int y = 0; y <= dataRows; y+=rowsPerThread) {
+		if (numberOfThreads == 1) {
+			ModelProgram modelProgram = this.modelPrograms.get(0);
+			GridProcessChunkThread chunkThread = new GridProcessChunkThread(this.latitudeProcessedList
+					, modelProgram
+					, 0
+					, north
+					, south
+					, east
+					, west
+					, latitudeResolution
+					, longitudeResolution);
+			chunkThread.run();
 			
-			chunkNorth = north - ((double)y * latitudeResolution);
-			chunkSouth = chunkNorth - ((double)rowsPerThread * latitudeResolution);
+		} else {
+			GridProcessChunkThread[] threads = new GridProcessChunkThread[numberOfThreads];
 			
-			if (chunkSouth < south) {
-				chunkSouth = south;
-			}
+			int dataRows = (int) MathExt.round((north - south) / latitudeResolution);
 			
-			if (threadNumber >= 0 && threadNumber < modelPrograms.size()) {
-				ModelProgram modelProgram = this.modelPrograms.get(threadNumber);
-				threads[threadNumber] = new GridProcessChunkThread(this.latitudeProcessedList
-																	, modelProgram
-																	, threadNumber
-																	, chunkNorth
-																	, chunkSouth
-																	, east
-																	, west
-																	, latitudeResolution
-																	, longitudeResolution);
+			int rowsPerThread = (int) MathExt.ceil((double)dataRows / (double)numberOfThreads);
+			
+			double chunkNorth = 0;
+			double chunkSouth = 0;
+			
+			int threadNumber = 0;
+			for (int y = 0; y <= dataRows; y+=rowsPerThread) {
 				
+				chunkNorth = north - ((double)y * latitudeResolution);
+				chunkSouth = chunkNorth - ((double)rowsPerThread * latitudeResolution);
 				
-				threads[threadNumber].start();
-			} else {
-				log.warn("Invalid thread number: " + threadNumber);
-			}
+				if (chunkSouth < south) {
+					chunkSouth = south;
+				}
+				
+				if (threadNumber >= 0 && threadNumber < modelPrograms.size()) {
+					ModelProgram modelProgram = this.modelPrograms.get(threadNumber);
+					threads[threadNumber] = new GridProcessChunkThread(this.latitudeProcessedList
+																		, modelProgram
+																		, threadNumber
+																		, chunkNorth
+																		, chunkSouth
+																		, east
+																		, west
+																		, latitudeResolution
+																		, longitudeResolution);
+					
+					
+					threads[threadNumber].start();
+				} else {
+					log.warn("Invalid thread number: " + threadNumber);
+				}
 
-			threadNumber++;
-			//processCycleChunk(0, chunkNorth, chunkSouth, east, west, latitudeResolution, longitudeResolution);
+				threadNumber++;
+
+			}
 			
-		}
-		
-		
-		boolean threadsActive = true;
-		
-		while (threadsActive) {
-			threadsActive = false;
 			
-			for (GridProcessChunkThread thread : threads) {
-				if (thread != null && !thread.isCompleted()) {
-					threadsActive = true;
-					break;
+			
+			boolean threadsActive = true;
+			
+			while (threadsActive) {
+				threadsActive = false;
+				
+				for (GridProcessChunkThread thread : threads) {
+					if (thread != null && !thread.isCompleted()) {
+						threadsActive = true;
+						break;
+					}
+				}
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException ex) {
+					log.warn("Thread sleep interrupted while waiting for grid process threads to complete: " + ex.getMessage(), ex);
 				}
 			}
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException ex) {
-				log.warn("Thread sleep interrupted while waiting for grid process threads to complete: " + ex.getMessage(), ex);
-			}
 		}
+		
 		
 		
 
