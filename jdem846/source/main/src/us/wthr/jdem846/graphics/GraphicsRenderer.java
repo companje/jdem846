@@ -160,14 +160,15 @@ public class GraphicsRenderer
 		}
 		
 		double c = MathExt.cos(_fov) / s;
+
 		
 		m.set(0, 0, (c / aspect));
 		m.set(1, 1, c);
 		m.set(2, 2, -(far + near) / deltaZ);
-		m.set(2, 3, -1.0);
-		m.set(3, 2, -2.0 * near * far / deltaZ);
+		m.set(3, 2, -1.0);
+		m.set(2, 3, -2.0 * near * far / deltaZ);
 		m.set(3, 3, 0);
-		
+
 		this.multMatrix(m);
 
 	}
@@ -196,7 +197,23 @@ public class GraphicsRenderer
 		Vectors.normalize(side);
 		
 		Vectors.crossProduct(side, forward, up);
+		//Vectors.normalize(up);
 		
+		/*
+		m.set(0, 0, side.x);
+		m.set(0, 1, side.y);
+		m.set(0, 2, side.z);
+
+		m.set(1, 0, up.x);
+		m.set(1, 1, up.y);
+		m.set(1, 2, up.z);
+
+		m.set(2, 0, -forward.x);
+		m.set(2, 1, -forward.y);
+		m.set(2, 2, -forward.z);
+		*/
+		
+
 		m.set(0, 0, side.x);
 		m.set(1, 0, side.y);
 		m.set(2, 0, side.z);
@@ -211,6 +228,7 @@ public class GraphicsRenderer
 		
 		this.multMatrix(m);
 		this.translate(-eyeX, -eyeY, -eyeZ);
+		//this.translate(-eyeX, -eyeY, -eyeZ);
 		
 	}
 	
@@ -296,25 +314,17 @@ public class GraphicsRenderer
 	
 	public void translate(double x, double y, double z)
 	{
-		Matrix m = new Matrix(true);
-		
-		m.set(0, 3, x);
-		m.set(1, 3, y);
-		m.set(2, 3, z);
-		
-		this.multMatrix(this.modelViewStack.top(), m);
+		if (this.currentMatrixStack != null && this.currentMatrixStack.top() != null) {
+			this.currentMatrixStack.top().translate(x, y, z);
+		}
 	}
 	
 	
 	public void scale(double x, double y, double z)
 	{
-		Matrix m = new Matrix(true);
-		
-		m.set(0, 0, x);
-		m.set(1, 1, y);
-		m.set(2, 2, z);
-		
-		this.multMatrix(this.modelViewStack.top(), m);
+		if (this.currentMatrixStack != null && this.currentMatrixStack.top() != null) {
+			this.currentMatrixStack.top().scale(x, y, z);
+		}
 	}
 	
 	public void begin(PrimitiveModeEnum mode)
@@ -425,7 +435,7 @@ public class GraphicsRenderer
 		
 		
 		//if (-v.z > this.far || -v.z < this.near) {
-		//	return false;
+			//return false;
 		//}
 		
 		return true;

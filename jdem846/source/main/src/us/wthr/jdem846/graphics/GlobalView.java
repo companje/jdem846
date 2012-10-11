@@ -7,10 +7,12 @@ import us.wthr.jdem846.math.Vector;
 
 public class GlobalView extends AbstractView implements View
 {
-
+	
+	private double dataMaximumValue = DemConstants.ELEV_UNDETERMINED;
+	
 	public void project(double latitude, double longitude, double elevation, Vector point)
 	{
-		double radius = this.radius() + elevation;
+		double radius = 0.5;//this.radius() + elevation;
 		Spheres.getPoint3D(longitude, latitude, radius, point);
 		point.z *= -1.0;
 	}
@@ -25,7 +27,12 @@ public class GlobalView extends AbstractView implements View
 			radius = DemConstants.EARTH_MEAN_RADIUS * 1000.0;
 		}
 		
-		return radius + (modelContext.getRasterDataContext().getDataMaximumValue() * globalOptionModel.getElevationMultiple());
+		if (dataMaximumValue == DemConstants.ELEV_UNDETERMINED) {
+			dataMaximumValue = modelContext.getRasterDataContext().getDataMaximumValue();
+		}
+		
+		//return radius + (dataMaximumValue * globalOptionModel.getElevationMultiple());
+		return 0.5;
 	}
 
 	@Override
@@ -37,28 +44,31 @@ public class GlobalView extends AbstractView implements View
 	@Override
 	public double elevationFromSurface()
 	{
-		return DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH;
+		//return DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH;
+		return 3.0;
 	}
 
 	@Override
 	public double nearClipDistance()
 	{
-		double tha = MathExt.tan(MathExt.radians(horizFieldOfView()) * 0.5);
-		return elevationFromSurface() / (2.0 * MathExt.sqrt(2.0 * tha * tha + 1.0));
+		//double tha = MathExt.tan(MathExt.radians(horizFieldOfView()) * 0.5);
+		//return elevationFromSurface() / (2.0 * MathExt.sqrt(2.0 * tha * tha + 1.0));
+		return 0.5;
 	}
 
 	@Override
 	public double farClipDistance()
 	{
 		double elevationFromSurface = elevationFromSurface();
-		return MathExt.sqrt(elevationFromSurface * (2.0 * radius() + elevationFromSurface));
+		//return MathExt.sqrt(elevationFromSurface * (2.0 * radius() + elevationFromSurface));
+		return -0.5;
 	}
 
 	@Override
 	public double eyeZ()
 	{
-		double tha = MathExt.tan(MathExt.radians(horizFieldOfView()) * 0.5);
-		return radius() / tha;
+		//return radius() / MathExt.tan(MathExt.radians(horizFieldOfView()) * 0.5);
+		return 2.0;
 	}
 
 }

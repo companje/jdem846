@@ -41,6 +41,11 @@ public class DemColor
 		this.setColor(r, g, b, a);
 	}
 	
+	public DemColor copy()
+	{
+		return new DemColor(this.red, this.green, this.blue, this.alpha);
+	}
+	
 	
 	public void setColor(double r, double g, double b, double a)
 	{

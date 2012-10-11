@@ -186,7 +186,13 @@ public class ModelBuilder extends InterruptibleProcess
 			
 			int dataRows = (int) MathExt.round((globalOptionModel.getNorthLimit() - globalOptionModel.getSouthLimit()) / modelDimensions.getTextureLatitudeResolution());
 			this.latitudeProcessedList = new LatitudeProcessedList(globalOptionModel.getNorthLimit(), modelDimensions.getTextureLatitudeResolution(), dataRows);
+		} else {
+			
+			this.latitudeProcessedList.reset();
+			
 		}
+		
+		
 		
 		/*
 		if (modelCanvas == null) {

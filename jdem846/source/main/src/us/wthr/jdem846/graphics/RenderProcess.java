@@ -113,6 +113,10 @@ public class RenderProcess
 		double horizFieldOfView = this.modelView.horizFieldOfView();
 
 		this.renderer.viewPort(0, 0, width, height);
+		
+		this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
+		this.renderer.loadIdentity();
+		
 		this.renderer.matrixMode(MatrixModeEnum.PROJECTION);
 		this.renderer.loadIdentity();
 		
@@ -125,29 +129,46 @@ public class RenderProcess
 		
 		
 		
-		this.renderer.ortho(-radius		// Left
-							, radius	// Right
-							, -radius	// Bottom
-							, radius	// Top
-							, -radius	// Near
-							, radius);	// Far
+		if (PerspectiveTypeEnum.getPerspectiveTypeFromIdentifier(this.globalOptionModel.getPerspectiveType()) == PerspectiveTypeEnum.ORTHOGRAPHIC) {
+			this.renderer.ortho(-radius		// Left
+					, radius	// Right
+					, -radius	// Bottom
+					, radius	// Top
+					, -radius	// Near
+					, radius);	// Far
+			
+			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
+			this.renderer.loadIdentity();
+		} else if (PerspectiveTypeEnum.getPerspectiveTypeFromIdentifier(this.globalOptionModel.getPerspectiveType()) == PerspectiveTypeEnum.PERSPECTIVE) {
+			
+			this.renderer.perspective(horizFieldOfView, aspect, near, far);
+			
+			
+			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
+			
+			
+			
+			this.renderer.lookAt(0							// Eye X
+					, 0							// Eye Y
+					, eyeZ						// Eye Z
+					, 0							// Center X
+					, 0							// Center Y
+					, 0							// Center Z
+					, 0							// Up X
+					, 1							// Up Y
+					, 0);						// Up Z
+					
+			
+			
+			//this.renderer.loadIdentity();
+		}
 		
 		
 		/*
-		this.renderer.perspective(horizFieldOfView, aspect, near, far);
 		
-		
-		
-		this.renderer.lookAt(0							// Eye X
-				, 0							// Eye Y
-				, eyeZ						// Eye Z
-				, 0							// Center X
-				, 0							// Center Y
-				, 0							// Center Z
-				, 0							// Up X
-				, 1							// Up Y
-				, 0);						// Up Z
 		*/
+		
+		
 		
 		
 		
@@ -160,8 +181,7 @@ public class RenderProcess
 		this.setPerspective();
 		
 		
-		this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
-		this.renderer.loadIdentity();
+		
 		
 		
 		this.renderer.pushMatrix();
@@ -180,7 +200,11 @@ public class RenderProcess
 		
 		ViewPerspective view = this.globalOptionModel.getViewAngle();
 		
+		
+		double radius = this.modelView.radius();
+		
 		if (view != null) {
+			
 			
 			this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
 			this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
@@ -188,16 +212,19 @@ public class RenderProcess
 			
 			
 			this.renderer.scale(view.getZoom(), view.getZoom(), view.getZoom());
-			
-			double meanRadius = (this.planet != null) ? this.planet.getMeanRadius() : DemConstants.EARTH_MEAN_RADIUS;
-			this.renderer.translate(view.getShiftX() * meanRadius * 1000
-									, view.getShiftY() * meanRadius * 1000
-									, view.getShiftZ() * meanRadius * 1000);
+	
+			this.renderer.translate(view.getShiftX() * radius
+									, view.getShiftY() * radius
+									, view.getShiftZ() * radius);
 			
 			
 		}
 		
-		
+		log.info("Zoom: " + view.getZoom());
+		double eyeZ = this.modelView.eyeZ();
+		//this.renderer.translate(0.0, 0.0, -eyeZ);
+		//this.renderer.translate(0, 0, (view.getZoom() * radius));
+
 		this.renderer.pushMatrix();
 		if (this.globalOptionModel.getUseScripting() && this.scriptProxy != null) {
 			try {

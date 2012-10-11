@@ -1322,7 +1322,6 @@ public class DemProjectPane extends JdemPanel implements Savable
 	
 	public void fireCreateModelListeners(ModelContext modelContext)
 	{
-
 		for (CreateModelListener listener : createModelListeners) {
 			listener.onCreateModel(modelContext);
 		}

@@ -32,9 +32,8 @@ public class GradientColoring implements ModelColoring
 	private static final int UNITS_PERCENT = 0;
 	private static final int UNITS_METERS = 10;
 	
-	private String name;
-	private String identifier;
-	private boolean needsMinMaxElevation;
+
+
 	private int units;
 
 	private static DemColor defaultColor = new DemColor(0, 0, 0, 0xFF);
@@ -50,10 +49,22 @@ public class GradientColoring implements ModelColoring
 		reset();
 	}
 	
+	public GradientColoring() throws GradientLoadException
+	{
+		
+	}
 
 	public ModelColoring copy() throws Exception
 	{
-		return new GradientColoring(configFile);
+		//return new GradientColoring(configFile);
+		GradientColoring c = new GradientColoring();
+		c.gradient = this.gradient.copy();
+		c.units = this.units;
+		
+		c.colorStops = new GradientColorStop[c.gradient.getColorStops().size()];
+		c.gradient.getColorStops().toArray(c.colorStops);
+		
+		return c;
 	}
 	
 	
@@ -66,9 +77,7 @@ public class GradientColoring implements ModelColoring
 		} catch (Exception ex) {
 			throw new GradientLoadException(configFile, "Invalid gradient file location: " + ex.getMessage(), ex);
 		}
-		this.name = gradient.getName();
-		this.identifier = gradient.getIdentifier();
-		this.needsMinMaxElevation = gradient.needsMinMaxElevation();
+
 		if (gradient.getUnits().equalsIgnoreCase("percent")) {
 			this.units = UNITS_PERCENT;
 		} else if (gradient.getUnits().equalsIgnoreCase("meters")) {
@@ -91,19 +100,19 @@ public class GradientColoring implements ModelColoring
 	
 	public String getName()
 	{
-		return name;
+		return gradient.getName();
 	}
 
 
 	public String getIdentifier()
 	{
-		return identifier;
+		return gradient.getIdentifier();
 	}
 
 
 	public boolean needsMinMaxElevation()
 	{
-		return needsMinMaxElevation;
+		return gradient.needsMinMaxElevation();
 	}
 
 

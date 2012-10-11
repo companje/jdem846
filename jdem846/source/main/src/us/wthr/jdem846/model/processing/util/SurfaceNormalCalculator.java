@@ -25,25 +25,26 @@ public class SurfaceNormalCalculator
 
 	private double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
 	
-	private double[] normalBufferA = new double[3];
-	private double[] normalBufferB = new double[3];
+	private Vector normalBufferA = new Vector();
+	private Vector normalBufferB = new Vector();
 	
-	protected double backLeftPoints[] = new double[3];
-	protected double backRightPoints[] = new double[3];
-	protected double frontLeftPoints[] = new double[3];
-	protected double frontRightPoints[] = new double[3];
+	protected Vector backLeftPoints = new Vector();
+	protected Vector backRightPoints = new Vector();
+	protected Vector frontLeftPoints = new Vector();
+	protected Vector frontRightPoints = new Vector();
 	
-	protected double xyzN[] = new double[3];
-	protected double xyzS[] = new double[3];
-	protected double xyzE[] = new double[3];
-	protected double xyzW[] = new double[3];
-	protected double xyzC[] = new double[3];
+	protected Vector xyzN = new Vector();
+	protected Vector xyzS = new Vector();
+	protected Vector xyzE = new Vector();
+	protected Vector xyzW = new Vector();
+	protected Vector xyzC = new Vector();
 	
 	
-	protected double normalNW[] = new double[3];
-	protected double normalSW[] = new double[3];
-	protected double normalSE[] = new double[3];
-	protected double normalNE[] = new double[3];
+	protected Vector normalNW = new Vector();
+	protected Vector normalSW = new Vector();
+	protected Vector normalSE = new Vector();
+	protected Vector normalNE = new Vector();
+	
 	
 	protected ViewPerspective viewPerspective;
 	
@@ -165,15 +166,15 @@ public class SurfaceNormalCalculator
 		Vectors.calcNormal(xyzC, xyzS, xyzE, normalSE); // SE
 		Vectors.calcNormal(xyzN, xyzC, xyzE, normalNE); // NE
 		
-		normal.x = (normalNW[0] + normalSW[0] + normalSE[0] + normalNE[0]) / 4.0;
-		normal.y = (normalNW[1] + normalSW[1] + normalSE[1] + normalNE[1]) / 4.0;
-		normal.z = (normalNW[2] + normalSW[2] + normalSE[2] + normalNE[2]) / 4.0;
+		normal.x = (normalNW.x + normalSW.x + normalSE.x + normalNE.x) / 4.0;
+		normal.y = (normalNW.y + normalSW.y + normalSE.y + normalNE.y) / 4.0;
+		normal.z = (normalNW.z + normalSW.z + normalSE.z + normalNE.z) / 4.0;
 
 		
 	}
 	
 	
-	protected void fillPointXYZ(double[] P, double latitude, double longitude, double elevation)
+	protected void fillPointXYZ(Vector P, double latitude, double longitude, double elevation)
 	{
 		double radius = meanRadius * 1000 + elevation;
 			
@@ -187,19 +188,12 @@ public class SurfaceNormalCalculator
 			} else {
 				_longitude -= 180.0;
 			}
-			
-			
-			//longitude += 180.0;
+
 		}
 		
 		
 		Spheres.getPoint3D(_longitude, _latitude, radius, P);
 
-		//if (viewPerspective != null) {
-			//Vectors.rotate(viewPerspective.getRotateX(), viewPerspective.getRotateY(), 0.0, P, Vectors.YXZ);
-		//}
-		
-		
 	}
 	
 	
@@ -287,31 +281,31 @@ public class SurfaceNormalCalculator
 
 		
 		calculateNormal(0.0, wElev, midElev, nElev, CornerEnum.SOUTHEAST, normalBufferA);
-		normalBufferB[0] = normalBufferA[0];
-		normalBufferB[1] = normalBufferA[1];
-		normalBufferB[2] = normalBufferA[2];
+		normalBufferB.x = normalBufferA.x;
+		normalBufferB.y = normalBufferA.y;
+		normalBufferB.z = normalBufferA.z;
 		
 		// SW Normal
 		calculateNormal(wElev, 0.0, sElev, midElev, CornerEnum.NORTHEAST, normalBufferA);
-		normalBufferB[0] += normalBufferA[0];
-		normalBufferB[1] += normalBufferA[1];
-		normalBufferB[2] += normalBufferA[2];
+		normalBufferB.x += normalBufferA.x;
+		normalBufferB.y += normalBufferA.y;
+		normalBufferB.z += normalBufferA.z;
 		
 		// SE Normal
 		calculateNormal(midElev, sElev, 0.0, eElev, CornerEnum.NORTHWEST, normalBufferA);
-		normalBufferB[0] += normalBufferA[0];
-		normalBufferB[1] += normalBufferA[1];
-		normalBufferB[2] += normalBufferA[2];
+		normalBufferB.x += normalBufferA.x;
+		normalBufferB.y += normalBufferA.y;
+		normalBufferB.z += normalBufferA.z;
 		
 		// NE Normal
 		calculateNormal(nElev, midElev, eElev, 0.0, CornerEnum.SOUTHWEST, normalBufferA);
-		normalBufferB[0] += normalBufferA[0];
-		normalBufferB[1] += normalBufferA[1];
-		normalBufferB[2] += normalBufferA[2];
+		normalBufferB.x += normalBufferA.x;
+		normalBufferB.y += normalBufferA.y;
+		normalBufferB.z += normalBufferA.z;
 		
-		normal.x = normalBufferB[0] / 4.0;
-		normal.y = normalBufferB[1] / 4.0;
-		normal.z = normalBufferB[2] / 4.0;
+		normal.x = normalBufferB.x / 4.0;
+		normal.y = normalBufferB.y / 4.0;
+		normal.z = normalBufferB.z / 4.0;
 		
 		
 	}
@@ -335,15 +329,15 @@ public class SurfaceNormalCalculator
 	
 	
 	
-	protected void calculateNormal(double nw, double sw, double se, double ne, CornerEnum corner, double[] normal)
+	protected void calculateNormal(double nw, double sw, double se, double ne, CornerEnum corner, Vector normal)
 	{
 		
 		
 		
-		backLeftPoints[1] = nw;
-		backRightPoints[1] = ne;
-		frontLeftPoints[1] = sw;
-		frontRightPoints[1] = se;
+		backLeftPoints.y = nw;
+		backRightPoints.y = ne;
+		frontLeftPoints.y = sw;
+		frontRightPoints.y = se;
 		
 		if (corner == CornerEnum.NORTHWEST) {
 			Vectors.calcNormal(backLeftPoints, frontLeftPoints, backRightPoints, normal);
@@ -364,21 +358,21 @@ public class SurfaceNormalCalculator
 		double resolutionMeters = RasterDataContext.getMetersResolution(meanRadius, latitude, longitude, latitudeResolution, longitudeResolution);
 		double xzRes = (resolutionMeters / 2.0);
 		
-		backLeftPoints[0] = -xzRes;
-		backLeftPoints[1] = 0.0;
-		backLeftPoints[2] = -xzRes;
+		backLeftPoints.x = -xzRes;
+		backLeftPoints.y = 0.0;
+		backLeftPoints.z = -xzRes;
 		
-		backRightPoints[0] = xzRes;
-		backRightPoints[1] = 0.0;
-		backRightPoints[2] = -xzRes;
+		backRightPoints.x = xzRes;
+		backRightPoints.y = 0.0;
+		backRightPoints.z = -xzRes;
 		
-		frontLeftPoints[0] = -xzRes;
-		frontLeftPoints[1] = 0.0;
-		frontLeftPoints[2] = xzRes;
+		frontLeftPoints.x = -xzRes;
+		frontLeftPoints.y = 0.0;
+		frontLeftPoints.z = xzRes;
 		
-		frontRightPoints[0] = xzRes;
-		frontRightPoints[1] = 0.0;
-		frontRightPoints[2] = xzRes;
+		frontRightPoints.x = xzRes;
+		frontRightPoints.y = 0.0;
+		frontRightPoints.z = xzRes;
 		
 	}
 }
