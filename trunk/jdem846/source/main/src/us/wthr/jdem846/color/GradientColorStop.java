@@ -42,36 +42,17 @@ public class GradientColorStop
     	this.position = position;
     	color = new DemColor(red, green, blue, alpha);
 	}
-	
-	/*
-	//1.000000, 1.000000, 1.000000, 1.000000
-	public GradientColorStop(String source_line)
-	{
-		float _pos = 0;
-		float _red = 0;
-		float _green = 0;
-		float _blue = 0;
-		float _alpha = 1.0f;
-		
-		String[] parts = source_line.split(", ");
-		if (parts.length == 4) {
-			_pos = Float.parseFloat(parts[0]);
-			_red = Float.parseFloat(parts[1]);
-			_green = Float.parseFloat(parts[2]);
-			_blue = Float.parseFloat(parts[3]);
-			
-			if (_red > 1)
-				_red = _red / 255.0f;
-			if (_green > 1)
-				_green = _green / 255.0f;
-			if (_blue > 1)
-				_blue = _blue / 255.0f;
-		}
 
-		position = _pos;
-		color = new DemColor(_red, _green, _blue, _alpha);
+	public GradientColorStop(double position, DemColor color)
+	{
+		this.position = position;
+		this.color = color;
 	}
-	*/
+	
+	public GradientColorStop copy()
+	{
+		return new GradientColorStop(this.position, this.color.copy());
+	}
 	
 	
 	public String toString()

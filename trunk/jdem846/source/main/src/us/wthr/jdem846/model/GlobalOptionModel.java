@@ -5,10 +5,12 @@ import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
+import us.wthr.jdem846.graphics.PerspectiveTypeEnum;
 import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 import us.wthr.jdem846.model.annotations.ValueBounds;
 import us.wthr.jdem846.model.listModels.ElevationScalerListModel;
+import us.wthr.jdem846.model.listModels.PerspectiveTypeListModel;
 import us.wthr.jdem846.model.listModels.PixelStackDepthListModel;
 import us.wthr.jdem846.model.listModels.PlanetListModel;
 import us.wthr.jdem846.model.listModels.RenderProjectionListModel;
@@ -37,6 +39,7 @@ public class GlobalOptionModel implements OptionModel
 	private String elevationScale = ElevationScalerEnum.LINEAR.identifier();
 	private String mapProjection = MapProjectionEnum.EQUIRECTANGULAR.identifier();
 	private String renderProjection = CanvasProjectionTypeEnum.PROJECT_FLAT.identifier();
+	private String perspectiveType = PerspectiveTypeEnum.ORTHOGRAPHIC.identifier();
 	private int subpixelGridSize = 1;
 	private int pixelStackDepth = 1;
 	
@@ -327,13 +330,32 @@ public class GlobalOptionModel implements OptionModel
 	{
 		this.renderProjection = renderProjection;
 	}
-
 	
+	
+	
+	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.perspectiveType",
+			label="Perspective Type",
+			tooltip="",
+			enabled=true,
+			listModel=PerspectiveTypeListModel.class)
+	@Order(16)
+	public String getPerspectiveType()
+	{
+		return perspectiveType;
+	}
+
+
+	public void setPerspectiveType(String perspectiveType)
+	{
+		this.perspectiveType = perspectiveType;
+	}
+
+
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.viewAngle",
 			label="View Angle",
 			tooltip="",
 			enabled=true)
-	@Order(16)
+	@Order(17)
 	public ViewPerspective getViewAngle()
 	{
 		return viewAngle;
@@ -351,7 +373,7 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true,
 			listModel=SubpixelGridSizeListModel.class)
-	@Order(17)
+	@Order(18)
 	@ValueBounds(minimum=1, 
 				maximum=16)
 	public int getSubpixelGridSize()
@@ -371,7 +393,7 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true,
 			listModel=PixelStackDepthListModel.class)
-	@Order(18)
+	@Order(19)
 	@ValueBounds(minimum=0, 
 				maximum=32)
 	public int getPixelStackDepth()
@@ -391,7 +413,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Texture Quality",
 			tooltip="",
 			enabled=true)
-	@Order(19)
+	@Order(20)
 	@ValueBounds(minimum=0, 
 				maximum=10.0,
 				stepSize=0.05)
@@ -413,7 +435,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Model Quality",
 			tooltip="",
 			enabled=true)
-	@Order(20)
+	@Order(21)
 	@ValueBounds(minimum=0, 
 				maximum=10.0,
 				stepSize=0.05)
@@ -499,7 +521,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Use Disk Cache",
 			tooltip="",
 			enabled=true)
-	@Order(21)
+	@Order(22)
 	public boolean getUseDiskCachedModelGrid()
 	{
 		return useDiskCachedModelGrid;
@@ -520,7 +542,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Number of Threads",
 			tooltip="",
 			enabled=true)
-	@Order(22)
+	@Order(23)
 	@ValueBounds(minimum=1, 
 				maximum=10,
 				stepSize=1)
@@ -621,6 +643,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.elevationScale = this.elevationScale; 
 		copy.mapProjection = this.mapProjection;
 		copy.renderProjection = this.renderProjection;
+		copy.perspectiveType = this.perspectiveType;
 		copy.viewAngle = this.viewAngle.copy();
 		copy.subpixelGridSize = this.subpixelGridSize;
 		copy.pixelStackDepth = this.pixelStackDepth;

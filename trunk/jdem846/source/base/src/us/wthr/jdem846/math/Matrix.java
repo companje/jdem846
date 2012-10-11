@@ -267,4 +267,19 @@ public class Matrix
 		}
 	}
 	
+	public void scale(double x, double y, double z)
+	{
+		this.matrix[0] *= x;   this.matrix[4] *= y;   this.matrix[8]  *= z;
+		this.matrix[1] *= x;   this.matrix[5] *= y;   this.matrix[9]  *= z;
+		this.matrix[2] *= x;   this.matrix[6] *= y;   this.matrix[10] *= z;
+		this.matrix[3] *= x;   this.matrix[7] *= y;   this.matrix[11] *= z;
+	}
+	
+	public void translate(double x, double y, double z)
+	{
+		this.matrix[12] = this.matrix[0] * x + this.matrix[4] * y + this.matrix[8]  * z + this.matrix[12];
+		this.matrix[13] = this.matrix[1] * x + this.matrix[5] * y + this.matrix[9]  * z + this.matrix[13];
+		this.matrix[14] = this.matrix[2] * x + this.matrix[6] * y + this.matrix[10] * z + this.matrix[14];
+		this.matrix[15] = this.matrix[3] * x + this.matrix[7] * y + this.matrix[11] * z + this.matrix[15];
+	}
 }

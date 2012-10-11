@@ -308,6 +308,8 @@ public class FillControlledModelGrid extends ModelPointGrid
 																		rasterDataContext,
 																		modelGrid,
 																		scriptProxy);
+		instance.setForceResetAndRunFilters(getForceResetAndRunFilters());
+		
 		return instance;
 		
 	}

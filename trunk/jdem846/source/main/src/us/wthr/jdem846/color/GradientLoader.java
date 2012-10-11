@@ -57,6 +57,26 @@ public class GradientLoader
 		load(gradientFile);
 	}
 	
+	protected GradientLoader()
+	{
+		
+	}
+	
+	public GradientLoader copy()
+	{
+		GradientLoader c = new GradientLoader();
+		c.name = this.name;
+		c.identifier = this.identifier;
+		c.needsMinMaxElevation = this.needsMinMaxElevation;
+		c.units = this.units;
+		
+		for (GradientColorStop stop : colorStops) {
+			c.colorStops.add(stop.copy());
+		}
+		
+		return c;
+	}
+	
 	
 	public static GradientLoader loadGradient(String jsonTxt) throws GradientLoadException
 	{

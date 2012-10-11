@@ -52,6 +52,8 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 	
 	private List<ModelConfigurationChangeListener> modelConfigurationChangeListeners = new LinkedList<ModelConfigurationChangeListener>();
 	
+	private boolean ignoreValueChanges = false;
+	
 	public ModelConfigurationPanel(ModelContext modelContext, ModelProcessManifest modelProcessManifest, List<OptionModel> providedOptionModelList)
 	{
 		
@@ -179,6 +181,8 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 	public boolean validateOptions()
 	{
 		
+		ignoreValueChanges = true;
+		
 		List<PropertyValidationResult> results = new LinkedList<PropertyValidationResult>();
 		
 		List<OptionModelContainer> containers = new LinkedList<OptionModelContainer>();
@@ -220,6 +224,8 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 			refreshUI();
 		}
 		
+		ignoreValueChanges = false;
+		
 		return validationExceptions.size() == 0;
 	}
 	
@@ -257,8 +263,10 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 	
 	protected void firePropertyChangeListeners(OptionModelChangeEvent e)
 	{
-		for (ModelConfigurationChangeListener listener : modelConfigurationChangeListeners) {
-			listener.onPropertyChanged(e);
+		if (!ignoreValueChanges) {
+			for (ModelConfigurationChangeListener listener : modelConfigurationChangeListeners) {
+				listener.onPropertyChanged(e);
+			}
 		}
 	}
 	
