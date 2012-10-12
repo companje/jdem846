@@ -144,9 +144,9 @@ public class RenderProcess
 			this.renderer.perspective(horizFieldOfView, aspect, near, far);
 			
 			
+			
+		
 			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
-			
-			
 			
 			this.renderer.lookAt(0							// Eye X
 					, 0							// Eye Y
@@ -206,22 +206,28 @@ public class RenderProcess
 		if (view != null) {
 			
 			
-			this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
+			
+			
+			
+			//this.renderer.scale(view.getZoom(), view.getZoom(), view.getZoom());
 			this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
+			this.renderer.rotate(-view.getRotateY(), AxisEnum.Y_AXIS);
 			this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
 			
-			
-			this.renderer.scale(view.getZoom(), view.getZoom(), view.getZoom());
-	
 			this.renderer.translate(view.getShiftX() * radius
 									, view.getShiftY() * radius
 									, view.getShiftZ() * radius);
 			
+			//double zoom = view.getZoom();
+			//double zoomZ = zoom * (DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER * (DemConstants.DEFAULT_GLOBAL_RADIUS / modelView.radiusTrue()));
+			//log.info("Zoom: " + zoom + ", Z: " + zoomZ);
+			//this.renderer.translate(0.0, 0.0, zoomZ);
 			
 		}
 		
-		log.info("Zoom: " + view.getZoom());
-		double eyeZ = this.modelView.eyeZ();
+		
+		
+		//double eyeZ = this.modelView.eyeZ();
 		//this.renderer.translate(0.0, 0.0, -eyeZ);
 		//this.renderer.translate(0, 0, (view.getZoom() * radius));
 
@@ -316,7 +322,7 @@ public class RenderProcess
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
 					int c = fb.get(x, y);
-					this.image.set(x, height - y - 1, c);
+					this.image.set(x, y, c);
 				}
 			}
 			

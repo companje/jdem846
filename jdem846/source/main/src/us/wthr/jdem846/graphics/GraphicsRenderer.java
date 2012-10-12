@@ -199,7 +199,7 @@ public class GraphicsRenderer
 		Vectors.crossProduct(side, forward, up);
 		//Vectors.normalize(up);
 		
-		/*
+		
 		m.set(0, 0, side.x);
 		m.set(0, 1, side.y);
 		m.set(0, 2, side.z);
@@ -211,9 +211,9 @@ public class GraphicsRenderer
 		m.set(2, 0, -forward.x);
 		m.set(2, 1, -forward.y);
 		m.set(2, 2, -forward.z);
-		*/
 		
-
+		
+		/*
 		m.set(0, 0, side.x);
 		m.set(1, 0, side.y);
 		m.set(2, 0, side.z);
@@ -222,12 +222,12 @@ public class GraphicsRenderer
 		m.set(1, 1, up.y);
 		m.set(2, 1, up.z);
 
-		m.set(0, 2, -forward.x);
-		m.set(1, 2, -forward.y);
-		m.set(2, 2, -forward.z);
-		
+		m.set(0, 2, forward.x);
+		m.set(1, 2, forward.y);
+		m.set(2, 2, forward.z);
+		*/
 		this.multMatrix(m);
-		this.translate(-eyeX, -eyeY, -eyeZ);
+		this.translate(eyeX, eyeY, eyeZ);
 		//this.translate(-eyeX, -eyeY, -eyeZ);
 		
 	}

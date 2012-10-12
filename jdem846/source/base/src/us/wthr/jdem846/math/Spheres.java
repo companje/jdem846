@@ -82,7 +82,7 @@ public class Spheres
 			double radius, 
 			Vector v)
 	{
-		
+		theta += 90.0;
 		theta = MathExt.radians(fixThetaDegrees(theta));
 		phi = MathExt.radians(fixPhiDegrees(phi));
 

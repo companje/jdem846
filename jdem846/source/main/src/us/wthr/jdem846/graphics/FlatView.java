@@ -58,6 +58,11 @@ public class FlatView extends AbstractView implements View
 	}
 	*/
 	
+	@Override
+	public double radiusTrue()
+	{
+		return 0.5;
+	}
 	
 	@Override
 	public double radius()

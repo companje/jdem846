@@ -19,6 +19,7 @@ public interface View {
 	public void setScript(ScriptProxy arg);
 	public void setModelGrid(ModelPointGrid arg);
 	
+	public double radiusTrue();
 	public double radius();
 	public double horizFieldOfView();
 	public double elevationFromSurface();
