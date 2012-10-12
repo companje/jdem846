@@ -58,9 +58,29 @@ public class MathExt
     	return FastMath.sin(a);
     }
     
+    public static double sin_d(double a)
+    {
+    	return MathExt.sin(MathExt.radians(a));
+    }
+    
     public static double cos(double a)
     {
     	return FastMath.cos(a);
+    }
+    
+    public static double cos_d(double a)
+    {
+    	return MathExt.cos(MathExt.radians(a));
+    }
+    
+    public static double sec(double a)
+    {
+    	return 1.0 / MathExt.cos(a);
+    }
+    
+    public static double sec_d(double a)
+    {
+    	return MathExt.sec(MathExt.radians(a));
     }
     
     public static double radians(double a)

@@ -125,16 +125,16 @@ public class HillshadingProcessor extends GridProcessor
 		advancedLightingControl = optionModel.getAdvancedLightingControl();
 		advancedLightingCalculator = new LightingCalculator(optionModel.getEmmisive(), optionModel.getAmbient(), optionModel.getDiffuse(), optionModel.getSpecular(), optionModel.getShadowIntensity(), viewPerspective, scriptProxy);
 		
-		double minSideLength = MathExt.min(globalOptionModel.getWidth(), globalOptionModel.getHeight()) - 20;
-		double fov = 18.0;
-		double a = (fov / 2.0);
-		double R = modelRadius;
+		//double minSideLength = MathExt.min(globalOptionModel.getWidth(), globalOptionModel.getHeight()) - 20;
+		//double fov = 18.0;
+		//double a = (fov / 2.0);
+		//double R = modelRadius;
 		
-		double D = R / MathExt.tan(MathExt.radians(a));
-		double d = (minSideLength / 2.0) / MathExt.tan(MathExt.radians(a));
+		//double D = R / MathExt.tan(MathExt.radians(a));
+		//double d = (minSideLength / 2.0) / MathExt.tan(MathExt.radians(a));
 		
 		Vector eye = new Vector();
-		Spheres.getPoint3D(-90.0, 0, DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH, eye);
+		Spheres.getPoint3D(0, 0, DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER, eye);
 		Vectors.rotate(-viewPerspective.getRotateX()
 				, -viewPerspective.getRotateY()
 				, -viewPerspective.getRotateZ()

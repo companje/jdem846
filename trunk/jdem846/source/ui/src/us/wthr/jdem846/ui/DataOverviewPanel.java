@@ -17,16 +17,18 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import javax.swing.table.DefaultTableModel;
 
 import us.wthr.jdem846.i18n.I18N;
+import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.Table;
 import us.wthr.jdem846.ui.panels.RoundedPanel;
 
 @SuppressWarnings("serial")
-public class DataOverviewPanel extends RoundedPanel
+public class DataOverviewPanel extends Panel
 {
 	
 
@@ -44,6 +46,8 @@ public class DataOverviewPanel extends RoundedPanel
 		BorderLayout layout = new BorderLayout();
 		setLayout(layout);
 		add(scroll, BorderLayout.CENTER);
+		
+		setBackground(Color.WHITE);
 
 	}
 	

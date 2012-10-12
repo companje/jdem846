@@ -12,13 +12,24 @@ public class GlobalView extends AbstractView implements View
 	
 	public void project(double latitude, double longitude, double elevation, Vector point)
 	{
-		double radius = 0.5;//this.radius() + elevation;
+		//this.radius() + elevation;
+		
+		//elevation = elevation * (0.5 / radiusTrue());
+		double radius = DemConstants.DEFAULT_GLOBAL_RADIUS + (elevation * (DemConstants.DEFAULT_GLOBAL_RADIUS / radiusTrue()));
+		
 		Spheres.getPoint3D(longitude, latitude, radius, point);
-		point.z *= -1.0;
+		//point.z *= -1.0;
+	}
+	
+	
+	public double getZoomDistanceFromCenter()
+	{
+		double zoom = globalOptionModel.getViewAngle().getZoom();
+		return (DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER * (DemConstants.DEFAULT_GLOBAL_RADIUS / radiusTrue())) / zoom;
 	}
 	
 	@Override
-	public double radius()
+	public double radiusTrue()
 	{
 		double radius = 0;
 		if (planet != null) {
@@ -26,13 +37,13 @@ public class GlobalView extends AbstractView implements View
 		} else {
 			radius = DemConstants.EARTH_MEAN_RADIUS * 1000.0;
 		}
-		
-		if (dataMaximumValue == DemConstants.ELEV_UNDETERMINED) {
-			dataMaximumValue = modelContext.getRasterDataContext().getDataMaximumValue();
-		}
-		
-		//return radius + (dataMaximumValue * globalOptionModel.getElevationMultiple());
-		return 0.5;
+		return radius;
+	}
+	
+	@Override
+	public double radius()
+	{
+		return DemConstants.DEFAULT_GLOBAL_RADIUS;
 	}
 
 	@Override
@@ -44,31 +55,28 @@ public class GlobalView extends AbstractView implements View
 	@Override
 	public double elevationFromSurface()
 	{
-		//return DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH;
-		return 3.0;
+		return getZoomDistanceFromCenter() - radius();
 	}
 
 	@Override
 	public double nearClipDistance()
 	{
-		//double tha = MathExt.tan(MathExt.radians(horizFieldOfView()) * 0.5);
-		//return elevationFromSurface() / (2.0 * MathExt.sqrt(2.0 * tha * tha + 1.0));
-		return 0.5;
+		return elevationFromSurface();
 	}
 
 	@Override
 	public double farClipDistance()
 	{
-		double elevationFromSurface = elevationFromSurface();
-		//return MathExt.sqrt(elevationFromSurface * (2.0 * radius() + elevationFromSurface));
-		return -0.5;
+		double r = radius();
+		double e = elevationFromSurface();
+		
+		return MathExt.sin(MathExt.sec_d(r / (r + e))) * MathExt.sqrt(e * (e + 2 * r));
 	}
 
 	@Override
 	public double eyeZ()
 	{
-		//return radius() / MathExt.tan(MathExt.radians(horizFieldOfView()) * 0.5);
-		return 2.0;
+		return getZoomDistanceFromCenter();
 	}
 
 }

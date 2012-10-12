@@ -17,6 +17,7 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -452,6 +453,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		EmbeddedTabbedPane leftLowerTabPane = new EmbeddedTabbedPane();
 		leftLowerTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.modelOverview"), regionOverviewPanel);
 		leftLowerTabPane.add(I18N.get("us.wthr.jdem846.ui.projectPane.tab.layerOverview"), layerOverviewPanel);
+		leftLowerTabPane.setBackground(Color.WHITE);
 		
 		final SplitPane leftSplit = new SplitPane(SplitPane.VERTICAL_SPLIT);
 		leftSplit.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));

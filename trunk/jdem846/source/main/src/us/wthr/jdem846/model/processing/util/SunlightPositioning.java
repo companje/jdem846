@@ -236,9 +236,9 @@ public class SunlightPositioning
     	else
             ha = trueSolarTime / 4.0 - 180.0;
 
-        xyz.x = 149598000000.0; // R (AU) in meters
+        xyz.x = 0.0; // R (AU) in meters
         xyz.y = 0.0;
-        xyz.z = 0.0;
+        xyz.z = -149598000000.0;
 		//xyz[0] = R * 149598000000.0; // R (AU) in meters
 		//xyz[1] = 0.0;
 		//xyz[2] = 0.0; 
