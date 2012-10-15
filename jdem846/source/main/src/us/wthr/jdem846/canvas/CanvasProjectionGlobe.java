@@ -201,7 +201,7 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		double meanRadius = DemConstants.EARTH_MEAN_RADIUS * 1000;
 		
 		double minSideLength = MathExt.min(outputWidth, outputHeight) - 20;
-		double radius = minSideLength * scaleFactor;
+		double radius = minSideLength;// * scaleFactor;
 		//double radiusAdjusted = (radius / meanRadius) * (meanRadius + 0);
 		
 		

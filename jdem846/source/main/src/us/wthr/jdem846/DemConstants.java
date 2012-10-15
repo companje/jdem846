@@ -26,9 +26,9 @@ public class DemConstants {
 	public static final String APPLICATION_SPEC_VERSION = "0.1";
 	
 	public static final double DEFAULT_HORIZONTAL_FIELD_OF_VIEW = 45.0;
-	//public static final double DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER = 19.07e6;
+	public static final double DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER = 19.07e6;
 	//public static final double DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER = 9.7926e6;//6.36557e7;
-	public static final double DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER = 11997.9 * 1000;
+	//public static final double DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER = 11997.9 * 1000;
 	public static final double DEFAULT_GLOBAL_RADIUS = 0.5;
 	
 	public static final double EARTH_MEAN_RADIUS = 6371.0;

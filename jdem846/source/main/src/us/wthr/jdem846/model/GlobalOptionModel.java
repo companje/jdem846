@@ -46,6 +46,10 @@ public class GlobalOptionModel implements OptionModel
 	private double modelQuality = 1.0;
 	private double textureQuality = 1.0;
 	
+	
+	private double fieldOfView = 45.0;
+	private double eyeDistance = 19.07e6;
+	
 	private boolean getStandardResolutionElevation = false;
 	private boolean interpolateData = true;
 	private boolean averageOverlappedData = true;
@@ -368,12 +372,50 @@ public class GlobalOptionModel implements OptionModel
 	}
 	
 	
+	
+	
+	
+	
+	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.fieldOfView",
+			label="Field of View",
+			tooltip="",
+			enabled=true)
+	@Order(18)
+	@ValueBounds(minimum=1, 
+				maximum=90)
+	public double getFieldOfView() {
+		return fieldOfView;
+	}
+
+
+	public void setFieldOfView(double fieldOfView) {
+		this.fieldOfView = fieldOfView;
+	}
+
+	
+	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.eyeDistance",
+			label="Eye Distance",
+			tooltip="Viewer distance from center of model in meters",
+			enabled=true)
+	@ValueBounds(minimum=1, 
+				maximum=5000.07e6)
+	@Order(19)
+	public double getEyeDistance() {
+		return eyeDistance;
+	}
+
+
+	public void setEyeDistance(double eyeDistance) {
+		this.eyeDistance = eyeDistance;
+	}
+
+
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.subpixelGridSize",
 			label="Subpixel Grid Size",
 			tooltip="",
 			enabled=true,
 			listModel=SubpixelGridSizeListModel.class)
-	@Order(18)
+	@Order(20)
 	@ValueBounds(minimum=1, 
 				maximum=16)
 	public int getSubpixelGridSize()
@@ -393,7 +435,7 @@ public class GlobalOptionModel implements OptionModel
 			tooltip="",
 			enabled=true,
 			listModel=PixelStackDepthListModel.class)
-	@Order(19)
+	@Order(21)
 	@ValueBounds(minimum=0, 
 				maximum=32)
 	public int getPixelStackDepth()
@@ -413,7 +455,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Texture Quality",
 			tooltip="",
 			enabled=true)
-	@Order(20)
+	@Order(22)
 	@ValueBounds(minimum=0, 
 				maximum=10.0,
 				stepSize=0.05)
@@ -435,7 +477,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Model Quality",
 			tooltip="",
 			enabled=true)
-	@Order(21)
+	@Order(23)
 	@ValueBounds(minimum=0, 
 				maximum=10.0,
 				stepSize=0.05)
@@ -521,7 +563,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Use Disk Cache",
 			tooltip="",
 			enabled=true)
-	@Order(22)
+	@Order(24)
 	public boolean getUseDiskCachedModelGrid()
 	{
 		return useDiskCachedModelGrid;
@@ -542,7 +584,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Number of Threads",
 			tooltip="",
 			enabled=true)
-	@Order(23)
+	@Order(25)
 	@ValueBounds(minimum=1, 
 				maximum=10,
 				stepSize=1)
@@ -659,6 +701,8 @@ public class GlobalOptionModel implements OptionModel
 		copy.previewRendering = this.previewRendering;
 		copy.forceResetAndRunFilters = this.forceResetAndRunFilters;
 		copy.numberOfThreads = this.numberOfThreads;
+		copy.fieldOfView = this.fieldOfView;
+		copy.eyeDistance = this.eyeDistance;
 		return copy;
 	}
 	

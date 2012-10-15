@@ -25,7 +25,7 @@ public class GlobalView extends AbstractView implements View
 	public double getZoomDistanceFromCenter()
 	{
 		double zoom = globalOptionModel.getViewAngle().getZoom();
-		return (DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER * (DemConstants.DEFAULT_GLOBAL_RADIUS / radiusTrue())) / zoom;
+		return (globalOptionModel.getEyeDistance() * (DemConstants.DEFAULT_GLOBAL_RADIUS / radiusTrue())) / zoom;
 	}
 	
 	@Override
@@ -49,7 +49,7 @@ public class GlobalView extends AbstractView implements View
 	@Override
 	public double horizFieldOfView()
 	{
-		return DemConstants.DEFAULT_HORIZONTAL_FIELD_OF_VIEW;
+		return globalOptionModel.getFieldOfView();
 	}
 
 	@Override
