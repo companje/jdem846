@@ -347,7 +347,7 @@ public class ModelBuilder extends InterruptibleProcess
 		} else {
 			GridProcessChunkThread[] threads = new GridProcessChunkThread[numberOfThreads];
 			
-			int dataRows = (int) MathExt.round((north - south) / latitudeResolution);
+			int dataRows = (int) MathExt.ceil((north - south) / latitudeResolution);
 			
 			int rowsPerThread = (int) MathExt.ceil((double)dataRows / (double)numberOfThreads);
 			

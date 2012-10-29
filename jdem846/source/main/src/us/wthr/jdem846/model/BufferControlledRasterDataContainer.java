@@ -82,16 +82,32 @@ public class BufferControlledRasterDataContainer extends RasterDataContext
 		if (tiledBuffering) {
 			if (latitude <= nextCachePoint) {
 				
-				double southCache = latitude - cacheHeight - latitudeResolution;
+				//double northCache = nextCachePoint + (cacheHeight * 0.5);
+				//double southCache = (latitude - cacheHeight - latitudeResolution) + (cacheHeight * 0.5);
+				double northCache = nextCachePoint + (cacheHeight * 0.5);
+				double southCache = northCache - cacheHeight;
+				
+				if (northCache > north) {
+					northCache = north;
+				}
+				
+				if (southCache >= northCache) {
+					southCache = northCache - cacheHeight;
+				}
+				
+				if (southCache < south) {
+					southCache = south;
+				}
+				
 				try {
 					clearBuffers();
-					rasterDataContext.fillBuffers(latitude, southCache, east, west);
+					rasterDataContext.fillBuffers(northCache, southCache, east, west);
 				} catch (Exception ex) {
 					// TODO: Add better handling
 					log.warn("Error filling raster buffers: " + ex.getMessage(), ex);
 				}
 				
-				nextCachePoint = latitude - cacheHeight;
+				nextCachePoint = southCache;
 			}
 		}
 		
