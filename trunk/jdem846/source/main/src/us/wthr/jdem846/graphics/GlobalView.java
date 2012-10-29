@@ -67,10 +67,17 @@ public class GlobalView extends AbstractView implements View
 	@Override
 	public double farClipDistance()
 	{
+		//double r = radius();
+		//double e = elevationFromSurface();
+		
+		//return MathExt.sin(MathExt.sec_d(r / (r + e))) * MathExt.sqrt(e * (e + 2 * r));
 		double r = radius();
 		double e = elevationFromSurface();
-		
-		return MathExt.sin(MathExt.sec_d(r / (r + e))) * MathExt.sqrt(e * (e + 2 * r));
+
+		double a = MathExt.sec_d(r / (r + e));
+		double d = MathExt.cos(a) * r;
+		double f = (r - d) + e;
+		return f;
 	}
 
 	@Override
