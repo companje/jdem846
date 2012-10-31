@@ -10,22 +10,35 @@ public class GlobalView extends AbstractView implements View
 	
 	private double dataMaximumValue = DemConstants.ELEV_UNDETERMINED;
 	
+	protected double elevScaler = -1;
+	
+	protected double getElevationScaler()
+	{
+		if (elevScaler == -1) {
+			elevScaler = radius() / radiusTrue();
+		}
+		return elevScaler;
+	}
+	
+	protected double scaleElevation(double elevation)
+	{
+		return (elevation * getElevationScaler());
+	}
+	
 	public void project(double latitude, double longitude, double elevation, Vector point)
 	{
-		//this.radius() + elevation;
-		
-		//elevation = elevation * (0.5 / radiusTrue());
-		double radius = DemConstants.DEFAULT_GLOBAL_RADIUS + (elevation * (DemConstants.DEFAULT_GLOBAL_RADIUS / radiusTrue()));
-		
+		double radius = radius() + scaleElevation(elevation);
 		Spheres.getPoint3D(longitude, latitude, radius, point);
-		//point.z *= -1.0;
 	}
+	
+	
 	
 	
 	public double getZoomDistanceFromCenter()
 	{
-		double zoom = globalOptionModel.getViewAngle().getZoom();
-		return (globalOptionModel.getEyeDistance() * (DemConstants.DEFAULT_GLOBAL_RADIUS / radiusTrue())) / zoom;
+		//double zoom = globalOptionModel.getViewAngle().getZoom();
+		//return (globalOptionModel.getEyeDistance() * (DemConstants.DEFAULT_GLOBAL_RADIUS / radiusTrue())) / zoom;
+		return scaleElevation(globalOptionModel.getEyeDistance());
 	}
 	
 	@Override
@@ -37,13 +50,21 @@ public class GlobalView extends AbstractView implements View
 		} else {
 			radius = DemConstants.EARTH_MEAN_RADIUS * 1000.0;
 		}
-		return radius;
+		double zoom = globalOptionModel.getViewAngle().getZoom();
+		return radius * zoom;
 	}
 	
 	@Override
 	public double radius()
 	{
-		return DemConstants.DEFAULT_GLOBAL_RADIUS;
+		double radius = 0;
+		if (planet != null) {
+			radius = planet.getMeanRadius() * 1000.0;
+		} else {
+			radius = DemConstants.EARTH_MEAN_RADIUS * 1000.0;
+		}
+		double zoom = globalOptionModel.getViewAngle().getZoom();
+		return radius * zoom;
 	}
 
 	@Override
@@ -61,7 +82,8 @@ public class GlobalView extends AbstractView implements View
 	@Override
 	public double nearClipDistance()
 	{
-		return elevationFromSurface();
+		//return elevationFromSurface();
+		return elevationFromSurface() - scaleElevation(modelContext.getRasterDataContext().getDataMaximumValue());
 	}
 
 	@Override
