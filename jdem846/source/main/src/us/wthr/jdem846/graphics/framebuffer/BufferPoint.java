@@ -1,4 +1,4 @@
-package us.wthr.jdem846.graphics;
+package us.wthr.jdem846.graphics.framebuffer;
 
 public class BufferPoint {
 	

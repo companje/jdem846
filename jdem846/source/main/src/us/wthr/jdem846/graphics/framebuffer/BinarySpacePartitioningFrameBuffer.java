@@ -1,22 +1,18 @@
-package us.wthr.jdem846.graphics;
+package us.wthr.jdem846.graphics.framebuffer;
 
 import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.math.MathExt;
 
-public class FrameBuffer 
+public class BinarySpacePartitioningFrameBuffer extends AbstractFrameBuffer implements FrameBuffer
 {
-	protected static final double FB_MINIMUM_Z_INDEX = -9999999999.99;
 	
-	protected int width;
-	protected int height;
-	protected int bufferLength;
+	
+	
 	protected BufferPoint[] buffer = null;
 	
-	public FrameBuffer(int width, int height)
+	public BinarySpacePartitioningFrameBuffer(int width, int height)
 	{
-		this.width = width;
-		this.height = height;
-		this.bufferLength = width * height;
+		super(width, height);
 		buffer = new BufferPoint[bufferLength];
 		for (int i = 0; i < bufferLength; i++) {
 			buffer[i] = null;
@@ -24,20 +20,7 @@ public class FrameBuffer
 	}
 	
 	
-	protected int index(double x, double y)
-	{
-		return index((int) MathExt.floor(x), (int) MathExt.floor(y));
-	}
-	
-	protected int index(int x, int y)
-	{
-		if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
-			return -1;
-		}
-		
-		int i = (y * width) + x;
-		return i;
-	}
+
 	
 	
 	
@@ -86,6 +69,7 @@ public class FrameBuffer
 		
 	}
 	
+	@Override
 	public boolean isVisible(double x, double y, double z, int rgba)
 	{
 		if ((0xFF & (rgba >>> 24)) == 0x0) {
@@ -103,11 +87,8 @@ public class FrameBuffer
 	}
 	
 	
-	public void reset()
-	{
-		reset(false, -1);
-	}
 	
+	@Override
 	public void reset(boolean setBackground, int background)
 	{
 		for (int i = 0; i < this.bufferLength; i++) {
@@ -144,7 +125,7 @@ public class FrameBuffer
 		
 	}
 	
-	
+	@Override
 	public void set(double x, double y, double z, int rgba)
 	{
 		if (!this.isVisible(x, y, z, rgba)) {
@@ -170,6 +151,7 @@ public class FrameBuffer
 		
 	}
 	
+	@Override
 	public int get(double x, double y)
 	{
 		int idx = this.index(x, y);
@@ -186,14 +168,5 @@ public class FrameBuffer
 		return rgba;
 	}
 	
-	public int getWidth()
-	{
-		return width;
-	}
-	
-	public int getHeight()
-	{
-		return height;
-	}
 	
 }
