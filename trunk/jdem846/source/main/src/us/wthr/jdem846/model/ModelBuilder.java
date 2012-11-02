@@ -192,24 +192,7 @@ public class ModelBuilder extends InterruptibleProcess
 			
 		}
 		
-		
-		
-		/*
-		if (modelCanvas == null) {
-			modelCanvas = new ModelCanvas(modelDimensions.getOutputWidth(), 
-														modelDimensions.getOutputHeight(), 
-														globalOptionModel.getPixelStackDepth(),
-														globalOptionModel.getSubpixelGridSize(), 
-														globalOptionModel.getBackgroundColor(), 
-														null);
-			modelContext.setModelCanvas(modelCanvas);
-			
-			
-		} else {
-			modelCanvas.reset();
-		}
-		*/
-		
+
 		
 		useScripting = globalOptionModel.getUseScripting();
 		

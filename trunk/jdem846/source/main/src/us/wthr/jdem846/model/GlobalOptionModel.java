@@ -6,10 +6,12 @@ import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
 import us.wthr.jdem846.graphics.PerspectiveTypeEnum;
+import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 import us.wthr.jdem846.model.annotations.ValueBounds;
 import us.wthr.jdem846.model.listModels.ElevationScalerListModel;
+import us.wthr.jdem846.model.listModels.FrameBufferModeListModel;
 import us.wthr.jdem846.model.listModels.PerspectiveTypeListModel;
 import us.wthr.jdem846.model.listModels.PixelStackDepthListModel;
 import us.wthr.jdem846.model.listModels.PlanetListModel;
@@ -40,6 +42,7 @@ public class GlobalOptionModel implements OptionModel
 	private String mapProjection = MapProjectionEnum.EQUIRECTANGULAR.identifier();
 	private String renderProjection = CanvasProjectionTypeEnum.PROJECT_FLAT.identifier();
 	private String perspectiveType = PerspectiveTypeEnum.ORTHOGRAPHIC.identifier();
+	private String frameBufferMode = FrameBufferModeEnum.STANDARD.identifier();
 	private int subpixelGridSize = 1;
 	private int pixelStackDepth = 1;
 	
@@ -493,7 +496,23 @@ public class GlobalOptionModel implements OptionModel
 	}
 
 
-	
+	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.frameBufferMode",
+			label="FrameBuffer Mode",
+			tooltip="",
+			enabled=true,
+			listModel=FrameBufferModeListModel.class)
+	@Order(24)
+	public String getFrameBufferMode() 
+	{
+		return frameBufferMode;
+	}
+
+
+	public void setFrameBufferMode(String frameBufferMode) 
+	{
+		this.frameBufferMode = frameBufferMode;
+	}
+
 
 	public boolean getStandardResolutionElevation()
 	{
@@ -563,7 +582,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Use Disk Cache",
 			tooltip="",
 			enabled=true)
-	@Order(24)
+	@Order(25)
 	public boolean getUseDiskCachedModelGrid()
 	{
 		return useDiskCachedModelGrid;
@@ -584,7 +603,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Number of Threads",
 			tooltip="",
 			enabled=true)
-	@Order(25)
+	@Order(26)
 	@ValueBounds(minimum=1, 
 				maximum=10,
 				stepSize=1)
@@ -691,6 +710,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.pixelStackDepth = this.pixelStackDepth;
 		copy.modelQuality = this.modelQuality;
 		copy.textureQuality = this.textureQuality;
+		copy.frameBufferMode = this.frameBufferMode;
 		copy.averageOverlappedData = this.averageOverlappedData;
 		copy.getStandardResolutionElevation = this.getStandardResolutionElevation;
 		copy.interpolateData = this.interpolateData;

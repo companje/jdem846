@@ -2,6 +2,9 @@ package us.wthr.jdem846.graphics;
 
 import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.GraphicsRenderException;
+import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
+import us.wthr.jdem846.graphics.framebuffer.FrameBufferFactory;
+import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -78,8 +81,12 @@ public class GraphicsRenderer
 		}
 	}
 	
-	
 	public void viewPort(int x, int y, int width, int height)
+	{
+		viewPort(x, y, width, height, FrameBufferModeEnum.STANDARD);
+	}
+	
+	public void viewPort(int x, int y, int width, int height, FrameBufferModeEnum bufferMode)
 	{
 
 		if (width <= 0 || width > GraphicsRenderer.RENDER_MAXIMUM_WIDTH || height <= 0 || height > GraphicsRenderer.RENDER_MAXIMUM_HEIGHT) {
@@ -87,7 +94,8 @@ public class GraphicsRenderer
 			return;
 		}
 		this.viewPort = new ViewPort(x, y, width, height);
-		this.frameBuffer = new FrameBuffer(width, height);
+
+		this.frameBuffer = FrameBufferFactory.createFrameBufferInstance(width, height, bufferMode);
 	
 	}
 	

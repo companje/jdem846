@@ -11,6 +11,8 @@ import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
+import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Vector;
@@ -111,8 +113,10 @@ public class RenderProcess
 		int height = this.globalOptionModel.getHeight();
 		
 		double horizFieldOfView = this.modelView.horizFieldOfView();
-
-		this.renderer.viewPort(0, 0, width, height);
+		
+		
+		FrameBufferModeEnum bufferMode = FrameBufferModeEnum.getBufferModeFromIdentifier(this.globalOptionModel.getFrameBufferMode());
+		this.renderer.viewPort(0, 0, width, height, bufferMode);
 		
 		this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
 		this.renderer.loadIdentity();

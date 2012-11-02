@@ -2,6 +2,7 @@ package us.wthr.jdem846.graphics;
 
 import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.geom.util.SignTrianglePointTest;
+import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
 import us.wthr.jdem846.math.MathExt;
 
 public class TriangleStripDraw extends PrimitiveDraw
