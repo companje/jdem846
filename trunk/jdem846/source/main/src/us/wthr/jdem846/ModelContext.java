@@ -350,7 +350,7 @@ public class ModelContext
 	{
 		if (northLimit == NOT_SET) {
 			// TODO: Add shape data dimensions once supported
-			if (rasterDataContext != null) {
+			if (rasterDataContext != null && rasterDataContext.getRasterDataListSize() > 0) {
 				return rasterDataContext.getNorth();
 			} else {
 				return 90.0;
@@ -369,7 +369,7 @@ public class ModelContext
 	{
 		if (southLimit == NOT_SET) {
 			// TODO: Add shape data dimensions once supported
-			if (rasterDataContext != null) {
+			if (rasterDataContext != null && rasterDataContext.getRasterDataListSize() > 0) {
 				return rasterDataContext.getSouth();
 			} else {
 				return -90.0;
@@ -388,7 +388,7 @@ public class ModelContext
 	{
 		if (eastLimit == NOT_SET) {
 			// TODO: Add shape data dimensions once supported
-			if (rasterDataContext != null) {
+			if (rasterDataContext != null && rasterDataContext.getRasterDataListSize() > 0) {
 				return rasterDataContext.getEast();
 			} else {
 				return 180.0;
@@ -407,7 +407,7 @@ public class ModelContext
 	{
 		if (westLimit == NOT_SET) {
 			// TODO: Add shape data dimensions once supported
-			if (rasterDataContext != null) {
+			if (rasterDataContext != null && rasterDataContext.getRasterDataListSize() > 0) {
 				return rasterDataContext.getWest();
 			} else {
 				return -180.0;

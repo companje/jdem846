@@ -144,28 +144,9 @@ public class ModelGridDimensions extends ModelDimensions
 		modelLatitudeResolution /= modelQuality;
 		modelLongitudeResolution /= modelQuality;
 		
-		textureLatitudeResolution /= modelQuality;
-		textureLongitudeResolution /= modelQuality;
-		/*
-		double latitudeSlices = globalOptionModel.getLatitudeSlices();
-		double longitudeSlices = globalOptionModel.getLongitudeSlices();
-		
-		
-		if (latitudeSlices != -1) {
-			outputLatitudeResolution = (north - south - outputLatitudeResolution) / latitudeSlices;
-		}
-		
-		if (longitudeSlices != -1) {
-			outputLongitudeResolution = (east - west - outputLongitudeResolution) / longitudeSlices;
-		}
-		*/
-		/*
-		if (outputLongitudeResolution < longitudeResolution)
-			outputLongitudeResolution = longitudeResolution;
-		
-		if (outputLatitudeResolution < latitudeResolution)
-			outputLatitudeResolution = latitudeResolution;
-			*/
+		textureLatitudeResolution /= textureQuality;
+		textureLongitudeResolution /= textureQuality;
+
 	}
 	
 	

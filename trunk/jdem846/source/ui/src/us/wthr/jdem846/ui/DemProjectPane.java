@@ -1037,7 +1037,17 @@ public class DemProjectPane extends JdemPanel implements Savable
 		
 		try {
 			boolean estimate = this.modelProcessManifest.getGlobalOptionModel().isEstimateElevationRange();
-			modelContext.updateContext(updateRaster, estimate);
+			
+			boolean updateDataMinMax = false;
+			if (updateRaster || (rasterDataContext.getRasterDataListSize() == 0 && imageDataContext.getImageListSize() > 0)) {
+				updateDataMinMax = true;
+			}
+			
+			if (updateDataMinMax && (rasterDataContext.getRasterDataListSize() == 0 && imageDataContext.getImageListSize() > 0)) {
+				estimate = true;
+			}
+			
+			modelContext.updateContext(updateDataMinMax, estimate);
 		} catch (ModelContextException ex) {
 			// TODO: Display error dialog
 			log.warn("Exception updating model context: " + ex.getMessage(), ex);
