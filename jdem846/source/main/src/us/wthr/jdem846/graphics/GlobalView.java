@@ -54,18 +54,15 @@ public class GlobalView extends AbstractView implements View
 		return radius * zoom;
 	}
 	
+	
 	@Override
 	public double radius()
 	{
-		double radius = 0;
-		if (planet != null) {
-			radius = planet.getMeanRadius() * 1000.0;
-		} else {
-			radius = DemConstants.EARTH_MEAN_RADIUS * 1000.0;
-		}
 		double zoom = globalOptionModel.getViewAngle().getZoom();
-		return radius * zoom;
+		return 0.5 * zoom;
+		//return getElevationScaler() * radiusTrue();
 	}
+
 
 	@Override
 	public double horizFieldOfView()
@@ -83,7 +80,11 @@ public class GlobalView extends AbstractView implements View
 	public double nearClipDistance()
 	{
 		//return elevationFromSurface();
-		return elevationFromSurface() - scaleElevation(modelContext.getRasterDataContext().getDataMaximumValue());
+		double elevationFromSurface = elevationFromSurface();
+		double dataMaximumValue = modelContext.getRasterDataContext().getDataMaximumValue();
+		double scaledDataMaximumValue = scaleElevation(dataMaximumValue);
+		double near = elevationFromSurface - scaledDataMaximumValue;
+		return near;
 	}
 
 	@Override

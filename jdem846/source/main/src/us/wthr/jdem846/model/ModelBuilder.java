@@ -103,7 +103,7 @@ public class ModelBuilder extends InterruptibleProcess
 			globalOptionModel.setSouthLimit(modelContext.getSouth());
 			globalOptionModel.setEastLimit(modelContext.getEast());
 			globalOptionModel.setWestLimit(modelContext.getWest());
-		}
+		} 
 		
 		
 		ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext);
