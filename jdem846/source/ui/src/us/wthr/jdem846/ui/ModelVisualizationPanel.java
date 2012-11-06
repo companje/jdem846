@@ -362,7 +362,9 @@ public class ModelVisualizationPanel extends Panel
 	{
 		double value = (double) sldTextureQuality.getValue();
 		previewTextureQuality = (value / 100);
-		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewQuality", ""+previewTextureQuality);
+		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
+		
+		//JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.previewQuality", ""+previewTextureQuality);
 	}
 	
 	protected void setWorkingCopyOptions()
