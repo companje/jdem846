@@ -12,6 +12,11 @@ public class GlobalView extends AbstractView implements View
 	
 	protected double elevScaler = -1;
 	
+	protected double getZoom()
+	{
+		return globalOptionModel.getViewAngle().getZoom();
+	}
+	
 	protected double getElevationScaler()
 	{
 		if (elevScaler == -1) {
@@ -50,16 +55,14 @@ public class GlobalView extends AbstractView implements View
 		} else {
 			radius = DemConstants.EARTH_MEAN_RADIUS * 1000.0;
 		}
-		double zoom = globalOptionModel.getViewAngle().getZoom();
-		return radius * zoom;
+		return radius * getZoom();
 	}
 	
 	
 	@Override
 	public double radius()
 	{
-		double zoom = globalOptionModel.getViewAngle().getZoom();
-		return 0.5 * zoom;
+		return ((double)this.globalOptionModel.getWidth() / 2.0);
 		//return getElevationScaler() * radiusTrue();
 	}
 
@@ -79,21 +82,12 @@ public class GlobalView extends AbstractView implements View
 	@Override
 	public double nearClipDistance()
 	{
-		//return elevationFromSurface();
-		double elevationFromSurface = elevationFromSurface();
-		double dataMaximumValue = modelContext.getRasterDataContext().getDataMaximumValue();
-		double scaledDataMaximumValue = scaleElevation(dataMaximumValue);
-		double near = elevationFromSurface - scaledDataMaximumValue;
-		return near;
+		return elevationFromSurface();// - scaleElevation(modelContext.getRasterDataContext().getDataMaximumValue());
 	}
 
 	@Override
 	public double farClipDistance()
 	{
-		//double r = radius();
-		//double e = elevationFromSurface();
-		
-		//return MathExt.sin(MathExt.sec_d(r / (r + e))) * MathExt.sqrt(e * (e + 2 * r));
 		double r = radius();
 		double e = elevationFromSurface();
 

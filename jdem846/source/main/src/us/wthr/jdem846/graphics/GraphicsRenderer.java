@@ -157,7 +157,7 @@ public class GraphicsRenderer
 		
 		Matrix m = new Matrix(true);
 		
-		double _fov = MathExt.radians(fov);
+		double _fov = MathExt.radians(fov / 2.0);
 		
 		double deltaZ = far - near;
 		double s = MathExt.sin(_fov);
