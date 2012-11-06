@@ -245,10 +245,7 @@ public class HillshadingProcessor extends GridProcessor
 	
 	protected void processPointColor(double latitude, double longitude) throws RenderEngineException
 	{
-		if (!lightingEnabled) {
-			return;
-		}
-		
+
 		double blockAmt = 0;
 		double elevation = 0;
 		try {
@@ -260,48 +257,51 @@ public class HillshadingProcessor extends GridProcessor
 		}
 		
 		modelGrid.getRgba(latitude, longitude, rgbaBuffer);
-		normalsCalculator.calculateNormalSpherical(latitude, longitude, normal);
+		
 		
 		
 		
 		
 
 		
-		
-		if (advancedLightingControl) {
-			advancedLightingCalculator.calculateColor(normal, 
-													latitude, 
-													longitude, 
-													elevation,
-													modelRadius, 
-													spotExponent,
-													blockAmt,
-													sunsource,
-													rgbaBuffer);
+		if (lightingEnabled) {
+			normalsCalculator.calculateNormalSpherical(latitude, longitude, normal);
 			
-			
-		} else {
-			
-			double dot = calculateDotProduct(normal);
-			
-			
-			if (dot > 0) {
-				dot *= relativeLightIntensity;
-			} else if (dot < 0) {
-				dot *= relativeDarkIntensity;
-			}
-			
-			if (blockAmt > 0) {
-				dot = dot - (2 * shadowIntensity * blockAmt);
-				if (dot < -1.0) {
-					dot = -1.0;
+			if (advancedLightingControl) {
+				advancedLightingCalculator.calculateColor(normal, 
+														latitude, 
+														longitude, 
+														elevation,
+														modelRadius, 
+														spotExponent,
+														blockAmt,
+														sunsource,
+														rgbaBuffer);
+				
+				
+			} else {
+				
+				double dot = calculateDotProduct(normal);
+				
+				
+				if (dot > 0) {
+					dot *= relativeLightIntensity;
+				} else if (dot < 0) {
+					dot *= relativeDarkIntensity;
 				}
+				
+				if (blockAmt > 0) {
+					dot = dot - (2 * shadowIntensity * blockAmt);
+					if (dot < -1.0) {
+						dot = -1.0;
+					}
+				}
+				
+				if (spotExponent != 1) {
+					dot = MathExt.pow(dot, spotExponent);
+				}
+				ColorAdjustments.adjustBrightness(rgbaBuffer, dot);
 			}
-			
-			if (spotExponent != 1) {
-				dot = MathExt.pow(dot, spotExponent);
-			}
-			ColorAdjustments.adjustBrightness(rgbaBuffer, dot);
 		}
 
 		modelGrid.setRgba(latitude, longitude, rgbaBuffer);

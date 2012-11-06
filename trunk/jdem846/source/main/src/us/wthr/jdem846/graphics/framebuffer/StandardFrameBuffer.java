@@ -1,44 +1,59 @@
 package us.wthr.jdem846.graphics.framebuffer;
 
+import us.wthr.jdem846.math.MathExt;
+
 public class StandardFrameBuffer extends AbstractFrameBuffer implements FrameBuffer
 {
 
 
-	protected BufferPoint[] buffer = null;
+	protected BufferPoint[][] buffer = null;
 	
 	
 	public StandardFrameBuffer(int width, int height)
 	{
 		super(width, height);
-		buffer = new BufferPoint[bufferLength];
-		for (int i = 0; i < bufferLength; i++) {
-			buffer[i] = null;
-			//buffer[i] = new BufferPoint(0x0, FrameBuffer.FB_MINIMUM_Z_INDEX);
+		buffer = new BufferPoint[height][width];
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				buffer[y][x] = new BufferPoint(0x0, FrameBuffer.FB_MINIMUM_Z_INDEX);
+			}
 		}
-		
 	}
 
+	
+	protected boolean isValidCoords(double x, double y)
+	{
+		if (x < 0 || x >= this.width || y < 0 || y >= this.height)
+			return false;
+		else
+			return true;
+	}
 
-	@Override
-	public boolean isVisible(double x, double y, double z, int rgba) 
+	
+	
+	public boolean isVisible(int x, int y, double z, int rgba) 
 	{
 		if ((0xFF & (rgba >>> 24)) == 0x0) {
 			return false;
 		}
 		
-		int index = this.index(x, y);
-		
-		if (index < 0 || index >= this.bufferLength) {
+		if (!isValidCoords(x, y)) {
 			return false;
 		}
-		
 
 		
-		if (this.buffer[index] != null && this.buffer[index].z > z) {
+		if (this.buffer[y][x] != null && this.buffer[y][x].z > z) {
 			return false;
 		}
 		
 		return true;
+		
+	}
+	
+	@Override
+	public boolean isVisible(double x, double y, double z, int rgba) 
+	{
+		return isVisible((int)MathExt.floor(x), (int)MathExt.floor(y), z, rgba);
 		
 	}
 
@@ -46,18 +61,35 @@ public class StandardFrameBuffer extends AbstractFrameBuffer implements FrameBuf
 	@Override
 	public void reset(boolean setBackground, int background) 
 	{
-		for (int i = 0; i < this.bufferLength; i++) {
-
-			if (setBackground) {
-				this.buffer[i] = new BufferPoint(background, FrameBuffer.FB_MINIMUM_Z_INDEX);
-			} else if (this.buffer[i] != null) {
-				this.buffer[i].z = FrameBuffer.FB_MINIMUM_Z_INDEX;
-				this.buffer[i].rgba = 0x0;
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (setBackground) {
+					buffer[y][x] = new BufferPoint(background, FrameBuffer.FB_MINIMUM_Z_INDEX);
+				} else {
+					buffer[y][x].z = FrameBuffer.FB_MINIMUM_Z_INDEX;
+					buffer[y][x].rgba = 0x0;
+				}
+				
 			}
-			
 		}
+
 	}
 
+	
+	
+	public void set(int x, int y, double z, int rgba) 
+	{
+		if (!isVisible(x, y, z, rgba)) {
+			return;
+		}
+		
+		if (buffer[y][x] == null) {
+			buffer[y][x] = new BufferPoint(rgba, z);
+		} else {
+			buffer[y][x].z = z;
+			buffer[y][x].rgba = rgba;
+		}
+	}
 
 	@Override
 	public void set(double x, double y, double z, int rgba) 
@@ -66,37 +98,29 @@ public class StandardFrameBuffer extends AbstractFrameBuffer implements FrameBuf
 			return;
 		}
 		
-		int index = this.index(x, y);
-		
-		if (index >= 0 && index < this.bufferLength) {
-		
-			if (buffer[index] == null) {
-				buffer[index] = new BufferPoint(rgba, z);
-			} else {
-				buffer[index].z = z;
-				buffer[index].rgba = rgba;
-			}
-		
-		}
+		set((int)MathExt.floor(x), (int)MathExt.floor(y), z, rgba);
 	}
 
 
-	@Override
-	public int get(double x, double y) 
+	public int get(int x, int y) 
 	{
-		int index = this.index(x, y);
+		if (!this.isValidCoords(x, y)) {
+			return 0x0;
+		}
 		
-		if (index >= 0 && index < this.bufferLength) {
-			
-			if (buffer[index] == null) {
-				return 0x0;
-			} else {
-				return buffer[index].rgba;
-			}
-			
+		if (buffer[y][x] != null) {
+			return buffer[y][x].rgba;
 		} else {
 			return 0x0;
 		}
+		
+	}
+	
+	
+	@Override
+	public int get(double x, double y) 
+	{
+		return get((int)MathExt.floor(x), (int)MathExt.floor(y));
 	}
 
 	

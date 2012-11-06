@@ -17,8 +17,8 @@ public class GraphicsRenderer
 {
 	private static Log log = Logging.getLog(GraphicsRenderer.class);
 	
-	public static final int RENDER_MAXIMUM_WIDTH = 5000;
-	public static final int RENDER_MAXIMUM_HEIGHT = 5000;
+	public static final int RENDER_MAXIMUM_WIDTH = 10000;
+	public static final int RENDER_MAXIMUM_HEIGHT = 10000;
 	
 	
 	protected int currentColor = 0x0;
