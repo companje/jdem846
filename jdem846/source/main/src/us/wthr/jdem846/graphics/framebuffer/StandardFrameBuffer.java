@@ -76,19 +76,24 @@ public class StandardFrameBuffer extends AbstractFrameBuffer implements FrameBuf
 	}
 
 	
+	@Override
+	public void set(int x, int y, BufferPoint point) 
+	{
+		if (isValidCoords(x, y)) {
+			buffer[y][x] = point;
+		}
+		
+	}
 	
+	@Override
 	public void set(int x, int y, double z, int rgba) 
 	{
 		if (!isVisible(x, y, z, rgba)) {
 			return;
-		}
-		
-		if (buffer[y][x] == null) {
-			buffer[y][x] = new BufferPoint(rgba, z);
 		} else {
-			buffer[y][x].z = z;
-			buffer[y][x].rgba = rgba;
+			set(x, y, new BufferPoint(rgba, z));
 		}
+
 	}
 
 	@Override
@@ -122,6 +127,9 @@ public class StandardFrameBuffer extends AbstractFrameBuffer implements FrameBuf
 	{
 		return get((int)MathExt.floor(x), (int)MathExt.floor(y));
 	}
+
+
+	
 
 	
 	

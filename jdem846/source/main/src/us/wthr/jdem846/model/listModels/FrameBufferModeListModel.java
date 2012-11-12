@@ -8,7 +8,9 @@ public class FrameBufferModeListModel extends OptionListModel<String>
 	public FrameBufferModeListModel()
 	{
 		for (FrameBufferModeEnum mode : FrameBufferModeEnum.values()) {
-			this.addItem(mode.modeName(), mode.identifier());
+			if (mode.displayOnUserInterfaces()) {
+				this.addItem(mode.modeName(), mode.identifier());
+			}
 		}
 	}
 }

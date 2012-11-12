@@ -1,5 +1,6 @@
 package us.wthr.jdem846.graphics.framebuffer;
 
+import us.wthr.jdem846.graphics.ImageCapture;
 import us.wthr.jdem846.math.MathExt;
 
 public abstract class AbstractFrameBuffer implements FrameBuffer
@@ -15,6 +16,11 @@ public abstract class AbstractFrameBuffer implements FrameBuffer
 		this.bufferLength = width * height;
 	}
 	
+	@Override
+	public void set(double x, double y, double z, int rgba) 
+	{
+		set((int)MathExt.floor(x), (int)MathExt.floor(y), z, rgba);
+	}
 	
 	protected int index(double x, double y)
 	{
@@ -31,6 +37,22 @@ public abstract class AbstractFrameBuffer implements FrameBuffer
 		return i;
 	}
 	
+	@Override
+	public ImageCapture captureImage()
+	{
+		int width = getWidth();
+		int height = getHeight();
+		ImageCapture image = new ImageCapture(width, height);
+		
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				int c = get(x, y);
+				image.set(x, y, c);
+			}
+		}
+		return image;
+	}
 	
 	@Override
 	public void reset()
