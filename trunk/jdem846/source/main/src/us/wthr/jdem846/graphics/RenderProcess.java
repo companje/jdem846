@@ -11,13 +11,11 @@ import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
-import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.GlobalOptionModel;
-import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPointGrid;
 import us.wthr.jdem846.model.RgbaColor;
 import us.wthr.jdem846.model.ViewPerspective;
@@ -317,19 +315,7 @@ public class RenderProcess
 	public ImageCapture capture()
 	{
 		if (this.image == null) {
-			int width = this.globalOptionModel.getWidth();
-			int height = this.globalOptionModel.getHeight();
-			this.image = new ImageCapture(width, height);
-			
-			FrameBuffer fb = this.renderer.getFrameBuffer();
-			
-			for (int x = 0; x < width; x++) {
-				for (int y = 0; y < height; y++) {
-					int c = fb.get(x, y);
-					this.image.set(x, y, c);
-				}
-			}
-			
+			this.image = this.renderer.getFrameBuffer().captureImage();
 		}
 		
 		return this.image;

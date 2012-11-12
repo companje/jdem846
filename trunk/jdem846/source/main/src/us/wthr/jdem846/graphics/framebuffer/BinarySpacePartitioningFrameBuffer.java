@@ -1,7 +1,6 @@
 package us.wthr.jdem846.graphics.framebuffer;
 
 import us.wthr.jdem846.canvas.util.ColorUtil;
-import us.wthr.jdem846.math.MathExt;
 
 public class BinarySpacePartitioningFrameBuffer extends AbstractFrameBuffer implements FrameBuffer
 {
@@ -100,37 +99,11 @@ public class BinarySpacePartitioningFrameBuffer extends AbstractFrameBuffer impl
 			
 		}
 	}
-	
-	protected void set(BufferPoint point, BufferPoint addPoint)
-	{
-		if (point == null || addPoint == null) {
-			return;
-		}
-		
-		if (addPoint.z < point.z) {
-			if (point.left == null) {
-				point.left = addPoint;
-			} else {
-				this.set(point.left, addPoint);
-			}
-		} else {
-			
-			if (point.right == null) {
-				point.right = addPoint;
-			} else {
-				this.set(point.right, addPoint);
-			}
-			
-		}
-		
-	}
+
 	
 	@Override
-	public void set(double x, double y, double z, int rgba)
+	public void set(int x, int y, BufferPoint point) 
 	{
-		if (!this.isVisible(x, y, z, rgba)) {
-			return;
-		}
 		
 		int idx = this.index(x, y);
 		
@@ -138,17 +111,23 @@ public class BinarySpacePartitioningFrameBuffer extends AbstractFrameBuffer impl
 			return;
 		}
 		
-		BufferPoint point = new BufferPoint(rgba, z);
 		if (this.buffer[idx] == null) {
 			this.buffer[idx] = point;
-		} else if (this.buffer[idx] != null && point.isOpaque() && buffer[idx].z < z) { 
-			BufferPoint reapply = buffer[idx].right;
-			this.buffer[idx] = point;
-			this.set(this.buffer[idx], reapply);
 		} else {
-			this.set(this.buffer[idx], point);
+			this.buffer[idx].addLeaf(point);
 		}
-		
+	}
+	
+	
+	
+	@Override
+	public void set(int x, int y, double z, int rgba)
+	{
+		if (!this.isVisible(x, y, z, rgba)) {
+			return;
+		}
+
+		set(x, y, new BufferPoint(rgba, z));
 	}
 	
 	@Override
@@ -167,6 +146,14 @@ public class BinarySpacePartitioningFrameBuffer extends AbstractFrameBuffer impl
 
 		return rgba;
 	}
+
+
+
+
+
+
+
+	
 	
 	
 }
