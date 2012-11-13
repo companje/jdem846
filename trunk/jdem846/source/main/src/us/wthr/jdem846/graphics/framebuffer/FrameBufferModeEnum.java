@@ -7,7 +7,7 @@ public enum FrameBufferModeEnum
 {
 	STANDARD("us.wthr.jdem846.graphics.framebuffer.bufferMode.standard", true),
 	BINARY_SPACE_PARTITIONING("us.wthr.jdem846.graphics.framebuffer.bufferMode.binarySpacePartitioning", true),
-	CONCURRENT_PARTIAL_FRAME_BUFFER("us.wthr.jdem846.graphics.frameBuffer.bufferMode.concurrentPartial", false);
+	CONCURRENT_PARTIAL_FRAME_BUFFER("us.wthr.jdem846.graphics.frameBuffer.bufferMode.concurrentPartial", true);
 	
 	
 	private final String identifier;
