@@ -42,8 +42,7 @@ public class GridProcessChunkThread extends Thread
 		
 		GridProcessMethodStack processStack = modelProgram.getProcessStack();
 		
-		for (double latitude = north; latitude >= south; latitude -= latitudeResolution) {
-			
+		for (double latitude = north; latitude > south; latitude -= latitudeResolution) {
 			if (this.latitudeProcessedList != null) {
 				if (this.latitudeProcessedList.isLatitudeProcessed(latitude)) {
 					continue;

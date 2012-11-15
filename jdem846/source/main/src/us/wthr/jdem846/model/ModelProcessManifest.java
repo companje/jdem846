@@ -3,6 +3,8 @@ package us.wthr.jdem846.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import us.wthr.jdem846.graphics.View;
+import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
@@ -14,6 +16,7 @@ import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.GridWorker;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
+import us.wthr.jdem846.model.processing.RenderProcessor;
 
 public class ModelProcessManifest
 {
@@ -41,7 +44,7 @@ public class ModelProcessManifest
 		this.globalOptionModelContainer = globalOptionModelContainer;
 	}
 	
-	public ModelProgram createModelProgram() throws Exception
+	public ModelProgram createModelProgram(FrameBuffer frameBuffer, View view) throws Exception
 	{
 		ModelProgram modelProgram = new ModelProgram();
 		
@@ -49,6 +52,12 @@ public class ModelProcessManifest
 			
 			GridWorker worker = container.getGridWorker().getClass().newInstance();
 			OptionModel optionModel = container.getOptionModel();
+
+			if (worker instanceof RenderProcessor) {
+				RenderProcessor r = (RenderProcessor) worker;
+				r.setFrameBuffer(frameBuffer);
+				r.setView(view);
+			}
 			
 			worker.setOptionModel(optionModel);
 			modelProgram.addWorker(worker);

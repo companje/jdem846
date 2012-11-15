@@ -26,6 +26,8 @@ public class GraphicsRenderer
 	protected RenderCodesEnum error = RenderCodesEnum.RENDER_NO_ERROR;
 	
 	protected ViewPort viewPort = null;
+	
+	protected boolean frameBufferProvided = false;
 	protected FrameBuffer frameBuffer = null;
 	
 	protected boolean inPrimitiveDraw = false;
@@ -81,6 +83,16 @@ public class GraphicsRenderer
 		}
 	}
 	
+	public void setFrameBuffer(FrameBuffer frameBuffer)
+	{
+		this.frameBuffer = frameBuffer;
+		if (this.frameBuffer != null) {
+			frameBufferProvided = true;
+		} else {
+			frameBufferProvided = false;
+		}
+	}
+	
 	public void viewPort(int x, int y, int width, int height)
 	{
 		viewPort(x, y, width, height, FrameBufferModeEnum.STANDARD);
@@ -95,8 +107,9 @@ public class GraphicsRenderer
 		}
 		this.viewPort = new ViewPort(x, y, width, height);
 
-		this.frameBuffer = FrameBufferFactory.createFrameBufferInstance(width, height, bufferMode);
-	
+		if (!frameBufferProvided) {
+			this.frameBuffer = FrameBufferFactory.createFrameBufferInstance(width, height, bufferMode);
+		}
 	}
 	
 	public void matrixMode(MatrixModeEnum mode) throws GraphicsRenderException

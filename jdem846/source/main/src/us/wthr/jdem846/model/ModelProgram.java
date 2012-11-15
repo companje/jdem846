@@ -2,6 +2,7 @@ package us.wthr.jdem846.model;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
+import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
 import us.wthr.jdem846.model.processing.GridFilter;
 import us.wthr.jdem846.model.processing.GridFilterMethodStack;
 import us.wthr.jdem846.model.processing.GridProcessMethodStack;
@@ -29,7 +30,7 @@ public class ModelProgram
 	{
 		
 	}
-	
+
 	public ModelProgram(ModelContext modelContext)
 	{
 		this.modelContext = modelContext;

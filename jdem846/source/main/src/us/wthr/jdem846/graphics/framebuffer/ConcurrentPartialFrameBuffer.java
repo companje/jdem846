@@ -5,7 +5,9 @@ import us.wthr.jdem846.graphics.ImageCapture;
 
 public class ConcurrentPartialFrameBuffer extends AbstractFrameBuffer implements FrameBuffer
 {
-
+	
+	private Long mutex = new Long(0);
+	
 	private IndexedBufferPoint top = null;
 	
 	private int background = 0x0;
@@ -19,10 +21,12 @@ public class ConcurrentPartialFrameBuffer extends AbstractFrameBuffer implements
 	
 	public void merge(ConcurrentPartialFrameBuffer other)
 	{
-		if (this.top == null) {
-			top = other.top;
-		} else {
-			top.addLeaf(other.top);
+		synchronized(mutex) {
+			if (this.top == null) {
+				top = other.top;
+			} else {
+				top.addLeaf(other.top);
+			}
 		}
 	}
 	
@@ -35,18 +39,22 @@ public class ConcurrentPartialFrameBuffer extends AbstractFrameBuffer implements
 	@Override
 	public void reset(boolean setBackground, int background) 
 	{
-		this.setBackground = setBackground;
-		this.background = background;
-		this.top = null;
+		synchronized(mutex) {
+			this.setBackground = setBackground;
+			this.background = background;
+			this.top = null;
+		}
 	}
 	
 	@Override
 	public void set(int x, int y, BufferPoint point) 
 	{
-		if (top == null) {
-			top = (IndexedBufferPoint) point;
-		} else {
-			top.addLeaf(point);
+		synchronized(mutex) {
+			if (top == null) {
+				top = (IndexedBufferPoint) point;
+			} else {
+				top.addLeaf(point);
+			}
 		}
 	}
 	
@@ -82,6 +90,7 @@ public class ConcurrentPartialFrameBuffer extends AbstractFrameBuffer implements
 			addPointsToFrameBuffer((IndexedBufferPoint)top.left, frameBuffer);
 		}
 		
+		
 		frameBuffer.set(top.x, top.y, top.z, top.rgba);
 		
 		if (top.right != null) {
@@ -91,9 +100,60 @@ public class ConcurrentPartialFrameBuffer extends AbstractFrameBuffer implements
 		
 	}
 	
-	public void loadBinarySpacePartitioningFrameBuffer(BinarySpacePartitioningFrameBuffer frameBuffer)
+	/** Loads the BSP framebuffer in synchronous mode.
+	 * 
+	 * @param frameBuffer The framebuffer to load
+	 */
+	public void loadBinarySpacePartitioningFrameBuffer(FrameBuffer frameBuffer)
 	{
-		addPointsToFrameBuffer(top, frameBuffer);
+		loadBinarySpacePartitioningFrameBuffer(frameBuffer, false);
+	}
+	
+	/** Loads the framebuffer synchronously or asychronously.
+	 * 
+	 * @param frameBuffer The framebuffer to load
+	 * @param asynchWithReset Optionaly reset the tree and use the snapshot to load the framebuffer asynchronously to the graphics rendering
+	 * thread.
+	 */
+	public void loadBinarySpacePartitioningFrameBuffer(FrameBuffer frameBuffer, boolean asynchWithReset)
+	{	
+		if (asynchWithReset) {
+			loadBinarySpacePartitioningFrameBufferASync(frameBuffer);
+		} else {
+			loadBinarySpacePartitioningFrameBufferSync(frameBuffer);
+		}
+		
+		
+	}
+	
+	/** Loads all the points into the framebuffer. Does not reset the top of the tree, so it does the
+	 * operations synchronously to prevent changes to the tree in mid flight.
+	 * 
+	 * @param frameBuffer The framebuffer to load
+	 */
+	protected void loadBinarySpacePartitioningFrameBufferSync(FrameBuffer frameBuffer)
+	{	
+		synchronized(mutex) {
+			addPointsToFrameBuffer(top, frameBuffer);
+		}
+	}
+	
+	/** Loads all the points into the framebuffer. This will reset the tree to null and work with the snapshot 
+	 * asynchronously while other threads are able to begin working. 
+	 * 
+	 * @param frameBuffer The framebuffer to load
+	 */
+	protected void loadBinarySpacePartitioningFrameBufferASync(FrameBuffer frameBuffer)
+	{	
+		IndexedBufferPoint point = null;
+		synchronized(mutex) {
+			point = top;
+			top = null;
+		}
+		
+		if (point != null) {
+			addPointsToFrameBuffer(point, frameBuffer);
+		}
 	}
 	
 	
@@ -148,8 +208,9 @@ public class ConcurrentPartialFrameBuffer extends AbstractFrameBuffer implements
 			}
 		}
 		
-		
-		capturePoint(image, top);
+		synchronized(mutex) {
+			capturePoint(image, top);
+		}
 		return image;
 	}
 	
