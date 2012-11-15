@@ -44,7 +44,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 	
 	private ProcessTypeConfigurationPanel coloringConfiguration;
 	private ProcessTypeConfigurationPanel shadingConfiguration;
-	//private ProcessTypeConfigurationPanel renderConfiguration;
+	private ProcessTypeConfigurationPanel renderConfiguration;
 	private DynamicOptionsPanel globalOptionsPanel;
 	
 	private GlobalOptionModel globalOptionModel;
@@ -88,7 +88,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		globalOptionsPanel = new DynamicOptionsPanel(globalOptionModelContainer);
 		coloringConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.COLORING, defaultColoringProcessor, optionModelList);
 		shadingConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.SHADING, defaultShadingProcessor, optionModelList);
-		//renderConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.RENDER, defaultRenderProcessor, optionModelList);
+		renderConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.RENDER, defaultRenderProcessor, optionModelList);
 		
 		
 		// Add Listeners
@@ -101,7 +101,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 
 		coloringConfiguration.addModelConfigurationChangeListener(this);
 		shadingConfiguration.addModelConfigurationChangeListener(this);
-		//renderConfiguration.addModelConfigurationChangeListener(this);
+		renderConfiguration.addModelConfigurationChangeListener(this);
 		
 		
 		ScrollPane globalOptionsScroll = new ScrollPane(globalOptionsPanel);
@@ -112,7 +112,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		tabPane.add("General", globalOptionsScroll);
 		tabPane.add("Coloring", coloringConfiguration);
 		tabPane.add("Shading", shadingConfiguration);
-		//tabPane.add("Rendering", renderConfiguration);
+		tabPane.add("Rendering", renderConfiguration);
 		
 		setLayout(new BorderLayout());
 		add(tabPane, BorderLayout.CENTER);
@@ -135,7 +135,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		
 		//String defaultLoadProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.loadProcessor.default");
 		//String defaultSurfaceNormalsProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.normalsProcessor.default");
-		String defaultShapesProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.shapesProcessor.default");
+		//String defaultShapesProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.shapesProcessor.default");
 		
 		String coloringProcessId = coloringConfiguration.getCurrentProcessId();
 		OptionModel coloringOptionModel = coloringConfiguration.getCurrentOptionModel();
@@ -143,8 +143,8 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		String shadingProcessId = shadingConfiguration.getCurrentProcessId();
 		OptionModel shadingOptionModel = shadingConfiguration.getCurrentOptionModel();
 		
-		//String renderProcessId = renderConfiguration.getCurrentProcessId();
-		//OptionModel renderOptionModel = renderConfiguration.getCurrentOptionModel();
+		String renderProcessId = renderConfiguration.getCurrentProcessId();
+		OptionModel renderOptionModel = renderConfiguration.getCurrentOptionModel();
 		
 		//modelProcessManifest.addProcessor(defaultLoadProcessor, new GridLoadOptionModel());
 		//modelProcessManifest.addProcessor(defaultSurfaceNormalsProcessor, new SurfaceNormalsOptionModel());
@@ -153,7 +153,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		modelProcessManifest.addWorker(shadingProcessId, shadingOptionModel);
 		
 		//modelProcessManifest.addWorker(defaultShapesProcessor, new ShapeOptionModel());
-		//modelProcessManifest.addProcessor(renderProcessId, renderOptionModel);
+		//modelProcessManifest.addWorker(renderProcessId, renderOptionModel);
 		
 		return modelProcessManifest;
 	}

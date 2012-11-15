@@ -25,6 +25,7 @@ import us.wthr.jdem846.graphics.ImageCapture;
 import us.wthr.jdem846.graphics.RenderProcess;
 import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.graphics.ViewFactory;
+import us.wthr.jdem846.graphics.framebuffer.ManagedConcurrentFrameBufferController;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -39,6 +40,8 @@ import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor;
 import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsProcessor;
 import us.wthr.jdem846.model.processing.dataload.GridLoadProcessor;
+import us.wthr.jdem846.model.processing.render.ModelRenderOptionModel;
+import us.wthr.jdem846.model.processing.render.ModelRenderer;
 import us.wthr.jdem846.canvas.CanvasProjection;
 import us.wthr.jdem846.canvas.CanvasProjectionFactory;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
@@ -67,6 +70,7 @@ public class ModelBuilder extends InterruptibleProcess
 	private LatitudeProcessedList latitudeProcessedList = null;
 	//private ModelCanvas modelCanvas;
 	private BufferControlledRasterDataContainer bufferControlledRasterDataContainer;
+	private ManagedConcurrentFrameBufferController frameBufferController;
 	
 	private boolean runLoadProcessor = true;
 	private boolean runColorProcessor = true;
@@ -197,13 +201,34 @@ public class ModelBuilder extends InterruptibleProcess
 		useScripting = globalOptionModel.getUseScripting();
 		
 		
+		MapProjection mapProjection = null;
 		
+		try {
+			
+			mapProjection = globalOptionModel.getMapProjectionInstance();
+			
+		} catch (MapProjectionException ex) {
+			throw new RenderEngineException("Error creating map projection: " + ex.getMessage(), ex);
+		}
 		
 		int numberOfThreads = globalOptionModel.getNumberOfThreads();
+		this.frameBufferController = new ManagedConcurrentFrameBufferController(globalOptionModel.getWidth(), globalOptionModel.getHeight(), numberOfThreads);
+		
+		
+		
+		
 		for (int i = 0; i < numberOfThreads; i++) {
 			ModelProgram modelProgram;
+			
+			View view = ViewFactory.getViewInstance(modelContext
+					, globalOptionModel
+					, modelDimensions
+					, mapProjection
+					, modelContext.getScriptingContext().getScriptProxy()
+					, modelGrid);
+			
 			try {
-				modelProgram = modelProcessManifest.createModelProgram();
+				modelProgram = modelProcessManifest.createModelProgram(null, null);
 			} catch (Exception ex) {
 				throw new RenderEngineException("Error creating model program: " + ex.getMessage(), ex);
 			}
@@ -312,7 +337,7 @@ public class ModelBuilder extends InterruptibleProcess
 		double longitudeResolution = modelDimensions.getTextureLongitudeResolution();
 		
 		
-		
+		frameBufferController.start();
 		
 		if (numberOfThreads == 1) {
 			ModelProgram modelProgram = this.modelPrograms.get(0);
@@ -394,9 +419,81 @@ public class ModelBuilder extends InterruptibleProcess
 		
 
 		onProcessAfter();
+		
+		// Reset the lat processed list to prepare for the render stage
+		this.latitudeProcessedList.reset();
+		
 
 		dataLoaded = true;
 		
+		log.info("Initializing final rendering...");
+		MapProjection mapProjection = null;
+		
+		try {
+			
+			mapProjection = globalOptionModel.getMapProjectionInstance();
+			
+		} catch (MapProjectionException ex) {
+			throw new RenderEngineException("Error creating map projection: " + ex.getMessage(), ex);
+		}
+		
+		View view = ViewFactory.getViewInstance(modelContext
+				, globalOptionModel
+				, modelDimensions
+				, mapProjection
+				, modelContext.getScriptingContext().getScriptProxy()
+				, modelGrid);
+		
+		
+		
+		ModelRenderer renderer = new ModelRenderer();
+		renderer.setView(view);
+		renderer.setFrameBuffer(frameBufferController.getPartialBuffer(0));
+		renderer.setOptionModel(new ModelRenderOptionModel());
+		renderer.setModelContext(modelContext);
+		renderer.setGlobalOptionModel(globalOptionModel);
+		renderer.setModelDimensions(modelDimensions);
+		renderer.setScript(modelContext.getScriptingContext().getScriptProxy());
+		renderer.setModelGrid(modelGrid);
+		
+		renderer.prepare();
+		renderer.onProcessBefore();
+		
+		
+		latitudeResolution = modelDimensions.getModelLatitudeResolution();
+		longitudeResolution = modelDimensions.getModelLongitudeResolution();
+		
+		
+		for (double latitude = north; latitude > south; latitude -= latitudeResolution) {
+			if (this.latitudeProcessedList != null) {
+				if (this.latitudeProcessedList.isLatitudeProcessed(latitude)) {
+					continue;
+				} else {
+					this.latitudeProcessedList.setLatitudeProcessed(latitude);
+				}
+			}
+
+			renderer.onLatitudeStart(latitude);
+
+			for (double longitude = west; longitude <= east; longitude += longitudeResolution) {
+				renderer.onModelPoint(latitude, longitude);
+			}
+			
+			renderer.onLatitudeEnd(latitude);
+
+			//checkPause();
+			//if (isCancelled()) {
+			//	log.warn("Render process cancelled, model not complete.");
+			//	break;
+			//}
+		}
+		
+		renderer.onProcessAfter();
+		renderer.dispose();
+		
+		
+		
+		/*
 		log.info("Initializing final rendering...");
 		MapProjection mapProjection = null;
 		
@@ -438,8 +535,19 @@ public class ModelBuilder extends InterruptibleProcess
 		
 		log.info("Completed final rendering, disposing...");
 		renderProcess.dispose();
+		*/
 		
+		this.frameBufferController.finish();
+		while(frameBufferController.isAlive()) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException ex) {
+				log.warn("Thread sleep interrupted while waiting for grid process threads to complete: " + ex.getMessage(), ex);
+			}
+		}
 		
+		//frameBufferController.collectPoints();
+		ImageCapture imageCapture = this.frameBufferController.captureImage();
 		
 		if (useScripting) {
 			onDestroy();
