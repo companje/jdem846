@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="us.wthr.jdem846ui.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Perspective"
+            class="us.wthr.jdem846ui.Perspective"
+            id="jDem846UI.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      
+      <view
+            name="Data Sources"
+            allowMultiple="false"
+            icon="icons/eclipse/sundial.gif"
+            class="us.wthr.jdem846ui.views.DataView"
+            id="jdem846ui.dataView" />
+      
+      <view
+            name="Log Console"
+            class="us.wthr.jdem846ui.views.LogConsoleView"
+            id="jdem846ui.logConsoleView" />
+            
+      <view
+            name="Model Configuration"
+            class="us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView"
+            id="jdem846ui.modelConfigurationView" />
+      
+      <view
+            name="Preview"
+            class="us.wthr.jdem846ui.views.PreviewView"
+            id="jdem846ui.previewView" />
+      
+      <view
+            name="Region Overview"
+            class="us.wthr.jdem846ui.views.RegionOverviewView"
+            id="jdem846ui.regionOverviewView" />
+      
+      <view
+            name="Rendered Model Display"
+            class="us.wthr.jdem846ui.views.RenderedModelDisplayView"
+            id="jdem846ui.renderedModelDisplayView" />
+     
+      <view
+            name="Rendered Model List"
+            class="us.wthr.jdem846ui.views.RenderedModelListView"
+            id="jdem846ui.renderedModelListView" />
+     
+      <view
+            name="Rendered Model Properties"
+            class="us.wthr.jdem846ui.views.RenderedModelPropertiesView"
+            id="jdem846ui.renderedModelPropertiesView" />
+     
+     <view
+            name="Script Editor"
+            class="us.wthr.jdem846ui.views.ScriptEditorView"
+            id="jdem846ui.scriptEditorView" />
+     
+     
+     
+   </extension>
+   <!--
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <view
+               standalone="true"
+               minimized="false"
+               relative="org.eclipse.ui.editorss"
+               relationship="left"
+               id="jDem846UI.view">
+         </view>
+      </perspectiveExtension>
+   </extension>
+  -->
+  <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="jDem846"
+            id="jdem846ui.category">
+      </category>
+      <command
+            name="New Project"
+            description="Creates a new project"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.project.new">
+      </command>
+      <command
+            name="Open Project"
+            description="Opens a project"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.project.open">
+      </command>
+  </extension>
+<!--
+  
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="File">
+            <command
+                  commandId="org.eclipse.ui.file.exit"
+                  label="Exit">
+            </command>
+         </menu>
+
+      </menuContribution>
+   </extension>
+   
+-->
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="jDem846UI.application"
+            name="jDem846">
+         <property
+               name="windowImages"
+               value="icons/alt_window_16.gif,icons/alt_window_32.gif">
+         </property>
+      </product>
+   </extension>
+
+</plugin>
