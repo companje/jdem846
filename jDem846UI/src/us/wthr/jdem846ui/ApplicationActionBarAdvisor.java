@@ -1,7 +1,6 @@
 package us.wthr.jdem846ui;
 
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
@@ -17,7 +16,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
-import org.eclipse.ui.internal.about.AboutAction;
 
 import us.wthr.jdem846ui.actions.AddDataAction;
 import us.wthr.jdem846ui.actions.ExportDataAction;
@@ -25,6 +23,8 @@ import us.wthr.jdem846ui.actions.NewProjectAction;
 import us.wthr.jdem846ui.actions.OpenProjectAction;
 import us.wthr.jdem846ui.actions.RemoveDataAction;
 import us.wthr.jdem846ui.actions.RenderAction;
+import us.wthr.jdem846ui.actions.SaveProjectAction;
+import us.wthr.jdem846ui.actions.SaveProjectAsAction;
 
 /**
  * An action bar advisor is responsible for creating, adding, and disposing of
@@ -46,11 +46,14 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private IWorkbenchAction aboutAction;
     private NewProjectAction newProjectAction;
     private OpenProjectAction openProjectAction;
+    private SaveProjectAction saveProjectAction;
+    private SaveProjectAsAction saveProjectAsAction;
     
     private AddDataAction addDataAction;
     private RemoveDataAction removeDataAction;
     private ExportDataAction exportDataAction;
     private RenderAction renderAction;
+    
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
         super(configurer);
@@ -71,6 +74,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         
         newProjectAction = new NewProjectAction(window, "New Project", View.ID);
         openProjectAction = new OpenProjectAction(window, "Open Project", View.ID);
+        saveProjectAction = new SaveProjectAction(window, "Save Project", View.ID);
+        saveProjectAsAction = new SaveProjectAsAction(window, "Save Project As", View.ID);
+        
         addDataAction = new AddDataAction(window, "Add", View.ID);
         removeDataAction = new RemoveDataAction(window, "Remove", View.ID);
         exportDataAction = new ExportDataAction(window, "Export", View.ID);
@@ -78,6 +84,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         
         register(newProjectAction);
         register(openProjectAction);
+        register(saveProjectAction);
+        register(saveProjectAsAction);
         register(addDataAction);
         register(removeDataAction);
         register(exportDataAction);
@@ -106,6 +114,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         fileMenu.add(newProjectAction);
         fileMenu.add(openProjectAction);
         fileMenu.add(new Separator());
+        fileMenu.add(saveProjectAction);
+        fileMenu.add(saveProjectAsAction);
+       // fileMenu.add(new Separator());
        // fileMenu.add(messagePopupAction);
        // fileMenu.add(openViewAction);
         fileMenu.add(new Separator());
@@ -120,6 +131,13 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         coolBar.add(new ToolBarContributionItem(toolbar, "main"));   
         toolbar.add(newProjectAction);
         toolbar.add(openProjectAction);
+        toolbar.add(saveProjectAction);
+        toolbar.add(saveProjectAsAction);
+        toolbar.add(new Separator());
+        toolbar.add(addDataAction);
+        toolbar.add(removeDataAction);
+        toolbar.add(exportDataAction);
+        toolbar.add(renderAction);
         //toolbar.add(openViewAction);
        // toolbar.add(messagePopupAction);
     }

@@ -32,17 +32,20 @@
       <view
             name="Log Console"
             class="us.wthr.jdem846ui.views.LogConsoleView"
-            id="jdem846ui.logConsoleView" />
+            id="jdem846ui.logConsoleView"
+            icon="icons/eclipse/console_view.gif" />
             
       <view
             name="Model Configuration"
             class="us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView"
-            id="jdem846ui.modelConfigurationView" />
+            id="jdem846ui.modelConfigurationView"
+            icon="icons/eclipse/configure.gif" />
       
       <view
             name="Preview"
             class="us.wthr.jdem846ui.views.PreviewView"
-            id="jdem846ui.previewView" />
+            id="jdem846ui.previewView" 
+            icon="icons/eclipse/globe2.gif"/>
       
       <view
             name="Region Overview"
@@ -52,7 +55,8 @@
       <view
             name="Rendered Model Display"
             class="us.wthr.jdem846ui.views.RenderedModelDisplayView"
-            id="jdem846ui.renderedModelDisplayView" />
+            id="jdem846ui.renderedModelDisplayView"
+            icon="icons/eclipse/gallery_view.gif" />
      
       <view
             name="Rendered Model List"
@@ -62,12 +66,14 @@
       <view
             name="Rendered Model Properties"
             class="us.wthr.jdem846ui.views.RenderedModelPropertiesView"
-            id="jdem846ui.renderedModelPropertiesView" />
+            id="jdem846ui.renderedModelPropertiesView" 
+            icon="icons/eclipse/message_info.gif" />
      
      <view
             name="Script Editor"
             class="us.wthr.jdem846ui.views.ScriptEditorView"
-            id="jdem846ui.scriptEditorView" />
+            id="jdem846ui.scriptEditorView"
+            icon="icons/eclipse/scroll.png" />
      
      
      
@@ -105,6 +111,51 @@
             categoryId="jdem846ui.category"
             id="jdem846ui.project.open">
       </command>
+      <command
+            name="Save Project"
+            description="Saves a project"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.project.save">
+      </command>
+      <command
+            name="Save Project As"
+            description="Saves a project to a different file"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.project.saveAs">
+      </command>
+      
+      <command
+            name="Add Data"
+            description="Adds a data source"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.data.add">
+      </command>
+      <command
+            name="Remove Data"
+            description="Removes a data source"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.data.remove">
+      </command>
+      <command
+            name="Exports Data"
+            description="Exports a data source"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.data.export">
+      </command>
+      <command
+            name="Render"
+            description="Render the final model"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.render">
+      </command>
+      <command
+      		name="Clear Log"
+      		description="Clears the log console"
+      		categoryId="jdem846ui.category"
+      		id="jdem846ui.log.clear">
+      </command>
+
+      
   </extension>
 <!--
   
