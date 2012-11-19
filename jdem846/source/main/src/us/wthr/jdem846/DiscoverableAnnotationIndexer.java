@@ -61,16 +61,20 @@ public class DiscoverableAnnotationIndexer
 		
 		Set<String> discoverableAnnotations = findDiscoverableAnnotations();
 		
-		for (String clazzName : discoverableAnnotations) {
-			log.info("Found Discoverable Annotation: " + clazzName);
-			try {
-				findClassesWithAnnotation(clazzName);
-			} catch (Exception ex) {
-				throw new AnnotationIndexerException("Error finding classes with annotation '" + clazzName + "': " + ex.getMessage(), ex);
+		if (discoverableAnnotations != null) {
+			for (String clazzName : discoverableAnnotations) {
+				log.info("Found Discoverable Annotation: " + clazzName);
+				try {
+					findClassesWithAnnotation(clazzName);
+				} catch (Exception ex) {
+					throw new AnnotationIndexerException("Error finding classes with annotation '" + clazzName + "': " + ex.getMessage(), ex);
+				}
+				
+				
+				
 			}
-			
-			
-			
+		} else {
+			this.log.warn("No discoverable annotations found!");
 		}
 		
 	}
