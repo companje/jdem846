@@ -1,11 +1,14 @@
 package us.wthr.jdem846;
 
+import java.io.File;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
 import org.scannotation.AnnotationDB;
 import org.scannotation.ClasspathUrlFinder;
 
@@ -84,13 +87,21 @@ public class DiscoverableAnnotationIndexer
 		log.info("Loading annotation index");
 		
 		AnnotationDB db = new AnnotationDB();
+
+		File installPath = new File(System.getProperty("us.wthr.jdem846.installPath"));
+		URL url = installPath.toURI().toURL();
+		log.info("Scanning Classpath URL: " + url);
+		StartupLoadNotifyQueue.add("Searching for modules in " + url);
 		
-		URL[] urls = ClasspathUrlFinder.findClassPaths();
-		for (URL url : urls) {	
-			log.info("Scanning Classpath URL: " + url);
-			StartupLoadNotifyQueue.add("Searching for modules in " + url);
-			db.scanArchives(url);
-		}
+		db.scanArchives(url);
+			
+			
+		//URL[] urls = ClasspathUrlFinder.findClassPaths();
+		//for (URL url : urls) {	
+		//	log.info("Scanning Classpath URL: " + url);
+		//	StartupLoadNotifyQueue.add("Searching for modules in " + url);
+		//	db.scanArchives(url);
+		//}
 		//db.crossReferenceImplementedInterfaces();
 		 	
 		DiscoverableAnnotationIndexer.annotationIndex = db.getAnnotationIndex();
