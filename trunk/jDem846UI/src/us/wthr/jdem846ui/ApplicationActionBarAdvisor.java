@@ -19,8 +19,12 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.internal.about.AboutAction;
 
+import us.wthr.jdem846ui.actions.AddDataAction;
+import us.wthr.jdem846ui.actions.ExportDataAction;
 import us.wthr.jdem846ui.actions.NewProjectAction;
 import us.wthr.jdem846ui.actions.OpenProjectAction;
+import us.wthr.jdem846ui.actions.RemoveDataAction;
+import us.wthr.jdem846ui.actions.RenderAction;
 
 /**
  * An action bar advisor is responsible for creating, adding, and disposing of
@@ -42,6 +46,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private IWorkbenchAction aboutAction;
     private NewProjectAction newProjectAction;
     private OpenProjectAction openProjectAction;
+    
+    private AddDataAction addDataAction;
+    private RemoveDataAction removeDataAction;
+    private ExportDataAction exportDataAction;
+    private RenderAction renderAction;
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
         super(configurer);
@@ -62,9 +71,17 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         
         newProjectAction = new NewProjectAction(window, "New Project", View.ID);
         openProjectAction = new OpenProjectAction(window, "Open Project", View.ID);
+        addDataAction = new AddDataAction(window, "Add", View.ID);
+        removeDataAction = new RemoveDataAction(window, "Remove", View.ID);
+        exportDataAction = new ExportDataAction(window, "Export", View.ID);
+        renderAction = new RenderAction(window, "Render", View.ID);
         
         register(newProjectAction);
         register(openProjectAction);
+        register(addDataAction);
+        register(removeDataAction);
+        register(exportDataAction);
+        register(renderAction);
         
         //newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
         //register(newWindowAction);
