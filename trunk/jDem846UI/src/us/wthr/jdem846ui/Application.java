@@ -1,23 +1,18 @@
 package us.wthr.jdem846ui;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.ServiceKernel;
-import us.wthr.jdem846.StartupLoadNotifyQueue;
 import us.wthr.jdem846.ServiceKernel.ServiceThreadListener;
 import us.wthr.jdem846.exception.ArgumentException;
 import us.wthr.jdem846.exception.RegistryException;
@@ -25,6 +20,8 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.InstanceIdentifier;
+import us.wthr.jdem846ui.project.ProjectContext;
+import us.wthr.jdem846ui.project.ProjectException;
 
 /**
  * This class controls all aspects of the application's execution
@@ -96,9 +93,6 @@ public class Application implements IApplication {
 			log.error("Service initialization error: " + ex.getMessage(), ex);
 
 		}
-		
-		StartupLoadNotifyQueue.add("Loading User Interface...");
-		Thread.sleep(3000);
 
 
 	}
@@ -116,6 +110,22 @@ public class Application implements IApplication {
 			e.printStackTrace();
 			return -1;
 		}
+		
+		
+		String projectPath = System.getProperty("us.wthr.jdem846.ui.openFiles");
+		if (projectPath != null) {
+			String[] projects = projectPath.split(";");
+			if (projects.length > 0 && fileExistsAndIsProject(projects[0])) {
+				try {
+					ProjectContext.initialize(projects[0]);
+				} catch (ProjectException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		
+		
+		
 		
 		Display display = PlatformUI.createDisplay();
 		try {
@@ -231,7 +241,7 @@ public class Application implements IApplication {
 			return false;
 		
 		String pathLower = path.toLowerCase();
-		if (!(pathLower.endsWith(".zdem") || pathLower.endsWith(".jdem") || pathLower.endsWith(".xdem"))) {
+		if (!(pathLower.endsWith(".jdemprj") || pathLower.endsWith(".jdemimg"))) {
 			return false;
 		}
 		

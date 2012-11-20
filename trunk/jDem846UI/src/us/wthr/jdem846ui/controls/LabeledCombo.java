@@ -1,11 +1,9 @@
 package us.wthr.jdem846ui.controls;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 
 public class LabeledCombo extends LabeledControl<Combo> 
@@ -17,9 +15,12 @@ public class LabeledCombo extends LabeledControl<Combo>
 	
 	
 	
-	public static LabeledCombo create(FormToolkit toolkit, Composite form, String labelText, int style)
+	public static LabeledCombo create(Composite form, String labelText, int style)
 	{
-		Label label = toolkit.createLabel(form, labelText);
+		Label label = new Label(form, SWT.NONE);
+		label.setBackground(form.getBackground());
+		label.setText(labelText);
+		
 		Combo combo = new Combo(form, style);
 		combo.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		

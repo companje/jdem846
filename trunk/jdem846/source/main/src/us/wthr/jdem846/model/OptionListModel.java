@@ -58,15 +58,48 @@ public class OptionListModel<E>
 		}
 	}
 	
+	public int getSelectionIndex()
+	{
+		if (selectedItem != null) {
+			return getIndexOfValue(selectedItem.getValue());
+		} else {
+			return 0;
+		}
+	}
 	
+	public int getIndexOfLabel(String label)
+	{
+		int i = 0;
+		for (OptionListModelItem<E> item : itemList) {
+			if (item.getLabel().equals(label)) {
+				return i;
+			}
+			i++;
+		}
+		return 0;
+	}
 	
-
+	public int getIndexOfValue(E value)
+	{
+		int i = 0;
+		for (OptionListModelItem<E> item : itemList) {
+			if (item.getValue().equals(value)) {
+				return i;
+			}
+			i++;
+		}
+		return 0;
+	}
 	
 	public Object getElementAt(int index) 
 	{	
 		return itemList.get(index);
 	}
 
+	public E getValueAt(int index)
+	{
+		return itemList.get(index).getValue();
+	}
 	
 	public int getSize()
 	{
