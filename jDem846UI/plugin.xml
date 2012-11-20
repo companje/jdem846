@@ -26,7 +26,7 @@
             name="Data Sources"
             allowMultiple="false"
             icon="icons/eclipse/sundial.gif"
-            class="us.wthr.jdem846ui.views.DataView"
+            class="us.wthr.jdem846ui.views.data.DataView"
             id="jdem846ui.dataView" />
       
       <view
@@ -37,6 +37,7 @@
             
       <view
             name="Model Configuration"
+            allowMultiple="false"
             class="us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView"
             id="jdem846ui.modelConfigurationView"
             icon="icons/eclipse/configure.gif" />

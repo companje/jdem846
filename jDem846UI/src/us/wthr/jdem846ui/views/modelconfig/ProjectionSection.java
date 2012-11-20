@@ -1,17 +1,12 @@
 package us.wthr.jdem846ui.views.modelconfig;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import us.wthr.jdem846ui.controls.FormSection;
-import us.wthr.jdem846ui.controls.LabeledCheck;
 import us.wthr.jdem846ui.controls.LabeledCombo;
-import us.wthr.jdem846ui.controls.LabeledList;
 import us.wthr.jdem846ui.controls.LabeledSpinner;
-import us.wthr.jdem846ui.controls.LabeledText;
-import us.wthr.jdem846ui.controls.SectionContainer;
 import us.wthr.jdem846ui.controls.SectionFactory;
 
 public class ProjectionSection extends FormSection 
@@ -84,12 +79,12 @@ public class ProjectionSection extends FormSection
 		
 		section.sectionContainer = SectionFactory.createSection(toolkit, parent, "Projections");
 		
-		section.elevationScale = LabeledCombo.create(toolkit, section.sectionContainer.getSectionClient(), "Elevation Scale", SWT.READ_ONLY);
-		section.mapProjection = LabeledCombo.create(toolkit, section.sectionContainer.getSectionClient(), "Map Projection", SWT.READ_ONLY);
-		section.renderProjection = LabeledCombo.create(toolkit, section.sectionContainer.getSectionClient(), "Render Projection", SWT.READ_ONLY);
-		section.perspective = LabeledCombo.create(toolkit, section.sectionContainer.getSectionClient(), "Perspective Type", SWT.READ_ONLY);
-		section.fieldOfView = LabeledSpinner.create(toolkit, section.sectionContainer.getSectionClient(), "Field of View", 0, 180, 0, 1);
-		section.eyeDistance = LabeledSpinner.create(toolkit, section.sectionContainer.getSectionClient(), "Eye Distance", 0, 1000000000, 0, 1000);
+		section.elevationScale = LabeledCombo.create(section.sectionContainer.getSectionClient(), "Elevation Scale", SWT.READ_ONLY);
+		section.mapProjection = LabeledCombo.create(section.sectionContainer.getSectionClient(), "Map Projection", SWT.READ_ONLY);
+		section.renderProjection = LabeledCombo.create(section.sectionContainer.getSectionClient(), "Render Projection", SWT.READ_ONLY);
+		section.perspective = LabeledCombo.create(section.sectionContainer.getSectionClient(), "Perspective Type", SWT.READ_ONLY);
+		section.fieldOfView = LabeledSpinner.create(section.sectionContainer.getSectionClient(), "Field of View", 0, 180, 0, 1);
+		section.eyeDistance = LabeledSpinner.create(section.sectionContainer.getSectionClient(), "Eye Distance", 0, 1000000000, 0, 1000);
 		
 		return section;
 		

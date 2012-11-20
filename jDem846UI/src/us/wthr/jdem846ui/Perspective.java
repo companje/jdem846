@@ -5,11 +5,11 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
-import us.wthr.jdem846ui.views.DataView;
 import us.wthr.jdem846ui.views.LogConsoleView;
 import us.wthr.jdem846ui.views.PreviewView;
 import us.wthr.jdem846ui.views.RenderedModelPropertiesView;
 import us.wthr.jdem846ui.views.ScriptEditorView;
+import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView;
 
 public class Perspective implements IPerspectiveFactory {

@@ -10,6 +10,7 @@ public interface ICommandIds {
 	public static final String CMD_EXPORT_DATA = "jdem846ui.data.export";
 	public static final String CMD_RENDER = "jdem846ui.render";
 	
+	public static final String CMD_DATA_SELECTED = "jdem846ui.data.selected";
 	
 	public static final String CMD_CLEAR_LOG_CONSOLE = "jdem846ui.log.clear";
 }

@@ -7,7 +7,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import us.wthr.jdem846ui.Activator;
-import us.wthr.jdem846ui.ICommandIds;
 
 public class BasicAction extends Action
 {
@@ -53,6 +52,12 @@ public class BasicAction extends Action
 		super.run();
 		this.fireActionListeners();
 	}
+	
+	protected IWorkbenchWindow getWindow()
+	{
+		return window;
+	}
+	
 
 	public void addActionListener(ActionListener l)
 	{

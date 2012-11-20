@@ -12,19 +12,20 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.canvas.CanvasProjection;
+import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.gis.CoordinateSpaceAdjuster;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.canvas.CanvasProjection;
-import us.wthr.jdem846.color.ColorAdjustments;
 
-public class SimpleGeoImage 
+public class SimpleGeoImage implements InputSourceData
 {
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(SimpleGeoImage.class);

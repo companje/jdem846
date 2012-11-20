@@ -1,8 +1,9 @@
 package us.wthr.jdem846.rasterdata;
 
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.input.InputSourceData;
 
-public interface RasterData {
+public interface RasterData extends InputSourceData {
 
 	public void create(String file) throws DataSourceException;
 	

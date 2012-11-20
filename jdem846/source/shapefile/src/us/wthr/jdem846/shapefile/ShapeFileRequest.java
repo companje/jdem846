@@ -18,11 +18,12 @@ package us.wthr.jdem846.shapefile;
 
 import us.wthr.jdem846.DataSetTypes;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 
-public class ShapeFileRequest
+public class ShapeFileRequest implements InputSourceData
 {
 	private static Log log = Logging.getLog(ShapeFileRequest.class);
 	

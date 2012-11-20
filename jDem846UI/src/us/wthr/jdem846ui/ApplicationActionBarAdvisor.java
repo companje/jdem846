@@ -65,7 +65,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         // The corresponding commands keybindings are defined in the plugin.xml file.
         // Registering also provides automatic disposal of the actions when
         // the window is closed.
-
+    	
         exitAction = ActionFactory.QUIT.create(window);
         register(exitAction);
         
@@ -90,6 +90,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register(removeDataAction);
         register(exportDataAction);
         register(renderAction);
+        
+   
         
         //newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
         //register(newWindowAction);
