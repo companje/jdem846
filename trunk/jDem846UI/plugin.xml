@@ -184,7 +184,7 @@
             name="jDem846">
          <property
                name="windowImages"
-               value="icons/alt_window_16.gif,icons/alt_window_32.gif">
+               value="icons/jdem846-icon-16.png,icons/jdem846-icon-32.png,icons/jdem846-icon-48.png">
          </property>
       </product>
    </extension>

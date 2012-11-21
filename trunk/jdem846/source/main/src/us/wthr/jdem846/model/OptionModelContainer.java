@@ -35,6 +35,8 @@ public class OptionModelContainer
 	private Map<String, OptionModelPropertyContainer> propertyContainerMap = new HashMap<String, OptionModelPropertyContainer>();
 	private List<OptionModelPropertyContainer> propertyContainerList = new LinkedList<OptionModelPropertyContainer>();
 	
+	private List<String> optionGroups = new LinkedList<String>();
+	
 	public OptionModelContainer(OptionModel optionModel) throws InvalidProcessOptionException
 	{
 		this.optionModel = optionModel;
@@ -52,6 +54,7 @@ public class OptionModelContainer
 		getAnnotatedMethods();
 		getGetterSetterMethods();
 		getPropertyContainers();
+		loadOptionGroups();
 	}
 	
 	
@@ -124,6 +127,15 @@ public class OptionModelContainer
 		
 		sortPropertyContainerList(propertyContainerList);
 
+	}
+	
+	private void loadOptionGroups()
+	{
+		for (OptionModelPropertyContainer propertyContainer : propertyContainerList) {
+			if (!this.optionGroups.contains(propertyContainer.getOptionGroup())) {
+				this.optionGroups.add(propertyContainer.getOptionGroup());
+			}
+		}
 	}
 	
 	private void sortPropertyContainerList(List<OptionModelPropertyContainer> propertyContainerList)

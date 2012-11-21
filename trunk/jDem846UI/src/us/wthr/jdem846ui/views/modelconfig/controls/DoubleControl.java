@@ -20,7 +20,14 @@ public class DoubleControl {
 	public static LabeledSpinner create(Composite parent, final OptionModelPropertyContainer property,  String labelText)
 	{
 		ValueBounds bounds = property.getValueBounds();
-		LabeledSpinner control = LabeledSpinner.create(parent, labelText, (int) bounds.minimum() * 100, (int) bounds.maximum() * 100, 2, (int) bounds.stepSize() * 100);
+		
+		
+		LabeledSpinner control = null;
+		if (bounds != null) {
+			control = LabeledSpinner.create(parent, labelText, (int) bounds.minimum() * 100, (int) bounds.maximum() * 100, 2, (int) bounds.stepSize() * 100);
+		} else {
+			control =  LabeledSpinner.create(parent, labelText);
+		}
 		
 		control.getControl().addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {

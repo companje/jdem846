@@ -19,8 +19,7 @@ public class LabeledCheck extends LabeledControl<Button> {
 		
 		Button button = new Button(parent, SWT.CHECK);
 		button.setText(labelText);
-		button.setBackground(parent.getBackground());
-
+		
 		return new LabeledCheck(label, button);
 	}
 }

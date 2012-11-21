@@ -44,7 +44,7 @@ public class ProjectContext {
 	private ShapeDataContext shapeDataContext;
 	private ImageDataContext imageDataContext;
 	private ScriptingContext scriptingContext;
-	
+	private List<OptionModel> defaultOptionModelList;
 	
 	
 	protected ProjectContext() throws ProjectException
@@ -58,11 +58,16 @@ public class ProjectContext {
 			log.info("Initializing project from " + projectPath);
 		}
 		
-		ProjectMarshall projectMarshall = loadMarshalledProject(projectPath);
+		ProjectMarshall projectMarshall = null;
+		
+		if (projectPath != null) {
+			projectMarshall = loadMarshalledProject(projectPath);
+		} else {
+			projectMarshall = new ProjectMarshall();
+		}
 		
 		rasterDataContext = new RasterDataContext();
 
-		List<OptionModel> defaultOptionModelList = null;
 		try {
 			defaultOptionModelList = createDefaultOptionModelList(projectMarshall);
 		} catch (Exception ex) {
@@ -118,22 +123,25 @@ public class ProjectContext {
 	{
 		ProjectMarshall projectMarshall = null;
 
-		try {
-			projectMarshall = ProjectFiles.read(projectPath);
+		if (projectPath != null) {
+			try {
+				projectMarshall = ProjectFiles.read(projectPath);
+				
+				RecentProjectTracker.addProject(projectPath);
+			} catch (FileNotFoundException ex) {
+				log.error("Project file not found: " + ex.getMessage(), ex);
+				throw new ProjectException("Project file not found: " + ex.getMessage(), ex);
+			} catch (IOException ex) {
+				log.error("IO error reading from disk: " + ex.getMessage(), ex);
+				throw new ProjectException("IO error reading from disk: " + ex.getMessage(), ex);
+			} catch (ProjectParseException ex) {
+				log.error("Error parsing project: " + ex.getMessage(), ex);
+				throw new ProjectException("Error parsing project: " + ex.getMessage(), ex);
+			}
 			
-			RecentProjectTracker.addProject(projectPath);
-		} catch (FileNotFoundException ex) {
-			log.error("Project file not found: " + ex.getMessage(), ex);
-			throw new ProjectException("Project file not found: " + ex.getMessage(), ex);
-		} catch (IOException ex) {
-			log.error("IO error reading from disk: " + ex.getMessage(), ex);
-			throw new ProjectException("IO error reading from disk: " + ex.getMessage(), ex);
-		} catch (ProjectParseException ex) {
-			log.error("Error parsing project: " + ex.getMessage(), ex);
-			throw new ProjectException("Error parsing project: " + ex.getMessage(), ex);
-		}
+			projectMarshall.setLoadedFrom(projectPath);
+		} 
 		
-		projectMarshall.setLoadedFrom(projectPath);
 		return projectMarshall;
 	}
 	
@@ -307,6 +315,12 @@ public class ProjectContext {
 	public ScriptingContext getScriptingContext() 
 	{
 		return scriptingContext;
+	}
+
+	
+	
+	public List<OptionModel> getDefaultOptionModelList() {
+		return defaultOptionModelList;
 	}
 
 	public static void initialize() throws ProjectException
