@@ -8,14 +8,15 @@ public class ScriptEditorView extends ViewPart
 	public static final String ID = "jdem846ui.scriptEditorView";
 	
 	@Override
-	public void createPartControl(Composite arg0) {
-		// TODO Auto-generated method stub
+	public void createPartControl(Composite parent) {
+		
+
+		
 		
 	}
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
 		
 	}
 

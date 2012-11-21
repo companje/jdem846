@@ -17,8 +17,8 @@ public class LabeledText extends LabeledControl<Text>
 	public static LabeledText create(Composite form, String labelText)
 	{
 		Label label = new Label(form, SWT.NONE);
-		label.setBackground(form.getBackground());
 		label.setText(labelText);
+		label.setLayoutData(new TableWrapData(TableWrapData.LEFT, TableWrapData.MIDDLE));
 		
 		Text text = new Text(form, SWT.BORDER);
 		text.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));

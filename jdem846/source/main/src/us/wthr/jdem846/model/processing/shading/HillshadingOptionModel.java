@@ -1,7 +1,5 @@
 package us.wthr.jdem846.model.processing.shading;
 
-import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
-import us.wthr.jdem846.model.AzimuthElevationAngles;
 import us.wthr.jdem846.model.LightingDate;
 import us.wthr.jdem846.model.LightingTime;
 import us.wthr.jdem846.model.OptionModel;
@@ -13,14 +11,10 @@ public class HillshadingOptionModel implements OptionModel
 {
 	
 	private boolean lightingEnabled = true;
-	//private String sourceType = LightSourceSpecifyTypeEnum.BY_AZIMUTH_AND_ELEVATION.optionValue();
-	//private AzimuthElevationAngles sourceLocation = new AzimuthElevationAngles(315.0, 25.0); 
+
 	private LightingDate sunlightDate = new LightingDate(System.currentTimeMillis());
 	private LightingTime sunlightTime = new LightingTime(System.currentTimeMillis());
-	//private boolean recalcLightForEachPoint = true;
-	//private double lightZenith = 90.0;
-	//private double darkZenith = 108.0;
-	//private double lightMultiple = 1.0;
+
 	private double lightIntensity = 0.75;
 	private double darkIntensity = 1.0;
 	
@@ -57,40 +51,7 @@ public class HillshadingOptionModel implements OptionModel
 		this.lightingEnabled = lightingEnabled;
 	}
 
-	
-	/*
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.sourceType",
-			label="Source Type",
-			tooltip="",
-			enabled=true,
-			listModel=SourceTypeListModel.class)
-	@Order(10)
-	public String getSourceType()
-	{
-		return sourceType;
-	}
 
-	public void setSourceType(String sourceType)
-	{
-		this.sourceType = sourceType;
-	}
-
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.sourceLocation",
-			label="Source Location",
-			tooltip="",
-			enabled=true)
-	@Order(20)
-	public AzimuthElevationAngles getSourceLocation()
-	{
-		return sourceLocation;
-	}
-
-	public void setSourceLocation(AzimuthElevationAngles sourceLocation)
-	{
-		this.sourceLocation = sourceLocation;
-	}
-	*/
-	
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.sunlightDate",
 			label="Sunlight Date (GMT)",
 			tooltip="",
@@ -121,76 +82,11 @@ public class HillshadingOptionModel implements OptionModel
 		this.sunlightTime = sunlightTime;
 	}
 	
-	/*
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.recalcLightForEachPoint",
-			label="Recalc Light For Each Point",
-			tooltip="",
-			enabled=true)
-	@Order(50)
-	public boolean isRecalcLightForEachPoint()
-	{
-		return recalcLightForEachPoint;
-	}
-
-	public void setRecalcLightForEachPoint(boolean recalcLightForEachPoint)
-	{
-		this.recalcLightForEachPoint = recalcLightForEachPoint;
-	}
-	
-	
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.lightZenith",
-			label="Light Zenith",
-			tooltip="",
-			enabled=true)
-	@Order(60)
-	public double getLightZenith()
-	{
-		return lightZenith;
-	}
-
-	public void setLightZenith(double lightZenith)
-	{
-		this.lightZenith = lightZenith;
-	}
-	
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.darkZenith",
-			label="Dark Zenith",
-			tooltip="",
-			enabled=true)
-	@Order(70)
-	public double getDarkZenith()
-	{
-		return darkZenith;
-	}
-
-	public void setDarkZenith(double darkZenith)
-	{
-		this.darkZenith = darkZenith;
-	}
-	
-	
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.lightMultiple",
-			label="Light Multiple",
-			tooltip="",
-			enabled=true)
-	@Order(80)
-	@ValueBounds(minimum=0,
-			stepSize=0.1)
-	public double getLightMultiple()
-	{
-		return lightMultiple;
-	}
-
-	public void setLightMultiple(double lightMultiple)
-	{
-		this.lightMultiple = lightMultiple;
-	}
-	*/
-	
 
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.lightIntensity",
 			label="Light Intensity",
 			tooltip="",
+			optionGroup="Basic Lighting",
 			enabled=true)
 	@Order(90)
 	@ValueBounds(minimum=0,
@@ -209,6 +105,7 @@ public class HillshadingOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.darkIntensity",
 			label="Dark Intensity",
 			tooltip="",
+			optionGroup="Basic Lighting",
 			enabled=true)
 	@Order(100)
 	@ValueBounds(minimum=0,
@@ -224,22 +121,7 @@ public class HillshadingOptionModel implements OptionModel
 		this.darkIntensity = darkIntensity;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.spotExponent",
-			label="Spot Exponent",
-			tooltip="",
-			enabled=true)
-	@Order(110)
-	@ValueBounds(minimum=1,
-			maximum=128)
-	public int getSpotExponent()
-	{
-		return spotExponent;
-	}
-
-	public void setSpotExponent(int spotExponent)
-	{
-		this.spotExponent = spotExponent;
-	}
+	
 
 	
 	
@@ -248,6 +130,7 @@ public class HillshadingOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.advancedLightingControl",
 			label="Advanced Lighting",
 			tooltip="",
+			optionGroup="Advanced Lighting",
 			enabled=true)
 	@Order(140)
 	public boolean getAdvancedLightingControl()
@@ -263,6 +146,7 @@ public class HillshadingOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.emmisive",
 			label="Emmisive",
 			tooltip="Light emmitted or given off by the surface",
+			optionGroup="Advanced Lighting",
 			enabled=true)
 	@Order(150)
 	@ValueBounds(minimum=0,
@@ -281,6 +165,7 @@ public class HillshadingOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.ambient",
 			label="Ambient",
 			tooltip="Fixed-intensity light that affects all surfaces equally",
+			optionGroup="Advanced Lighting",
 			enabled=true)
 	@Order(160)
 	@ValueBounds(minimum=0,
@@ -299,6 +184,7 @@ public class HillshadingOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.diffuse",
 			label="Diffuse",
 			tooltip="Directed light reflected off a surface equally in all directions",
+			optionGroup="Advanced Lighting",
 			enabled=true)
 	@Order(170)
 	@ValueBounds(minimum=0,
@@ -317,6 +203,7 @@ public class HillshadingOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.specular",
 			label="Specular",
 			tooltip="Light scattered from the surface predominantly around the mirror direction (Shininess).",
+			optionGroup="Advanced Lighting",
 			enabled=true)
 	@Order(180)
 	@ValueBounds(minimum=0,
@@ -332,9 +219,27 @@ public class HillshadingOptionModel implements OptionModel
 		this.specular = specular;
 	}
 
+	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.spotExponent",
+			label="Spot Exponent",
+			tooltip="",
+			optionGroup="Advanced Lighting",
+			enabled=true)
+	@Order(185)
+	@ValueBounds(minimum=1,
+			maximum=128)
+	public int getSpotExponent()
+	{
+		return spotExponent;
+	}
+
+	public void setSpotExponent(int spotExponent)
+	{
+		this.spotExponent = spotExponent;
+	}
 	
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.rayTraceShadows",
 			label="Ray Trace Shadows",
+			optionGroup="Ray Tracing",
 			tooltip="",
 			enabled=true)
 	@Order(190)
@@ -350,6 +255,7 @@ public class HillshadingOptionModel implements OptionModel
 
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.shadowIntensity",
 			label="Shadow Intensity",
+			optionGroup="Ray Tracing",
 			tooltip="",
 			enabled=true)
 	@Order(200)
@@ -374,6 +280,7 @@ public class HillshadingOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.useDistanceAttenuation",
 			label="Use Distance Attenuation",
 			tooltip="",
+			optionGroup="Ray Tracing",
 			enabled=true)
 	@Order(210)
 	public boolean getUseDistanceAttenuation()
@@ -388,6 +295,7 @@ public class HillshadingOptionModel implements OptionModel
 
 	@ProcessOption(id="us.wthr.jdem846.model.HillshadingOptionModel.attenuationRadius",
 			label="Attenuation Radius",
+			optionGroup="Ray Tracing",
 			tooltip="",
 			enabled=true)
 	@ValueBounds(minimum=0,
@@ -409,14 +317,8 @@ public class HillshadingOptionModel implements OptionModel
 		HillshadingOptionModel copy = new HillshadingOptionModel();
 		
 		copy.lightingEnabled = this.lightingEnabled;
-		//copy.sourceType = this.sourceType;
-		//copy.sourceLocation = this.sourceLocation.copy();
 		copy.sunlightDate = this.sunlightDate.copy();
 		copy.sunlightTime = this.sunlightTime.copy();
-		//copy.recalcLightForEachPoint = this.recalcLightForEachPoint;
-		//copy.lightZenith = this.lightZenith;
-		//copy.darkZenith = this.darkZenith;
-		//copy.lightMultiple = this.lightMultiple;
 		copy.lightIntensity = this.lightIntensity;
 		copy.darkIntensity = this.darkIntensity;
 		copy.spotExponent = this.spotExponent;

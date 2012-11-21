@@ -112,20 +112,24 @@ public class Application implements IApplication {
 		}
 		
 		
-		String projectPath = System.getProperty("us.wthr.jdem846.ui.openFiles");
-		if (projectPath != null) {
-			String[] projects = projectPath.split(";");
-			if (projects.length > 0 && fileExistsAndIsProject(projects[0])) {
-				try {
-					ProjectContext.initialize(projects[0]);
-				} catch (ProjectException ex) {
-					ex.printStackTrace();
-				}
+		String projectPaths = System.getProperty("us.wthr.jdem846.ui.openFiles");
+		String[] projects = (projectPaths != null) ? projectPaths.split(";") : null;
+		String loadProject = (projects != null && projects.length > 0) ? projects[0] : null;
+		if (loadProject != null && fileExistsAndIsProject(loadProject)) {
+			try {
+				ProjectContext.initialize(projects[0]);
+			} catch (ProjectException ex) {
+				ex.printStackTrace();
+			}
+		} else {
+			try {
+				ProjectContext.initialize();
+			} catch (ProjectException ex) {
+				ex.printStackTrace();
 			}
 		}
-		
-		
-		
+
+	
 		
 		Display display = PlatformUI.createDisplay();
 		try {

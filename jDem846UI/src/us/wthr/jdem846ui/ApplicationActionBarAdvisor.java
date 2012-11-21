@@ -43,6 +43,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     // in the fill methods.  This ensures that the actions aren't recreated
     // when fillActionBars is called with FILL_PROXY.
     private IWorkbenchAction exitAction;
+    private IWorkbenchAction prefsAction;
     private IWorkbenchAction aboutAction;
     private NewProjectAction newProjectAction;
     private OpenProjectAction openProjectAction;
@@ -68,6 +69,10 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     	
         exitAction = ActionFactory.QUIT.create(window);
         register(exitAction);
+        
+        
+        prefsAction = ActionFactory.PREFERENCES.create(window);
+        register(prefsAction);
         
         aboutAction = ActionFactory.ABOUT.create(window);
         register(aboutAction);
@@ -107,9 +112,12 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
         MenuManager helpMenu = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
         
+        MenuManager windowMenu = new MenuManager("&Window", IWorkbenchActionConstants.M_WINDOW);
+        
         menuBar.add(fileMenu);
         // Add a group marker indicating where action set menus will appear.
         menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+        menuBar.add(windowMenu);
         menuBar.add(helpMenu);
         
         // File
@@ -123,6 +131,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
        // fileMenu.add(openViewAction);
         fileMenu.add(new Separator());
         fileMenu.add(exitAction);
+        
+        
+        windowMenu.add(prefsAction);
         
         // Help
         helpMenu.add(aboutAction);

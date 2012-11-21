@@ -15,13 +15,13 @@ public class LabeledCombo extends LabeledControl<Combo>
 	
 	
 	
-	public static LabeledCombo create(Composite form, String labelText, int style)
+	public static LabeledCombo create(Composite parent, String labelText, int style)
 	{
-		Label label = new Label(form, SWT.NONE);
-		label.setBackground(form.getBackground());
+		Label label = new Label(parent, SWT.NONE);
 		label.setText(labelText);
+		label.setLayoutData(new TableWrapData(TableWrapData.LEFT, TableWrapData.MIDDLE));
 		
-		Combo combo = new Combo(form, style);
+		Combo combo = new Combo(parent, style);
 		combo.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
 		return new LabeledCombo(label, combo);

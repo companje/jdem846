@@ -21,16 +21,35 @@ public class LabeledSpinner extends LabeledControl<Spinner>
 	
 	public static LabeledSpinner create(Composite form, String labelText, int style, int min, int max, int digits, int increments)
 	{
+		return create(form, labelText, style, true, min, max, digits, increments);
+	}
+	
+	public static LabeledSpinner create(Composite form, String labelText)
+	{
+		return create(form, labelText, SWT.NULL, false, 0, 0, 0, 0);
+	}
+	
+	public static LabeledSpinner create(Composite form, String labelText, int style)
+	{
+		return create(form, labelText, style, false, 0, 0, 0, 0);
+	}
+	
+	protected static LabeledSpinner create(Composite form, String labelText, int style, boolean setBounds, int min, int max, int digits, int increments)
+	{
 		Label label = new Label(form, SWT.NONE);
-		label.setBackground(form.getBackground());
 		label.setText(labelText);
+		label.setLayoutData(new TableWrapData(TableWrapData.LEFT, TableWrapData.MIDDLE));
 		
 		Spinner spinner = new Spinner(form, style | SWT.BORDER);
 		spinner.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		spinner.setMinimum(min);
-		spinner.setMaximum(max);
-		spinner.setIncrement(increments);
-		spinner.setDigits(digits);
+		
+		if (setBounds) {
+			spinner.setMinimum(min);
+			spinner.setMaximum(max);
+			spinner.setIncrement(increments);
+			spinner.setDigits(digits);
+		}
+		
 		return new LabeledSpinner(label, spinner);
 	}
 
