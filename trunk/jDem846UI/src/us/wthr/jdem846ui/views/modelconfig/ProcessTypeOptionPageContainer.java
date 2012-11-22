@@ -15,17 +15,19 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.OptionModel;
+import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
 import us.wthr.jdem846ui.controls.LabeledCombo;
+import us.wthr.jdem846ui.project.ProjectContext;
 
 public class ProcessTypeOptionPageContainer extends Composite {
 	private static Log log = Logging.getLog(ProcessTypeOptionPageContainer.class);
 	
 	private Composite parent;
 	private GridProcessingTypesEnum processType;
-	private List<OptionModel> providedOptionModelList;
+
 	private String initialSelection;
 	private String currentProcessId = null;
 	
@@ -38,7 +40,7 @@ public class ProcessTypeOptionPageContainer extends Composite {
 	private StackLayout stackLayout;
 	private Composite optionCards;
 	
-	public ProcessTypeOptionPageContainer(Composite parent, GridProcessingTypesEnum processType, String initialSelection, List<OptionModel> providedOptionModelList)
+	public ProcessTypeOptionPageContainer(Composite parent, GridProcessingTypesEnum processType, String initialSelection)
 	{
 		super(parent, SWT.NONE);
 		
@@ -46,8 +48,7 @@ public class ProcessTypeOptionPageContainer extends Composite {
 		
 		this.parent = parent;
 		this.processType = processType;
-		this.providedOptionModelList = providedOptionModelList;
-		
+
 		this.processTypeList = new ProcessTypeListModel(processType);
 		
 		TableWrapLayout layout = new TableWrapLayout();
@@ -104,7 +105,7 @@ public class ProcessTypeOptionPageContainer extends Composite {
 	}
 	
 	
-	protected OptionModel getProvidedOptionModel(String processId)
+	protected OptionModelContainer getProvidedOptionModel(String processId)
 	{
 		ProcessInstance processInstance = ModelProcessRegistry.getInstance(processId);
 		
@@ -114,17 +115,13 @@ public class ProcessTypeOptionPageContainer extends Composite {
 			
 			Class<?> clazz = processInstance.getOptionModelClass();
 			
-			for (OptionModel optionModel : this.providedOptionModelList) {
-				if (optionModel.getClass().equals(clazz)) {
-					return optionModel;
-				}
-			}
-			
-			return null;
-			
+			return ProjectContext.getInstance().getOptionModelContainer(clazz);
+
 		} else {
 			log.info("Process not found with id " + processId);
 			return null;
 		}
 	}
+	
+
 }

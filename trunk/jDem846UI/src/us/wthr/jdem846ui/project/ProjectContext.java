@@ -16,7 +16,10 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelProcessManifest;
 import us.wthr.jdem846.model.OptionModel;
+import us.wthr.jdem846.model.OptionModelChangeEvent;
+import us.wthr.jdem846.model.OptionModelChangeListener;
 import us.wthr.jdem846.model.OptionModelContainer;
+import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
@@ -44,8 +47,10 @@ public class ProjectContext {
 	private ShapeDataContext shapeDataContext;
 	private ImageDataContext imageDataContext;
 	private ScriptingContext scriptingContext;
-	private List<OptionModel> defaultOptionModelList;
 	
+	
+	private List<OptionModel> defaultOptionModelList;
+	private List<OptionModelContainer> defaultOptionModelContainerList = new LinkedList<OptionModelContainer>();
 	
 	protected ProjectContext() throws ProjectException
 	{
@@ -116,6 +121,27 @@ public class ProjectContext {
 			}
 					
 		}
+		
+		
+		OptionModelChangeListener optionModelChangeListener = new OptionModelChangeListener() {
+			public void onPropertyChanged(OptionModelChangeEvent e) {
+				log.info("Project context option changed");
+				projectChangeBroker.fireOnOptionChanged(e);
+			}
+		};
+		
+		for (OptionModel optionModel : defaultOptionModelList) {
+			try {
+				OptionModelContainer optionModelContainer = new OptionModelContainer(optionModel);
+				optionModelContainer.addOptionModelChangeListener(optionModelChangeListener);
+				defaultOptionModelContainerList.add(optionModelContainer);
+			} catch (InvalidProcessOptionException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
+		}
+		
+		
 	}
 	
 	
@@ -323,6 +349,23 @@ public class ProjectContext {
 		return defaultOptionModelList;
 	}
 
+	public List<OptionModelContainer> getDefaultOptionModelContainerList() {
+		return defaultOptionModelContainerList;
+	}
+	
+	
+	public OptionModelContainer getOptionModelContainer(Class<?> clazz)
+	{
+
+		for (OptionModelContainer optionModelContainer : defaultOptionModelContainerList) {
+			if (optionModelContainer.getOptionModel().getClass().equals(clazz)) {
+				return optionModelContainer;
+			}
+		}
+			
+		return null;
+	}
+	
 	public static void initialize() throws ProjectException
 	{
 		ProjectContext.initialize(null);

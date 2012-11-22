@@ -1,5 +1,7 @@
 package us.wthr.jdem846ui.project;
 
+import us.wthr.jdem846.model.OptionModelChangeEvent;
+
 public class ProjectChangeAdapter implements ProjectChangeListener {
 
 	@Override
@@ -13,7 +15,7 @@ public class ProjectChangeAdapter implements ProjectChangeListener {
 	}
 
 	@Override
-	public void onOptionChanged() {
+	public void onOptionChanged(OptionModelChangeEvent e) {
 		
 	}
 
