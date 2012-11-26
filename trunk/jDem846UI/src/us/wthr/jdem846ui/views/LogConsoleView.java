@@ -10,6 +10,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
@@ -48,10 +49,18 @@ public class LogConsoleView extends ViewPart
 		   
 		clearLogConsoleAction.addActionListener(new ActionListener() {
 			public void onAction() {
-				logText.setText("");
+				Display.getDefault().asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						logText.setText("");
+					}
+					
+				});
+				
 			}
 		});
-		   
+		  
 		Logging.addHandler(new Handler() {
 			public void close() throws SecurityException
 			{
@@ -63,8 +72,18 @@ public class LogConsoleView extends ViewPart
 			}
 			public void publish(LogRecord record)
 			{
-				String formatted = this.getFormatter().format(record);
-				logText.append(formatted);
+				final String formatted = this.getFormatter().format(record);
+				
+				Display.getDefault().asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						logText.append(formatted);
+					}
+					
+				});
+				
+				
 			}
 		});
 		

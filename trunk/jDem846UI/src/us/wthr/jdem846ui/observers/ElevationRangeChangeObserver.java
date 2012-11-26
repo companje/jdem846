@@ -1,21 +1,13 @@
 package us.wthr.jdem846ui.observers;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressService;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.OptionModelChangeEvent;
-import us.wthr.jdem846ui.project.ProjectChangeListener;
-import us.wthr.jdem846ui.project.ProjectContext;
 
 public class ElevationRangeChangeObserver extends ProjectChangeObserver {
 
@@ -41,7 +33,7 @@ public class ElevationRangeChangeObserver extends ProjectChangeObserver {
 		
 		
 		
-		   new DecathlonJob().schedule();
+		  // new DecathlonJob().schedule();
 		
 	}
 	

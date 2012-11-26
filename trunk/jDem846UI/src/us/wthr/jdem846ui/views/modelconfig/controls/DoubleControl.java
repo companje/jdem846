@@ -1,5 +1,7 @@
 package us.wthr.jdem846ui.views.modelconfig.controls;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -9,9 +11,12 @@ import org.eclipse.swt.widgets.Spinner;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.OptionModelPropertyContainer;
+import us.wthr.jdem846.model.PropertyValidationResult;
 import us.wthr.jdem846.model.annotations.ValueBounds;
 import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
 import us.wthr.jdem846ui.controls.LabeledSpinner;
+import us.wthr.jdem846ui.observers.OptionValidationChangeObserver;
+import us.wthr.jdem846ui.observers.OptionValidationResultsListener;
 
 public class DoubleControl {
 	
@@ -28,6 +33,8 @@ public class DoubleControl {
 		} else {
 			control =  LabeledSpinner.create(parent, labelText);
 		}
+		
+		final Spinner _spinner = control.getControl();
 		
 		control.getControl().addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -49,6 +56,16 @@ public class DoubleControl {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		OptionValidationChangeObserver.getInstance().addOptionValidationResultsListener(new OptionValidationResultsListener() {
+			public void onOptionValidationResults(List<PropertyValidationResult> results) {
+				try {
+					_spinner.setSelection((int) ((Double)property.getValue() * 100));
+				} catch (MethodContainerInvokeException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		return control;
 	}
