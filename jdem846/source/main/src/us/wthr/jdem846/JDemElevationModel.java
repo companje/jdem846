@@ -12,12 +12,9 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-
 import us.wthr.jdem846.canvas.AbstractBuffer;
 import us.wthr.jdem846.canvas.GeoRasterBuffer3d;
 import us.wthr.jdem846.canvas.util.ColorUtil;
@@ -27,7 +24,6 @@ import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 import us.wthr.jdem846.util.ByteConversions;
 
@@ -49,7 +45,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	private float[] elevationBuffer;
 	
 	private ElevationHistogramModel elevationHistogramModel;
-	
+
 	public JDemElevationModel(BufferedImage image, InputStream dataIn, String properties) throws IOException
 	{
 		this(image.getWidth(), image.getHeight());
@@ -157,6 +153,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 		return properties;
 	}
 	
+
 	public int getRgba(double x, double y)
 	{
 		int index = this.getIndex(x, y);

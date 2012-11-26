@@ -22,6 +22,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.InstanceIdentifier;
 import us.wthr.jdem846ui.observers.ElevationRangeChangeObserver;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
+import us.wthr.jdem846ui.observers.OptionValidationChangeObserver;
 import us.wthr.jdem846ui.project.ProjectContext;
 import us.wthr.jdem846ui.project.ProjectException;
 
@@ -131,9 +132,9 @@ public class Application implements IApplication {
 			}
 		}
 		
-		
-		ElevationRangeChangeObserver rangeController = new ElevationRangeChangeObserver();
-		ModelPreviewChangeObserver modelPreviewController = new ModelPreviewChangeObserver();
+		OptionValidationChangeObserver validationObserver = new OptionValidationChangeObserver();
+		ElevationRangeChangeObserver rangeObserver = new ElevationRangeChangeObserver();
+		ModelPreviewChangeObserver modelPreviewObserver = new ModelPreviewChangeObserver();
 		
 		Display display = PlatformUI.createDisplay();
 		try {

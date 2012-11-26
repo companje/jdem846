@@ -1,8 +1,5 @@
 package us.wthr.jdem846ui.views.modelconfig;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
@@ -13,9 +10,8 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.GlobalOptionModel;
-import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.OptionModelContainer;
-import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
+import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846ui.project.ProjectContext;
 
@@ -54,7 +50,17 @@ public class ModelConfigurationView extends ViewPart {
 		shadingOptionsTabItem.setText("Shading");
 		ProcessTypeOptionPageContainer shadingOptionsPageContainer = new ProcessTypeOptionPageContainer(tabFolder, GridProcessingTypesEnum.SHADING, defaultShadingProcessor);
 		shadingOptionsTabItem.setControl(shadingOptionsPageContainer);
-
+		
+		
+		try {
+			
+			ProjectContext.getInstance().getModelProcessManifest().addWorker(defaultColoringProcessor, ProjectContext.getInstance().getOptionModelContainer(defaultColoringProcessor).getOptionModel());
+			ProjectContext.getInstance().getModelProcessManifest().addWorker(defaultShadingProcessor, ProjectContext.getInstance().getOptionModelContainer(defaultShadingProcessor).getOptionModel());
+		} catch (ProcessContainerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	

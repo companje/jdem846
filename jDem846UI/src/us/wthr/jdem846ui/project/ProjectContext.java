@@ -19,6 +19,7 @@ import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.OptionModelChangeEvent;
 import us.wthr.jdem846.model.OptionModelChangeListener;
 import us.wthr.jdem846.model.OptionModelContainer;
+import us.wthr.jdem846.model.exceptions.ContextPrepareException;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
@@ -51,6 +52,8 @@ public class ProjectContext {
 	
 	private List<OptionModel> defaultOptionModelList;
 	private List<OptionModelContainer> defaultOptionModelContainerList = new LinkedList<OptionModelContainer>();
+	
+	private boolean ignoreOptionChanges = false;
 	
 	protected ProjectContext() throws ProjectException
 	{
@@ -126,7 +129,9 @@ public class ProjectContext {
 		OptionModelChangeListener optionModelChangeListener = new OptionModelChangeListener() {
 			public void onPropertyChanged(OptionModelChangeEvent e) {
 				log.info("Project context option changed");
-				projectChangeBroker.fireOnOptionChanged(e);
+				if (!ignoreOptionChanges) {
+					projectChangeBroker.fireOnOptionChanged(e);
+				}
 			}
 		};
 		
@@ -250,6 +255,30 @@ public class ProjectContext {
 		}
 		
 		
+		try {
+			rasterDataContext.prepare();
+		} catch (ContextPrepareException ex) {
+			log.error("Failed to prepare raster data: " + ex.getMessage(), ex);
+			throw new ProjectException("Failed to prepare raster data: " + ex.getMessage(), ex);
+		}
+		
+		
+		
+		try {
+			boolean estimate = this.modelProcessManifest.getGlobalOptionModel().isEstimateElevationRange();
+			
+			boolean updateDataMinMax = true;
+			
+			if (updateDataMinMax && (rasterDataContext.getRasterDataListSize() == 0 && imageDataContext.getImageListSize() > 0)) {
+				estimate = true;
+			}
+			
+			modelContext.updateContext(updateDataMinMax, estimate);
+		} catch (ModelContextException ex) {
+			// TODO: Display error dialog
+			log.warn("Exception updating model context: " + ex.getMessage(), ex);
+		}
+		
 		if (triggerModelChanged) {
 			projectChangeBroker.fireOnDataAdded();
 		}
@@ -366,6 +395,35 @@ public class ProjectContext {
 		return null;
 	}
 	
+	
+	public OptionModelContainer getOptionModelContainer(String processId)
+	{
+		ProcessInstance processInstance = ModelProcessRegistry.getInstance(processId);
+		
+		if (processInstance != null) {
+			Class<?> clazz = processInstance.getOptionModelClass();
+			
+			return ProjectContext.getInstance().getOptionModelContainer(clazz);
+
+		} else {
+			log.info("Process not found with id " + processId);
+			return null;
+		}
+	}
+	
+	
+	
+	
+	public boolean getIgnoreOptionChanges()
+	{
+		return ignoreOptionChanges;
+	}
+
+	public void setIgnoreOptionChanges(boolean ignoreOptionChanges)
+	{
+		this.ignoreOptionChanges = ignoreOptionChanges;
+	}
+
 	public static void initialize() throws ProjectException
 	{
 		ProjectContext.initialize(null);
