@@ -6,7 +6,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
 import us.wthr.jdem846ui.views.LogConsoleView;
-import us.wthr.jdem846ui.views.PreviewView;
+import us.wthr.jdem846ui.views.preview.PreviewView;
 import us.wthr.jdem846ui.views.RenderedModelListView;
 import us.wthr.jdem846ui.views.RenderedModelPropertiesView;
 import us.wthr.jdem846ui.views.ScriptEditorView;
