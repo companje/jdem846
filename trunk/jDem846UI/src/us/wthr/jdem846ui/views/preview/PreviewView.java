@@ -1,4 +1,4 @@
-package us.wthr.jdem846ui.views;
+package us.wthr.jdem846ui.views.preview;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;

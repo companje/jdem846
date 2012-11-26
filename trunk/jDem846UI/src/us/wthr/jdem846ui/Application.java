@@ -20,6 +20,8 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.InstanceIdentifier;
+import us.wthr.jdem846ui.observers.ElevationRangeChangeObserver;
+import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
 import us.wthr.jdem846ui.project.ProjectContext;
 import us.wthr.jdem846ui.project.ProjectException;
 
@@ -128,8 +130,10 @@ public class Application implements IApplication {
 				ex.printStackTrace();
 			}
 		}
-
-	
+		
+		
+		ElevationRangeChangeObserver rangeController = new ElevationRangeChangeObserver();
+		ModelPreviewChangeObserver modelPreviewController = new ModelPreviewChangeObserver();
 		
 		Display display = PlatformUI.createDisplay();
 		try {

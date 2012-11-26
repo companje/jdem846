@@ -44,7 +44,7 @@
       
       <view
             name="Preview"
-            class="us.wthr.jdem846ui.views.PreviewView"
+            class="us.wthr.jdem846ui.views.preview.PreviewView"
             id="jdem846ui.previewView" 
             icon="icons/eclipse/globe2.gif"/>
       
