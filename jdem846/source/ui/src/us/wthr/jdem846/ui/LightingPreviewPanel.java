@@ -34,13 +34,10 @@ import javax.swing.event.ChangeListener;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
+import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
-import us.wthr.jdem846.i18n.I18N;
-import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
-import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -52,23 +49,14 @@ import us.wthr.jdem846.model.ModelProcessManifest;
 import us.wthr.jdem846.model.RgbaColor;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.processing.coloring.HypsometricColorOptionModel;
-import us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor;
-import us.wthr.jdem846.model.processing.coloring.TopographicPositionIndexColoringProcessor;
 import us.wthr.jdem846.model.processing.dataload.GridLoadOptionModel;
-import us.wthr.jdem846.model.processing.dataload.GridLoadProcessor;
 import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsOptionModel;
-import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsProcessor;
 import us.wthr.jdem846.model.processing.render.ModelRenderOptionModel;
-import us.wthr.jdem846.model.processing.render.ModelRenderer;
 import us.wthr.jdem846.model.processing.shading.HillshadingOptionModel;
-import us.wthr.jdem846.model.processing.shading.HillshadingProcessor;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
-import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
-import us.wthr.jdem846.render.simple.SimpleRenderer;
 import us.wthr.jdem846.ui.base.Panel;
-import us.wthr.jdem846.util.TempFiles;
 
 @SuppressWarnings("serial")
 public class LightingPreviewPanel extends Panel
@@ -164,9 +152,9 @@ public class LightingPreviewPanel extends Panel
 			globalOptionModel.setGetStandardResolutionElevation(true);
 			globalOptionModel.setInterpolateData(false);
 			globalOptionModel.setPlanet("earth");
-			globalOptionModel.setPixelStackDepth(1);
+			//globalOptionModel.setPixelStackDepth(1);
 			globalOptionModel.setPrecacheStrategy("none");
-			globalOptionModel.setSubpixelGridSize(1);
+			//globalOptionModel.setSubpixelGridSize(1);
 			
 			hypsometricColorOptionModel.setColorTint(JDem846Properties.getProperty("us.wthr.jdem846.ui.lightingPreviewPanel.previewColoring"));
 			

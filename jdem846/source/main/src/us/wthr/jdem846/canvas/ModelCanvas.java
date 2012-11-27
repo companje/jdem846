@@ -10,17 +10,12 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.ImageException;
-import us.wthr.jdem846.image.ImageWriter;
-import us.wthr.jdem846.logging.Log;
-import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.model.RgbaColor;
 import us.wthr.jdem846.geom.Geometric;
 import us.wthr.jdem846.geom.Polygon;
 import us.wthr.jdem846.geom.Triangle;
@@ -28,8 +23,11 @@ import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.image.ImageWriter;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.RgbaColor;
 import us.wthr.jdem846.render.RenderPipeline;
-import us.wthr.jdem846.render.render2d.ScanlinePath;
 import us.wthr.jdem846.util.ColorSerializationUtil;
 
 @Deprecated
@@ -55,8 +53,8 @@ public class ModelCanvas
 	{
 		this(modelContext.getModelProcessManifest().getGlobalOptionModel().getWidth(), 
 				modelContext.getModelProcessManifest().getGlobalOptionModel().getHeight(), 
-				modelContext.getModelProcessManifest().getGlobalOptionModel().getPixelStackDepth(),
-				modelContext.getModelProcessManifest().getGlobalOptionModel().getSubpixelGridSize(), 
+				1, //modelContext.getModelProcessManifest().getGlobalOptionModel().getPixelStackDepth(),
+				1, //modelContext.getModelProcessManifest().getGlobalOptionModel().getSubpixelGridSize(), 
 				modelContext.getModelProcessManifest().getGlobalOptionModel().getBackgroundColor(), 
 				CanvasProjectionFactory.create(modelContext));
 	}

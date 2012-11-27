@@ -1,11 +1,7 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -24,7 +20,6 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptionNamesEnum;
 import us.wthr.jdem846.PropertiesChangeListener;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ModelContextException;
@@ -37,9 +32,6 @@ import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelBuilder;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
-import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
-import us.wthr.jdem846.canvas.ModelCanvas;
-import us.wthr.jdem846.render.simple.SimpleRenderer;
 import us.wthr.jdem846.tasks.RunnableTask;
 import us.wthr.jdem846.tasks.TaskControllerService;
 import us.wthr.jdem846.tasks.TaskStatusListener;
@@ -47,8 +39,6 @@ import us.wthr.jdem846.ui.base.CheckBox;
 import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Slider;
-import us.wthr.jdem846.ui.panels.RoundedPanel;
-import us.wthr.jdem846.util.ColorSerializationUtil;
 
 @SuppressWarnings("serial")
 public class ModelVisualizationPanel extends Panel
@@ -373,14 +363,14 @@ public class ModelVisualizationPanel extends Panel
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
 
 		globalOptionModel.setMaintainAspectRatio(false);
-		globalOptionModel.setSubpixelGridSize(1);
+		//globalOptionModel.setSubpixelGridSize(1);
 		globalOptionModel.setAverageOverlappedData(true);
 		globalOptionModel.setGetStandardResolutionElevation(true);
 		globalOptionModel.setInterpolateData(false);
 		globalOptionModel.setPrecacheStrategy("none");
 		globalOptionModel.setUseDiskCachedModelGrid(false);
 		globalOptionModel.setDisposeGridOnComplete(false);
-		globalOptionModel.setPixelStackDepth(1);
+		//globalOptionModel.setPixelStackDepth(1);
 		globalOptionModel.setCreateJdemElevationModel(false);
 		globalOptionModel.setForceResetAndRunFilters(true);
 		globalOptionModel.setNumberOfThreads(1);

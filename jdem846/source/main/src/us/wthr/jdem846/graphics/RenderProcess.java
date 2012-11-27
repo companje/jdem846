@@ -113,7 +113,7 @@ public class RenderProcess
 		double horizFieldOfView = this.modelView.horizFieldOfView();
 		
 		
-		FrameBufferModeEnum bufferMode = FrameBufferModeEnum.getBufferModeFromIdentifier(this.globalOptionModel.getFrameBufferMode());
+		FrameBufferModeEnum bufferMode = FrameBufferModeEnum.CONCURRENT_PARTIAL_FRAME_BUFFER;//FrameBufferModeEnum.getBufferModeFromIdentifier(this.globalOptionModel.getFrameBufferMode());
 		this.renderer.viewPort(0, 0, width, height, bufferMode);
 		
 		this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);

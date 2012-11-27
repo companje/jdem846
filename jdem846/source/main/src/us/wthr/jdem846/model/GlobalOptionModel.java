@@ -6,17 +6,13 @@ import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.gis.projections.MapProjectionEnum;
 import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
 import us.wthr.jdem846.graphics.PerspectiveTypeEnum;
-import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.model.annotations.Order;
 import us.wthr.jdem846.model.annotations.ProcessOption;
 import us.wthr.jdem846.model.annotations.ValueBounds;
 import us.wthr.jdem846.model.listModels.ElevationScalerListModel;
-import us.wthr.jdem846.model.listModels.FrameBufferModeListModel;
 import us.wthr.jdem846.model.listModels.PerspectiveTypeListModel;
-import us.wthr.jdem846.model.listModels.PixelStackDepthListModel;
 import us.wthr.jdem846.model.listModels.PlanetListModel;
 import us.wthr.jdem846.model.listModels.RenderProjectionListModel;
-import us.wthr.jdem846.model.listModels.SubpixelGridSizeListModel;
 import us.wthr.jdem846.model.processing.ModelHeightWidthValidator;
 import us.wthr.jdem846.model.processing.render.MapProjectionListModel;
 import us.wthr.jdem846.scaling.ElevationScalerEnum;
@@ -42,9 +38,9 @@ public class GlobalOptionModel implements OptionModel
 	private String mapProjection = MapProjectionEnum.EQUIRECTANGULAR.identifier();
 	private String renderProjection = CanvasProjectionTypeEnum.PROJECT_FLAT.identifier();
 	private String perspectiveType = PerspectiveTypeEnum.ORTHOGRAPHIC.identifier();
-	private String frameBufferMode = FrameBufferModeEnum.STANDARD.identifier();
-	private int subpixelGridSize = 1;
-	private int pixelStackDepth = 1;
+	//private String frameBufferMode = FrameBufferModeEnum.STANDARD.identifier();
+	//private int subpixelGridSize = 1;
+	//private int pixelStackDepth = 1;
 	
 	private double modelQuality = 1.0;
 	private double textureQuality = 1.0;
@@ -413,45 +409,6 @@ public class GlobalOptionModel implements OptionModel
 	}
 
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.subpixelGridSize",
-			label="Subpixel Grid Size",
-			tooltip="",
-			enabled=true,
-			listModel=SubpixelGridSizeListModel.class)
-	@Order(20)
-	@ValueBounds(minimum=1, 
-				maximum=16)
-	public int getSubpixelGridSize()
-	{
-		return subpixelGridSize;
-	}
-
-
-	public void setSubpixelGridSize(int subpixelGridSize)
-	{
-		this.subpixelGridSize = subpixelGridSize;
-	}
-	
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.pixelStackDepth",
-			label="Pixel Stack Depth",
-			tooltip="",
-			enabled=true,
-			listModel=PixelStackDepthListModel.class)
-	@Order(21)
-	@ValueBounds(minimum=0, 
-				maximum=32)
-	public int getPixelStackDepth()
-	{
-		return pixelStackDepth;
-	}
-
-
-	public void setPixelStackDepth(int pixelStackDepth)
-	{
-		this.pixelStackDepth = pixelStackDepth;
-	}
-	
 	
 	
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.textureQuality",
@@ -496,22 +453,6 @@ public class GlobalOptionModel implements OptionModel
 	}
 
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.frameBufferMode",
-			label="FrameBuffer Mode",
-			tooltip="",
-			enabled=true,
-			listModel=FrameBufferModeListModel.class)
-	@Order(24)
-	public String getFrameBufferMode() 
-	{
-		return frameBufferMode;
-	}
-
-
-	public void setFrameBufferMode(String frameBufferMode) 
-	{
-		this.frameBufferMode = frameBufferMode;
-	}
 
 
 	public boolean getStandardResolutionElevation()
@@ -578,11 +519,11 @@ public class GlobalOptionModel implements OptionModel
 	}
 
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.useDiskCachedModelGrid",
-			label="Use Disk Cache",
-			tooltip="",
-			enabled=true)
-	@Order(25)
+//	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.useDiskCachedModelGrid",
+//			label="Use Disk Cache",
+//			tooltip="",
+//			enabled=true)
+//	@Order(25)
 	public boolean getUseDiskCachedModelGrid()
 	{
 		return useDiskCachedModelGrid;
@@ -706,11 +647,8 @@ public class GlobalOptionModel implements OptionModel
 		copy.renderProjection = this.renderProjection;
 		copy.perspectiveType = this.perspectiveType;
 		copy.viewAngle = this.viewAngle.copy();
-		copy.subpixelGridSize = this.subpixelGridSize;
-		copy.pixelStackDepth = this.pixelStackDepth;
 		copy.modelQuality = this.modelQuality;
 		copy.textureQuality = this.textureQuality;
-		copy.frameBufferMode = this.frameBufferMode;
 		copy.averageOverlappedData = this.averageOverlappedData;
 		copy.getStandardResolutionElevation = this.getStandardResolutionElevation;
 		copy.interpolateData = this.interpolateData;
