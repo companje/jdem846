@@ -1,26 +1,16 @@
 package us.wthr.jdem846.model.processing.render;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelDimensions;
-import us.wthr.jdem846.Projection;
+import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.GraphicsRenderException;
-import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.exception.ScriptingException;
-import us.wthr.jdem846.geom.GeoTriangleStrip;
-import us.wthr.jdem846.geom.GeoVertex;
-import us.wthr.jdem846.geom.TriangleStrip;
 import us.wthr.jdem846.geom.Vertex;
-import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
-import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
-import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
 import us.wthr.jdem846.graphics.AxisEnum;
 import us.wthr.jdem846.graphics.GraphicsRenderer;
-import us.wthr.jdem846.graphics.ImageCapture;
 import us.wthr.jdem846.graphics.MatrixModeEnum;
 import us.wthr.jdem846.graphics.PerspectiveTypeEnum;
 import us.wthr.jdem846.graphics.PrimitiveModeEnum;
@@ -30,27 +20,12 @@ import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Vector;
-import us.wthr.jdem846.model.GlobalOptionModel;
-import us.wthr.jdem846.model.ModelGrid;
-import us.wthr.jdem846.model.ModelPoint;
-import us.wthr.jdem846.model.ModelPointAdapter;
-import us.wthr.jdem846.model.ModelPointCycler;
-import us.wthr.jdem846.model.ModelPointGrid;
-import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.RgbaColor;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.annotations.GridProcessing;
-import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.RenderProcessor;
-import us.wthr.jdem846.model.processing.util.StripRenderQueue;
-import us.wthr.jdem846.scripting.ScriptProxy;
-import us.wthr.jdem846.canvas.CanvasProjection;
-import us.wthr.jdem846.canvas.CanvasProjectionFactory;
-import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
-import us.wthr.jdem846.canvas.ModelCanvas;
-import us.wthr.jdem846.canvas.util.ColorUtil;
 
 
 @GridProcessing(id="us.wthr.jdem846.model.processing.render.ModelRenderer",
@@ -248,7 +223,7 @@ public class ModelRenderer extends GridProcessor implements RenderProcessor
 		double horizFieldOfView = this.modelView.horizFieldOfView();
 		
 		
-		FrameBufferModeEnum bufferMode = FrameBufferModeEnum.getBufferModeFromIdentifier(this.globalOptionModel.getFrameBufferMode());
+		FrameBufferModeEnum bufferMode = FrameBufferModeEnum.BINARY_SPACE_PARTITIONING;//FrameBufferModeEnum.getBufferModeFromIdentifier(this.globalOptionModel.getFrameBufferMode());
 		this.renderer.viewPort(0, 0, width, height, bufferMode);
 		
 		this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
