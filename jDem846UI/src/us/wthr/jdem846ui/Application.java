@@ -130,6 +130,8 @@ public class Application implements IApplication {
 			}
 		}
 		
+		
+		
 		OptionValidationChangeObserver.getInstance();
 		//OptionValidationChangeObserver validationObserver = new OptionValidationChangeObserver();
 		//ElevationRangeChangeObserver rangeObserver = new ElevationRangeChangeObserver();

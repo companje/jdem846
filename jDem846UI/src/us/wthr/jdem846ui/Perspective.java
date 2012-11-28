@@ -25,7 +25,6 @@ public class Perspective implements IPerspectiveFactory {
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
 		
-		
 		IFolderLayout topLeftFolder = layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea);
 		topLeftFolder.addView(DataView.ID);
 	

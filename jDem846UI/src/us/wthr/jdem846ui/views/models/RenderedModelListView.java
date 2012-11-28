@@ -52,14 +52,15 @@ public class RenderedModelListView extends ViewPart
 		viewer.setContentProvider(new ViewContentProvider());
 		//viewer.setLabelProvider(new ViewLabelProvider());
 		
+		
 		viewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ElevationModel selectedElevationModel = null;
-				
+
 				if (!event.getSelection().isEmpty()) {
 					
 					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-					TreeObject treeObject = (TreeObject) selection.getFirstElement();
+					TreeObject<ElevationModel> treeObject = (TreeObject<ElevationModel>) selection.getFirstElement();
 					
 					if (treeObject instanceof ModelTreeObject) {
 						ModelTreeObject modelTreeObject = (ModelTreeObject)treeObject;
@@ -72,7 +73,7 @@ public class RenderedModelListView extends ViewPart
 			}
 		});
 		
-		
+
 		resetAndUpdateModelAsync(null);
 		
 	}
