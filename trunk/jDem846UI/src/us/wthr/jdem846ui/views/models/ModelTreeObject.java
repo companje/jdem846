@@ -3,13 +3,13 @@ package us.wthr.jdem846ui.views.models;
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846ui.views.tree.TreeObject;
 
-public class ModelTreeObject extends TreeObject {
+public class ModelTreeObject extends TreeObject<ElevationModel> {
 
 	private ElevationModel elevationModel;
 	
 	public ModelTreeObject(String name, ElevationModel elevationModel)
 	{
-		super(name);
+		super(name, ElevationModel.class);
 		this.elevationModel = elevationModel;
 	}
 	
