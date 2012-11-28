@@ -21,10 +21,13 @@ public class OptionValidationChangeObserver extends ProjectChangeObserver
 	private List<OptionValidationExceptionListener> exceptionListeners = new LinkedList<OptionValidationExceptionListener>();
 	private List<OptionValidationResultsListener> resultsListeners = new LinkedList<OptionValidationResultsListener>();
 	
-	public OptionValidationChangeObserver()
+	static {
+		OptionValidationChangeObserver.INSTANCE = new OptionValidationChangeObserver();
+	}
+	
+	protected OptionValidationChangeObserver()
 	{
 		super();
-		OptionValidationChangeObserver.INSTANCE = this;
 	}
 
 	@Override

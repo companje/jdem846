@@ -6,12 +6,13 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
 import us.wthr.jdem846ui.views.LogConsoleView;
-import us.wthr.jdem846ui.views.preview.PreviewView;
-import us.wthr.jdem846ui.views.RenderedModelListView;
-import us.wthr.jdem846ui.views.RenderedModelPropertiesView;
 import us.wthr.jdem846ui.views.ScriptEditorView;
 import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView;
+import us.wthr.jdem846ui.views.models.RenderedModelDisplayView;
+import us.wthr.jdem846ui.views.models.RenderedModelListView;
+import us.wthr.jdem846ui.views.models.RenderedModelPropertiesView;
+import us.wthr.jdem846ui.views.preview.PreviewView;
 
 public class Perspective implements IPerspectiveFactory {
 
@@ -44,6 +45,7 @@ public class Perspective implements IPerspectiveFactory {
 		IFolderLayout centerFolder = layout.createFolder("center", IPageLayout.TOP, 0.75f, editorArea);
 		centerFolder.addView(PreviewView.ID);
 		centerFolder.addView(ScriptEditorView.ID);
+		centerFolder.addView(RenderedModelDisplayView.ID);
 		
 		IFolderLayout bottomFolder = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.25f, editorArea);
 		bottomFolder.addView(LogConsoleView.ID);
@@ -54,7 +56,7 @@ public class Perspective implements IPerspectiveFactory {
 		layout.getViewLayout(ModelConfigurationView.ID).setCloseable(false);
 		layout.getViewLayout(RenderedModelPropertiesView.ID).setCloseable(false);
 		layout.getViewLayout(RenderedModelListView.ID).setCloseable(false);
-		
+		layout.getViewLayout(RenderedModelDisplayView.ID).setCloseable(false);
 	}
 
 }

@@ -3,6 +3,7 @@ package us.wthr.jdem846ui.project;
 import java.util.LinkedList;
 import java.util.List;
 
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.model.OptionModelChangeEvent;
 
 public class ProjectChangeBroker {
@@ -44,6 +45,20 @@ public class ProjectChangeBroker {
 	{
 		for (ProjectChangeListener listener : listeners) {
 			listener.onOptionChanged(e);
+		}
+	}
+	
+	public void fireOnElevationModelAdded(ElevationModel elevationModel)
+	{
+		for (ProjectChangeListener listener : listeners) {
+			listener.onElevationModelAdded(elevationModel);
+		}
+	}
+	
+	public void fireOnElevationModelRemoved(ElevationModel elevationModel)
+	{
+		for (ProjectChangeListener listener : listeners) {
+			listener.onElevationModelRemoved(elevationModel);
 		}
 	}
 	

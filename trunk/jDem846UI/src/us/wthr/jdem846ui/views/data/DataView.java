@@ -25,6 +25,8 @@ import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846ui.project.IconEnum;
 import us.wthr.jdem846ui.project.ProjectChangeAdapter;
 import us.wthr.jdem846ui.project.ProjectContext;
+import us.wthr.jdem846ui.views.tree.TreeObject;
+import us.wthr.jdem846ui.views.tree.ViewContentProvider;
 
 public class DataView extends ViewPart
 {
@@ -67,17 +69,17 @@ public class DataView extends ViewPart
 
 	private TreeObject createTreeModel() {
 
-        TreeParent p0 = new TreeParent("Elevation Data", IconEnum.RASTER_CATEGORY);
-        TreeParent p1 = new TreeParent("Shape Data", IconEnum.SHAPE_CATEGORY);
-        TreeParent p2 = new TreeParent("Image Data", IconEnum.IMAGE_CATEGORY);
+        DataTreeParent p0 = new DataTreeParent("Elevation Data", IconEnum.RASTER_CATEGORY);
+        DataTreeParent p1 = new DataTreeParent("Shape Data", IconEnum.SHAPE_CATEGORY);
+        DataTreeParent p2 = new DataTreeParent("Image Data", IconEnum.IMAGE_CATEGORY);
         
-        TreeParent root = new TreeParent("", IconEnum.NONE);
+        DataTreeParent root = new DataTreeParent("", IconEnum.NONE);
         
         root.addChild(p0);
         RasterDataContext rasterDataContext = ProjectContext.getInstance().getRasterDataContext();
         for(RasterData rasterData : rasterDataContext.getRasterDataList()) {
         	File f = new File(rasterData.getFilePath());
-        	TreeObject obj = new TreeObject(f.getName(), rasterData, IconEnum.RASTER_DATA);
+        	DataTreeObject obj = new DataTreeObject(f.getName(), rasterData, IconEnum.RASTER_DATA);
         	p0.addChild(obj);
         }
         
@@ -85,7 +87,7 @@ public class DataView extends ViewPart
         ShapeDataContext shapeDataContext = ProjectContext.getInstance().getShapeDataContext();
         for (ShapeFileRequest shapeFile : shapeDataContext.getShapeFiles()) {
         	File f = new File(shapeFile.getPath());
-        	TreeObject obj = new TreeObject(f.getName(), shapeFile, IconEnum.SHAPE_DATA);
+        	DataTreeObject obj = new DataTreeObject(f.getName(), shapeFile, IconEnum.SHAPE_DATA);
         	p1.addChild(obj);
         }
         
@@ -93,7 +95,7 @@ public class DataView extends ViewPart
         ImageDataContext imageDataContext = ProjectContext.getInstance().getImageDataContext();
         for (SimpleGeoImage image : imageDataContext.getImageList()) {
         	File f = new File(image.getImageFile());
-        	TreeObject obj = new TreeObject(f.getName(), image, IconEnum.IMAGE_DATA);
+        	DataTreeObject obj = new DataTreeObject(f.getName(), image, IconEnum.IMAGE_DATA);
         	p2.addChild(obj);
         }
         
@@ -130,7 +132,14 @@ public class DataView extends ViewPart
 					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 					for (Iterator<TreeObject> iter = selection.iterator(); iter.hasNext(); ) {
 						TreeObject treeObject = iter.next();
-						fireOnSelectionChanged(treeObject.getData());
+						
+						if (treeObject instanceof DataTreeObject) {
+							fireOnSelectionChanged(((DataTreeObject)treeObject).getData());
+						} else {
+							fireOnSelectionChanged(null);
+						}
+						
+						
 					}
 					
 				}

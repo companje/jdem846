@@ -55,18 +55,18 @@
       
       <view
             name="Rendered Model Display"
-            class="us.wthr.jdem846ui.views.RenderedModelDisplayView"
+            class="us.wthr.jdem846ui.views.models.RenderedModelDisplayView"
             id="jdem846ui.renderedModelDisplayView"
             icon="icons/eclipse/gallery_view.gif" />
      
       <view
             name="Rendered Model List"
-            class="us.wthr.jdem846ui.views.RenderedModelListView"
+            class="us.wthr.jdem846ui.views.models.RenderedModelListView"
             id="jdem846ui.renderedModelListView" />
      
       <view
             name="Rendered Model Properties"
-            class="us.wthr.jdem846ui.views.RenderedModelPropertiesView"
+            class="us.wthr.jdem846ui.views.models.RenderedModelPropertiesView"
             id="jdem846ui.renderedModelPropertiesView" 
             icon="icons/eclipse/message_info.gif" />
      
