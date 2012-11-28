@@ -34,29 +34,37 @@ public class ViewLabelProvider extends LabelProvider
 
 	public Image getImage(Object obj) {
 
-		if (obj instanceof TreeObject) {
-			TreeObject treeObject = (TreeObject) obj;
-
-			if (treeObject.getIcon() == IconEnum.RASTER_DATA) {
-				return rasterDataIcon;
-			} else if (treeObject.getIcon() == IconEnum.RASTER_CATEGORY) {
-				return rasterCategoryIcon;
-			} else if (treeObject.getIcon() == IconEnum.SHAPE_DATA) {
-				return shapeDataIcon;
-			} else if (treeObject.getIcon() == IconEnum.SHAPE_CATEGORY) {
-				return shapeCategoryIcon;
-			} else if (treeObject.getIcon() == IconEnum.IMAGE_DATA) {
-				return imageDataIcon;
-			} else if (treeObject.getIcon() == IconEnum.IMAGE_CATEGORY) {
-				return imageCategoryIcon;
-			} else {
-				return PlatformUI.getWorkbench().getSharedImages()
-						.getImage(ISharedImages.IMG_OBJ_ELEMENT);
-			}
+		if (obj instanceof DataTreeObject) {
+			DataTreeObject treeObject = (DataTreeObject) obj;
+			return getIcon(treeObject.getIcon());
+		} else if (obj instanceof DataTreeParent) {
+			DataTreeParent treeParent = (DataTreeParent) obj;
+			return getIcon(treeParent.getIcon());
 		} else {
 			return PlatformUI.getWorkbench().getSharedImages()
 					.getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
 
 	}
+	
+	protected Image getIcon(IconEnum icon)
+	{
+		if (icon == IconEnum.RASTER_DATA) {
+			return rasterDataIcon;
+		} else if (icon == IconEnum.RASTER_CATEGORY) {
+			return rasterCategoryIcon;
+		} else if (icon == IconEnum.SHAPE_DATA) {
+			return shapeDataIcon;
+		} else if (icon == IconEnum.SHAPE_CATEGORY) {
+			return shapeCategoryIcon;
+		} else if (icon == IconEnum.IMAGE_DATA) {
+			return imageDataIcon;
+		} else if (icon == IconEnum.IMAGE_CATEGORY) {
+			return imageCategoryIcon;
+		} else {
+			return PlatformUI.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJ_ELEMENT);
+		}
+	}
+	
 }

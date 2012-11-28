@@ -1,5 +1,6 @@
 package us.wthr.jdem846ui.project;
 
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.model.OptionModelChangeEvent;
 
 public class ProjectChangeAdapter implements ProjectChangeListener {
@@ -19,4 +20,15 @@ public class ProjectChangeAdapter implements ProjectChangeListener {
 		
 	}
 
+	@Override
+	public void onElevationModelAdded(ElevationModel elevationModel) {
+		
+	}
+
+	@Override
+	public void onElevationModelRemoved(ElevationModel elevationModel) {
+		
+	}
+	
+	
 }

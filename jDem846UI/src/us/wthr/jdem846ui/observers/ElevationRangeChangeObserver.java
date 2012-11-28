@@ -13,7 +13,16 @@ public class ElevationRangeChangeObserver extends ProjectChangeObserver {
 
 	private static Log log = Logging.getLog(ElevationRangeChangeObserver.class);
 	
-	public ElevationRangeChangeObserver() {
+	
+	private static ElevationRangeChangeObserver INSTANCE = null;
+	
+	static {
+		ElevationRangeChangeObserver.INSTANCE = new ElevationRangeChangeObserver();
+	}
+	
+	
+	
+	protected ElevationRangeChangeObserver() {
 		super();
 	}
 
@@ -37,6 +46,11 @@ public class ElevationRangeChangeObserver extends ProjectChangeObserver {
 		
 	}
 	
+	
+	public static ElevationRangeChangeObserver getInstance()
+	{
+		return ElevationRangeChangeObserver.INSTANCE;
+	}
 	
 	static class DecathlonJob extends Job {
 		private static Log log = Logging.getLog(DecathlonJob.class);

@@ -47,11 +47,13 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 	private static PreviewRunTask previewRunTaskInstance = null;
 	private ReRenderRequestContainer rerendering;
 	
-	public ModelPreviewChangeObserver()
+	static {
+		ModelPreviewChangeObserver.INSTANCE = new ModelPreviewChangeObserver();
+	}
+	
+	protected ModelPreviewChangeObserver()
 	{
 		super();
-		ModelPreviewChangeObserver.INSTANCE = this;
-		
 		rerendering = new ReRenderRequestContainer();
 	}
 	
@@ -77,14 +79,14 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
 
 		globalOptionModel.setMaintainAspectRatio(false);
-		globalOptionModel.setSubpixelGridSize(1);
+		//globalOptionModel.setSubpixelGridSize(1);
 		globalOptionModel.setAverageOverlappedData(true);
 		globalOptionModel.setGetStandardResolutionElevation(true);
 		globalOptionModel.setInterpolateData(false);
 		globalOptionModel.setPrecacheStrategy("none");
 		globalOptionModel.setUseDiskCachedModelGrid(false);
 		globalOptionModel.setDisposeGridOnComplete(false);
-		globalOptionModel.setPixelStackDepth(1);
+		//globalOptionModel.setPixelStackDepth(1);
 		globalOptionModel.setCreateJdemElevationModel(false);
 		globalOptionModel.setForceResetAndRunFilters(true);
 		globalOptionModel.setNumberOfThreads(1);

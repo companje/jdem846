@@ -1,4 +1,4 @@
-package us.wthr.jdem846ui.views.data;
+package us.wthr.jdem846ui.views.tree;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;

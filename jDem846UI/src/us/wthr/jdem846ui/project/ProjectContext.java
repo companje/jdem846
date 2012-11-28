@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ModelContextException;
@@ -53,6 +54,8 @@ public class ProjectContext {
 	private List<OptionModel> defaultOptionModelList;
 	private List<OptionModelContainer> defaultOptionModelContainerList = new LinkedList<OptionModelContainer>();
 	
+	private List<ElevationModel> elevationModelList = new LinkedList<ElevationModel>();
+	
 	private boolean ignoreOptionChanges = false;
 	
 	protected ProjectContext() throws ProjectException
@@ -72,6 +75,10 @@ public class ProjectContext {
 			projectMarshall = loadMarshalledProject(projectPath);
 		} else {
 			projectMarshall = new ProjectMarshall();
+		}
+		
+		if (projectMarshall.getElevationModels() != null) {
+			this.elevationModelList.addAll(projectMarshall.getElevationModels());
 		}
 		
 		rasterDataContext = new RasterDataContext();
@@ -412,8 +419,26 @@ public class ProjectContext {
 	}
 	
 	
+	public List<ElevationModel> getElevationModelList() {
+		List<ElevationModel> listCopy = new LinkedList<ElevationModel>(elevationModelList);
+		return listCopy;
+	}
 	
+	public void addElevationModel(ElevationModel elevationModel)
+	{
+		this.elevationModelList.add(elevationModel);
+		this.projectChangeBroker.fireOnElevationModelAdded(elevationModel);
+	}
 	
+	public boolean removeElevationModel(ElevationModel elevationModel)
+	{
+		boolean wasRemoved = this.elevationModelList.remove(elevationModel);
+		if (wasRemoved) {
+			this.projectChangeBroker.fireOnElevationModelRemoved(elevationModel);
+		}
+		return wasRemoved;
+	}
+
 	public boolean getIgnoreOptionChanges()
 	{
 		return ignoreOptionChanges;
