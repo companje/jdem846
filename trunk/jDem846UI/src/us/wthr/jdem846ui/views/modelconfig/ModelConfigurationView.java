@@ -10,17 +10,22 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.GlobalOptionModel;
+import us.wthr.jdem846.model.ModelProcessManifest;
 import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
+import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
 import us.wthr.jdem846ui.project.ProjectContext;
 
 public class ModelConfigurationView extends ViewPart {
 	private static Log log = Logging.getLog(ModelConfigurationView.class);
 	public static final String ID = "jdem846ui.modelConfigurationView";
 
-
+	
 	private TabFolder tabFolder;
+	
+	private ProcessTypeOptionPageContainer coloringOptionsPageContainer;
+	private ProcessTypeOptionPageContainer shadingOptionsPageContainer;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -42,15 +47,26 @@ public class ModelConfigurationView extends ViewPart {
 		
 		TabItem coloringOptionsTabItem = new TabItem(tabFolder, SWT.NONE);
 		coloringOptionsTabItem.setText("Coloring");
-		ProcessTypeOptionPageContainer coloringOptionsPageContainer = new ProcessTypeOptionPageContainer(tabFolder, GridProcessingTypesEnum.COLORING, defaultColoringProcessor);
+		coloringOptionsPageContainer = new ProcessTypeOptionPageContainer(tabFolder, GridProcessingTypesEnum.COLORING, defaultColoringProcessor);
 		coloringOptionsTabItem.setControl(coloringOptionsPageContainer);
+		
+		coloringOptionsPageContainer.addProcessTypeSelectionChangeListener(new ProcessTypeSelectionChangeListener() {
+			public void onProcessTypeSelectionChanged() {
+				onProcessTypeSelectionsChanged();
+			}
+		});
 		
 		
 		TabItem shadingOptionsTabItem = new TabItem(tabFolder, SWT.NONE);
 		shadingOptionsTabItem.setText("Shading");
-		ProcessTypeOptionPageContainer shadingOptionsPageContainer = new ProcessTypeOptionPageContainer(tabFolder, GridProcessingTypesEnum.SHADING, defaultShadingProcessor);
+		shadingOptionsPageContainer = new ProcessTypeOptionPageContainer(tabFolder, GridProcessingTypesEnum.SHADING, defaultShadingProcessor);
 		shadingOptionsTabItem.setControl(shadingOptionsPageContainer);
 		
+		shadingOptionsPageContainer.addProcessTypeSelectionChangeListener(new ProcessTypeSelectionChangeListener() {
+			public void onProcessTypeSelectionChanged() {
+				onProcessTypeSelectionsChanged();
+			}
+		});
 		
 		try {
 			
@@ -64,11 +80,31 @@ public class ModelConfigurationView extends ViewPart {
 	}
 	
 	
-	
+	protected void onProcessTypeSelectionsChanged()
+	{
+		log.info("Process type selections changed");
+		
+		ModelProcessManifest modelProcessManifest = ProjectContext.getInstance().getModelProcessManifest();
+		modelProcessManifest.removeAll();
+		
+		String selectedColoringProcessor = coloringOptionsPageContainer.getSelectedProcessType();
+		String selectedShadingProcessor = shadingOptionsPageContainer.getSelectedProcessType();
+		
+		try {
+			modelProcessManifest.addWorker(selectedColoringProcessor, ProjectContext.getInstance().getOptionModelContainer(selectedColoringProcessor).getOptionModel());
+			modelProcessManifest.addWorker(selectedShadingProcessor, ProjectContext.getInstance().getOptionModelContainer(selectedShadingProcessor).getOptionModel());
+		} catch (ProcessContainerException e) {
+			e.printStackTrace();
+		}
+		
+		ModelPreviewChangeObserver.getInstance().update(false, true);
+	}
 	
 	@Override
 	public void setFocus() {
 		tabFolder.setFocus();
+		
+		
 	}
 
 	public void dispose() {

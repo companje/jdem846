@@ -3,7 +3,6 @@ package us.wthr.jdem846.ui;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,12 +11,12 @@ import javax.swing.BorderFactory;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.ui.base.Label;
-import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.TextArea;
 import us.wthr.jdem846.ui.base.TextField;
@@ -29,7 +28,7 @@ public class ModelPropertiesPanel extends FlexGridPanel
 	private static Log log = Logging.getLog(ModelPropertiesPanel.class);
 	
 	private static Font textFont = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
-	private JDemElevationModel jdemElevationModel;
+	private ElevationModel jdemElevationModel;
 	
 	private PropertyTextField txtAuthor;
 	private PropertyTextField txtInstitution;
@@ -199,17 +198,17 @@ public class ModelPropertiesPanel extends FlexGridPanel
 		
 	}
 	
-	public JDemElevationModel getJdemElevationModel()
+	public ElevationModel getJdemElevationModel()
 	{
 		return jdemElevationModel;
 	}
 
-	public void setJdemElevationModel(JDemElevationModel jdemElevationModel)
+	public void setJdemElevationModel(ElevationModel jdemElevationModel2)
 	{
-		this.jdemElevationModel = jdemElevationModel;
+		this.jdemElevationModel = jdemElevationModel2;
 		updatePropertiesUI();
 		
-		modelPropertiesTable.setJdemElevationModel(jdemElevationModel);
+		modelPropertiesTable.setJdemElevationModel(jdemElevationModel2);
 	}
 	
 	

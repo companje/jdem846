@@ -7,6 +7,8 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
+import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
+
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	private static final String PERSPECTIVE_ID = "jDem846UI.perspective";
@@ -21,6 +23,12 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
 			IWorkbenchWindowConfigurer configurer) {
 		return new ApplicationWorkbenchWindowAdvisor(configurer);
+	}
+
+	@Override
+	public void postStartup() {
+		super.postStartup();
+		ModelPreviewChangeObserver.getInstance().update(true, true);
 	}
 
 	public String getInitialWindowPerspectiveId() {

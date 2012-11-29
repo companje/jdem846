@@ -41,21 +41,16 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.DataSetTypes;
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDem846Properties;
-import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.JDemResourceLoader;
-import us.wthr.jdem846.MappedOptions;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptionNamesEnum;
-import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.OptionChangeListener;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.image.SimpleGeoImage;
-import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.GlobalOptionModel;
@@ -67,26 +62,20 @@ import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.exceptions.ContextPrepareException;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
-import us.wthr.jdem846.model.exceptions.ProcessCreateException;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
 import us.wthr.jdem846.project.ProcessMarshall;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectMarshall;
 import us.wthr.jdem846.project.ProjectMarshaller;
-import us.wthr.jdem846.project.ProjectModel;
-import us.wthr.jdem846.project.ProjectTypeEnum;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
-import us.wthr.jdem846.scripting.ScriptProxy;
-import us.wthr.jdem846.scripting.ScriptProxyFactory;
 import us.wthr.jdem846.scripting.ScriptingContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.ui.DataSetTree.DatasetSelectionListener;
-import us.wthr.jdem846.ui.ModelOptionsPanel.GetAspectRatioHandler;
 import us.wthr.jdem846.ui.ModelVisualizationPanel.ProjectionChangeListener;
 import us.wthr.jdem846.ui.MonitoredThread.ProgressListener;
 import us.wthr.jdem846.ui.OrderingButtonBar.OrderingButtonClickedListener;
@@ -95,9 +84,7 @@ import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.Panel;
-import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.SplitPane;
-import us.wthr.jdem846.ui.lighting.LightingOptionsPanel;
 import us.wthr.jdem846.ui.options.ModelConfigurationChangeListener;
 import us.wthr.jdem846.ui.options.ModelConfigurationPanel;
 import us.wthr.jdem846.ui.panels.EmbeddedTabbedPane;
@@ -546,7 +533,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 		if (projectMarshall.getElevationModels() == null)
 			return;
 		
-		for (JDemElevationModel jdemElevationModel : projectMarshall.getElevationModels()) {
+		for (ElevationModel jdemElevationModel : projectMarshall.getElevationModels()) {
 			renderPane.display(jdemElevationModel);
 		}
 	}
@@ -1392,7 +1379,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 
 			ProjectMarshall projectMarshall = ProjectMarshaller.marshallProject(modelContext);
 			
-			List<JDemElevationModel> modelList = this.renderPane.getJdemElevationModels();
+			List<ElevationModel> modelList = this.renderPane.getJdemElevationModels();
 			projectMarshall.getElevationModels().addAll(modelList);
 			
 			

@@ -1,17 +1,13 @@
 package us.wthr.jdem846.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,15 +20,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.exception.ProjectMarshalException;
-import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
@@ -54,7 +47,6 @@ import us.wthr.jdem846.ui.FileSaveThread.SaveCompletedListener;
 import us.wthr.jdem846.ui.ImageDisplayPanel.MousePositionListener;
 import us.wthr.jdem846.ui.ImageToolButtonGridPanel.ClickListener;
 import us.wthr.jdem846.ui.base.FileChooser;
-import us.wthr.jdem846.ui.base.Label;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.SplitPane;
 import us.wthr.jdem846.ui.base.TabPane;
@@ -91,7 +83,7 @@ public class RenderViewPane extends Panel
 	private SplitPane viewSplit;
 	private Panel componentPanel;
 	
-	private JDemElevationModel jdemElevationModel;
+	private ElevationModel jdemElevationModel;
 	private ModelContext modelContext;
 	private boolean isWorking = false;
 
@@ -104,18 +96,15 @@ public class RenderViewPane extends Panel
 
     private String lastExportPath = null;
     
-    public RenderViewPane(ModelContext _modelContext)
-	{
-    	this(_modelContext, null);
-	}
+
     
-    public RenderViewPane(JDemElevationModel jdemElevationModel)
+    public RenderViewPane(ElevationModel jdemElevationModel)
 	{
     	this(null, jdemElevationModel);
 	}
     
     
-	public RenderViewPane(ModelContext _modelContext, JDemElevationModel jdemElevationModel)
+	public RenderViewPane(ModelContext _modelContext, ElevationModel jdemElevationModel)
 	{
 		this.modelContext = _modelContext;
 		
@@ -355,11 +344,11 @@ public class RenderViewPane extends Panel
 	
 	
 	
-	protected void initializeWithJDemElevationModel(JDemElevationModel jdemElevationModel)
+	protected void initializeWithJDemElevationModel(ElevationModel jdemElevationModel2)
 	{
-		this.jdemElevationModel = jdemElevationModel;
+		this.jdemElevationModel = jdemElevationModel2;
 		
-		BufferedImage modelImage = (BufferedImage) jdemElevationModel.getImage();
+		BufferedImage modelImage = (BufferedImage) jdemElevationModel2.getImage();
 
 		synchronized(imageDisplay) {
 			imageDisplay.setImage(modelImage);
@@ -382,16 +371,16 @@ public class RenderViewPane extends Panel
 			});
 		}
 		
-		TonalHistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(jdemElevationModel);
+		TonalHistogramModel histogramModel = DistributionGenerator.generateHistogramModelFromImage(jdemElevationModel2);
 		histogramDisplay.setHistogramModel(histogramModel);
 		
-		ElevationHistogramModel elevationHistogramModel = jdemElevationModel.getElevationHistogramModel();
+		ElevationHistogramModel elevationHistogramModel = jdemElevationModel2.getElevationHistogramModel();
 		//ElevationHistogramModel elevationHistogramModel = modelBuilder.getModelGrid().getElevationHistogramModel();
 		if (elevationHistogramModel != null) {
 			elevationHistogram.setElevationHistogramModel(elevationHistogramModel);
 		}
 		
-		modelPropertiesPanel.setJdemElevationModel(jdemElevationModel);
+		modelPropertiesPanel.setJdemElevationModel(jdemElevationModel2);
 		
 		
 	}
@@ -651,7 +640,7 @@ public class RenderViewPane extends Panel
 
 	
 	
-	public JDemElevationModel getJdemElevationModel()
+	public ElevationModel getJdemElevationModel()
 	{
 		return jdemElevationModel;
 	}

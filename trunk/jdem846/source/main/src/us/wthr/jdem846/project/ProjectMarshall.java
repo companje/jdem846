@@ -5,15 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import us.wthr.jdem846.JDemElevationModel;
-import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.exception.ProjectMarshalException;
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.model.ModelProcessContainer;
-import us.wthr.jdem846.model.exceptions.ModelContainerException;
-import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
@@ -30,7 +25,7 @@ public class ProjectMarshall
 	private List<ShapeFileRequest> shapeFiles = new LinkedList<ShapeFileRequest>();
 	private List<SimpleGeoImage> imageFiles = new LinkedList<SimpleGeoImage>();
 	
-	private List<JDemElevationModel> modelList = new LinkedList<JDemElevationModel>();
+	private List<ElevationModel> modelList = new LinkedList<ElevationModel>();
 	
 	private String userScript = null;
 	private ScriptLanguageEnum scriptLanguage = null;
@@ -95,12 +90,12 @@ public class ProjectMarshall
 		return shapeFiles;
 	}
 	
-	public void setElevationModels(List<JDemElevationModel> modelList)
+	public void setElevationModels(List<ElevationModel> modelList)
 	{
 		this.modelList = modelList;
 	}
 	
-	public List<JDemElevationModel> getElevationModels()
+	public List<ElevationModel> getElevationModels()
 	{
 		return this.modelList;
 	}

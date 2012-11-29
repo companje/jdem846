@@ -1,16 +1,13 @@
 package us.wthr.jdem846.ui;
 
-import java.awt.BorderLayout;
-
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.ui.base.Panel;
-import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.Table;
 
 @SuppressWarnings("serial")
@@ -21,7 +18,7 @@ public class ModelPropertiesTable extends Table
 	
 	private ModelPropertiesTableModel tableModel;
 	
-	private JDemElevationModel jdemElevationModel;
+	private ElevationModel jdemElevationModel;
 	
 	
 	public ModelPropertiesTable()
@@ -40,15 +37,15 @@ public class ModelPropertiesTable extends Table
 	
 	
 	
-	public JDemElevationModel getJdemElevationModel()
+	public ElevationModel getJdemElevationModel()
 	{
 		return jdemElevationModel;
 	}
 
 	
-	public void setJdemElevationModel(JDemElevationModel jdemElevationModel)
+	public void setJdemElevationModel(ElevationModel jdemElevationModel2)
 	{
-		this.jdemElevationModel = jdemElevationModel;
+		this.jdemElevationModel = jdemElevationModel2;
 		updateData();
 	}
 	

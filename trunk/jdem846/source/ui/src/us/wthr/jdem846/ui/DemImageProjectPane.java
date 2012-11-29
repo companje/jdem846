@@ -7,7 +7,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import us.wthr.jdem846.JDemElevationModel;
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.i18n.I18N;
@@ -55,7 +55,7 @@ public class DemImageProjectPane extends JdemPanel implements Savable
 			return;
 		}
 		
-		for (JDemElevationModel jdemElevationModel : projectMarshall.getElevationModels()) {
+		for (ElevationModel jdemElevationModel : projectMarshall.getElevationModels()) {
 			renderPane.display(jdemElevationModel);
 		}
 		
@@ -124,7 +124,7 @@ public class DemImageProjectPane extends JdemPanel implements Savable
 			
 			projectMarshall.setProjectType(ProjectTypeEnum.DEM_IMAGE);
 			
-			List<JDemElevationModel> modelList = this.renderPane.getJdemElevationModels();
+			List<ElevationModel> modelList = this.renderPane.getJdemElevationModels();
 			projectMarshall.getElevationModels().addAll(modelList);
 			
 			
