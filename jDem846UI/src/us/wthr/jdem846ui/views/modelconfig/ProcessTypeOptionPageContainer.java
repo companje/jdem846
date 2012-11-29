@@ -1,6 +1,7 @@
 package us.wthr.jdem846ui.views.modelconfig;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,6 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
@@ -39,6 +39,8 @@ public class ProcessTypeOptionPageContainer extends Composite {
 	
 	private StackLayout stackLayout;
 	private Composite optionCards;
+	
+	private List<ProcessTypeSelectionChangeListener> selectionChangeListeners = new LinkedList<ProcessTypeSelectionChangeListener>();
 	
 	public ProcessTypeOptionPageContainer(Composite parent, GridProcessingTypesEnum processType, String initialSelection)
 	{
@@ -100,8 +102,12 @@ public class ProcessTypeOptionPageContainer extends Composite {
 		//OptionModel providedOptionModel = getProvidedOptionModel(id);
 		
 		
+		currentProcessId = id;
+		
 		stackLayout.topControl = modelOptionPages.get(id);
 		optionCards.layout();
+		
+		fireProcessTypeSelectionChangeListener();
 	}
 	
 	
@@ -110,9 +116,7 @@ public class ProcessTypeOptionPageContainer extends Composite {
 		ProcessInstance processInstance = ModelProcessRegistry.getInstance(processId);
 		
 		if (processInstance != null) {
-			log.info("Process Selected: " + processInstance.getId());
-			this.currentProcessId = processInstance.getId();
-			
+
 			Class<?> clazz = processInstance.getOptionModelClass();
 			
 			return ProjectContext.getInstance().getOptionModelContainer(clazz);
@@ -123,5 +127,27 @@ public class ProcessTypeOptionPageContainer extends Composite {
 		}
 	}
 	
-
+	
+	public String getSelectedProcessType()
+	{
+		return this.currentProcessId;
+	}
+	
+	public void addProcessTypeSelectionChangeListener(ProcessTypeSelectionChangeListener l)
+	{
+		this.selectionChangeListeners.add(l);
+	}
+	
+	public boolean removeProcessTypeSelectionChangeListener(ProcessTypeSelectionChangeListener l)
+	{
+		return this.selectionChangeListeners.remove(l);
+	}
+	
+	protected void fireProcessTypeSelectionChangeListener()
+	{
+		for (ProcessTypeSelectionChangeListener l : this.selectionChangeListeners) {
+			l.onProcessTypeSelectionChanged();
+		}
+	}
+	
 }

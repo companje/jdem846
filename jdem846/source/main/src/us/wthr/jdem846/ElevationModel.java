@@ -1,8 +1,11 @@
 package us.wthr.jdem846;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
+import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 
 public interface ElevationModel
@@ -28,6 +31,10 @@ public interface ElevationModel
 	public int getHeight();
 	
 	public void setElevationHistogramModel(ElevationHistogramModel elevationHistogramModel);
+	public void writeImageData(OutputStream zos,
+			ImageTypeEnum imageTypeFromFormatName) throws IOException;
+	public void writeModelData(OutputStream zos) throws IOException;
+	public void writeProperties(OutputStream zos) throws IOException;
 	
 	
 	

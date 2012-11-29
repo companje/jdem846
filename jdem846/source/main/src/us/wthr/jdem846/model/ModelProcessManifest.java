@@ -10,9 +10,6 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
-import us.wthr.jdem846.model.processing.AbstractGridProcessor;
-import us.wthr.jdem846.model.processing.GridFilter;
-import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.GridWorker;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
@@ -68,6 +65,12 @@ public class ModelProcessManifest
 		return modelProgram;
 	}
 	
+	
+	
+	public void removeAll()
+	{
+		workerList.clear();
+	}
 	
 	public void addWorker(String processId) throws ProcessContainerException
 	{

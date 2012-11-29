@@ -10,27 +10,18 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDem846Properties;
-import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.PropertiesChangeListener;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.tasks.RunnableTask;
-import us.wthr.jdem846.tasks.TaskControllerService;
-import us.wthr.jdem846.tasks.TaskStatusListener;
-import us.wthr.jdem846.ui.FileSaveThread.SaveCompletedListener;
 import us.wthr.jdem846.ui.OutputImageViewButtonBar.ButtonClickedListener;
-import us.wthr.jdem846.ui.OutputImageViewButtonBar.OptionChangeListener;
-import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.Menu;
 import us.wthr.jdem846.ui.base.MenuItem;
 import us.wthr.jdem846.ui.base.Panel;
@@ -196,7 +187,7 @@ public class RenderPane extends Panel implements Savable
 	{
 		renderCount++;
 		
-		RenderViewPane renderViewPane = new RenderViewPane(modelContext);
+		RenderViewPane renderViewPane = new RenderViewPane(modelContext, null);
 		
 		if (tabbed) {
 			outputImageTabbedPane.addTab("Image #" + renderCount, renderViewPane, true);
@@ -218,7 +209,7 @@ public class RenderPane extends Panel implements Savable
 		
 	}
 	
-	public void display(JDemElevationModel jdemElevationModel)
+	public void display(ElevationModel jdemElevationModel)
 	{
 		renderCount++;
 		
@@ -336,9 +327,9 @@ public class RenderPane extends Panel implements Savable
 	}
 	
 	
-	public List<JDemElevationModel> getJdemElevationModels()
+	public List<ElevationModel> getJdemElevationModels()
 	{
-		List<JDemElevationModel> modelList = new ArrayList<JDemElevationModel>();
+		List<ElevationModel> modelList = new ArrayList<ElevationModel>();
 		
 		if (tabbed) {
 		

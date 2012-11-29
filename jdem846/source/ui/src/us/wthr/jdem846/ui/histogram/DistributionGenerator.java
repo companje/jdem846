@@ -1,17 +1,13 @@
 package us.wthr.jdem846.ui.histogram;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
-
-import us.wthr.jdem846.JDemElevationModel;
-import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.ElevationModel;
 
 public class DistributionGenerator
 {
 	
 
 	
-	public static TonalHistogramModel generateHistogramModelFromImage(JDemElevationModel jdemElevationModel)
+	public static TonalHistogramModel generateHistogramModelFromImage(ElevationModel jdemElevationModel2)
 	{
 		TonalDistribution channel0 = new TonalDistribution(0);
 		TonalDistribution channel1 = new TonalDistribution(1);
@@ -23,15 +19,15 @@ public class DistributionGenerator
 		
 		//int w = raster.getWidth();
 		//int h = raster.getHeight();
-		int w = jdemElevationModel.getWidth();
-		int h = jdemElevationModel.getHeight();
+		int w = jdemElevationModel2.getWidth();
+		int h = jdemElevationModel2.getHeight();
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				
 				//if (modelMask == null || modelMask[y][x] == true) {
 					//raster.getPixel(x, y, rgba);
-					jdemElevationModel.getRgba(x, y, rgba);
+					jdemElevationModel2.getRgba(x, y, rgba);
 					
 					channel0.distribution[rgba[0]]++;
 					channel1.distribution[rgba[1]]++;

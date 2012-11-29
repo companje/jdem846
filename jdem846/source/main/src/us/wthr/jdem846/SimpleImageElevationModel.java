@@ -2,10 +2,13 @@ package us.wthr.jdem846;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.graphics.ImageCapture;
+import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 
@@ -137,6 +140,28 @@ public class SimpleImageElevationModel implements ElevationModel
 	@Override
 	public void setElevationHistogramModel(ElevationHistogramModel elevationHistogramModel)
 	{
+		
+	}
+
+
+	@Override
+	public void writeImageData(OutputStream zos,
+			ImageTypeEnum imageTypeFromFormatName) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void writeModelData(OutputStream zos) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void writeProperties(OutputStream zos) throws IOException {
+		// TODO Auto-generated method stub
 		
 	}
 	

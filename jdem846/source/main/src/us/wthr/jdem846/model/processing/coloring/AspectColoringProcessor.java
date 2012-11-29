@@ -3,20 +3,15 @@ package us.wthr.jdem846.model.processing.coloring;
 import java.util.LinkedList;
 import java.util.List;
 
-import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Vector;
-import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
-import us.wthr.jdem846.model.ModelPointHandler;
 import us.wthr.jdem846.model.annotations.GridProcessing;
-import us.wthr.jdem846.model.processing.AbstractGridProcessor;
+import us.wthr.jdem846.model.processing.GridFilter;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
-import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.util.Aspect;
 import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 
@@ -25,9 +20,10 @@ import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 				name="Aspect Color Process",
 				type=GridProcessingTypesEnum.COLORING,
 				optionModel=AspectColoringOptionModel.class,
-				enabled=true
+				enabled=true,
+				isFilter=true
 )
-public class AspectColoringProcessor extends GridProcessor
+public class AspectColoringProcessor extends GridFilter
 {
 	private static Log log = Logging.getLog(AspectColoringProcessor.class);
 	
@@ -109,17 +105,6 @@ public class AspectColoringProcessor extends GridProcessor
 		
 	}
 
-	@Override
-	public void onLatitudeStart(double latitude) throws RenderEngineException
-	{
-		
-	}
-
-	@Override
-	public void onLatitudeEnd(double latitude) throws RenderEngineException
-	{
-		
-	}
 
 	@Override
 	public void onProcessBefore() throws RenderEngineException

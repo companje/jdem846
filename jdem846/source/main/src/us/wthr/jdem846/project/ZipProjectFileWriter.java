@@ -1,7 +1,5 @@
 package us.wthr.jdem846.project;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,12 +8,9 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.imageio.ImageIO;
-
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDem846Properties;
-import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.JDemResourceLoader;
-import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -32,7 +27,7 @@ public class ZipProjectFileWriter
 		
 	}
 	
-	protected static void writeJDemElevationModel(JDemElevationModel model, int index, ZipOutputStream zos) throws IOException
+	protected static void writeJDemElevationModel(ElevationModel model, int index, ZipOutputStream zos) throws IOException
 	{
 		//ZipEntry imageEntry = new ZipEntry("models/" + index + "/image.png");
 		ZipEntry imageEntry = new ZipEntry("models/" + index + "/image.jpg");
@@ -63,11 +58,11 @@ public class ZipProjectFileWriter
 		
 	}
 	
-	protected static void writeJDemElevationModels(List<JDemElevationModel> modelList, ZipOutputStream zos) throws IOException
+	protected static void writeJDemElevationModels(List<ElevationModel> modelList, ZipOutputStream zos) throws IOException
 	{
 
 		for (int i = 0; i < modelList.size(); i++) {
-			JDemElevationModel model = modelList.get(i);
+			ElevationModel model = modelList.get(i);
 			writeJDemElevationModel(model, i, zos);
 		}
 	}
@@ -84,7 +79,7 @@ public class ZipProjectFileWriter
 		JsonProjectFileWriter.writeProject(projectMarshall, zos);
 		zos.closeEntry();
 		
-		List<JDemElevationModel> modelList = projectMarshall.getElevationModels();
+		List<ElevationModel> modelList = projectMarshall.getElevationModels();
 		if (modelList != null && modelList.size() > 0) {
 			writeJDemElevationModels(modelList, zos);
 		}

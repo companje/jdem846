@@ -22,12 +22,14 @@ import us.wthr.jdem846.model.OptionModelChangeListener;
 import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.exceptions.ContextPrepareException;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
+import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
 import us.wthr.jdem846.project.ProcessMarshall;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectMarshall;
+import us.wthr.jdem846.project.ProjectMarshaller;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
@@ -58,6 +60,8 @@ public class ProjectContext {
 	
 	private boolean ignoreOptionChanges = false;
 	
+	private String projectLoadedFrom = null;
+	
 	protected ProjectContext() throws ProjectException
 	{
 		this(null);
@@ -68,6 +72,8 @@ public class ProjectContext {
 		if (projectPath != null) {
 			log.info("Initializing project from " + projectPath);
 		}
+		
+		this.projectLoadedFrom = projectPath;
 		
 		ProjectMarshall projectMarshall = null;
 		
@@ -196,7 +202,11 @@ public class ProjectContext {
 			for (String option : projectMarshall.getGlobalOptions().keySet()) {
 				String value = projectMarshall.getGlobalOptions().get(option);
 				if (value != null) {
-					globalOptionModelContainer.setPropertyValueById(option, value);
+					try {
+						globalOptionModelContainer.setPropertyValueById(option, value);
+					} catch (ModelContainerException ex) {
+						log.warn("Property not found with id '" + option + "': " + ex.getMessage(), ex);
+					}
 				}
 			}
 		}
@@ -449,6 +459,45 @@ public class ProjectContext {
 		this.ignoreOptionChanges = ignoreOptionChanges;
 	}
 
+	
+	public void save()
+	{
+		save(projectLoadedFrom);
+	}
+	
+	public void save(GetSaveLocationCallback cb)
+	{
+		save(cb.getSaveLocation(projectLoadedFrom));
+	}
+	
+	public void save(String saveTo)
+	{
+		log.info("Save to " + saveTo);
+		
+		try {
+
+			ProjectMarshall projectMarshall = ProjectMarshaller.marshallProject(modelContext);
+			projectMarshall.getElevationModels().addAll(this.elevationModelList);
+			ProjectFiles.write(projectMarshall, saveTo);
+			
+			this.projectLoadedFrom = saveTo;
+			
+			//RecentProjectTracker.addProject(saveTo);
+			
+			log.info("Project file saved to " + saveTo);
+		} catch (Exception ex) {
+			log.warn("Error trying to write project to disk: " + ex.getMessage(), ex);
+
+			return;
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
 	public static void initialize() throws ProjectException
 	{
 		ProjectContext.initialize(null);
