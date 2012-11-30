@@ -8,46 +8,26 @@ import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelDimensions;
-import us.wthr.jdem846.Projection;
 import us.wthr.jdem846.SimpleImageElevationModel;
 import us.wthr.jdem846.exception.DataSourceException;
-import us.wthr.jdem846.exception.GraphicsRenderException;
-import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
-import us.wthr.jdem846.gis.planets.Planet;
-import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjection;
-import us.wthr.jdem846.graphics.GraphicsRenderer;
 import us.wthr.jdem846.graphics.ImageCapture;
-import us.wthr.jdem846.graphics.RenderProcess;
 import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.graphics.ViewFactory;
 import us.wthr.jdem846.graphics.framebuffer.ManagedConcurrentFrameBufferController;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
-import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridFilterMethodStack;
-import us.wthr.jdem846.model.processing.GridPointFilter;
 import us.wthr.jdem846.model.processing.GridProcessMethodStack;
-import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
-import us.wthr.jdem846.model.processing.GridProcessor;
-import us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor;
-import us.wthr.jdem846.model.processing.dataload.SurfaceNormalsProcessor;
-import us.wthr.jdem846.model.processing.dataload.GridLoadProcessor;
 import us.wthr.jdem846.model.processing.render.ModelRenderOptionModel;
 import us.wthr.jdem846.model.processing.render.ModelRenderer;
-import us.wthr.jdem846.canvas.CanvasProjection;
-import us.wthr.jdem846.canvas.CanvasProjectionFactory;
-import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
-import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.render.ProcessInterruptListener;
 import us.wthr.jdem846.scaling.ElevationScaler;
 import us.wthr.jdem846.scaling.ElevationScalerEnum;
@@ -83,10 +63,16 @@ public class ModelBuilder extends InterruptibleProcess
 	
 	private boolean dataLoaded = false;
 	
+	private ProgressTracker progressTracker = null;
+	
 	public ModelBuilder()
 	{
-
-		
+		this(null);
+	}
+	
+	public ModelBuilder(ProgressTracker progressTracker)
+	{
+		this.progressTracker = progressTracker;
 	}
 	
 	public void dispose()
@@ -97,6 +83,9 @@ public class ModelBuilder extends InterruptibleProcess
 	
 	public void prepare(ModelContext modelContext,  ModelProcessManifest modelProcessManifest) throws RenderEngineException
 	{
+		if (progressTracker != null) {
+			progressTracker.beginTask("Preparing model builder", 6 + globalOptionModel.getNumberOfThreads());
+		}
 		
 		modelPrograms.clear();
 		
@@ -109,6 +98,10 @@ public class ModelBuilder extends InterruptibleProcess
 			globalOptionModel.setWestLimit(modelContext.getWest());
 		} 
 		
+		//+
+		if (progressTracker != null) {
+			progressTracker.worked(1);
+		}
 		
 		ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext);
 	
@@ -129,12 +122,15 @@ public class ModelBuilder extends InterruptibleProcess
 			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
 		}
 		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
-		
-		
+
 		modelContext.getRasterDataContext().setAvgOfAllRasterValues(globalOptionModel.getAverageOverlappedData());
 		modelContext.getRasterDataContext().setInterpolate(globalOptionModel.getInterpolateData());
 		modelContext.getRasterDataContext().setScaled(true);
 		
+		//+
+		if (progressTracker != null) {
+			progressTracker.worked(1);
+		}
 		
 		bufferControlledRasterDataContainer = new BufferControlledRasterDataContainer(modelContext.getRasterDataContext(), globalOptionModel.getPrecacheStrategy(), modelDimensions.getLatitudeResolution(), globalOptionModel.getTileSize());
 		modelContext.setRasterDataContext(bufferControlledRasterDataContainer);
@@ -196,7 +192,10 @@ public class ModelBuilder extends InterruptibleProcess
 			
 		}
 		
-
+		//+
+		if (progressTracker != null) {
+			progressTracker.worked(1);
+		}
 		
 		useScripting = globalOptionModel.getUseScripting();
 		
@@ -214,8 +213,10 @@ public class ModelBuilder extends InterruptibleProcess
 		int numberOfThreads = globalOptionModel.getNumberOfThreads();
 		this.frameBufferController = new ManagedConcurrentFrameBufferController(globalOptionModel.getWidth(), globalOptionModel.getHeight(), numberOfThreads);
 		
-		
-		
+		//+
+		if (progressTracker != null) {
+			progressTracker.worked(1);
+		}
 		
 		for (int i = 0; i < numberOfThreads; i++) {
 			ModelProgram modelProgram;
@@ -271,6 +272,10 @@ public class ModelBuilder extends InterruptibleProcess
 				throw new RenderEngineException("Error creating model program: " + ex.getMessage(), ex);
 			}
 			
+			//+
+			if (progressTracker != null) {
+				progressTracker.worked(1);
+			}
 		}
 		
 		
@@ -296,12 +301,20 @@ public class ModelBuilder extends InterruptibleProcess
 			
 		}
 		
-		
+		//+
+		if (progressTracker != null) {
+			progressTracker.worked(1);
+		}
 		
 		if (useScripting) {
 			onInitialize();
 		}
 		
+		//+
+		if (progressTracker != null) {
+			progressTracker.worked(1);
+		}
+				
 		prepared = true;
 	}
 	
@@ -318,6 +331,11 @@ public class ModelBuilder extends InterruptibleProcess
 		if (!modelContainsData()) {
 			log.info("Model contains no data. Skipping model build process");
 			return null;
+		}
+		
+		
+		if (progressTracker != null) {
+			progressTracker.beginTask("Generating Model Data", globalOptionModel.getNumberOfThreads());
 		}
 		
 		ProcessInterruptHandler interruptHandler = new ProcessInterruptHandler();
@@ -351,6 +369,11 @@ public class ModelBuilder extends InterruptibleProcess
 					, latitudeResolution
 					, longitudeResolution);
 			chunkThread.run();
+			
+			
+			if (progressTracker != null) {
+				progressTracker.worked(1);
+			}
 			
 		} else {
 			GridProcessChunkThread[] threads = new GridProcessChunkThread[numberOfThreads];
@@ -413,6 +436,10 @@ public class ModelBuilder extends InterruptibleProcess
 					log.warn("Thread sleep interrupted while waiting for grid process threads to complete: " + ex.getMessage(), ex);
 				}
 			}
+			
+			if (progressTracker != null) {
+				progressTracker.worked(threads.length);
+			}
 		}
 		
 		
@@ -425,6 +452,8 @@ public class ModelBuilder extends InterruptibleProcess
 		
 
 		dataLoaded = true;
+		
+		
 		
 		log.info("Initializing final rendering...");
 		MapProjection mapProjection = null;
@@ -464,6 +493,11 @@ public class ModelBuilder extends InterruptibleProcess
 		longitudeResolution = modelDimensions.getModelLongitudeResolution();
 		
 		
+		if (progressTracker != null) {
+			progressTracker.beginTask("Final rendering", (int) MathExt.round((north - south) / latitudeResolution));
+		}
+		
+		
 		for (double latitude = north; latitude > south; latitude -= latitudeResolution) {
 			if (this.latitudeProcessedList != null) {
 				if (this.latitudeProcessedList.isLatitudeProcessed(latitude)) {
@@ -480,62 +514,21 @@ public class ModelBuilder extends InterruptibleProcess
 			}
 			
 			renderer.onLatitudeEnd(latitude);
+			
+			
+			if (progressTracker != null) {
+				progressTracker.worked(1);
+				if (progressTracker.isCanceled()) {
+					break;
+				}
+			}
 
-			//checkPause();
-			//if (isCancelled()) {
-			//	log.warn("Render process cancelled, model not complete.");
-			//	break;
-			//}
 		}
 		
 		renderer.onProcessAfter();
 		renderer.dispose();
 		
-		
-		
-		/*
-		log.info("Initializing final rendering...");
-		MapProjection mapProjection = null;
-		
-		try {
-			
-			mapProjection = globalOptionModel.getMapProjectionInstance();
-			
-		} catch (MapProjectionException ex) {
-			throw new RenderEngineException("Error creating map projection: " + ex.getMessage(), ex);
-		}
-		
-		View view = ViewFactory.getViewInstance(modelContext
-				, globalOptionModel
-				, modelDimensions
-				, mapProjection
-				, modelContext.getScriptingContext().getScriptProxy()
-				, modelGrid);
-		
-		
-		RenderProcess renderProcess = new RenderProcess(view);
-		renderProcess.setModelContext(modelContext);
-		renderProcess.setGlobalOptionModel(globalOptionModel);
-		renderProcess.setModelDimensions(modelDimensions);
-		renderProcess.setMapProjection(mapProjection);
-		renderProcess.setScript(modelContext.getScriptingContext().getScriptProxy());
-		renderProcess.setModelGrid(modelGrid);
-		
-		log.info("Running final rendering...");
-		renderProcess.prepare();
-		
-		
-		try {
-			renderProcess.run();
-		} catch (GraphicsRenderException ex) {
-			throw new RenderEngineException("Error rendering model: " + ex.getMessage(), ex);
-		}
-		
-		ImageCapture imageCapture = renderProcess.capture();
-		
-		log.info("Completed final rendering, disposing...");
-		renderProcess.dispose();
-		*/
+
 		
 		this.frameBufferController.finish();
 		while(frameBufferController.isAlive()) {
@@ -558,7 +551,9 @@ public class ModelBuilder extends InterruptibleProcess
 		}
 		
 		
-		
+		if (progressTracker != null) {
+			progressTracker.beginTask("Finalizing", 1);
+		}
 		
 		
 		setProcessing(false);
@@ -576,6 +571,11 @@ public class ModelBuilder extends InterruptibleProcess
 			setJDemElevationModelProperties(elevationModel);
 		} else {
 			elevationModel = new SimpleImageElevationModel(imageCapture);
+		}
+		
+		if (progressTracker != null) {
+			progressTracker.worked(1);
+			progressTracker.done();
 		}
 		
 		return elevationModel;
