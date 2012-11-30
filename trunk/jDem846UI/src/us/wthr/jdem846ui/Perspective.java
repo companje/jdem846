@@ -31,6 +31,8 @@ public class Perspective implements IPerspectiveFactory {
 		
 		IFolderLayout bottomLeftFolder = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.70f, "topLeft");
 		bottomLeftFolder.addView(RenderedModelListView.ID);
+		bottomLeftFolder.addView("org.eclipse.ui.views.ProgressView");
+		
 		
 		//layout.addStandaloneView(DataView.ID,  false, IPageLayout.LEFT, 0.25f, editorArea);
 		//layout.addStandaloneView(DataView.ID,  false, IPageLayout.LEFT, 0.25f, editorArea);

@@ -474,21 +474,25 @@ public class ProjectContext {
 	{
 		log.info("Save to " + saveTo);
 		
-		try {
-
-			ProjectMarshall projectMarshall = ProjectMarshaller.marshallProject(modelContext);
-			projectMarshall.getElevationModels().addAll(this.elevationModelList);
-			ProjectFiles.write(projectMarshall, saveTo);
-			
-			this.projectLoadedFrom = saveTo;
-			
-			//RecentProjectTracker.addProject(saveTo);
-			
-			log.info("Project file saved to " + saveTo);
-		} catch (Exception ex) {
-			log.warn("Error trying to write project to disk: " + ex.getMessage(), ex);
-
-			return;
+		if (saveTo != null) {
+			try {
+	
+				ProjectMarshall projectMarshall = ProjectMarshaller.marshallProject(modelContext);
+				projectMarshall.getElevationModels().addAll(this.elevationModelList);
+				ProjectFiles.write(projectMarshall, saveTo);
+				
+				this.projectLoadedFrom = saveTo;
+				
+				//RecentProjectTracker.addProject(saveTo);
+				
+				log.info("Project file saved to " + saveTo);
+			} catch (Exception ex) {
+				log.warn("Error trying to write project to disk: " + ex.getMessage(), ex);
+	
+				return;
+			}
+		} else {
+			log.info("Save path is null, cannot save");
 		}
 		
 	}

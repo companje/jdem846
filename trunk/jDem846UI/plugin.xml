@@ -62,7 +62,8 @@
       <view
             name="Rendered Model List"
             class="us.wthr.jdem846ui.views.models.RenderedModelListView"
-            id="jdem846ui.renderedModelListView" />
+            id="jdem846ui.renderedModelListView" 
+            icon="icons/eclipse/flatLayout.gif" />
      
       <view
             name="Rendered Model Properties"
@@ -76,7 +77,13 @@
             id="jdem846ui.scriptEditorView"
             icon="icons/eclipse/scroll.png" />
      
-     
+	<view
+         name="Tasks"
+         icon="icons/eclipse/progress_task.gif"
+         category="org.eclipse.ui"
+         class="org.eclipse.ui.ExtensionFactory:progressView"
+         id="org.eclipse.ui.views.ProgressView" />
+
      
    </extension>
    <!--

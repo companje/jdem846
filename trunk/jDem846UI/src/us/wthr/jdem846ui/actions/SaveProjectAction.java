@@ -16,13 +16,7 @@ public class SaveProjectAction extends BasicAction
 {
 	private static Log log = Logging.getLog(SaveProjectAction.class);
 	
-	// Merge this shit with SaveProjectAsAction
-	public static final String[] GENERIC_FILE_TYPES = {"Data Files", "All Files (*)"};
-	public static final String[] GENERIC_FILE_TYPES_WIN = {"Data Files", "All Files (*.*)"};
-	
-	public static final String[] GENERIC_FILE_EXTENSIONS = {"*.jdemprj", "*"};
-	public static final String[] GENERIC_FILE_EXTENSIONS_WIN = {"*.jdemprj", "*.*"};
-	
+
 	public SaveProjectAction(IWorkbenchWindow window, String label, String viewId)
 	{
 		super(window, ICommandIds.CMD_SAVE, viewId, label, "/icons/eclipse/project_save.gif");
@@ -48,13 +42,13 @@ public class SaveProjectAction extends BasicAction
 	protected String promptForFilePath(String previousFile)
 	{
 		FileDialog dialog = new FileDialog (this.getWindow().getShell(), SWT.SAVE);
-		String [] filterNames = GENERIC_FILE_TYPES;
-		String [] filterExtensions = GENERIC_FILE_EXTENSIONS;
+		String [] filterNames = StandardFileTypes.PROJECT_PROJECT_FILE_TYPES;
+		String [] filterExtensions = StandardFileTypes.PROJECT_PROJECT_FILE_EXTENSIONS;
 		String filterPath = "/";
 		String platform = SWT.getPlatform();
 		if (platform.equals("win32") || platform.equals("wpf")) {
-			filterNames = GENERIC_FILE_TYPES_WIN;
-			filterExtensions = GENERIC_FILE_EXTENSIONS_WIN;
+			filterNames = StandardFileTypes.PROJECT_PROJECT_FILE_TYPES_WIN;
+			filterExtensions = StandardFileTypes.PROJECT_PROJECT_FILE_EXTENSIONS_WIN;
 			filterPath = "c:\\";
 		}
 		dialog.setFilterNames (filterNames);
