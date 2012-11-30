@@ -2,7 +2,6 @@ package us.wthr.jdem846ui.controls;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class LabeledControl<T extends Control>
 {
@@ -13,10 +12,7 @@ public class LabeledControl<T extends Control>
 	{
 		this.label = label;
 		this.control = control;
-		
-		//control.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-		//control.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
-		
+
 	}
 
 	public Label getLabel() {

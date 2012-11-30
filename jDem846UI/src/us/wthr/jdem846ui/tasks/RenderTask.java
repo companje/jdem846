@@ -16,6 +16,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelBuilder;
 import us.wthr.jdem846.model.ModelProcessManifest;
+import us.wthr.jdem846.model.ProgressTracker;
 import us.wthr.jdem846ui.project.ProjectContext;
 
 public class RenderTask extends Job 
@@ -53,7 +54,7 @@ public class RenderTask extends Job
 		
 		ModelProcessManifest modelProcessManifest = modelContext.getModelProcessManifest();
 		
-		ModelBuilder modelBuilder = new ModelBuilder();
+		ModelBuilder modelBuilder = new ModelBuilder(new RenderProgressMonitor(progressMonitor));
 		
 		log.info("Initializing model builder...");
 		try {
@@ -104,4 +105,65 @@ public class RenderTask extends Job
 		}
 	}
 	
+	
+	
+	
+	protected static class RenderProgressMonitor implements ProgressTracker
+	{
+		private IProgressMonitor progressMonitor;
+		
+		public RenderProgressMonitor(IProgressMonitor progressMonitor)
+		{
+			this.progressMonitor = progressMonitor;
+		}
+		
+		@Override
+		public void beginTask(String name, int totalWork) 
+		{
+			this.progressMonitor.beginTask(name, totalWork);
+		}
+
+		@Override
+		public void done() 
+		{
+			progressMonitor.done();
+		}
+
+		@Override
+		public void internalWorked(double work)
+		{
+			progressMonitor.internalWorked(work);
+		}
+
+		@Override
+		public boolean isCanceled() 
+		{
+			return progressMonitor.isCanceled();
+		}
+
+		@Override
+		public void setCanceled(boolean value) 
+		{
+			progressMonitor.setCanceled(value);
+		}
+
+		@Override
+		public void setTaskName(String name)
+		{
+			progressMonitor.setTaskName(name);
+		}
+
+		@Override
+		public void subTask(String name) 
+		{
+			progressMonitor.subTask(name);
+		}
+
+		@Override
+		public void worked(int work) 
+		{
+			progressMonitor.worked(work);
+		}
+		
+	}
 }

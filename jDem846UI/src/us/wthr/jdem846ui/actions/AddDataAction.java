@@ -95,13 +95,13 @@ public class AddDataAction extends BasicAction
 	protected String promptForFilePath()
 	{
 		FileDialog dialog = new FileDialog (this.getWindow().getShell(), SWT.OPEN);
-		String [] filterNames = GENERIC_FILE_TYPES;
-		String [] filterExtensions = GENERIC_FILE_EXTENSIONS;
+		String [] filterNames = StandardFileTypes.GENERIC_DATA_FILE_TYPES;
+		String [] filterExtensions = StandardFileTypes.GENERIC_DATA_FILE_EXTENSIONS;
 		String filterPath = "/";
 		String platform = SWT.getPlatform();
 		if (platform.equals("win32") || platform.equals("wpf")) {
-			filterNames = GENERIC_FILE_TYPES_WIN;
-			filterExtensions = GENERIC_FILE_EXTENSIONS_WIN;
+			filterNames = StandardFileTypes.GENERIC_DATA_FILE_TYPES_WIN;
+			filterExtensions = StandardFileTypes.GENERIC_DATA_FILE_EXTENSIONS_WIN;
 			filterPath = "c:\\";
 		}
 		dialog.setFilterNames (filterNames);
