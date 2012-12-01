@@ -29,9 +29,5 @@ public class MollweideProjectionTest extends BaseMapProjectionTest
 		//double longitude = -71.061667;
 	}
 	
-	public void testGenerateMap()
-	{
-		//MollweideProjection projection = new MollweideProjection(90, -90, 180, -180, width, height);
-		this.__testGenerateMap(MapProjectionEnum.MOLLWEIDE);
-	}
+
 }

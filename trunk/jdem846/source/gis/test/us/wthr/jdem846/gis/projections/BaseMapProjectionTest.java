@@ -6,17 +6,11 @@ import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
 import junit.framework.TestCase;
-import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.ModelOptions;
-import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.ImageException;
-import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.canvas.ModelCanvas;
 
 public class BaseMapProjectionTest extends TestCase
 {
@@ -70,101 +64,8 @@ public class BaseMapProjectionTest extends TestCase
 		
 	}
 	
+
 	
-	public void __testGenerateMap(MapProjectionEnum mapProjectionDef)
-	{
-		ModelOptions modelOptions = new ModelOptions();
-		modelOptions.setWidth((int)width);
-		modelOptions.setHeight((int)height);
-		modelOptions.setMapProjection(mapProjectionDef);
-		modelOptions.setBackgroundColor("255;255;255;255");
-		modelOptions.setAntialiased(false);
-		//modelOptions.setUseSimpleCanvasFill(false);
-		RasterDataContext rasterDataContext = new RasterDataContext();
-		ModelContext modelContext = null;
-		
-		try {
-			modelContext = ModelContext.createInstance(rasterDataContext, modelOptions);
-		} catch (ModelContextException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		ModelCanvas modelCanvas = null;
-		try {
-			modelCanvas = modelContext.getModelCanvas(true);
-		} catch (ModelContextException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		int[] pointColor = {0, 0, 0, 0xFF};
-		int[] lineColor = {255, 0, 0, 0xFF};
-		
-		double latStep = 0.25;
-		double lonStep = 0.25;
-		
-		for (double latitude = north; latitude > south; latitude-=latStep) {
-			for (double longitude = west; longitude < east; longitude+=lonStep) {
-				
-				try {
-					modelCanvas.fillRectangle(pointColor, 
-							latitude, longitude, 0.0,
-							latitude-latStep, longitude, 0.0,
-							latitude-latStep, longitude+lonStep, 0.0,
-							latitude, longitude+lonStep, 0.0);
-					
-				} catch (CanvasException ex) {
-					ex.printStackTrace();
-					return;
-				}
-				
-			}
-		}
-		
-		
-		double coordWidthLat = (Math.abs(north) + Math.abs(south)) / 12;
-		double coordWidthLon = (Math.abs(west) + Math.abs(east)) / 24;
-		
-		for (double latitude = north; latitude >= south; latitude-=coordWidthLat) {
-			for (double longitude = west; longitude <= east; longitude+=coordWidthLon) {
-				
-				if (latitude > south) {
-					
-					try {
-						modelCanvas.drawLine(lineColor, 
-								latitude, longitude, 0.0, 
-								latitude-coordWidthLat, longitude, 0.0);
-					} catch (CanvasException ex) {
-						fail("Failed to project coordinates: " + ex.getMessage());
-					}
-				}
-				
-				if (longitude < east) {
-					
-					try {
-						modelCanvas.drawLine(lineColor, 
-								latitude, longitude, 0.0, 
-								latitude, longitude+coordWidthLon, 0.0);
-					} catch (CanvasException ex) {
-						fail("Failed to project coordinates: " + ex.getMessage());
-					}
-					
-				}
-				
-			}
-			
-		}
-		
-		
-		try {
-			modelCanvas.save(saveImagesTo.replace("{test}", "testGenerateMap"));
-		} catch (CanvasException ex) {
-			ex.printStackTrace();
-		}
-		
-		
-	}
 	
 	public void __testGenerateMap(MapProjection mapProjection)
 	{

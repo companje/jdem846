@@ -7,17 +7,14 @@ import java.util.Map;
 
 import us.wthr.jdem846.AppRegistry;
 import us.wthr.jdem846.DiscoverableAnnotationIndexer;
-import us.wthr.jdem846.annotations.DemEngine;
 import us.wthr.jdem846.annotations.Initialize;
 import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.exception.AnnotationIndexerException;
 import us.wthr.jdem846.exception.RegistryException;
-import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.annotations.GridProcessing;
-import us.wthr.jdem846.render.EngineInstance;
-import us.wthr.jdem846.render.EngineRegistry;
+
 
 @Registry
 public class ModelProcessRegistry  implements AppRegistry

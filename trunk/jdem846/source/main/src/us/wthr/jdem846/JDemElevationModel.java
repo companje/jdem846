@@ -16,7 +16,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import us.wthr.jdem846.canvas.AbstractBuffer;
-import us.wthr.jdem846.canvas.GeoRasterBuffer3d;
 import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.graphics.ImageCapture;
@@ -75,25 +74,6 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 		}
 	}
 	
-	public JDemElevationModel(GeoRasterBuffer3d geoRasterBuffer)
-	{
-		this(geoRasterBuffer.getWidth(), geoRasterBuffer.getHeight());
-		
-		for (int y = 0; y < getHeight(); y++) {
-			for (int x = 0; x < getWidth(); x++) {
-				int index = getIndex(x, y);
-				
-				rgbaBuffer[index] = geoRasterBuffer.get(x, y);
-				maskBuffer[index] = geoRasterBuffer.isPixelFilled(x, y);
-				
-				latitudeBuffer[index] = (float) geoRasterBuffer.getLatitude(x, y);
-				longitudeBuffer[index] = (float) geoRasterBuffer.getLongitude(x, y);
-				elevationBuffer[index] = (float) geoRasterBuffer.getElevation(x, y);
-			}
-		}
-		
-		
-	}
 	
 	public JDemElevationModel(int width, int height)
 	{

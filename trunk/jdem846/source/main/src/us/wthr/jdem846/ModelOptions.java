@@ -30,6 +30,7 @@ import us.wthr.jdem846.util.ColorSerializationUtil;
  * @author Kevin M. Gill
  *
  */
+@Deprecated
 public class ModelOptions extends MappedOptions
 {
 	public static final int SPOT_EXPONENT_MINIMUM = 1;

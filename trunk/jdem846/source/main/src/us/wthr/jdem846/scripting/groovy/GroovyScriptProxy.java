@@ -1,20 +1,12 @@
 package us.wthr.jdem846.scripting.groovy;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import org.codehaus.groovy.runtime.metaclass.ClosureMetaClass;
-
-import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.graphics.GraphicsRenderer;
 import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.model.ModelProcessContainer;
 import us.wthr.jdem846.model.processing.util.LightingValues;
 import us.wthr.jdem846.scripting.ScriptProxy;
 

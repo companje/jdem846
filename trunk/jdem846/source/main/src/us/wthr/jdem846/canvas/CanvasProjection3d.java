@@ -1,23 +1,16 @@
 package us.wthr.jdem846.canvas;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
-import us.wthr.jdem846.ModelOptionNamesEnum;
-import us.wthr.jdem846.Projection;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
-import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Vectors;
-import us.wthr.jdem846.model.ModelGridDimensions;
 import us.wthr.jdem846.model.ViewPerspective;
-import us.wthr.jdem846.render.gfx.Vector;
-
 
 public class CanvasProjection3d extends CanvasProjection
 {

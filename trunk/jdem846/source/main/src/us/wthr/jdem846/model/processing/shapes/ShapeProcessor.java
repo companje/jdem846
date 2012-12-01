@@ -7,7 +7,6 @@ import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.canvas.CanvasProjection;
 import us.wthr.jdem846.canvas.CanvasProjectionFactory;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
-import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ModelContextException;
@@ -31,7 +30,6 @@ import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
-import us.wthr.jdem846.render.shapelayer.ShapeFill;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.PointTranslateHandler;
 import us.wthr.jdem846.shapefile.Shape;
@@ -241,14 +239,14 @@ public class ShapeProcessor extends GridProcessor
 					shapeType == ShapeConstants.TYPE_POLYGONM ||
 					shapeType == ShapeConstants.TYPE_POLYGONZ);
 			
-			ShapeFill shapeFill = new ShapeFill(color, shapeType, path, lineStroke, fill);
-			try {
-				shapeFill.fill(modelContext.getModelCanvas());
-			} catch (CanvasException ex) {
-				throw new RenderEngineException("Shape fill error: " + shapeType);
-			} catch (ModelContextException ex) {
-				throw new RenderEngineException("Error fetching model canvas: " + ex.getMessage(), ex);
-			}
+//			ShapeFill shapeFill = new ShapeFill(color, shapeType, path, lineStroke, fill);
+//			try {
+//				shapeFill.fill(modelContext.getModelCanvas());
+//			} catch (CanvasException ex) {
+//				throw new RenderEngineException("Shape fill error: " + shapeType);
+//			} catch (ModelContextException ex) {
+//				throw new RenderEngineException("Error fetching model canvas: " + ex.getMessage(), ex);
+//			}
 
 		}	
 	}

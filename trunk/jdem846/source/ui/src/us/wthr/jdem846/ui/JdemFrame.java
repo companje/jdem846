@@ -44,7 +44,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.dbase.ClassLoadException;
 import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.ImageIcons;
@@ -52,11 +51,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectMarshall;
-import us.wthr.jdem846.project.ProjectModel;
 import us.wthr.jdem846.project.ProjectTypeEnum;
-import us.wthr.jdem846.render.EngineInstance;
-import us.wthr.jdem846.render.EngineRegistry;
-import us.wthr.jdem846.render.RenderEngine;
 import us.wthr.jdem846.ui.RecentProjectTracker.ProjectListListener;
 import us.wthr.jdem846.ui.TopButtonBar.ButtonClickedListener;
 import us.wthr.jdem846.ui.base.FileChooser;
@@ -556,6 +551,7 @@ public class JdemFrame extends Frame
 		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.ready"));
 	}
 	
+	
 	protected void buildStandardProjectUI(ProjectMarshall projectMarshall)
 	{
 		
@@ -563,7 +559,7 @@ public class JdemFrame extends Frame
 		
 		projectPane.addCreateModelListener(new CreateModelListener() {
 			public void onCreateModel(ModelContext modelContext) {
-				onCreateModelTab(modelContext);
+				
 			}
 		});
 		
@@ -632,77 +628,7 @@ public class JdemFrame extends Frame
 		
 	}
 	
-	protected void onCreateModelTab(ModelContext modelContext)
-	{
-		
-		
-		/*
-		String engineIdentifier = modelContext.getModelOptions().getEngine();
-		EngineInstance engineInstance = EngineRegistry.getInstance(engineIdentifier);
-		
-		// TODO: Add scripting proxy
-		//ModelContext modelContext = ModelContext.createInstance(dataPackage, modelOptions);
-		
-		RenderEngine engine;
-		try {
-			engine = engineInstance.getImpl();
-			engine.initialize(modelContext);
-		} catch (ClassLoadException ex) {
-			ex.printStackTrace();
-			log.error("Failed to load engine class '" + ex.getClassName() + "': " + ex.getMessage(), ex);
-			
-			JOptionPane.showMessageDialog(getRootPane(),
-					I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelInstanceError.message") + " " + engineInstance.getName(),
-					I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelInstanceError.title"),
-				    JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		*/
-		//engine.setDataPackage(dataPackage);
-		
-		// TODO: Restore this functionality
-		/*
-		ElevationDataLoaderInstance dataLoaderInstance = engine.needsOutputFileOfType();
-		if (dataLoaderInstance != null) {
-			
-			JFileChooser chooser = new JFileChooser();
-			FileNameExtensionFilter filter = new FileNameExtensionFilter(dataLoaderInstance.getName(), dataLoaderInstance.getExtension());
-			chooser.setFileFilter(filter);
-			chooser.setMultiSelectionEnabled(false);
-		    int returnVal = chooser.showSaveDialog(this);
-		    if(returnVal == JFileChooser.APPROVE_OPTION) {
-		    	File selectedFile = chooser.getSelectedFile();
-		    	modelContext.getModelOptions().setWriteTo(selectedFile.getAbsolutePath());
-		    } else {
-		    	JOptionPane.showMessageDialog(getRootPane(),
-					    I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.fileNotSelected.message"),
-					    I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.fileNotSelected.title"),
-					    JOptionPane.ERROR_MESSAGE);
-		    	return;
-		    }
-			
 
-		}
-		*/
-		
-		//if (engine.generatesImage()) {
-			OutputImageViewPanel outputPanel = new OutputImageViewPanel(modelContext);
-			tabPane.addTab(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelTabTitle"), outputPanel, true);
-			tabPane.setSelectedComponent(outputPanel);
-			outputPanel.setTitle(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelTabTitle"));
-			outputPanel.startWorker();
-		/*
-		} else {
-			
-			DataGenerationViewPanel outputPanel = new DataGenerationViewPanel(engine);
-			tabPane.addTab(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.dataTabTitle"), outputPanel, true);
-			tabPane.setSelectedComponent(outputPanel);
-			outputPanel.setTitle(I18N.get("us.wthr.jdem846.ui.jdemFrame.createModelTab.modelTabTitle"));
-			outputPanel.startWorker();
-		}
-		*/
-
-	}
 	
 	public void addShadedComponent(Component component, String text)
 	{

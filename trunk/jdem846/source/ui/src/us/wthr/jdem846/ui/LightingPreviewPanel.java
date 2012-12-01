@@ -252,7 +252,7 @@ public class LightingPreviewPanel extends Panel
 				modelBuilder.prepare(modelContext, modelProcessManifest);
 				modelBuilder.process();
 				
-				prerendered = (BufferedImage) modelContext.getModelCanvas().getImage();
+				//prerendered = (BufferedImage) modelContext.getModelCanvas().getImage();
 
 			} catch (Exception e) {
 				log.warn("Failed to render preview image: " + e.getMessage(), e);

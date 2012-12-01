@@ -13,7 +13,6 @@ import us.wthr.jdem846.gis.datetime.SolarCalculator;
 import us.wthr.jdem846.gis.datetime.SolarPosition;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
-import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -58,7 +57,6 @@ public class SunlightPositioning
 
 	protected double lightZenith;
 	protected double darkZenith;
-	protected LightSourceSpecifyTypeEnum lightSourceType;
 	protected long lightOnDate;
 	protected long lightOnTime;
 	protected boolean recalcLightOnEachPoint;

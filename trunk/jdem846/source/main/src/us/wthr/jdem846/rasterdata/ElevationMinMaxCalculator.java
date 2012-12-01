@@ -1,4 +1,4 @@
-package us.wthr.jdem846.render;
+package us.wthr.jdem846.rasterdata;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
@@ -9,6 +9,7 @@ import us.wthr.jdem846.gis.elevation.ElevationMinMax;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.model.CancelIndicator;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 
 public class ElevationMinMaxCalculator

@@ -32,12 +32,7 @@ public class EquirectangularProjectionTest extends BaseMapProjectionTest
 		//double longitude = -71.061667;
 	}
 	
-	public void testGenerateMap()
-	{
-		//MapProjection projection = new EquirectangularProjection(90, -90, 180, -180, width, height);
-		this.__testGenerateMap(MapProjectionEnum.EQUIRECTANGULAR);
-	}
-	
+
 	
 	
 	

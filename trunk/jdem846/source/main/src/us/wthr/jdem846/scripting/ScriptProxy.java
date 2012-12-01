@@ -17,11 +17,9 @@
 package us.wthr.jdem846.scripting;
 
 import us.wthr.jdem846.ModelContext;
-import us.wthr.jdem846.canvas.ModelCanvas;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.graphics.GraphicsRenderer;
 import us.wthr.jdem846.graphics.View;
-import us.wthr.jdem846.model.ModelProcessContainer;
 import us.wthr.jdem846.model.processing.util.LightingValues;
 
 /** Describes a proxy interface for modeling engines to call user-provided scripts
