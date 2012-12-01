@@ -695,8 +695,7 @@ public class ModelVisualizationPanel extends Panel
 			// TODO Display error message dialog
 			log.error("Exception updating model context: " + ex.getMessage(), ex);
 		}
-		
-		modelContextWorkingCopy.resetModelCanvas();
+
 		
 		if (dataModelChange) {
 			modelBuilder = null;

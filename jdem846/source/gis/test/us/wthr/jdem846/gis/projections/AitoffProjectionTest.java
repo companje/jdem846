@@ -30,8 +30,7 @@ public class AitoffProjectionTest extends BaseMapProjectionTest
 	
 	public void testGenerateMap()
 	{
-		//AitoffProjection projection = new AitoffProjection(90, -90, 180, -180, width, height);
-		this.__testGenerateMap(MapProjectionEnum.AITOFF);
+
 	}
 	
 	

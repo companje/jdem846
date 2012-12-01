@@ -48,7 +48,7 @@ public class RayTracing
 				modelContext.getWest(),
 				modelContext.getRasterDataContext().getDataMinimumValue(),
 				modelContext.getRasterDataContext().getDataMaximumValue(),
-				modelContext.getModelOptions().getElevationMultiple(),
+				1.0, //modelContext.getModelOptions().getElevationMultiple(),
 				rasterDataFetchHandler
 				);
 		}

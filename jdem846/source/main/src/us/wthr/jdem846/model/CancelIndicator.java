@@ -1,4 +1,4 @@
-package us.wthr.jdem846.render;
+package us.wthr.jdem846.model;
 
 public class CancelIndicator
 {

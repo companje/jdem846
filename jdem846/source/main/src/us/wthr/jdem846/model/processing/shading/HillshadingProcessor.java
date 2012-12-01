@@ -1,14 +1,12 @@
 package us.wthr.jdem846.model.processing.shading;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
-import us.wthr.jdem846.lighting.LightSourceSpecifyTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -16,12 +14,8 @@ import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.GlobalOptionModel;
-import us.wthr.jdem846.model.ModelGrid;
-import us.wthr.jdem846.model.ModelPointHandler;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.annotations.GridProcessing;
-import us.wthr.jdem846.model.processing.AbstractGridProcessor;
-import us.wthr.jdem846.model.processing.GridPointFilter;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.shading.RayTracing.RasterDataFetchHandler;

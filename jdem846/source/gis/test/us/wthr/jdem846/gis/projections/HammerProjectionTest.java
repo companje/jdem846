@@ -28,10 +28,5 @@ public class HammerProjectionTest extends BaseMapProjectionTest
 		//double latitude = 42.357778;
 		//double longitude = -71.061667;
 	}
-	
-	public void testGenerateMap()
-	{
-		//HammerProjection projection = new HammerProjection(90, -90, 180, -180, width, height);
-		this.__testGenerateMap(MapProjectionEnum.HAMMER);
-	}
+
 }

@@ -41,12 +41,7 @@ public class MapProjectionProviderFactory
 		
 	}
 	
-	public static MapProjection getMapProjection(ModelContext modelContext) throws MapProjectionException
-	{
-		return MapProjectionProviderFactory._getMapProjection(modelContext.getModelOptions().getMapProjection(), modelContext, 0, 0, 0, 0, 0, 0);
-	}
-	
-	
+
 	public static MapProjection getMapProjection(MapProjectionEnum projectionEnum, double north, double south, double east, double west, double width, double height) throws MapProjectionException
 	{
 		return MapProjectionProviderFactory._getMapProjection(projectionEnum, null, north, south, east, west, width, height);

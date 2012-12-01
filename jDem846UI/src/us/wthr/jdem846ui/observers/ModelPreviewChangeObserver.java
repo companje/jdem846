@@ -301,8 +301,6 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 			log.error("Exception updating model context: " + ex.getMessage(), ex);
 		}
 		
-		modelContextWorkingCopy.resetModelCanvas();
-		
 		if (dataModelChange) {
 			modelBuilder = null;
 		}

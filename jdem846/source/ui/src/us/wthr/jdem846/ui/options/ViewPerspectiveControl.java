@@ -8,10 +8,10 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.OptionModelPropertyContainer;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
-import us.wthr.jdem846.ui.perspective.PerspectiveValueControl;
+import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
-public class ViewPerspectiveControl extends PerspectiveValueControl implements ChangeListener, OptionModelUIControl
+public class ViewPerspectiveControl extends Panel implements ChangeListener, OptionModelUIControl
 {
 	private static Log log = Logging.getLog(ViewPerspectiveControl.class);
 	
@@ -21,11 +21,10 @@ public class ViewPerspectiveControl extends PerspectiveValueControl implements C
 	public ViewPerspectiveControl(OptionModelPropertyContainer propertyContainer)
 	{
 		this.propertyContainer = propertyContainer;
-		this.setToolTipText(propertyContainer.getTooltip());
-		
+
 		refreshUI();
 		
-		this.addChangeListener(this);
+
 	}
 	
 	public void refreshUI()
@@ -33,8 +32,7 @@ public class ViewPerspectiveControl extends PerspectiveValueControl implements C
 		try {
 			ViewPerspective initialValue = (ViewPerspective) propertyContainer.getValue();
 			if (initialValue != null) {
-				this.setRotateX(initialValue.getRotateX());
-				this.setRotateY(initialValue.getRotateY());
+
 				//this.setRotateZ(initialValue.getRotateZ());
 			}
 		

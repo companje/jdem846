@@ -28,10 +28,5 @@ public class WagnerVIProjectionTest extends BaseMapProjectionTest
 		//double latitude = 42.357778;
 		//double longitude = -71.061667;
 	}
-	
-	public void testGenerateMap()
-	{
-		//MapProjection projection = new WagnerVIProjection(90, -90, 180, -180, width, height);
-		this.__testGenerateMap(MapProjectionEnum.WAGNERVI);
-	}
+
 }

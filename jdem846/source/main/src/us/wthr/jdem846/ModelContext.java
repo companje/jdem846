@@ -22,18 +22,17 @@ import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.gis.elevation.ElevationMinMaxEstimation;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.image.ImageDataContext;
-import us.wthr.jdem846.lighting.LightingContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.CancelIndicator;
 import us.wthr.jdem846.model.ModelGridDimensions;
 import us.wthr.jdem846.model.ModelProcessManifest;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
+import us.wthr.jdem846.rasterdata.ElevationMinMaxCalculator;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
-import us.wthr.jdem846.render.CancelIndicator;
+
 import us.wthr.jdem846.gis.elevation.ElevationMinMax;
-import us.wthr.jdem846.render.ElevationMinMaxCalculator;
-import us.wthr.jdem846.canvas.ModelCanvas;
-import us.wthr.jdem846.render.ModelDimensions2D;
+
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjection;
@@ -61,18 +60,10 @@ public class ModelContext
 	
 	private ModelProcessManifest modelProcessManifest;
 	
-	@Deprecated
-	private ModelOptions modelOptions;
-
-	
-	@Deprecated
-	private LightingContext lightingContext;
-	
 	private String contextId;
 	
 	private MapProjection mapProjection;
 	private ModelDimensions modelDimensions;
-	private ModelCanvas modelCanvas = null;
 	
 	private double northLimit = NOT_SET;
 	private double southLimit = NOT_SET;
@@ -94,18 +85,6 @@ public class ModelContext
 		this.contextId = contextId;
 	}
 	
-	@Deprecated
-	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptingContext scriptingContext, String contextId)
-	{
-		this.rasterDataContext = rasterDataContext;
-		this.shapeDataContext = shapeDataContext;
-		this.imageDataContext = imageDataContext;
-		this.modelOptions = modelOptions;
-		this.scriptingContext = scriptingContext;
-		this.lightingContext = lightingContext;
-		
-		this.contextId = contextId;
-	}
 
 	public void updateContext() throws ModelContextException
 	{
@@ -123,23 +102,12 @@ public class ModelContext
 		
 		if (this.getModelProcessManifest() != null) {
 			modelDimensions = ModelGridDimensions.getModelDimensions(this);
-		} else {
-			modelDimensions = ModelDimensions2D.getModelDimensions(this);
-		}
+		} 
 		
 		rasterDataContext.setEffectiveLatitudeResolution(modelDimensions.textureLatitudeResolution);
 		rasterDataContext.setEffectiveLongitudeResolution(modelDimensions.textureLongitudeResolution);
 		
-		/*
-		try {
-			
-			mapProjection = MapProjectionProviderFactory.getMapProjection(this);
-			
-		} catch (MapProjectionException ex) {
-			log.error("Failed to create map projection: " + ex.getMessage(), ex);
-		}
-		*/
-		
+
 		
 		if (updateDataMinMax) {
 			
@@ -148,10 +116,7 @@ public class ModelContext
 			
 			if (this.getModelProcessManifest() != null) {
 				planet = PlanetsRegistry.getPlanet(getModelProcessManifest().getGlobalOptionModel().getPlanet());
-			} else {
-				planet = PlanetsRegistry.getPlanet(modelOptions.getOption(ModelOptionNamesEnum.PLANET));
-			}
-			
+			} 
 			
 			
 			if (estimateMinMax && planet != null && planet.getElevationSamplesPath() != null) {
@@ -236,41 +201,8 @@ public class ModelContext
 	{
 		return modelDimensions;
 	}
+
 	
-	public ModelCanvas createModelCanvas() throws ModelContextException
-	{
-		////log.info("****************************");
-		//log.info("Creating Model Canvas!!");
-		//log.info("****************************");
-		try {
-			return new ModelCanvas(this);
-		} catch (CanvasException ex) {
-			throw new ModelContextException("Error creating model canvas: " + ex.getMessage(), ex);
-		}
-	}
-	
-	public ModelCanvas getModelCanvas() throws ModelContextException
-	{
-		return getModelCanvas(true);
-	}
-	
-	public ModelCanvas getModelCanvas(boolean create) throws ModelContextException
-	{
-		if (this.modelCanvas == null && create) {
-			this.modelCanvas = createModelCanvas();
-		}
-		return this.modelCanvas;
-	}
-	
-	public void setModelCanvas(ModelCanvas modelCanvas)
-	{
-		this.modelCanvas = modelCanvas;
-	}
-	
-	public void resetModelCanvas()
-	{
-		this.modelCanvas = null;
-	}
 	
 	public void setRasterDataContext(RasterDataContext rasterDataContext)
 	{
@@ -308,15 +240,7 @@ public class ModelContext
 	{
 		this.modelProcessManifest = modelProcessManifest;
 	}
-	
 
-	@Deprecated
-	public ModelOptions getModelOptions()
-	{
-		return modelOptions;
-	}
-
-	
 
 	
 	public ScriptingContext getScriptingContext()
@@ -327,12 +251,6 @@ public class ModelContext
 	public void setScriptingContext(ScriptingContext scriptingContext)
 	{
 		this.scriptingContext = scriptingContext;
-	}
-
-	@Deprecated
-	public LightingContext getLightingContext()
-	{
-		return lightingContext;
 	}
 
 
@@ -443,36 +361,8 @@ public class ModelContext
 		} catch (ProcessContainerException ex) {
 			throw new DataSourceException("Error creating copy of model process manifest: " + ex.getMessage(), ex);
 		}
-		
-		//LightingContext lightingContextCopy = (lightingContext == null) ? null : lightingContext.copy();
-		ModelCanvas modelCanvasCopy = null;
-		
-		/*
-		try {
-			if (withDependentCanvas) {
-				//modelCanvasCopy = getModelCanvas(true).getDependentHandle();
-			}
-		} catch (CanvasException ex) {
-			throw new DataSourceException("Error creating dependent canvas handle: " + ex.getMessage(), ex);
-		}
-		*/
-		
-		// TODO: Implement script proxy copy
-		//ScriptProxy scriptProxyCopy = null;//(scriptProxy == null) ? null : scriptProxy.copy();
-		
-		/*
-		ScriptProxy scriptProxyCopy = null;
-		
-		
-		if (modelOptions != null && modelOptions.getUserScript() != null && modelOptions.getUserScript().length() > 0) {
-			try {
-				scriptProxyCopy = ScriptProxyFactory.createScriptProxy(modelOptions.getScriptLanguage(), modelOptions.getUserScript());
-			} catch (Exception ex) {
-				throw new DataSourceException("Failed to recompile script: " + ex.getMessage(), ex);
-			} 
-		}
-		*/
-		
+
+
 		ModelContext clone = null;
 		
 		
@@ -491,7 +381,6 @@ public class ModelContext
 		if (this.modelDimensions != null) {
 			clone.modelDimensions = this.modelDimensions.copy();
 		}
-		clone.modelCanvas = modelCanvasCopy;
 		return clone;
 
 	}
@@ -546,46 +435,6 @@ public class ModelContext
 	}
 	
 
-	@Deprecated
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ModelOptions modelOptions) throws ModelContextException
-	{
-		return ModelContext.createInstance(rasterDataContext, null, null, null, modelOptions, null);
-	}
-	
-	@Deprecated
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions) throws ModelContextException
-	{
-		return ModelContext.createInstance(rasterDataContext, null, null, lightingContext, modelOptions, null);
-	}
-	
-	@Deprecated
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptingContext scriptingContext) throws ModelContextException
-	{
-		return ModelContext.createInstance(rasterDataContext, null, null, lightingContext, modelOptions, scriptingContext);
-	}
-	
-	@Deprecated
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ModelOptions modelOptions) throws ModelContextException
-	{
-		return ModelContext.createInstance(rasterDataContext, shapeDataContext, null, null, modelOptions, null);
-	}
-	
-	@Deprecated
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, LightingContext lightingContext, ModelOptions modelOptions) throws ModelContextException
-	{
-		return ModelContext.createInstance(rasterDataContext, shapeDataContext, null, lightingContext, modelOptions, null);
-	}
-	
-	@Deprecated
-	public static ModelContext createInstance(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, LightingContext lightingContext, ModelOptions modelOptions, ScriptingContext scriptingContext) throws ModelContextException
-	{
-		String contextId = ModelContext.generateContextId();
-		ModelContext modelContext = new ModelContext(rasterDataContext, shapeDataContext, imageDataContext, lightingContext, modelOptions, scriptingContext, contextId);
-		modelContext.updateContext();
-		return modelContext;
-	}
-	
-
 	
 	
 	protected static String generateContextId()
@@ -597,15 +446,11 @@ public class ModelContext
 	public static ModelContext createInstance(
 			RasterDataContext rasterDataContext,
 			ShapeDataContext shapeDataContext,
-			ImageDataContext imageDataContext,
-			LightingContext lightingContext, 
-			ModelOptions modelOptions) throws ModelContextException
+			ImageDataContext imageDataContext) throws ModelContextException
 	{
 		return createInstance(rasterDataContext, 
 								shapeDataContext, 
 								imageDataContext, 
-								lightingContext, 
-								modelOptions, 
 								null);
 	}
 }
