@@ -13,6 +13,7 @@ import us.wthr.jdem846ui.views.models.RenderedModelDisplayView;
 import us.wthr.jdem846ui.views.models.RenderedModelListView;
 import us.wthr.jdem846ui.views.models.RenderedModelPropertiesView;
 import us.wthr.jdem846ui.views.preview.PreviewView;
+import us.wthr.jdem846ui.views.raster.RasterPropertiesView;
 
 public class Perspective implements IPerspectiveFactory {
 
@@ -27,17 +28,15 @@ public class Perspective implements IPerspectiveFactory {
 		
 		IFolderLayout topLeftFolder = layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea);
 		topLeftFolder.addView(DataView.ID);
+		topLeftFolder.addView(RasterPropertiesView.ID);
+
 	
 		
 		IFolderLayout bottomLeftFolder = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.70f, "topLeft");
 		bottomLeftFolder.addView(RenderedModelListView.ID);
 		bottomLeftFolder.addView("org.eclipse.ui.views.ProgressView");
 		
-		
-		//layout.addStandaloneView(DataView.ID,  false, IPageLayout.LEFT, 0.25f, editorArea);
-		//layout.addStandaloneView(DataView.ID,  false, IPageLayout.LEFT, 0.25f, editorArea);
-		//layout.addStandaloneView(RenderedModelListView.ID,  false, IPageLayout., 0.25f, editorArea);
-		
+
 		IFolderLayout rightFolder = layout.createFolder("right", IPageLayout.RIGHT, 0.60f, editorArea);
 		rightFolder.addView(ModelConfigurationView.ID);
 		rightFolder.addView(RenderedModelPropertiesView.ID);

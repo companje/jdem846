@@ -77,6 +77,12 @@
             id="jdem846ui.scriptEditorView"
             icon="icons/eclipse/scroll.png" />
      
+     <view
+            name="Raster Properties"
+            class="us.wthr.jdem846ui.views.raster.RasterPropertiesView"
+            id="jdem846ui.rasterPropertiesView"
+            icon="icons/eclipse/binary.gif" />
+     
 	<view
          name="Tasks"
          icon="icons/eclipse/progress_task.gif"
