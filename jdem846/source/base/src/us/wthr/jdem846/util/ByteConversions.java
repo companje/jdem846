@@ -304,6 +304,64 @@ public class ByteConversions
 		return intBits;
 	}
 	
+	
+	
+	/** Converts a 2 byte array to an integer using the default byte order.
+	 * 
+	 * @param bytes A 2 byte array.
+	 * @return
+	 */
+	public static int bytesToShort(byte[] bytes)
+	{
+		return bytesToShort(bytes, ByteConversions.DEFAULT_BYTE_ORDER);
+	}
+	
+	/** Converts a 2 byte array to an integer using the specified byte order.
+	 * 
+	 * @param bytes A 2 byte array.
+	 * @param byteOrder
+	 * @return
+	 */
+	public static int bytesToShort(byte[] bytes, ByteOrder byteOrder)
+	{
+		return bytesToShort(bytes[0], bytes[1], byteOrder);
+	}
+	
+	
+	/** Converts 2 bytes to an short integer using the default byte order.
+	 * 
+	 * @param b00
+	 * @param b01
+	 * @return
+	 */
+	public static int bytesToShort(byte b00, byte b01)
+	{
+		return bytesToShort(b00, b01, ByteConversions.DEFAULT_BYTE_ORDER);
+	}
+	
+	
+	/** Converts the bytes to an short integer using the specified byte order.
+	 * 
+	 * @param b00
+	 * @param b01
+	 * @param byteOrder
+	 * @return
+	 */
+	public static int bytesToShort(byte b00, byte b01, ByteOrder byteOrder)
+	{
+		int intBits = 0;
+		if (byteOrder == ByteOrder.MSBFIRST || byteOrder == ByteOrder.INTEL_OR_MOTOROLA) {
+			intBits = ((b01 & 0xFF) << 8) |
+				(b00 & 0xFF);
+		} else if (byteOrder == ByteOrder.LSBFIRST || byteOrder == ByteOrder.INTEL_BYTE_ORDER) {
+			intBits = ((b00 & 0xFF) << 24) |
+				((b01 & 0xFF) << 16);
+		}
+		return intBits;
+	}
+	
+	
+	
 	/** Converts an 8 byte array to a double using the default byte order.
 	 * 
 	 * @param bytes
@@ -323,6 +381,11 @@ public class ByteConversions
 	public static double bytesToDouble(byte[] bytes, ByteOrder byteOrder)
 	{
 		return Double.longBitsToDouble(bytesToLong(bytes, byteOrder));
+	}
+	
+	public static double bytesToDouble(byte b000, byte b001, byte b010, byte b011, byte b100, byte b101, byte b110, byte b111, ByteOrder byteOrder)
+	{
+		return Double.longBitsToDouble(bytesToLong(b000, b001, b010, b011, b100, b101, b110, b111, byteOrder));
 	}
 	
 	/** Converts an 8 byte array to a long using the default byte order.
@@ -359,6 +422,15 @@ public class ByteConversions
 		return longBits;
 
 	}	
+	
+	
+	public static long bytesToLong(byte b000, byte b001, byte b010, byte b011, byte b100, byte b101, byte b110, byte b111, ByteOrder byteOrder)
+	{
+		byte[] buffer = {b000, b001, b010, b011,
+						 b100, b101, b110, b111
+		};
+		return bytesToLong(buffer, byteOrder);
+	}
 	
 	
 }
