@@ -1,29 +1,33 @@
-package us.wthr.jdem846.rasterdata.gridfloat;
+package us.wthr.jdem846.rasterdata.generic;
 
 import java.io.File;
 
-import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
-public class CachingGridFloatDataReader
+public class CachingGenericRasterDataReader
 {
-	private static Log log = Logging.getLog(CachingGridFloatDataReader.class);
+	private static Log log = Logging.getLog(CachingGenericRasterDataReader.class);
 	
-	private GridFloatDataReader dataReader = null;
+	
+	private GenericRasterDataReader dataReader = null;
 	private boolean isDisposed = false;
 	
 	private int bufferX = -1;
 	private int bufferY = -1;
 	private int bufferRows = -1;
 	private int bufferColumns = -1;
-	private float[][] buffer = null;
+	private Number[][] buffer = null;
 	
-	public CachingGridFloatDataReader(File dataFile, int rows, int columns, ByteOrder byteOrder)
+	private RasterDefinition rasterDefinition;
+	
+	public CachingGenericRasterDataReader(File dataFile, RasterDefinition rasterDefinition) throws DataSourceException
 	{
-		dataReader = new GridFloatDataReader(dataFile, rows, columns, byteOrder);
+		this.rasterDefinition = rasterDefinition;
+		this.dataReader = GenericRasterDataReaderFactory.createInstance(dataFile, rasterDefinition);
+		
 	}
 	
 	public void dispose() throws DataSourceException
@@ -32,12 +36,13 @@ public class CachingGridFloatDataReader
 			throw new DataSourceException("Raster data reader already disposed.");
 		}
 		
-		dataReader.dispose();
+		if (dataReader != null) {
+			dataReader.dispose();
+		}
 		
 		// TODO: Finish
 		isDisposed = true;
 	}
-
 	
 	public boolean isDisposed()
 	{
@@ -49,6 +54,7 @@ public class CachingGridFloatDataReader
 		return (buffer != null);
 	}
 	
+	
 	public boolean fillBuffer(int x, int y, int columns, int rows) throws DataSourceException
 	{
 		if (isBufferFilled()) {
@@ -59,19 +65,18 @@ public class CachingGridFloatDataReader
 		bufferY = y;
 		bufferRows = rows;
 		bufferColumns = columns;
-		
-		//if (rows <= 0 || columns <= 0) {
-		//	throw new DataSourceException("Invalid buffer size: " + rows + "/" + columns + " (rows/columns); " + " (x/y: " + x + "/" + y + ")");
-		//}
-		
+
 		log.info("Filling buffer with " + rows + " rows and " + columns + " columns");
-		buffer = new float[rows][columns];
+		
+		buffer = DataTypeUtil.createDataArray(rasterDefinition.getDataType(), rows, columns);
 		
 		dataReader.get(x, y, buffer);
 
 		return true;
 	}
 	
+	
+
 	public void clearBuffer() throws DataSourceException
 	{
 		bufferX = -1;
@@ -101,8 +106,7 @@ public class CachingGridFloatDataReader
 			throw new DataSourceException("Data reader has been disposed.");
 		}
 		
-		
-
+		double value = DemConstants.ELEV_UNDETERMINED;
 		
 		if (isPointInBuffer(row, column)) {
 			int bufferRow = row - bufferY;
@@ -116,14 +120,16 @@ public class CachingGridFloatDataReader
 				throw new DataSourceException("Invalid buffer column " + bufferColumn);
 			}
 			
-			return buffer[bufferRow][bufferColumn];
+			value = (buffer[bufferRow][bufferColumn] != null) ? buffer[bufferRow][bufferColumn].doubleValue() : DemConstants.ELEV_UNDETERMINED;
 		} else {
 			if (buffer != null) {
-				return DemConstants.ELEV_NO_DATA;
+				value = DemConstants.ELEV_NO_DATA;
 			} else {
-				return dataReader.get(row, column);
+				value = dataReader.get(row, column).doubleValue();
 			}
 		}
+		
+		return value;
 		
 	}
 	
@@ -144,4 +150,6 @@ public class CachingGridFloatDataReader
 		}
 		dataReader.close();
 	}
+	
+	
 }

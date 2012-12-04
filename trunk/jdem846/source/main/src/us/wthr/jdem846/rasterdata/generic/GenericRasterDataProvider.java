@@ -2,6 +2,7 @@ package us.wthr.jdem846.rasterdata.generic;
 
 import java.io.File;
 
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -18,6 +19,8 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 	
 	private boolean isDisposed = false;
 	
+	private CachingGenericRasterDataReader dataReader;
+	
 	public GenericRasterDataProvider()
 	{
 		setRasterDefinition(new RasterDefinition());
@@ -26,15 +29,29 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 	@Override
 	public void create(String file) throws DataSourceException 
 	{
+		create(file, new RasterDefinition());
+	}
+	
+	
+	public void create(String file, RasterDefinition rasterDefinition) throws DataSourceException 
+	{
 		dataFile = new File(file);
-		
-		
+		setRasterDefinition(rasterDefinition);
+		refreshDefinitionData();
+		this.dataReader = new CachingGenericRasterDataReader(dataFile, this.rasterDefinition);
 	}
 
 	@Override
 	public void dispose() throws DataSourceException 
 	{
-		// TODO: Dispose of stuff
+		if (isDisposed()) {
+			throw new DataSourceException("Raster data provider already disposed.");
+		}
+		
+		if (!dataReader.isDisposed()) {
+			dataReader.dispose();
+		}
+		
 		isDisposed = true;
 	}
 
@@ -52,9 +69,8 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 		}
 		
 		GenericRasterDataProvider clone = new GenericRasterDataProvider();
-		clone.create(getFilePath());
-		clone.setRasterDefinition(getRasterDefinition().copy());
-		
+		clone.create(getFilePath(), getRasterDefinition().copy());
+
 		return clone;
 	}
 
@@ -67,8 +83,28 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 	@Override
 	public double getData(int row, int column) throws DataSourceException
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		if (isDisposed()) {
+			throw new DataSourceException("Data raster provider has been disposed.");
+		}
+		
+		if (row >= this.getRows()) {
+			return DemConstants.ELEV_NO_DATA;
+			//throw new DataSourceException("Specified row exceeds data limits: " + row);
+		}
+		
+		if (column >= this.getColumns()) {
+			return DemConstants.ELEV_NO_DATA;
+			//throw new DataSourceException("Specified column exceeds data limits: " + column);
+		}
+		
+		
+		double data = dataReader.get(row, column);
+		
+		if (data == this.rasterDefinition.getNoData()) {
+			data = DemConstants.ELEV_NO_DATA;
+		}
+		
+		return data;
 	}
 
 	@Override
@@ -82,15 +118,14 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 	@Override
 	public boolean isBufferFilled()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return dataReader.isBufferFilled();
 	}
 
 	@Override
 	public void clearBuffer() throws DataSourceException 
 	{
-		// TODO Auto-generated method stub
-		
+		log.info("Clearing Buffer!");
+		dataReader.clearBuffer();
 	}
 
 	public RasterDefinition getRasterDefinition()
@@ -128,10 +163,11 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 		this.setEast(this.rasterDefinition.getEast());
 		this.setWest(this.rasterDefinition.getWest());
 		
-		this.setLatitudeResolution((rasterDefinition.getNorth() - rasterDefinition.getSouth()) / rasterDefinition.getImageHeight());
-		this.setLongitudeResolution((rasterDefinition.getEast() - rasterDefinition.getWest()) / rasterDefinition.getImageWidth());
-
+		this.setLatitudeResolution(this.rasterDefinition.getLatitudeResolution());
+		this.setLongitudeResolution(this.rasterDefinition.getLongitudeResolution());
 		
+		
+
 	}
 	
 

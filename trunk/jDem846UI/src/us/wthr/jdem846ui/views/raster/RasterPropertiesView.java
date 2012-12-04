@@ -1,8 +1,8 @@
 package us.wthr.jdem846ui.views.raster;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
 
 import us.wthr.jdem846.input.InputSourceData;
@@ -22,12 +22,22 @@ public class RasterPropertiesView extends ViewPart
 	@Override
 	public void createPartControl(Composite parent) {
 		
-		
+		/*
 		TableWrapLayout layout = new TableWrapLayout();
-		parent.setLayout(layout);
 		layout.numColumns = 1;
+		layout.bottomMargin = 0;
+		layout.topMargin = 0;
+		layout.leftMargin = 0;
+		layout.rightMargin = 0;
+		layout.numColumns = 1;
+		parent.setLayout(layout);
+		*/
+		parent.setLayout(new FillLayout());
 		
 		rasterPropertiesContainer = new RasterPropertiesContainer(parent, SWT.NONE);
+		//TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
+		/////td.grabVertical = true;
+		//rasterPropertiesContainer.setLayoutData(td);
 		
 		DataView.addTreeSelectionListener(new TreeSelectionListener() {
 			public void onSelectionChanged(InputSourceData selectedData) {

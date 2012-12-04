@@ -12,7 +12,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ByteConversions;
 
-public class GenericRasterDataReader<E> {
+public class GenericRasterDataReader {
 	private static Log log = Logging.getLog(GenericRasterDataReader.class);
 	
 	private File dataFile;
@@ -64,11 +64,11 @@ public class GenericRasterDataReader<E> {
 		return isDisposed;
 	}
 	
-	public E get(int row, int column) throws DataSourceException
+	public Number get(int row, int column) throws DataSourceException
 	{
 		RandomAccessFile dataReader = getFileReader(row, column);
 		
-		E value = null;
+		Number value = null;
 		
 		try {
 			value = readSingleValue(dataReader);
@@ -79,7 +79,7 @@ public class GenericRasterDataReader<E> {
 		return value;
 	}
 	
-	public void get(int row, int startColumn, E[] buffer)  throws DataSourceException
+	public void get(int row, int startColumn, Number[] buffer)  throws DataSourceException
 	{
 		if (row < 0 || row >= rasterDefinition.getImageHeight() || startColumn < 0 || startColumn >= rasterDefinition.getImageWidth()) {
 			return;
@@ -91,18 +91,17 @@ public class GenericRasterDataReader<E> {
 			log.info("Data reader is null... I should be throwing an exception here...");
 		}
 
-		int bufferLength = buffer.length;
-		if (bufferLength + startColumn >= rasterDefinition.getImageWidth()) {
-			bufferLength = rasterDefinition.getImageWidth() - startColumn;
+		try {
+			readLine(dataReader, startColumn, buffer);
+		} catch (IOException ex) {
+			throw new DataSourceException("Error reading from data file: " + ex.getMessage(), ex);
 		}
-		
-		
 		
 	}
 	
 	
 	
-	public void get(int startColumn, int startRow, E[][] buffer)  throws DataSourceException
+	public void get(int startColumn, int startRow, Number[][] buffer)  throws DataSourceException
 	{
 		for (int i = 0; i < buffer.length; i++) {
 			get(startRow+i, startColumn, buffer[i]);
@@ -176,11 +175,15 @@ public class GenericRasterDataReader<E> {
 	
 	
 
-	protected E readSingleValue(RandomAccessFile dataReader) throws DataSourceException, IOException
+	protected Number readSingleValue(RandomAccessFile dataReader) throws DataSourceException, IOException
 	{
 		DataTypeEnum dataType = this.rasterDefinition.getDataType();
 
-		Object o = null;
+		if (this.wordBuffer == null || this.wordBuffer.length != dataType.numberOfBytes()) {
+			this.wordBuffer = new byte[dataType.numberOfBytes()];
+		}
+		
+		Number o = null;
 		
 		if (dataType == DataTypeEnum.Byte) {
 			o = readByte(dataReader);
@@ -208,7 +211,7 @@ public class GenericRasterDataReader<E> {
 			throw new DataSourceException("Invalid or unsupported data type specified: " + dataType.name());
 		}
 		
-		return (E) o;
+		return o;
 	}
 	
 	
@@ -279,7 +282,7 @@ public class GenericRasterDataReader<E> {
 	
 	
 	
-	protected void readLine(RandomAccessFile dataReader, int startColumn, E[] line) throws DataSourceException, IOException
+	protected void readLine(RandomAccessFile dataReader, int startColumn, Number[] line) throws DataSourceException, IOException
 	{
 		int bufferLength = line.length;
 		if (bufferLength + startColumn >= rasterDefinition.getImageWidth()) {
@@ -296,17 +299,17 @@ public class GenericRasterDataReader<E> {
 		dataReader.readFully(lineBuffer, 0, readLength);
 		
 		for (int i = 0; i < bufferLength; i++) {
-			int readBufferPos = i * rasterDefinition.getDataType().numberOfBytes();
-			E value = null;
+			int p = i * rasterDefinition.getDataType().numberOfBytes();
+			Number value = convertBytes(lineBuffer, p);
 			line[i] = value;
 		}
 		
 	}
 	
 	
-	protected E convertBytes(byte[] buffer, int offset) throws DataSourceException
+	protected Number convertBytes(byte[] buffer, int offset) throws DataSourceException
 	{
-		Object o = null;
+		Number o = null;
 		DataTypeEnum dataType = rasterDefinition.getDataType();
 		ByteOrder byteOrder = rasterDefinition.getByteOrder();
 		
@@ -339,6 +342,6 @@ public class GenericRasterDataReader<E> {
 		}
 		
 		
-		return (E) o;
+		return o;
 	}
 }

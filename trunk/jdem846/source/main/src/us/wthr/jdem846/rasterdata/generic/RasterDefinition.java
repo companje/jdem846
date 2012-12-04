@@ -5,6 +5,7 @@ import java.util.List;
 
 import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.DataTypeEnum;
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.InterleavingTypeEnum;
 
 public class RasterDefinition {
@@ -14,6 +15,9 @@ public class RasterDefinition {
 	private double east = 180.0;
 	private double west = -180.0;
 	
+	private double latitudeResolution = 1.0;
+	private double longitudeResolution = 1.0;
+	
 	private int imageWidth = 0;
 	private int imageHeight = 0;
 	private int numBands = 1;
@@ -22,7 +26,11 @@ public class RasterDefinition {
 	private ByteOrder byteOrder = ByteOrder.MSBFIRST;
 	private InterleavingTypeEnum interleavingType = InterleavingTypeEnum.Pixel;
 	
+	private double noData = DemConstants.ELEV_NO_DATA;
+	
 	private List<DefinitionChangeListener> changeListeners = new LinkedList<DefinitionChangeListener>();
+	
+	private boolean locked = false;
 	
 	public RasterDefinition()
 	{
@@ -37,6 +45,7 @@ public class RasterDefinition {
 	public void setImageWidth(int imageWidth) 
 	{
 		this.imageWidth = imageWidth;
+		this.fireDefinitionChangeListener();
 	}
 
 	public int getImageHeight() 
@@ -47,6 +56,7 @@ public class RasterDefinition {
 	public void setImageHeight(int imageHeight) 
 	{
 		this.imageHeight = imageHeight;
+		this.fireDefinitionChangeListener();
 	}
 
 	public int getNumBands()
@@ -57,6 +67,7 @@ public class RasterDefinition {
 	public void setNumBands(int numBands) 
 	{
 		this.numBands = numBands;
+		this.fireDefinitionChangeListener();
 	}
 
 	public int getHeaderSize() 
@@ -67,11 +78,12 @@ public class RasterDefinition {
 	public void setHeaderSize(int headerSize) 
 	{
 		this.headerSize = headerSize;
+		this.fireDefinitionChangeListener();
 	}
 
 	public long getFileSize() 
 	{
-		return 0;
+		return this.imageHeight * this.imageWidth * (this.dataType.numberOfBytes() * this.numBands) + this.headerSize;
 	}
 
 
@@ -83,6 +95,7 @@ public class RasterDefinition {
 	public void setDataType(DataTypeEnum dataType) 
 	{
 		this.dataType = dataType;
+		this.fireDefinitionChangeListener();
 	}
 
 	public ByteOrder getByteOrder() 
@@ -93,6 +106,7 @@ public class RasterDefinition {
 	public void setByteOrder(ByteOrder byteOrder) 
 	{
 		this.byteOrder = byteOrder;
+		this.fireDefinitionChangeListener();
 	}
 
 	public InterleavingTypeEnum getInterleavingType() 
@@ -103,6 +117,7 @@ public class RasterDefinition {
 	public void setInterleavingType(InterleavingTypeEnum interleavingType) 
 	{
 		this.interleavingType = interleavingType;
+		this.fireDefinitionChangeListener();
 	}
 
 	public double getNorth() 
@@ -113,6 +128,7 @@ public class RasterDefinition {
 	public void setNorth(double north) 
 	{
 		this.north = north;
+		this.fireDefinitionChangeListener();
 	}
 
 	public double getSouth()
@@ -123,6 +139,7 @@ public class RasterDefinition {
 	public void setSouth(double south) 
 	{
 		this.south = south;
+		this.fireDefinitionChangeListener();
 	}
 
 	public double getEast() 
@@ -133,6 +150,7 @@ public class RasterDefinition {
 	public void setEast(double east) 
 	{
 		this.east = east;
+		this.fireDefinitionChangeListener();
 	}
 
 	public double getWest() 
@@ -143,9 +161,88 @@ public class RasterDefinition {
 	public void setWest(double west) 
 	{
 		this.west = west;
+		this.fireDefinitionChangeListener();
 	}
 	
 
+	public double getLatitudeResolution() 
+	{
+		return latitudeResolution;
+	}
+
+	public void setLatitudeResolution(double latitudeResolution) 
+	{
+		this.latitudeResolution = latitudeResolution;
+		this.fireDefinitionChangeListener();
+	}
+
+	public double getLongitudeResolution()
+	{
+		return longitudeResolution;
+	}
+
+	public void setLongitudeResolution(double longitudeResolution) 
+	{
+		this.longitudeResolution = longitudeResolution;
+		this.fireDefinitionChangeListener();
+	}
+	
+	
+	
+	public double getNoData()
+	{
+		return noData;
+	}
+
+	public void setNoData(double noData) 
+	{
+		this.noData = noData;
+	}
+
+	public boolean isLocked()
+	{
+		return locked;
+	}
+
+	public void setLocked(boolean locked) 
+	{
+		this.locked = locked;
+	}
+
+	public void determineNorth()
+	{
+		setNorth(getSouth() + (getImageHeight() * getLatitudeResolution()));
+	}
+	
+	public void determineSouth()
+	{
+		setSouth(getNorth() - (getImageHeight() * getLatitudeResolution()));
+	}
+	
+	public void determineLatitudeResolution()
+	{
+		setLatitudeResolution((getNorth() - getSouth()) / getImageHeight());
+	}
+	
+	public void determineWest()
+	{
+		setWest(getEast() - (getImageWidth() * getLongitudeResolution()));
+	}
+	
+	public void determineEast()
+	{
+		setEast(getWest() + (getImageWidth() * getLongitudeResolution()));
+	}
+	
+	public void determineLongitudeResolution()
+	{
+		setLongitudeResolution((getWest() - getEast()) / getImageWidth());
+	}
+	
+	
+	
+	
+	
 	
 	public void addDefinitionChangeListener(DefinitionChangeListener l)
 	{
@@ -163,6 +260,7 @@ public class RasterDefinition {
 			l.onDefinitionChanged();
 		}
 	}
+
 	
 
 	public RasterDefinition copy()
@@ -179,6 +277,9 @@ public class RasterDefinition {
 		clone.dataType = this.dataType;
 		clone.byteOrder = this.byteOrder;
 		clone.interleavingType = this.interleavingType;
+		clone.latitudeResolution = this.latitudeResolution;
+		clone.longitudeResolution = this.longitudeResolution;
+		clone.noData = this.noData;
 		return clone;
 	}
 	
