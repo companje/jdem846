@@ -15,6 +15,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
+import us.wthr.jdem846ui.project.ProjectChangeAdapter;
+import us.wthr.jdem846ui.project.ProjectContext;
 
 public class RenderedModelDisplayView extends ViewPart
 {
@@ -93,6 +95,16 @@ public class RenderedModelDisplayView extends ViewPart
 				}
 			}
 			
+		});
+		
+		ProjectContext.getInstance().addProjectChangeListener(new ProjectChangeAdapter() 
+		{
+			public void onProjectLoaded() {
+				synchronized(imageMutex) {
+					 image = null;
+					 canvas.redraw();
+				}
+			}
 		});
 	}
 

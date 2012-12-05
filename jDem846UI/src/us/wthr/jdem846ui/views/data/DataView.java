@@ -111,9 +111,6 @@ public class DataView extends ViewPart
 	@Override
 	public void createPartControl(Composite parent) {
 		
-
-		
-		
 		viewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
@@ -156,6 +153,11 @@ public class DataView extends ViewPart
 
 			@Override
 			public void onDataRemoved() {
+				resetAndUpdateModel();
+			}
+			
+			@Override
+			public void onProjectLoaded() {
 				resetAndUpdateModel();
 			}
 			

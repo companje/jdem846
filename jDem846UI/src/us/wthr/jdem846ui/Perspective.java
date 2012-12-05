@@ -26,20 +26,23 @@ public class Perspective implements IPerspectiveFactory {
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
 		
-		IFolderLayout topLeftFolder = layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea);
+		IFolderLayout topLeftFolder = layout.createFolder("topLeft", IPageLayout.LEFT, 0.30f, editorArea);
 		topLeftFolder.addView(DataView.ID);
-		topLeftFolder.addView(RasterPropertiesView.ID);
 
 	
 		
-		IFolderLayout bottomLeftFolder = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.70f, "topLeft");
+		IFolderLayout bottomLeftFolder = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.40f, "topLeft");
+		bottomLeftFolder.addView(RasterPropertiesView.ID);
 		bottomLeftFolder.addView(RenderedModelListView.ID);
-		bottomLeftFolder.addView("org.eclipse.ui.views.ProgressView");
+		
 		
 
-		IFolderLayout rightFolder = layout.createFolder("right", IPageLayout.RIGHT, 0.60f, editorArea);
-		rightFolder.addView(ModelConfigurationView.ID);
-		rightFolder.addView(RenderedModelPropertiesView.ID);
+		IFolderLayout topRightFolder = layout.createFolder("topRight", IPageLayout.RIGHT, 0.60f, editorArea);
+		topRightFolder.addView(ModelConfigurationView.ID);
+		topRightFolder.addView(RenderedModelPropertiesView.ID);
+		
+		
+		
 		
 		
 		IFolderLayout centerFolder = layout.createFolder("center", IPageLayout.TOP, 0.75f, editorArea);
@@ -49,6 +52,7 @@ public class Perspective implements IPerspectiveFactory {
 		
 		IFolderLayout bottomFolder = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.25f, editorArea);
 		bottomFolder.addView(LogConsoleView.ID);
+		bottomFolder.addView("org.eclipse.ui.views.ProgressView");
 		
 		layout.getViewLayout(PreviewView.ID).setCloseable(false);
 		layout.getViewLayout(ScriptEditorView.ID).setCloseable(false);

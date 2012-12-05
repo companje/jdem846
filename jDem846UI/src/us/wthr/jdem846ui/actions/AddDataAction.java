@@ -16,12 +16,6 @@ public class AddDataAction extends BasicAction
 {
 	private static Log log = Logging.getLog(AddDataAction.class);
 	
-	public static final String[] GENERIC_FILE_TYPES = {"Data Files", "All Files (*)"};
-	public static final String[] GENERIC_FILE_TYPES_WIN = {"Data Files", "All Files (*.*)"};
-	
-	public static final String[] GENERIC_FILE_EXTENSIONS = {"*.flt;*bil;*.png;*.jpg;*.shp", "*"};
-	public static final String[] GENERIC_FILE_EXTENSIONS_WIN = {"*.flt;*bil;*.png;*.jpg;*.shp", "*.*"};
-	
 	public AddDataAction(IWorkbenchWindow window, String label, String viewId)
 	{
 		super(window, ICommandIds.CMD_ADD_DATA, viewId, label, "/icons/eclipse/data_add.gif");

@@ -41,8 +41,10 @@ import us.wthr.jdem846.ui.RecentProjectTracker;
 public class ProjectContext {
 	private static Log log = Logging.getLog(ProjectContext.class);
 	
-	private static ProjectContext INSTANCE = null;
 	
+	//private static final StaticWindowInstanceProvider<ProjectContext> instances = new StaticWindowInstanceProvider<ProjectContext>();
+	private static  ProjectContext INSTANCE = null;
+
 	private ProjectChangeBroker projectChangeBroker = new ProjectChangeBroker();
 	
 	private ModelContext modelContext;
@@ -54,9 +56,9 @@ public class ProjectContext {
 	
 	
 	private List<OptionModel> defaultOptionModelList;
-	private List<OptionModelContainer> defaultOptionModelContainerList = new LinkedList<OptionModelContainer>();
+	private List<OptionModelContainer> defaultOptionModelContainerList;
 	
-	private List<ElevationModel> elevationModelList = new LinkedList<ElevationModel>();
+	private List<ElevationModel> elevationModelList;
 	
 	private boolean ignoreOptionChanges = false;
 	
@@ -69,9 +71,18 @@ public class ProjectContext {
 	
 	protected ProjectContext(String projectPath) throws ProjectException
 	{
+		initializeFromFile(projectPath);
+	}
+	
+	protected void initializeFromFile(String projectPath) throws ProjectException
+	{
 		if (projectPath != null) {
 			log.info("Initializing project from " + projectPath);
 		}
+		
+		
+		defaultOptionModelContainerList = new LinkedList<OptionModelContainer>();
+		elevationModelList = new LinkedList<ElevationModel>();
 		
 		this.projectLoadedFrom = projectPath;
 		
@@ -158,6 +169,9 @@ public class ProjectContext {
 				ex.printStackTrace();
 			}
 		}
+	
+		
+		projectChangeBroker.fireOnProjectLoaded();
 		
 		
 	}
@@ -511,7 +525,11 @@ public class ProjectContext {
 
 	public static void initialize(String projectPath) throws ProjectException
 	{
-		ProjectContext.INSTANCE = new ProjectContext(projectPath);
+		if (ProjectContext.INSTANCE == null) {
+			ProjectContext.INSTANCE = new ProjectContext(projectPath);
+		} else {
+			ProjectContext.INSTANCE.initializeFromFile(projectPath);
+		}
 	}
 	
 	public static ProjectContext getInstance()

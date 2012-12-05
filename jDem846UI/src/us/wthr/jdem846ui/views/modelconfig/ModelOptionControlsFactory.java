@@ -103,7 +103,7 @@ public class ModelOptionControlsFactory
 			public void onOptionValidationResults(List<PropertyValidationResult> results) {
 				try {
 					RgbaColor rgbaColor = (RgbaColor) property.getValue();
-					if (rgbaColor != null) {
+					if (rgbaColor != null && !labeledColor.getControl().isDisposed()) {
 						labeledColor.getControl().setColor(rgbaColor.getRgba());
 					}
 				} catch (MethodContainerInvokeException e1) {
@@ -145,7 +145,9 @@ public class ModelOptionControlsFactory
 		OptionValidationChangeObserver.getInstance().addOptionValidationResultsListener(new OptionValidationResultsListener() {
 			public void onOptionValidationResults(List<PropertyValidationResult> results) {
 				try {
-					check.getControl().setSelection((Boolean)property.getValue());
+					if (!check.getControl().isDisposed()) {
+						check.getControl().setSelection((Boolean)property.getValue());
+					}
 				} catch (MethodContainerInvokeException e1) {
 					e1.printStackTrace();
 				}
@@ -215,12 +217,14 @@ public class ModelOptionControlsFactory
 	
 	private static void setControlValue(LabeledDate labeledDate, LightingDate lightingDate)
 	{
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(lightingDate.getDate());
-
-		labeledDate.getControl().setYear(cal.get(Calendar.YEAR));
-		labeledDate.getControl().setMonth(cal.get(Calendar.MONTH));
-		labeledDate.getControl().setDay(cal.get(Calendar.DAY_OF_MONTH));
+		if (!labeledDate.getControl().isDisposed()) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(lightingDate.getDate());
+	
+			labeledDate.getControl().setYear(cal.get(Calendar.YEAR));
+			labeledDate.getControl().setMonth(cal.get(Calendar.MONTH));
+			labeledDate.getControl().setDay(cal.get(Calendar.DAY_OF_MONTH));
+		}
 	}
 	
 	
@@ -263,7 +267,9 @@ public class ModelOptionControlsFactory
 		OptionValidationChangeObserver.getInstance().addOptionValidationResultsListener(new OptionValidationResultsListener() {
 			public void onOptionValidationResults(List<PropertyValidationResult> results) {
 				try {
-					_spinner.setSelection((int) ((Double)property.getValue() * 100));
+					if (!_spinner.isDisposed()) {
+						_spinner.setSelection((int) ((Double)property.getValue() * 100));
+					}
 				} catch (MethodContainerInvokeException e1) {
 					e1.printStackTrace();
 				}
@@ -308,7 +314,9 @@ public class ModelOptionControlsFactory
 		OptionValidationChangeObserver.getInstance().addOptionValidationResultsListener(new OptionValidationResultsListener() {
 			public void onOptionValidationResults(List<PropertyValidationResult> results) {
 				try {
-					_spinner.setSelection((Integer)property.getValue());
+					if (!_spinner.isDisposed()) {
+						_spinner.setSelection((Integer)property.getValue());
+					}
 				} catch (MethodContainerInvokeException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -458,12 +466,14 @@ public class ModelOptionControlsFactory
 	
 	private static void setTimeControlValue(LabeledTime labeledTime, LightingTime lightingTime)
 	{
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(lightingTime.getTime());
-
-		labeledTime.getControl().setHours(cal.get(Calendar.HOUR_OF_DAY));
-		labeledTime.getControl().setMinutes(cal.get(Calendar.MINUTE));
-		labeledTime.getControl().setSeconds(cal.get(Calendar.SECOND));
+		if (!labeledTime.getControl().isDisposed()) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(lightingTime.getTime());
+	
+			labeledTime.getControl().setHours(cal.get(Calendar.HOUR_OF_DAY));
+			labeledTime.getControl().setMinutes(cal.get(Calendar.MINUTE));
+			labeledTime.getControl().setSeconds(cal.get(Calendar.SECOND));
+		}
 	}
 	
 }

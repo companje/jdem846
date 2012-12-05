@@ -55,7 +55,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private ExportDataAction exportDataAction;
     private RenderAction renderAction;
     
-
+    //IWorkbenchAction newWindowAction;
+    
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
         super(configurer);
     }
@@ -121,6 +122,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         menuBar.add(helpMenu);
         
         // File
+        //fileMenu.add(newWindowAction);
         fileMenu.add(newProjectAction);
         fileMenu.add(openProjectAction);
         fileMenu.add(new Separator());

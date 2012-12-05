@@ -61,5 +61,12 @@ public class ProjectChangeBroker {
 			listener.onElevationModelRemoved(elevationModel);
 		}
 	}
+
+	public void fireOnProjectLoaded()
+	{
+		for (ProjectChangeListener listener : listeners) {
+			listener.onProjectLoaded();
+		}
+	}
 	
 }
