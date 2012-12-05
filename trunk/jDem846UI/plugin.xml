@@ -189,6 +189,9 @@
    </extension>
    
 -->
+	<extension point = "org.eclipse.debug.core.launchConfigurationTypes">
+
+	</extension>
    <extension
          id="product"
          point="org.eclipse.core.runtime.products">

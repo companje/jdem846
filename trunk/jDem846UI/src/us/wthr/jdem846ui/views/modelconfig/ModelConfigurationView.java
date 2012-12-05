@@ -1,6 +1,7 @@
 package us.wthr.jdem846ui.views.modelconfig;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -15,6 +16,7 @@ import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
+import us.wthr.jdem846ui.project.ProjectChangeAdapter;
 import us.wthr.jdem846ui.project.ProjectContext;
 
 public class ModelConfigurationView extends ViewPart {
@@ -27,10 +29,37 @@ public class ModelConfigurationView extends ViewPart {
 	private ProcessTypeOptionPageContainer coloringOptionsPageContainer;
 	private ProcessTypeOptionPageContainer shadingOptionsPageContainer;
 	
+	private Composite parent;
+	private Composite configComposite;
+	
 	@Override
 	public void createPartControl(Composite parent) {
-
-		tabFolder = new TabFolder (parent, SWT.TOP);
+		
+		this.parent = parent;
+		
+		ProjectContext.getInstance().addProjectChangeListener(new ProjectChangeAdapter() 
+		{
+			public void onProjectLoaded() {
+				createControls(true);
+			}
+		});
+		
+		createControls(false);
+	}
+	
+	protected void createControls(boolean redraw) 
+	{
+		parent.setLayout(new FillLayout());
+		
+		
+		if (configComposite != null) {
+			configComposite.dispose();
+		}
+		
+		configComposite = new Composite(parent, SWT.NONE);
+		configComposite.setLayout(new FillLayout());
+		
+		tabFolder = new TabFolder (configComposite, SWT.TOP);
 
 		TabItem generalOptionsTabItem = new TabItem(tabFolder, SWT.NONE);
 		generalOptionsTabItem.setText("General");
@@ -75,6 +104,10 @@ public class ModelConfigurationView extends ViewPart {
 		} catch (ProcessContainerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		if (redraw) {
+			parent.layout(true);
 		}
 		
 	}

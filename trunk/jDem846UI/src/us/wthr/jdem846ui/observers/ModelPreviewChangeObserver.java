@@ -73,6 +73,11 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 	}
 	
 	
+	@Override
+	public void onProjectLoaded() {
+		update(true, true);
+	}
+
 	protected void setWorkingCopyOptions()
 	{
 

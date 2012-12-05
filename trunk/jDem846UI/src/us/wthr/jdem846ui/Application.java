@@ -20,9 +20,6 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.InstanceIdentifier;
-import us.wthr.jdem846ui.observers.OptionValidationChangeObserver;
-import us.wthr.jdem846ui.project.ProjectContext;
-import us.wthr.jdem846ui.project.ProjectException;
 
 /**
  * This class controls all aspects of the application's execution
@@ -116,30 +113,21 @@ public class Application implements IApplication {
 		String projectPaths = System.getProperty("us.wthr.jdem846.ui.openFiles");
 		String[] projects = (projectPaths != null) ? projectPaths.split(";") : null;
 		String loadProject = (projects != null && projects.length > 0) ? projects[0] : null;
-		if (loadProject != null && fileExistsAndIsProject(loadProject)) {
-			try {
-				ProjectContext.initialize(projects[0]);
-			} catch (ProjectException ex) {
-				ex.printStackTrace();
-			}
-		} else {
-			try {
-				ProjectContext.initialize();
-			} catch (ProjectException ex) {
-				ex.printStackTrace();
-			}
+		if (loadProject != null && !fileExistsAndIsProject(loadProject)) {
+			loadProject = null;
 		}
 		
+
 		
 		
-		OptionValidationChangeObserver.getInstance();
+		
 		//OptionValidationChangeObserver validationObserver = new OptionValidationChangeObserver();
 		//ElevationRangeChangeObserver rangeObserver = new ElevationRangeChangeObserver();
 		//ModelPreviewChangeObserver modelPreviewObserver = new ModelPreviewChangeObserver();
-		
+	
 		Display display = PlatformUI.createDisplay();
 		try {
-			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
+			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor(loadProject));
 			if (returnCode == PlatformUI.RETURN_RESTART) {
 				return IApplication.EXIT_RESTART;
 			}
@@ -172,7 +160,7 @@ public class Application implements IApplication {
 	 */
 	protected static void checkCommandLineOptions() throws ArgumentException
 	{
-
+		
 		String openFiles = "";
 		
 		String[] args = Platform.getCommandLineArgs();

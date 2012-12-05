@@ -30,5 +30,10 @@ public class ProjectChangeAdapter implements ProjectChangeListener {
 		
 	}
 	
+	@Override
+	public void onProjectLoaded()
+	{
+		
+	}
 	
 }

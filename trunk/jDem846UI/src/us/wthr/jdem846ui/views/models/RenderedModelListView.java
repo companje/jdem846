@@ -44,6 +44,10 @@ public class RenderedModelListView extends ViewPart
 				resetAndUpdateModelAsync(null);
 			}
 			
+			@Override
+			public void onProjectLoaded() {
+				resetAndUpdateModelAsync(null);
+			}
 		});
 		
 		

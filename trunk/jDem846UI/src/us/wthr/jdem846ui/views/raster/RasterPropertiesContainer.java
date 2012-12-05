@@ -2,10 +2,12 @@ package us.wthr.jdem846ui.views.raster;
 
 import java.text.NumberFormat;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
@@ -51,6 +53,10 @@ public class RasterPropertiesContainer extends Composite {
 
 	private RasterDefinition rasterDefinition;
 
+	
+	private Button btnApply;
+	private Button btnReset;
+	
 	public RasterPropertiesContainer(Composite parent, int style) {
 		super(parent, style);
 		
@@ -180,6 +186,18 @@ public class RasterPropertiesContainer extends Composite {
 		for (InterleavingTypeEnum type : InterleavingTypeEnum.values()) {
 			cmbInterleavingType.getControl().add(type.name());
 		}
+		
+		
+		Composite buttonComposite = toolkit.createComposite(form.getBody());
+		layout = new TableWrapLayout();
+		layout.numColumns = 2;
+		buttonComposite.setLayout(layout);
+		
+		btnApply = new Button(buttonComposite, SWT.PUSH);
+		btnApply.setText("Apply");
+		
+		btnReset = new Button(buttonComposite, SWT.PUSH);
+		btnReset.setText("Reset");
 
 		updateFileSizeControl();
 
@@ -192,7 +210,7 @@ public class RasterPropertiesContainer extends Composite {
 		this.initializeFromRasterDefinition(rasterDefinition);
 	}
 
-	protected void reset() {
+	public void reset() {
 		spnNorth.getControl().setSelection(0);
 		spnSouth.getControl().setSelection(0);
 		spnEast.getControl().setSelection(0);
@@ -260,7 +278,7 @@ public class RasterPropertiesContainer extends Composite {
 	
 	protected void updateLockedState(RasterDefinition rd)
 	{
-		boolean enableControls = true;
+		boolean enableControls = false;
 		if (rd != null) {
 			enableControls = !rd.isLocked();
 		}
@@ -280,6 +298,9 @@ public class RasterPropertiesContainer extends Composite {
 		cmbByteOrder.getControl().setEnabled(enableControls);
 		cmbInterleavingType.getControl().setEnabled(enableControls);
 		spnNoData.getControl().setEnabled(enableControls);
+		
+		btnApply.setEnabled(enableControls);
+		btnReset.setEnabled(enableControls);
 	}
 	
 	protected void updateRasterDefinition(RasterDefinition rd) {

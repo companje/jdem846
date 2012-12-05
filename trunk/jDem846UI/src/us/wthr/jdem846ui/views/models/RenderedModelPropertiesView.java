@@ -7,6 +7,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846ui.controls.LabeledText;
+import us.wthr.jdem846ui.project.ProjectChangeAdapter;
+import us.wthr.jdem846ui.project.ProjectContext;
 
 public class RenderedModelPropertiesView extends ViewPart
 {
@@ -41,6 +43,12 @@ public class RenderedModelPropertiesView extends ViewPart
 		txtAuthor = LabeledText.create(parent, "Author:");
 		txtDateRendered = LabeledText.create(parent, "Date Rendered:");
 		
+		ProjectContext.getInstance().addProjectChangeListener(new ProjectChangeAdapter() 
+		{
+			public void onProjectLoaded() {
+				update();
+			}
+		});
 		
 		update();
 	}
