@@ -83,13 +83,15 @@ public class ModelBuilder extends InterruptibleProcess
 	
 	public void prepare(ModelContext modelContext,  ModelProcessManifest modelProcessManifest) throws RenderEngineException
 	{
+		globalOptionModel = modelProcessManifest.getGlobalOptionModel();
+		
 		if (progressTracker != null) {
 			progressTracker.beginTask("Preparing model builder", 6 + globalOptionModel.getNumberOfThreads());
 		}
 		
 		modelPrograms.clear();
 		
-		globalOptionModel = modelProcessManifest.getGlobalOptionModel();
+		
 		
 		if (!globalOptionModel.getLimitCoordinates()) {
 			globalOptionModel.setNorthLimit(modelContext.getNorth());
