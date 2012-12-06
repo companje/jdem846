@@ -10,31 +10,30 @@ import us.wthr.jdem846.rasterdata.AbstractRasterDataProvider;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataLatLongBox;
 
-public class GenericRasterDataProvider extends AbstractRasterDataProvider 
+public class GenericRasterDataProvider extends AbstractRasterDataProvider
 {
 	private static Log log = Logging.getLog(GenericRasterDataProvider.class);
 
-	private RasterDefinition rasterDefinition;
-	
+	private IRasterDefinition rasterDefinition;
+
 	private File dataFile;
-	
+
 	private boolean isDisposed = false;
-	
+
 	private CachingGenericRasterDataReader dataReader;
-	
+
 	public GenericRasterDataProvider()
 	{
 		setRasterDefinition(new RasterDefinition());
 	}
-	
+
 	@Override
-	public void create(String file) throws DataSourceException 
+	public void create(String file) throws DataSourceException
 	{
 		create(file, new RasterDefinition());
 	}
-	
-	
-	public void create(String file, RasterDefinition rasterDefinition) throws DataSourceException 
+
+	public void create(String file, IRasterDefinition rasterDefinition) throws DataSourceException
 	{
 		dataFile = new File(file);
 		setRasterDefinition(rasterDefinition);
@@ -43,32 +42,32 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 	}
 
 	@Override
-	public void dispose() throws DataSourceException 
+	public void dispose() throws DataSourceException
 	{
 		if (isDisposed()) {
 			throw new DataSourceException("Raster data provider already disposed.");
 		}
-		
+
 		if (!dataReader.isDisposed()) {
 			dataReader.dispose();
 		}
-		
+
 		isDisposed = true;
 	}
 
 	@Override
-	public boolean isDisposed() 
+	public boolean isDisposed()
 	{
 		return isDisposed;
 	}
 
 	@Override
-	public RasterData copy() throws DataSourceException 
+	public RasterData copy() throws DataSourceException
 	{
 		if (isDisposed()) {
 			throw new DataSourceException("Cannot copy object: already disposed");
 		}
-		
+
 		GenericRasterDataProvider clone = new GenericRasterDataProvider();
 		clone.create(getFilePath(), getRasterDefinition().copy());
 
@@ -87,37 +86,38 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 		if (isDisposed()) {
 			throw new DataSourceException("Data raster provider has been disposed.");
 		}
-		
+
 		if (row >= this.getRows()) {
 			return DemConstants.ELEV_NO_DATA;
-			//throw new DataSourceException("Specified row exceeds data limits: " + row);
+			// throw new
+			// DataSourceException("Specified row exceeds data limits: " + row);
 		}
-		
+
 		if (column >= this.getColumns()) {
 			return DemConstants.ELEV_NO_DATA;
-			//throw new DataSourceException("Specified column exceeds data limits: " + column);
+			// throw new
+			// DataSourceException("Specified column exceeds data limits: " +
+			// column);
 		}
-		
-		
+
 		double data = dataReader.get(row, column);
-		
+
 		if (data == this.rasterDefinition.getNoData()) {
 			data = DemConstants.ELEV_NO_DATA;
 		}
-		
+
 		return data;
 	}
 
 	@Override
-	public boolean fillBuffer(double north, double south, double east, double west) throws DataSourceException 
+	public boolean fillBuffer(double north, double south, double east, double west) throws DataSourceException
 	{
 		RasterDataLatLongBox bufferBox = new RasterDataLatLongBox(north, south, east, west);
 		if (!this.intersects(bufferBox)) {
 			return false;
 		}
-		
+
 		// Adjust the range to fit what this data supports
-		
 
 		// TODO: Too simplistic
 		if (north > this.getNorth())
@@ -128,30 +128,31 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 			east = this.getEast();
 		if (west < this.getWest())
 			west = this.getWest();
-		
+
 		// TODO: Too simplistic
 		int x = (int) Math.floor(this.longitudeToColumn(west));
 		int y = (int) Math.floor(this.latitudeToRow(north));
 
 		int x2 = (int) Math.ceil(this.longitudeToColumn(east));
 		int y2 = (int) Math.ceil(this.latitudeToRow(south));
-		
-		// We add 2 columns & 2 rows to support data point interpolation (done in AbstractRasterDataProvider)
+
+		// We add 2 columns & 2 rows to support data point interpolation (done
+		// in AbstractRasterDataProvider)
 		int columns = x2 - x + 2;
 		int rows = y2 - y + 2;
 
 		if (columns <= 0 || rows <= 0) {
 			return false;
 		}
-		
+
 		if (x + columns > rasterDefinition.getImageWidth()) {
 			columns = rasterDefinition.getImageWidth() - x;
 		}
-		
+
 		if (y + rows > rasterDefinition.getImageHeight()) {
 			rows = rasterDefinition.getImageHeight() - y;
 		}
-		
+
 		log.info("Filling raster buffer...");
 		boolean status;
 		try {
@@ -173,53 +174,52 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 	}
 
 	@Override
-	public void clearBuffer() throws DataSourceException 
+	public void clearBuffer() throws DataSourceException
 	{
 		log.info("Clearing Buffer!");
 		dataReader.clearBuffer();
 	}
 
-	public RasterDefinition getRasterDefinition()
+	public IRasterDefinition getRasterDefinition()
 	{
 		return rasterDefinition;
 	}
 
-	public void setRasterDefinition(RasterDefinition rasterDefinition) 
+	public void setRasterDefinition(IRasterDefinition rasterDefinition)
 	{
 		this.rasterDefinition = rasterDefinition;
 		if (this.rasterDefinition != null) {
-			this.rasterDefinition.addDefinitionChangeListener(new DefinitionChangeListener() {
-	
+			this.rasterDefinition.addDefinitionChangeListener(new DefinitionChangeListener()
+			{
+
 				@Override
-				public void onDefinitionChanged() {
+				public void onDefinitionChanged(IRasterDefinition rasterDefinition)
+				{
 					refreshDefinitionData();
 				}
-				
+
 			});
 		}
-		
+
 	}
-	
+
 	protected void refreshDefinitionData()
 	{
 		if (this.rasterDefinition == null) {
 			return;
 		}
-		
+
 		this.setColumns(this.rasterDefinition.getImageWidth());
 		this.setRows(this.rasterDefinition.getImageHeight());
-		
+
 		this.setNorth(this.rasterDefinition.getNorth());
 		this.setSouth(this.rasterDefinition.getSouth());
 		this.setEast(this.rasterDefinition.getEast());
 		this.setWest(this.rasterDefinition.getWest());
-		
+
 		this.setLatitudeResolution(this.rasterDefinition.getLatitudeResolution());
 		this.setLongitudeResolution(this.rasterDefinition.getLongitudeResolution());
-		
-		
 
 	}
-	
 
 }
