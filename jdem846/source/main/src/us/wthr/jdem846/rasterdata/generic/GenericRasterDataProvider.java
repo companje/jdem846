@@ -7,6 +7,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.AbstractRasterDataProvider;
+import us.wthr.jdem846.rasterdata.IRasterDataValidator;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataLatLongBox;
 
@@ -222,4 +223,9 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 
 	}
 
+	@Override
+	public IRasterDataValidator getValidator()
+	{
+		return new GenericRasterDataValidator(this);
+	}
 }
