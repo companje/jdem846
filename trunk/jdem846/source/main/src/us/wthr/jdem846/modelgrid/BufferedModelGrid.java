@@ -1,34 +1,35 @@
-package us.wthr.jdem846.model;
+package us.wthr.jdem846.modelgrid;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.ModelPoint;
+import us.wthr.jdem846.model.WatchableModelPoint;
 import us.wthr.jdem846.model.WatchableModelPoint.ModelPointChangedListener;
 
-public class BufferedModelGrid extends ModelPointGrid
+public class BufferedModelGrid extends BaseModelGrid
 {
 	private static Log log = Logging.getLog(BufferedModelGrid.class);
-	
-	
+
 	private float[] elevationGrid;
 	private int[] rgbaGrid;
 	private ModelPointChangedHandler changeHandler;
-	
+
 	private boolean isDisposed = false;
-	
+
 	public BufferedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum)
 	{
 		super(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum);
-		
+
 		log.info("Allocating elevation and RGBA grid buffers of length " + gridLength);
-		
-		elevationGrid = new float[(int)gridLength];
-		rgbaGrid = new int[(int)gridLength];
-		
+
+		elevationGrid = new float[(int) gridLength];
+		rgbaGrid = new int[(int) gridLength];
+
 		changeHandler = new ModelPointChangedHandler();
-		
-		//reset();
+
+		// reset();
 	}
 
 	@Override
@@ -47,26 +48,26 @@ public class BufferedModelGrid extends ModelPointGrid
 	@Override
 	public void reset()
 	{
-		
+
 		for (int i = 0; i < gridLength; i++) {
 			elevationGrid[i] = (float) DemConstants.ELEV_UNDETERMINED;
 			rgbaGrid[i] = 0x0;
 		}
-		
+
 	}
-	
+
 	@Override
 	public int[] getModelTexture()
 	{
 		return rgbaGrid;
 	}
-	
+
 	@Override
 	public ModelPoint get(double latitude, double longitude)
 	{
 		int index = getIndex(latitude, longitude);
-		
-		if (/*grid != null && */index >= 0 && index < this.gridLength) {
+
+		if (/* grid != null && */index >= 0 && index < this.gridLength) {
 			try {
 				return get(index);
 			} catch (Exception ex) {
@@ -79,23 +80,22 @@ public class BufferedModelGrid extends ModelPointGrid
 			return null;
 		}
 	}
-	
-	
+
 	public ModelPoint get(int index) throws Exception
 	{
 		if (index >= 0 && index < this.gridLength) {
 			BufferedModelPointProxy modelPoint = new BufferedModelPointProxy(index);
-			
+
 			modelPoint.setElevation(elevationGrid[index]);
 			modelPoint.setRgba(rgbaGrid[index]);
-			
+
 			modelPoint.addModelPointChangedListener(changeHandler);
 			return modelPoint;
 		} else {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public double getElevation(double latitude, double longitude, boolean basic)
 	{
@@ -106,7 +106,7 @@ public class BufferedModelGrid extends ModelPointGrid
 			return DemConstants.ELEV_NO_DATA;
 		}
 	}
-	
+
 	@Override
 	public void setElevation(double latitude, double longitude, double elevation)
 	{
@@ -116,13 +116,13 @@ public class BufferedModelGrid extends ModelPointGrid
 			getElevationHistogramModel().add(elevation);
 		}
 	}
-	
+
 	@Override
-	public void getRgba(double latitude, double longitude, int[] fill) 
+	public void getRgba(double latitude, double longitude, int[] fill)
 	{
 		ColorUtil.intToRGBA(getRgba(latitude, longitude), fill);
 	}
-	
+
 	@Override
 	public int getRgba(double latitude, double longitude)
 	{
@@ -133,7 +133,7 @@ public class BufferedModelGrid extends ModelPointGrid
 			return 0x0;
 		}
 	}
-	
+
 	@Override
 	public void setRgba(double latitude, double longitude, int rgba)
 	{
@@ -144,7 +144,7 @@ public class BufferedModelGrid extends ModelPointGrid
 		}
 
 	}
-	
+
 	@Override
 	public void setRgba(double latitude, double longitude, int[] rgba)
 	{
@@ -152,30 +152,23 @@ public class BufferedModelGrid extends ModelPointGrid
 		this.setRgba(latitude, longitude, ColorUtil.rgbaToInt(rgba));
 
 	}
-	
-
-	
-	
-	
-	
 
 	public void set(BufferedModelPointProxy modelPoint) throws Exception
 	{
-		
+
 		elevationGrid[modelPoint.index] = (float) modelPoint.getElevation();
 		rgbaGrid[modelPoint.index] = modelPoint.getRgba();
-	
+
 	}
-	
-	
+
 	class ModelPointChangedHandler implements ModelPointChangedListener
 	{
-		
+
 		public ModelPointChangedHandler()
 		{
 
 		}
-		
+
 		public void onModelPointChanged(ModelPoint modelPoint)
 		{
 			BufferedModelPointProxy modelPointProxy = (BufferedModelPointProxy) modelPoint;
@@ -186,21 +179,16 @@ public class BufferedModelGrid extends ModelPointGrid
 			}
 		}
 	}
-	
-	
-	
-	
+
 	class BufferedModelPointProxy extends WatchableModelPoint
 	{
-		
+
 		public int index;
-		
+
 		public BufferedModelPointProxy(int index)
 		{
 			this.index = index;
 		}
-		
 
-		
 	}
 }

@@ -1,18 +1,12 @@
 package us.wthr.jdem846.model.processing;
 
-import us.wthr.jdem846.exception.RenderEngineException;
-
-
-public abstract class GridProcessor extends GridWorker
+public abstract class GridProcessor extends GridWorker implements IGridProcessor
 {
-	
-	
-	public abstract void onLatitudeStart(double latitude) throws RenderEngineException;
-	public abstract void onLatitudeEnd(double latitude) throws RenderEngineException;
 
+	@Override
 	public WorkerTypeEnum getWorkerType()
 	{
 		return WorkerTypeEnum.PROCESSOR;
 	}
-	
+
 }

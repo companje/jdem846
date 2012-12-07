@@ -2,12 +2,14 @@ package us.wthr.jdem846.model;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
-import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
 import us.wthr.jdem846.model.processing.GridFilter;
 import us.wthr.jdem846.model.processing.GridFilterMethodStack;
 import us.wthr.jdem846.model.processing.GridProcessMethodStack;
 import us.wthr.jdem846.model.processing.GridProcessor;
-import us.wthr.jdem846.model.processing.GridWorker;
+import us.wthr.jdem846.model.processing.IGridFilter;
+import us.wthr.jdem846.model.processing.IGridProcessor;
+import us.wthr.jdem846.model.processing.IGridWorker;
+import us.wthr.jdem846.modelgrid.IModelGrid;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
@@ -15,42 +17,40 @@ public class ModelProgram
 {
 	private GridProcessMethodStack processStack = new GridProcessMethodStack();
 	private GridFilterMethodStack filterStack = new GridFilterMethodStack();
-	
-	
+
 	private ModelContext modelContext;
 	private ScriptProxy script;
 
 	private RasterDataContext rasterDataContext;
-	private ModelPointGrid modelGrid;
+	private IModelGrid modelGrid;
 	private ModelDimensions modelDimensions;
 	private GlobalOptionModel globalOptionModel;
-	
-	
+
 	public ModelProgram()
 	{
-		
+
 	}
 
 	public ModelProgram(ModelContext modelContext)
 	{
 		this.modelContext = modelContext;
 	}
-	
-	public void addWorker(GridWorker worker)
+
+	public void addWorker(IGridWorker worker)
 	{
 		if (worker instanceof GridProcessor) {
 			addProcessor((GridProcessor) worker);
 		} else if (worker instanceof GridFilter) {
-			addFilter((GridFilter)worker);
+			addFilter((GridFilter) worker);
 		}
 	}
-	
+
 	public void prepare() throws Exception
 	{
 		this.filterStack.prepare();
 		this.processStack.prepare();
 	}
-	
+
 	public GridProcessMethodStack getProcessStack()
 	{
 		return processStack;
@@ -61,12 +61,12 @@ public class ModelProgram
 		return filterStack;
 	}
 
-	public void addProcessor(GridProcessor gridProcessor)
+	public void addProcessor(IGridProcessor gridProcessor)
 	{
 		processStack.add(gridProcessor);
 	}
-	
-	public void addFilter(GridFilter gridFilter)
+
+	public void addFilter(IGridFilter gridFilter)
 	{
 		filterStack.add(gridFilter);
 	}
@@ -103,15 +103,15 @@ public class ModelProgram
 	public void setRasterDataContext(RasterDataContext rasterDataContext) throws Exception
 	{
 		this.rasterDataContext = rasterDataContext;
-		
+
 	}
 
-	public ModelPointGrid getModelGrid()
+	public IModelGrid getModelGrid()
 	{
 		return modelGrid;
 	}
 
-	public void setModelGrid(ModelPointGrid modelGrid) throws Exception
+	public void setModelGrid(IModelGrid modelGrid) throws Exception
 	{
 		this.modelGrid = modelGrid;
 		filterStack.setModelGrid(modelGrid);
@@ -141,8 +141,5 @@ public class ModelProgram
 		filterStack.setGlobalOptionModel(globalOptionModel);
 		processStack.setGlobalOptionModel(globalOptionModel);
 	}
-	
-	
-	
-	
+
 }

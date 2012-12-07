@@ -7,92 +7,92 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGridDimensions;
-import us.wthr.jdem846.model.ModelGrid;
 import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ModelPointCycler;
-import us.wthr.jdem846.model.ModelPointGrid;
-import us.wthr.jdem846.model.ModelPointHandler;
 import us.wthr.jdem846.model.OptionModel;
+import us.wthr.jdem846.modelgrid.IModelGrid;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ProcessInterruptListener;
 
 @Deprecated
-public abstract class AbstractGridProcessor extends InterruptibleProcess// implements GridProcessor, ModelPointHandler
+public abstract class AbstractGridProcessor extends InterruptibleProcess// implements
+// GridProcessor,
+// ModelPointHandler
 {
-	
+
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(AbstractGridProcessor.class);
-	
+
 	protected ModelContext modelContext;
-	protected ModelPointGrid modelGrid;
+	protected IModelGrid modelGrid;
 	protected GlobalOptionModel globalOptionModel;
-	protected OptionModel processOptionModel; 
+	protected OptionModel processOptionModel;
 	protected ModelGridDimensions modelDimensions;
-	
+
 	private boolean isProcessing = false;
-	
+
 	public AbstractGridProcessor()
 	{
-		
+
 	}
-	
-	public AbstractGridProcessor(ModelContext modelContext, ModelPointGrid modelGrid)
+
+	public AbstractGridProcessor(ModelContext modelContext, IModelGrid modelGrid)
 	{
 		setModelContext(modelContext);
 		setModelGrid(modelGrid);
 	}
-	
-	
-	public void setAndPrepare(ModelContext modelContext, ModelPointGrid modelGrid, ModelGridDimensions modelDimensions, GlobalOptionModel globalOptionModel, OptionModel processOptionModel) throws RenderEngineException
+
+	public void setAndPrepare(ModelContext modelContext, IModelGrid modelGrid, ModelGridDimensions modelDimensions, GlobalOptionModel globalOptionModel, OptionModel processOptionModel)
+			throws RenderEngineException
 	{
 		setModelContext(modelContext);
 		setModelGrid(modelGrid);
 		setModelDimensions(modelDimensions);
 		setGlobalOptionModel(globalOptionModel);
 		setProcessOptionModel(processOptionModel);
-		//prepare();
+		// prepare();
 	}
-	
-	//@Override
+
+	// @Override
 	public void process() throws RenderEngineException
 	{
 		final ModelPointCycler pointCycler = new ModelPointCycler(modelContext, modelDimensions);
-		
-		this.setProcessInterruptListener(new ProcessInterruptListener() {
+
+		this.setProcessInterruptListener(new ProcessInterruptListener()
+		{
 			public void onProcessCancelled()
 			{
 				pointCycler.cancel();
 			}
+
 			public void onProcessPaused()
 			{
 				pointCycler.pause();
 			}
+
 			public void onProcessResumed()
 			{
 				pointCycler.resume();
 			}
 		});
-		
+
 		this.setProcessing(true);
-		
-		//pointCycler.forEachModelPoint(this);
-		
+
+		// pointCycler.forEachModelPoint(this);
+
 		this.setProcessing(false);
 	}
-	
-	
+
 	public void setModelContext(ModelContext modelContext)
 	{
 		this.modelContext = modelContext;
 	}
-	
-	public void setModelGrid(ModelPointGrid modelGrid)
+
+	public void setModelGrid(IModelGrid modelGrid)
 	{
 		this.modelGrid = modelGrid;
 	}
-	
-	
-	
+
 	public ModelGridDimensions getModelDimensions()
 	{
 		return modelDimensions;
@@ -125,21 +125,19 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess// imple
 
 	protected boolean modelContainsData()
 	{
-		return (modelContext.getRasterDataContext().getRasterDataListSize() > 0 ||
-				modelContext.getImageDataContext().getImageListSize() > 0);
+		return (modelContext.getRasterDataContext().getRasterDataListSize() > 0 || modelContext.getImageDataContext().getImageListSize() > 0);
 	}
-	
+
 	protected void setProcessing(boolean isProcessing)
 	{
 		this.isProcessing = isProcessing;
 	}
-	
+
 	public boolean isProcessing()
 	{
 		return isProcessing;
 	}
 
-	
 	protected double getElevationAtPoint(double latitude, double longitude)
 	{
 		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
@@ -150,48 +148,39 @@ public abstract class AbstractGridProcessor extends InterruptibleProcess// imple
 		}
 	}
 
-	//@Override
+	// @Override
 	public void onCycleStart() throws RenderEngineException
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
-
-	//@Override
-	public void onModelLatitudeStart(double latitude)
-			throws RenderEngineException
+	// @Override
+	public void onModelLatitudeStart(double latitude) throws RenderEngineException
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
-
-	//@Override
-	public void onModelPoint(double latitude, double longitude)
-			throws RenderEngineException
+	// @Override
+	public void onModelPoint(double latitude, double longitude) throws RenderEngineException
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
-
-//	@Override
-	public void onModelLatitudeEnd(double latitude)
-			throws RenderEngineException
+	// @Override
+	public void onModelLatitudeEnd(double latitude) throws RenderEngineException
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
-
-	//@Override
+	// @Override
 	public void onCycleEnd() throws RenderEngineException
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	
-	
+
 }
