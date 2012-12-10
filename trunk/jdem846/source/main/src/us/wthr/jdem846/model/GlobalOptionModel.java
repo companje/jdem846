@@ -19,7 +19,7 @@ import us.wthr.jdem846.scaling.ElevationScalerEnum;
 
 public class GlobalOptionModel implements OptionModel
 {
-	
+
 	private boolean useScripting = false;
 	private int width = 2000;
 	private int height = 2000;
@@ -38,39 +38,34 @@ public class GlobalOptionModel implements OptionModel
 	private String mapProjection = MapProjectionEnum.EQUIRECTANGULAR.identifier();
 	private String renderProjection = CanvasProjectionTypeEnum.PROJECT_FLAT.identifier();
 	private String perspectiveType = PerspectiveTypeEnum.ORTHOGRAPHIC.identifier();
-	
+
 	private double modelQuality = 1.0;
 	private double textureQuality = 1.0;
-	
-	
+
 	private double fieldOfView = 45.0;
 	private double eyeDistance = 19.07e6;
-	
+
 	private boolean getStandardResolutionElevation = false;
 	private boolean interpolateData = true;
 	private boolean averageOverlappedData = true;
 	private String precacheStrategy = "tiled";
 	private int tileSize = 1000;
-	
+
 	private int numberOfThreads = 1;
-	
+
 	private boolean useDiskCachedModelGrid = false;
 	private boolean disposeGridOnComplete = true;
 	private boolean createJdemElevationModel = true;
-	
+
 	private boolean previewRendering = false;
 	private boolean forceResetAndRunFilters = false;
-	
+
 	public GlobalOptionModel()
 	{
-		
+
 	}
-	
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.useScripting",
-					label="Use Scripting",
-					tooltip="Enable scripting during the modeling process",
-					enabled=true)
+
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.useScripting", label = "Use Scripting", tooltip = "Enable scripting during the modeling process", visible = true)
 	@Order(0)
 	public boolean getUseScripting()
 	{
@@ -82,14 +77,9 @@ public class GlobalOptionModel implements OptionModel
 		this.useScripting = useScripting;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.width",
-			label="Width",
-			tooltip="Model image width",
-			enabled=true,
-			validator=ModelHeightWidthValidator.class,
-			enabler=GlobalOptionModelEnabler.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.width", label = "Width", tooltip = "Model image width", visible = true, validator = ModelHeightWidthValidator.class, enabler = GlobalOptionModelEnabler.class)
 	@Order(1)
-	@ValueBounds(minimum=1)
+	@ValueBounds(minimum = 1)
 	public int getWidth()
 	{
 		return width;
@@ -100,13 +90,9 @@ public class GlobalOptionModel implements OptionModel
 		this.width = width;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.height",
-			label="Height",
-			tooltip="Model image height",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.height", label = "Height", tooltip = "Model image height", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(2)
-	@ValueBounds(minimum=1)
+	@ValueBounds(minimum = 1)
 	public int getHeight()
 	{
 		return height;
@@ -117,11 +103,7 @@ public class GlobalOptionModel implements OptionModel
 		this.height = height;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.maintainAspectRatio",
-			label="Maintain Aspect Ratio",
-			tooltip="Maintain model dimensions aspect ratio in relation to raster data bounds",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.maintainAspectRatio", label = "Maintain Aspect Ratio", tooltip = "Maintain model dimensions aspect ratio in relation to raster data bounds", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(3)
 	public boolean getMaintainAspectRatio()
 	{
@@ -133,11 +115,7 @@ public class GlobalOptionModel implements OptionModel
 		this.maintainAspectRatio = maintainAspectRatio;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.planet",
-			label="Planet",
-			tooltip="",
-			enabled=true,
-			listModel=PlanetListModel.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.planet", label = "Planet", tooltip = "", visible = true, listModel = PlanetListModel.class)
 	@Order(4)
 	public String getPlanet()
 	{
@@ -149,11 +127,7 @@ public class GlobalOptionModel implements OptionModel
 		this.planet = planet;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.estimateElevationRange",
-			label="Estimate Elevation Min/Max",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.estimateElevationRange", label = "Estimate Elevation Min/Max", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(5)
 	public boolean isEstimateElevationRange()
 	{
@@ -165,11 +139,7 @@ public class GlobalOptionModel implements OptionModel
 		this.estimateElevationRange = estimateElevationRange;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.limitCoordinates",
-			label="Limit Coordinates",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.limitCoordinates", label = "Limit Coordinates", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(6)
 	public boolean getLimitCoordinates()
 	{
@@ -180,16 +150,10 @@ public class GlobalOptionModel implements OptionModel
 	{
 		this.limitCoordinates = limitCoordinates;
 	}
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.northLimit",
-			label="North Limit",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.northLimit", label = "North Limit", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(7)
-	@ValueBounds(minimum=-90.0, 
-			maximum=90.0, 
-			stepSize=.1)
+	@ValueBounds(minimum = -90.0, maximum = 90.0, stepSize = .1)
 	public double getNorthLimit()
 	{
 		return northLimit;
@@ -199,16 +163,10 @@ public class GlobalOptionModel implements OptionModel
 	{
 		this.northLimit = northLimit;
 	}
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.southLimit",
-			label="South Limit",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.southLimit", label = "South Limit", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(8)
-	@ValueBounds(minimum=-90.0, 
-			maximum=90.0, 
-			stepSize=.1)
+	@ValueBounds(minimum = -90.0, maximum = 90.0, stepSize = .1)
 	public double getSouthLimit()
 	{
 		return southLimit;
@@ -218,16 +176,10 @@ public class GlobalOptionModel implements OptionModel
 	{
 		this.southLimit = southLimit;
 	}
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.eastLimit",
-			label="East Limit",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.eastLimit", label = "East Limit", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(9)
-	@ValueBounds(minimum=-360.0, 
-			maximum=360.0, 
-			stepSize=.1)
+	@ValueBounds(minimum = -360.0, maximum = 360.0, stepSize = .1)
 	public double getEastLimit()
 	{
 		return eastLimit;
@@ -238,15 +190,9 @@ public class GlobalOptionModel implements OptionModel
 		this.eastLimit = eastLimit;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.westLimit",
-			label="West Limit",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.westLimit", label = "West Limit", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(10)
-	@ValueBounds(minimum=-360.0, 
-			maximum=360.0, 
-			stepSize=.1)
+	@ValueBounds(minimum = -360.0, maximum = 360.0, stepSize = .1)
 	public double getWestLimit()
 	{
 		return westLimit;
@@ -256,12 +202,8 @@ public class GlobalOptionModel implements OptionModel
 	{
 		this.westLimit = westLimit;
 	}
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.backgroundColor",
-			label="Background Color",
-			tooltip="Model image background color",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.backgroundColor", label = "Background Color", tooltip = "Model image background color", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(11)
 	public RgbaColor getBackgroundColor()
 	{
@@ -273,14 +215,9 @@ public class GlobalOptionModel implements OptionModel
 		this.backgroundColor = backgroundColor;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.elevationMultiple",
-			label="Elevation Multiple",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.elevationMultiple", label = "Elevation Multiple", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(12)
-	@ValueBounds(minimum=0,
-				stepSize=0.1)
+	@ValueBounds(minimum = 0, stepSize = 0.1)
 	public double getElevationMultiple()
 	{
 		return elevationMultiple;
@@ -291,12 +228,7 @@ public class GlobalOptionModel implements OptionModel
 		this.elevationMultiple = elevationMultiple;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.elevationScale",
-			label="Elevation Scale",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class,
-			listModel=ElevationScalerListModel.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.elevationScale", label = "Elevation Scale", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class, listModel = ElevationScalerListModel.class)
 	@Order(13)
 	public String getElevationScale()
 	{
@@ -307,349 +239,242 @@ public class GlobalOptionModel implements OptionModel
 	{
 		this.elevationScale = elevationScale;
 	}
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.mapProjection",
-			label="Map Projection",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class,
-			listModel=MapProjectionListModel.class)
+
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.mapProjection", label = "Map Projection", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class, listModel = MapProjectionListModel.class)
 	@Order(14)
 	public String getMapProjection()
 	{
 		return mapProjection;
 	}
 
-
 	public void setMapProjection(String mapProjection)
 	{
 		this.mapProjection = mapProjection;
 	}
 
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.renderProjection",
-			label="Render Projection",
-			tooltip="",
-			enabled=true,
-			listModel=RenderProjectionListModel.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.renderProjection", label = "Render Projection", tooltip = "", visible = true, listModel = RenderProjectionListModel.class)
 	@Order(15)
 	public String getRenderProjection()
 	{
 		return renderProjection;
 	}
 
-
 	public void setRenderProjection(String renderProjection)
 	{
 		this.renderProjection = renderProjection;
 	}
-	
-	
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.perspectiveType",
-			label="Perspective Type",
-			tooltip="",
-			enabled=true,
-			listModel=PerspectiveTypeListModel.class)
+
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.perspectiveType", label = "Perspective Type", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class, listModel = PerspectiveTypeListModel.class)
 	@Order(16)
 	public String getPerspectiveType()
 	{
 		return perspectiveType;
 	}
 
-
 	public void setPerspectiveType(String perspectiveType)
 	{
 		this.perspectiveType = perspectiveType;
 	}
 
-
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.viewAngle",
-			label="View Angle",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.viewAngle", label = "View Angle", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(17)
 	public ViewPerspective getViewAngle()
 	{
 		return viewAngle;
 	}
 
-
 	public void setViewAngle(ViewPerspective viewAngle)
 	{
 		this.viewAngle = viewAngle;
 	}
-	
-	
-	
-	
-	
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.fieldOfView",
-			label="Field of View",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.fieldOfView", label = "Field of View", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(18)
-	@ValueBounds(minimum=1, 
-				maximum=90)
-	public double getFieldOfView() {
+	@ValueBounds(minimum = 1, maximum = 90)
+	public double getFieldOfView()
+	{
 		return fieldOfView;
 	}
 
-
-	public void setFieldOfView(double fieldOfView) {
+	public void setFieldOfView(double fieldOfView)
+	{
 		this.fieldOfView = fieldOfView;
 	}
 
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.eyeDistance",
-			label="Eye Distance",
-			tooltip="Viewer distance from center of model in meters",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
-	@ValueBounds(minimum=1, 
-				maximum=5000.07e6)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.eyeDistance", label = "Eye Distance", tooltip = "Viewer distance from center of model in meters", visible = true, enabler = GlobalOptionModelEnabler.class)
+	@ValueBounds(minimum = 1, maximum = 5000.07e6)
 	@Order(19)
-	public double getEyeDistance() {
+	public double getEyeDistance()
+	{
 		return eyeDistance;
 	}
 
-
-	public void setEyeDistance(double eyeDistance) {
+	public void setEyeDistance(double eyeDistance)
+	{
 		this.eyeDistance = eyeDistance;
 	}
 
-
-	
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.textureQuality",
-			label="Texture Quality",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.textureQuality", label = "Texture Quality", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(22)
-	@ValueBounds(minimum=0, 
-				maximum=10.0,
-				stepSize=0.05)
+	@ValueBounds(minimum = 0, maximum = 10.0, stepSize = 0.05)
 	public double getTextureQuality()
 	{
 		return textureQuality;
 	}
 
-
 	public void setTextureQuality(double textureQuality)
 	{
 		this.textureQuality = textureQuality;
 	}
-	
-	
-	
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.modelQuality",
-			label="Model Quality",
-			tooltip="",
-			enabled=true,
-			enabler=GlobalOptionModelEnabler.class)
+
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.modelQuality", label = "Model Quality", tooltip = "", visible = true, enabler = GlobalOptionModelEnabler.class)
 	@Order(23)
-	@ValueBounds(minimum=0, 
-				maximum=10.0,
-				stepSize=0.05)
+	@ValueBounds(minimum = 0, maximum = 10.0, stepSize = 0.05)
 	public double getModelQuality()
 	{
 		return modelQuality;
 	}
-
 
 	public void setModelQuality(double modelQuality)
 	{
 		this.modelQuality = modelQuality;
 	}
 
-
-
-
 	public boolean getStandardResolutionElevation()
 	{
 		return getStandardResolutionElevation;
 	}
 
-
-	public void setGetStandardResolutionElevation(
-			boolean getStandardResolutionElevation)
+	public void setGetStandardResolutionElevation(boolean getStandardResolutionElevation)
 	{
 		this.getStandardResolutionElevation = getStandardResolutionElevation;
 	}
-
 
 	public boolean getInterpolateData()
 	{
 		return interpolateData;
 	}
 
-
 	public void setInterpolateData(boolean interpolateData)
 	{
 		this.interpolateData = interpolateData;
 	}
-
 
 	public boolean getAverageOverlappedData()
 	{
 		return averageOverlappedData;
 	}
 
-
 	public void setAverageOverlappedData(boolean averageOverlappedData)
 	{
 		this.averageOverlappedData = averageOverlappedData;
 	}
-	
-	
-
 
 	public String getPrecacheStrategy()
 	{
 		return precacheStrategy;
 	}
 
-
 	public void setPrecacheStrategy(String precacheStrategy)
 	{
 		this.precacheStrategy = precacheStrategy;
 	}
 
-	
-	
 	public int getTileSize()
 	{
 		return tileSize;
 	}
-
 
 	public void setTileSize(int tileSize)
 	{
 		this.tileSize = tileSize;
 	}
 
-
-//	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.useDiskCachedModelGrid",
-//			label="Use Disk Cache",
-//			tooltip="",
-//			enabled=true)
-//	@Order(25)
+	// @ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.useDiskCachedModelGrid",
+	// label="Use Disk Cache",
+	// tooltip="",
+	// enabled=true)
+	// @Order(25)
 	public boolean getUseDiskCachedModelGrid()
 	{
 		return useDiskCachedModelGrid;
 	}
-
 
 	public void setUseDiskCachedModelGrid(boolean useDiskCachedModelGrid)
 	{
 		this.useDiskCachedModelGrid = useDiskCachedModelGrid;
 	}
 
-	
-	
-	
-	
-	
-	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.numberOfThreads",
-			label="Number of Threads",
-			tooltip="",
-			enabled=true)
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.numberOfThreads", label = "Number of Threads", tooltip = "", visible = true)
 	@Order(26)
-	@ValueBounds(minimum=1, 
-				maximum=10,
-				stepSize=1)
+	@ValueBounds(minimum = 1, maximum = 10, stepSize = 1)
 	public int getNumberOfThreads()
 	{
 		return numberOfThreads;
 	}
-
 
 	public void setNumberOfThreads(int numberOfThreads)
 	{
 		this.numberOfThreads = numberOfThreads;
 	}
 
-
 	public boolean getDisposeGridOnComplete()
 	{
 		return disposeGridOnComplete;
 	}
-
 
 	public void setDisposeGridOnComplete(boolean disposeGridOnComplete)
 	{
 		this.disposeGridOnComplete = disposeGridOnComplete;
 	}
 
-	
-
 	public boolean isPreviewRendering()
 	{
 		return previewRendering;
 	}
-
 
 	public void setPreviewRendering(boolean previewRendering)
 	{
 		this.previewRendering = previewRendering;
 	}
 
-
 	public boolean getCreateJdemElevationModel()
 	{
 		return createJdemElevationModel;
 	}
-
 
 	public void setCreateJdemElevationModel(boolean createJdemElevationModel)
 	{
 		this.createJdemElevationModel = createJdemElevationModel;
 	}
 
-	
-	
-	
-	public boolean getForceResetAndRunFilters() 
+	public boolean getForceResetAndRunFilters()
 	{
 		return forceResetAndRunFilters;
 	}
 
-
-	public void setForceResetAndRunFilters(boolean forceResetAndRunFilters) 
+	public void setForceResetAndRunFilters(boolean forceResetAndRunFilters)
 	{
 		this.forceResetAndRunFilters = forceResetAndRunFilters;
 	}
 
-
 	public MapProjection getMapProjectionInstance() throws MapProjectionException
 	{
-		MapProjection mapProjection =  MapProjectionProviderFactory.getMapProjection(getMapProjection(), 
-																					getNorthLimit(), 
-																					getSouthLimit(), 
-																					getEastLimit(), 
-																					getWestLimit(), 
-																					getWidth(), 
-																					getHeight());
+		MapProjection mapProjection = MapProjectionProviderFactory.getMapProjection(getMapProjection(), getNorthLimit(), getSouthLimit(), getEastLimit(), getWestLimit(), getWidth(), getHeight());
 
 		return mapProjection;
 	}
-	
-	
+
 	public GlobalOptionModel copy()
 	{
 		GlobalOptionModel copy = new GlobalOptionModel();
-		
+
 		copy.useScripting = this.useScripting;
 		copy.width = this.width;
 		copy.height = this.height;
-		copy.maintainAspectRatio = this.maintainAspectRatio; 
+		copy.maintainAspectRatio = this.maintainAspectRatio;
 		copy.planet = this.planet;
-		copy.estimateElevationRange = this.estimateElevationRange; 
+		copy.estimateElevationRange = this.estimateElevationRange;
 		copy.limitCoordinates = this.limitCoordinates;
 		copy.northLimit = this.northLimit;
 		copy.southLimit = this.southLimit;
@@ -657,7 +482,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.westLimit = this.westLimit;
 		copy.backgroundColor = this.backgroundColor.copy();
 		copy.elevationMultiple = this.elevationMultiple;
-		copy.elevationScale = this.elevationScale; 
+		copy.elevationScale = this.elevationScale;
 		copy.mapProjection = this.mapProjection;
 		copy.renderProjection = this.renderProjection;
 		copy.perspectiveType = this.perspectiveType;
@@ -678,5 +503,5 @@ public class GlobalOptionModel implements OptionModel
 		copy.eyeDistance = this.eyeDistance;
 		return copy;
 	}
-	
+
 }

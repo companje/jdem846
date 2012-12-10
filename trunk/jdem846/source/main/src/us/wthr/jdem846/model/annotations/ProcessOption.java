@@ -8,26 +8,25 @@ import java.lang.annotation.Target;
 import us.wthr.jdem846.annotations.Discoverable;
 
 @Discoverable
-@Target(value={ElementType.METHOD})
+@Target(value = { ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ProcessOption
 {
-	
+
 	String id();
-	
+
 	String label();
-	
+
 	String tooltip();
-	
+
 	String optionGroup() default "General";
 
 	Class<?> listModel() default Object.class;
-	
+
 	Class<?> validator() default Object.class;
-	
+
 	Class<?> enabler() default Object.class;
-	
-	boolean enabled() default true;
-	
-	
+
+	boolean visible() default true;
+
 }
