@@ -38,9 +38,6 @@ public class GlobalOptionModel implements OptionModel
 	private String mapProjection = MapProjectionEnum.EQUIRECTANGULAR.identifier();
 	private String renderProjection = CanvasProjectionTypeEnum.PROJECT_FLAT.identifier();
 	private String perspectiveType = PerspectiveTypeEnum.ORTHOGRAPHIC.identifier();
-	//private String frameBufferMode = FrameBufferModeEnum.STANDARD.identifier();
-	//private int subpixelGridSize = 1;
-	//private int pixelStackDepth = 1;
 	
 	private double modelQuality = 1.0;
 	private double textureQuality = 1.0;
@@ -89,7 +86,8 @@ public class GlobalOptionModel implements OptionModel
 			label="Width",
 			tooltip="Model image width",
 			enabled=true,
-			validator=ModelHeightWidthValidator.class)
+			validator=ModelHeightWidthValidator.class,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(1)
 	@ValueBounds(minimum=1)
 	public int getWidth()
@@ -105,7 +103,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.height",
 			label="Height",
 			tooltip="Model image height",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(2)
 	@ValueBounds(minimum=1)
 	public int getHeight()
@@ -121,7 +120,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.maintainAspectRatio",
 			label="Maintain Aspect Ratio",
 			tooltip="Maintain model dimensions aspect ratio in relation to raster data bounds",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(3)
 	public boolean getMaintainAspectRatio()
 	{
@@ -152,7 +152,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.estimateElevationRange",
 			label="Estimate Elevation Min/Max",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(5)
 	public boolean isEstimateElevationRange()
 	{
@@ -167,7 +168,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.limitCoordinates",
 			label="Limit Coordinates",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(6)
 	public boolean getLimitCoordinates()
 	{
@@ -182,7 +184,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.northLimit",
 			label="North Limit",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(7)
 	@ValueBounds(minimum=-90.0, 
 			maximum=90.0, 
@@ -200,7 +203,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.southLimit",
 			label="South Limit",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(8)
 	@ValueBounds(minimum=-90.0, 
 			maximum=90.0, 
@@ -218,7 +222,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.eastLimit",
 			label="East Limit",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(9)
 	@ValueBounds(minimum=-360.0, 
 			maximum=360.0, 
@@ -236,7 +241,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.westLimit",
 			label="West Limit",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(10)
 	@ValueBounds(minimum=-360.0, 
 			maximum=360.0, 
@@ -254,7 +260,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.backgroundColor",
 			label="Background Color",
 			tooltip="Model image background color",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(11)
 	public RgbaColor getBackgroundColor()
 	{
@@ -269,7 +276,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.elevationMultiple",
 			label="Elevation Multiple",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(12)
 	@ValueBounds(minimum=0,
 				stepSize=0.1)
@@ -287,6 +295,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Elevation Scale",
 			tooltip="",
 			enabled=true,
+			enabler=GlobalOptionModelEnabler.class,
 			listModel=ElevationScalerListModel.class)
 	@Order(13)
 	public String getElevationScale()
@@ -303,6 +312,7 @@ public class GlobalOptionModel implements OptionModel
 			label="Map Projection",
 			tooltip="",
 			enabled=true,
+			enabler=GlobalOptionModelEnabler.class,
 			listModel=MapProjectionListModel.class)
 	@Order(14)
 	public String getMapProjection()
@@ -357,7 +367,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.viewAngle",
 			label="View Angle",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(17)
 	public ViewPerspective getViewAngle()
 	{
@@ -378,7 +389,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.fieldOfView",
 			label="Field of View",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(18)
 	@ValueBounds(minimum=1, 
 				maximum=90)
@@ -395,7 +407,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.eyeDistance",
 			label="Eye Distance",
 			tooltip="Viewer distance from center of model in meters",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@ValueBounds(minimum=1, 
 				maximum=5000.07e6)
 	@Order(19)
@@ -414,7 +427,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.textureQuality",
 			label="Texture Quality",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(22)
 	@ValueBounds(minimum=0, 
 				maximum=10.0,
@@ -436,7 +450,8 @@ public class GlobalOptionModel implements OptionModel
 	@ProcessOption(id="us.wthr.jdem846.model.GlobalOptionModel.modelQuality",
 			label="Model Quality",
 			tooltip="",
-			enabled=true)
+			enabled=true,
+			enabler=GlobalOptionModelEnabler.class)
 	@Order(23)
 	@ValueBounds(minimum=0, 
 				maximum=10.0,

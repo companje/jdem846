@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
+import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.annotations.Order;
@@ -117,9 +118,19 @@ public class OptionModelPropertyContainer
 		return annotated.getValidatorClass();
 	}
 	
+	public Class<?> getEnablerClass()
+	{
+		return annotated.getEnablerClass();
+	}
+	
 	public OptionValidator getValidator()
 	{
 		return annotated.getValidator();
+	}
+	
+	public IOptionEnabler getEnabler()
+	{
+		return annotated.getEnabler();
 	}
 	
 	public boolean isEnabled()
@@ -183,6 +194,20 @@ public class OptionModelPropertyContainer
 	public boolean removeOptionModelChangeListener(OptionModelChangeListener listener)
 	{
 		return changeListeners.remove(listener);
+	}
+	
+	
+	
+	public boolean isPropertyEnabled(ModelContext modelContext, OptionModel optionModel) throws MethodContainerInvokeException
+	{
+		
+		IOptionEnabler enabler = this.getEnabler();
+		if (enabler == null) {
+			return isEnabled();
+		}
+		
+		return enabler.isOptionEnabled(modelContext, optionModel, getId(), getValue());
+
 	}
 	
 }

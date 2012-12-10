@@ -1,6 +1,5 @@
 package us.wthr.jdem846.model;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import us.wthr.jdem846.logging.Log;
@@ -25,6 +24,7 @@ public class OptionModelMethodContainer
 	private Order orderAnnotation;
 	private ValueBounds boundsAnnotation;
 	private OptionValidator optionValidator = null;
+	private IOptionEnabler optionEnabler = null;
 	
 	public OptionModelMethodContainer(Object declaringObject, Method method) throws InvalidProcessOptionException
 	{
@@ -83,6 +83,16 @@ public class OptionModelMethodContainer
 				throw new InvalidProcessOptionException("Error creating instance of option validator class " + validatorClazz.getName() + ": " + ex.getMessage(), ex);
 			}
 		}
+		
+		if (annotation != null && annotation.enabler() != null && !annotation.validator().equals(Object.class)) {
+			Class<?> enablerClazz = annotation.enabler();
+			try {
+				optionEnabler = (IOptionEnabler) enablerClazz.newInstance();
+			} catch (Exception ex) {
+				throw new InvalidProcessOptionException("Error creating instance of option enabler class " + enablerClazz.getName() + ": " + ex.getMessage(), ex);
+			}
+		}
+		
 	}
 	
 	
@@ -123,6 +133,15 @@ public class OptionModelMethodContainer
 		return optionValidator;
 	}
 	
+	public Class<?> getEnablerClass()
+	{
+		return annotation.enabler();
+	}
+	
+	public IOptionEnabler getEnabler()
+	{
+		return optionEnabler;
+	}
 	
 	public boolean isEnabled()
 	{
