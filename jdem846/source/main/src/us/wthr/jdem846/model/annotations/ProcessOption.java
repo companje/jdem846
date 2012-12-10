@@ -25,6 +25,8 @@ public @interface ProcessOption
 	
 	Class<?> validator() default Object.class;
 	
+	Class<?> enabler() default Object.class;
+	
 	boolean enabled() default true;
 	
 	
