@@ -12,18 +12,18 @@ import us.wthr.jdem846.model.OptionModel;
 import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.OptionModelPropertyContainer;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
-
+import us.wthr.jdem846ui.controls.LabeledControl;
 
 public class ModelOptionPage extends Composite
 {
 	private static Log log = Logging.getLog(ModelOptionPage.class);
-	
+
 	private OptionModelContainer container;
-	
-	public ModelOptionPage(Composite parent, OptionModel optionModel) 
+
+	public ModelOptionPage(Composite parent, OptionModel optionModel)
 	{
 		super(parent, SWT.NONE);
-		
+
 		OptionModelContainer optionModelContainer = null;
 		try {
 			optionModelContainer = new OptionModelContainer(optionModel);
@@ -32,11 +32,11 @@ public class ModelOptionPage extends Composite
 			log.error("Error creating option model container: " + ex.getMessage(), ex);
 			return;
 		}
-		
+
 		init(optionModelContainer);
 	}
-	
-	public ModelOptionPage(Composite parent, OptionModelContainer container) 
+
+	public ModelOptionPage(Composite parent, OptionModelContainer container)
 	{
 		super(parent, SWT.NONE);
 		init(container);
@@ -45,16 +45,16 @@ public class ModelOptionPage extends Composite
 	protected void init(OptionModelContainer container)
 	{
 		this.container = container;
-		
+
 		TableWrapLayout layout = new TableWrapLayout();
 		this.setLayout(layout);
 		layout.numColumns = 2;
-		
+
 		List<OptionModelPropertyContainer> properties = container.getProperties();
 		for (OptionModelPropertyContainer propertyContainer : properties) {
-			ModelOptionControlsFactory.createControl(propertyContainer.getListModelClass(), this, propertyContainer);
+			if (propertyContainer.isVisible()) {
+				LabeledControl<?> labeledControl = ModelOptionControlsFactory.createControl(propertyContainer.getListModelClass(), this, container.getOptionModel(), propertyContainer);
+			}
 		}
 	}
-	
-	
 }

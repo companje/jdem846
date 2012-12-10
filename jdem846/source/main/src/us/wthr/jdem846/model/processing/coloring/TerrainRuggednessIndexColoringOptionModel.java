@@ -5,39 +5,27 @@ import us.wthr.jdem846.model.annotations.ProcessOption;
 
 public class TerrainRuggednessIndexColoringOptionModel implements OptionModel
 {
-	
+
 	private int band = 1;
 	private String colorTint = "tri-green-yellow-red";
-	
-	
+
 	public TerrainRuggednessIndexColoringOptionModel()
 	{
-		
-	}
-	
 
-	@ProcessOption(id="us.wthr.jdem846.model.TerrainRuggednessIndexColoringOptionModel.band",
-			label="Band",
-			tooltip="",
-			enabled=true)
-	public int getBand() 
+	}
+
+	@ProcessOption(id = "us.wthr.jdem846.model.TerrainRuggednessIndexColoringOptionModel.band", label = "Band", tooltip = "", visible = true)
+	public int getBand()
 	{
 		return band;
 	}
-
-
 
 	public void setBand(int band)
 	{
 		this.band = band;
 	}
 
-	
-	@ProcessOption(id="us.wthr.jdem846.model.TerrainRuggednessIndexColoringOptionModel.colorTint",
-			label="Color Tinting",
-			tooltip="",
-			enabled=true,
-			listModel=ColorTintsListModel.class)
+	@ProcessOption(id = "us.wthr.jdem846.model.TerrainRuggednessIndexColoringOptionModel.colorTint", label = "Color Tinting", tooltip = "", visible = true, listModel = ColorTintsListModel.class)
 	public String getColorTint()
 	{
 		return colorTint;
@@ -47,7 +35,6 @@ public class TerrainRuggednessIndexColoringOptionModel implements OptionModel
 	{
 		this.colorTint = colorTint;
 	}
-	
 
 	public TerrainRuggednessIndexColoringOptionModel copy()
 	{
@@ -56,5 +43,5 @@ public class TerrainRuggednessIndexColoringOptionModel implements OptionModel
 		copy.colorTint = this.colorTint.toString();
 		return copy;
 	}
-	
+
 }

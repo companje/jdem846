@@ -7,25 +7,20 @@ import us.wthr.jdem846.model.annotations.ValueBounds;
 
 public class AspectShadingOptionModel implements OptionModel
 {
-	
+
 	private double lightMultiple = 1.0;
 	private double lightIntensity = 0.50;
 	private double darkIntensity = 0.75;
 	private int spotExponent = 1;
-	
+
 	public AspectShadingOptionModel()
 	{
-		
-	}
-	
 
-	@ProcessOption(id="us.wthr.jdem846.model.AspectShadingOptionModel.lightMultiple",
-			label="Light Multiple",
-			tooltip="",
-			enabled=true)
+	}
+
+	@ProcessOption(id = "us.wthr.jdem846.model.AspectShadingOptionModel.lightMultiple", label = "Light Multiple", tooltip = "", visible = true)
 	@Order(80)
-	@ValueBounds(minimum=0,
-			stepSize=0.1)
+	@ValueBounds(minimum = 0, stepSize = 0.1)
 	public double getLightMultiple()
 	{
 		return lightMultiple;
@@ -36,14 +31,9 @@ public class AspectShadingOptionModel implements OptionModel
 		this.lightMultiple = lightMultiple;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.AspectShadingOptionModel.lightIntensity",
-			label="Light Intensity",
-			tooltip="",
-			enabled=true)
+	@ProcessOption(id = "us.wthr.jdem846.model.AspectShadingOptionModel.lightIntensity", label = "Light Intensity", tooltip = "", visible = true)
 	@Order(90)
-	@ValueBounds(minimum=0,
-			maximum=1.0,
-			stepSize=0.05)
+	@ValueBounds(minimum = 0, maximum = 1.0, stepSize = 0.05)
 	public double getLightIntensity()
 	{
 		return lightIntensity;
@@ -53,15 +43,10 @@ public class AspectShadingOptionModel implements OptionModel
 	{
 		this.lightIntensity = lightIntensity;
 	}
-	
-	@ProcessOption(id="us.wthr.jdem846.model.AspectShadingOptionModel.darkIntensity",
-			label="Dark Intensity",
-			tooltip="",
-			enabled=true)
+
+	@ProcessOption(id = "us.wthr.jdem846.model.AspectShadingOptionModel.darkIntensity", label = "Dark Intensity", tooltip = "", visible = true)
 	@Order(100)
-	@ValueBounds(minimum=0,
-			maximum=1.0,
-			stepSize=0.05)
+	@ValueBounds(minimum = 0, maximum = 1.0, stepSize = 0.05)
 	public double getDarkIntensity()
 	{
 		return darkIntensity;
@@ -72,13 +57,9 @@ public class AspectShadingOptionModel implements OptionModel
 		this.darkIntensity = darkIntensity;
 	}
 
-	@ProcessOption(id="us.wthr.jdem846.model.AspectShadingOptionModel.spotExponent",
-			label="Spot Exponent",
-			tooltip="",
-			enabled=true)
+	@ProcessOption(id = "us.wthr.jdem846.model.AspectShadingOptionModel.spotExponent", label = "Spot Exponent", tooltip = "", visible = true)
 	@Order(110)
-	@ValueBounds(minimum=1,
-			maximum=5)
+	@ValueBounds(minimum = 1, maximum = 5)
 	public int getSpotExponent()
 	{
 		return spotExponent;
@@ -88,8 +69,7 @@ public class AspectShadingOptionModel implements OptionModel
 	{
 		this.spotExponent = spotExponent;
 	}
-	
-	
+
 	public AspectShadingOptionModel copy()
 	{
 		AspectShadingOptionModel copy = new AspectShadingOptionModel();
@@ -99,5 +79,5 @@ public class AspectShadingOptionModel implements OptionModel
 		copy.spotExponent = this.spotExponent;
 		return copy;
 	}
-	
+
 }

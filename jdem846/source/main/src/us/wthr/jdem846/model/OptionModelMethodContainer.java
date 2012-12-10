@@ -14,7 +14,7 @@ public class OptionModelMethodContainer
 {
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(OptionModelMethodContainer.class);
-	
+
 	private Object declaringObject;
 	private Method method;
 	private ProcessOption annotation;
@@ -25,7 +25,7 @@ public class OptionModelMethodContainer
 	private ValueBounds boundsAnnotation;
 	private OptionValidator optionValidator = null;
 	private IOptionEnabler optionEnabler = null;
-	
+
 	public OptionModelMethodContainer(Object declaringObject, Method method) throws InvalidProcessOptionException
 	{
 		this.declaringObject = declaringObject;
@@ -35,27 +35,26 @@ public class OptionModelMethodContainer
 		} else {
 			annotation = null;
 		}
-		
+
 		if (method.isAnnotationPresent(Order.class)) {
 			orderAnnotation = method.getAnnotation(Order.class);
 		} else {
 			orderAnnotation = null;
 		}
-		
+
 		if (method.isAnnotationPresent(ValueBounds.class)) {
 			boundsAnnotation = method.getAnnotation(ValueBounds.class);
 		} else {
 			boundsAnnotation = null;
 		}
-		
-		
+
 		String name = method.getName();
-		
+
 		propertyName = determinePropertyName(name);
-		
+
 		isSetter = false;
 		isGetter = false;
-		
+
 		if (name.startsWith("get")) {
 			isGetter = true;
 			validateAsGetter(method);
@@ -71,10 +70,7 @@ public class OptionModelMethodContainer
 		} else {
 			throw new InvalidProcessOptionException("Method '" + name + "' does not meet naming standards", method);
 		}
-		
-		
-		
-		
+
 		if (annotation != null && annotation.validator() != null && !annotation.validator().equals(Object.class)) {
 			Class<?> validatorClazz = annotation.validator();
 			try {
@@ -83,8 +79,8 @@ public class OptionModelMethodContainer
 				throw new InvalidProcessOptionException("Error creating instance of option validator class " + validatorClazz.getName() + ": " + ex.getMessage(), ex);
 			}
 		}
-		
-		if (annotation != null && annotation.enabler() != null && !annotation.validator().equals(Object.class)) {
+
+		if (annotation != null && annotation.enabler() != null && !annotation.enabler().equals(Object.class)) {
 			Class<?> enablerClazz = annotation.enabler();
 			try {
 				optionEnabler = (IOptionEnabler) enablerClazz.newInstance();
@@ -92,92 +88,89 @@ public class OptionModelMethodContainer
 				throw new InvalidProcessOptionException("Error creating instance of option enabler class " + enablerClazz.getName() + ": " + ex.getMessage(), ex);
 			}
 		}
-		
+
 	}
-	
-	
-	
-	
+
 	public String getId()
 	{
 		return annotation.id();
 	}
-	
+
 	public String getLabel()
 	{
 		return annotation.label();
 	}
-	
+
 	public String getTooltip()
 	{
 		return annotation.tooltip();
 	}
-	
+
 	public String getOptionGroup()
 	{
 		return annotation.optionGroup();
 	}
-	
+
 	public Class<?> getListModelClass()
 	{
 		return annotation.listModel();
 	}
-	
+
 	public Class<?> getValidatorClass()
 	{
 		return annotation.validator();
 	}
-	
+
 	public OptionValidator getValidator()
 	{
 		return optionValidator;
 	}
-	
+
 	public Class<?> getEnablerClass()
 	{
 		return annotation.enabler();
 	}
-	
+
 	public IOptionEnabler getEnabler()
 	{
 		return optionEnabler;
 	}
-	
-	public boolean isEnabled()
+
+	public boolean isVisible()
 	{
-		return annotation.enabled();
+		return annotation.visible();
 	}
-	
+
 	public String getMethodName()
 	{
 		return method.getName();
 	}
-	
+
 	public String getPropertyName()
 	{
 		return this.propertyName;
 	}
-	
+
 	public boolean isGetter()
 	{
 		return isGetter;
 	}
-	
+
 	public boolean isSetter()
 	{
 		return isSetter;
 	}
-	
+
 	public boolean hasAnnotation()
 	{
 		return (annotation != null);
 	}
-	
+
 	public boolean hasOrderAnnotation()
 	{
 		return (orderAnnotation != null);
 	}
-	
+
 	public int getOrder()
 	{
 		if (hasOrderAnnotation()) {
@@ -186,12 +179,12 @@ public class OptionModelMethodContainer
 			return Order.NOT_SET;
 		}
 	}
-	
+
 	public ValueBounds getValueBounds()
 	{
 		return boundsAnnotation;
 	}
-	
+
 	public Object getValue() throws MethodContainerInvokeException
 	{
 		if (isGetter()) {
@@ -203,12 +196,12 @@ public class OptionModelMethodContainer
 		} else {
 			throw new MethodContainerInvokeException("Method is not a getter");
 		}
-		
+
 	}
-	
+
 	public void setValue(Object value) throws MethodContainerInvokeException
 	{
-		
+
 		if (isSetter()) {
 			try {
 				method.invoke(declaringObject, OptionValueTypeConverter.fromString(value.toString(), getType()));
@@ -218,9 +211,9 @@ public class OptionModelMethodContainer
 		} else {
 			throw new MethodContainerInvokeException("Method is not a setter");
 		}
-		
+
 	}
-	
+
 	public Class<?> getType()
 	{
 		if (isGetter()) {
@@ -230,72 +223,71 @@ public class OptionModelMethodContainer
 			return parameterTypes[0];
 		}
 	}
-	
-	
+
 	public static boolean validateAsGetterOrSetter(Method method) throws InvalidProcessOptionException
 	{
 		boolean isGetter = false;
 		boolean isSetter = false;
-		
+
 		try {
 			if (validateAsGetter(method)) {
 				isGetter = true;
 			}
-			
+
 			if (validateAsSetter(method)) {
 				isSetter = true;
 			}
-		} catch(InvalidProcessOptionException ex) {
-			
+		} catch (InvalidProcessOptionException ex) {
+
 		}
-		
+
 		if (!isGetter && !isSetter) {
 			throw new InvalidProcessOptionException("Method '" + method.getName() + "' does not meet getter/setter requirements", method);
 		} else {
 			return true;
 		}
-		
+
 	}
-	
+
 	public static boolean validateAsGetter(Method method) throws InvalidProcessOptionException
 	{
 		if (!method.getName().startsWith("get") && !method.getName().startsWith("is")) {
 			throw new InvalidProcessOptionException("Getter method '" + method.getName() + "' goes not meet naming standards", method);
 		}
-		
+
 		if (method.isVarArgs()) {
 			throw new InvalidProcessOptionException("Getter method '" + method.getName() + "' cannot require parameters", method);
 		}
-		
+
 		if (method.getReturnType().equals(Void.TYPE)) {
 			throw new InvalidProcessOptionException("Getter method '" + method.getName() + "' must have a return type.", method);
 		}
-		
+
 		return true;
 	}
-	
+
 	public static boolean validateAsSetter(Method method) throws InvalidProcessOptionException
 	{
 		if (!method.getName().startsWith("set") && !method.getName().startsWith("put")) {
 			throw new InvalidProcessOptionException("Setter method '" + method.getName() + "' goes not meet naming standards", method);
 		}
-		
+
 		if (method.getParameterTypes().length != 1) {
 			throw new InvalidProcessOptionException("Setter method '" + method.getName() + "' must have a single parameter", method);
 		}
-		
+
 		if (!method.getReturnType().equals(Void.TYPE)) {
 			throw new InvalidProcessOptionException("Setter method '" + method.getName() + "' cannot have a return type.", method);
 		}
-		
+
 		return true;
 
 	}
-	
+
 	public static String determinePropertyName(String methodName)
 	{
 		String propertyName = null;
-		
+
 		if (methodName.startsWith("get")) {
 			propertyName = methodName.substring(3);
 		} else if (methodName.startsWith("is")) {
@@ -304,9 +296,9 @@ public class OptionModelMethodContainer
 			propertyName = methodName.substring(3);
 		} else if (methodName.startsWith("put")) {
 			propertyName = methodName.substring(3);
-		} 
-		
+		}
+
 		return propertyName;
 	}
-	
+
 }
