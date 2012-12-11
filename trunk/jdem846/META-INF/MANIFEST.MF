@@ -113,6 +113,7 @@ Export-Package: org.scannotation;
    us.wthr.jdem846,
    us.wthr.jdem846.math,
    us.wthr.jdem846.model.processing.dataload",
+ us.wthr.jdem846.modelgrid,
  us.wthr.jdem846.netcdf,
  us.wthr.jdem846.orthoimagery;uses:="us.wthr.jdem846,us.wthr.jdem846.rasterdata",
  us.wthr.jdem846.project;uses:="us.wthr.jdem846",

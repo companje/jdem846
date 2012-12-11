@@ -26,6 +26,7 @@ import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
+import us.wthr.jdem846.modelgrid.ModelGridContext;
 import us.wthr.jdem846.project.ProcessMarshall;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectMarshall;
@@ -54,6 +55,7 @@ public class ProjectContext
 	private ShapeDataContext shapeDataContext;
 	private ImageDataContext imageDataContext;
 	private ScriptingContext scriptingContext;
+	private ModelGridContext modelGridContext;
 
 	private List<OptionModel> defaultOptionModelList;
 	private List<OptionModelContainer> defaultOptionModelContainerList;
@@ -120,9 +122,10 @@ public class ProjectContext
 		shapeDataContext = new ShapeDataContext();
 		imageDataContext = new ImageDataContext();
 		scriptingContext = new ScriptingContext();
+		modelGridContext = new ModelGridContext();
 
 		try {
-			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, modelProcessManifest, scriptingContext);
+			modelContext = ModelContext.createInstance(rasterDataContext, shapeDataContext, imageDataContext, modelGridContext, modelProcessManifest, scriptingContext);
 		} catch (ModelContextException ex) {
 			// TODO: Display error message dialog
 			log.error("Exception creating model context: " + ex.getMessage(), ex);
@@ -351,6 +354,19 @@ public class ProjectContext
 
 	}
 
+	public void addModelGridData(String filePath) throws ProjectException
+	{
+		addModelGridData(filePath, true);
+	}
+
+	protected void addModelGridData(String filePath, boolean triggerModelChanged) throws ProjectException
+	{
+
+		if (triggerModelChanged) {
+			projectChangeBroker.fireOnDataAdded(true);
+		}
+	}
+
 	public ProjectChangeBroker getProjectChangeBroker()
 	{
 		return projectChangeBroker;
@@ -379,6 +395,11 @@ public class ProjectContext
 	public ImageDataContext getImageDataContext()
 	{
 		return imageDataContext;
+	}
+
+	public ModelGridContext getModelGridContext()
+	{
+		return modelGridContext;
 	}
 
 	public ScriptingContext getScriptingContext()
