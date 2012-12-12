@@ -1,5 +1,6 @@
 package us.wthr.jdem846.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,10 +27,10 @@ import us.wthr.jdem846.model.processing.GridFilterMethodStack;
 import us.wthr.jdem846.model.processing.GridProcessMethodStack;
 import us.wthr.jdem846.model.processing.render.ModelRenderOptionModel;
 import us.wthr.jdem846.model.processing.render.ModelRenderer;
-import us.wthr.jdem846.modelgrid.BufferedModelGrid;
-import us.wthr.jdem846.modelgrid.FillControlledModelGrid;
 import us.wthr.jdem846.modelgrid.IFillControlledModelGrid;
 import us.wthr.jdem846.modelgrid.IModelGrid;
+import us.wthr.jdem846.modelgrid.ModelGridFactory;
+import us.wthr.jdem846.modelgrid.ModelGridWriter;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ProcessInterruptListener;
@@ -49,6 +50,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 	private ModelProcessManifest modelProcessManifest;
 	private ModelContext modelContext;
 	private IFillControlledModelGrid modelGrid;
+	private IModelGrid innerModelGrid = null;
 
 	private ModelGridDimensions modelDimensions;
 	private GlobalOptionModel globalOptionModel;
@@ -86,7 +88,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		modelGrid = null;
 	}
 
-	public void prepare(ModelContext modelContext, ModelProcessManifest modelProcessManifest) throws RenderEngineException
+	public void prepare(ModelContext modelContext) throws RenderEngineException
 	{
 		globalOptionModel = modelProcessManifest.getGlobalOptionModel();
 
@@ -112,7 +114,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 
 		this.modelContext = modelContext;
 		this.modelDimensions = modelDimensions;
-		this.modelProcessManifest = modelProcessManifest;
+		this.modelProcessManifest = modelContext.getModelProcessManifest();
 
 		double minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
 		double maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
@@ -135,25 +137,25 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 			progressTracker.worked(1);
 		}
 
-		bufferControlledRasterDataContainer = new BufferControlledRasterDataContainer(modelContext.getRasterDataContext(), globalOptionModel.getPrecacheStrategy(),
-				modelDimensions.getLatitudeResolution(), globalOptionModel.getTileSize());
+		bufferControlledRasterDataContainer = new BufferControlledRasterDataContainer(modelContext.getRasterDataContext(), globalOptionModel.getPrecacheStrategy(), modelDimensions.getLatitudeResolution(), globalOptionModel.getTileSize());
 		modelContext.setRasterDataContext(bufferControlledRasterDataContainer);
 
-		IModelGrid innerModelGrid = null;
-		if (modelGrid == null) {
-
-			innerModelGrid = new BufferedModelGrid(globalOptionModel.getNorthLimit(), globalOptionModel.getSouthLimit(), globalOptionModel.getEastLimit(), globalOptionModel.getWestLimit(),
-					modelDimensions.getTextureLatitudeResolution(), modelDimensions.getTextureLongitudeResolution(), modelContext.getRasterDataContext().getDataMinimumValue(), modelContext
-							.getRasterDataContext().getDataMaximumValue());
-
+		innerModelGrid = modelContext.getModelGridContext().getModelGrid();
+		if (innerModelGrid == null) {
+			innerModelGrid = ModelGridFactory.createBufferedModelGrid(modelContext);
+		
 			innerModelGrid.reset();
-
-			modelGrid = new FillControlledModelGrid(globalOptionModel.getNorthLimit(), globalOptionModel.getSouthLimit(), globalOptionModel.getEastLimit(), globalOptionModel.getWestLimit(),
-					modelDimensions.getTextureLatitudeResolution(), modelDimensions.getTextureLongitudeResolution(), modelContext.getRasterDataContext().getDataMinimumValue(), modelContext
-							.getRasterDataContext().getDataMaximumValue(), (modelContext.getImageDataContext().getImageListSize() > 0), modelContext.getRasterDataContext(), innerModelGrid,
-					(globalOptionModel.getUseScripting() ? modelContext.getScriptingContext().getScriptProxy() : null));
+			modelContext.getModelGridContext().setModelGrid(innerModelGrid);
+		}
+		
+		
+		modelGrid = modelContext.getModelGridContext().getFillControlledModelGrid();
+		if (modelGrid == null) {
+			
+			modelGrid = ModelGridFactory.createFillControlledModelGrid(modelContext);
 			modelGrid.setForceResetAndRunFilters(globalOptionModel.getForceResetAndRunFilters());
-
+			modelContext.getModelGridContext().setFillControlledModelGrid(modelGrid);
+			
 			int dataRows = (int) MathExt.round((globalOptionModel.getNorthLimit() - globalOptionModel.getSouthLimit()) / modelDimensions.getTextureLatitudeResolution());
 			this.latitudeProcessedList = new LatitudeProcessedList(globalOptionModel.getNorthLimit(), modelDimensions.getTextureLatitudeResolution(), dataRows);
 		} else {
@@ -344,8 +346,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 
 				if (threadNumber >= 0 && threadNumber < modelPrograms.size()) {
 					ModelProgram modelProgram = this.modelPrograms.get(threadNumber);
-					threads[threadNumber] = new GridProcessChunkThread(this.latitudeProcessedList, modelProgram, threadNumber, chunkNorth, chunkSouth, east, west, latitudeResolution,
-							longitudeResolution);
+					threads[threadNumber] = new GridProcessChunkThread(this.latitudeProcessedList, modelProgram, threadNumber, chunkNorth, chunkSouth, east, west, latitudeResolution, longitudeResolution);
 
 					threads[threadNumber].start();
 				} else {
@@ -378,6 +379,14 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 				progressTracker.worked(threads.length);
 			}
 		}
+		
+		
+		try {
+			ModelGridWriter.write("C:\\jdem\\temp\\modelgrid_test.jdemgrid", innerModelGrid);
+		} catch (IOException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
 
 	}
 
@@ -394,7 +403,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		frameBufferController.start();
 
 		dataLoaded = true;
-
+		
 		log.info("Initializing final rendering...");
 		MapProjection mapProjection = null;
 

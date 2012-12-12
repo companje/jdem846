@@ -36,4 +36,25 @@ public interface IModelGrid
 
 	public int getHeight();
 
+	public double getNorth();
+
+	public double getSouth();
+
+	public double getEast();
+
+	public double getWest();
+
+	public double getLatitudeResolution();
+
+	public double getLongitudeResolution();
+
+	public long getGridLength();
+
+	public double getMinimum();
+
+	public void setMinimum(double minimum);
+
+	public double getMaximum();
+
+	public void setMaximum(double maximum);
 }

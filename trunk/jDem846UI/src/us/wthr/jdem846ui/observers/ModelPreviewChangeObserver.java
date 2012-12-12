@@ -316,7 +316,7 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 		
 		try {
 			
-			modelBuilder.prepare(modelContextWorkingCopy, modelContextWorkingCopy.getModelProcessManifest());
+			modelBuilder.prepare(modelContextWorkingCopy);
 		} catch (RenderEngineException ex) {
 			log.warn("Error preparing renderer: " + ex.getMessage(), ex);
 			// TODO Display error message

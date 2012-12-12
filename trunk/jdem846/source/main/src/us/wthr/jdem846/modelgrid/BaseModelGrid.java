@@ -90,4 +90,70 @@ public abstract class BaseModelGrid implements IModelGrid
 		return height;
 	}
 
+	@Override
+	public double getNorth()
+	{
+		return north;
+	}
+
+	@Override
+	public double getSouth()
+	{
+		return south;
+	}
+
+	@Override
+	public double getEast()
+	{
+		return east;
+	}
+
+	@Override
+	public double getWest()
+	{
+		return west;
+	}
+
+	@Override
+	public double getLatitudeResolution()
+	{
+		return latitudeResolution;
+	}
+
+	@Override
+	public double getLongitudeResolution()
+	{
+		return longitudeResolution;
+	}
+
+	@Override
+	public long getGridLength()
+	{
+		return gridLength;
+	}
+
+	@Override
+	public double getMinimum()
+	{
+		return minimum;
+	}
+
+	@Override
+	public void setMinimum(double minimum)
+	{
+		this.minimum = minimum;
+	}
+
+	@Override
+	public double getMaximum()
+	{
+		return maximum;
+	}
+
+	@Override
+	public void setMaximum(double maximum)
+	{
+		this.maximum = maximum;
+	}
+
 }

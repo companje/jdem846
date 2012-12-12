@@ -218,7 +218,7 @@ public class RenderViewPane extends Panel
 					modelProcessManifest.getGlobalOptionModel().setDisposeGridOnComplete(false);
 					
 					log.info("Initializing model builder...");
-					modelBuilder.prepare(modelContext, modelProcessManifest);
+					modelBuilder.prepare(modelContext);
 					
 					log.info("Processing...");
 					start = System.currentTimeMillis();

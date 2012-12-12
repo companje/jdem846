@@ -15,7 +15,6 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelBuilder;
-import us.wthr.jdem846.model.ModelProcessManifest;
 import us.wthr.jdem846.model.ProgressTracker;
 import us.wthr.jdem846ui.project.ProjectContext;
 
@@ -52,13 +51,11 @@ public class RenderTask extends Job
 			return Status.OK_STATUS;
 		}
 		
-		ModelProcessManifest modelProcessManifest = modelContext.getModelProcessManifest();
-		
 		ModelBuilder modelBuilder = new ModelBuilder(new RenderProgressMonitor(progressMonitor));
 		
 		log.info("Initializing model builder...");
 		try {
-			modelBuilder.prepare(modelContext, modelProcessManifest);
+			modelBuilder.prepare(modelContext);
 		} catch (RenderEngineException ex) {
 			fireRenderExceptionListeners(ex);
 			return Status.OK_STATUS;

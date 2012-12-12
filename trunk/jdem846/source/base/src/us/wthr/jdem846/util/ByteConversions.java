@@ -167,34 +167,9 @@ public class ByteConversions
 	 */
 	public static byte[] doubleToBytes(double value, ByteOrder byteOrder)
 	{
-
 		long bits = Double.doubleToLongBits(value);
-		
-		byte[] buffer = null;
-		
-		if (byteOrder == ByteOrder.MSBFIRST) {
-			buffer = new byte[] {
-				(byte)(bits >>> 56),
-				(byte)(bits >>> 48),
-				(byte)(bits >>> 40),
-				(byte)(bits >>> 32),
-                (byte)(bits >>> 24),
-                (byte)(bits >>> 16),
-                (byte)(bits >>> 8),
-                (byte)bits};
-		} else {
-			buffer = new byte[] {
-	                (byte)(bits),
-	                (byte)(bits >>> 8),
-	                (byte)(bits >>> 16),
-	                (byte)(bits >>> 24),
-	                (byte)(bits >>> 32),
-	                (byte)(bits >>> 40),
-	                (byte)(bits >>> 48),
-	                (byte)(bits >>> 56)
-			};
-		}
-		
+		byte[] buffer = new byte[8];
+		longToBytes(bits, buffer, byteOrder);
 		return buffer;
 	}
 	
@@ -431,6 +406,55 @@ public class ByteConversions
 		};
 		return bytesToLong(buffer, byteOrder);
 	}
+	
+	
+	
+	
+	
+	public static byte[] longToBytes(int value)
+	{
+		return longToBytes(value, DEFAULT_BYTE_ORDER);
+	}
+
+	public static byte[] longToBytes(long bits, ByteOrder byteOrder)
+	{
+		byte[] buffer = new byte[8];
+		longToBytes(bits, buffer, byteOrder);
+		return buffer;
+	}
+	
+	public static void longToBytes(long bits, byte[] buffer)
+	{
+		longToBytes(bits, buffer, ByteConversions.DEFAULT_BYTE_ORDER);
+	}
+	
+	public static void longToBytes(long bits, byte[] buffer, ByteOrder byteOrder)
+	{
+
+		if (byteOrder == ByteOrder.MSBFIRST) {
+			buffer[0] = (byte)(bits >>> 56);
+			buffer[1] = (byte)(bits >>> 48);
+			buffer[2] = (byte)(bits >>> 40);
+			buffer[3] = (byte)(bits >>> 32);
+			buffer[4] = (byte)(bits >>> 24);
+			buffer[5] = (byte)(bits >>> 16);
+			buffer[6] = (byte)(bits >>> 8);
+			buffer[7] = (byte)(bits);
+		} else {
+			buffer[0] = (byte)(bits);
+			buffer[1] = (byte)(bits >>> 8);
+			buffer[2] = (byte)(bits >>> 16);
+			buffer[3] = (byte)(bits >>> 24);
+			buffer[4] = (byte)(bits >>> 32);
+			buffer[5] = (byte)(bits >>> 40);
+			buffer[6] = (byte)(bits >>> 48);
+			buffer[7] = (byte)(bits >>> 56);
+		}
+	}
+	
+	
+	
+	
 	
 	
 }
