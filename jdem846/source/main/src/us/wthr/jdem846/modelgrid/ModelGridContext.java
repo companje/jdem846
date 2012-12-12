@@ -11,6 +11,7 @@ public class ModelGridContext implements DataContext
 	private static Log log = Logging.getLog(ModelGridContext.class);
 
 	private IModelGrid modelGrid = null;
+	private IFillControlledModelGrid fillControlledModelGrid = null;
 
 	private boolean isDisposed = false;
 
@@ -22,7 +23,6 @@ public class ModelGridContext implements DataContext
 	@Override
 	public void prepare() throws ContextPrepareException
 	{
-		// TODO Auto-generated method stub
 
 	}
 
@@ -50,6 +50,16 @@ public class ModelGridContext implements DataContext
 	public IModelGrid getModelGrid()
 	{
 		return modelGrid;
+	}
+	
+	public IFillControlledModelGrid getFillControlledModelGrid()
+	{
+		return fillControlledModelGrid;
+	}
+
+	public void setFillControlledModelGrid(IFillControlledModelGrid fillControlledModelGrid)
+	{
+		this.fillControlledModelGrid = fillControlledModelGrid;
 	}
 
 	public void importModelGrid(String filePath) throws DataSourceException

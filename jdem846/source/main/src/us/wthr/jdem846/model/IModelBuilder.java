@@ -9,7 +9,7 @@ public interface IModelBuilder
 
 	public void dispose();
 
-	public void prepare(ModelContext modelContext, ModelProcessManifest modelProcessManifest) throws RenderEngineException;
+	public void prepare(ModelContext modelContext) throws RenderEngineException;
 
 	public ElevationModel process() throws RenderEngineException;
 

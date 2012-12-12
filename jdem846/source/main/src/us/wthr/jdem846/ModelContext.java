@@ -78,6 +78,10 @@ public class ModelContext
 		this.modelProcessManifest = modelProcessManifest;
 		this.scriptingContext = scriptingContext;
 
+		if (this.modelGridContext == null) {
+			this.modelGridContext = new ModelGridContext();
+		}
+
 		this.contextId = contextId;
 	}
 
@@ -219,6 +223,16 @@ public class ModelContext
 	public void setModelProcessManifest(ModelProcessManifest modelProcessManifest)
 	{
 		this.modelProcessManifest = modelProcessManifest;
+	}
+
+	public ModelGridContext getModelGridContext()
+	{
+		return modelGridContext;
+	}
+
+	public void setModelGridContext(ModelGridContext modelGridContext)
+	{
+		this.modelGridContext = modelGridContext;
 	}
 
 	public ScriptingContext getScriptingContext()
