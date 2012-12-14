@@ -7,7 +7,6 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
-import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
 import us.wthr.jdem846ui.observers.OptionValidationChangeObserver;
 import us.wthr.jdem846ui.project.ProjectContext;
 import us.wthr.jdem846ui.project.ProjectException;
@@ -53,7 +52,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public void postStartup() {
 		super.postStartup();
-		ModelPreviewChangeObserver.getInstance().update(true, true);
+		//ModelPreviewChangeObserver.getInstance().update(true, true);
 	}
 
 	public String getInitialWindowPerspectiveId() {

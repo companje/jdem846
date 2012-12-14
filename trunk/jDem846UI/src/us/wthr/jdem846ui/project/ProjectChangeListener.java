@@ -12,6 +12,6 @@ public interface ProjectChangeListener {
 	public void onElevationModelAdded(ElevationModel elevationModel);
 	public void onElevationModelRemoved(ElevationModel elevationModel);
 	
-	public void onProjectLoaded();
+	public void onProjectLoaded(String filePath);
 	
 }

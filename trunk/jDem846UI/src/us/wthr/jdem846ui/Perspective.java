@@ -7,6 +7,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 import us.wthr.jdem846ui.views.LogConsoleView;
 import us.wthr.jdem846ui.views.ScriptEditorView;
 import us.wthr.jdem846ui.views.data.DataView;
+import us.wthr.jdem846ui.views.geoimage.GeoImagePropertiesView;
 import us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView;
 import us.wthr.jdem846ui.views.models.RenderedModelDisplayView;
 import us.wthr.jdem846ui.views.models.RenderedModelListView;
@@ -32,6 +33,7 @@ public class Perspective implements IPerspectiveFactory
 
 		IFolderLayout bottomLeftFolder = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.40f, "topLeft");
 		bottomLeftFolder.addView(RasterPropertiesView.ID);
+		bottomLeftFolder.addView(GeoImagePropertiesView.ID);
 		bottomLeftFolder.addView(RenderedModelListView.ID);
 
 		IFolderLayout topRightFolder = layout.createFolder("topRight", IPageLayout.RIGHT, 0.60f, editorArea);

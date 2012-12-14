@@ -1,6 +1,9 @@
 package us.wthr.jdem846.modelgrid;
 
-public class ModelGridHeader
+import us.wthr.jdem846.input.InputSourceData;
+
+
+public class ModelGridHeader implements InputSourceData
 {
 	public String gridPrefix;
 	

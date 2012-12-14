@@ -83,6 +83,12 @@
             id="jdem846ui.rasterPropertiesView"
             icon="icons/eclipse/binary.gif" />
      
+     <view
+            name="GeoImage Properties"
+            class="us.wthr.jdem846ui.views.geoimage.GeoImagePropertiesView"
+            id="jdem846ui.geoImagePropertiesView"
+            icon="icons/eclipse/binary.gif" />
+     
 	<view
          name="Tasks"
          icon="icons/eclipse/progress_task.gif"
@@ -204,5 +210,29 @@
          </property>
       </product>
    </extension>
-
+	
+	<extension point="org.eclipse.core.runtime.preferences">
+		<!-- <scope name="foo" class="com.example.FooPrefs"/> -->
+		<initializer class="us.wthr.jdem846ui.ApplicationPreferenceInitializer" />
+		<modifier class="us.wthr.jdem846ui.ApplicationPreferenceChangeListener"/>
+	</extension>
+	
+	<extension point="org.eclipse.ui.preferencePages">
+		<page id="jDem846UI.preferences.general"
+			name="General"
+			class="us.wthr.jdem846ui.preferences.GeneralPreferencesPage" />
+			
+		<page id="jDem846UI.preferences.performance"
+			name="Performance"
+			class="us.wthr.jdem846ui.preferences.PerformancePreferencesPage" />
+		
+		<page id="jDem846UI.preferences.previewing"
+			name="Previewing"
+			class="us.wthr.jdem846ui.preferences.PreviewingPreferencesPage" />
+		
+		<page id="jDem846UI.preferences.defaults"
+			name="Defaults"
+			class="us.wthr.jdem846ui.preferences.DefaultsPreferencesPage" />
+	</extension>
+	
 </plugin>

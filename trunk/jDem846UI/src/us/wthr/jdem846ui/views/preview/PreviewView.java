@@ -103,14 +103,15 @@ public class PreviewView extends ViewPart
 			@Override
 			public void controlResized(ControlEvent e)
 			{
-
-				int previewHeight = canvas.getClientArea().height;
-				int previewWidth = canvas.getClientArea().width;
-				ModelPreviewChangeObserver.getInstance().setPreviewHeight(previewHeight);
-				ModelPreviewChangeObserver.getInstance().setPreviewWidth(previewWidth);
-
-				if (previewHeight > 0 && previewWidth > 0) {
-					ModelPreviewChangeObserver.getInstance().update(false, false);
+				if (canvas.isVisible()) {
+					int previewHeight = canvas.getClientArea().height;
+					int previewWidth = canvas.getClientArea().width;
+					ModelPreviewChangeObserver.getInstance().setPreviewHeight(previewHeight);
+					ModelPreviewChangeObserver.getInstance().setPreviewWidth(previewWidth);
+	
+					if (previewHeight > 0 && previewWidth > 0) {
+						ModelPreviewChangeObserver.getInstance().update(false, false);
+					}
 				}
 			}
 

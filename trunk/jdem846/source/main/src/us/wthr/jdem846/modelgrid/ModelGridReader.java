@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -18,13 +19,13 @@ public class ModelGridReader extends ModelGridFileIO {
 	private static Log log = Logging.getLog(ModelGridReader.class);
 	
 	
-	public static IModelGrid read(String filePath) throws IOException
+	public static IModelGrid read(String filePath) throws IOException, DataSourceException
 	{
 		File f = new File(filePath);
 		return read(f);
 	}
 	
-	public static IModelGrid read(File filePath) throws IOException
+	public static IModelGrid read(File filePath) throws IOException, DataSourceException
 	{
 		InputStream in = new BufferedInputStream(new FileInputStream(filePath));
 		IModelGrid modelGrid = read(in);
@@ -32,12 +33,11 @@ public class ModelGridReader extends ModelGridFileIO {
 		return modelGrid;
 	}
 	
-	public static IModelGrid read(InputStream in) throws IOException
+	public static IModelGrid read(InputStream in) throws IOException, DataSourceException
 	{
 		IModelGrid modelGrid = null;
 		
 		ModelGridHeader header = readHeader(in);
-		
 		modelGrid = ModelGridFactory.createBufferedModelGrid(header.north, header.south, header.east, header.west, header.latitudeResolution, header.longitudeResolution, header.minimum, header.maximum);
 		
 		ModelGridCell cell = new ModelGridCell();

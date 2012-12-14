@@ -18,6 +18,8 @@ import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.modelgrid.ModelGridContext;
+import us.wthr.jdem846.modelgrid.ModelGridHeader;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
@@ -104,7 +106,16 @@ public class DataView extends ViewPart
 			}
 		}
 
-		// root.addChild(p3);
+		ModelGridContext modelGridContext = ProjectContext.getInstance().getModelGridContext();
+		ModelGridHeader modelGridHeader = (modelGridContext != null) ? modelGridContext.getUserProvidedModelGridHeader() : null;
+		String gridLoadedFrom = (modelGridContext != null) ? modelGridContext.getGridLoadedFrom() : null;
+		if (modelGridHeader != null && gridLoadedFrom != null) {
+			root.addChild(p3);
+			File f = new File(gridLoadedFrom);
+			DataTreeObject obj = new DataTreeObject(f.getName(), modelGridHeader, IconEnum.MODELGRID_DATA);
+			p3.addChild(obj);
+		}
+
 
 		return root;
 	}
@@ -167,7 +178,7 @@ public class DataView extends ViewPart
 			}
 
 			@Override
-			public void onProjectLoaded()
+			public void onProjectLoaded(String projectPath)
 			{
 				resetAndUpdateModel();
 			}

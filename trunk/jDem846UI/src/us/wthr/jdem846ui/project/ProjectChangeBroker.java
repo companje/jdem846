@@ -103,7 +103,7 @@ public class ProjectChangeBroker
 		ignoreInterimEvents = false;
 	}
 
-	public void fireOnProjectLoaded(boolean ignoreInterim)
+	public void fireOnProjectLoaded(String filePath, boolean ignoreInterim)
 	{
 		if (ignoreInterimEvents) {
 			return;
@@ -112,7 +112,7 @@ public class ProjectChangeBroker
 		ignoreInterimEvents = ignoreInterim;
 
 		for (ProjectChangeListener listener : listeners) {
-			listener.onProjectLoaded();
+			listener.onProjectLoaded(filePath);
 		}
 
 		ignoreInterimEvents = false;

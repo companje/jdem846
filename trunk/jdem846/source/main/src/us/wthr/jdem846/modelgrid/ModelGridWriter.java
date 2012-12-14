@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -20,20 +21,20 @@ public class ModelGridWriter extends ModelGridFileIO
 
 	
 	
-	public static void write(String path, IModelGrid modelGrid) throws IOException
+	public static void write(String path, IModelGrid modelGrid) throws IOException, DataSourceException
 	{
 		File f = new File(path);
 		write(f, modelGrid);
 	}
 	
-	public static void write(File file, IModelGrid modelGrid) throws IOException
+	public static void write(File file, IModelGrid modelGrid) throws IOException, DataSourceException
 	{
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
 		write(out, modelGrid);
 		out.close();
 	}
 	
-	public static void write(OutputStream out, IModelGrid modelGrid) throws IOException
+	public static void write(OutputStream out, IModelGrid modelGrid) throws IOException, DataSourceException
 	{
 		long bytesWritten = 0;
 		
@@ -58,7 +59,7 @@ public class ModelGridWriter extends ModelGridFileIO
 		
 	}	
 
-	protected static long writeCell(IModelGrid modelGrid, double latitude, double longitude, OutputStream out) throws IOException
+	protected static long writeCell(IModelGrid modelGrid, double latitude, double longitude, OutputStream out) throws IOException, DataSourceException
 	{
 		double elevation = modelGrid.getElevation(latitude, longitude, true);
 		int rgba = modelGrid.getRgba(latitude, longitude);

@@ -30,6 +30,22 @@ public class GlobalOptionModelEnabler implements IOptionEnabler
 		} else if (propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.maintainAspectRatio") && !globalOptionModel.getRenderProjection().equals("us.wthr.jdem846.render.canvasProjection.flat")) {
 			enable = false;
 		}
+		
+		
+		if (modelContext.getModelGridContext() != null 
+				&& modelContext.getModelGridContext().getGridLoadedFrom() != null
+				&& (propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.width")
+						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.height")
+						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.maintainAspectRatio")
+						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.estimateElevationRange")
+						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.elevationMultiple")
+						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.elevationScale")
+						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.textureQuality")
+				)) {
+			enable = false;
+		}
+		
+		
 		return enable;
 	}
 
