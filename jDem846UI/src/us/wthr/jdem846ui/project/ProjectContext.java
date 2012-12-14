@@ -171,7 +171,8 @@ public class ProjectContext
 			}
 		}
 
-		projectChangeBroker.fireOnProjectLoaded(true);
+		
+		projectChangeBroker.fireOnProjectLoaded(projectPath, true);
 
 	}
 
@@ -253,6 +254,21 @@ public class ProjectContext
 
 		return defaultOptionModelList;
 	}
+	
+	public void addModelGridDataset(String filePath) throws ProjectException
+	{
+		addModelGridDataset(filePath, true);
+	}
+	
+	protected void addModelGridDataset(String filePath, boolean triggerModelChanged) throws ProjectException
+	{
+		
+		modelGridContext.importModelGrid(filePath);
+		
+		if (triggerModelChanged) {
+			projectChangeBroker.fireOnDataAdded(true);
+		}
+	}
 
 	public void addElevationDataset(final String filePath) throws ProjectException
 	{
@@ -331,7 +347,7 @@ public class ProjectContext
 
 	public void addImageryData(String filePath, double north, double south, double east, double west) throws ProjectException
 	{
-		addImageryData(filePath, north, south, east, west);
+		addImageryData(filePath, north, south, east, west, true);
 	}
 
 	protected void addImageryData(String filePath, double north, double south, double east, double west, boolean triggerModelChanged) throws ProjectException
@@ -352,19 +368,6 @@ public class ProjectContext
 			projectChangeBroker.fireOnDataAdded(true);
 		}
 
-	}
-
-	public void addModelGridData(String filePath) throws ProjectException
-	{
-		addModelGridData(filePath, true);
-	}
-
-	protected void addModelGridData(String filePath, boolean triggerModelChanged) throws ProjectException
-	{
-
-		if (triggerModelChanged) {
-			projectChangeBroker.fireOnDataAdded(true);
-		}
 	}
 
 	public ProjectChangeBroker getProjectChangeBroker()

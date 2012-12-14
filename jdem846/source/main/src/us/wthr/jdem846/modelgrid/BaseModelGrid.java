@@ -1,5 +1,6 @@
 package us.wthr.jdem846.modelgrid;
 
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -50,7 +51,7 @@ public abstract class BaseModelGrid implements IModelGrid
 	}
 
 	@Override
-	public double getElevation(double latitude, double longitude)
+	public double getElevation(double latitude, double longitude) throws DataSourceException
 	{
 		return getElevation(latitude, longitude, false);
 	}

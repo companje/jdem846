@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -50,6 +51,11 @@ public class JDem846Properties
 		overrideWithSystemProperties();
 	}
 	
+	
+	public static Set<Object> getPropertyNames()
+	{
+		return properties.keySet();
+	}
 	
 	public static boolean hasProperty(String name)
 	{

@@ -68,7 +68,13 @@ public class AddDataAction extends BasicAction
 					// TODO Auto-generated catch block
 					ex.printStackTrace();
 				}
-				
+			} else if (extension != null && extension.equalsIgnoreCase("jdemgrid")) {
+				try {
+					ProjectContext.getInstance().addModelGridDataset(file.getAbsolutePath());
+				} catch (ProjectException ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
 			} else {
 				
 				try {

@@ -74,8 +74,12 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 	
 	
 	@Override
-	public void onProjectLoaded() {
-		update(true, true);
+	public void onProjectLoaded(String projectPath) {
+		
+		// If project path is null, then it's a blank project and there's nothing to rerender.
+		if (projectPath != null) { 
+			update(true, true);
+		}
 	}
 
 	protected void setWorkingCopyOptions()

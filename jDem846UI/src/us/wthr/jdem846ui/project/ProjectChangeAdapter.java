@@ -31,7 +31,7 @@ public class ProjectChangeAdapter implements ProjectChangeListener {
 	}
 	
 	@Override
-	public void onProjectLoaded()
+	public void onProjectLoaded(String filePath)
 	{
 		
 	}

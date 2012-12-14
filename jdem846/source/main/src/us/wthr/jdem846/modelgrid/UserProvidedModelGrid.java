@@ -3,7 +3,6 @@ package us.wthr.jdem846.modelgrid;
 import java.io.File;
 import java.io.IOException;
 
-import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 import us.wthr.jdem846.model.ModelPoint;
@@ -39,6 +38,12 @@ public class UserProvidedModelGrid implements IModelGrid
 		return file.getAbsolutePath();
 	}
 	
+	public ModelGridHeader getModelGridHeader()
+	{
+		return this.modelGridHeader;
+	}
+	
+	
 	public void load() throws DataSourceException
 	{
 		try {
@@ -51,6 +56,15 @@ public class UserProvidedModelGrid implements IModelGrid
 	public void unload()
 	{
 		this.modelGrid = null;
+	}
+	
+	
+	protected IModelGrid getInternalModelGrid() throws DataSourceException
+	{
+		if (modelGrid == null) {
+			load();
+		}
+		return modelGrid;
 	}
 	
 	@Override
@@ -80,79 +94,58 @@ public class UserProvidedModelGrid implements IModelGrid
 	}
 
 	@Override
-	public ModelPoint get(double latitude, double longitude)
+	public ModelPoint get(double latitude, double longitude) throws DataSourceException
 	{
-		if (this.modelGrid != null) {
-			return modelGrid.get(latitude, longitude);
-		} else {
-			return null;
-		}
+		return getInternalModelGrid().get(latitude, longitude);
 	}
 
 	@Override
-	public double getElevation(double latitude, double longitude)
+	public double getElevation(double latitude, double longitude) throws DataSourceException
 	{
-		if (this.modelGrid != null) {
-			return modelGrid.getElevation(latitude, longitude);
-		} else {
-			return DemConstants.ELEV_UNDETERMINED;
-		}
+		return getInternalModelGrid().getElevation(latitude, longitude);
 	}
 
 	@Override
-	public double getElevation(double latitude, double longitude, boolean basic)
+	public double getElevation(double latitude, double longitude, boolean basic) throws DataSourceException
 	{
-		if (this.modelGrid != null) {
-			return modelGrid.getElevation(latitude, longitude, basic);
-		} else {
-			return DemConstants.ELEV_UNDETERMINED;
-		}
+		return getInternalModelGrid().getElevation(latitude, longitude, basic);
+
 	}
 
 	@Override
-	public void setElevation(double latitude, double longitude, double elevation)
+	public void setElevation(double latitude, double longitude, double elevation) throws DataSourceException
 	{
 		// To nothing. user provided model grids are read-only
 	}
 
 	@Override
-	public void getRgba(double latitude, double longitude, int[] fill)
+	public void getRgba(double latitude, double longitude, int[] fill) throws DataSourceException
 	{
-		if (this.modelGrid != null) {
-			modelGrid.getRgba(latitude, longitude, fill);
-		}
+		getInternalModelGrid().getRgba(latitude, longitude, fill);
 	}
 
 	@Override
-	public int getRgba(double latitude, double longitude)
+	public int getRgba(double latitude, double longitude) throws DataSourceException
 	{
-		if (this.modelGrid != null) {
-			return modelGrid.getRgba(latitude, longitude);
-		} else {
-			return 0x0;
-		}
+		return getInternalModelGrid().getRgba(latitude, longitude);
 	}
 
 	@Override
-	public void setRgba(double latitude, double longitude, int rgba)
+	public void setRgba(double latitude, double longitude, int rgba) throws DataSourceException
 	{
 		// To nothing. user provided model grids are read-only
 	}
 
 	@Override
-	public void setRgba(double latitude, double longitude, int[] rgba)
+	public void setRgba(double latitude, double longitude, int[] rgba) throws DataSourceException
 	{
 		// To nothing. user provided model grids are read-only
 	}
 
 	@Override
-	public ElevationHistogramModel getElevationHistogramModel()
+	public ElevationHistogramModel getElevationHistogramModel() throws DataSourceException
 	{
-		if (this.modelGrid != null) {
-			return modelGrid.getElevationHistogramModel();
-		} else {
-			return null;
-		}
+		return getInternalModelGrid().getElevationHistogramModel();
 	}
 
 	@Override

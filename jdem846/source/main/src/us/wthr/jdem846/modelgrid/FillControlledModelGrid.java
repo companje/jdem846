@@ -65,13 +65,13 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 	}
 
 	@Override
-	public void reset()
+	public void reset() throws DataSourceException
 	{
 		modelGrid.reset();
 	}
 
 	@Override
-	public ModelPoint get(double latitude, double longitude)
+	public ModelPoint get(double latitude, double longitude) throws DataSourceException
 	{
 		return modelGrid.get(latitude, longitude);
 	}
@@ -91,7 +91,7 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 	}
 
 	@Override
-	public double getElevation(double latitude, double longitude, boolean basic)
+	public double getElevation(double latitude, double longitude, boolean basic) throws DataSourceException
 	{
 		double elevation = modelGrid.getElevation(latitude, longitude);
 		boolean doFilters = forceResetAndRunFilters;
@@ -122,31 +122,31 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 	}
 
 	@Override
-	public void setElevation(double latitude, double longitude, double elevation)
+	public void setElevation(double latitude, double longitude, double elevation) throws DataSourceException
 	{
 		modelGrid.setElevation(latitude, longitude, elevation);
 	}
 
 	@Override
-	public void getRgba(double latitude, double longitude, int[] fill)
+	public void getRgba(double latitude, double longitude, int[] fill) throws DataSourceException
 	{
 		modelGrid.getRgba(latitude, longitude, fill);
 	}
 
 	@Override
-	public int getRgba(double latitude, double longitude)
+	public int getRgba(double latitude, double longitude) throws DataSourceException
 	{
 		return modelGrid.getRgba(latitude, longitude);
 	}
 
 	@Override
-	public void setRgba(double latitude, double longitude, int rgba)
+	public void setRgba(double latitude, double longitude, int rgba) throws DataSourceException
 	{
 		modelGrid.setRgba(latitude, longitude, rgba);
 	}
 
 	@Override
-	public void setRgba(double latitude, double longitude, int[] rgba)
+	public void setRgba(double latitude, double longitude, int[] rgba) throws DataSourceException
 	{
 		modelGrid.setRgba(latitude, longitude, rgba);
 	}
@@ -263,7 +263,7 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 	}
 
 	@Override
-	public int[] getModelTexture()
+	public int[] getModelTexture() throws DataSourceException
 	{
 		return this.modelGrid.getModelTexture();
 	}

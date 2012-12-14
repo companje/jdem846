@@ -1,5 +1,6 @@
 package us.wthr.jdem846.modelgrid;
 
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.model.processing.GridFilter;
 import us.wthr.jdem846.model.processing.GridFilterMethodStack;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
@@ -10,7 +11,7 @@ public interface IFillControlledModelGrid extends IModelGrid
 
 	public void setForceResetAndRunFilters(boolean forceResetAndRunFilters);
 
-	public IFillControlledModelGrid createDependentInstance(RasterDataContext rasterDataContext);
+	public IFillControlledModelGrid createDependentInstance(RasterDataContext rasterDataContext) throws DataSourceException;
 
 	public void processFiltersOnPoint(double latitude, double longitude);
 

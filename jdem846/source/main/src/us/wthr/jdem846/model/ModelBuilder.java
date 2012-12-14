@@ -1,6 +1,5 @@
 package us.wthr.jdem846.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +29,6 @@ import us.wthr.jdem846.model.processing.render.ModelRenderer;
 import us.wthr.jdem846.modelgrid.IFillControlledModelGrid;
 import us.wthr.jdem846.modelgrid.IModelGrid;
 import us.wthr.jdem846.modelgrid.ModelGridFactory;
-import us.wthr.jdem846.modelgrid.ModelGridWriter;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ProcessInterruptListener;
@@ -90,6 +88,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 
 	public void prepare(ModelContext modelContext) throws RenderEngineException
 	{
+		this.modelProcessManifest = modelContext.getModelProcessManifest();
 		globalOptionModel = modelProcessManifest.getGlobalOptionModel();
 
 		if (progressTracker != null) {
@@ -114,7 +113,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 
 		this.modelContext = modelContext;
 		this.modelDimensions = modelDimensions;
-		this.modelProcessManifest = modelContext.getModelProcessManifest();
+		
 
 		double minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
 		double maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
@@ -142,9 +141,12 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 
 		innerModelGrid = modelContext.getModelGridContext().getModelGrid();
 		if (innerModelGrid == null) {
-			innerModelGrid = ModelGridFactory.createBufferedModelGrid(modelContext);
-		
-			innerModelGrid.reset();
+			try {
+				innerModelGrid = ModelGridFactory.createBufferedModelGrid(modelContext);
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Error creating buffered model grid: " + ex.getMessage(), ex);
+			}
+			
 			modelContext.getModelGridContext().setModelGrid(innerModelGrid);
 		}
 		
@@ -152,7 +154,12 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		modelGrid = modelContext.getModelGridContext().getFillControlledModelGrid();
 		if (modelGrid == null) {
 			
-			modelGrid = ModelGridFactory.createFillControlledModelGrid(modelContext);
+			try {
+				modelGrid = ModelGridFactory.createFillControlledModelGrid(modelContext);
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Error creating fill controlled model grid: " + ex.getMessage(), ex);
+			}
+			
 			modelGrid.setForceResetAndRunFilters(globalOptionModel.getForceResetAndRunFilters());
 			modelContext.getModelGridContext().setFillControlledModelGrid(modelGrid);
 			
@@ -206,7 +213,14 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 			} catch (DataSourceException ex) {
 				throw new RenderEngineException("Error creating raster data context copy: " + ex.getMessage(), ex);
 			}
-			IFillControlledModelGrid programModelGrid = modelGrid.createDependentInstance(programRasterInstance);
+			
+			
+			IFillControlledModelGrid programModelGrid;
+			try {
+				programModelGrid = modelGrid.createDependentInstance(programRasterInstance);
+			} catch (DataSourceException ex) {
+				throw new RenderEngineException("Error creating subinstance of model grid: " + ex.getMessage(), ex);
+			}
 
 			GridFilterMethodStack filterStack = modelProgram.getFilterStack();
 			GridProcessMethodStack processStack = modelProgram.getProcessStack();
@@ -381,12 +395,12 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		}
 		
 		
-		try {
-			ModelGridWriter.write("C:\\jdem\\temp\\modelgrid_test.jdemgrid", innerModelGrid);
-		} catch (IOException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
-		}
+//		try {
+//			ModelGridWriter.write("C:\\jdem\\temp\\modelgrid_test.jdemgrid", innerModelGrid);
+//		} catch (IOException ex) {
+//			// TODO Auto-generated catch block
+//			ex.printStackTrace();
+//		}
 
 	}
 
@@ -433,6 +447,14 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		double latitudeResolution = modelDimensions.getModelLatitudeResolution();
 		double longitudeResolution = modelDimensions.getModelLongitudeResolution();
 
+		if (latitudeResolution <= 0) {
+			throw new RenderEngineException("Invalid latitude resolution: " + latitudeResolution);
+		}
+		
+		if (longitudeResolution <= 0) {
+			throw new RenderEngineException("Invalid longitude resolution: " + longitudeResolution);
+		}
+		
 		double north = globalOptionModel.getNorthLimit();
 		double south = globalOptionModel.getSouthLimit();
 		double east = globalOptionModel.getEastLimit();
@@ -510,7 +532,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		return elevationModel;
 	}
 
-	protected void setJDemElevationModelProperties(ElevationModel elevationModel)
+	protected void setJDemElevationModelProperties(ElevationModel elevationModel) throws RenderEngineException
 	{
 
 		elevationModel.setProperty("subject", JDem846Properties.getProperty("us.wthr.jdem846.defaults.subject"));
@@ -524,7 +546,12 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		elevationModel.setProperty("product-version", JDem846Properties.getProperty("us.wthr.jdem846.version"));
 
 		if (modelGrid != null) {
-			elevationModel.setElevationHistogramModel(modelGrid.getElevationHistogramModel());
+			try {
+				elevationModel.setElevationHistogramModel(modelGrid.getElevationHistogramModel());
+			} catch (DataSourceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		elevationModel.setProperty("max-model-latitude", "" + this.globalOptionModel.getNorthLimit());

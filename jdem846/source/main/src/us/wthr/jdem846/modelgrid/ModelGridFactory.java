@@ -1,6 +1,7 @@
 package us.wthr.jdem846.modelgrid;
 
 import us.wthr.jdem846.ModelContext;
+import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelGridDimensions;
 import us.wthr.jdem846.model.ModelProcessManifest;
@@ -10,7 +11,7 @@ import us.wthr.jdem846.scripting.ScriptProxy;
 public class ModelGridFactory
 {
 
-	public static IModelGrid createBufferedModelGrid(ModelContext modelContext)
+	public static IModelGrid createBufferedModelGrid(ModelContext modelContext) throws DataSourceException
 	{
 		ModelProcessManifest modelProcessManifest = modelContext.getModelProcessManifest();
 		GlobalOptionModel globalOptionModel = modelProcessManifest.getGlobalOptionModel();
@@ -20,7 +21,7 @@ public class ModelGridFactory
 				modelDimensions.getTextureLongitudeResolution(), modelContext.getRasterDataContext().getDataMinimumValue(), modelContext.getRasterDataContext().getDataMaximumValue());
 	}
 
-	public static IModelGrid createBufferedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum)
+	public static IModelGrid createBufferedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum) throws DataSourceException
 	{
 		IModelGrid modelGrid = new BufferedModelGrid(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum);
 
@@ -28,12 +29,12 @@ public class ModelGridFactory
 		return modelGrid;
 	}
 
-	public static IFillControlledModelGrid createFillControlledModelGrid(ModelContext modelContext)
+	public static IFillControlledModelGrid createFillControlledModelGrid(ModelContext modelContext) throws DataSourceException
 	{
 		return ModelGridFactory.createFillControlledModelGrid(modelContext, modelContext.getModelGridContext().getModelGrid());
 	}
 
-	public static IFillControlledModelGrid createFillControlledModelGrid(ModelContext modelContext, IModelGrid modelGrid)
+	public static IFillControlledModelGrid createFillControlledModelGrid(ModelContext modelContext, IModelGrid modelGrid) throws DataSourceException
 	{
 		ModelProcessManifest modelProcessManifest = modelContext.getModelProcessManifest();
 		GlobalOptionModel globalOptionModel = modelProcessManifest.getGlobalOptionModel();
@@ -47,7 +48,7 @@ public class ModelGridFactory
 	}
 
 	public static IFillControlledModelGrid createFillControlledModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum, boolean zeroInCaseOfNoRaster,
-			RasterDataContext rasterDataContext, IModelGrid modelGrid, ScriptProxy scriptProxy)
+			RasterDataContext rasterDataContext, IModelGrid modelGrid, ScriptProxy scriptProxy) throws DataSourceException
 	{
 		IFillControlledModelGrid fillControlledModelGrid = new FillControlledModelGrid(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum, zeroInCaseOfNoRaster, rasterDataContext, modelGrid, scriptProxy);
 

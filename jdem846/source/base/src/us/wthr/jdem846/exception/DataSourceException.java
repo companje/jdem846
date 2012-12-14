@@ -1,7 +1,7 @@
 package us.wthr.jdem846.exception;
 
 @SuppressWarnings("serial")
-public class DataSourceException extends Exception
+public class DataSourceException extends RuntimeException
 {
 	
 	public DataSourceException(String message)

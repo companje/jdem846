@@ -13,6 +13,9 @@ public class ModelGridContext implements DataContext
 	private IModelGrid modelGrid = null;
 	private IFillControlledModelGrid fillControlledModelGrid = null;
 
+	private String gridLoadedFrom = null;
+	private ModelGridHeader userProvidedModelGridHeader;
+	
 	private boolean isDisposed = false;
 
 	public ModelGridContext()
@@ -64,14 +67,32 @@ public class ModelGridContext implements DataContext
 
 	public void importModelGrid(String filePath) throws DataSourceException
 	{
-
+		this.modelGrid = null;
+		this.userProvidedModelGridHeader = null;
+		this.gridLoadedFrom = filePath;
+		
+		if (filePath != null) {
+			UserProvidedModelGrid userProvidedModelGrid = new UserProvidedModelGrid(filePath);
+			this.userProvidedModelGridHeader = userProvidedModelGrid.getModelGridHeader();
+		} 
 	}
 
 	public void exportModelGrid(String filePath) throws DataSourceException
 	{
 
 	}
+	
 
+	public ModelGridHeader getUserProvidedModelGridHeader()
+	{
+		return userProvidedModelGridHeader;
+	}
+	
+	public String getGridLoadedFrom()
+	{
+		return gridLoadedFrom;
+	}
+	
 	@Override
 	public ModelGridContext copy() throws DataSourceException
 	{

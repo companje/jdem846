@@ -433,12 +433,6 @@ public class ModelOptionControlsFactory
 		{
 			public void onOptionValidationResults(List<PropertyValidationResult> results, OptionModelChangeEvent originatingEvent)
 			{
-				// try {
-				// //
-				// control.getControl().select(listModel.getIndexOfValue(property.getValue()));
-				// e1.printStackTrace();
-				// }
-
 				try {
 					boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
 					control.getControl().setEnabled(enabled);
