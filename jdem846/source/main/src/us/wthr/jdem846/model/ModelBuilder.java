@@ -290,7 +290,12 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 	public ElevationModel process() throws RenderEngineException
 	{
 		this.onProcessBefore();
-		this.processModelData();
+		
+		if (!this.modelGrid.isCompleted()) {
+			this.processModelData();
+		} else {
+			log.info("Model grid indicates that it is already completed. Skipping...");
+		}
 		this.processModelRender();
 		this.onProcessAfter();
 		this.onDestroy();
@@ -394,7 +399,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 			}
 		}
 		
-		
+		this.modelGrid.setCompleted(true);
 //		try {
 //			ModelGridWriter.write("C:\\jdem\\temp\\modelgrid_test.jdemgrid", innerModelGrid);
 //		} catch (IOException ex) {
@@ -770,7 +775,12 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 
 	protected boolean modelContainsData()
 	{
-		return (modelContext.getRasterDataContext().getRasterDataListSize() > 0 || modelContext.getImageDataContext().getImageListSize() > 0);
+		boolean hasRasterData = modelContext.getRasterDataContext().getRasterDataListSize() > 0;
+		boolean hasImageData = modelContext.getImageDataContext().getImageListSize() > 0;
+		boolean hasModelGridData = modelContext.getModelGridContext().getGridLoadedFrom() != null;
+		
+		
+		return (hasRasterData || hasImageData || hasModelGridData);
 	}
 
 	protected void setProcessing(boolean isProcessing)

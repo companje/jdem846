@@ -1,6 +1,7 @@
 package us.wthr.jdem846.modelgrid;
 
 import us.wthr.jdem846.DataContext;
+import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -74,6 +75,7 @@ public class ModelGridContext implements DataContext
 		if (filePath != null) {
 			UserProvidedModelGrid userProvidedModelGrid = new UserProvidedModelGrid(filePath);
 			this.userProvidedModelGridHeader = userProvidedModelGrid.getModelGridHeader();
+			this.modelGrid = userProvidedModelGrid;
 		} 
 	}
 
@@ -96,36 +98,57 @@ public class ModelGridContext implements DataContext
 	@Override
 	public ModelGridContext copy() throws DataSourceException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		ModelGridContext context = new ModelGridContext();
+		
+		context.modelGrid = this.modelGrid;
+		context.fillControlledModelGrid = context.fillControlledModelGrid;
+
+		context.gridLoadedFrom = this.gridLoadedFrom;
+		context.userProvidedModelGridHeader = this.userProvidedModelGridHeader;
+		
+		context.isDisposed = this.isDisposed;
+		
+		return context;
 	}
 
 	@Override
 	public double getNorth()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		if (modelGrid != null) {
+			return modelGrid.getNorth();
+		} else {
+			return DemConstants.COORDINATE_NOT_SET;
+		}
 	}
 
 	@Override
 	public double getSouth()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		if (modelGrid != null) {
+			return modelGrid.getSouth();
+		} else {
+			return DemConstants.COORDINATE_NOT_SET;
+		}
 	}
 
 	@Override
 	public double getEast()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		if (modelGrid != null) {
+			return modelGrid.getEast();
+		} else {
+			return DemConstants.COORDINATE_NOT_SET;
+		}
 	}
 
 	@Override
 	public double getWest()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		if (modelGrid != null) {
+			return modelGrid.getWest();
+		} else {
+			return DemConstants.COORDINATE_NOT_SET;
+		}
 	}
 
 }

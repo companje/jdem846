@@ -8,7 +8,6 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.math.Vectors;
-import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.scripting.ScriptProxy;
 

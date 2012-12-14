@@ -14,7 +14,6 @@ import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.gis.projections.MapProjectionProviderFactory;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
@@ -121,21 +120,21 @@ public class ShapeProcessor extends GridProcessor
 		{
 			public void translatePoint(double[] coords)
 			{
-				try {
-					ModelPoint modelPoint = modelGrid.get(coords[1], coords[0]);
-					double elevation = 0;
-					if (modelPoint != null) {
-						elevation = modelPoint.getElevation();
-					}
-
-					canvasProjection.getPoint(coords[1], coords[0], elevation, mapPoint);
-					coords[0] = (int) mapPoint.column;
-					coords[1] = (int) mapPoint.row;
-					coords[2] = (int) mapPoint.z + 10.0;
-
-				} catch (MapProjectionException ex) {
-					log.warn("Error projecting coordinates to map: " + ex.getMessage(), ex);
-				}
+//				try {
+//					ModelPoint modelPoint = modelGrid.get(coords[1], coords[0]);
+//					double elevation = 0;
+//					if (modelPoint != null) {
+//						elevation = modelPoint.getElevation();
+//					}
+//
+//					canvasProjection.getPoint(coords[1], coords[0], elevation, mapPoint);
+//					coords[0] = (int) mapPoint.column;
+//					coords[1] = (int) mapPoint.row;
+//					coords[2] = (int) mapPoint.z + 10.0;
+//
+//				} catch (MapProjectionException ex) {
+//					log.warn("Error projecting coordinates to map: " + ex.getMessage(), ex);
+//				}
 			}
 		}, false);
 

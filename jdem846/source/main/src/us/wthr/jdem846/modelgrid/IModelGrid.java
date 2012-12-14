@@ -2,26 +2,39 @@ package us.wthr.jdem846.modelgrid;
 
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.model.ElevationHistogramModel;
-import us.wthr.jdem846.model.ModelPoint;
 
 public interface IModelGrid
 {
 
-	public abstract int[] getModelTexture() throws DataSourceException;
+	public int[] getModelTexture() throws DataSourceException;
 
-	public abstract void dispose();
+	public void dispose();
 
-	public abstract boolean isDisposed();
+	public boolean isDisposed();
 
-	public abstract void reset() throws DataSourceException;
+	public void reset() throws DataSourceException;
 
-	public abstract ModelPoint get(double latitude, double longitude) throws DataSourceException;
+	public boolean isCompleted();
+
+	public void setCompleted(boolean completed);
+
+	public double getElevationByIndex(int index) throws DataSourceException;
+
+	public void setElevationByIndex(int index, double elevation) throws DataSourceException;
 
 	public double getElevation(double latitude, double longitude) throws DataSourceException;
 
 	public double getElevation(double latitude, double longitude, boolean basic) throws DataSourceException;
 
 	public void setElevation(double latitude, double longitude, double elevation) throws DataSourceException;
+
+	public void getRgbaByIndex(int index, int[] fill) throws DataSourceException;
+
+	public int getRgbaByIndex(int index) throws DataSourceException;
+
+	public void setRgbaByIndex(int index, int rgba) throws DataSourceException;
+
+	public void setRgbaByIndex(int index, int[] rgba) throws DataSourceException;
 
 	public void getRgba(double latitude, double longitude, int[] fill) throws DataSourceException;
 

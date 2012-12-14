@@ -27,6 +27,11 @@ public abstract class BaseModelGrid implements IModelGrid
 
 	private ElevationHistogramModel elevationHistogramModel;
 
+	private boolean isCompleted = false;
+	
+	
+	
+	
 	public BaseModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum)
 	{
 		this.north = north;
@@ -41,13 +46,44 @@ public abstract class BaseModelGrid implements IModelGrid
 		double _height = (this.north - this.south) / latitudeResolution;
 		double _width = (this.east - this.west) / longitudeResolution;
 
-		this.height = (int) MathExt.ceil(_height);
-		this.width = (int) MathExt.ceil(_width);
+		this.height = (int) MathExt.floor(_height);
+		this.width = (int) MathExt.floor(_width);
 
 		gridLength = (long) height * (long) width;
 
 		elevationHistogramModel = new ElevationHistogramModel(500, minimum, maximum);
 
+	}
+	
+	public BaseModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum, int width, int height)
+	{
+		this.north = north;
+		this.south = south;
+		this.east = east;
+		this.west = west;
+		this.latitudeResolution = latitudeResolution;
+		this.longitudeResolution = longitudeResolution;
+		this.minimum = minimum;
+		this.maximum = maximum;
+
+		this.height = height;
+		this.width = width;
+
+		gridLength = (long) height * (long) width;
+
+		elevationHistogramModel = new ElevationHistogramModel(500, minimum, maximum);
+	}
+	
+	@Override
+	public boolean isCompleted()
+	{
+		return isCompleted;
+	}
+	
+	@Override
+	public void setCompleted(boolean completed)
+	{
+		isCompleted = completed;
 	}
 
 	@Override
@@ -58,8 +94,8 @@ public abstract class BaseModelGrid implements IModelGrid
 
 	protected int getIndex(double latitude, double longitude)
 	{
-		int column = (int) Math.round((longitude - west) / longitudeResolution);
-		int row = (int) Math.round((north - latitude) / latitudeResolution);
+		int column = (int) Math.floor((longitude - west) / longitudeResolution);
+		int row = (int) Math.floor((north - latitude) / latitudeResolution);
 
 		if (column < 0 || column >= width) {
 			return -1;

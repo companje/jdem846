@@ -229,12 +229,12 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 			globalOptionModel.setUseScripting(useScripting);
 		}
 
-		if (modelContextWorkingCopy.getRasterDataContext().getRasterDataListSize() == 0) {
-			modelContextWorkingCopy.setNorthLimit(90);
-			modelContextWorkingCopy.setSouthLimit(-90);
-			modelContextWorkingCopy.setEastLimit(180);
-			modelContextWorkingCopy.setWestLimit(-180);
-		}
+//		if (modelContextWorkingCopy.getRasterDataContext().getRasterDataListSize() == 0) {
+//			modelContextWorkingCopy.setNorthLimit(90);
+//			modelContextWorkingCopy.setSouthLimit(-90);
+//			modelContextWorkingCopy.setEastLimit(180);
+//			modelContextWorkingCopy.setWestLimit(-180);
+//		}
 
 		
 		boolean resetCache = dataModelChange;

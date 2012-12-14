@@ -1,11 +1,9 @@
 package us.wthr.jdem846.model.processing.util;
 
 
-import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.math.Vectors;
-import us.wthr.jdem846.model.ModelPoint;
 
 public class Aspect
 {

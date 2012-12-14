@@ -8,7 +8,6 @@ import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Vector;
-import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.GridFilter;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
@@ -73,14 +72,11 @@ public class AspectColoringProcessor extends GridFilter
 			throws RenderEngineException
 	{
 		
-		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
-		
-		//modelPoint.getNormal(normal);
 		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
 		double degrees = Aspect.aspectInDegrees(normal);
 
 		getCategoryColor(degrees, rgbaBuffer);
-		modelPoint.setRgba(rgbaBuffer);
+		this.modelGrid.setRgba(latitude, longitude, rgbaBuffer);
 	}
 	
 	

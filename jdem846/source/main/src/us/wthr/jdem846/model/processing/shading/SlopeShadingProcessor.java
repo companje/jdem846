@@ -1,13 +1,11 @@
 package us.wthr.jdem846.model.processing.shading;
 
-import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Vector;
-import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
@@ -86,7 +84,7 @@ public class SlopeShadingProcessor extends GridProcessor
 	public void onModelPointFirstPass(double latitude, double longitude) throws RenderEngineException
 	{
 
-		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
+		//ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 
 		// modelPoint.getNormal(normal);
 		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
@@ -99,7 +97,7 @@ public class SlopeShadingProcessor extends GridProcessor
 
 	public void onModelPointSecondPass(double latitude, double longitude) throws RenderEngineException
 	{
-		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
+		//ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 
 		// modelPoint.getNormal(normal);
 		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
@@ -116,16 +114,16 @@ public class SlopeShadingProcessor extends GridProcessor
 		if (spotExponent != 1) {
 			shade = MathExt.pow(shade, spotExponent);
 		}
-
-		processPointColor(modelPoint, latitude, longitude, shade);
+		// TODO: Reimplement sans ModelPoint
+		//processPointColor(modelPoint, latitude, longitude, shade);
 	}
 
-	protected void processPointColor(ModelPoint modelPoint, double latitude, double longitude, double shade) throws RenderEngineException
-	{
-		modelPoint.getRgba(rgbaBuffer);
-		ColorAdjustments.adjustBrightness(rgbaBuffer, shade);
-		modelPoint.setRgba(rgbaBuffer);
-	}
+//	protected void processPointColor(ModelPoint modelPoint, double latitude, double longitude, double shade) throws RenderEngineException
+//	{
+//		modelPoint.getRgba(rgbaBuffer);
+//		ColorAdjustments.adjustBrightness(rgbaBuffer, shade);
+//		modelPoint.setRgba(rgbaBuffer);
+//	}
 
 	@Override
 	public void onLatitudeEnd(double latitude) throws RenderEngineException

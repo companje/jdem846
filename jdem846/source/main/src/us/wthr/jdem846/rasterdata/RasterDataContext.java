@@ -21,10 +21,10 @@ public class RasterDataContext implements DataContext
 	private List<RasterData> rasterDataList = new LinkedList<RasterData>();
 	private List<RasterDataRowColumnBox> rasterDataRowColumnBoxes = new LinkedList<RasterDataRowColumnBox>();
 	
-	private double east = 180.0;
-	private double west = -180.0;
-	private double north = 90.0;
-	private double south = -90.0;
+	private double east = DemConstants.COORDINATE_NOT_SET;
+	private double west = DemConstants.COORDINATE_NOT_SET;
+	private double north = DemConstants.COORDINATE_NOT_SET;
+	private double south = DemConstants.COORDINATE_NOT_SET;
 	
 	private double latitudeResolution;
 	private double longitudeResolution;

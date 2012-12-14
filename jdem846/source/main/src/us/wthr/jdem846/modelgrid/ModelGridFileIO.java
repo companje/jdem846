@@ -10,13 +10,14 @@ import us.wthr.jdem846.util.ByteConversions;
 public abstract class ModelGridFileIO
 {
 	public static final String FILE_HEADER_PREFIX = "jdemgrid-->";
-	public static final ByteOrder DEFAULT_BYTE_ORDER = ByteOrder.MSBFIRST;
+	public static final int FILE_HEADER_PREFIX_LENGTH = FILE_HEADER_PREFIX.getBytes().length;
+	public static final ByteOrder DEFAULT_BYTE_ORDER = ByteOrder.LSBFIRST;
 	
 	
 	public static long calculateEstimatedFileSize(IModelGrid modelGrid)
 	{
-		long headerSizeBytes = ModelGridFileIO.FILE_HEADER_PREFIX.getBytes().length + 48;
-		long dataCellSizeBytes = 8;
+		long headerSizeBytes = 72;
+		long dataCellSizeBytes = 12;
 		long dataSizeBytes = dataCellSizeBytes * (modelGrid.getWidth() * modelGrid.getHeight());
 		
 		return (headerSizeBytes + dataSizeBytes);
@@ -25,7 +26,10 @@ public abstract class ModelGridFileIO
 	
 	protected static long write(double value, OutputStream out) throws IOException
 	{
-		return write((float)value, out);
+		byte[] buffer8 = new byte[8];
+		ByteConversions.doubleToBytes(value, buffer8, ModelGridFileIO.DEFAULT_BYTE_ORDER);
+		return write(buffer8, 8, out);
+		
 	}
 	
 	protected static long write(float value, OutputStream out) throws IOException
@@ -64,7 +68,9 @@ public abstract class ModelGridFileIO
 	
 	protected static double readDouble(InputStream in) throws IOException
 	{
-		return readFloat(in);
+		byte[] bytes = new byte[8];
+		read(bytes, 8, in);
+		return ByteConversions.bytesToDouble(bytes, DEFAULT_BYTE_ORDER);
 	}
 	
 	protected static float readFloat(InputStream in) throws IOException
@@ -97,6 +103,12 @@ public abstract class ModelGridFileIO
 	
 	protected static long read(byte[] bytes, int length, InputStream in) throws IOException
 	{
-		return in.read(bytes, 0, length);
+		int bytesRead = in.read(bytes, 0, length);
+		
+		if (bytesRead < length) {
+			throw new IOException("Insufficient bytes read. Read: " + bytesRead + ", Required: " + length);
+		}
+		
+		return bytesRead;
 	}
 }
