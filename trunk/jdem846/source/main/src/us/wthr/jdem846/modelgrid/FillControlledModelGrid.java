@@ -7,7 +7,6 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.processing.GridFilter;
 import us.wthr.jdem846.model.processing.GridFilterMethodStack;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
@@ -71,10 +70,17 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 	}
 
 	@Override
-	public ModelPoint get(double latitude, double longitude) throws DataSourceException
+	public boolean isCompleted()
 	{
-		return modelGrid.get(latitude, longitude);
+		return modelGrid.isCompleted();
 	}
+	
+	@Override
+	public void setCompleted(boolean completed)
+	{
+		modelGrid.setCompleted(completed);
+	}
+	
 
 	@Override
 	public void processFiltersOnPoint(double latitude, double longitude)
@@ -89,7 +95,21 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 		}
 		forceResetAndRunFilters = f;
 	}
+	
+	
+	@Override
+	public double getElevationByIndex(int index) throws DataSourceException
+	{
+		throw new DataSourceException("Index fetch not supported by fill controlled model grid");
+	}
 
+	@Override
+	public void setElevationByIndex(int index, double elevation) throws DataSourceException
+	{
+		throw new DataSourceException("Index set not supported by fill controlled model grid");
+	}
+	
+	
 	@Override
 	public double getElevation(double latitude, double longitude, boolean basic) throws DataSourceException
 	{
@@ -127,6 +147,31 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 		modelGrid.setElevation(latitude, longitude, elevation);
 	}
 
+	@Override
+	public void getRgbaByIndex(int index, int[] fill) throws DataSourceException
+	{
+		modelGrid.getRgbaByIndex(index, fill);
+	}
+
+	@Override
+	public int getRgbaByIndex(int index) throws DataSourceException
+	{
+		return modelGrid.getRgbaByIndex(index);
+	}
+
+	@Override
+	public void setRgbaByIndex(int index, int rgba) throws DataSourceException
+	{
+		modelGrid.setRgbaByIndex(index, rgba);
+	}
+
+	@Override
+	public void setRgbaByIndex(int index, int[] rgba) throws DataSourceException
+	{
+		modelGrid.setRgbaByIndex(index, rgba);
+	}
+	
+	
 	@Override
 	public void getRgba(double latitude, double longitude, int[] fill) throws DataSourceException
 	{
@@ -278,5 +323,9 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 		return instance;
 
 	}
+
+
+
+
 
 }

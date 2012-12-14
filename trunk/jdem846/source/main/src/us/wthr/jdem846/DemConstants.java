@@ -31,6 +31,8 @@ public class DemConstants {
 	//public static final double DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER = 11997.9 * 1000;
 	public static final double DEFAULT_GLOBAL_RADIUS = 0.5;
 	
+	public static final double COORDINATE_NOT_SET = -1000000;
+	
 	public static final double EARTH_MEAN_RADIUS = 6371.0;
 	public static final double MARS_MEAN_RADIUS = 3396.2;
 	public static final double MOON_MEAN_RADIUS = 1737.1;

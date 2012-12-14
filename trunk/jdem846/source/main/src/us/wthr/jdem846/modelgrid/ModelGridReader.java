@@ -38,20 +38,18 @@ public class ModelGridReader extends ModelGridFileIO {
 		IModelGrid modelGrid = null;
 		
 		ModelGridHeader header = readHeader(in);
-		modelGrid = ModelGridFactory.createBufferedModelGrid(header.north, header.south, header.east, header.west, header.latitudeResolution, header.longitudeResolution, header.minimum, header.maximum);
+		modelGrid = ModelGridFactory.createBufferedModelGrid(header.north, header.south, header.east, header.west, header.latitudeResolution, header.longitudeResolution, header.minimum, header.maximum, header.width, header.height);
 		
 		ModelGridCell cell = new ModelGridCell();
 		
-		for (int y = 0; y < modelGrid.getHeight(); y++) {
-			double latitude = modelGrid.getNorth() - modelGrid.getLatitudeResolution() * (double)y;
-			for (int x = 0; x < modelGrid.getWidth(); x++) {
-				double longitude = modelGrid.getWest() + modelGrid.getLongitudeResolution() * (double)x;
-				readCell(in, cell);
-				modelGrid.setElevation(latitude, longitude, cell.elevation);
-				modelGrid.setRgba(latitude, longitude, cell.rgba);
-			}
+		int gridLength = header.width * header.height;
+		for (int i = 0; i < gridLength; i++) {
+			readCell(in, cell);
+			modelGrid.setElevationByIndex(i, cell.elevation);
+			modelGrid.setRgbaByIndex(i, cell.rgba);
 		}
 		
+
 		return modelGrid;
 	}
 	
@@ -71,7 +69,7 @@ public class ModelGridReader extends ModelGridFileIO {
 	public static ModelGridHeader readHeader(InputStream in) throws IOException
 	{
 		ModelGridHeader header = new ModelGridHeader();
-		header.gridPrefix = readString(ModelGridFileIO.FILE_HEADER_PREFIX.getBytes().length, in);
+		header.gridPrefix = ModelGridFileIO.FILE_HEADER_PREFIX;//readString(ModelGridFileIO.FILE_HEADER_PREFIX.getBytes().length, in);
 		
 		header.height = readInt(in);
 		header.width = readInt(in);
@@ -84,7 +82,7 @@ public class ModelGridReader extends ModelGridFileIO {
 		header.latitudeResolution = readDouble(in);
 		header.longitudeResolution = readDouble(in);
 		
-		header.dateCreated = readLong(in);
+		//header.dateCreated = readLong(in);
 		
 		return header;
 	}

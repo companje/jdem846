@@ -29,6 +29,14 @@ public class ModelGridFactory
 		return modelGrid;
 	}
 
+	public static IModelGrid createBufferedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum, int width, int height) throws DataSourceException
+	{
+		IModelGrid modelGrid = new BufferedModelGrid(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum, width, height);
+
+		modelGrid.reset();
+		return modelGrid;
+	}
+	
 	public static IFillControlledModelGrid createFillControlledModelGrid(ModelContext modelContext) throws DataSourceException
 	{
 		return ModelGridFactory.createFillControlledModelGrid(modelContext, modelContext.getModelGridContext().getModelGrid());

@@ -40,14 +40,11 @@ public class ModelGridWriter extends ModelGridFileIO
 		
 		bytesWritten += writeHeader(modelGrid, out);
 
-		for (int y = 0; y < modelGrid.getHeight(); y++) {
-			double latitude = modelGrid.getNorth() - modelGrid.getLatitudeResolution() * (double)y;
-			for (int x = 0; x < modelGrid.getWidth(); x++) {
-				double longitude = modelGrid.getWest() + modelGrid.getLongitudeResolution() * (double)x;
-				bytesWritten += writeCell(modelGrid, latitude, longitude, out);
-			}
-			
+		int gridLength = (int) modelGrid.getGridLength();
+		for (int i = 0; i < gridLength; i++) {
+			bytesWritten += writeCell(modelGrid, i, out);
 		}
+		
 		
 		long estimatedFileSize = calculateEstimatedFileSize(modelGrid);
 		
@@ -59,10 +56,10 @@ public class ModelGridWriter extends ModelGridFileIO
 		
 	}	
 
-	protected static long writeCell(IModelGrid modelGrid, double latitude, double longitude, OutputStream out) throws IOException, DataSourceException
+	protected static long writeCell(IModelGrid modelGrid, int index, OutputStream out) throws IOException, DataSourceException
 	{
-		double elevation = modelGrid.getElevation(latitude, longitude, true);
-		int rgba = modelGrid.getRgba(latitude, longitude);
+		double elevation = modelGrid.getElevationByIndex(index);
+		int rgba = modelGrid.getRgbaByIndex(index);
 		
 		long bytesWritten = 0;
 		
@@ -76,7 +73,7 @@ public class ModelGridWriter extends ModelGridFileIO
 	{
 		long bytesWritten = 0;
 		
-		bytesWritten += write(ModelGridFileIO.FILE_HEADER_PREFIX, out);
+		//bytesWritten += write(ModelGridFileIO.FILE_HEADER_PREFIX, out);
 		bytesWritten += write(modelGrid.getHeight(), out);
 		bytesWritten += write(modelGrid.getWidth(), out);
 		bytesWritten += write(modelGrid.getMinimum(), out);
@@ -87,7 +84,7 @@ public class ModelGridWriter extends ModelGridFileIO
 		bytesWritten += write(modelGrid.getWest(), out);
 		bytesWritten += write(modelGrid.getLatitudeResolution(), out);
 		bytesWritten += write(modelGrid.getLongitudeResolution(), out);
-		bytesWritten += write(System.currentTimeMillis(), out);
+		//bytesWritten += write(System.currentTimeMillis(), out);
 		
 		return bytesWritten;
 	}

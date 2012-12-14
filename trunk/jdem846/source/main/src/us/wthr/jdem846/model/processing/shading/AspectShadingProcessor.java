@@ -1,17 +1,13 @@
 package us.wthr.jdem846.model.processing.shading;
 
-import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Vector;
-import us.wthr.jdem846.model.ModelPoint;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
-import us.wthr.jdem846.model.processing.util.Aspect;
 import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 
 @GridProcessing(id = "us.wthr.jdem846.model.processing.shading.AspectShadingProcessor", name = "Aspect Shading Process", type = GridProcessingTypesEnum.SHADING, optionModel = AspectShadingOptionModel.class, enabled = true)
@@ -51,40 +47,40 @@ public class AspectShadingProcessor extends GridProcessor
 	@Override
 	public void onModelPoint(double latitude, double longitude) throws RenderEngineException
 	{
-
-		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
-
-		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
-		// modelPoint.getNormal(normal);
-		double degrees = Aspect.aspectInDegrees(normal);
-		if (degrees > 180) {
-			degrees = 180 - (degrees - 180);
-		}
-
-		double shade = 1.0 - (2.0 * (degrees / 180.0));
-
-		// log.info("Degrees: " + degrees + ", Shade: " + shade);
-
-		if (shade > 0) {
-			shade *= relativeLightIntensity;
-		} else if (shade < 0) {
-			shade *= relativeDarkIntensity;
-		}
-
-		if (spotExponent != 1) {
-			shade = MathExt.pow(shade, spotExponent);
-		}
-
-		processPointColor(modelPoint, latitude, longitude, shade);
+		// TODO: Reimplement sans ModelPoint
+//		ModelPoint modelPoint = modelGrid.get(latitude, longitude);
+//
+//		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
+//		// modelPoint.getNormal(normal);
+//		double degrees = Aspect.aspectInDegrees(normal);
+//		if (degrees > 180) {
+//			degrees = 180 - (degrees - 180);
+//		}
+//
+//		double shade = 1.0 - (2.0 * (degrees / 180.0));
+//
+//		// log.info("Degrees: " + degrees + ", Shade: " + shade);
+//
+//		if (shade > 0) {
+//			shade *= relativeLightIntensity;
+//		} else if (shade < 0) {
+//			shade *= relativeDarkIntensity;
+//		}
+//
+//		if (spotExponent != 1) {
+//			shade = MathExt.pow(shade, spotExponent);
+//		}
+//
+//		processPointColor(modelPoint, latitude, longitude, shade);
 
 	}
 
-	protected void processPointColor(ModelPoint modelPoint, double latitude, double longitude, double shade) throws RenderEngineException
-	{
-		modelPoint.getRgba(rgbaBuffer);
-		ColorAdjustments.adjustBrightness(rgbaBuffer, shade);
-		modelPoint.setRgba(rgbaBuffer);
-	}
+//	protected void processPointColor(ModelPoint modelPoint, double latitude, double longitude, double shade) throws RenderEngineException
+//	{
+//		modelPoint.getRgba(rgbaBuffer);
+//		ColorAdjustments.adjustBrightness(rgbaBuffer, shade);
+//		modelPoint.setRgba(rgbaBuffer);
+//	}
 
 	@Override
 	public void onLatitudeStart(double latitude) throws RenderEngineException

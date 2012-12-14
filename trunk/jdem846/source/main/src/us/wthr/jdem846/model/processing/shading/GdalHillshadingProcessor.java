@@ -5,9 +5,7 @@ import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.model.ModelPointHandler;
 import us.wthr.jdem846.model.annotations.GridProcessing;
-import us.wthr.jdem846.model.processing.AbstractGridProcessor;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 
@@ -64,7 +62,9 @@ public class GdalHillshadingProcessor extends GridProcessor
 	{
 		
 		double x, y, slope, aspect, cang;
-
+		
+		this.modelGrid.getElevation(latitude, longitude);
+		
 		// First Slope ...
 		x = ((
 				this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude - this.longitudeResolution)

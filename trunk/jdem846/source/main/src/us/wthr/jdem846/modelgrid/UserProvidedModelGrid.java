@@ -3,9 +3,9 @@ package us.wthr.jdem846.modelgrid;
 import java.io.File;
 import java.io.IOException;
 
+import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.model.ElevationHistogramModel;
-import us.wthr.jdem846.model.ModelPoint;
 
 public class UserProvidedModelGrid implements IModelGrid
 {
@@ -31,6 +31,18 @@ public class UserProvidedModelGrid implements IModelGrid
 			throw new DataSourceException("Error reading data grid header: " + ex.getMessage(), ex);
 		}
 		
+	}
+	
+	@Override
+	public boolean isCompleted()
+	{
+		return true;
+	}
+	
+	@Override
+	public void setCompleted(boolean completed)
+	{
+		// Do nothing. user provided model grids are read-only and completed by virtue of their original creation and export.
 	}
 	
 	public String getFilePath()
@@ -70,8 +82,7 @@ public class UserProvidedModelGrid implements IModelGrid
 	@Override
 	public int[] getModelTexture()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return getInternalModelGrid().getModelTexture();
 	}
 
 	@Override
@@ -90,15 +101,21 @@ public class UserProvidedModelGrid implements IModelGrid
 	@Override
 	public void reset()
 	{
-		// To nothing. user provided model grids are read-only
+		// Do nothing. user provided model grids are read-only
 	}
 
 	@Override
-	public ModelPoint get(double latitude, double longitude) throws DataSourceException
+	public double getElevationByIndex(int index) throws DataSourceException
 	{
-		return getInternalModelGrid().get(latitude, longitude);
+		return getInternalModelGrid().getElevationByIndex(index);
 	}
 
+	@Override
+	public void setElevationByIndex(int index, double elevation) throws DataSourceException
+	{
+		// Do nothing. user provided model grids are read-only
+	}
+	
 	@Override
 	public double getElevation(double latitude, double longitude) throws DataSourceException
 	{
@@ -115,13 +132,38 @@ public class UserProvidedModelGrid implements IModelGrid
 	@Override
 	public void setElevation(double latitude, double longitude, double elevation) throws DataSourceException
 	{
-		// To nothing. user provided model grids are read-only
+		// Do nothing. user provided model grids are read-only
+	}
+	
+	
+	@Override
+	public void getRgbaByIndex(int index, int[] fill) throws DataSourceException
+	{
+		getInternalModelGrid().getRgbaByIndex(index, fill);
+	}
+
+	@Override
+	public int getRgbaByIndex(int index) throws DataSourceException
+	{
+		return getInternalModelGrid().getRgbaByIndex(index);
+	}
+
+	@Override
+	public void setRgbaByIndex(int index, int rgba) throws DataSourceException
+	{
+		// Do nothing. user provided model grids are read-only
+	}
+
+	@Override
+	public void setRgbaByIndex(int index, int[] rgba) throws DataSourceException
+	{
+		// Do nothing. user provided model grids are read-only
 	}
 
 	@Override
 	public void getRgba(double latitude, double longitude, int[] fill) throws DataSourceException
 	{
-		getInternalModelGrid().getRgba(latitude, longitude, fill);
+		ColorUtil.intToRGBA(getRgba(latitude, longitude), fill);
 	}
 
 	@Override
@@ -133,13 +175,13 @@ public class UserProvidedModelGrid implements IModelGrid
 	@Override
 	public void setRgba(double latitude, double longitude, int rgba) throws DataSourceException
 	{
-		// To nothing. user provided model grids are read-only
+		// Do nothing. user provided model grids are read-only
 	}
 
 	@Override
 	public void setRgba(double latitude, double longitude, int[] rgba) throws DataSourceException
 	{
-		// To nothing. user provided model grids are read-only
+		// Do nothing. user provided model grids are read-only
 	}
 
 	@Override
@@ -211,7 +253,7 @@ public class UserProvidedModelGrid implements IModelGrid
 	@Override
 	public void setMinimum(double minimum)
 	{
-		// To nothing. user provided model grids are read-only
+		// Do nothing. user provided model grids are read-only
 	}
 
 	@Override
@@ -223,7 +265,11 @@ public class UserProvidedModelGrid implements IModelGrid
 	@Override
 	public void setMaximum(double maximum)
 	{
-		// To nothing. user provided model grids are read-only
+		// Do nothing. user provided model grids are read-only
 	}
+
+
+
+
 
 }

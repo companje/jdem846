@@ -2,18 +2,19 @@ package us.wthr.jdem846.model;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
-import us.wthr.jdem846.image.ImageDataContext;
-import us.wthr.jdem846.image.SimpleGeoImage;
-import us.wthr.jdem846.logging.Log;
-import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.rasterdata.RasterData;
-import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.canvas.CanvasProjection;
 import us.wthr.jdem846.canvas.CanvasProjection3d;
 import us.wthr.jdem846.canvas.CanvasProjectionGlobe;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
 import us.wthr.jdem846.canvas.LatLonResolution;
+import us.wthr.jdem846.image.ImageDataContext;
+import us.wthr.jdem846.image.SimpleGeoImage;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.modelgrid.IModelGrid;
+import us.wthr.jdem846.rasterdata.RasterData;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 
 public class ModelGridDimensions extends ModelDimensions
 {
@@ -26,13 +27,91 @@ public class ModelGridDimensions extends ModelDimensions
 		
 	}
 	
-	public ModelGridDimensions(ModelContext modelContext, GlobalOptionModel globalOptionModel)
+	public ModelGridDimensions(ModelContext modelContext)
 	{
-		init(modelContext, globalOptionModel);
+		if (modelContext.getModelGridContext().getGridLoadedFrom() == null) {
+			initNoModelGrid(modelContext);
+		} else {
+			initModelGrid(modelContext);
+		}
 	}
 	
-	public void init(ModelContext modelContext, GlobalOptionModel globalOptionModel)
+	public void initModelGrid(ModelContext modelContext)
 	{
+		IModelGrid modelGrid = modelContext.getModelGridContext().getModelGrid();
+		GlobalOptionModel globalOptionModel = modelContext.getModelProcessManifest().getGlobalOptionModel();
+		
+		
+		north = modelGrid.getNorth();
+		south = modelGrid.getSouth();
+		east = modelGrid.getEast();
+		west = modelGrid.getWest();
+		
+		dataRows = modelGrid.getHeight();
+		dataColumns = modelGrid.getWidth();
+		latitudeResolution = modelGrid.getLatitudeResolution();
+		longitudeResolution = modelGrid.getLongitudeResolution();
+		
+		outputHeight = globalOptionModel.getHeight();
+		outputWidth = globalOptionModel.getWidth();
+		
+		double scaleX = globalOptionModel.getViewAngle().getZoom();
+		
+		
+		LatLonResolution latLonOutputRes = null;
+		CanvasProjectionTypeEnum canvasProjectionType = CanvasProjectionTypeEnum.getCanvasProjectionEnumFromIdentifier(globalOptionModel.getRenderProjection());
+		
+		if (canvasProjectionType == CanvasProjectionTypeEnum.PROJECT_3D) {
+			latLonOutputRes = CanvasProjection3d.calculateOutputResolutions(outputWidth,
+															outputHeight,
+															dataColumns,
+															dataRows,
+															latitudeResolution,
+															longitudeResolution,
+															scaleX);
+		} else if (canvasProjectionType == CanvasProjectionTypeEnum.PROJECT_SPHERE) {
+			latLonOutputRes = CanvasProjectionGlobe.calculateOutputResolutions(outputWidth,
+															outputHeight,
+															dataColumns,
+															dataRows,
+															latitudeResolution,
+															longitudeResolution,
+															scaleX);
+		} else  {
+			latLonOutputRes = CanvasProjection.calculateOutputResolutions(outputWidth,
+															outputHeight,
+															dataColumns,
+															dataRows,
+															latitudeResolution,
+															longitudeResolution,
+															scaleX);
+		}
+		
+		modelLatitudeResolution = latLonOutputRes.latitudeResolution;
+		modelLongitudeResolution = latLonOutputRes.longitudeResolution;
+		modelLatitudeResolutionTrue = latLonOutputRes.latitudeResolution;
+		modelLongitudeResolutionTrue = latLonOutputRes.longitudeResolution;
+		
+		textureLatitudeResolution = latLonOutputRes.latitudeResolution;
+		textureLongitudeResolution = latLonOutputRes.longitudeResolution;
+		textureLatitudeResolutionTrue = latLonOutputRes.latitudeResolution;
+		textureLongitudeResolutionTrue = latLonOutputRes.longitudeResolution;
+		
+		double modelQuality = globalOptionModel.getModelQuality();
+		double textureQuality = globalOptionModel.getTextureQuality();
+		
+		modelLatitudeResolution /= modelQuality;
+		modelLongitudeResolution /= modelQuality;
+		
+		textureLatitudeResolution /= textureQuality;
+		textureLongitudeResolution /= textureQuality;
+
+	}
+	
+	
+	public void initNoModelGrid(ModelContext modelContext)
+	{
+		GlobalOptionModel globalOptionModel = modelContext.getModelProcessManifest().getGlobalOptionModel();
 		RasterDataContext rasterDataContext = modelContext.getRasterDataContext();
 		ImageDataContext imageDataContext = modelContext.getImageDataContext();
 		
@@ -152,13 +231,7 @@ public class ModelGridDimensions extends ModelDimensions
 	
 	public static ModelGridDimensions getModelDimensions(ModelContext modelContext)
 	{
-		ModelGridDimensions modelGridDimensions = new ModelGridDimensions(modelContext, modelContext.getModelProcessManifest().getGlobalOptionModel());
-		return modelGridDimensions;
-	}
-	
-	public static ModelGridDimensions getModelDimensions(ModelContext modelContext, GlobalOptionModel globalOptionModel)
-	{
-		ModelGridDimensions modelGridDimensions = new ModelGridDimensions(modelContext, globalOptionModel);
+		ModelGridDimensions modelGridDimensions = new ModelGridDimensions(modelContext);
 		return modelGridDimensions;
 	}
 	

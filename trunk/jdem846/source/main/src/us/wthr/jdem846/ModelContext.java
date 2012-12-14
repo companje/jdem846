@@ -45,7 +45,6 @@ import us.wthr.jdem846.util.UniqueIdentifierUtil;
  */
 public class ModelContext
 {
-	private static final double NOT_SET = DemConstants.ELEV_NO_DATA;
 	private static Log log = Logging.getLog(ModelContext.class);
 
 	private RasterDataContext rasterDataContext;
@@ -61,10 +60,10 @@ public class ModelContext
 	private MapProjection mapProjection;
 	private ModelDimensions modelDimensions;
 
-	private double northLimit = NOT_SET;
-	private double southLimit = NOT_SET;
-	private double eastLimit = NOT_SET;
-	private double westLimit = NOT_SET;
+	private double northLimit = DemConstants.COORDINATE_NOT_SET;
+	private double southLimit = DemConstants.COORDINATE_NOT_SET;
+	private double eastLimit = DemConstants.COORDINATE_NOT_SET;
+	private double westLimit = DemConstants.COORDINATE_NOT_SET;
 
 	private boolean isDisposed = false;
 
@@ -105,8 +104,12 @@ public class ModelContext
 		rasterDataContext.setEffectiveLatitudeResolution(modelDimensions.textureLatitudeResolution);
 		rasterDataContext.setEffectiveLongitudeResolution(modelDimensions.textureLongitudeResolution);
 
-		if (updateDataMinMax) {
-
+		if (this.modelGridContext.getGridLoadedFrom() != null) {
+			
+			getRasterDataContext().setDataMaximumValue(modelGridContext.getUserProvidedModelGridHeader().maximum);
+			getRasterDataContext().setDataMinimumValue(modelGridContext.getUserProvidedModelGridHeader().minimum);
+			
+		} else if (updateDataMinMax) {
 			Planet planet = null;
 
 			if (this.getModelProcessManifest() != null) {
@@ -147,6 +150,7 @@ public class ModelContext
 				}
 			}
 		}
+
 
 	}
 
@@ -257,10 +261,11 @@ public class ModelContext
 
 	public double getNorth()
 	{
-		if (northLimit == NOT_SET) {
-			// TODO: Add shape data dimensions once supported
-			if (rasterDataContext != null && rasterDataContext.getRasterDataListSize() > 0) {
-				return rasterDataContext.getNorth();
+		if (northLimit == DemConstants.COORDINATE_NOT_SET) {
+			if (this.modelGridContext.getNorth() != DemConstants.COORDINATE_NOT_SET) {
+				return modelGridContext.getNorth();
+			} else if (this.rasterDataContext != null && rasterDataContext.getNorth() != DemConstants.COORDINATE_NOT_SET) {
+				return this.rasterDataContext.getNorth();
 			} else {
 				return 90.0;
 			}
@@ -276,10 +281,11 @@ public class ModelContext
 
 	public double getSouth()
 	{
-		if (southLimit == NOT_SET) {
-			// TODO: Add shape data dimensions once supported
-			if (rasterDataContext != null && rasterDataContext.getRasterDataListSize() > 0) {
-				return rasterDataContext.getSouth();
+		if (southLimit == DemConstants.COORDINATE_NOT_SET) {
+			if (this.modelGridContext.getSouth() != DemConstants.COORDINATE_NOT_SET) {
+				return modelGridContext.getSouth();
+			} else if (this.rasterDataContext != null && rasterDataContext.getSouth() != DemConstants.COORDINATE_NOT_SET) {
+				return this.rasterDataContext.getSouth();
 			} else {
 				return -90.0;
 			}
@@ -295,10 +301,11 @@ public class ModelContext
 
 	public double getEast()
 	{
-		if (eastLimit == NOT_SET) {
-			// TODO: Add shape data dimensions once supported
-			if (rasterDataContext != null && rasterDataContext.getRasterDataListSize() > 0) {
-				return rasterDataContext.getEast();
+		if (eastLimit == DemConstants.COORDINATE_NOT_SET) {
+			if (this.modelGridContext.getEast() != DemConstants.COORDINATE_NOT_SET) {
+				return modelGridContext.getEast();
+			} else if (this.rasterDataContext != null && rasterDataContext.getEast() != DemConstants.COORDINATE_NOT_SET) {
+				return this.rasterDataContext.getEast();
 			} else {
 				return 180.0;
 			}
@@ -314,10 +321,11 @@ public class ModelContext
 
 	public double getWest()
 	{
-		if (westLimit == NOT_SET) {
-			// TODO: Add shape data dimensions once supported
-			if (rasterDataContext != null && rasterDataContext.getRasterDataListSize() > 0) {
-				return rasterDataContext.getWest();
+		if (westLimit == DemConstants.COORDINATE_NOT_SET) {
+			if (this.modelGridContext.getWest() != DemConstants.COORDINATE_NOT_SET) {
+				return modelGridContext.getWest();
+			} else if (this.rasterDataContext != null && rasterDataContext.getWest() != DemConstants.COORDINATE_NOT_SET) {
+				return this.rasterDataContext.getWest();
 			} else {
 				return -180.0;
 			}

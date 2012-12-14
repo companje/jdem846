@@ -167,10 +167,20 @@ public class ByteConversions
 	 */
 	public static byte[] doubleToBytes(double value, ByteOrder byteOrder)
 	{
-		long bits = Double.doubleToLongBits(value);
 		byte[] buffer = new byte[8];
-		longToBytes(bits, buffer, byteOrder);
+		doubleToBytes(value, buffer, byteOrder);
 		return buffer;
+	}
+	
+	public static void doubleToBytes(double value, byte[] buffer)
+	{
+		doubleToBytes(value, buffer, DEFAULT_BYTE_ORDER);
+	}
+	
+	public static void doubleToBytes(double value, byte[] buffer, ByteOrder byteOrder)
+	{
+		long bits = Double.doubleToLongBits(value);
+		longToBytes(bits, buffer, byteOrder);
 	}
 	
 	public static byte[] intToBytes(int value)
