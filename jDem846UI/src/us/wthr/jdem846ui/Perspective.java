@@ -10,7 +10,6 @@ import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.geoimage.GeoImagePropertiesView;
 import us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView;
 import us.wthr.jdem846ui.views.models.RenderedModelDisplayView;
-import us.wthr.jdem846ui.views.models.RenderedModelListView;
 import us.wthr.jdem846ui.views.models.RenderedModelPropertiesView;
 import us.wthr.jdem846ui.views.preview.PreviewView;
 import us.wthr.jdem846ui.views.raster.RasterPropertiesView;
@@ -34,7 +33,7 @@ public class Perspective implements IPerspectiveFactory
 		IFolderLayout bottomLeftFolder = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.40f, "topLeft");
 		bottomLeftFolder.addView(RasterPropertiesView.ID);
 		bottomLeftFolder.addView(GeoImagePropertiesView.ID);
-		bottomLeftFolder.addView(RenderedModelListView.ID);
+		//bottomLeftFolder.addView(RenderedModelListView.ID);
 
 		IFolderLayout topRightFolder = layout.createFolder("topRight", IPageLayout.RIGHT, 0.60f, editorArea);
 		topRightFolder.addView(ModelConfigurationView.ID);
@@ -54,7 +53,6 @@ public class Perspective implements IPerspectiveFactory
 		layout.getViewLayout(DataView.ID).setCloseable(false);
 		layout.getViewLayout(ModelConfigurationView.ID).setCloseable(false);
 		layout.getViewLayout(RenderedModelPropertiesView.ID).setCloseable(false);
-		layout.getViewLayout(RenderedModelListView.ID).setCloseable(false);
 		layout.getViewLayout(RenderedModelDisplayView.ID).setCloseable(false);
 	}
 

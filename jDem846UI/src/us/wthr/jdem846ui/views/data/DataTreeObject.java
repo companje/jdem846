@@ -1,22 +1,22 @@
 package us.wthr.jdem846ui.views.data;
 
-import us.wthr.jdem846.input.InputSourceData;
+import us.wthr.jdem846.IDataObject;
 import us.wthr.jdem846ui.project.IconEnum;
 import us.wthr.jdem846ui.views.tree.TreeObject;
 
-public class DataTreeObject extends TreeObject<InputSourceData> {
+public class DataTreeObject extends TreeObject<IDataObject> {
 
 	private IconEnum icon;
-	private InputSourceData data;
+	private IDataObject data;
 
-	public DataTreeObject(String name, InputSourceData data, IconEnum icon) {
-		super(name, InputSourceData.class);
+	public DataTreeObject(String name, IDataObject data, IconEnum icon) {
+		super(name, IDataObject.class);
 		this.icon = icon;
 		this.data = data;
 	}
 
 	
-	public InputSourceData getData() {
+	public IDataObject getData() {
 		return data;
 	}
 

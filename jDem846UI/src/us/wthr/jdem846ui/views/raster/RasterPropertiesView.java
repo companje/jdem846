@@ -14,7 +14,7 @@ import us.wthr.jdem846.rasterdata.generic.GenericRasterDataProvider;
 import us.wthr.jdem846ui.project.ProjectChangeAdapter;
 import us.wthr.jdem846ui.project.ProjectContext;
 import us.wthr.jdem846ui.views.data.DataView;
-import us.wthr.jdem846ui.views.data.TreeSelectionListener;
+import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 
 public class RasterPropertiesView extends ViewPart
 {
@@ -40,9 +40,9 @@ public class RasterPropertiesView extends ViewPart
 		// ///td.grabVertical = true;
 		// rasterPropertiesContainer.setLayoutData(td);
 
-		DataView.addTreeSelectionListener(new TreeSelectionListener()
+		DataView.addTreeSelectionListener(new TreeSelectionAdapter()
 		{
-			public void onSelectionChanged(InputSourceData selectedData)
+			public void onSourceDataSelectionChanged(InputSourceData selectedData)
 			{
 				if (selectedData != null && selectedData instanceof GenericRasterDataProvider) {
 					showView();

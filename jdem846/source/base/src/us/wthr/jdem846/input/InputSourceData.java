@@ -1,5 +1,8 @@
 package us.wthr.jdem846.input;
 
-public interface InputSourceData {
+import us.wthr.jdem846.IDataObject;
+
+public interface InputSourceData extends IDataObject
+{
 
 }

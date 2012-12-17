@@ -14,7 +14,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846ui.project.ProjectChangeAdapter;
 import us.wthr.jdem846ui.project.ProjectContext;
 import us.wthr.jdem846ui.views.data.DataView;
-import us.wthr.jdem846ui.views.data.TreeSelectionListener;
+import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 
 public class GeoImagePropertiesView extends ViewPart
 {
@@ -31,9 +31,9 @@ public class GeoImagePropertiesView extends ViewPart
 
 		geoImagePropertiesContainer = new GeoImagePropertiesContainer(parent, SWT.NONE);
 
-		DataView.addTreeSelectionListener(new TreeSelectionListener()
+		DataView.addTreeSelectionListener(new TreeSelectionAdapter()
 		{
-			public void onSelectionChanged(InputSourceData selectedData)
+			public void onSourceDataSelectionChanged(InputSourceData selectedData)
 			{
 				if (selectedData != null && selectedData instanceof ISimpleGeoImageDefinition) {
 					showView();

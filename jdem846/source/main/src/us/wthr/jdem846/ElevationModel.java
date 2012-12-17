@@ -8,7 +8,7 @@ import java.util.Map;
 import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 
-public interface ElevationModel
+public interface ElevationModel extends IDataObject
 {
 	public void dispose();
 	public void reset();
