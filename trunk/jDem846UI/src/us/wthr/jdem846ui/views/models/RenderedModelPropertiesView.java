@@ -9,6 +9,8 @@ import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846ui.controls.LabeledText;
 import us.wthr.jdem846ui.project.ProjectChangeAdapter;
 import us.wthr.jdem846ui.project.ProjectContext;
+import us.wthr.jdem846ui.views.data.DataView;
+import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 
 public class RenderedModelPropertiesView extends ViewPart
 {
@@ -47,6 +49,14 @@ public class RenderedModelPropertiesView extends ViewPart
 		{
 			public void onProjectLoaded() {
 				update();
+			}
+		});
+		
+		DataView.addTreeSelectionListener(new TreeSelectionAdapter()
+		{
+			public void onRenderedModelSelectionChanged(ElevationModel elevationModel)
+			{
+				setElevationModel(elevationModel);
 			}
 		});
 		

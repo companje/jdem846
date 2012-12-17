@@ -2,6 +2,7 @@ package us.wthr.jdem846ui.actions;
 
 import org.eclipse.ui.IWorkbenchWindow;
 
+import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846ui.ICommandIds;
 import us.wthr.jdem846ui.views.data.DataView;
@@ -17,12 +18,18 @@ public class RemoveDataAction extends BasicAction
 		setEnabled(false);
 		
 		DataView.addTreeSelectionListener(new TreeSelectionListener() {
-			public void onSelectionChanged(InputSourceData selectedData) {
+			public void onSourceDataSelectionChanged(InputSourceData selectedData) {
 				if (selectedData != null) {
 					setEnabled(true);
 				} else {
 					setEnabled(false);
 				}
+			}
+
+			@Override
+			public void onRenderedModelSelectionChanged(ElevationModel elevationModel)
+			{
+				
 			}
 		});
 		

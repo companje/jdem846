@@ -4,7 +4,8 @@ public enum ScriptLanguageEnum
 {
 	JYTHON("jython", "text/jython"),
 	GROOVY("groovy", "text/groovy"),
-	SCALA("scala", "text/scala");
+	SCALA("scala", "text/scala"),
+	JAVASCRIPT("javascript", "text/javascript");
 	
 	private final String text;
 	private final String mime;

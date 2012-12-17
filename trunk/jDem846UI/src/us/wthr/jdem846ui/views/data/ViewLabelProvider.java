@@ -16,22 +16,36 @@ public class ViewLabelProvider extends LabelProvider
 	private Image imageDataIcon;
 	private Image modelGridDataIcon;
 
+	private Image dataSourceCategoryIcon;
+	private Image renderedModelCategoryIcon;
+	
+	private Image renderedModelIcon;
+	
 	private Image rasterCategoryIcon;
 	private Image shapeCategoryIcon;
 	private Image imageCategoryIcon;
 	private Image modelGridCategoryIcon;
+	
+	private Image folderIcon;
 
 	public ViewLabelProvider()
 	{
+		folderIcon = Activator.getImageDescriptor("icons/eclipse/fldr_obj.gif").createImage();
+		
 		rasterDataIcon = Activator.getImageDescriptor("icons/node-icon-elevation.png").createImage();
 		shapeDataIcon = Activator.getImageDescriptor("icons/node-icon-shape-polygon.png").createImage();
 		imageDataIcon = Activator.getImageDescriptor("icons/node-icon-orthoimagery.png").createImage();
 		modelGridDataIcon = Activator.getImageDescriptor("icons/node-icon-modelgrid.gif").createImage();
 
-		rasterCategoryIcon = Activator.getImageDescriptor("icons/node-icon-category-elevation.png").createImage();
-		shapeCategoryIcon = Activator.getImageDescriptor("icons/node-icon-category-shapes.png").createImage();
-		imageCategoryIcon = Activator.getImageDescriptor("icons/node-icon-category-imagery.png").createImage();
-		modelGridCategoryIcon = Activator.getImageDescriptor("icons/node-icon-category-modelgrid.gif").createImage();
+		dataSourceCategoryIcon = folderIcon;
+		renderedModelCategoryIcon = folderIcon;
+		
+		renderedModelIcon = Activator.getImageDescriptor("icons/eclipse/image.gif").createImage();
+		
+		rasterCategoryIcon = folderIcon;
+		shapeCategoryIcon = folderIcon;
+		imageCategoryIcon = folderIcon;
+		modelGridCategoryIcon = folderIcon;
 	}
 
 	public String getText(Object obj)
@@ -72,6 +86,12 @@ public class ViewLabelProvider extends LabelProvider
 			return modelGridDataIcon;
 		} else if (icon == IconEnum.MODELGRID_CATEGORY) {
 			return modelGridCategoryIcon;
+		} else if (icon == IconEnum.DATA_SOURCE_CATEGORY) {
+			return dataSourceCategoryIcon;
+		} else if (icon == IconEnum.RENDERED_MODEL_CATEGORY) {
+			return renderedModelCategoryIcon;
+		} else if (icon == IconEnum.RENDERED_MODEL_OBJECT) {
+			return renderedModelIcon;
 		} else {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}

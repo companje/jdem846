@@ -5,6 +5,7 @@ import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.scripting.groovy.GroovyScriptLoader;
+import us.wthr.jdem846.scripting.javascript.JavaScriptLoader;
 import us.wthr.jdem846.scripting.scala.ScalaScriptLoader;
 
 public class ScriptProxyFactory
@@ -20,6 +21,8 @@ public class ScriptProxyFactory
 			scriptProxy = GroovyScriptLoader.parseScript(scriptContent);
 		} else if (language == ScriptLanguageEnum.SCALA) {
 			scriptProxy = ScalaScriptLoader.parseScript(scriptContent);
+		} else if (language == ScriptLanguageEnum.JAVASCRIPT) {
+			scriptProxy = JavaScriptLoader.parseScript(scriptContent);
 		} /*else if (language == ScriptLanguageEnum.JYTHON) {
 			
 		}*/ else {

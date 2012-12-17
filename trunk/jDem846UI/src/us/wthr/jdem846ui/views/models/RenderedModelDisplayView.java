@@ -17,6 +17,8 @@ import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
 import us.wthr.jdem846ui.project.ProjectChangeAdapter;
 import us.wthr.jdem846ui.project.ProjectContext;
+import us.wthr.jdem846ui.views.data.DataView;
+import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 
 public class RenderedModelDisplayView extends ViewPart
 {
@@ -104,6 +106,14 @@ public class RenderedModelDisplayView extends ViewPart
 					 image = null;
 					 canvas.redraw();
 				}
+			}
+		});
+		
+		DataView.addTreeSelectionListener(new TreeSelectionAdapter()
+		{
+			public void onRenderedModelSelectionChanged(ElevationModel elevationModel)
+			{
+				setElevationModel(elevationModel);
 			}
 		});
 	}

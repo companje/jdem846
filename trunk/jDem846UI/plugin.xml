@@ -60,12 +60,6 @@
             icon="icons/eclipse/gallery_view.gif" />
      
       <view
-            name="Rendered Model List"
-            class="us.wthr.jdem846ui.views.models.RenderedModelListView"
-            id="jdem846ui.renderedModelListView" 
-            icon="icons/eclipse/flatLayout.gif" />
-     
-      <view
             name="Rendered Model Properties"
             class="us.wthr.jdem846ui.views.models.RenderedModelPropertiesView"
             id="jdem846ui.renderedModelPropertiesView" 
