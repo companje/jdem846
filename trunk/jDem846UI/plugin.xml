@@ -58,30 +58,19 @@
             class="us.wthr.jdem846ui.views.models.RenderedModelDisplayView"
             id="jdem846ui.renderedModelDisplayView"
             icon="icons/eclipse/gallery_view.gif" />
-     
-      <view
-            name="Rendered Model Properties"
-            class="us.wthr.jdem846ui.views.models.RenderedModelPropertiesView"
-            id="jdem846ui.renderedModelPropertiesView" 
-            icon="icons/eclipse/message_info.gif" />
+
      
      <view
             name="Script Editor"
             class="us.wthr.jdem846ui.views.ScriptEditorView"
             id="jdem846ui.scriptEditorView"
             icon="icons/eclipse/scroll.png" />
-     
+
      <view
-            name="Raster Properties"
-            class="us.wthr.jdem846ui.views.raster.RasterPropertiesView"
-            id="jdem846ui.rasterPropertiesView"
-            icon="icons/eclipse/binary.gif" />
-     
-     <view
-            name="GeoImage Properties"
-            class="us.wthr.jdem846ui.views.geoimage.GeoImagePropertiesView"
-            id="jdem846ui.geoImagePropertiesView"
-            icon="icons/eclipse/binary.gif" />
+            name="Layer Properties"
+            class="us.wthr.jdem846ui.views.layers.LayerPropertiesView"
+            id="jdem846ui.layerPropertiesView"
+            icon="icons/eclipse/binary.gif" />        
      
 	<view
          name="Tasks"
@@ -168,8 +157,34 @@
       		categoryId="jdem846ui.category"
       		id="jdem846ui.log.clear">
       </command>
-
       
+      <command
+            name="Zoom In"
+            description="Zoom In"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.zoom.in">
+      </command>
+
+      <command
+            name="Zoom Out"
+            description="Zoom Out"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.zoom.out">
+      </command>
+      
+      <command
+            name="Zoom Fit"
+            description="Zoom Fit"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.zoom.fit">
+      </command>
+      
+      <command
+            name="Zoom Actual"
+            description="Zoom Actual"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.zoom.actual">
+      </command>
   </extension>
 <!--
   
@@ -202,7 +217,10 @@
                name="windowImages"
                value="icons/jdem846-icon-16.png,icons/jdem846-icon-32.png,icons/jdem846-icon-48.png">
          </property>
+         <property name="preferenceCustomization" value="plugin_customization.properties"/>
       </product>
+      
+
    </extension>
 	
 	<extension point="org.eclipse.core.runtime.preferences">

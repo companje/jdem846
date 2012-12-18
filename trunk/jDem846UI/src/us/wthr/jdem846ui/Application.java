@@ -128,6 +128,8 @@ public class Application implements IApplication {
 		Display display = PlatformUI.createDisplay();
 		try {
 			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor(loadProject));
+			ServiceKernel.initiateApplicationShutdown();
+			
 			if (returnCode == PlatformUI.RETURN_RESTART) {
 				return IApplication.EXIT_RESTART;
 			}
@@ -143,6 +145,9 @@ public class Application implements IApplication {
 	public void stop() {
 		if (!PlatformUI.isWorkbenchRunning())
 			return;
+		
+		ServiceKernel.initiateApplicationShutdown();
+		
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final Display display = workbench.getDisplay();
 		display.syncExec(new Runnable() {

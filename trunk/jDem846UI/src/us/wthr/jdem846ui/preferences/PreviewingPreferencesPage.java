@@ -1,26 +1,17 @@
 package us.wthr.jdem846ui.preferences;
 
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class PreviewingPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage
+public class PreviewingPreferencesPage extends BasicPreferencesPage
 {
+	public static final String ID = "jDem846UI.preferences.previewing";
 
 	@Override
-	public void init(IWorkbench arg0)
+	protected void createFieldEditors()
 	{
 		// TODO Auto-generated method stub
 		
 	}
+	
 
-	@Override
-	protected Control createContents(Composite arg0)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

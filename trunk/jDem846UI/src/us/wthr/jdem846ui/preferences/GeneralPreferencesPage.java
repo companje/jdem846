@@ -2,40 +2,22 @@ package us.wthr.jdem846ui.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import us.wthr.jdem846ui.Activator;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 
-public class GeneralPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage
+public class GeneralPreferencesPage extends BasicPreferencesPage
 {
+	private static Log log = Logging.getLog(GeneralPreferencesPage.class);
+	public static final String ID = "jDem846UI.preferences.general";
+	
 
-	@Override
-	public void init(IWorkbench arg0)
-	{
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		
-	}
 	
-	@Override
-	protected void performDefaults()
-	{
-		super.performDefaults();
-	}
-	
-	
-	@Override
-	public boolean performOk() 
-	{
-		
-		return super.performOk();
-	}
-
 	@Override
 	protected void createFieldEditors()
 	{
+		
 		addField(new ComboFieldEditor("us.wthr.jdem846.general.ui.i18n.default", "Language", new String[][] { { "English", "en" } }, getFieldEditorParent()));
 		
 		addField(new BooleanFieldEditor("us.wthr.jdem846.general.ui.jdemFrame.displayMemoryMonitor", "Display Memory Monitor", getFieldEditorParent()));
@@ -44,7 +26,7 @@ public class GeneralPreferencesPage extends FieldEditorPreferencePage implements
 		addField(new BooleanFieldEditor("us.wthr.jdem846.general.ui.console.limitOuput", "Limit Console", getFieldEditorParent()));
 		addField(new IntegerFieldEditor("us.wthr.jdem846.general.ui.console.bufferSize", "Max Console Length", getFieldEditorParent()));
 		
-		
+		//this.getApplyButton().setEnabled(false);
 //		addField(new DirectoryFieldEditor("PATH", "&Directory preference:",
 //		        getFieldEditorParent()));
 //		    addField(new BooleanFieldEditor("BOOLEAN_VALUE",
@@ -58,23 +40,11 @@ public class GeneralPreferencesPage extends FieldEditorPreferencePage implements
 //		        getFieldEditorParent()));
 //		    addField(new StringFieldEditor("MySTRING2", "A &text preference:",
 //		        getFieldEditorParent()));
-		    
-		    
-		    /*
-		     * 
-		     * private ComboBox cmbGeneralLanguage;   us.wthr.jdem846.general.ui.i18n.default
-	private ComboBox cmbGeneralDefaultImageFormat;
-	private JGoodiesColorThemeListModel colorThemeListModel;
-	private ComboBox cmbGeneralColorTheme;
-	private CheckBox chkGeneralDisplayToolbarText;
-	private CheckBox chkGeneralAntialiasedScriptEditorText;
-	private CheckBox chkGeneralDisplayMemoryMonitor;   us.wthr.jdem846.general.ui.jdemFrame.displayMemoryMonitor
-	private CheckBox chkGeneralDisplayLogPanel;   us.wthr.jdem846.general.ui.displayLogViewPanel
-	private CheckBox chkGeneralPreviewModelDuringRender;   us.wthr.jdem846.general.ui.renderInProcessPreviewing	
-	private CheckBox chkGeneralLimitConsoleOutput; us.wthr.jdem846.general.ui.console.limitOuput
-	private NumberTextField txtGeneralConsoleBufferSize; us.wthr.jdem846.general.ui.console.bufferSize
-	private CheckBox chkGeneralReportUsage;
-		     */
+
 	}
+	
+	
+
+
 
 }

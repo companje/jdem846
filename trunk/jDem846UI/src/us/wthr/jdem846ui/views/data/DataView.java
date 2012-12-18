@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 
 import us.wthr.jdem846.ElevationModel;
@@ -155,7 +156,19 @@ public class DataView extends ViewPart
 
 	}
 
-	protected void resetAndUpdateModel()
+	protected void resetAndUpdateModelAsync()
+	{
+		Display.getDefault().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				resetAndUpdateModel();
+			}
+			
+		});
+	}
+	
+	private void resetAndUpdateModel()
 	{
 		viewer.setInput(createTreeModel());
 		viewer.expandAll();
@@ -198,14 +211,10 @@ public class DataView extends ViewPart
 					}
 				}
 
-				if (!selectedSourceData) {
+				if (!selectedSourceData && !selectedRenderedModel) {
 					fireOnSourceDataSelectionChanged(null);
-				}
-				
-				if (!selectedRenderedModel) {
 					fireOnRenderedModelSelectionChanged(null);
 				}
-				
 			}
 		});
 
@@ -215,34 +224,31 @@ public class DataView extends ViewPart
 			@Override
 			public void onDataAdded()
 			{
-				resetAndUpdateModel();
+				resetAndUpdateModelAsync();
 			}
 
 			@Override
 			public void onDataRemoved()
 			{
-				resetAndUpdateModel();
+				resetAndUpdateModelAsync();
 			}
 
 			
 			@Override
 			public void onElevationModelAdded(ElevationModel elevationModel) {
 				log.info("Model added: Rebuilding rendered model list");
-				resetAndUpdateModel();
-				//resetAndUpdateModelAsync(elevationModel);
+				resetAndUpdateModelAsync();
 			}
 
 			@Override
 			public void onElevationModelRemoved(ElevationModel elevationModel) {
 				log.info("Model removed: Rebuilding rendered model list");
-				resetAndUpdateModel();
-				//resetAndUpdateModelAsync(null);
+				resetAndUpdateModelAsync();
 			}
 			
 			@Override
 			public void onProjectLoaded(String projectPath) {
-				resetAndUpdateModel();
-				//resetAndUpdateModelAsync(null);
+				resetAndUpdateModelAsync();
 			}
 			
 		});
