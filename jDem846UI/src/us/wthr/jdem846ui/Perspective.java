@@ -4,15 +4,14 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846ui.views.LogConsoleView;
 import us.wthr.jdem846ui.views.ScriptEditorView;
 import us.wthr.jdem846ui.views.data.DataView;
-import us.wthr.jdem846ui.views.geoimage.GeoImagePropertiesView;
+import us.wthr.jdem846ui.views.layers.LayerPropertiesView;
 import us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView;
 import us.wthr.jdem846ui.views.models.RenderedModelDisplayView;
-import us.wthr.jdem846ui.views.models.RenderedModelPropertiesView;
 import us.wthr.jdem846ui.views.preview.PreviewView;
-import us.wthr.jdem846ui.views.raster.RasterPropertiesView;
 
 public class Perspective implements IPerspectiveFactory
 {
@@ -31,13 +30,12 @@ public class Perspective implements IPerspectiveFactory
 		topLeftFolder.addView(DataView.ID);
 
 		IFolderLayout bottomLeftFolder = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.40f, "topLeft");
-		bottomLeftFolder.addView(RasterPropertiesView.ID);
-		bottomLeftFolder.addView(GeoImagePropertiesView.ID);
-		//bottomLeftFolder.addView(RenderedModelListView.ID);
+		bottomLeftFolder.addView(LayerPropertiesView.ID);
+
 
 		IFolderLayout topRightFolder = layout.createFolder("topRight", IPageLayout.RIGHT, 0.60f, editorArea);
 		topRightFolder.addView(ModelConfigurationView.ID);
-		topRightFolder.addView(RenderedModelPropertiesView.ID);
+
 
 		IFolderLayout centerFolder = layout.createFolder("center", IPageLayout.TOP, 0.75f, editorArea);
 		centerFolder.addView(PreviewView.ID);
@@ -45,15 +43,18 @@ public class Perspective implements IPerspectiveFactory
 		centerFolder.addView(RenderedModelDisplayView.ID);
 
 		IFolderLayout bottomFolder = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.25f, editorArea);
-		bottomFolder.addView(LogConsoleView.ID);
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.displayLogViewPanel")) {
+			bottomFolder.addView(LogConsoleView.ID);
+		}
 		bottomFolder.addView("org.eclipse.ui.views.ProgressView");
 
 		layout.getViewLayout(PreviewView.ID).setCloseable(false);
 		layout.getViewLayout(ScriptEditorView.ID).setCloseable(false);
 		layout.getViewLayout(DataView.ID).setCloseable(false);
 		layout.getViewLayout(ModelConfigurationView.ID).setCloseable(false);
-		layout.getViewLayout(RenderedModelPropertiesView.ID).setCloseable(false);
+		//layout.getViewLayout(RenderedModelPropertiesView.ID).setCloseable(false);
 		layout.getViewLayout(RenderedModelDisplayView.ID).setCloseable(false);
+		layout.getViewLayout(LayerPropertiesView.ID).setCloseable(false);
 	}
 
 }

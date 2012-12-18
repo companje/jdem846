@@ -8,6 +8,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
 import us.wthr.jdem846ui.observers.OptionValidationChangeObserver;
+import us.wthr.jdem846ui.preferences.GeneralPreferencesPage;
 import us.wthr.jdem846ui.project.ProjectContext;
 import us.wthr.jdem846ui.project.ProjectException;
 
@@ -58,5 +59,13 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	public String getInitialWindowPerspectiveId() {
 		return PERSPECTIVE_ID;
 	}
+
+	@Override
+	public String getMainPreferencePageId()
+	{
+		return GeneralPreferencesPage.ID;
+	}
+
+	
 
 }

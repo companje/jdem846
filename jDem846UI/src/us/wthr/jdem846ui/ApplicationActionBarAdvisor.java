@@ -25,6 +25,10 @@ import us.wthr.jdem846ui.actions.RemoveDataAction;
 import us.wthr.jdem846ui.actions.RenderAction;
 import us.wthr.jdem846ui.actions.SaveProjectAction;
 import us.wthr.jdem846ui.actions.SaveProjectAsAction;
+import us.wthr.jdem846ui.actions.ZoomActualAction;
+import us.wthr.jdem846ui.actions.ZoomFitAction;
+import us.wthr.jdem846ui.actions.ZoomInAction;
+import us.wthr.jdem846ui.actions.ZoomOutAction;
 
 /**
  * An action bar advisor is responsible for creating, adding, and disposing of
@@ -49,6 +53,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private OpenProjectAction openProjectAction;
     private SaveProjectAction saveProjectAction;
     private SaveProjectAsAction saveProjectAsAction;
+    
+    private ZoomInAction zoomInAction;
+    private ZoomOutAction zoomOutAction;
+    private ZoomActualAction zoomActualAction;
+    private ZoomFitAction zoomFitAction;
     
     private AddDataAction addDataAction;
     private RemoveDataAction removeDataAction;
@@ -88,6 +97,12 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         exportDataAction = new ExportDataAction(window, "Export", View.ID);
         renderAction = new RenderAction(window, "Render", View.ID);
         
+        zoomInAction = new ZoomInAction(window, "Zoom In", View.ID);
+        zoomOutAction = new ZoomOutAction(window, "Zoom Out", View.ID);
+        zoomActualAction = new ZoomActualAction(window, "Zoom Actual", View.ID);
+        zoomFitAction = new ZoomFitAction(window, "Zoom Fit", View.ID);
+        
+        
         register(newProjectAction);
         register(openProjectAction);
         register(saveProjectAction);
@@ -97,7 +112,10 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register(exportDataAction);
         register(renderAction);
         
-   
+        register(zoomInAction);
+        register(zoomOutAction);
+        register(zoomActualAction);
+        register(zoomFitAction);
         
         //newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
         //register(newWindowAction);
@@ -142,17 +160,26 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     }
     
     protected void fillCoolBar(ICoolBarManager coolBar) {
-        IToolBarManager toolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-        coolBar.add(new ToolBarContributionItem(toolbar, "main"));   
-        toolbar.add(newProjectAction);
-        toolbar.add(openProjectAction);
-        toolbar.add(saveProjectAction);
-        toolbar.add(saveProjectAsAction);
-        toolbar.add(new Separator());
-        toolbar.add(addDataAction);
-        toolbar.add(removeDataAction);
-        toolbar.add(exportDataAction);
-        toolbar.add(renderAction);
+        IToolBarManager mainToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
+        coolBar.add(new ToolBarContributionItem(mainToolbar, "main"));   
+        mainToolbar.add(newProjectAction);
+        mainToolbar.add(openProjectAction);
+        mainToolbar.add(saveProjectAction);
+        mainToolbar.add(saveProjectAsAction);
+        
+        IToolBarManager dataToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
+        coolBar.add(new ToolBarContributionItem(dataToolbar, "data"));
+        dataToolbar.add(addDataAction);
+        dataToolbar.add(removeDataAction);
+        dataToolbar.add(exportDataAction);
+        dataToolbar.add(renderAction);
+
+        IToolBarManager modelToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
+        coolBar.add(new ToolBarContributionItem(modelToolbar, "model"));
+        modelToolbar.add(zoomInAction);
+        modelToolbar.add(zoomOutAction);
+        modelToolbar.add(zoomActualAction);
+        modelToolbar.add(zoomFitAction);
         //toolbar.add(openViewAction);
        // toolbar.add(messagePopupAction);
     }

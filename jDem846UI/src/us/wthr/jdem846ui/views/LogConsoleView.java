@@ -32,7 +32,7 @@ public class LogConsoleView extends ViewPart
 	private Text logText;
 	
 	@Override
-	public void createPartControl(Composite parent) 
+	public void createPartControl(final Composite parent) 
 	{
 		logText = new Text(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		logText.setEditable(false);
@@ -46,14 +46,18 @@ public class LogConsoleView extends ViewPart
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		dropDownMenu.add(clearLogConsoleAction);
 		toolBar.add(clearLogConsoleAction);
-		   
+		  
+		
+		
 		clearLogConsoleAction.addActionListener(new ActionListener() {
 			public void onAction() {
 				Display.getDefault().asyncExec(new Runnable() {
 
 					@Override
 					public void run() {
-						logText.setText("");
+						if (!parent.isDisposed()) {
+							logText.setText("");
+						}
 					}
 					
 				});
@@ -74,11 +78,14 @@ public class LogConsoleView extends ViewPart
 			{
 				final String formatted = this.getFormatter().format(record);
 				
+				
 				Display.getDefault().asyncExec(new Runnable() {
 
 					@Override
 					public void run() {
-						logText.append(formatted);
+						if (!parent.isDisposed()) {
+							logText.append(formatted);
+						}
 					}
 					
 				});
@@ -86,10 +93,6 @@ public class LogConsoleView extends ViewPart
 				
 			}
 		});
-		
-		
-		log.info("Test A");
-		log.info("Test B");
 	}
 
 	@Override

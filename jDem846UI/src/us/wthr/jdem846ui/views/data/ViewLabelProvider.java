@@ -40,7 +40,7 @@ public class ViewLabelProvider extends LabelProvider
 		dataSourceCategoryIcon = folderIcon;
 		renderedModelCategoryIcon = folderIcon;
 		
-		renderedModelIcon = Activator.getImageDescriptor("icons/eclipse/image.gif").createImage();
+		renderedModelIcon = Activator.getImageDescriptor("icons/eclipse/map.gif").createImage();
 		
 		rasterCategoryIcon = folderIcon;
 		shapeCategoryIcon = folderIcon;

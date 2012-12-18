@@ -13,4 +13,10 @@ public interface ICommandIds {
 	public static final String CMD_DATA_SELECTED = "jdem846ui.data.selected";
 	
 	public static final String CMD_CLEAR_LOG_CONSOLE = "jdem846ui.log.clear";
+	
+	public static final String CMD_ZOOM_IN = "jdem846ui.zoom.in";
+	public static final String CMD_ZOOM_OUT = "jdem846ui.zoom.out";
+	public static final String CMD_ZOOM_ACTUAL = "jdem846ui.zoom.actual";
+	public static final String CMD_ZOOM_FIT = "jdem846ui.zoom.fit";
+	
 }
