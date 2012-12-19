@@ -17,8 +17,6 @@
 package us.wthr.jdem846.ui.scripting;
 
 import java.awt.BorderLayout;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,7 +52,7 @@ public class ScriptEditorPanel extends Panel
 	
 	private ScriptEditorButtonBar buttonBar;
 	
-	private ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.GROOVY;
+	private ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.JAVASCRIPT;
 	
 	private DefaultSyntaxKit syntaxKit;
 	private SyntaxDocument syntaxDocument;

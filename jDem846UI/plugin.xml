@@ -140,7 +140,7 @@
             id="jdem846ui.data.remove">
       </command>
       <command
-            name="Exports Data"
+            name="Export Data"
             description="Exports a data source"
             categoryId="jdem846ui.category"
             id="jdem846ui.data.export">
@@ -157,7 +157,18 @@
       		categoryId="jdem846ui.category"
       		id="jdem846ui.log.clear">
       </command>
-      
+      <command
+      		name="Update Preview"
+      		description="Rerenders the preview model"
+      		categoryId="jdem846ui.category"
+      		id="jdem846ui.preview.update">
+      </command>
+      <command
+      		name="Export Model"
+      		description="Export the model image"
+      		categoryId="jdem846ui.category"
+      		id="jdem846ui.model.export">
+      </command>
       <command
             name="Zoom In"
             description="Zoom In"
@@ -247,4 +258,11 @@
 			class="us.wthr.jdem846ui.preferences.DefaultsPreferencesPage" />
 	</extension>
 	
+	<editor
+      name="Script Editor"
+      extensions="js"
+      icon="icons/eclipse/script_project.gif"
+      class="us.wthr.jdem846ui.editors.ScriptEditor"
+      id="us.wthr.jdem846ui.editors.ScriptEditor">
+   </editor>
 </plugin>

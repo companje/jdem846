@@ -1,5 +1,7 @@
 package us.wthr.jdem846ui.views.models;
 
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -11,9 +13,12 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 import us.wthr.jdem846.ElevationModel;
+import us.wthr.jdem846ui.View;
+import us.wthr.jdem846ui.actions.ExportModelAction;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
 import us.wthr.jdem846ui.project.ProjectChangeAdapter;
 import us.wthr.jdem846ui.project.ProjectContext;
@@ -34,6 +39,8 @@ public class RenderedModelDisplayView extends ViewPart
 	private Long imageMutex = new Long(0);
 	private Image image;
 	
+	private ExportModelAction exportModelAction;
+	
 	public RenderedModelDisplayView()
 	{
 		RenderedModelDisplayView.INSTANCE = this;
@@ -44,7 +51,12 @@ public class RenderedModelDisplayView extends ViewPart
 	{
 		this.parent = parent;
 		
-		
+		exportModelAction = new ExportModelAction("Export...", View.ID);
+		IActionBars actionBars = getViewSite().getActionBars();
+		IMenuManager dropDownMenu = actionBars.getMenuManager();
+		IToolBarManager toolBar = actionBars.getToolBarManager();
+		dropDownMenu.add(exportModelAction);
+		toolBar.add(exportModelAction);
 		
 		canvas = new Canvas(parent, SWT.NONE);
 		canvas.setBackground(new Color(parent.getDisplay(), 0xFF, 0xFF, 0xFF));
