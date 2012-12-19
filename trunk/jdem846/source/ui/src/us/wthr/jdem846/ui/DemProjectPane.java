@@ -611,6 +611,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 				scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.jython.template");
 			} else if (scriptingContext.getScriptLanguage() == ScriptLanguageEnum.SCALA) {
 				scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.scala.template");
+			} else if (scriptingContext.getScriptLanguage() == ScriptLanguageEnum.JAVASCRIPT) {
+				scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.javascript.template");
 			} else {
 				// fail silently for now
 				// TODO: Don't fail silently

@@ -92,6 +92,8 @@ public class ZipProjectFileWriter
 				scriptEntry = new ZipEntry("script.py");
 			} else if (projectMarshall.getScriptLanguage() == ScriptLanguageEnum.SCALA) {
 				scriptEntry = new ZipEntry("script.scala");
+			} else if (projectMarshall.getScriptLanguage() == ScriptLanguageEnum.JAVASCRIPT) {
+				scriptEntry = new ZipEntry("script.js");
 			}
 			
 			if (scriptEntry != null) {

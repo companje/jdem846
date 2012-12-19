@@ -1,14 +1,11 @@
 package us.wthr.jdem846.project;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -156,6 +153,8 @@ public class ZipProjectFileReader
 			scriptEntry = zipFile.getEntry("script.py");
 		} else if (projectMarshall.getScriptLanguage() == ScriptLanguageEnum.SCALA) {
 			scriptEntry = zipFile.getEntry("script.scala");
+		} else if (projectMarshall.getScriptLanguage() == ScriptLanguageEnum.JAVASCRIPT) {
+			scriptEntry = zipFile.getEntry("script.js");
 		}
 		
 		loadElevationModelsFromZip(projectMarshall, zipFile);

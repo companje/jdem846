@@ -1,7 +1,6 @@
 package us.wthr.jdem846.scripting;
 
 import us.wthr.jdem846.Context;
-import us.wthr.jdem846.DataContext;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -14,7 +13,7 @@ public class ScriptingContext implements Context
 	
 	private ScriptProxy scriptProxy = null;
 	private String userScript = null;
-	private ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.SCALA;
+	private ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.JAVASCRIPT;
 	
 	
 	private boolean disposed = false;

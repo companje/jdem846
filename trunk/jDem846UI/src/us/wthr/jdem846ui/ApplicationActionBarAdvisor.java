@@ -64,7 +64,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private ExportDataAction exportDataAction;
     private RenderAction renderAction;
     
-    //IWorkbenchAction newWindowAction;
+    private IWorkbenchAction cutAction;
+    private IWorkbenchAction copyAction;
+    private IWorkbenchAction pasteAction;
+    private IWorkbenchAction undoAction;
+    private IWorkbenchAction redoAction;
     
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
         super(configurer);
@@ -80,6 +84,21 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         exitAction = ActionFactory.QUIT.create(window);
         register(exitAction);
         
+        
+        cutAction = ActionFactory.CUT.create(window);
+        register(cutAction);
+        
+        copyAction = ActionFactory.COPY.create(window);
+        register(copyAction);
+        
+        pasteAction = ActionFactory.PASTE.create(window);
+        register(pasteAction);
+        
+        undoAction = ActionFactory.UNDO.create(window);
+        register(undoAction);
+        
+        redoAction = ActionFactory.REDO.create(window);
+        register(redoAction);
         
         prefsAction = ActionFactory.PREFERENCES.create(window);
         register(prefsAction);
@@ -129,11 +148,13 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     
     protected void fillMenuBar(IMenuManager menuBar) {
         MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
+        MenuManager editMenu = new MenuManager("&Edit", IWorkbenchActionConstants.M_EDIT);
         MenuManager helpMenu = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
         
         MenuManager windowMenu = new MenuManager("&Window", IWorkbenchActionConstants.M_WINDOW);
         
         menuBar.add(fileMenu);
+        menuBar.add(editMenu);
         // Add a group marker indicating where action set menus will appear.
         menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
         menuBar.add(windowMenu);
@@ -152,6 +173,14 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         fileMenu.add(new Separator());
         fileMenu.add(exitAction);
         
+        editMenu.add(undoAction);
+        editMenu.add(redoAction);
+        editMenu.add(new Separator());
+        editMenu.add(cutAction);
+        editMenu.add(copyAction);
+        editMenu.add(pasteAction);
+        
+        
         
         windowMenu.add(prefsAction);
         
@@ -166,6 +195,14 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         mainToolbar.add(openProjectAction);
         mainToolbar.add(saveProjectAction);
         mainToolbar.add(saveProjectAsAction);
+        
+        IToolBarManager editToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
+        coolBar.add(new ToolBarContributionItem(editToolbar, "edit"));   
+        editToolbar.add(cutAction);
+        editToolbar.add(copyAction);
+        editToolbar.add(pasteAction);
+        editToolbar.add(undoAction);
+        editToolbar.add(redoAction);
         
         IToolBarManager dataToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
         coolBar.add(new ToolBarContributionItem(dataToolbar, "data"));

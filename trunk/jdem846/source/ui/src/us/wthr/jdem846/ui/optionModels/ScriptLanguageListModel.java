@@ -29,6 +29,11 @@ public class ScriptLanguageListModel extends JComboBoxModel<String>
 				defaultSelected = ScriptLanguageEnum.JYTHON;
 		}
 		
+		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.scripting.javascript.enabled")) {
+			addItem(I18N.get("us.wthr.jdem846.programmingLanguage.javascript"), ScriptLanguageEnum.JAVASCRIPT.text());
+			if (defaultSelected == null) 
+				defaultSelected = ScriptLanguageEnum.JAVASCRIPT;
+		}
 		
 		
 		if (defaultSelected != null) {

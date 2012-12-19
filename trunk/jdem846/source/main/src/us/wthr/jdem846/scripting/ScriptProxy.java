@@ -30,7 +30,7 @@ import us.wthr.jdem846.model.processing.util.LightingValues;
 public interface ScriptProxy
 {
 	public void setProperty(String name, Object value) throws ScriptingException;
-	public void setModelContext(ModelContext modelContext);
+	public void setModelContext(ModelContext modelContext) throws ScriptingException;
 	
 	public void initialize() throws ScriptingException;
 	public void destroy() throws ScriptingException;
