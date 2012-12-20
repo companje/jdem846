@@ -14,7 +14,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core;bundle-version="3.7.0",
  jdem846;bundle-version="1.0.0",
  org.mozilla.javascript;bundle-version="1.7.2",
- org.eclipse.wtp.javascript.capabilities;bundle-version="1.0.100",
  org.eclipse.jface.text;bundle-version="3.7.0",
  org.eclipse.ui.editors;bundle-version="3.7.0"
 Bundle-ActivationPolicy: lazy
