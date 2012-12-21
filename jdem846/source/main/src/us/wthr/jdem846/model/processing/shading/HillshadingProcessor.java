@@ -119,7 +119,7 @@ public class HillshadingProcessor extends GridProcessor
 		// double d = (minSideLength / 2.0) / MathExt.tan(MathExt.radians(a));
 
 		Vector eye = new Vector();
-		Spheres.getPoint3D(0, 0, DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER, eye);
+		Spheres.getPoint3D(0, 0, globalOptionModel.getEyeDistance(), eye);
 		Vectors.rotate(-viewPerspective.getRotateX(), -viewPerspective.getRotateY(), -viewPerspective.getRotateZ(), eye, Vectors.YXZ);
 		advancedLightingCalculator.setEye(eye);
 

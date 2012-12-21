@@ -7,7 +7,7 @@ import org.mozilla.javascript.ScriptableObject;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.ScriptingException;
-import us.wthr.jdem846.graphics.GraphicsRenderer;
+import us.wthr.jdem846.graphics.IRenderer;
 import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -149,14 +149,14 @@ public class JavaScriptProxy implements ScriptProxy
 	}
 
 	@Override
-	public void preRender(GraphicsRenderer renderer, View view) throws ScriptingException
+	public void preRender(IRenderer renderer, View view) throws ScriptingException
 	{
 		Object functionArgs[] = {wrapJavaObject(renderer), wrapJavaObject(view)};
 		this.preRenderFunction.call(getContext(), scope, scope, functionArgs);
 	}
 
 	@Override
-	public void postRender(GraphicsRenderer renderer, View view) throws ScriptingException
+	public void postRender(IRenderer renderer, View view) throws ScriptingException
 	{
 		Object functionArgs[] = {wrapJavaObject(renderer), wrapJavaObject(view)};
 		this.postRenderFunction.call(getContext(), scope, scope, functionArgs);

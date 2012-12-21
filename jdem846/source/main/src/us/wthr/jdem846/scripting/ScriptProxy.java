@@ -18,7 +18,7 @@ package us.wthr.jdem846.scripting;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.ScriptingException;
-import us.wthr.jdem846.graphics.GraphicsRenderer;
+import us.wthr.jdem846.graphics.IRenderer;
 import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.model.processing.util.LightingValues;
 
@@ -41,8 +41,8 @@ public interface ScriptProxy
 	public Object onGetElevationBefore(double latitude, double longitude) throws ScriptingException;
 	public Object onGetElevationAfter(double latitude, double longitude, double elevation) throws ScriptingException;
 	
-	public void preRender(GraphicsRenderer renderer, View view) throws ScriptingException;
-	public void postRender(GraphicsRenderer renderer, View view) throws ScriptingException;
+	public void preRender(IRenderer renderer, View view) throws ScriptingException;
+	public void postRender(IRenderer renderer, View view) throws ScriptingException;
 	
 	public void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color) throws ScriptingException;
 	

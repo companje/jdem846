@@ -1,6 +1,5 @@
 package us.wthr.jdem846.graphics;
 
-import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferFactory;
@@ -13,7 +12,7 @@ import us.wthr.jdem846.math.MatrixStack;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.math.Vectors;
 
-public class GraphicsRenderer
+public class GraphicsRenderer extends BaseRenderer implements IRenderer
 {
 	private static Log log = Logging.getLog(GraphicsRenderer.class);
 	
@@ -23,7 +22,7 @@ public class GraphicsRenderer
 	
 	protected int currentColor = 0x0;
 	protected Texture currentTexture = null;
-	protected RenderCodesEnum error = RenderCodesEnum.RENDER_NO_ERROR;
+	
 	
 	protected ViewPort viewPort = null;
 	
@@ -47,28 +46,27 @@ public class GraphicsRenderer
 		projectionStack = new MatrixStack(true);
 	}
 	
+	public void initialize(int width, int height)
+	{
+		
+	}
 	
-	public void multMatrix(Matrix tgt, Matrix with)
+	protected void multMatrix(Matrix tgt, Matrix with)
 	{
 		if (tgt != null && with != null) {
 			tgt.multiply(with);
 		}
 	}
 	
-	public void multMatrix(Matrix m)
+	protected void multMatrix(Matrix m)
 	{
 		if (this.currentMatrixStack != null && this.currentMatrixStack.depth() > 0 && m != null) {
 			this.multMatrix(this.currentMatrixStack.top(), m);
 		}
 	}
 	
-	
-	public RenderCodesEnum getError()
-	{
-		return this.error;
-	}
-	
-	
+
+	@Override
 	public void pushMatrix()
 	{
 		if (this.currentMatrixStack != null) {
@@ -76,6 +74,7 @@ public class GraphicsRenderer
 		}
 	}
 	
+	@Override
 	public void popMatrix()
 	{
 		if (this.currentMatrixStack != null) {
@@ -83,6 +82,7 @@ public class GraphicsRenderer
 		}
 	}
 	
+	@Override
 	public void setFrameBuffer(FrameBuffer frameBuffer)
 	{
 		this.frameBuffer = frameBuffer;
@@ -93,11 +93,7 @@ public class GraphicsRenderer
 		}
 	}
 	
-	public void viewPort(int x, int y, int width, int height)
-	{
-		viewPort(x, y, width, height, FrameBufferModeEnum.STANDARD);
-	}
-	
+	@Override
 	public void viewPort(int x, int y, int width, int height, FrameBufferModeEnum bufferMode)
 	{
 
@@ -112,6 +108,7 @@ public class GraphicsRenderer
 		}
 	}
 	
+	@Override
 	public void matrixMode(MatrixModeEnum mode) throws GraphicsRenderException
 	{
 		
@@ -127,6 +124,7 @@ public class GraphicsRenderer
 			
 	}
 	
+	@Override
 	public void loadIdentity()
 	{
 		if (this.currentMatrixStack != null && this.currentMatrixStack.depth() > 0) {
@@ -135,6 +133,7 @@ public class GraphicsRenderer
 	}
 	
 	// http://cgit.freedesktop.org/mesa/mesa/tree/src/mesa/math/m_matrix.c
+	@Override
 	public void ortho(double left, double right, double bottom, double top, double nearval, double farval)
 	{
 		Matrix m = new Matrix(true);
@@ -163,6 +162,7 @@ public class GraphicsRenderer
 	}
 	
 	//http://cgit.freedesktop.org/mesa/mesa/tree/src/glu/sgi/libutil/project.c?h=7.8
+	@Override
 	public void perspective(double fov, double aspect, double near, double far)
 	{
 		this.near = near;
@@ -194,7 +194,7 @@ public class GraphicsRenderer
 
 	}
 	
-	
+	@Override
 	public void lookAt(double eyeX, double eyeY, double eyeZ
 						, double centerX, double centerY, double centerZ
 						, double upX, double upY, double upZ)
@@ -253,6 +253,7 @@ public class GraphicsRenderer
 		
 	}
 	
+	@Override
 	public void bindTexture(int[] tex, int width, int height)
 	{
 		if (tex == null) {
@@ -274,6 +275,7 @@ public class GraphicsRenderer
 		
 	}
 	
+	@Override
 	public void unbindTexture()
 	{
 		this.currentTexture = null;
@@ -282,11 +284,13 @@ public class GraphicsRenderer
 		}
 	}
 	
+	@Override
 	public boolean isTextureBound()
 	{
 		return (this.currentTexture != null);
 	}
 	
+	@Override
 	public void clear(int backgroundColor)
 	{
 		if (this.frameBuffer != null) {
@@ -296,7 +300,7 @@ public class GraphicsRenderer
 		}
 	}
 	
-	
+	@Override
 	public void rotate(double angle, AxisEnum axis)
 	{
 		Matrix m = new Matrix(true);
@@ -332,7 +336,7 @@ public class GraphicsRenderer
 		this.multMatrix(this.modelViewStack.top(), m);
 	}
 	
-	
+	@Override
 	public void translate(double x, double y, double z)
 	{
 		if (this.currentMatrixStack != null && this.currentMatrixStack.top() != null) {
@@ -340,7 +344,7 @@ public class GraphicsRenderer
 		}
 	}
 	
-	
+	@Override
 	public void scale(double x, double y, double z)
 	{
 		if (this.currentMatrixStack != null && this.currentMatrixStack.top() != null) {
@@ -348,6 +352,7 @@ public class GraphicsRenderer
 		}
 	}
 	
+	@Override
 	public void begin(PrimitiveModeEnum mode)
 	{
 		if (this.inPrimitiveDraw == true) {
@@ -369,18 +374,15 @@ public class GraphicsRenderer
 
 	}
 	
+	@Override
 	public void end()
 	{
 		this.primitiveDrawer = null;
 		this.inPrimitiveDraw = false;
 	}
 	
-	
-	public void color(int[] color)
-	{
-		color(ColorUtil.rgbaToInt(color));
-	}
-	
+
+	@Override
 	public void color(int color)
 	{
 		this.currentColor = color;
@@ -389,6 +391,7 @@ public class GraphicsRenderer
 		}
 	}
 	
+	@Override
 	public void texCoord(double left, double front)
 	{
 		if (this.currentTexture != null) {
@@ -397,12 +400,10 @@ public class GraphicsRenderer
 		}
 	}
 	
-	public void vertex(Vector v)
-	{
-		vertex(v.x, v.y, v.z);
-	}
 	
 	private Vector v0 = new Vector();
+	
+	@Override
 	public void vertex(double x, double y, double z)
 	{
 		if (this.primitiveDrawer == null) {
@@ -419,7 +420,7 @@ public class GraphicsRenderer
 		}
 	}
 	
-	
+	@Override
 	public boolean project(Vector v)
 	{
 
@@ -463,6 +464,7 @@ public class GraphicsRenderer
 		
 	}
 	
+	@Override
 	public FrameBuffer getFrameBuffer()
 	{
 		return frameBuffer;

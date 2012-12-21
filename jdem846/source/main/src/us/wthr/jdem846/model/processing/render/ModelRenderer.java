@@ -11,7 +11,9 @@ import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.graphics.AxisEnum;
 import us.wthr.jdem846.graphics.GraphicsRenderer;
+import us.wthr.jdem846.graphics.IRenderer;
 import us.wthr.jdem846.graphics.MatrixModeEnum;
+import us.wthr.jdem846.graphics.OpenGlRenderer;
 import us.wthr.jdem846.graphics.PerspectiveTypeEnum;
 import us.wthr.jdem846.graphics.PrimitiveModeEnum;
 import us.wthr.jdem846.graphics.View;
@@ -51,7 +53,7 @@ public class ModelRenderer extends GridProcessor implements RenderProcessor
 	protected double lastElevation = 0x0;
 	
 	protected View modelView = null;
-	protected GraphicsRenderer renderer = null;
+	protected IRenderer renderer = null;
 	
 	protected Boolean renderCompleted = false;
 	
@@ -77,9 +79,12 @@ public class ModelRenderer extends GridProcessor implements RenderProcessor
 	{
 		this.lastElevation = this.modelContext.getRasterDataContext().getDataMaximumValue();
 		this.renderer = new GraphicsRenderer();
+		//this.renderer = new OpenGlRenderer();
 		if (this.frameBuffer != null) {
 			this.renderer.setFrameBuffer(frameBuffer);
 		}
+		this.renderer.initialize(globalOptionModel.getWidth(), globalOptionModel.getHeight());
+		
 		latitudeResolution = this.modelDimensions.modelLatitudeResolution;
 		longitudeResolution = this.modelDimensions.modelLongitudeResolution;
 	}

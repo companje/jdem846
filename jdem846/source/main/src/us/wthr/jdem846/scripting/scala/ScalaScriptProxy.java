@@ -5,14 +5,12 @@ import java.lang.reflect.Method;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.ScriptingException;
-import us.wthr.jdem846.graphics.GraphicsRenderer;
+import us.wthr.jdem846.graphics.IRenderer;
 import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.model.ModelProcessContainer;
 import us.wthr.jdem846.model.processing.util.LightingValues;
 import us.wthr.jdem846.scripting.ScriptProxy;
-import us.wthr.jdem846.scripting.groovy.CallBack;
 
 
 public class ScalaScriptProxy implements ScriptProxy
@@ -156,12 +154,14 @@ public class ScalaScriptProxy implements ScriptProxy
 		onLightLevelsCallBack.call(latitude, longitude, elevation, lightingValues);
 	}
 	
-	public void preRender(GraphicsRenderer renderer, View view) throws ScriptingException
+	@Override
+	public void preRender(IRenderer renderer, View view) throws ScriptingException
 	{
 		preRenderCallBack.call(renderer, view);
 	}
 	
-	public void postRender(GraphicsRenderer renderer, View view) throws ScriptingException
+	@Override
+	public void postRender(IRenderer renderer, View view) throws ScriptingException
 	{
 		postRenderCallBack.call(renderer, view);
 	}
