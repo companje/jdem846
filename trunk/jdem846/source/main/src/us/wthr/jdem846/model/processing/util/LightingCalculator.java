@@ -21,7 +21,7 @@ public class LightingCalculator
 	//private double[] ambientColor = {1.0, 1.0, 1.0, 1.0};
 	//private double[] diffuseColor = {1.0, 1.0, 1.0, 1.0};
 	//private double[] specularColor = {1.0, 1.0, 1.0, 1.0};
-	private double[] specularColor = {0.8, 0.8, 0.8, 0.8};
+	private double[] specularColor = {0.8, 0.8, 0.8, 1.0};
 	
 	private boolean useDistanceAttenuation = true;
 	private double attenuationRadius = 2000;
@@ -109,21 +109,20 @@ public class LightingCalculator
 
 		
 		
-		lightingValues.specularLight = 0;
+		
 		if (lightingValues.diffuseLight > 0) {
 			
 			Vectors.subtract(N, L, H);
 			Vectors.normalize(H);
 			
-			double specDot = Vectors.dotProduct(H, eye);
+			double specDot = Vectors.dotProduct(eye, H);
 			if (shininess != 1.0) {
 				specDot = MathExt.pow(specDot, shininess);
 			}
 			
-			lightingValues.specularLight = specDot;
-			if (lightingValues.specularLight < 0) {
-		//		lightingValues.specularLight = 0;
-			}
+			lightingValues.specularLight = (specDot >= 0.0) ? specDot : 0.0;
+		} else {
+			lightingValues.specularLight = 0;
 		}
 		
 		
@@ -147,8 +146,7 @@ public class LightingCalculator
 		lightingValues.specularColor[0] = lightingValues.specularLevel * specularColor[0] * lightingValues.specularLight;
 		lightingValues.specularColor[1] = lightingValues.specularLevel * specularColor[1] * lightingValues.specularLight;
 		lightingValues.specularColor[2] = lightingValues.specularLevel * specularColor[2] * lightingValues.specularLight;
-
-
+		
 		// Add and clamp color channels
 		rgba[0] = (int) clamp(255.0 * (lightingValues.emmisiveColor[0] + lightingValues.ambientColor[0] + lightingValues.diffuseColor[0] + lightingValues.specularColor[0]));
 		rgba[1] = (int) clamp(255.0 * (lightingValues.emmisiveColor[1] + lightingValues.ambientColor[1] + lightingValues.diffuseColor[1] + lightingValues.specularColor[1]));
