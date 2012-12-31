@@ -7,11 +7,7 @@ public class ImageCapture
 	protected int width;
 	protected int height;
 	protected int backgroundColor;
-	
-	public ImageCapture(int width, int height)
-	{
-		this(width, height, 0x0);
-	}
+
 	
 	public ImageCapture(int width, int height, int backgroundColor)
 	{

@@ -193,12 +193,19 @@ public class ConcurrentPartialFrameBuffer extends AbstractFrameBuffer implements
 		
 	}
 	
+	
 	@Override
 	public ImageCapture captureImage()
 	{
+		return captureImage(0x0);
+	}
+	
+	@Override
+	public ImageCapture captureImage(int backgroundColor)
+	{
 		int width = getWidth();
 		int height = getHeight();
-		ImageCapture image = new ImageCapture(width, height);
+		ImageCapture image = new ImageCapture(width, height, backgroundColor);
 		
 		if (setBackground) {
 			for (int y = 0; y < getHeight(); y++) {
