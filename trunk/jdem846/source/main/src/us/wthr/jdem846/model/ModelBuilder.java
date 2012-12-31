@@ -516,7 +516,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 			throw new RenderEngineException("Model builder not yet prepared!");
 		}
 
-		ImageCapture imageCapture = this.frameBufferController.captureImage();
+		ImageCapture imageCapture = this.frameBufferController.captureImage(this.globalOptionModel.getBackgroundColor().getRgba());
 
 		if (progressTracker != null) {
 			progressTracker.beginTask("Finalizing", 1);

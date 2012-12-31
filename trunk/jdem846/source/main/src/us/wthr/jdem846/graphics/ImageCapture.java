@@ -6,16 +6,22 @@ public class ImageCapture
 	protected int[] buffer;
 	protected int width;
 	protected int height;
-	
+	protected int backgroundColor;
 	
 	public ImageCapture(int width, int height)
 	{
+		this(width, height, 0x0);
+	}
+	
+	public ImageCapture(int width, int height, int backgroundColor)
+	{
 		this.width = width;
 		this.height = height;
+		this.backgroundColor = backgroundColor;
 		
 		this.buffer = new int[width * height];
 		for (int i = 0; i < buffer.length; i++) {
-			buffer[i] = 0x0;
+			buffer[i] = backgroundColor;
 		}
 		
 	}
@@ -35,7 +41,7 @@ public class ImageCapture
 	public int get(int x, int y)
 	{
 		if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
-			return 0x0;
+			return backgroundColor;
 		}
 		
 		return this.buffer[(y * this.width) + x];

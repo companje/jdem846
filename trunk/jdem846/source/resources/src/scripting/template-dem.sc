@@ -14,6 +14,7 @@ import us.wthr.jdem846.canvas.util._
 import us.wthr.jdem846.geom._
 import us.wthr.jdem846.gis.planets._
 import us.wthr.jdem846.model._
+import us.wthr.jdem846.modelgrid._
 import us.wthr.jdem846.model.processing.util._
 import us.wthr.jdem846.model.processing.shading._
 import us.wthr.jdem846.globe._
@@ -32,7 +33,7 @@ class JDemScript {
 	var log : Log = null
 	var modelContext : ModelContext = null
     var globalOptionModel : GlobalOptionModel = null
-    var modelGrid : ModelPointGrid = null
+    var modelGrid : IModelGrid = null
     var modelDimensions : ModelDimensions = null
 	
 	

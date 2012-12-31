@@ -40,9 +40,15 @@ public abstract class AbstractFrameBuffer implements FrameBuffer
 	@Override
 	public ImageCapture captureImage()
 	{
+		return captureImage(0x0);
+	}
+	
+	@Override
+	public ImageCapture captureImage(int backgroundColor)
+	{
 		int width = getWidth();
 		int height = getHeight();
-		ImageCapture image = new ImageCapture(width, height);
+		ImageCapture image = new ImageCapture(width, height, backgroundColor);
 		
 
 		for (int x = 0; x < width; x++) {

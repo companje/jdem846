@@ -15,4 +15,5 @@ public interface FrameBuffer {
 	public int getWidth();
 	public int getHeight();
 	public ImageCapture captureImage();
+	public ImageCapture captureImage(int backgroundColor);
 }
