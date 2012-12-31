@@ -89,11 +89,15 @@ public class ManagedConcurrentFrameBufferController extends Thread
 	}
 	
 	
-	
 	public ImageCapture captureImage()
 	{
+		return captureImage(0x0);
+	}
+	
+	public ImageCapture captureImage(int background)
+	{
 		synchronized(mutex) {
-			return this.bspBuffer.captureImage();
+			return this.bspBuffer.captureImage(background);
 		}
 	}
 	
