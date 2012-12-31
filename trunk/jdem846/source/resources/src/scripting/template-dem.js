@@ -1,43 +1,42 @@
 
-importPackage(us.wthr.jdem846);
-importPackage(us.wthr.jdem846.logging);
-importPackage(us.wthr.jdem846.image);
-importPackage(us.wthr.jdem846.input);
-importPackage(us.wthr.jdem846.math);
-importPackage(java.io);
-importPackage(javax.imageio);
-importPackage(java.awt.image);
-importPackage(us.wthr.jdem846.color);
-importPackage(us.wthr.jdem846.gis.projections);
-importPackage(us.wthr.jdem846.canvas);
-importPackage(us.wthr.jdem846.canvas.util);
-importPackage(us.wthr.jdem846.geom);
-importPackage(us.wthr.jdem846.gis.planets);
-importPackage(us.wthr.jdem846.model);
-importPackage(us.wthr.jdem846.model.processing.util);
-importPackage(us.wthr.jdem846.model.processing.shading);
-importPackage(us.wthr.jdem846.globe);
-importPackage(us.wthr.jdem846.graphics);
+importPackage(Packages.us.wthr.jdem846);
+importPackage(Packages.us.wthr.jdem846.logging);
+importPackage(Packages.us.wthr.jdem846.image);
+importPackage(Packages.us.wthr.jdem846.input);
+importPackage(Packages.us.wthr.jdem846.math);
+importPackage(Packages.java.io);
+importPackage(Packages.javax.imageio);
+importPackage(Packages.java.awt.image);
+importPackage(Packages.us.wthr.jdem846.color);
+importPackage(Packages.us.wthr.jdem846.gis.projections);
+importPackage(Packages.us.wthr.jdem846.canvas);
+importPackage(Packages.us.wthr.jdem846.canvas.util);
+importPackage(Packages.us.wthr.jdem846.geom);
+importPackage(Packages.us.wthr.jdem846.gis.planets);
+importPackage(Packages.us.wthr.jdem846.model);
+importPackage(Packages.us.wthr.jdem846.model.processing.util);
+importPackage(Packages.us.wthr.jdem846.model.processing.shading);
+importPackage(Packages.us.wthr.jdem846.globe);
+importPackage(Packages.us.wthr.jdem846.graphics);
 
-var Context = {
+
+var log = null;
+var modelContext = null;
+var globalOptionModel = null;
+var modelGrid = null;
+var modelDimensions = null;
 		
-	log : null,
-	modelContext : null,
-	globalOptionModel : null,
-	modelGrid : null,
-	modelDimensions : null
-		
-};
 
 
-function setLog(log)
+
+function setLog(l)
 {
-	Context.log = log;
+	log = l;
 }
 
-function setModelContext(modelContext)
+function setModelContext(mc)
 {
-	Context.modelContext = modelContext;
+	modelContext = mc;
 }
 
 function initialize() 
@@ -61,7 +60,7 @@ function onGetElevationBefore(latitude, longitude)
 }
 
 function onGetElevationAfter(latitude, longitude, elevation) 
-{	
+{	 
 	return elevation
 }
 
