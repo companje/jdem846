@@ -501,7 +501,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		this.frameBufferController.finish();
 		while (frameBufferController.isAlive()) {
 			try {
-				Thread.sleep(50);
+				Thread.sleep(1000);
 			} catch (InterruptedException ex) {
 				log.warn("Thread sleep interrupted while waiting for grid process threads to complete: " + ex.getMessage(), ex);
 			}
