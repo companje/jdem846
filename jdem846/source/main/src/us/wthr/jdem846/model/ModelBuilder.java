@@ -10,22 +10,21 @@ import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.SimpleImageElevationModel;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.graphics.ImageCapture;
+import us.wthr.jdem846.graphics.RenderProcess;
 import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.graphics.ViewFactory;
-import us.wthr.jdem846.graphics.framebuffer.ManagedConcurrentFrameBufferController;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.processing.GridFilterMethodStack;
 import us.wthr.jdem846.model.processing.GridProcessMethodStack;
-import us.wthr.jdem846.model.processing.render.ModelRenderOptionModel;
-import us.wthr.jdem846.model.processing.render.ModelRenderer;
 import us.wthr.jdem846.modelgrid.IFillControlledModelGrid;
 import us.wthr.jdem846.modelgrid.IModelGrid;
 import us.wthr.jdem846.modelgrid.ModelGridFactory;
@@ -55,7 +54,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 	private LatitudeProcessedList latitudeProcessedList = null;
 	// private ModelCanvas modelCanvas;
 	private BufferControlledRasterDataContainer bufferControlledRasterDataContainer;
-	private ManagedConcurrentFrameBufferController frameBufferController;
+	//private ManagedConcurrentFrameBufferController frameBufferController;
 
 	private boolean runLoadProcessor = true;
 	private boolean runColorProcessor = true;
@@ -189,7 +188,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		}
 
 		int numberOfThreads = globalOptionModel.getNumberOfThreads();
-		this.frameBufferController = new ManagedConcurrentFrameBufferController(globalOptionModel.getWidth(), globalOptionModel.getHeight(), numberOfThreads);
+		//this.frameBufferController = new ManagedConcurrentFrameBufferController(globalOptionModel.getWidth(), globalOptionModel.getHeight(), numberOfThreads);
 
 		// +
 		if (progressTracker != null) {
@@ -296,10 +295,10 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		} else {
 			log.info("Model grid indicates that it is already completed. Skipping...");
 		}
-		this.processModelRender();
+		ImageCapture imageCapture = this.processModelRender();
 		this.onProcessAfter();
 		this.onDestroy();
-		return this.createElevationModel();
+		return this.createElevationModel(imageCapture);
 	}
 
 	@Override
@@ -410,7 +409,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 	}
 
 	@Override
-	public void processModelRender() throws RenderEngineException
+	public ImageCapture processModelRender() throws RenderEngineException
 	{
 		if (!isPrepared()) {
 			throw new RenderEngineException("Model builder not yet prepared!");
@@ -419,7 +418,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 
 		// Reset the lat processed list to prepare for the render stage
 		this.latitudeProcessedList.reset();
-		frameBufferController.start();
+		//frameBufferController.start();
 
 		dataLoaded = true;
 		
@@ -436,10 +435,11 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 
 		View view = ViewFactory.getViewInstance(modelContext, globalOptionModel, modelDimensions, mapProjection, modelContext.getScriptingContext().getScriptProxy(), modelGrid);
 
-		ModelRenderer renderer = new ModelRenderer();
-		renderer.setView(view);
-		renderer.setFrameBuffer(frameBufferController.getPartialBuffer(0));
-		renderer.setOptionModel(new ModelRenderOptionModel());
+		//ModelRenderer renderer = new ModelRenderer();
+		RenderProcess renderer = new RenderProcess(view);
+		//renderer.setView(view);
+		//renderer.setFrameBuffer(frameBufferController.getPartialBuffer(0));
+		//renderer.setOptionModel(new ModelRenderOptionModel());
 		renderer.setModelContext(modelContext);
 		renderer.setGlobalOptionModel(globalOptionModel);
 		renderer.setModelDimensions(modelDimensions);
@@ -447,8 +447,9 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		renderer.setModelGrid(modelGrid);
 
 		renderer.prepare();
-		renderer.onProcessBefore();
+		//renderer.onProcessBefore();
 
+		/*
 		double latitudeResolution = modelDimensions.getModelLatitudeResolution();
 		double longitudeResolution = modelDimensions.getModelLongitudeResolution();
 
@@ -464,11 +465,13 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		double south = globalOptionModel.getSouthLimit();
 		double east = globalOptionModel.getEastLimit();
 		double west = globalOptionModel.getWestLimit();
+		*/
+		
+		//if (progressTracker != null) {
+		//	progressTracker.beginTask("Final rendering", (int) MathExt.round((north - south) / latitudeResolution));
+		//}
 
-		if (progressTracker != null) {
-			progressTracker.beginTask("Final rendering", (int) MathExt.round((north - south) / latitudeResolution));
-		}
-
+		/*
 		for (double latitude = north; latitude > south; latitude -= latitudeResolution) {
 			if (this.latitudeProcessedList != null) {
 				if (this.latitudeProcessedList.isLatitudeProcessed(latitude)) {
@@ -494,10 +497,19 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 			}
 
 		}
-
+		
 		renderer.onProcessAfter();
 		renderer.dispose();
-
+		*/
+		try {
+			renderer.run();
+		} catch (GraphicsRenderException ex) {
+			throw new RenderEngineException("Error rendering image: " + ex.getMessage(), ex);
+		}
+		
+		ImageCapture imageCapture = renderer.capture();
+		return imageCapture;
+		/*
 		this.frameBufferController.finish();
 		while (frameBufferController.isAlive()) {
 			try {
@@ -506,17 +518,18 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 				log.warn("Thread sleep interrupted while waiting for grid process threads to complete: " + ex.getMessage(), ex);
 			}
 		}
-
+		*/
+		
 	}
 
 	@Override
-	public ElevationModel createElevationModel() throws RenderEngineException
+	public ElevationModel createElevationModel(ImageCapture imageCapture) throws RenderEngineException
 	{
 		if (!isPrepared()) {
 			throw new RenderEngineException("Model builder not yet prepared!");
 		}
 
-		ImageCapture imageCapture = this.frameBufferController.captureImage(this.globalOptionModel.getBackgroundColor().getRgba());
+		//ImageCapture imageCapture = this.frameBufferController.captureImage(this.globalOptionModel.getBackgroundColor().getRgba());
 
 		if (progressTracker != null) {
 			progressTracker.beginTask("Finalizing", 1);

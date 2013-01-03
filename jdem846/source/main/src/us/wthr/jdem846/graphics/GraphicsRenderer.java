@@ -470,4 +470,9 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 		return frameBuffer;
 	}
 	
+	@Override
+	public void finish()
+	{
+		
+	}
 }

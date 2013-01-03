@@ -56,5 +56,6 @@
 	<classpathentry kind="lib" path="lib/jogl/jocl.jar"/>
 	<classpathentry kind="lib" path="lib/jogl/jogl-all-natives-windows-amd64.jar"/>
 	<classpathentry kind="lib" path="lib/jogl/jogl-all.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jogl-2.0"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
