@@ -40,7 +40,7 @@ public class RenderProcess
 	protected double lastElevation = 0x0;
 
 	protected View modelView = null;
-	protected GraphicsRenderer renderer = null;
+	protected IRenderer renderer = null;
 
 	protected Boolean renderCompleted = false;
 
@@ -53,6 +53,13 @@ public class RenderProcess
 	{
 		this.lastElevation = this.modelContext.getRasterDataContext().getDataMaximumValue();
 		this.renderer = new GraphicsRenderer();
+		//this.frameBufferController = new ManagedConcurrentFrameBufferController(globalOptionModel.getWidth(), globalOptionModel.getHeight(), numberOfThreads);
+		
+		//this.renderer = new OpenGlRenderer();
+		//if (this.frameBuffer != null) {
+		//	this.renderer.setFrameBuffer(frameBuffer);
+		//}
+		this.renderer.initialize(globalOptionModel.getWidth(), globalOptionModel.getHeight());
 	}
 
 	public void dispose()
@@ -213,10 +220,12 @@ public class RenderProcess
 		}
 		this.renderer.popMatrix();
 
-		this.bindTexture();
-		int[] c = { 0, 0, 0, 0xFF };
+		
+		int[] c = { 0x00, 0x00, 0x00, 0xFF };
 		this.renderer.color(ColorUtil.rgbaToInt(c));
-
+		
+		this.bindTexture();
+		
 		double latitudeResolution = this.modelDimensions.modelLatitudeResolution;
 		double longitudeResolution = this.modelDimensions.modelLongitudeResolution;
 		for (double latitude = north; latitude > south; latitude -= latitudeResolution) {
@@ -245,6 +254,8 @@ public class RenderProcess
 		this.renderer.popMatrix();
 
 		this.renderer.popMatrix();
+		
+		this.renderer.finish();
 
 	}
 
