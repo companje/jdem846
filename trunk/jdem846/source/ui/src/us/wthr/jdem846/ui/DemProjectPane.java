@@ -1170,7 +1170,15 @@ public class DemProjectPane extends JdemPanel implements Savable
 
 	public void onCreateModel()
 	{
+		
+		ModelProcessManifest modelProcessManifest = null;
 
+		try {
+			modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
+		} catch (Exception ex) {
+			log.error("Error retrieving model process manifest from configuration panel: " + ex.getMessage(), ex);
+		}
+		
 		RasterDataContext rasterDataContext;
 		try {
 			rasterDataContext = this.rasterDataContext.copy();
@@ -1207,7 +1215,10 @@ public class DemProjectPane extends JdemPanel implements Savable
 			scriptingContext = this.scriptingContext.copy();
 			scriptingContext.setUserScript(scriptPane.getScriptContent());
 			scriptingContext.setScriptLanguage(scriptPane.getScriptLanguage());
-			scriptingContext.prepare();
+			
+			if (modelProcessManifest.getGlobalOptionModel().getUseScripting()) {
+				scriptingContext.prepare();
+			}
 		} catch (Exception ex) {
 			log.warn("Error compiling script: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(this.getRootPane(), I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.message") + ": " + ex.getMessage(), I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.title"),
@@ -1215,13 +1226,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 			return;
 		}
 
-		ModelProcessManifest modelProcessManifest = null;
-
-		try {
-			modelProcessManifest = modelConfigurationPanel.getModelProcessManifest();
-		} catch (Exception ex) {
-			log.error("Error retrieving model process manifest from configuration panel: " + ex.getMessage(), ex);
-		}
+		
 		// modelProcessManifest.getGlobalOptionModel().setLatitudeSlices(-1);
 		// modelProcessManifest.getGlobalOptionModel().setLongitudeSlices(-1);
 		modelProcessManifest.getGlobalOptionModel().setGetStandardResolutionElevation(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.standardResolutionRetrieval"));

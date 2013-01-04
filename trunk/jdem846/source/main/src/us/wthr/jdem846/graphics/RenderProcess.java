@@ -3,7 +3,6 @@ package us.wthr.jdem846.graphics;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
-import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.geom.Vertex;
@@ -12,6 +11,7 @@ import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
+import us.wthr.jdem846.graphics.opengl.OpenGlRenderer;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Vector;
@@ -52,10 +52,10 @@ public class RenderProcess
 	public void prepare()
 	{
 		this.lastElevation = this.modelContext.getRasterDataContext().getDataMaximumValue();
-		this.renderer = new GraphicsRenderer();
+		//this.renderer = new GraphicsRenderer();
 		//this.frameBufferController = new ManagedConcurrentFrameBufferController(globalOptionModel.getWidth(), globalOptionModel.getHeight(), numberOfThreads);
 		
-		//this.renderer = new OpenGlRenderer();
+		this.renderer = new OpenGlRenderer();
 		//if (this.frameBuffer != null) {
 		//	this.renderer.setFrameBuffer(frameBuffer);
 		//}
@@ -221,8 +221,8 @@ public class RenderProcess
 		this.renderer.popMatrix();
 
 		
-		int[] c = { 0x00, 0x00, 0x00, 0xFF };
-		this.renderer.color(ColorUtil.rgbaToInt(c));
+		int[] c = { 0xFF, 0xFF, 0xFF, 0xFF };
+		//this.renderer.color(ColorUtil.rgbaToInt(c));
 		
 		this.bindTexture();
 		
