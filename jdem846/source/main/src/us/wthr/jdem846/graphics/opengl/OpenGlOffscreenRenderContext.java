@@ -8,6 +8,7 @@ import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.gl2.GLUgl2;
 
 public class OpenGlOffscreenRenderContext
 {
@@ -16,6 +17,7 @@ public class OpenGlOffscreenRenderContext
 	protected GLCapabilities glCapabilities;
 	protected GLContext glContext;
 	protected GLU glu = new GLU();
+	protected GLUgl2 glugl2 = new GLUgl2();
 	protected GLAutoDrawable drawable;
 	
 	
@@ -29,11 +31,14 @@ public class OpenGlOffscreenRenderContext
 		glCapabilities.setPBuffer(true);
 		glCapabilities.setNumSamples(1);
 		
-		//glCapabilities.setAlphaBits(8);
-		
 		drawable = fac.createOffscreenAutoDrawable(null, glCapabilities, null, width, height, null);
 		glContext = drawable.getContext();
 		
+	}
+	
+	public GLProfile getGlProfile()
+	{
+		return glProfile;
 	}
 	
 	public void dispose()
@@ -70,5 +75,10 @@ public class OpenGlOffscreenRenderContext
 	public GLU getGLU()
 	{
 		return glu;
+	}
+	
+	public GLUgl2 getGLUgl2()
+	{
+		return glugl2;
 	}
 }

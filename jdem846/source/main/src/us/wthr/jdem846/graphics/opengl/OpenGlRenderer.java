@@ -170,11 +170,35 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 			log.error("GL Context in error condition following bind of texture");
 		}
 		
+		//Texture texture = new Texture(openGl.getGL(), )
+		//
 		ByteBuffer byteBuffer = ByteBuffer.allocate(tex.length * 4);
+		
+//		for (int i = 0; i < tex.length; i++) {
+//			
+//			int index = i * 3;
+//			byteBuffer.put(index + 0, (byte) 0xFF);
+//			byteBuffer.put(index + 1, (byte) 0x00);
+//			byteBuffer.put(index + 2, (byte) 0x00);
+//			//byteBuffer.put(index + 3, (byte) 0xFF);
+//		}
+		
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
 		intBuffer.put(tex);
-
-		openGl.getGL2().glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, byteBuffer);
+		
+		//ByteBuffer byteBuffer = convertARGBBufferedImageToJOGLDirectByteBuffer(tex, width, height, true ,true,true,true);
+		
+		openGl.getGL2().glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+		
+//		openGl.getGLUgl2().gluBuild2DMipmaps(GL.GL_TEXTURE_2D, //target : usually GL_TEXTURE_2D
+//                4,                              //internal format : RGB so 3 components
+//                width,                //image size
+//                height,
+//                GL.GL_RGBA,                      //fomat : RGB
+//                GL.GL_UNSIGNED_BYTE,            //data type : pixels are made of byte
+//                byteBuffer);       //picture datas
+		
+		openGl.getGL2().glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, byteBuffer);
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following tex image 2d");
 		}
@@ -188,6 +212,8 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		}
 	}
 
+
+	
 	@Override
 	public void unbindTexture()
 	{
@@ -212,7 +238,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		ColorUtil.intToRGBA(backgroundColor, rgba);
 		openGl.getGL().glClearDepth(1.0f);
 		openGl.getGL().glClearColor((float) rgba[0] / 255.0f, (float) rgba[1] / 255.0f, (float) rgba[2] / 255.0f, (float) rgba[3] / 255.0f);
-		openGl.getGL().glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		openGl.getGL().glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 	}
 
 	@Override

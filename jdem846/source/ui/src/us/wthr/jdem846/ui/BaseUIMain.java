@@ -10,8 +10,8 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.RegistryKernel;
 import us.wthr.jdem846.ServiceKernel;
-import us.wthr.jdem846.StartupLoadNotifyQueue;
 import us.wthr.jdem846.ServiceKernel.ServiceThreadListener;
+import us.wthr.jdem846.StartupLoadNotifyQueue;
 import us.wthr.jdem846.exception.ArgumentException;
 import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.i18n.I18N;
@@ -245,7 +245,7 @@ public abstract class BaseUIMain
 			return false;
 		
 		String pathLower = path.toLowerCase();
-		if (!(pathLower.endsWith(".zdem") || pathLower.endsWith(".jdem") || pathLower.endsWith(".xdem"))) {
+		if (!(pathLower.endsWith(".jdemprj") || pathLower.endsWith(".jdemimg"))) {
 			return false;
 		}
 		

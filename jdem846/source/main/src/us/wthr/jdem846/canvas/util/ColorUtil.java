@@ -6,7 +6,7 @@ public class ColorUtil
 {
 	public static final int INT_MODE_RGBA = 0;
 	public static final int INT_MODE_ARGB = 1;
-	protected static final int DEFAULT_INT_MODE = INT_MODE_ARGB;
+	protected static final int DEFAULT_INT_MODE = INT_MODE_RGBA;
 
 	public static final int BLACK = -16777216;
 	public static final int WHITE = -1;
