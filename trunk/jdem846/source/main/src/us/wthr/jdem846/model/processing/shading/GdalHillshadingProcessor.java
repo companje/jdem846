@@ -63,27 +63,27 @@ public class GdalHillshadingProcessor extends GridProcessor
 		
 		double x, y, slope, aspect, cang;
 		
-		this.modelGrid.getElevation(latitude, longitude);
+		modelGrid.getElevation(latitude, longitude, false);
 		
 		// First Slope ...
 		x = ((
-				this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude - this.longitudeResolution)
-				+ (this.modelGrid.getElevation(latitude, longitude - this.longitudeResolution) * 2)
-				+ this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude - this.longitudeResolution)
+				this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude - this.longitudeResolution, true)
+				+ (this.modelGrid.getElevation(latitude, longitude - this.longitudeResolution, true) * 2)
+				+ this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude - this.longitudeResolution, true)
 			) - (
-				this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude + this.longitudeResolution)
-				+ (this.modelGrid.getElevation(latitude, longitude + this.longitudeResolution) * 2)
-				+ this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude + this.longitudeResolution)
+				this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude + this.longitudeResolution, true)
+				+ (this.modelGrid.getElevation(latitude, longitude + this.longitudeResolution, true) * 2)
+				+ this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude + this.longitudeResolution, true)
 			)) / (8.0 * this.longitudeResolution * this.scale);
 
 		y = ((
-				this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude - this.longitudeResolution)
-				+ (this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude) * 2)
-				+ this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude + this.longitudeResolution)
+				this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude - this.longitudeResolution, true)
+				+ (this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude, true) * 2)
+				+ this.modelGrid.getElevation(latitude - this.latitudeResolution, longitude + this.longitudeResolution, true)
 			) - (
-				this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude - this.longitudeResolution)
-				+ (this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude) * 2)
-				+ this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude + this.longitudeResolution)
+				this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude - this.longitudeResolution, true)
+				+ (this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude, true) * 2)
+				+ this.modelGrid.getElevation(latitude + this.latitudeResolution, longitude + this.longitudeResolution, true)
 			)) / (8.0 * this.latitudeResolution * this.scale);
 
 		slope = MathExt.HALFPI - MathExt.atan(MathExt.sqrt(x * x + y * y));

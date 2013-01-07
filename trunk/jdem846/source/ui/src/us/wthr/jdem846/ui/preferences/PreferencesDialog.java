@@ -353,9 +353,9 @@ us.wthr.jdem846.defaults.institution-address=
 		chkPreviewScripting.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.scripting"));
 		
 		chkPerfPipelineRendering.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.pipelineRender"));
-		chkPerfNearestNeighborDataRetrieval.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.standardResolutionRetrieval"));
-		chkPerfInterpolateLowerResolutionData.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.interpolateToHigherResolution"));
-		chkPerfAverageOverlappingData.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData"));
+		chkPerfNearestNeighborDataRetrieval.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.standardResolutionRetrieval"));
+		chkPerfInterpolateLowerResolutionData.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.interpolateToHigherResolution"));
+		chkPerfAverageOverlappingData.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.averageOverlappedData"));
 		txtPerfTileSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.performance.tileSize"));
 		chkPerfDoubleBuffered.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.doubleBuffered"));
 		
@@ -404,9 +404,9 @@ us.wthr.jdem846.defaults.institution-address=
 		
 		
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.pipelineRender", ""+chkPerfPipelineRendering.getModel().isSelected());
-		JDem846Properties.setProperty("us.wthr.jdem846.performance.standardResolutionRetrieval", ""+chkPerfNearestNeighborDataRetrieval.getModel().isSelected());
-		JDem846Properties.setProperty("us.wthr.jdem846.performance.interpolateToHigherResolution", ""+chkPerfInterpolateLowerResolutionData.getModel().isSelected());
-		JDem846Properties.setProperty("us.wthr.jdem846.performance.averageOverlappedData", ""+chkPerfAverageOverlappingData.getModel().isSelected());
+		JDem846Properties.setProperty("us.wthr.jdem846.rendering.standardResolutionRetrieval", ""+chkPerfNearestNeighborDataRetrieval.getModel().isSelected());
+		JDem846Properties.setProperty("us.wthr.jdem846.rendering.interpolateToHigherResolution", ""+chkPerfInterpolateLowerResolutionData.getModel().isSelected());
+		JDem846Properties.setProperty("us.wthr.jdem846.rendering.averageOverlappedData", ""+chkPerfAverageOverlappingData.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.tileSize", txtPerfTileSize.getText());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.precacheStrategy", precacheStrategyModel.getSelectedItemValue());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.doubleBuffered", ""+chkPerfDoubleBuffered.getModel().isSelected());

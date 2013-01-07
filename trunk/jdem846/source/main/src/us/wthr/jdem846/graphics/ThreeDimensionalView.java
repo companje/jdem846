@@ -52,13 +52,13 @@ public class ThreeDimensionalView extends AbstractView implements View
 	@Override
 	public double nearClipDistance()
 	{
-		return this.radius();
+		return .1;//this.radius();
 	}
 
 	@Override
 	public double farClipDistance()
 	{
-		return -this.radius();
+		return 1.0;//-this.radius();
 	}
 
 	@Override

@@ -27,8 +27,15 @@ Bundle-ClassPath: jdem846.jar,
  lib/groovypp-all-0.9.0_1.8.2.jar,
  lib/groovy-all-1.8.2.jar,
  lib/scala-library.jar,
- lib/scala-compiler.jar
-Export-Package: org.scannotation;
+ lib/scala-compiler.jar,
+ lib/jogl/gluegen-rt.jar,
+ lib/jogl/gluegen.jar,
+ lib/jogl/joal.jar,
+ lib/jogl/jocl.jar,
+ lib/jogl/jogl-all.jar,
+ .
+Export-Package: javax.media.opengl,
+ org.scannotation;
   uses:="javax.servlet,
    javassist.bytecode,
    org.scannotation.archiveiterator,

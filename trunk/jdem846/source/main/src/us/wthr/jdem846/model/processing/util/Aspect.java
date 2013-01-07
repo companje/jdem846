@@ -28,6 +28,10 @@ public class Aspect
 			degrees += 180.0;
 		}
 		
+		if (Double.isNaN(degrees)) {
+			int i = 0;
+		}
+		
 		return degrees;
 	}
 	

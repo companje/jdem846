@@ -1,6 +1,7 @@
 package us.wthr.jdem846.graphics;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.exception.GraphicsRenderException;
@@ -11,6 +12,7 @@ import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
+import us.wthr.jdem846.graphics.opengl.OpenGlRenderer;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Vector;
@@ -51,10 +53,25 @@ public class RenderProcess
 	public void prepare()
 	{
 		this.lastElevation = this.modelContext.getRasterDataContext().getDataMaximumValue();
-		this.renderer = new GraphicsRenderer();
+		
+		String renderEngine = JDem846Properties.getProperty("us.wthr.jdem846.rendering.renderEngine"); 
+		if (renderEngine == null) {
+			renderEngine = "software";
+		}
+		
+		if (renderEngine.equalsIgnoreCase("software")) {
+			log.info("Initializing software renderer");
+			this.renderer = new GraphicsRenderer();
+		} else if (renderEngine.equalsIgnoreCase("opengl")) {
+			log.info("Initializing OpenGL renderer");
+			this.renderer = new OpenGlRenderer();
+		} else {
+			// Throw!!
+		}
+		
+		//
 		//this.frameBufferController = new ManagedConcurrentFrameBufferController(globalOptionModel.getWidth(), globalOptionModel.getHeight(), numberOfThreads);
 		
-		//this.renderer = new OpenGlRenderer();
 		//if (this.frameBuffer != null) {
 		//	this.renderer.setFrameBuffer(frameBuffer);
 		//}
@@ -187,27 +204,14 @@ public class RenderProcess
 		double radius = this.modelView.radius();
 
 		if (view != null) {
-
-			// this.renderer.scale(view.getZoom(), view.getZoom(),
-			// view.getZoom());
 			this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
-			this.renderer.rotate(-view.getRotateY(), AxisEnum.Y_AXIS);
+			this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
 			this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
 
 			this.renderer.translate(view.getShiftX() * radius, view.getShiftY() * radius, view.getShiftZ() * radius);
 
-			// double zoom = view.getZoom();
-			// double zoomZ = zoom *
-			// (DemConstants.DEFAULT_EYE_DISTANCE_FROM_EARTH_CENTER *
-			// (DemConstants.DEFAULT_GLOBAL_RADIUS / modelView.radiusTrue()));
-			// log.info("Zoom: " + zoom + ", Z: " + zoomZ);
-			// this.renderer.translate(0.0, 0.0, zoomZ);
 
 		}
-
-		// double eyeZ = this.modelView.eyeZ();
-		// this.renderer.translate(0.0, 0.0, -eyeZ);
-		// this.renderer.translate(0, 0, (view.getZoom() * radius));
 
 		this.renderer.pushMatrix();
 		if (this.globalOptionModel.getUseScripting() && this.scriptProxy != null) {

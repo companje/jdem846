@@ -305,6 +305,10 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 	{
 		Matrix m = new Matrix(true);
 		
+		if (axis == AxisEnum.Y_AXIS) {
+			angle *= -1.0;
+		}
+		
 		double _a = MathExt.radians(angle);
 		double c = MathExt.cos(_a);
 		double s = MathExt.sin(_a);

@@ -97,7 +97,7 @@ public class OpenGlFrameBuffer
 		this.offscreenTexture = list[0];
 		openGl.getGL().glBindTexture(GL.GL_TEXTURE_2D, offscreenTexture);
 
-		openGl.getGL().glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
+		openGl.getGL().glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following teximage2d");
 		}

@@ -22,9 +22,9 @@ public class HillshadingOptionModel implements OptionModel
 	private double emmisive = 0.0;
 	private double ambient = 0.4;
 	private double diffuse = 0.7;
-	private double specular = 0.6;
+	private double specular = 0.2;
 
-	private int spotExponent = 10;
+	private int spotExponent = 2;
 	private boolean rayTraceShadows = false;
 	private double shadowIntensity = 0.4;
 

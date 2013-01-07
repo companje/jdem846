@@ -10,6 +10,8 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.gl2.GLUgl2;
 
+import us.wthr.jdem846.JDem846Properties;
+
 public class OpenGlOffscreenRenderContext
 {
 	
@@ -29,7 +31,12 @@ public class OpenGlOffscreenRenderContext
 		glCapabilities.setDoubleBuffered(false);
 		glCapabilities.setOnscreen(false);
 		glCapabilities.setPBuffer(true);
-		glCapabilities.setNumSamples(1);
+		
+		boolean multisampling = JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.opengl.multisampling.enabled");
+		int samples = JDem846Properties.getIntProperty("us.wthr.jdem846.rendering.opengl.multisampling.samples");
+		
+		glCapabilities.setSampleBuffers(multisampling);
+		glCapabilities.setNumSamples(samples);
 		
 		drawable = fac.createOffscreenAutoDrawable(null, glCapabilities, null, width, height, null);
 		glContext = drawable.getContext();
