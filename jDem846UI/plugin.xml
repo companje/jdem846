@@ -245,9 +245,9 @@
 			name="General"
 			class="us.wthr.jdem846ui.preferences.GeneralPreferencesPage" />
 			
-		<page id="jDem846UI.preferences.performance"
-			name="Performance"
-			class="us.wthr.jdem846ui.preferences.PerformancePreferencesPage" />
+		<page id="jDem846UI.preferences.rendering"
+			name="Rendering"
+			class="us.wthr.jdem846ui.preferences.RenderingPreferencesPage" />
 		
 		<page id="jDem846UI.preferences.previewing"
 			name="Previewing"

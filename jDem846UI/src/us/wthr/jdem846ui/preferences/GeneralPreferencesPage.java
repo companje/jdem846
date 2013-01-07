@@ -20,6 +20,8 @@ public class GeneralPreferencesPage extends BasicPreferencesPage
 		
 		addField(new ComboFieldEditor("us.wthr.jdem846.general.ui.i18n.default", "Language", new String[][] { { "English", "en" } }, getFieldEditorParent()));
 		
+		addField(new IntegerFieldEditor("us.wthr.jdem846.performance.tileSize", "Cache Size (Rows of Data)", getFieldEditorParent()));
+		
 		addField(new BooleanFieldEditor("us.wthr.jdem846.general.ui.jdemFrame.displayMemoryMonitor", "Display Memory Monitor", getFieldEditorParent()));
 		addField(new BooleanFieldEditor("us.wthr.jdem846.general.ui.displayLogViewPanel", "Display Console", getFieldEditorParent()));
 		

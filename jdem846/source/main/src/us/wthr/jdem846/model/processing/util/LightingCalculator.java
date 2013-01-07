@@ -105,25 +105,28 @@ public class LightingCalculator
 		N.y *= dp;
 		N.z *= dp;
 
+		//if (dot < 0) {
+		//	dot = 0.0;
+		//}
 		lightingValues.diffuseLight = dot;
 
 		
 		
 		
-		if (lightingValues.diffuseLight > 0) {
+		//if (lightingValues.diffuseLight > 0) {
 			
 			Vectors.subtract(N, L, H);
 			Vectors.normalize(H);
 			
 			double specDot = Vectors.dotProduct(eye, H);
-			if (shininess != 1.0) {
+			//if (shininess != 1.0) {
 				specDot = MathExt.pow(specDot, shininess);
-			}
+			//}
 			
 			lightingValues.specularLight = (specDot >= 0.0) ? specDot : 0.0;
-		} else {
-			lightingValues.specularLight = 0;
-		}
+		//} else {
+		//	lightingValues.specularLight = 0;
+		//}
 		
 		
 		onLightLevels(latitude, longitude, elevation);
@@ -146,6 +149,19 @@ public class LightingCalculator
 		lightingValues.specularColor[0] = lightingValues.specularLevel * specularColor[0] * lightingValues.specularLight;
 		lightingValues.specularColor[1] = lightingValues.specularLevel * specularColor[1] * lightingValues.specularLight;
 		lightingValues.specularColor[2] = lightingValues.specularLevel * specularColor[2] * lightingValues.specularLight;
+		
+		
+		if (lightingValues.specularColor[0] < 0) {
+			int i = 0;
+		}
+		
+		double r = 255.0 * (lightingValues.emmisiveColor[0] + lightingValues.ambientColor[0] + lightingValues.diffuseColor[0] + lightingValues.specularColor[0]);
+		double g = 255.0 * (lightingValues.emmisiveColor[1] + lightingValues.ambientColor[1] + lightingValues.diffuseColor[1] + lightingValues.specularColor[1]);
+		double b = 255.0 * (lightingValues.emmisiveColor[2] + lightingValues.ambientColor[2] + lightingValues.diffuseColor[2] + lightingValues.specularColor[2]);
+		
+		if (r > 255 || g > 255 || b > 255 || r < 0 || g < 0 || b < 0) {
+			int i = 0;
+		}
 		
 		// Add and clamp color channels
 		rgba[0] = (int) clamp(255.0 * (lightingValues.emmisiveColor[0] + lightingValues.ambientColor[0] + lightingValues.diffuseColor[0] + lightingValues.specularColor[0]));

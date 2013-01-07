@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import us.wthr.jdem846.ElevationModel;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -23,8 +24,6 @@ public class RenderTask extends Job
 	private static Log log = Logging.getLog(RenderTask.class);
 	
 	private List<RenderCompletionListener> completionListeners = new LinkedList<RenderCompletionListener>();
-	
-	private ModelContext modelContext;
 	
 	public RenderTask(List<RenderCompletionListener> completionListeners)
 	{
@@ -50,6 +49,13 @@ public class RenderTask extends Job
 			fireRenderExceptionListeners(ex);
 			return Status.OK_STATUS;
 		}
+		
+		modelContext.getModelProcessManifest().getGlobalOptionModel().setGetStandardResolutionElevation(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.standardResolutionRetrieval"));
+		modelContext.getModelProcessManifest().getGlobalOptionModel().setInterpolateData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.interpolateToHigherResolution"));
+		modelContext.getModelProcessManifest().getGlobalOptionModel().setAverageOverlappedData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.averageOverlappedData"));
+		modelContext.getModelProcessManifest().getGlobalOptionModel().setPrecacheStrategy(JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy"));
+		modelContext.getModelProcessManifest().getGlobalOptionModel().setTileSize(JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize"));
+		
 		
 		ModelBuilder modelBuilder = new ModelBuilder(new RenderProgressMonitor(progressMonitor));
 		

@@ -158,8 +158,8 @@ public class PreviewView extends ViewPart
 			if (width <= 0 || height <= 0)
 				return;
 
-			PaletteData palette = new PaletteData(0xFF0000, 0xFF00, 0xFF);
-			ImageData imageData = new ImageData(width, height, 24, palette);
+			PaletteData palette = new PaletteData(0xFF000000, 0xFF0000, 0xFF00);
+			ImageData imageData = new ImageData(width, height, 32, palette);
 
 			if (elevationModel != null) {
 

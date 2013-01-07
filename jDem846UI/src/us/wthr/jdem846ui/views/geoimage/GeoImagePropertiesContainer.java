@@ -108,10 +108,21 @@ public class GeoImagePropertiesContainer extends Composite
 
 		btnApply = new Button(buttonComposite, SWT.PUSH);
 		btnApply.setText("Apply");
-
+		btnApply.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent arg0)
+			{
+				
+			}
+		});
+		
 		btnReset = new Button(buttonComposite, SWT.PUSH);
 		btnReset.setText("Reset");
-
+		btnReset.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event)
+			{
+				initializeFromImageDefinition(simpleGeoImage);
+			}
+		});
 		
 		setImageDefinition(null);
 		

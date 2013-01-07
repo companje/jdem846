@@ -1,12 +1,12 @@
 package us.wthr.jdem846.graphics.opengl;
 
-
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.graphics.AxisEnum;
@@ -31,7 +31,7 @@ import us.wthr.jdem846.math.Vector;
 public class OpenGlRenderer extends BaseRenderer implements IRenderer
 {
 	private static Log log = Logging.getLog(OpenGlRenderer.class);
-	
+
 	protected OpenGlOffscreenRenderContext openGl;
 	protected boolean enableFrameBuffer = false;
 	protected OpenGlFrameBuffer frameBuffer;
@@ -50,41 +50,47 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl.makeGlContextCurrent();
 
 		
-		
-		if (this.enableFrameBuffer) {
-			this.frameBuffer = new OpenGlFrameBuffer(openGl, width, height, 1);
-			this.frameBuffer.initialize();
-			this.frameBuffer.bindForRender();
-		}
-		
-		
-		if (!this.checkGlContextSane()) {
-			log.error("GL Context in error condition prior to gl environment initialization");
-		}
-		//openGl.getGL2().glClampColor(GL2.GL_CLAMP_READ_COLOR, GL.GL_FALSE);
-		//openGl.getGL2().glClampColor(GL2.GL_CLAMP_VERTEX_COLOR, GL.GL_FALSE);
-		//openGl.getGL2().glClampColor(GL2.GL_CLAMP_FRAGMENT_COLOR, GL.GL_FALSE);
-		
-		//openGl.getGL().glEnable(GL.GL_ALPHA);
+		boolean multisampling = JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.opengl.multisampling.enabled");
+		int samples = JDem846Properties.getIntProperty("us.wthr.jdem846.general.opengl.multisampling.samples");
+		// openGl.getGL2().glClampColor(GL2.GL_CLAMP_READ_COLOR, GL.GL_FALSE);
+		// openGl.getGL2().glClampColor(GL2.GL_CLAMP_VERTEX_COLOR, GL.GL_FALSE);
+		// openGl.getGL2().glClampColor(GL2.GL_CLAMP_FRAGMENT_COLOR,
+		// GL.GL_FALSE);
+
+		// openGl.getGL().glEnable(GL.GL_ALPHA);
 		openGl.getGL().glEnable(GL.GL_TEXTURE_2D);
-		openGl.getGL().glEnable(GL.GL_MULTISAMPLE);
+		
+		if (multisampling) {
+			openGl.getGL().glEnable(GL.GL_MULTISAMPLE);
+		}
+		
 		openGl.getGL2().glShadeModel(GL2.GL_SMOOTH);
 		openGl.getGL().glEnable(GL2.GL_POLYGON_SMOOTH);
-		
+
 		openGl.getGL().glEnable(GL.GL_DEPTH_TEST);
 		openGl.getGL().glDepthFunc(GL.GL_LEQUAL);
-		
+
 		openGl.getGL().glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 		openGl.getGL().glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
 		openGl.getGL().glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
-		//openGl.getGL().glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
-		
-		//openGl.getGL().glDisable(GL2.GL_LIGHTING);
-		//openGl.getGL().glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE); 
+		// openGl.getGL().glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
+
+		// openGl.getGL().glDisable(GL2.GL_LIGHTING);
+		// openGl.getGL().glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
 		openGl.getGL().glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-		
+
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following renderer initialization");
+		}
+
+		if (this.enableFrameBuffer) {
+			this.frameBuffer = new OpenGlFrameBuffer(openGl, width, height, samples);
+			this.frameBuffer.initialize();
+			this.frameBuffer.bindForRender();
+		}
+
+		if (!this.checkGlContextSane()) {
+			log.error("GL Context in error condition prior to gl environment initialization");
 		}
 
 	}
@@ -104,7 +110,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	@Override
 	public void setFrameBuffer(FrameBuffer frameBuffer)
 	{
-		
+
 	}
 
 	@Override
@@ -156,7 +162,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition prior to binding of texture");
 		}
-		
+
 		int[] textures = { 0 };
 		openGl.getGL2().glGenTextures(1, textures, 0);
 		this.texture = textures[0];
@@ -164,56 +170,33 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following generation of texture");
 		}
-		
+
 		openGl.getGL2().glBindTexture(GL.GL_TEXTURE_2D, texture);
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following bind of texture");
 		}
-		
-		//Texture texture = new Texture(openGl.getGL(), )
-		//
+
 		ByteBuffer byteBuffer = ByteBuffer.allocate(tex.length * 4);
-		
-//		for (int i = 0; i < tex.length; i++) {
-//			
-//			int index = i * 3;
-//			byteBuffer.put(index + 0, (byte) 0xFF);
-//			byteBuffer.put(index + 1, (byte) 0x00);
-//			byteBuffer.put(index + 2, (byte) 0x00);
-//			//byteBuffer.put(index + 3, (byte) 0xFF);
-//		}
-		
+
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
 		intBuffer.put(tex);
-		
-		//ByteBuffer byteBuffer = convertARGBBufferedImageToJOGLDirectByteBuffer(tex, width, height, true ,true,true,true);
-		
+
 		openGl.getGL2().glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-		
-//		openGl.getGLUgl2().gluBuild2DMipmaps(GL.GL_TEXTURE_2D, //target : usually GL_TEXTURE_2D
-//                4,                              //internal format : RGB so 3 components
-//                width,                //image size
-//                height,
-//                GL.GL_RGBA,                      //fomat : RGB
-//                GL.GL_UNSIGNED_BYTE,            //data type : pixels are made of byte
-//                byteBuffer);       //picture datas
-		
+
+
 		openGl.getGL2().glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, byteBuffer);
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following tex image 2d");
 		}
-		
-		
+
 		openGl.getGL2().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
 		openGl.getGL2().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-		
+
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following tex parameters");
 		}
 	}
 
-
-	
 	@Override
 	public void unbindTexture()
 	{
@@ -221,7 +204,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following unbinding texture");
 		}
-		
+
 		this.texture = 0;
 	}
 
@@ -311,17 +294,17 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition prior to renderer finish operation");
 		}
-		
-		//openGl.getGL().glFlush();
+
+		// openGl.getGL().glFlush();
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following gl flush");
 		}
-		
-		//openGl.getGL().glFinish();
+
+		// openGl.getGL().glFinish();
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following gl finish");
 		}
-		
+
 		if (frameBuffer != null) {
 			frameBuffer.transferToResolveTargetBuffer();
 		}
@@ -345,23 +328,23 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		int length = width * height;
 		int bufferLength = length * 4;
 
-		//byte[] pixelBuffer = new byte[bufferLength];
+		// byte[] pixelBuffer = new byte[bufferLength];
 		ByteBuffer byteBuffer = ByteBuffer.allocate(bufferLength);
-		//ByteBuffer byteBuffer = ByteBuffer.wrap(pixelBuffer);
+		// ByteBuffer byteBuffer = ByteBuffer.wrap(pixelBuffer);
 
-		//openGl.getGL2().glReadBuffer(GL.GL_FRONT);
+		// openGl.getGL2().glReadBuffer(GL.GL_FRONT);
 		openGl.getGL().glPixelStorei(GL.GL_PACK_ALIGNMENT, 4);
 		openGl.getGL().glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, byteBuffer);
-		
+
 		FrameBuffer frameBuffer = FrameBufferFactory.createFrameBufferInstance(width, height, FrameBufferModeEnum.STANDARD);
 
 		int i = 0; // Index into target int[]
 		for (int row = 0; row < height; row++) {
 
 			for (int col = 0; col < width; col++) {
-				
+
 				i = ((height - row - 1) * width * 4) + (col * 4);
-				
+
 				int iR = byteBuffer.get(i);
 				int iG = byteBuffer.get(i + 1);
 				int iB = byteBuffer.get(i + 2);
@@ -369,19 +352,20 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 				if (iG != -1 && iG != 0) {
 					int fdjuhfusd = 0;
 				}
-				
+
 				int pixelInt = ColorUtil.rgbaToInt(iR, iG, iB, iA);
-				//int pixelInt = 
-				//	    ((iR & 0x000000FF) << 24) | 
-				//	    ((iG & 0x000000FF) << 16) | (iB & 0x000000FF << 8) | (iA & 0x000000FF);
-				
+				// int pixelInt =
+				// ((iR & 0x000000FF) << 24) |
+				// ((iG & 0x000000FF) << 16) | (iB & 0x000000FF << 8) | (iA &
+				// 0x000000FF);
+
 				frameBuffer.set(col, row, 0.0, pixelInt);
 			}
 		}
-		
+
 		return frameBuffer;
 	}
-	
+
 	public boolean checkGlContextSane()
 	{
 		int error = 0;
@@ -392,36 +376,38 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 			return true;
 		}
 	}
-//
-//	//http://www.felixgers.de/teaching/jogl/imagingProg.html
-//	private IntBuffer transformPixelsRGBBuffer2ARGB(ByteBuffer byteBufferRGB, int width, int height)
-//	{
-//		int[] pixelInts = new int[width * height];
-//
-//		// Convert RGB bytes to ARGB ints with no transparency.
-//		// Flip image vertically by reading the
-//		// rows of pixels in the byte buffer in reverse
-//		// - (0,0) is at bottom left in OpenGL.
-//		//
-//		// Points to first byte (red) in each row.
-//		int p = width * height * 3;
-//		int q; // Index into ByteBuffer
-//		int i = 0; // Index into target int[]
-//		int w3 = width * 3; // Number of bytes in each row
-//		for (int row = 0; row < height; row++) {
-//			p -= w3;
-//			q = p;
-//			for (int col = 0; col < width; col++) {
-//				int iR = byteBufferRGB.get(q++);
-//				int iG = byteBufferRGB.get(q++);
-//				int iB = byteBufferRGB.get(q++);
-//				pixelInts[i++] = 0xFF000000 | ((iR & 0x000000FF) << 16) | ((iG & 0x000000FF) << 8) | (iB & 0x000000FF);
-//			}
-//		}
-//		
-//		
-//		IntBuffer transformedBuffer = IntBuffer.wrap(pixelInts);
-//		return transformedBuffer;
-//	}
+	//
+	// //http://www.felixgers.de/teaching/jogl/imagingProg.html
+	// private IntBuffer transformPixelsRGBBuffer2ARGB(ByteBuffer byteBufferRGB,
+	// int width, int height)
+	// {
+	// int[] pixelInts = new int[width * height];
+	//
+	// // Convert RGB bytes to ARGB ints with no transparency.
+	// // Flip image vertically by reading the
+	// // rows of pixels in the byte buffer in reverse
+	// // - (0,0) is at bottom left in OpenGL.
+	// //
+	// // Points to first byte (red) in each row.
+	// int p = width * height * 3;
+	// int q; // Index into ByteBuffer
+	// int i = 0; // Index into target int[]
+	// int w3 = width * 3; // Number of bytes in each row
+	// for (int row = 0; row < height; row++) {
+	// p -= w3;
+	// q = p;
+	// for (int col = 0; col < width; col++) {
+	// int iR = byteBufferRGB.get(q++);
+	// int iG = byteBufferRGB.get(q++);
+	// int iB = byteBufferRGB.get(q++);
+	// pixelInts[i++] = 0xFF000000 | ((iR & 0x000000FF) << 16) | ((iG &
+	// 0x000000FF) << 8) | (iB & 0x000000FF);
+	// }
+	// }
+	//
+	//
+	// IntBuffer transformedBuffer = IntBuffer.wrap(pixelInts);
+	// return transformedBuffer;
+	// }
 
 }
