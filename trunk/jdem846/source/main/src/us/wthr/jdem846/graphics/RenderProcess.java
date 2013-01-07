@@ -11,7 +11,6 @@ import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
-import us.wthr.jdem846.graphics.opengl.OpenGlRenderer;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Vector;
@@ -52,10 +51,10 @@ public class RenderProcess
 	public void prepare()
 	{
 		this.lastElevation = this.modelContext.getRasterDataContext().getDataMaximumValue();
-		//this.renderer = new GraphicsRenderer();
+		this.renderer = new GraphicsRenderer();
 		//this.frameBufferController = new ManagedConcurrentFrameBufferController(globalOptionModel.getWidth(), globalOptionModel.getHeight(), numberOfThreads);
 		
-		this.renderer = new OpenGlRenderer();
+		//this.renderer = new OpenGlRenderer();
 		//if (this.frameBuffer != null) {
 		//	this.renderer.setFrameBuffer(frameBuffer);
 		//}
