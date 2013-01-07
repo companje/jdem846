@@ -69,14 +69,14 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl.getGL().glEnable(GL.GL_TEXTURE_2D);
 		openGl.getGL().glEnable(GL.GL_MULTISAMPLE);
 		openGl.getGL2().glShadeModel(GL2.GL_SMOOTH);
-		//openGl.getGL().glEnable(GL2.GL_POLYGON_SMOOTH);
+		openGl.getGL().glEnable(GL2.GL_POLYGON_SMOOTH);
 		
 		openGl.getGL().glEnable(GL.GL_DEPTH_TEST);
 		openGl.getGL().glDepthFunc(GL.GL_LEQUAL);
 		
-		//openGl.getGL().glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
-		//openGl.getGL().glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
-		//openGl.getGL().glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
+		openGl.getGL().glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+		openGl.getGL().glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
+		openGl.getGL().glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
 		//openGl.getGL().glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
 		
 		//openGl.getGL().glDisable(GL2.GL_LIGHTING);
