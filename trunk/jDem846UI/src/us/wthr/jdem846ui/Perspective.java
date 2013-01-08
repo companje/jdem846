@@ -6,12 +6,12 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846ui.views.LogConsoleView;
-import us.wthr.jdem846ui.views.ScriptEditorView;
 import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.layers.LayerPropertiesView;
 import us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView;
 import us.wthr.jdem846ui.views.models.RenderedModelDisplayView;
 import us.wthr.jdem846ui.views.preview.PreviewView;
+import us.wthr.jdem846ui.views.scripteditor.ScriptEditorView;
 
 public class Perspective implements IPerspectiveFactory
 {
@@ -25,7 +25,7 @@ public class Perspective implements IPerspectiveFactory
 	{
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
-
+		
 		IFolderLayout topLeftFolder = layout.createFolder("topLeft", IPageLayout.LEFT, 0.30f, editorArea);
 		topLeftFolder.addView(DataView.ID);
 

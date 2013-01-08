@@ -15,6 +15,7 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelBuilder;
 import us.wthr.jdem846.model.OptionModelChangeEvent;
+import us.wthr.jdem846.model.exceptions.ContextPrepareException;
 import us.wthr.jdem846ui.project.ProjectContext;
 
 public class ModelPreviewChangeObserver extends ProjectChangeObserver {
@@ -86,7 +87,8 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 	{
 
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
-
+		
+		globalOptionModel.setUseScripting(true);
 		globalOptionModel.setMaintainAspectRatio(false);
 		//globalOptionModel.setSubpixelGridSize(1);
 		globalOptionModel.setAverageOverlappedData(true);
@@ -106,6 +108,8 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 			// TODO Display error message dialog
 			log.error("Exception updating model context: " + ex.getMessage(), ex);
 		}
+		
+		
 	}
 	
 	
@@ -225,8 +229,16 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 
 		// Only disable scripting if it's already enabled. Don't enable it if the user turned it off via the 
 		// global option model
+		useScripting = true;
 		if (globalOptionModel.getUseScripting()) {
 			globalOptionModel.setUseScripting(useScripting);
+		}
+		
+		try {
+			modelContextWorkingCopy.getScriptingContext().prepare();
+		} catch (ContextPrepareException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 //		if (modelContextWorkingCopy.getRasterDataContext().getRasterDataListSize() == 0) {

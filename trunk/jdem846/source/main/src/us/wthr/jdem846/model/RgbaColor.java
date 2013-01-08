@@ -3,7 +3,7 @@ package us.wthr.jdem846.model;
 import java.awt.Color;
 import java.util.Map;
 
-import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class RgbaColor
 {

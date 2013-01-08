@@ -17,6 +17,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelBuilder;
 import us.wthr.jdem846.model.ProgressTracker;
+import us.wthr.jdem846.model.exceptions.ContextPrepareException;
 import us.wthr.jdem846ui.project.ProjectContext;
 
 public class RenderTask extends Job 
@@ -56,6 +57,13 @@ public class RenderTask extends Job
 		modelContext.getModelProcessManifest().getGlobalOptionModel().setPrecacheStrategy(JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy"));
 		modelContext.getModelProcessManifest().getGlobalOptionModel().setTileSize(JDem846Properties.getIntProperty("us.wthr.jdem846.performance.tileSize"));
 		
+		
+		try {
+			modelContext.getScriptingContext().prepare();
+		} catch (ContextPrepareException ex) {
+			fireRenderExceptionListeners(ex);
+			return Status.OK_STATUS;
+		}
 		
 		ModelBuilder modelBuilder = new ModelBuilder(new RenderProgressMonitor(progressMonitor));
 		

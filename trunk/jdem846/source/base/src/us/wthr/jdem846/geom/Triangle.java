@@ -1,14 +1,12 @@
 package us.wthr.jdem846.geom;
 
 
-import us.wthr.jdem846.canvas.util.ColorUtil;
-import us.wthr.jdem846.geom.util.BarycentricTrianglePointTest;
 import us.wthr.jdem846.geom.util.PointTest;
 import us.wthr.jdem846.geom.util.RgbaTriangleInterpolator;
-import us.wthr.jdem846.geom.util.SameSideTrianglePointTest;
 import us.wthr.jdem846.geom.util.SignTrianglePointTest;
 import us.wthr.jdem846.geom.util.TriangleInterpolator;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class Triangle extends RenderableShape
 {

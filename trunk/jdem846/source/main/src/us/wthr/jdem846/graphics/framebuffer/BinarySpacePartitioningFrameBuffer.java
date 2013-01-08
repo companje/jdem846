@@ -1,6 +1,6 @@
 package us.wthr.jdem846.graphics.framebuffer;
 
-import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class BinarySpacePartitioningFrameBuffer extends AbstractFrameBuffer implements FrameBuffer
 {

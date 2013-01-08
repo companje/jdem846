@@ -7,7 +7,6 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
 import us.wthr.jdem846.JDem846Properties;
-import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.graphics.AxisEnum;
 import us.wthr.jdem846.graphics.BaseRenderer;
@@ -20,6 +19,7 @@ import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Vector;
+import us.wthr.jdem846.util.ColorUtil;
 
 /**
  * An OpenGL render context. Note: I cannot claim to be an OpenGL expert, so
@@ -52,12 +52,9 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		
 		boolean multisampling = JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.opengl.multisampling.enabled");
 		int samples = JDem846Properties.getIntProperty("us.wthr.jdem846.general.opengl.multisampling.samples");
-		// openGl.getGL2().glClampColor(GL2.GL_CLAMP_READ_COLOR, GL.GL_FALSE);
-		// openGl.getGL2().glClampColor(GL2.GL_CLAMP_VERTEX_COLOR, GL.GL_FALSE);
-		// openGl.getGL2().glClampColor(GL2.GL_CLAMP_FRAGMENT_COLOR,
-		// GL.GL_FALSE);
 
-		// openGl.getGL().glEnable(GL.GL_ALPHA);
+
+		openGl.getGL().glEnable(GL.GL_BLEND);
 		openGl.getGL().glEnable(GL.GL_TEXTURE_2D);
 		
 		if (multisampling) {
@@ -73,10 +70,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl.getGL().glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 		openGl.getGL().glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
 		openGl.getGL().glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
-		// openGl.getGL().glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
 
-		// openGl.getGL().glDisable(GL2.GL_LIGHTING);
-		// openGl.getGL().glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
 		openGl.getGL().glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
 		if (!this.checkGlContextSane()) {

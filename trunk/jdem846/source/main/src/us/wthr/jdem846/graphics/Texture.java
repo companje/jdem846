@@ -1,7 +1,7 @@
 package us.wthr.jdem846.graphics;
 
-import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class Texture {
 	public int[] texture = null;
@@ -84,7 +84,7 @@ public class Texture {
 		c11 = getValidColor(c11, b11, c10, b10, c01, b01, c00, b00);
 	
 
-		int color =  ColorAdjustments.interpolateColor(c00, c01, c10, c11, xFrac, yFrac);
+		int color =  ColorUtil.interpolateColor(c00, c01, c10, c11, xFrac, yFrac);
 
 		return color;
 	}

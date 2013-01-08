@@ -3,9 +3,9 @@ package us.wthr.jdem846.modelgrid;
 import java.io.File;
 import java.io.IOException;
 
-import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.model.ElevationHistogramModel;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class UserProvidedModelGrid implements IModelGrid
 {

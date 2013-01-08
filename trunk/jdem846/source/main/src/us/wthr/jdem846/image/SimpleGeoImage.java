@@ -13,7 +13,6 @@ import javax.imageio.stream.ImageInputStream;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.canvas.CanvasProjection;
-import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.gis.CoordinateSpaceAdjuster;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
@@ -24,6 +23,7 @@ import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinition
 {
@@ -306,7 +306,7 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 		getPixel((int) x00, (int) y00 + 1, rgbaBuffer10);
 		getPixel((int) x00 + 1, (int) y00 + 1, rgbaBuffer11);
 
-		ColorAdjustments.interpolateColor(rgbaBuffer00, rgbaBuffer01, rgbaBuffer10, rgbaBuffer11, rgba, xFrac, yFrac);
+		ColorUtil.interpolateColor(rgbaBuffer00, rgbaBuffer01, rgbaBuffer10, rgbaBuffer11, rgba, xFrac, yFrac);
 
 		return true;
 	}

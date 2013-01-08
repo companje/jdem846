@@ -1,6 +1,6 @@
 package us.wthr.jdem846.model.processing.shading;
 
-import us.wthr.jdem846.color.ColorAdjustments;
+
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
@@ -12,6 +12,7 @@ import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.util.Aspect;
 import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
+import us.wthr.jdem846.util.ColorUtil;
 
 @GridProcessing(id = "us.wthr.jdem846.model.processing.shading.AspectShadingProcessor", name = "Aspect Shading Process", type = GridProcessingTypesEnum.SHADING, optionModel = AspectShadingOptionModel.class, enabled = true)
 public class AspectShadingProcessor extends GridProcessor
@@ -83,7 +84,7 @@ public class AspectShadingProcessor extends GridProcessor
 	protected void processPointColor(double latitude, double longitude, double shade) throws RenderEngineException
 	{
 		this.modelGrid.getRgba(latitude, longitude, rgbaBuffer);
-		ColorAdjustments.adjustBrightness(rgbaBuffer, shade);
+		ColorUtil.adjustBrightness(rgbaBuffer, shade);
 		this.modelGrid.setRgba(latitude, longitude, rgbaBuffer);
 	}
 

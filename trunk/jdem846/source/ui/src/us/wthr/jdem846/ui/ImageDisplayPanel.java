@@ -27,12 +27,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -42,22 +40,19 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import us.wthr.jdem846.color.ColorAdjustments;
-import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.image.ImageUtilities;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.Slider;
-import us.wthr.jdem846.ui.panels.RoundedPanel;
+import us.wthr.jdem846.util.ColorUtil;
 
 @SuppressWarnings("serial")
 public class ImageDisplayPanel extends Panel
@@ -433,7 +428,7 @@ public class ImageDisplayPanel extends Panel
 		rgba1[2] = c1.getBlue();
 		rgba1[3] = c1.getAlpha();
 		
-		ColorAdjustments.interpolateColor(rgba0, rgba1, rgba1, f);
+		ColorUtil.interpolateColor(rgba0, rgba1, rgba1, f);
 		
 		return new Color(rgba1[0], rgba1[1], rgba1[2], rgba1[3]);
 		

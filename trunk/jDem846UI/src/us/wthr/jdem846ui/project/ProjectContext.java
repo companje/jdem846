@@ -146,8 +146,13 @@ public class ProjectContext
 			for (SimpleGeoImage imageRef : projectMarshall.getImageFiles()) {
 				addImageryData(imageRef.getImageFile(), imageRef.getNorth(), imageRef.getSouth(), imageRef.getEast(), imageRef.getWest(), false);
 			}
+			
+			scriptingContext.setScriptLanguage(projectMarshall.getScriptLanguage());
+			scriptingContext.setUserScript(projectMarshall.getUserScript());
 
 		}
+		
+		
 
 		OptionModelChangeListener optionModelChangeListener = new OptionModelChangeListener()
 		{

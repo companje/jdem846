@@ -802,17 +802,18 @@ public class DemProjectPane extends JdemPanel implements Savable
 
 	protected void updateScriptingContext()
 	{
-
-		scriptingContext.setUserScript(scriptPane.getScriptContent());
-		scriptingContext.setScriptLanguage(scriptPane.getScriptLanguage());
-
-		if (this.modelProcessManifest.getGlobalOptionModel().getUseScripting()) {
-			try {
-				scriptingContext.prepare();
-			} catch (Exception ex) {
-				log.warn("Error compiling script: " + ex.getMessage(), ex);
-				JOptionPane.showMessageDialog(this.getRootPane(), I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.message") + ": " + ex.getMessage(), I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.title"),
-						JOptionPane.ERROR_MESSAGE);
+		if (scriptPane.getScriptContent() != null && scriptPane.getScriptContent().length() > 0) {
+			scriptingContext.setUserScript(scriptPane.getScriptContent());
+			scriptingContext.setScriptLanguage(scriptPane.getScriptLanguage());
+	
+			if (this.modelProcessManifest.getGlobalOptionModel().getUseScripting()) {
+				try {
+					scriptingContext.prepare();
+				} catch (Exception ex) {
+					log.warn("Error compiling script: " + ex.getMessage(), ex);
+					JOptionPane.showMessageDialog(this.getRootPane(), I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.message") + ": " + ex.getMessage(), I18N.get("us.wthr.jdem846.ui.projectPane.onCreate.compileError.title"),
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
 	}

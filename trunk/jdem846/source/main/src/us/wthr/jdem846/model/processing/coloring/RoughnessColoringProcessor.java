@@ -1,7 +1,6 @@
 package us.wthr.jdem846.model.processing.coloring;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -11,6 +10,7 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
+import us.wthr.jdem846.util.ColorUtil;
 
 @GridProcessing(id = "us.wthr.jdem846.model.processing.coloring.RoughnessColoringProcessor", name = "Roughness Color Process", type = GridProcessingTypesEnum.COLORING, optionModel = RoughnessColoringOptionModel.class, enabled = false)
 /** Calculates a roughness ratio based on the largest difference between a
@@ -111,7 +111,7 @@ public class RoughnessColoringProcessor extends GridProcessor
 		if (r != DemConstants.ELEV_NO_DATA) {
 			double ratio = (r - min) / (max - min);
 
-			ColorAdjustments.interpolateColor(minColor, maxColor, colorBuffer, ratio);
+			ColorUtil.interpolateColor(minColor, maxColor, colorBuffer, ratio);
 			modelGrid.setRgba(latitude, longitude, colorBuffer);
 		} else {
 			colorBuffer[3] = 0x0;

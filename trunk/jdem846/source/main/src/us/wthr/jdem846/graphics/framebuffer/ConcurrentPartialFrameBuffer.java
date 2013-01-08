@@ -1,7 +1,7 @@
 package us.wthr.jdem846.graphics.framebuffer;
 
-import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.graphics.ImageCapture;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class ConcurrentPartialFrameBuffer extends AbstractFrameBuffer implements FrameBuffer
 {

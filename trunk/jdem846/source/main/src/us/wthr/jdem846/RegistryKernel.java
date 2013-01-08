@@ -21,9 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.annotations.Initialize;
-import us.wthr.jdem846.exception.AnnotationIndexerException;
+import us.wthr.jdem846.annotations.Registry;
 import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -51,9 +50,9 @@ public class RegistryKernel
 		
 		try {
 			clazzList = DiscoverableAnnotationIndexer.getAnnotatedClasses(Registry.class.getName());
-		} catch (AnnotationIndexerException ex) {
+		} catch (Exception ex) {
 			throw new RegistryException("Failed to retrieve registry classes: " + ex.getMessage(), ex);
-		}
+		} 
 		
 		if (clazzList != null) {
 			for (Class<?> clazz : clazzList) {

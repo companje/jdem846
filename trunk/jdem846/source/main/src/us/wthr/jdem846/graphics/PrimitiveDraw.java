@@ -1,9 +1,7 @@
 package us.wthr.jdem846.graphics;
 
-import us.wthr.jdem846.canvas.util.ColorUtil;
-import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
-import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.util.ColorUtil;
 
 public abstract class PrimitiveDraw
 {

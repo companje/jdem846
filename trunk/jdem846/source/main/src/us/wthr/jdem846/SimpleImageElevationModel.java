@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.graphics.ImageCapture;
 import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.ElevationHistogramModel;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class SimpleImageElevationModel implements ElevationModel
 {

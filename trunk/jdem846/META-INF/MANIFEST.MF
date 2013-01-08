@@ -33,7 +33,9 @@ Bundle-ClassPath: jdem846.jar,
  lib/jogl/joal.jar,
  lib/jogl/jocl.jar,
  lib/jogl/jogl-all.jar,
- .
+ .,
+ lib/js-14.jar,
+ lib/js.jar
 Export-Package: javax.media.opengl,
  org.scannotation;
   uses:="javax.servlet,

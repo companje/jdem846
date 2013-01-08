@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import us.wthr.jdem846ui.Activator;
@@ -46,6 +47,13 @@ public class BasicAction extends Action
 	}
 	
 	
+	@Override
+	public void runWithEvent(Event event)
+	{
+		super.runWithEvent(event);
+		this.fireActionListeners();
+	}
+
 	@Override
 	public void run() 
 	{

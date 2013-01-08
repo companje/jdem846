@@ -5,12 +5,12 @@ import java.util.List;
 
 import us.wthr.jdem846.DataContext;
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.exceptions.ContextPrepareException;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class ImageDataContext implements DataContext
 {
@@ -133,7 +133,7 @@ public class ImageDataContext implements DataContext
 					
 					double r = 1.0 - ((double)rgbaBufferA[3] / 255.0);
 					int a = Math.max(rgbaBufferA[3], rgba[3]);
-					ColorAdjustments.interpolateColor(rgbaBufferA, rgba, rgba, r);
+					ColorUtil.interpolateColor(rgbaBufferA, rgba, rgba, r);
 					rgba[3] = a;
 					
 				}

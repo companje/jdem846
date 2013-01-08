@@ -3,7 +3,9 @@ package us.wthr.jdem846ui.actions;
 import java.io.File;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import us.wthr.jdem846.logging.Log;
@@ -15,20 +17,34 @@ import us.wthr.jdem846ui.project.ProjectException;
 public class AddDataAction extends BasicAction
 {
 	private static Log log = Logging.getLog(AddDataAction.class);
+
 	
 	public AddDataAction(IWorkbenchWindow window, String label, String viewId)
 	{
 		super(window, ICommandIds.CMD_ADD_DATA, viewId, label, "/icons/eclipse/data_add.gif");
 	}
-
+	
 	@Override
-	public void run() {
+	public void runWithEvent(Event event)
+	{
+		
+		// Hack. I know...
+		if (event.widget != null && event.widget instanceof MenuItem) {
+			MenuItem m = (MenuItem)event.widget;
+			if (m.getText() != null && m.getText().equals("Shape")) {
+				// Not yet implemented
+				return;
+			}
+			
+		}
+		
 		
 		openInputData();
 		
-		super.run();
+		super.runWithEvent(event);
 	}
-	
+
+
 	
 	protected void openInputData()
 	{
@@ -109,5 +125,5 @@ public class AddDataAction extends BasicAction
 		dialog.setFilterPath (filterPath);
 		return dialog.open();
 	}
-	
+
 }

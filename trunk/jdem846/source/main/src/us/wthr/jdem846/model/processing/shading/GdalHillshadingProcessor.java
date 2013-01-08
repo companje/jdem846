@@ -1,6 +1,6 @@
 package us.wthr.jdem846.model.processing.shading;
 
-import us.wthr.jdem846.color.ColorAdjustments;
+
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -8,6 +8,7 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
+import us.wthr.jdem846.util.ColorUtil;
 
 /** Implements the GDAL hillshading algorithm from gdaldem.cpp
  * 
@@ -113,7 +114,7 @@ public class GdalHillshadingProcessor extends GridProcessor
 		}
 
 		//color::adjustBrightness(c, f);
-		ColorAdjustments.adjustBrightness(rgba, f);
+		ColorUtil.adjustBrightness(rgba, f);
 		this.modelGrid.setRgba(latitude, longitude, rgba);
 		//this->_modelGrid->color(latitude, longitude, c);
 	}

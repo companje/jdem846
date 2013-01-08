@@ -1,7 +1,6 @@
 package us.wthr.jdem846.model.processing.render;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.exception.ScriptingException;
@@ -27,6 +26,7 @@ import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.RenderProcessor;
+import us.wthr.jdem846.util.ColorUtil;
 
 
 @GridProcessing(id="us.wthr.jdem846.model.processing.render.ModelRenderer",
