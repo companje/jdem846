@@ -1,8 +1,8 @@
 package us.wthr.jdem846.geom;
 
 
-import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.math.MathExt;
+import us.wthr.jdem846.util.ColorUtil;
 
 
 /**
@@ -167,7 +167,7 @@ public class Edge implements Comparable<Edge>
     
     public int getInterpolatedColor(int rgba0, int rgba1, double frac)
     {
-    	return ColorAdjustments.interpolateColor(rgba0, rgba1, frac);
+    	return ColorUtil.interpolateColor(rgba0, rgba1, frac);
     }
     
  

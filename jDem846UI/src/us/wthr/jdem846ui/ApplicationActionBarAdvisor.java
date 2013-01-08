@@ -4,12 +4,8 @@ package us.wthr.jdem846ui;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
@@ -189,34 +185,34 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     }
     
     protected void fillCoolBar(ICoolBarManager coolBar) {
-        IToolBarManager mainToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-        coolBar.add(new ToolBarContributionItem(mainToolbar, "main"));   
-        mainToolbar.add(newProjectAction);
-        mainToolbar.add(openProjectAction);
-        mainToolbar.add(saveProjectAction);
-        mainToolbar.add(saveProjectAsAction);
+//        IToolBarManager mainToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
+//        coolBar.add(new ToolBarContributionItem(mainToolbar, "main"));   
+//        mainToolbar.add(newProjectAction);
+//        mainToolbar.add(openProjectAction);
+//        mainToolbar.add(saveProjectAction);
+//        mainToolbar.add(saveProjectAsAction);
         
-        IToolBarManager editToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-        coolBar.add(new ToolBarContributionItem(editToolbar, "edit"));   
-        editToolbar.add(cutAction);
-        editToolbar.add(copyAction);
-        editToolbar.add(pasteAction);
-        editToolbar.add(undoAction);
-        editToolbar.add(redoAction);
+//        IToolBarManager editToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
+//        coolBar.add(new ToolBarContributionItem(editToolbar, "edit"));   
+//        editToolbar.add(cutAction);
+//        editToolbar.add(copyAction);
+//        editToolbar.add(pasteAction);
+//        editToolbar.add(undoAction);
+//        editToolbar.add(redoAction);
         
-        IToolBarManager dataToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-        coolBar.add(new ToolBarContributionItem(dataToolbar, "data"));
-        dataToolbar.add(addDataAction);
-        dataToolbar.add(removeDataAction);
-        dataToolbar.add(exportDataAction);
-        dataToolbar.add(renderAction);
+//        IToolBarManager dataToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
+//        coolBar.add(new ToolBarContributionItem(dataToolbar, "data"));
+//        dataToolbar.add(addDataAction);
+//        dataToolbar.add(removeDataAction);
+//        dataToolbar.add(exportDataAction);
+//        dataToolbar.add(renderAction);
 
-        IToolBarManager modelToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-        coolBar.add(new ToolBarContributionItem(modelToolbar, "model"));
-        modelToolbar.add(zoomInAction);
-        modelToolbar.add(zoomOutAction);
-        modelToolbar.add(zoomActualAction);
-        modelToolbar.add(zoomFitAction);
+//        IToolBarManager modelToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
+//        coolBar.add(new ToolBarContributionItem(modelToolbar, "model"));
+//        modelToolbar.add(zoomInAction);
+//        modelToolbar.add(zoomOutAction);
+//        modelToolbar.add(zoomActualAction);
+//        modelToolbar.add(zoomFitAction);
         //toolbar.add(openViewAction);
        // toolbar.add(messagePopupAction);
     }

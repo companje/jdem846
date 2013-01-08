@@ -1,7 +1,6 @@
 package us.wthr.jdem846.model.processing.coloring;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.RenderEngineException;
@@ -11,6 +10,7 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
+import us.wthr.jdem846.util.ColorUtil;
 
 @GridProcessing(id = "us.wthr.jdem846.model.processing.coloring.TopographicPositionIndexColoringProcessor", name = "TPI Color Process", type = GridProcessingTypesEnum.COLORING, optionModel = TopographicPositionIndexColoringOptionModel.class, enabled = false)
 /** TPI (Topographic Position Index) is the difference between the central
@@ -112,7 +112,7 @@ public class TopographicPositionIndexColoringProcessor extends GridProcessor
 		double tpi = calculateTpi(latitude, longitude);
 		if (tpi != DemConstants.ELEV_NO_DATA) {
 			double ratio = (tpi - minTpi) / (maxTpi - minTpi);
-			ColorAdjustments.interpolateColor(minTpiColor, maxTpiColor, colorBuffer, ratio);
+			ColorUtil.interpolateColor(minTpiColor, maxTpiColor, colorBuffer, ratio);
 		} else {
 			colorBuffer[3] = 0x0;
 		}

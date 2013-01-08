@@ -15,18 +15,17 @@ import us.wthr.jdem846ui.project.ProjectException;
 public class OpenProjectAction extends BasicAction
 {
 	private static Log log = Logging.getLog(OpenProjectAction.class);
-	
-	
+
 	public OpenProjectAction(IWorkbenchWindow window, String label, String viewId)
 	{
 		super(window, ICommandIds.CMD_OPEN, viewId, label, "/icons/eclipse/project_open.gif");
 	}
-	
-	
+
 	@Override
-	public void run() {
+	public void run()
+	{
 		super.run();
-		
+
 		String filePath = promptForFilePath(null);
 		if (filePath != null) {
 			try {
@@ -35,15 +34,14 @@ public class OpenProjectAction extends BasicAction
 				e.printStackTrace();
 			}
 		}
+
 	}
-	
-	
-	
+
 	protected String promptForFilePath(String previousFile)
 	{
-		FileDialog dialog = new FileDialog (this.getWindow().getShell(), SWT.OPEN);
-		String [] filterNames = StandardFileTypes.PROJECT_PROJECT_FILE_TYPES;
-		String [] filterExtensions = StandardFileTypes.PROJECT_PROJECT_FILE_EXTENSIONS;
+		FileDialog dialog = new FileDialog(this.getWindow().getShell(), SWT.OPEN);
+		String[] filterNames = StandardFileTypes.PROJECT_PROJECT_FILE_TYPES;
+		String[] filterExtensions = StandardFileTypes.PROJECT_PROJECT_FILE_EXTENSIONS;
 		String filterPath = "/";
 		String platform = SWT.getPlatform();
 		if (platform.equals("win32") || platform.equals("wpf")) {
@@ -51,9 +49,9 @@ public class OpenProjectAction extends BasicAction
 			filterExtensions = StandardFileTypes.PROJECT_PROJECT_FILE_EXTENSIONS_WIN;
 			filterPath = "c:\\";
 		}
-		dialog.setFilterNames (filterNames);
-		dialog.setFilterExtensions (filterExtensions);
-		
+		dialog.setFilterNames(filterNames);
+		dialog.setFilterExtensions(filterExtensions);
+
 		if (previousFile != null) {
 			File f = new File(previousFile);
 			dialog.setFileName(f.getName());
@@ -61,8 +59,7 @@ public class OpenProjectAction extends BasicAction
 		} else {
 			dialog.setFilterPath(filterPath);
 		}
-		
-		
+
 		return dialog.open();
 	}
 }

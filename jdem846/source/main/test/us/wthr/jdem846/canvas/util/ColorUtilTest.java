@@ -1,6 +1,8 @@
 package us.wthr.jdem846.canvas.util;
 
 import junit.framework.TestCase;
+import us.wthr.jdem846.util.ColorIntFormatEnum;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class ColorUtilTest extends TestCase
 {
@@ -13,10 +15,10 @@ public class ColorUtilTest extends TestCase
 		int b = 75;
 		int a = 100;
 		
-		int c = ColorUtil.rgbaToInt(r, g, b, a, ColorUtil.INT_MODE_RGBA);
+		int c = ColorUtil.rgbaToInt(r, g, b, a, ColorIntFormatEnum.RGBA);
 		
 		int[] rgba = new int[4];
-		ColorUtil.intToRGBA(c, rgba, ColorUtil.INT_MODE_RGBA);
+		ColorUtil.intToRGBA(c, rgba, ColorIntFormatEnum.RGBA);
 		
 		assertEquals(rgba[0], r);
 		assertEquals(rgba[1], g);
@@ -32,10 +34,10 @@ public class ColorUtilTest extends TestCase
 		int b = 75;
 		int a = 100;
 		
-		int c = ColorUtil.rgbaToInt(r, g, b, a, ColorUtil.INT_MODE_ARGB);
+		int c = ColorUtil.rgbaToInt(r, g, b, a, ColorIntFormatEnum.ARGB);
 		
 		int[] rgba = new int[4];
-		ColorUtil.intToRGBA(c, rgba, ColorUtil.INT_MODE_ARGB);
+		ColorUtil.intToRGBA(c, rgba, ColorIntFormatEnum.ARGB);
 		
 		assertEquals(rgba[0], r);
 		assertEquals(rgba[1], g);

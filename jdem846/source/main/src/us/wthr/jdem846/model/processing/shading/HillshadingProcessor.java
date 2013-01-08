@@ -2,7 +2,6 @@ package us.wthr.jdem846.model.processing.shading;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
-import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.planets.Planet;
@@ -24,6 +23,7 @@ import us.wthr.jdem846.model.processing.util.SunlightPositioning;
 import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.scripting.ScriptingContext;
+import us.wthr.jdem846.util.ColorUtil;
 
 @GridProcessing(id = "us.wthr.jdem846.model.processing.coloring.HillshadingProcessor", name = "Hillshading Process", type = GridProcessingTypesEnum.SHADING, optionModel = HillshadingOptionModel.class, enabled = true)
 public class HillshadingProcessor extends GridProcessor
@@ -236,7 +236,7 @@ public class HillshadingProcessor extends GridProcessor
 				if (spotExponent != 1) {
 					dot = MathExt.pow(dot, spotExponent);
 				}
-				ColorAdjustments.adjustBrightness(rgbaBuffer, dot);
+				ColorUtil.adjustBrightness(rgbaBuffer, dot);
 			}
 		}
 

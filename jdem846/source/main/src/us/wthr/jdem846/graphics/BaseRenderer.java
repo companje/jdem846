@@ -1,10 +1,10 @@
 package us.wthr.jdem846.graphics;
 
-import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Vector;
+import us.wthr.jdem846.util.ColorUtil;
 
 public abstract class BaseRenderer implements IRenderer
 {

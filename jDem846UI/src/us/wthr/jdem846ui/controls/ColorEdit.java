@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-import us.wthr.jdem846.canvas.util.ColorUtil;
+import us.wthr.jdem846.util.ColorUtil;
 import us.wthr.jdem846ui.Activator;
 
 public class ColorEdit extends Composite

@@ -1,6 +1,5 @@
 package us.wthr.jdem846.model.processing.coloring;
 
-import us.wthr.jdem846.color.ColorAdjustments;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.DataSourceException;
@@ -11,6 +10,7 @@ import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.GridFilter;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.scripting.ScriptProxy;
+import us.wthr.jdem846.util.ColorUtil;
 
 @GridProcessing(id = "us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor", name = "Hypsometric Color Process", type = GridProcessingTypesEnum.COLORING, optionModel = HypsometricColorOptionModel.class, enabled = true, isFilter = true)
 public class HypsometricColorProcessor extends GridFilter
@@ -96,7 +96,7 @@ public class HypsometricColorProcessor extends GridFilter
 		if (imageOverlayed && rgba[3] < 0xFF) {
 			modelColoring.getGradientColor(elevation, minimumElevation, maximumElevation, rgbaBufferB);
 			double r = ((double) rgba[3] / 255.0);
-			ColorAdjustments.interpolateColor(rgbaBufferB, rgba, rgba, r);
+			ColorUtil.interpolateColor(rgbaBufferB, rgba, rgba, r);
 		}
 
 		if (!imageOverlayed) {

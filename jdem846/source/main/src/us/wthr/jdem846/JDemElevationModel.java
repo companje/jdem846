@@ -16,7 +16,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import us.wthr.jdem846.canvas.AbstractBuffer;
-import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.graphics.ImageCapture;
 import us.wthr.jdem846.image.ImageTypeEnum;
@@ -25,6 +24,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 import us.wthr.jdem846.util.ByteConversions;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 {

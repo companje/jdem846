@@ -62,7 +62,7 @@
      
      <view
             name="Script Editor"
-            class="us.wthr.jdem846ui.views.ScriptEditorView"
+            class="us.wthr.jdem846ui.views.scripteditor.ScriptEditorView"
             id="jdem846ui.scriptEditorView"
             icon="icons/eclipse/scroll.png" />
 
@@ -96,6 +96,8 @@
       </perspectiveExtension>
    </extension>
   -->
+  
+  
   <extension
          point="org.eclipse.ui.commands">
       <category
@@ -132,6 +134,8 @@
             description="Adds a data source"
             categoryId="jdem846ui.category"
             id="jdem846ui.data.add">
+            
+            <commandParameter id="jdem846ui.data.add.type" name="Raster Data" optional="true"></commandParameter>
       </command>
       <command
             name="Remove Data"
@@ -197,6 +201,77 @@
             id="jdem846ui.zoom.actual">
       </command>
   </extension>
+  
+  <extension point="org.eclipse.ui.commandImages">
+  	 <image commandId="jdem846ui.project.new" icon="/icons/eclipse/project_new.gif" />
+  	 <image commandId="jdem846ui.project.open" icon="/icons/eclipse/project_open.gif" />
+  	 <image commandId="jdem846ui.project.save" icon="/icons/eclipse/project_save.gif" />
+  	 <image commandId="jdem846ui.project.saveAs" icon="/icons/eclipse/project_saveas.gif" />
+  
+     <image commandId="jdem846ui.data.add" icon="/icons/eclipse/data_add.gif" />
+     <image commandId="jdem846ui.data.remove" icon="/icons/eclipse/data_remove.gif" />
+     <image commandId="jdem846ui.data.export" icon="/icons/eclipse/data_export.gif" />
+     <image commandId="jdem846ui.render" icon="/icons/eclipse/model_create.gif" />
+     
+     
+     <image commandId="jdem846ui.zoom.in" icon="/icons/eclipse/zoom_in.gif" />
+     <image commandId="jdem846ui.zoom.out" icon="/icons/eclipse/zoom_out.gif" />
+     <image commandId="jdem846ui.zoom.fit" icon="/icons/eclipse/zoom_fit.gif" />
+     <image commandId="jdem846ui.zoom.actual" icon="/icons/eclipse/zoom_100.gif" />
+  </extension>
+  
+  <extension point="org.eclipse.ui.menus">
+     <menuContribution locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+     	
+     	<toolbar id="jdem846ui.toolbar.project">
+     		<command commandId="jdem846ui.project.new" id="jdem846ui.toolbar.project.new" style="push" tooltip="New" />
+     		<command commandId="jdem846ui.project.open" id="jdem846ui.toolbar.project.open" style="push" tooltip="Open" />
+     		<command commandId="jdem846ui.project.save" id="jdem846ui.toolbar.project.save" style="push" tooltip="Save" />
+     		<command commandId="jdem846ui.project.saveAs" id="jdem846ui.toolbar.project.saveAs" style="push" tooltip="Save As..." />
+     	</toolbar>
+     	
+     	<toolbar id="jdem846ui.toolbar.edit">
+     		<command commandId="org.eclipse.ui.edit.cut" id="jdem846ui.toolbar.edit.cut" style="push" tooltip="Cut" />
+     		<command commandId="org.eclipse.ui.edit.copy" id="jdem846ui.toolbar.edit.copy" style="push" tooltip="Copy" />
+     		<command commandId="org.eclipse.ui.edit.paste" id="jdem846ui.toolbar.edit.paste" style="push" tooltip="Paste" />
+     		<command commandId="org.eclipse.ui.edit.undo" id="jdem846ui.toolbar.edit.undo" style="push" tooltip="Cut" />
+     		<command commandId="org.eclipse.ui.edit.redo" id="jdem846ui.toolbar.edit.redo" style="push" tooltip="Cut" />
+     	</toolbar>
+     
+        <toolbar id="jdem846ui.toolbar.data">
+           <command commandId="jdem846ui.data.add" id="jdem846ui.toolbar.data.add" style="pulldown" tooltip="Add Data" />
+           <command commandId="jdem846ui.data.remove" id="jdem846ui.toolbar.data.remove" style="push" tooltip="Remove Data" />
+           <command commandId="jdem846ui.data.export" id="jdem846ui.toolbar.data.export" style="push" tooltip="Export Data" />
+           <command commandId="jdem846ui.render" id="jdem846ui.toolbar.render" style="push" tooltip="Render Model" />
+        </toolbar>
+        
+
+        <toolbar id="jdem846ui.toolbar.model">
+        	<command commandId="jdem846ui.zoom.in" id="jdem846ui.toolbar.model.zoom.in" style="push" tooltip="Zoom In" />
+        	<command commandId="jdem846ui.zoom.out" id="jdem846ui.toolbar.model.zoom.out" style="push" tooltip="Zoom Out" />
+        	<command commandId="jdem846ui.zoom.fit" id="jdem846ui.toolbar.model.zoom.fit" style="push" tooltip="Zoom Fit" />
+        	<command commandId="jdem846ui.zoom.actual" id="jdem846ui.toolbar.model.zoom.actual" style="push" tooltip="Zoom Actual" />
+        	
+        </toolbar>
+        
+     </menuContribution>
+  </extension>
+  
+  <extension point="org.eclipse.ui.menus">
+     <menuContribution locationURI="menu:jdem846ui.toolbar.data.add">
+        <command commandId="jdem846ui.data.add" label="Raster" style="push">
+           <parameter name="jdem846ui.data.add.type" value="Raster">
+           </parameter>
+        </command>
+        <separator name="additions" visible="false">
+        </separator>
+        <command commandId="jdem846ui.data.add" label="Shape" style="push" visible="false">
+           <parameter name="jdem846ui.data.add.type" value="Shape" >
+           </parameter>
+        </command>
+     </menuContribution>
+  </extension>
+  
 <!--
   
    <extension
@@ -258,11 +333,5 @@
 			class="us.wthr.jdem846ui.preferences.DefaultsPreferencesPage" />
 	</extension>
 	
-	<editor
-      name="Script Editor"
-      extensions="js"
-      icon="icons/eclipse/script_project.gif"
-      class="us.wthr.jdem846ui.editors.ScriptEditor"
-      id="us.wthr.jdem846ui.editors.ScriptEditor">
-   </editor>
+
 </plugin>

@@ -1,10 +1,10 @@
 package us.wthr.jdem846.modelgrid;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.canvas.util.ColorUtil;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class BufferedModelGrid extends BaseModelGrid
 {
