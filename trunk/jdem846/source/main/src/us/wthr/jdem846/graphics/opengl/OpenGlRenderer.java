@@ -50,8 +50,8 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl.makeGlContextCurrent();
 
 		
-		boolean multisampling = JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.opengl.multisampling.enabled");
-		int samples = JDem846Properties.getIntProperty("us.wthr.jdem846.general.opengl.multisampling.samples");
+		boolean multisampling = JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.opengl.multisampling.enabled");
+		int samples = JDem846Properties.getIntProperty("us.wthr.jdem846.rendering.opengl.multisampling.samples");
 
 
 		openGl.getGL().glEnable(GL.GL_BLEND);
