@@ -263,12 +263,14 @@
            <parameter name="jdem846ui.data.add.type" value="Raster">
            </parameter>
         </command>
-        <separator name="additions" visible="false">
-        </separator>
+        
+        <!--
+        <separator name="additions" visible="false" />
         <command commandId="jdem846ui.data.add" label="Shape" style="push" visible="false">
            <parameter name="jdem846ui.data.add.type" value="Shape" >
            </parameter>
         </command>
+        -->
      </menuContribution>
   </extension>
   
