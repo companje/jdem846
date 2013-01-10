@@ -254,19 +254,19 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 	}
 	
 	@Override
-	public void bindTexture(int[] tex, int width, int height)
+	public void bindTexture(Texture tex)
 	{
 		if (tex == null) {
 			this.error = RenderCodesEnum.RENDER_ERR_INVALID_TEXTURE;
 			return;
 		}
 		
-		if (width <= 0 || height <= 0) {
+		if (tex.getWidth() <= 0 || tex.getHeight() <= 0) {
 			this.error = RenderCodesEnum.RENDER_ERR_INVALID_DIMENSIONS;
 			return;
 		}
 		
-		this.currentTexture = new Texture(width, height, tex);
+		this.currentTexture = tex;//new Texture(width, height, tex);
 		
 		if (this.primitiveDrawer != null) {
 			this.primitiveDrawer.setTexture(this.currentTexture);

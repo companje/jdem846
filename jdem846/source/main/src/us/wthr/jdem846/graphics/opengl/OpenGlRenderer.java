@@ -1,7 +1,6 @@
 package us.wthr.jdem846.graphics.opengl;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -13,6 +12,7 @@ import us.wthr.jdem846.graphics.BaseRenderer;
 import us.wthr.jdem846.graphics.IRenderer;
 import us.wthr.jdem846.graphics.MatrixModeEnum;
 import us.wthr.jdem846.graphics.PrimitiveModeEnum;
+import us.wthr.jdem846.graphics.Texture;
 import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferFactory;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
@@ -149,7 +149,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	}
 
 	@Override
-	public void bindTexture(int[] tex, int width, int height)
+	public void bindTexture(Texture tex)
 	{
 		this.unbindTexture();
 
@@ -170,15 +170,14 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 			log.error("GL Context in error condition following bind of texture");
 		}
 
-		ByteBuffer byteBuffer = ByteBuffer.allocate(tex.length * 4);
-
-		IntBuffer intBuffer = byteBuffer.asIntBuffer();
-		intBuffer.put(tex);
+		//ByteBuffer byteBuffer = ByteBuffer.allocate(tex.length * 4);
+		//IntBuffer intBuffer = byteBuffer.asIntBuffer();
+		//intBuffer.put(tex);
 
 		openGl.getGL2().glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
 
 
-		openGl.getGL2().glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, byteBuffer);
+		openGl.getGL2().glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, tex.getWidth(), tex.getHeight(), 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, tex.getAsByteBuffer());
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following tex image 2d");
 		}

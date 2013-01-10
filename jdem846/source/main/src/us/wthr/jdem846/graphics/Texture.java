@@ -1,5 +1,8 @@
 package us.wthr.jdem846.graphics;
 
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.util.ColorUtil;
 
@@ -19,6 +22,49 @@ public class Texture {
 	}
 	
 	
+	
+	public double getLeft()
+	{
+		return left;
+	}
+
+
+
+	public void setLeft(double left)
+	{
+		this.left = left;
+	}
+
+
+
+	public double getFront()
+	{
+		return front;
+	}
+
+
+
+	public void setFront(double front)
+	{
+		this.front = front;
+	}
+
+
+
+	public int getWidth()
+	{
+		return width;
+	}
+
+
+
+	public int getHeight()
+	{
+		return height;
+	}
+
+
+
 	protected int index(double x, double y)
 	{
 		return index((int) MathExt.round(x), (int) MathExt.round(y));		
@@ -41,6 +87,11 @@ public class Texture {
 	public int getColor(int x, int y)
 	{
 		int index = index(x, y);
+		return getColor(index);
+	}
+	
+	protected int getColor(int index)
+	{
 		if (index >= 0 && index < texture.length) {
 			return texture[index];
 		} else {
@@ -142,5 +193,50 @@ public class Texture {
 		Texture copy = new Texture(width, height, textureBits);
 		
 		return copy;
+	}
+	
+	
+	public Texture getSubTexture(int x, int y, int width, int height)
+	{
+		
+		if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+			return null; // or throw? Probably throw...
+		}
+		
+		if (x + width >= this.width) {
+			width = this.width - x;
+		}
+		
+		if (y + height >= this.height) {
+			height = this.height - y;
+		}
+		
+		int subtexLength = width * height;
+		
+		int[] subtexBuffer = new int[subtexLength];
+		
+		for (int row = 0; row < height; row++) {
+			for (int col = 0; col < width; col++) {
+				int subtexIndex = (row * height) + col;
+				int maintexIndex = index(x + col, y + row);
+				subtexBuffer[subtexIndex] = getColor(maintexIndex);
+			}
+		}
+		
+		Texture subtex = new Texture(width, height, subtexBuffer);
+		return subtex;
+	}
+	
+	public IntBuffer getAsIntBuffer()
+	{
+		return getAsByteBuffer().asIntBuffer();
+	}
+	
+	public ByteBuffer getAsByteBuffer()
+	{
+		ByteBuffer byteBuffer = ByteBuffer.allocate(texture.length * 4);
+		IntBuffer intBuffer = byteBuffer.asIntBuffer();
+		intBuffer.put(texture);
+		return byteBuffer;
 	}
 }

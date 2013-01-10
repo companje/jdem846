@@ -44,7 +44,8 @@ public class RenderProcess
 	protected IRenderer renderer = null;
 
 	protected Boolean renderCompleted = false;
-
+	protected Texture modelTexture = null;
+	
 	public RenderProcess(View modelView)
 	{
 		this.modelView = modelView;
@@ -76,6 +77,12 @@ public class RenderProcess
 		//	this.renderer.setFrameBuffer(frameBuffer);
 		//}
 		this.renderer.initialize(globalOptionModel.getWidth(), globalOptionModel.getHeight());
+		
+		int width = this.modelGrid.getWidth();
+		int height = this.modelGrid.getHeight();
+
+		int[] modelTextureBuffer = this.modelGrid.getModelTexture();
+		modelTexture = new Texture(width, height, modelTextureBuffer);
 	}
 
 	public void dispose()
@@ -113,13 +120,7 @@ public class RenderProcess
 	protected void bindTexture()
 	{
 		this.renderer.unbindTexture();
-
-		int width = this.modelGrid.getWidth();
-		int height = this.modelGrid.getHeight();
-
-		int[] modelTexture = this.modelGrid.getModelTexture();
-		this.renderer.bindTexture(modelTexture, width, height);
-
+		this.renderer.bindTexture(modelTexture);
 	}
 
 	protected void setPerspective() throws GraphicsRenderException

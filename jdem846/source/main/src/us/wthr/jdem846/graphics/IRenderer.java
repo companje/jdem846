@@ -32,7 +32,7 @@ public interface IRenderer
 
 	public void lookAt(double eyeX, double eyeY, double eyeZ, double centerX, double centerY, double centerZ, double upX, double upY, double upZ);
 
-	public void bindTexture(int[] tex, int width, int height);
+	public void bindTexture(Texture texture);
 
 	public void unbindTexture();
 
