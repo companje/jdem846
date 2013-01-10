@@ -13,6 +13,7 @@ import us.wthr.jdem846.graphics.IRenderer;
 import us.wthr.jdem846.graphics.MatrixModeEnum;
 import us.wthr.jdem846.graphics.PerspectiveTypeEnum;
 import us.wthr.jdem846.graphics.PrimitiveModeEnum;
+import us.wthr.jdem846.graphics.Texture;
 import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
@@ -61,6 +62,8 @@ public class ModelRenderer extends GridProcessor implements RenderProcessor
 	
 	protected int rowNum = 0;
 	
+	protected Texture modelTexture = null;
+	
 	public ModelRenderer()
 	{
 		
@@ -86,6 +89,12 @@ public class ModelRenderer extends GridProcessor implements RenderProcessor
 		
 		latitudeResolution = this.modelDimensions.modelLatitudeResolution;
 		longitudeResolution = this.modelDimensions.modelLongitudeResolution;
+		
+		int width = this.modelGrid.getWidth();
+		int height = this.modelGrid.getHeight();
+
+		int[] modelTextureBuffer = this.modelGrid.getModelTexture();
+		modelTexture = new Texture(width, height, modelTextureBuffer);
 	}
 
 	
@@ -207,14 +216,7 @@ public class ModelRenderer extends GridProcessor implements RenderProcessor
 	protected void bindTexture()
 	{
 		this.renderer.unbindTexture();
-		
-		int width = this.modelGrid.getWidth();
-		int height = this.modelGrid.getHeight();
-		
-		int[] modelTexture = this.modelGrid.getModelTexture();
-		this.renderer.bindTexture(modelTexture, width, height);
-		
-		
+		this.renderer.bindTexture(modelTexture);
 	}
 	
 
