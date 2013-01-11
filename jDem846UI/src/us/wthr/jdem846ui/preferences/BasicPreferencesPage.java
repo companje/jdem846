@@ -18,7 +18,7 @@ public abstract class BasicPreferencesPage extends FieldEditorPreferencePage imp
 {
 	private static Log log = Logging.getLog(BasicPreferencesPage.class);
 	
-	private List<String> managedProperties = new LinkedList<String>();
+	private List<ManagedProperty> managedProperties = new LinkedList<ManagedProperty>();
 	
 	
 	public BasicPreferencesPage()
@@ -59,15 +59,15 @@ public abstract class BasicPreferencesPage extends FieldEditorPreferencePage imp
 	
 	protected void applyProperties()
 	{
-		for (String property : managedProperties) {
+		for (ManagedProperty property : managedProperties) {
 			applyProperty(property);
 		}
 	}
 	
 	
-	protected void applyProperty(String id)
+	protected void applyProperty(ManagedProperty property )
 	{
-		JDem846Properties.setProperty(id, getPreferenceStore().getString(id));
+		JDem846Properties.setProperty(property.propertyId, property.getValue());
 	}
 	
 	@Override
@@ -77,10 +77,56 @@ public abstract class BasicPreferencesPage extends FieldEditorPreferencePage imp
 		this.getApplyButton().setEnabled(true);
 	}
 	
+	public void addField(FieldEditor editor, IPropertyModifier modifier)
+	{
+		managedProperties.add(new ManagedProperty(editor, modifier));
+		
+		if (modifier != null) {
+			String value = getPreferenceStore().getString(editor.getPreferenceName());
+			value = modifier.onPreferenceFromProperty(editor.getPreferenceName(), value);
+			getPreferenceStore().setValue(editor.getPreferenceName(), value);
+		}
+		
+		super.addField(editor);
+	}
+	
 	@Override
 	public void addField(FieldEditor editor)
 	{
-		managedProperties.add(editor.getPreferenceName());
-		super.addField(editor);
+		addField(editor, null);
 	}
+	
+	
+	
+	protected interface IPropertyModifier
+	{
+		public String onPreferenceFromProperty(String propertyId, String value);
+		public String onPropertyFromPreference(String propertyId, String value);
+	}
+	
+	protected class ManagedProperty
+	{
+		String propertyId;
+		IPropertyModifier modifier;
+		FieldEditor fieldEditor;
+		
+		public ManagedProperty(FieldEditor fieldEditor, IPropertyModifier modifier)
+		{
+			this.fieldEditor = fieldEditor;
+			this.propertyId = fieldEditor.getPreferenceName();
+			this.modifier = modifier;
+		}
+		
+		
+		public String getValue()
+		{
+			String value = getPreferenceStore().getString(propertyId);
+			if (modifier != null) {
+				value = modifier.onPropertyFromPreference(propertyId, value);
+			}
+			return value;
+		}
+		
+	}
+	
 }

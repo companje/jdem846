@@ -17,7 +17,11 @@ public interface IRenderer
 	public void popMatrix();
 
 	public void setFrameBuffer(FrameBuffer frameBuffer);
-
+	
+	
+	public int getMaximumTextureWidth();
+	public int getMaximumTextureHeight();
+	
 	public void viewPort(int x, int y, int width, int height);
 
 	public void viewPort(int x, int y, int width, int height, FrameBufferModeEnum bufferMode);

@@ -51,6 +51,17 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 		
 	}
 	
+	
+	public int getMaximumTextureWidth()
+	{
+		return RENDER_MAXIMUM_WIDTH;
+	}
+	
+	public int getMaximumTextureHeight()
+	{
+		return RENDER_MAXIMUM_HEIGHT;
+	}
+	
 	protected void multMatrix(Matrix tgt, Matrix with)
 	{
 		if (tgt != null && with != null) {

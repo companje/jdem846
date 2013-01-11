@@ -22,9 +22,9 @@ import us.wthr.jdem846.ui.base.TabPane;
 import us.wthr.jdem846.ui.base.TextField;
 import us.wthr.jdem846.ui.optionModels.ImageFormatListModel;
 import us.wthr.jdem846.ui.optionModels.ImageQualityListModel;
-import us.wthr.jdem846.ui.optionModels.JGoodiesColorThemeListModel;
 import us.wthr.jdem846.ui.optionModels.LanguageListModel;
 import us.wthr.jdem846.ui.optionModels.PrecacheStrategyOptionsListModel;
+import us.wthr.jdem846.ui.optionModels.RenderEngineListModel;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
 
 
@@ -41,17 +41,17 @@ public class PreferencesDialog extends Dialog
 	private LanguageListModel languageListModel;
 	private PrecacheStrategyOptionsListModel precacheStrategyModel;
 	private ImageFormatListModel imageFormatListModel;
-	
+	private RenderEngineListModel renderEngineListModel;
 	
 	private ComboBox cmbGeneralLanguage;
 	private ComboBox cmbGeneralDefaultImageFormat;
-	private JGoodiesColorThemeListModel colorThemeListModel;
-	private ComboBox cmbGeneralColorTheme;
+	//private JGoodiesColorThemeListModel colorThemeListModel;
+	//private ComboBox cmbGeneralColorTheme;
 	private CheckBox chkGeneralDisplayToolbarText;
 	private CheckBox chkGeneralAntialiasedScriptEditorText;
 	private CheckBox chkGeneralDisplayMemoryMonitor;
 	private CheckBox chkGeneralDisplayLogPanel;
-	private CheckBox chkGeneralPreviewModelDuringRender;	
+	//private CheckBox chkGeneralPreviewModelDuringRender;	
 	private CheckBox chkGeneralLimitConsoleOutput;
 	private NumberTextField txtGeneralConsoleBufferSize;
 	private CheckBox chkGeneralReportUsage;
@@ -68,13 +68,19 @@ public class PreferencesDialog extends Dialog
 	private CheckBox chkPreviewScripting;
 	
 	
-	private CheckBox chkPerfPipelineRendering;
+	//private CheckBox chkPerfPipelineRendering;
+	//private CheckBox chkPerfDoubleBuffered;
 	private CheckBox chkPerfNearestNeighborDataRetrieval;
 	private CheckBox chkPerfInterpolateLowerResolutionData;
 	private CheckBox chkPerfAverageOverlappingData;
 	private NumberTextField txtPerfTileSize;
 	private ComboBox cmbPerfPrecacheStrategy;
-	private CheckBox chkPerfDoubleBuffered;
+	
+	private ComboBox cmbRenderingRenderEngine;
+	private CheckBox chkRenderingMultisampling;
+	private NumberTextField txtRenderingMultisamplingSamples;
+	
+	
 	
 	private TextField txtDefaultsSubject;
 	private TextField txtDefaultsDescription;
@@ -83,17 +89,7 @@ public class PreferencesDialog extends Dialog
 	private TextField txtDefaultsInstitution;
 	private TextField txtDefaultsInstitutionContact;
 	private TextField txtDefaultsInstitutionAddress;
-	
-	/*
-	 * us.wthr.jdem846.defaults.subject=
-us.wthr.jdem846.defaults.description=
-us.wthr.jdem846.defaults.author=
-us.wthr.jdem846.defaults.author-contact=
-us.wthr.jdem846.defaults.institution=
-us.wthr.jdem846.defaults.institution-contact=
-us.wthr.jdem846.defaults.institution-address=
-	 */
-	
+
 	
 	public PreferencesDialog()
 	{
@@ -113,13 +109,13 @@ us.wthr.jdem846.defaults.institution-address=
 		imageFormatListModel = new ImageFormatListModel();
 		cmbGeneralDefaultImageFormat = new ComboBox(imageFormatListModel);
 		
-		colorThemeListModel = new JGoodiesColorThemeListModel();
-		cmbGeneralColorTheme = new ComboBox(colorThemeListModel);
+		//colorThemeListModel = new JGoodiesColorThemeListModel();
+		//cmbGeneralColorTheme = new ComboBox(colorThemeListModel);
 		chkGeneralDisplayToolbarText = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.displayToolbarText"));
 		chkGeneralAntialiasedScriptEditorText = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.antialiasedScriptEditorText"));
 		chkGeneralDisplayMemoryMonitor = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.displayMemoryMonitor"));
 		chkGeneralDisplayLogPanel = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.displayLogPanel"));
-		chkGeneralPreviewModelDuringRender = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.previewModelDuringRender"));
+		//chkGeneralPreviewModelDuringRender = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.previewModelDuringRender"));
 		chkGeneralLimitConsoleOutput = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.limitConsoleOutput"));
 		txtGeneralConsoleBufferSize = new NumberTextField(false);
 		chkGeneralReportUsage = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.reportUsage"));
@@ -135,16 +131,27 @@ us.wthr.jdem846.defaults.institution-address=
 		chkPreviewAutoUpdate = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.autoUpdate"));
 		chkPreviewScripting = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.scripting"));
 		
-		chkPerfPipelineRendering = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.pipelineRendering"));
+		//chkPerfPipelineRendering = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.pipelineRendering"));
 		chkPerfNearestNeighborDataRetrieval = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.nearestNeighborDataRetrieval"));
 		chkPerfInterpolateLowerResolutionData = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.interpolateLowerResolutionData"));
 		chkPerfAverageOverlappingData = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.averageOverlappingData"));
 		txtPerfTileSize = new NumberTextField(false);
 		precacheStrategyModel = new PrecacheStrategyOptionsListModel();
 		cmbPerfPrecacheStrategy = new ComboBox(precacheStrategyModel);
-		chkPerfDoubleBuffered = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.doubleBuffered"));
+		//chkPerfDoubleBuffered = new CheckBox(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.doubleBuffered"));
 		
+		renderEngineListModel = new RenderEngineListModel();
+		cmbRenderingRenderEngine = new ComboBox(renderEngineListModel);
+		chkRenderingMultisampling = new CheckBox("Multisampling");
+		txtRenderingMultisamplingSamples = new NumberTextField(false);
 		
+		/*
+		 renderEngineListModel
+		cmbRenderingRenderEngine
+		chkRenderingMultisampling
+		txtRenderingMultisamplingSamples
+
+		 */
 		
 		txtDefaultsSubject = new TextField();
 		txtDefaultsDescription = new TextField();
@@ -180,16 +187,19 @@ us.wthr.jdem846.defaults.institution-address=
 		
 		
 		FlexGridPanel performancePanel = new FlexGridPanel(2);
+		FlexGridPanel renderingPanel = new FlexGridPanel(2);
 		FlexGridPanel previewPanel = new FlexGridPanel(2);
 		FlexGridPanel generalPanel = new FlexGridPanel(2);
 		FlexGridPanel defaultsPanel = new FlexGridPanel(2);
 		
 		performancePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		renderingPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		previewPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		generalPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		defaultsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		tabPane.add(generalPanel, I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.tab"));
+		tabPane.add(renderingPanel, "Rendering");
 		tabPane.add(performancePanel, I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.tab"));
 		tabPane.add(previewPanel, I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.tab"));
 		tabPane.add(defaultsPanel, I18N.get("us.wthr.jdem846.ui.preferencesDialog.defaults.tab"));
@@ -215,8 +225,8 @@ us.wthr.jdem846.defaults.institution-address=
 		generalPanel.add(new Label(""));
 		generalPanel.add(chkGeneralDisplayMemoryMonitor);
 		
-		generalPanel.add(new Label(""));
-		generalPanel.add(chkGeneralPreviewModelDuringRender);
+		//generalPanel.add(new Label(""));
+		//generalPanel.add(chkGeneralPreviewModelDuringRender);
 		
 		generalPanel.add(new Label(""));
 		generalPanel.add(chkGeneralDisplayLogPanel);
@@ -229,6 +239,18 @@ us.wthr.jdem846.defaults.institution-address=
 		
 		generalPanel.add(new Label(""));
 		generalPanel.add(chkGeneralReportUsage);
+		
+		
+		
+		renderingPanel.add(new Label("Render Engine:"));
+		renderingPanel.add(cmbRenderingRenderEngine);
+		
+		renderingPanel.add(new Label(""));
+		renderingPanel.add(chkRenderingMultisampling);
+		
+		renderingPanel.add(new Label("Multisample Samples:"));
+		renderingPanel.add(txtRenderingMultisamplingSamples);
+		
 		
 		
 		previewPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.previewTextureQuality") + ":"));
@@ -253,11 +275,11 @@ us.wthr.jdem846.defaults.institution-address=
 		performancePanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.performance.precacheStrategy") + ":"));
 		performancePanel.add(cmbPerfPrecacheStrategy);
 		
-		performancePanel.add(new Label(""));
-		performancePanel.add(chkPerfDoubleBuffered);
+		//performancePanel.add(new Label(""));
+		//performancePanel.add(chkPerfDoubleBuffered);
 		
-		performancePanel.add(new Label(""));
-		performancePanel.add(chkPerfPipelineRendering);
+		//performancePanel.add(new Label(""));
+		//performancePanel.add(chkPerfPipelineRendering);
 		
 		performancePanel.add(new Label(""));
 		performancePanel.add(chkPerfNearestNeighborDataRetrieval);
@@ -268,27 +290,7 @@ us.wthr.jdem846.defaults.institution-address=
 		performancePanel.add(new Label(""));
 		performancePanel.add(chkPerfAverageOverlappingData);
 		
-		
-		
-		
-		/*
-		 * us.wthr.jdem846.defaults.subject=
-	us.wthr.jdem846.defaults.description=
-	us.wthr.jdem846.defaults.author=
-	us.wthr.jdem846.defaults.author-contact=
-	us.wthr.jdem846.defaults.institution=
-	us.wthr.jdem846.defaults.institution-contact=
-	us.wthr.jdem846.defaults.institution-address=
-	
-		txtDefaultsSubject
-		txtDefaultsDescription
-		txtDefaultsAuthor
-		txtDefaultsAuthorContact
-		txtDefaultsInstitution
-		txtDefaultsInstitutionContact
-		txtDefaultsInstitutionAddress
-		 */
-		
+
 		defaultsPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.defaults.author") + ":"));
 		defaultsPanel.add(txtDefaultsAuthor);
 		
@@ -316,7 +318,7 @@ us.wthr.jdem846.defaults.institution-address=
 		pnlButtons.add(btnCancel);
 		add(pnlButtons, BorderLayout.SOUTH);
 		
-		
+		renderingPanel.closeGrid();
 		performancePanel.closeGrid();
 		previewPanel.closeGrid();
 		generalPanel.closeGrid();
@@ -333,17 +335,28 @@ us.wthr.jdem846.defaults.institution-address=
 		qualityModel.setSelectedItemByValue(JDem846Properties.getIntProperty("us.wthr.jdem846.general.view.imageScaling.quality"));
 		languageListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.i18n.default"));
 		imageFormatListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.defaultImageFormat"));
-		colorThemeListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.jgoodies.theme"));
+		//colorThemeListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.jgoodies.theme"));
 		chkGeneralDisplayToolbarText.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.displayToolbarText"));
 		chkGeneralAntialiasedScriptEditorText.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.scriptEditorPane.textAA"));
 		chkGeneralDisplayMemoryMonitor.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.jdemFrame.displayMemoryMonitor"));
 		chkGeneralDisplayLogPanel.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.displayLogViewPanel"));
-		chkGeneralPreviewModelDuringRender.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.renderInProcessPreviewing"));
+		//chkGeneralPreviewModelDuringRender.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.renderInProcessPreviewing"));
 		chkGeneralReportUsage.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.usage.report"));
 		
 		chkGeneralLimitConsoleOutput.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.console.limitOuput"));
 		txtGeneralConsoleBufferSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.console.bufferSize"));
 		
+		
+		renderEngineListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.rendering.renderEngine"));
+		chkRenderingMultisampling.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.opengl.multisampling.enabled"));
+		txtRenderingMultisamplingSamples.setText(JDem846Properties.getProperty("us.wthr.jdem846.rendering.opengl.multisampling.samples"));
+		/*
+		 * 
+		renderEngineListModel
+		cmbRenderingRenderEngine
+		chkRenderingMultisampling
+		txtRenderingMultisamplingSamples
+		 */
 		
 		sldPreviewingPreviewModelQuality.setValue((int)(JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewModelQuality") * 100.0));
 		sldPreviewingPreviewTextureQuality.setValue((int)(JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewTextureQuality") * 100.0));
@@ -352,12 +365,12 @@ us.wthr.jdem846.defaults.institution-address=
 		chkPreviewAutoUpdate.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.autoUpdate"));
 		chkPreviewScripting.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.scripting"));
 		
-		chkPerfPipelineRendering.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.pipelineRender"));
+		//chkPerfPipelineRendering.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.pipelineRender"));
 		chkPerfNearestNeighborDataRetrieval.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.standardResolutionRetrieval"));
 		chkPerfInterpolateLowerResolutionData.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.interpolateToHigherResolution"));
 		chkPerfAverageOverlappingData.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.averageOverlappedData"));
 		txtPerfTileSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.performance.tileSize"));
-		chkPerfDoubleBuffered.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.doubleBuffered"));
+		//chkPerfDoubleBuffered.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.doubleBuffered"));
 		
 		precacheStrategyModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.performance.precacheStrategy"));
 		
@@ -379,12 +392,12 @@ us.wthr.jdem846.defaults.institution-address=
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.defaultImageFormat", imageFormatListModel.getSelectedItem());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.view.imageScaling.quality", qualityModel.getSelectedItemValue());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.i18n.default", languageListModel.getSelectedItemValue());
-		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.jgoodies.theme", colorThemeListModel.getSelectedItemValue());
+	//	JDem846Properties.setProperty("us.wthr.jdem846.general.ui.jgoodies.theme", colorThemeListModel.getSelectedItemValue());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.displayToolbarText", ""+chkGeneralDisplayToolbarText.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.scriptEditorPane.textAA", ""+chkGeneralAntialiasedScriptEditorText.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.jdemFrame.displayMemoryMonitor", ""+chkGeneralDisplayMemoryMonitor.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.displayLogViewPanel", ""+chkGeneralDisplayLogPanel.getModel().isSelected());
-		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.renderInProcessPreviewing", ""+chkGeneralPreviewModelDuringRender.getModel().isSelected());
+		//JDem846Properties.setProperty("us.wthr.jdem846.general.ui.renderInProcessPreviewing", ""+chkGeneralPreviewModelDuringRender.getModel().isSelected());
 		
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.console.limitOuput", ""+chkGeneralLimitConsoleOutput.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.console.bufferSize", ""+txtGeneralConsoleBufferSize.getInteger());
@@ -402,14 +415,18 @@ us.wthr.jdem846.defaults.institution-address=
 		JDem846Properties.setProperty("us.wthr.jdem846.previewing.ui.scripting", ""+chkPreviewScripting.getModel().isSelected());
 		
 		
+		JDem846Properties.setProperty("us.wthr.jdem846.rendering.renderEngine", renderEngineListModel.getSelectedItemValue());
+		JDem846Properties.setProperty("us.wthr.jdem846.rendering.opengl.multisampling.enabled", chkRenderingMultisampling.getModel().isSelected());
+		JDem846Properties.setProperty("us.wthr.jdem846.rendering.opengl.multisampling.samples", txtRenderingMultisamplingSamples.getInteger());
+	
 		
-		JDem846Properties.setProperty("us.wthr.jdem846.performance.pipelineRender", ""+chkPerfPipelineRendering.getModel().isSelected());
+		//JDem846Properties.setProperty("us.wthr.jdem846.performance.pipelineRender", ""+chkPerfPipelineRendering.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.rendering.standardResolutionRetrieval", ""+chkPerfNearestNeighborDataRetrieval.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.rendering.interpolateToHigherResolution", ""+chkPerfInterpolateLowerResolutionData.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.rendering.averageOverlappedData", ""+chkPerfAverageOverlappingData.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.tileSize", txtPerfTileSize.getText());
 		JDem846Properties.setProperty("us.wthr.jdem846.performance.precacheStrategy", precacheStrategyModel.getSelectedItemValue());
-		JDem846Properties.setProperty("us.wthr.jdem846.performance.doubleBuffered", ""+chkPerfDoubleBuffered.getModel().isSelected());
+		//JDem846Properties.setProperty("us.wthr.jdem846.performance.doubleBuffered", ""+chkPerfDoubleBuffered.getModel().isSelected());
 		
 		JDem846Properties.setProperty("us.wthr.jdem846.defaults.subject", txtDefaultsSubject.getText());
 		JDem846Properties.setProperty("us.wthr.jdem846.defaults.description", txtDefaultsDescription.getText());

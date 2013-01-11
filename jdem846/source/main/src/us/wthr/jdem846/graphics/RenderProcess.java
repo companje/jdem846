@@ -15,12 +15,14 @@ import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.graphics.opengl.OpenGlRenderer;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.RgbaColor;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.modelgrid.IModelGrid;
 import us.wthr.jdem846.scripting.ScriptProxy;
+import us.wthr.jdem846.util.ColorUtil;
 
 public class RenderProcess
 {
@@ -44,7 +46,9 @@ public class RenderProcess
 	protected IRenderer renderer = null;
 
 	protected Boolean renderCompleted = false;
+	
 	protected Texture modelTexture = null;
+	protected Texture boundTexture = null;
 	
 	public RenderProcess(View modelView)
 	{
@@ -80,9 +84,14 @@ public class RenderProcess
 		
 		int width = this.modelGrid.getWidth();
 		int height = this.modelGrid.getHeight();
+		
+		double north = this.modelGrid.getNorth();
+		double south = this.modelGrid.getSouth();
+		double east = this.modelGrid.getEast();
+		double west = this.modelGrid.getWest();
 
 		int[] modelTextureBuffer = this.modelGrid.getModelTexture();
-		modelTexture = new Texture(width, height, modelTextureBuffer);
+		modelTexture = new Texture(width, height, north, south, east, west, modelTextureBuffer);
 	}
 
 	public void dispose()
@@ -117,10 +126,11 @@ public class RenderProcess
 		setRenderCompleted(true);
 	}
 
-	protected void bindTexture()
+	protected void bindTexture(Texture texture)
 	{
 		this.renderer.unbindTexture();
-		this.renderer.bindTexture(modelTexture);
+		this.renderer.bindTexture(texture);
+		this.boundTexture = texture;
 	}
 
 	protected void setPerspective() throws GraphicsRenderException
@@ -197,7 +207,7 @@ public class RenderProcess
 		if (background != null) {
 			this.renderer.clear(background.getRgba());
 		} else {
-			this.renderer.clear(0x0);
+			this.renderer.clear(ColorUtil.BLACK);
 		}
 
 		ViewPerspective view = this.globalOptionModel.getViewAngle();
@@ -225,27 +235,73 @@ public class RenderProcess
 		this.renderer.popMatrix();
 
 		
-		int[] c = { 0xFF, 0xFF, 0xFF, 0xFF };
+		//int[] c = { 0xFF, 0xFF, 0xFF, 0xFF };
 		//this.renderer.color(ColorUtil.rgbaToInt(c));
 		
-		this.bindTexture();
+		int maxSizeShrinkPixelsByAmount = 100;
+		
+		int maxRegionWidthPixels = 500;//renderer.getMaximumTextureWidth() - maxSizeShrinkPixelsByAmount;
+		int maxRegionHeightPixels = 500;//renderer.getMaximumTextureHeight() - maxSizeShrinkPixelsByAmount;
+		
+		
+		
+		int mainTextureWidthPixels = modelTexture.getWidth();
+		int mainTextureHeightPixels = modelTexture.getHeight();
+		
+		double mainTextureHeightDegrees = modelTexture.getNorth() - modelTexture.getSouth();
+		double mainTextureWidthDegrees = modelTexture.getEast() - modelTexture.getWest();
+		
+		double maxRegionWidthDegrees = ((double)maxRegionWidthPixels / (double)mainTextureWidthPixels) * mainTextureWidthDegrees;
+		double maxRegionHeightDegrees = ((double)maxRegionHeightPixels / (double)mainTextureHeightPixels) * mainTextureHeightDegrees;
+		
+		log.info("Maximum Region Height/Width (Pixels): " + maxRegionHeightPixels + "/" + maxRegionWidthPixels);
+		log.info("Main Texture Height/Width (Pixels): " + mainTextureHeightPixels + "/" + mainTextureWidthPixels);
 		
 		double latitudeResolution = this.modelDimensions.modelLatitudeResolution;
 		double longitudeResolution = this.modelDimensions.modelLongitudeResolution;
-		for (double latitude = north; latitude > south; latitude -= latitudeResolution) {
-
-			this.renderer.begin(PrimitiveModeEnum.TRIANGLE_STRIP);
-
-			for (double longitude = west; longitude <= east; longitude += longitudeResolution) {
-				renderPointVertex(latitude, longitude);
-				renderPointVertex(latitude - latitudeResolution, longitude);
+		
+		if (mainTextureHeightPixels > maxRegionHeightPixels || mainTextureWidthPixels > maxRegionWidthPixels) {
+			
+			double maxWidthDegrees = (mainTextureWidthDegrees < maxRegionWidthDegrees) ? mainTextureWidthDegrees : maxRegionWidthDegrees;
+			double maxHeightDegrees = (mainTextureHeightDegrees < maxRegionHeightDegrees) ? mainTextureHeightDegrees : maxRegionHeightDegrees;
+			
+			
+			maxWidthDegrees = MathExt.floor((maxWidthDegrees / longitudeResolution)) * longitudeResolution;
+			maxHeightDegrees = MathExt.floor((maxHeightDegrees / latitudeResolution)) * latitudeResolution;
+			
+			double useNorth = north;
+			double useWest = west;
+			
+			double useSouth = useNorth - maxHeightDegrees;
+			double useEast = useWest + maxWidthDegrees;
+			
+			
+			while (useSouth > south - maxHeightDegrees) {
+				
+				while(useEast < east + maxWidthDegrees) {
+					
+					log.info("Rendering sub region N/S/E/W: " + useNorth + "/" + useSouth + "/" + useEast + "/" + useWest);
+					renderSubRegion(useNorth + latitudeResolution, useSouth - latitudeResolution, useEast + longitudeResolution, useWest - longitudeResolution);
+					
+					useWest = useEast;
+					useEast = useWest + maxWidthDegrees;
+				}
+				
+				useWest = west;
+				useEast = useWest + maxWidthDegrees;
+				
+				useNorth = useSouth;
+				useSouth = useNorth - maxHeightDegrees;
 			}
 
-			this.renderer.end();
-
+			
+			
+			
+			//renderSubRegion(north, useSouth, useEast, west);
+			//renderSubRegion(north, south, east, west);
+		} else {
+			renderSubRegion(north, south, east, west);
 		}
-
-		this.renderer.unbindTexture();
 
 		this.renderer.pushMatrix();
 		if (this.globalOptionModel.getUseScripting() && this.scriptProxy != null) {
@@ -262,10 +318,62 @@ public class RenderProcess
 		this.renderer.finish();
 
 	}
+	
+	
+	protected void renderSubRegion(double north, double south, double east, double west)
+	{
+		
+		if (north > globalOptionModel.getNorthLimit()) {
+			north = globalOptionModel.getNorthLimit();
+		}
+		
+		if (south < globalOptionModel.getSouthLimit()) {
+			south = globalOptionModel.getSouthLimit();
+		}
+		
+		if (east > globalOptionModel.getEastLimit()) {
+			east = globalOptionModel.getEastLimit();
+		}
+		
+		if (west < globalOptionModel.getWestLimit()) {
+			west = globalOptionModel.getWestLimit();
+		}
+		
+		if (south >= north || east <= west) {
+			return;
+		}
+		
+		Texture subTexture = modelTexture.getSubTexture(north, south, east, west);
 
+		int subTextureWidth = subTexture.getWidth();
+		int subTextureHeight = subTexture.getHeight();
+		
+		log.info("Subtexture height/width: " + subTextureHeight + "/" + subTextureWidth);
+		
+		this.bindTexture(subTexture);
+		
+		double latitudeResolution = this.modelDimensions.modelLatitudeResolution;
+		double longitudeResolution = this.modelDimensions.modelLongitudeResolution;
+		
+		for (double latitude = north; latitude > south; latitude -= latitudeResolution) {
+
+			this.renderer.begin(PrimitiveModeEnum.TRIANGLE_STRIP);
+
+			for (double longitude = west; longitude <= east; longitude += longitudeResolution) {
+				renderPointVertex(latitude, longitude);//, north, south, east, west);
+				renderPointVertex(latitude - latitudeResolution, longitude);//, north, south, east, west);
+			}
+
+			this.renderer.end();
+
+		}
+
+		this.renderer.unbindTexture();
+	}
+	
 	private Vector pointVector = new Vector();
 
-	protected void renderPointVertex(double latitude, double longitude)
+	protected void renderPointVertex(double latitude, double longitude)//, double north, double south, double east, double west)
 	{
 		double elevation = this.modelGrid.getElevation(latitude, longitude, true);
 		if (elevation == DemConstants.ELEV_NO_DATA) {
@@ -277,14 +385,37 @@ public class RenderProcess
 
 		this.modelView.project(latitude, longitude, elevation, pointVector);
 
-		double north = this.globalOptionModel.getNorthLimit();
-		double south = this.globalOptionModel.getSouthLimit();
-		double east = this.globalOptionModel.getEastLimit();
-		double west = this.globalOptionModel.getWestLimit();
+		//double north = this.globalOptionModel.getNorthLimit();
+		//double south = this.globalOptionModel.getSouthLimit();
+		//double east = this.globalOptionModel.getEastLimit();
+		//double west = this.globalOptionModel.getWestLimit();
 
+		double north = boundTexture.getNorth();
+		double south = boundTexture.getSouth();
+		double east = boundTexture.getEast();
+		double west = boundTexture.getWest();
+		
 		double left = (longitude - west) / (east - west);
 		double front = (north - latitude) / (north - south);
 
+		if (left < 0.0) {
+			left = 0.0;
+		}
+		
+		if (left > 1.0) {
+			left = 1.0;
+		}
+		
+		if (front < 0.0) {
+			front = 0.0;
+		}
+		
+		
+		if (front > 1.0) {
+			front = 1.0;
+		}
+		
+		
 		this.renderer.texCoord(left, front);
 
 		// pointVector.z = -pointVector.z;

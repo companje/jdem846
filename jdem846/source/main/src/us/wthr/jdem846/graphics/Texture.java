@@ -10,15 +10,35 @@ public class Texture {
 	public int[] texture = null;
 	public int width = 0;
 	public int height = 0;
+	public double north = 0;
+	public double south = 0;
+	public double east = 0;
+	public double west = 0;
 	public double left = 0;
 	public double front = 0;
 	
+	public double xResolution = 0;
+	public double yResolution = 0;
 	
 	public Texture(int width, int height, int[] texture)
+	{
+		this(width, height, 0, 0, 0, 0, texture);
+	}
+	
+	
+	public Texture(int width, int height, double north, double south, double east, double west, int[] texture)
 	{
 		this.width = width;
 		this.height = height;
 		this.texture = texture;
+		this.north = north;
+		this.south = south;
+		this.east = east;
+		this.west = west;
+		
+		this.xResolution = (east - west) / width;
+		this.yResolution = (north - south) / height;
+		
 	}
 	
 	
@@ -63,6 +83,43 @@ public class Texture {
 		return height;
 	}
 
+	
+
+	public double getNorth()
+	{
+		return north;
+	}
+
+
+	public double getSouth()
+	{
+		return south;
+	}
+
+
+	public double getEast()
+	{
+		return east;
+	}
+
+
+	public double getWest()
+	{
+		return west;
+	}
+
+	
+	
+	public double getXResolution()
+	{
+		return xResolution;
+	}
+
+
+	public double getYResolution()
+	{
+		return yResolution;
+	}
 
 
 	protected int index(double x, double y)
@@ -196,6 +253,21 @@ public class Texture {
 	}
 	
 	
+	public Texture getSubTexture(double north, double south, double east, double west)
+	{
+		
+		int y0 = (int) MathExt.floor(((this.north - north) / (this.north - this.south)) * (double)this.height);
+		int x0 = (int) MathExt.floor((1.0 - ((this.east - west) / (this.east - this.west))) * (double)this.width);
+		
+		int y1 = (int) MathExt.ceil(((this.north - south) / (this.north - this.south)) * (double)this.height);
+		int x1 = (int) MathExt.ceil((1.0 - ((this.east - east) / (this.east - this.west))) * (double)this.width);
+		
+		int width = x1 - x0;
+		int height = y1 - y0;
+		
+		return getSubTexture(x0, y0, width, height);
+	}
+	
 	public Texture getSubTexture(int x, int y, int width, int height)
 	{
 		
@@ -217,13 +289,19 @@ public class Texture {
 		
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
-				int subtexIndex = (row * height) + col;
+				int subtexIndex = (row * width) + col;
 				int maintexIndex = index(x + col, y + row);
 				subtexBuffer[subtexIndex] = getColor(maintexIndex);
 			}
 		}
 		
-		Texture subtex = new Texture(width, height, subtexBuffer);
+		double north = this.north - ((double)y / (double)this.height) * ((double)this.height * this.yResolution);
+		double south = this.north - ((double)(y + height) / (double)this.height) * ((double)this.height * this.yResolution);
+		
+		double west = this.west + ((double)x / (double)this.width) * ((double)this.width * this.xResolution);
+		double east = this.west + ((double)(x + width) / (double)this.width) * ((double)this.width * this.xResolution);
+		
+		Texture subtex = new Texture(width, height, north, south, east, west, subtexBuffer);
 		return subtex;
 	}
 	
