@@ -5,6 +5,7 @@ import java.util.List;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.ElevationModel;
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ModelContextException;
@@ -25,8 +26,8 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 	private static ModelPreviewChangeObserver INSTANCE;
 	
 	private ModelContext modelContextWorkingCopy = null;
-	private double previewTextureQuality = 0.25;
-	private double previewModelQuality = 0.25;
+	//private double previewTextureQuality = 0.25;
+	//private double previewModelQuality = 0.25;
 	
 	private boolean ignoreUpdate = false;
 	private boolean autoUpdate = true;
@@ -224,13 +225,17 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 		}
 		
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
-		globalOptionModel.setModelQuality(previewModelQuality);
-		globalOptionModel.setTextureQuality(previewTextureQuality);
+		
+		globalOptionModel.setAverageOverlappedData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData"));
+		globalOptionModel.setGetStandardResolutionElevation(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.standardResolutionRetrieval"));
+		globalOptionModel.setInterpolateData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.interpolateToHigherResolution"));
+		globalOptionModel.setModelQuality(JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewModelQuality"));
+		globalOptionModel.setTextureQuality(JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewTextureQuality"));
 
 		// Only disable scripting if it's already enabled. Don't enable it if the user turned it off via the 
 		// global option model
-		useScripting = true;
-		if (globalOptionModel.getUseScripting()) {
+		useScripting = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.scripting");
+		if (globalOptionModel.getUseScripting() && useScripting) {
 			globalOptionModel.setUseScripting(useScripting);
 		}
 		

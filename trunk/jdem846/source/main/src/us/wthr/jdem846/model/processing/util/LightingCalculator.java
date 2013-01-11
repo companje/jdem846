@@ -108,7 +108,7 @@ public class LightingCalculator
 		//if (dot < 0) {
 		//	dot = 0.0;
 		//}
-		lightingValues.diffuseLight = dot;
+		lightingValues.diffuseLight = -dot;
 
 		
 		

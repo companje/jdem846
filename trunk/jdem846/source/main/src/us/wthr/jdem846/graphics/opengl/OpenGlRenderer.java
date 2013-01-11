@@ -88,7 +88,24 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		}
 
 	}
-
+	
+	protected int getMaximumTextureSize()
+	{
+		int[] list = {0};
+		openGl.getGL().glGetIntegerv(GL.GL_MAX_TEXTURE_SIZE, list, 0);
+		return list[0];
+	}
+	
+	public int getMaximumTextureWidth()
+	{
+		return getMaximumTextureSize();
+	}
+	
+	public int getMaximumTextureHeight()
+	{
+		return getMaximumTextureSize();
+	}
+	
 	@Override
 	public void pushMatrix()
 	{
