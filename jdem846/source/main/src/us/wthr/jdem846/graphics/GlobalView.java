@@ -82,7 +82,11 @@ public class GlobalView extends AbstractView implements View
 	@Override
 	public double nearClipDistance()
 	{
-		return elevationFromSurface();// - scaleElevation(modelContext.getRasterDataContext().getDataMaximumValue());
+		double e = elevationFromSurface();
+		if (modelContext.getRasterDataContext().getDataMaximumValue() > 0) {
+			e -= scaleElevation(modelContext.getRasterDataContext().getDataMaximumValue());
+		}
+		return e;
 	}
 
 	@Override

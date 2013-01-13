@@ -448,6 +448,7 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 		if (this.isLoaded()) {
 			copy.image = this.image;
 			copy.raster = this.raster;
+			copy.hasAlphaChannel = this.hasAlphaChannel;
 		}
 
 		return copy;
