@@ -240,8 +240,8 @@ public class RenderProcess
 		
 		int maxSizeShrinkPixelsByAmount = 100;
 		
-		int maxRegionWidthPixels = 500;//renderer.getMaximumTextureWidth() - maxSizeShrinkPixelsByAmount;
-		int maxRegionHeightPixels = 500;//renderer.getMaximumTextureHeight() - maxSizeShrinkPixelsByAmount;
+		int maxRegionWidthPixels = renderer.getMaximumTextureWidth() - maxSizeShrinkPixelsByAmount;
+		int maxRegionHeightPixels = renderer.getMaximumTextureHeight() - maxSizeShrinkPixelsByAmount;
 		
 		
 		
@@ -344,7 +344,12 @@ public class RenderProcess
 		}
 		
 		Texture subTexture = modelTexture.getSubTexture(north, south, east, west);
-
+		north = subTexture.getNorth();
+		south = subTexture.getSouth();
+		east = subTexture.getEast();
+		west = subTexture.getWest();
+		
+		
 		int subTextureWidth = subTexture.getWidth();
 		int subTextureHeight = subTexture.getHeight();
 		
