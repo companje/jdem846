@@ -7,7 +7,7 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.util.ColorUtil;
 
 public class Texture {
-	public int[] texture = null;
+	public IntBuffer texture = null;
 	public int width = 0;
 	public int height = 0;
 	public double north = 0;
@@ -20,13 +20,13 @@ public class Texture {
 	public double xResolution = 0;
 	public double yResolution = 0;
 	
-	public Texture(int width, int height, int[] texture)
+	public Texture(int width, int height, IntBuffer texture)
 	{
 		this(width, height, 0, 0, 0, 0, texture);
 	}
 	
 	
-	public Texture(int width, int height, double north, double south, double east, double west, int[] texture)
+	public Texture(int width, int height, double north, double south, double east, double west, IntBuffer texture)
 	{
 		this.width = width;
 		this.height = height;
@@ -149,8 +149,8 @@ public class Texture {
 	
 	protected int getColor(int index)
 	{
-		if (index >= 0 && index < texture.length) {
-			return texture[index];
+		if (index >= 0 && index < texture.capacity()) {
+			return texture.get(index);
 		} else {
 			return 0x0;
 		}
@@ -234,21 +234,7 @@ public class Texture {
 	 */
 	public Texture copy(boolean copyTexture)
 	{
-		int[] textureBits = null;
-		
-		if (copyTexture && texture != null) {
-			
-			textureBits = new int[texture.length];
-			for (int i = 0; i < texture.length; i++) {
-				textureBits[i] = texture[i];
-			}
-			
-		} else {
-			textureBits = texture;
-		}
-		
-		Texture copy = new Texture(width, height, textureBits);
-		
+		Texture copy = new Texture(width, height, texture.duplicate());	
 		return copy;
 	}
 	
@@ -285,13 +271,12 @@ public class Texture {
 		
 		int subtexLength = width * height;
 		
-		int[] subtexBuffer = new int[subtexLength];
-		
+		IntBuffer subtexBuffer = IntBuffer.allocate(subtexLength);
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
 				int subtexIndex = (row * width) + col;
 				int maintexIndex = index(x + col, y + row);
-				subtexBuffer[subtexIndex] = getColor(maintexIndex);
+				subtexBuffer.put(subtexIndex, getColor(maintexIndex));
 			}
 		}
 		
@@ -307,12 +292,12 @@ public class Texture {
 	
 	public IntBuffer getAsIntBuffer()
 	{
-		return getAsByteBuffer().asIntBuffer();
+		return texture;
 	}
 	
 	public ByteBuffer getAsByteBuffer()
 	{
-		ByteBuffer byteBuffer = ByteBuffer.allocate(texture.length * 4);
+		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(texture.capacity() * 4);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
 		intBuffer.put(texture);
 		return byteBuffer;

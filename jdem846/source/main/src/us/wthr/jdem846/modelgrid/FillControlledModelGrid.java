@@ -1,6 +1,7 @@
 package us.wthr.jdem846.modelgrid;
 
 import java.math.BigDecimal;
+import java.nio.IntBuffer;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
@@ -308,7 +309,7 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 	}
 
 	@Override
-	public int[] getModelTexture() throws DataSourceException
+	public IntBuffer getModelTexture() throws DataSourceException
 	{
 		return this.modelGrid.getModelTexture();
 	}

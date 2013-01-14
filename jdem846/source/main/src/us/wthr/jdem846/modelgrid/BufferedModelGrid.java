@@ -1,5 +1,9 @@
 package us.wthr.jdem846.modelgrid;
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
@@ -10,8 +14,8 @@ public class BufferedModelGrid extends BaseModelGrid
 {
 	private static Log log = Logging.getLog(BufferedModelGrid.class);
 
-	private float[] elevationGrid;
-	private int[] rgbaGrid;
+	private FloatBuffer elevationGrid;
+	private IntBuffer rgbaGrid;
 
 	private boolean isDisposed = false;
 	
@@ -21,9 +25,18 @@ public class BufferedModelGrid extends BaseModelGrid
 		super(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum, width, height);
 
 		log.info("Allocating elevation and RGBA grid buffers of length " + gridLength);
-
-		elevationGrid = new float[(int) gridLength];
-		rgbaGrid = new int[(int) gridLength];
+		
+		ByteBuffer bb = ByteBuffer.allocateDirect((int)gridLength * (Integer.SIZE / 8));
+		rgbaGrid = bb.asIntBuffer();
+		
+		bb = ByteBuffer.allocateDirect((int)gridLength * (Float.SIZE / 8));
+		elevationGrid = bb.asFloatBuffer();
+		
+		
+		//elevationGrid = FloatBuffer.allocate((int)gridLength);
+		//rgbaGrid = IntBuffer.allocate((int)gridLength);
+		//elevationGrid = new float[(int) gridLength];
+		//rgbaGrid = new int[(int) gridLength];
 	}
 	
 	public BufferedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum)
@@ -31,10 +44,17 @@ public class BufferedModelGrid extends BaseModelGrid
 		super(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum);
 
 		log.info("Allocating elevation and RGBA grid buffers of length " + gridLength);
-
-		elevationGrid = new float[(int) gridLength];
-		rgbaGrid = new int[(int) gridLength];
-
+		
+		ByteBuffer bb = ByteBuffer.allocateDirect((int)gridLength * (Integer.SIZE / 8));
+		rgbaGrid = bb.asIntBuffer();
+		
+		bb = ByteBuffer.allocateDirect((int)gridLength * (Float.SIZE / 8));
+		elevationGrid = bb.asFloatBuffer();
+		
+		//elevationGrid = new float[(int) gridLength];
+		//rgbaGrid = new int[(int) gridLength];
+		//elevationGrid = FloatBuffer.allocate((int)gridLength);
+		//rgbaGrid = IntBuffer.allocate((int)gridLength);
 		// reset();
 	}
 
@@ -58,14 +78,16 @@ public class BufferedModelGrid extends BaseModelGrid
 	{
 
 		for (int i = 0; i < gridLength; i++) {
-			elevationGrid[i] = (float) DemConstants.ELEV_UNDETERMINED;
-			rgbaGrid[i] = 0x0;
+			elevationGrid.put(i, (float)DemConstants.ELEV_UNDETERMINED);
+			rgbaGrid.put(i, 0x0);
+			//elevationGrid[i] = (float) DemConstants.ELEV_UNDETERMINED;
+			//rgbaGrid[i] = 0x0;
 		}
 
 	}
 
 	@Override
-	public int[] getModelTexture()
+	public IntBuffer getModelTexture()
 	{
 		return rgbaGrid;
 	}
@@ -74,7 +96,7 @@ public class BufferedModelGrid extends BaseModelGrid
 	public double getElevationByIndex(int index) throws DataSourceException
 	{
 		if (index >= 0 && index < this.gridLength) {
-			return elevationGrid[index];
+			return elevationGrid.get(index);
 		} else {
 			return DemConstants.ELEV_NO_DATA;
 		}
@@ -84,7 +106,7 @@ public class BufferedModelGrid extends BaseModelGrid
 	public void setElevationByIndex(int index, double elevation) throws DataSourceException 
 	{
 		if (index >= 0 && index < this.gridLength) {
-			elevationGrid[index] = (float) elevation;
+			elevationGrid.put(index, (float)elevation);
 			getElevationHistogramModel().add(elevation);
 		}
 	}
@@ -118,7 +140,7 @@ public class BufferedModelGrid extends BaseModelGrid
 	public int getRgbaByIndex(int index) throws DataSourceException
 	{
 		if (index >= 0 && index < this.gridLength) {
-			return rgbaGrid[index];
+			return rgbaGrid.get(index);
 		} else {
 			return 0x0;
 		}
@@ -128,7 +150,7 @@ public class BufferedModelGrid extends BaseModelGrid
 	public void setRgbaByIndex(int index, int rgba) throws DataSourceException
 	{
 		if (index >= 0 && index < this.gridLength) {
-			rgbaGrid[index] = rgba;
+			rgbaGrid.put(index, rgba);
 		}
 	}
 
