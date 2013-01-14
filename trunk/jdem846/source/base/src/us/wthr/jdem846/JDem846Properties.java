@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -51,6 +53,21 @@ public class JDem846Properties
 		overrideWithSystemProperties();
 	}
 	
+	
+	protected static String resolveVariables(String template)
+	{
+		String finalText = template;
+		Pattern pattern = Pattern.compile("\\$\\{[a-zA-Z0-9.]+\\}");
+		Matcher matcher = pattern.matcher(template);
+		while (matcher.find()) {
+			String var = template.substring(matcher.start(), matcher.end());
+			String varStripped = var.substring(2, var.length() - 1);
+			if (properties.containsKey(varStripped)) {
+				finalText = finalText.replace(var, properties.getProperty(varStripped));
+			}
+		}
+		return finalText;
+	}
 	
 	public static Set<Object> getPropertyNames()
 	{
@@ -90,7 +107,16 @@ public class JDem846Properties
 	
 	public static String getProperty(String name)
 	{
-		return properties.getProperty(name);
+		return getProperty(name, true);
+	}
+	
+	public static String getProperty(String name, boolean resolveVars)
+	{
+		String value = properties.getProperty(name);
+		if (value != null && resolveVars == true) {
+			value = resolveVariables(value);
+		}
+		return value;
 	}
 	
 	public static double getDoubleProperty(String name)

@@ -22,6 +22,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -42,7 +43,7 @@ public class TempFiles
 	
 	public static File getTemporaryFile(String prefix, String suffix) throws IOException
 	{
-		File temp = File.createTempFile("jdem." + InstanceIdentifier.getInstanceId() + "." + prefix + ".", suffix, new File(System.getProperty("java.io.tmpdir")));
+		File temp = File.createTempFile("jdem." + InstanceIdentifier.getInstanceId() + "." + prefix + ".", suffix, new File(JDem846Properties.getProperty("us.wthr.jdem846.temp")));
 		return temp;
 	}
 	
@@ -91,6 +92,6 @@ public class TempFiles
 	
 	public static String getTemporaryRoot()
 	{
-		return System.getProperty("java.io.tmpdir");
+		return JDem846Properties.getProperty("us.wthr.jdem846.temp");
 	}
 }
