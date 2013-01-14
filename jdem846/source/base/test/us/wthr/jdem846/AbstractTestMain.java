@@ -25,7 +25,7 @@ public class AbstractTestMain
 	}
 	
 	
-	protected static void initialize(boolean initRegistry) throws Exception
+	public static void initialize(boolean initRegistry) throws Exception
 	{
 		bootstrapSystemProperties();
 		
