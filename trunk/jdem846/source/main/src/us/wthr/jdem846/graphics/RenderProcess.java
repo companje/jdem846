@@ -1,5 +1,7 @@
 package us.wthr.jdem846.graphics;
 
+import java.nio.IntBuffer;
+
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
@@ -90,7 +92,7 @@ public class RenderProcess
 		double east = this.modelGrid.getEast();
 		double west = this.modelGrid.getWest();
 
-		int[] modelTextureBuffer = this.modelGrid.getModelTexture();
+		IntBuffer modelTextureBuffer = this.modelGrid.getModelTexture();
 		modelTexture = new Texture(width, height, north, south, east, west, modelTextureBuffer);
 	}
 
