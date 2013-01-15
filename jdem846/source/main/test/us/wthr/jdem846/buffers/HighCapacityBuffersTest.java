@@ -33,7 +33,7 @@ public class HighCapacityBuffersTest extends TestCase
 	protected void tearDown() throws Exception
 	{
 		super.tearDown();
-		TempFiles.cleanUpTemporaryFiles();
+		TempFiles.cleanUpTemporaryFiles(true);
 	}
 
 

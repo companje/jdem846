@@ -1,19 +1,19 @@
 package us.wthr.jdem846.buffers.impl;
 
-import us.wthr.jdem846.buffers.IDoubleBuffer;
+import us.wthr.jdem846.buffers.ILongBuffer;
 import us.wthr.jdem846.util.ByteConversions;
 
-public class HighCapacityMappedDoubleBuffer implements IDoubleBuffer
+public class HighCapacityMappedLongBuffer implements ILongBuffer
 {
-	private final static int DOUBLE_SIZE_BYTES = (Double.SIZE / 8);
+	private final static int LONG_SIZE_BYTES = (Long.SIZE / 8);
 	private HighCapacityMappedByteBuffer byteBuffer;
 	private long capacity = 0;
 	
-	public HighCapacityMappedDoubleBuffer(long capacity)
+	public HighCapacityMappedLongBuffer(long capacity)
 	{
 		this.capacity = capacity;
 		
-		byteBuffer = new HighCapacityMappedByteBuffer(capacity * DOUBLE_SIZE_BYTES);
+		byteBuffer = new HighCapacityMappedByteBuffer(capacity * LONG_SIZE_BYTES);
 	}
 	
 	
@@ -30,30 +30,30 @@ public class HighCapacityMappedDoubleBuffer implements IDoubleBuffer
 	}
 
 	@Override
-	public Double get(long index)
+	public Long get(long index)
 	{
-		byte buffer[] = {0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0};
-		long byteIndex = index * DOUBLE_SIZE_BYTES;
-		
-		for (int i = 0; i < 8; i++)
+		byte buffer[] = new byte[LONG_SIZE_BYTES];
+		long byteIndex = index * LONG_SIZE_BYTES;
+		for (int i = 0; i < LONG_SIZE_BYTES; i++) {
 			buffer[i] = byteBuffer.get(byteIndex + i);
+		}
 		
-		double v = ByteConversions.bytesToDouble(buffer);
+		long v = ByteConversions.bytesToLong(buffer);
 		return v;
 	}
 
 	@Override
-	public void put(long index, Double value)
+	public void put(long index, Long value)
 	{
-		byte buffer[] = {0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0};
-		ByteConversions.doubleToBytes(value, buffer);
+		byte buffer[] = new byte[LONG_SIZE_BYTES];
+		ByteConversions.longToBytes(value, buffer);
 		
-		long byteIndex = index * DOUBLE_SIZE_BYTES;
-		byteBuffer.put(buffer, byteIndex, 0, DOUBLE_SIZE_BYTES);
+		long byteIndex = index * LONG_SIZE_BYTES;
+		byteBuffer.put(buffer, byteIndex, 0, LONG_SIZE_BYTES);
 	}
 	
 	@Override
-	public void put(double[] values, long startIndex, int offset, int count)
+	public void put(long[] values, long startIndex, int offset, int count)
 	{
 		// Really Slow & inefficient
 		for (int i = 0; i < count; i++) {
@@ -62,7 +62,7 @@ public class HighCapacityMappedDoubleBuffer implements IDoubleBuffer
 	}
 	
 	@Override
-	public void put(Double[] values, long startIndex, int offset, int count)
+	public void put(Long[] values, long startIndex, int offset, int count)
 	{
 		// Really Slow & inefficient
 		for (int i = 0; i < count; i++) {
@@ -82,18 +82,17 @@ public class HighCapacityMappedDoubleBuffer implements IDoubleBuffer
 	{
 		return byteBuffer.capacityBytes();
 	}
-
+	
+	
 	@Override
 	public void dispose()
 	{
 		this.close();
 	}
-	
+
 	@Override
-	public IDoubleBuffer duplicate()
+	public ILongBuffer duplicate()
 	{
 		return null;
 	}
-
-	
 }

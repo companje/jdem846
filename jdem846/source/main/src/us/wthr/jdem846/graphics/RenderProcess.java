@@ -1,11 +1,10 @@
 package us.wthr.jdem846.graphics;
 
-import java.nio.IntBuffer;
-
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
+import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.geom.Vertex;
@@ -92,7 +91,7 @@ public class RenderProcess
 		double east = this.modelGrid.getEast();
 		double west = this.modelGrid.getWest();
 
-		IntBuffer modelTextureBuffer = this.modelGrid.getModelTexture();
+		IIntBuffer modelTextureBuffer = this.modelGrid.getModelTexture();
 		modelTexture = new Texture(width, height, north, south, east, west, modelTextureBuffer);
 	}
 
@@ -433,7 +432,7 @@ public class RenderProcess
 	public ImageCapture capture()
 	{
 		if (this.image == null) {
-			this.image = this.renderer.getFrameBuffer().captureImage();
+			this.image = this.renderer.captureImage();
 		}
 
 		return this.image;

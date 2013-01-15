@@ -26,8 +26,8 @@ public class SimpleImageElevationModel implements ElevationModel
 	@Override
 	public void dispose()
 	{
+		imageCapture.dispose();
 		this.imageCapture = null;
-		
 	}
 
 	@Override

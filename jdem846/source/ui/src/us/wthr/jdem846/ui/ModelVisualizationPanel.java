@@ -736,6 +736,8 @@ public class ModelVisualizationPanel extends Panel
 			pnlModelDisplay.setBackground(globalOptionModel.getBackgroundColor().toAwtColor());
 			pnlModelDisplay.setImage(elevationModel.getImage());
 			pnlModelDisplay.zoomFit();
+			
+			elevationModel.dispose();
 		}
 		
 		repaint();

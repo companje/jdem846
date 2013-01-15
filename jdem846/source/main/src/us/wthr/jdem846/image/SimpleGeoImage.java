@@ -12,6 +12,8 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.buffers.BufferFactory;
+import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.canvas.CanvasProjection;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.gis.CoordinateSpaceAdjuster;
@@ -32,9 +34,11 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 
 	private String imageFile;
 
-	private BufferedImage image = null;
-	private Raster raster = null;
-
+	//private BufferedImage image = null;
+	//private Raster raster = null;
+	
+	private IIntBuffer rasterBuffer = null;
+	
 	private int height;
 	private int width;
 
@@ -52,14 +56,6 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 	private CoordinateSpaceAdjuster coordinateSpaceAdjuster;
 
 	private MapPoint mapPoint = new MapPoint();
-
-	/*
-	 * private int[] rgbaBuffer0 = new int[4];
-	 * 
-	 * private int[] rgbaBuffer00 = new int[4]; private int[] rgbaBuffer01 = new
-	 * int[4]; private int[] rgbaBuffer10 = new int[4]; private int[]
-	 * rgbaBuffer11 = new int[4];
-	 */
 
 	private boolean hasAlphaChannel = false;
 
@@ -105,7 +101,7 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 
 	public boolean isLoaded()
 	{
-		return (image != null);
+		return (rasterBuffer != null);
 	}
 
 	public void load() throws DataSourceException
@@ -113,20 +109,44 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 		if (isLoaded()) {
 			throw new DataSourceException("Image data already loaded");
 		}
-
+		
+		BufferedImage image = null;
 		try {
 			image = (BufferedImage) ImageIcons.loadImage(this.imageFile);
 		} catch (IOException ex) {
 			throw new DataSourceException("Failed to load image: " + ex.getMessage(), ex);
 		}
 
-		raster = image.getRaster();
-
+		Raster raster = image.getRaster();
+		
 		if (image.getAlphaRaster() != null) {
 			hasAlphaChannel = true;
 		} else {
 			hasAlphaChannel = false;
 		}
+		
+		int[] rgba = {0, 0, 0, 0};
+		
+		long capacity = raster.getWidth() * raster.getHeight();
+		this.rasterBuffer = BufferFactory.allocateIntBuffer(capacity);
+		for (int y = 0; y < raster.getHeight(); y++) {
+			for (int x = 0; x < raster.getWidth(); x++) {
+				
+				raster.getPixel(x, y, rgba);
+				if (!hasAlphaChannel) {
+					rgba[3] = 0xFF;
+				}
+				
+				long index = ((long) y * (long)raster.getWidth()) + ((long)x);
+				int c = ColorUtil.rgbaToInt(rgba);
+				rasterBuffer.put(index, c);
+				
+			}
+		}
+		
+		image = null;
+		raster = null;	
+		
 	}
 
 	public void unload() throws DataSourceException
@@ -134,9 +154,9 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
 		}
-
-		image = null;
-		raster = null;
+		
+		//rasterBuffer.dispose(); // Cannot dispose, the buffer may be shared with another copy
+		rasterBuffer = null;
 	}
 
 	public boolean contains(double latitude, double longitude)
@@ -337,11 +357,17 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 			throw new DataSourceException("Image data not loaded");
 		}
 
-		if (x < 0 || x >= raster.getWidth() || y < 0 || y >= raster.getHeight()) {
-			return false;
+		if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
+			return false; // Throw?
 		}
 
-		raster.getPixel(x, y, rgba);
+		long index = (y * width) + x;
+		if (index < 0 || index >= rasterBuffer.capacity()) {
+			return false; // Throw?
+		}
+		
+		int c = rasterBuffer.get(index);
+		ColorUtil.intToRGBA(c, rgba);
 
 		if (!hasAlphaChannel) {
 			rgba[3] = 0xFF;
@@ -446,8 +472,9 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 		SimpleGeoImage copy = new SimpleGeoImage(imageFile, north, south, east, west);
 
 		if (this.isLoaded()) {
-			copy.image = this.image;
-			copy.raster = this.raster;
+			copy.rasterBuffer = this.rasterBuffer;
+			//copy.image = this.image;
+			//copy.raster = this.raster;
 			copy.hasAlphaChannel = this.hasAlphaChannel;
 		}
 

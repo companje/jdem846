@@ -389,6 +389,11 @@ public class RenderViewPane extends Panel
 	public void dispose() throws ComponentException
 	{
 		log.info("Closing output image pane.");
+		
+		if (jdemElevationModel != null) {
+			jdemElevationModel.dispose();
+		}
+		
 		detachModelListeners(false);
 	}
 	

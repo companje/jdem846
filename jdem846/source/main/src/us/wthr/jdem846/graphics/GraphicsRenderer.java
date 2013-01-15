@@ -479,7 +479,14 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 		
 	}
 	
+	
 	@Override
+	public ImageCapture captureImage()
+	{
+		return frameBuffer.captureImage();
+	}
+	
+	
 	public FrameBuffer getFrameBuffer()
 	{
 		return frameBuffer;
@@ -487,6 +494,12 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 	
 	@Override
 	public void finish()
+	{
+		
+	}
+	
+	@Override
+	public void dispose()
 	{
 		
 	}

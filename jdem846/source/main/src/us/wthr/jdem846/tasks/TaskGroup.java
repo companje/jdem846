@@ -19,6 +19,7 @@ package us.wthr.jdem846.tasks;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -36,7 +37,7 @@ public class TaskGroup extends Thread
 	private TaskContainer activeTask = null;
 	private String taskGroupName;
 	private TaskIdentifier identifier;
-	private Queue<TaskContainer> tasks = new LinkedList<TaskContainer>();
+	private Queue<TaskContainer> tasks = new ConcurrentLinkedQueue<TaskContainer>();
 	private boolean persistentThread = false;
 	private long pollDelay = 500;
 
@@ -79,9 +80,9 @@ public class TaskGroup extends Thread
 		
 		while (tasks.size() > 0 || this.isPersistentThread()) {
 			TaskContainer nextTask = null;
-			synchronized(tasks) {
-				nextTask = tasks.peek();
-			}
+
+			nextTask = tasks.peek();
+
 			
 			if (nextTask != null) {
 				activeTask = nextTask;
@@ -114,13 +115,12 @@ public class TaskGroup extends Thread
 	 */
 	public boolean addTask(RunnableTask task, TaskStatusListener listener)
 	{
-		synchronized(tasks) {
-			boolean result = this.tasks.add(new TaskContainer(task, listener));
-			if (result) {
-				fireTaskAddedListeners(task);
-			}
-			return result;
+		boolean result = this.tasks.add(new TaskContainer(task, listener));
+		if (result) {
+			fireTaskAddedListeners(task);
 		}
+		return result;
+
 	}
 	
 	/** Adds a task listener to the container holding the task.
@@ -158,13 +158,12 @@ public class TaskGroup extends Thread
 	 */
 	public List<RunnableTask> getTasks()
 	{
-		synchronized (tasks) {
-			List<RunnableTask> taskList = new LinkedList<RunnableTask>();
-			for (TaskContainer taskContainer : tasks) {
-				taskList.add(taskContainer.getRunnableTask());
-			}
-			return taskList;
+		List<RunnableTask> taskList = new LinkedList<RunnableTask>();
+		for (TaskContainer taskContainer : tasks) {
+			taskList.add(taskContainer.getRunnableTask());
 		}
+		return taskList;
+
 	}
 	
 	/** Retrieves the currently active task or null if no task is active.
@@ -280,12 +279,10 @@ public class TaskGroup extends Thread
 	 */
 	public void cancelRemainingTasks()
 	{
-		synchronized(tasks) {
-			for (TaskContainer taskContainer : tasks) {
-				cancelTask(taskContainer);
-			}
-			this.fireAllRemainingTasksCancelledListeners();
+		for (TaskContainer taskContainer : tasks) {
+			cancelTask(taskContainer);
 		}
+		this.fireAllRemainingTasksCancelledListeners();
 	}
 	
 	/** Retrieves the task container holding the specified task.

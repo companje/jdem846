@@ -52,7 +52,16 @@ public class HighCapacityMappedFloatBuffer implements IFloatBuffer
 		long byteIndex = index * FLOAT_SIZE_BYTES;
 		byteBuffer.put(buffer, byteIndex, 0, 4);
 	}
-
+	
+	@Override
+	public void put(float[] values, long startIndex, int offset, int count)
+	{
+		// Really Slow & inefficient
+		for (int i = 0; i < count; i++) {
+			put(startIndex + i, values[offset + i]);
+		}
+	}
+	
 	@Override
 	public void put(Float[] values, long startIndex, int offset, int count)
 	{
@@ -81,5 +90,10 @@ public class HighCapacityMappedFloatBuffer implements IFloatBuffer
 		this.close();
 	}
 
-	
+	@Override
+	public IFloatBuffer duplicate()
+	{
+		return null;
+	}
+
 }

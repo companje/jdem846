@@ -1,14 +1,13 @@
 package us.wthr.jdem846.modelgrid;
 
-import java.nio.IntBuffer;
-
+import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 
 public interface IModelGrid
 {
 
-	public IntBuffer getModelTexture() throws DataSourceException;
+	public IIntBuffer getModelTexture() throws DataSourceException;
 
 	public void dispose();
 

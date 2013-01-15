@@ -1,8 +1,7 @@
 package us.wthr.jdem846.model.processing.render;
 
-import java.nio.IntBuffer;
-
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.exception.ScriptingException;
@@ -95,7 +94,7 @@ public class ModelRenderer extends GridProcessor implements RenderProcessor
 		int width = this.modelGrid.getWidth();
 		int height = this.modelGrid.getHeight();
 
-		IntBuffer modelTextureBuffer = this.modelGrid.getModelTexture();
+		IIntBuffer modelTextureBuffer = this.modelGrid.getModelTexture();
 		modelTexture = new Texture(width, height, modelTextureBuffer);
 	}
 

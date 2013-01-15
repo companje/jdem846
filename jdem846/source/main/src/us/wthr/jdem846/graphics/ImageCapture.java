@@ -1,9 +1,13 @@
 package us.wthr.jdem846.graphics;
 
+import us.wthr.jdem846.buffers.BufferFactory;
+import us.wthr.jdem846.buffers.IIntBuffer;
+
 public class ImageCapture
 {
 	
-	protected int[] buffer;
+	//protected int[] buffer;
+	protected IIntBuffer buffer;
 	protected int width;
 	protected int height;
 	protected int backgroundColor;
@@ -15,11 +19,19 @@ public class ImageCapture
 		this.height = height;
 		this.backgroundColor = backgroundColor;
 		
-		this.buffer = new int[width * height];
-		for (int i = 0; i < buffer.length; i++) {
-			buffer[i] = backgroundColor;
+		int capacity = width * height;
+		buffer = BufferFactory.allocateIntBuffer(capacity);
+		for (int i = 0; i < capacity; i++) {
+			buffer.put(i, backgroundColor);
 		}
-		
+
+	}
+	
+	public void dispose()
+	{
+		if (buffer != null) {
+			buffer.dispose();
+		}
 	}
 	
 	
@@ -29,8 +41,8 @@ public class ImageCapture
 			return;
 		}
 		
-		this.buffer[(y * this.width) + x] = rgba;
-		
+		int index = (y * this.width) + x;
+		buffer.put(index, rgba);
 	}
 	
 	
@@ -40,7 +52,8 @@ public class ImageCapture
 			return backgroundColor;
 		}
 		
-		return this.buffer[(y * this.width) + x];
+		int index = (y * this.width) + x;
+		return buffer.get(index);
 	}
 	
 	

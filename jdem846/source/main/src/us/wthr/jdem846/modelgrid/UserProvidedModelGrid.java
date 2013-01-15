@@ -2,8 +2,8 @@ package us.wthr.jdem846.modelgrid;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.IntBuffer;
 
+import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 import us.wthr.jdem846.util.ColorUtil;
@@ -81,7 +81,7 @@ public class UserProvidedModelGrid implements IModelGrid
 	}
 	
 	@Override
-	public IntBuffer getModelTexture()
+	public IIntBuffer getModelTexture()
 	{
 		return getInternalModelGrid().getModelTexture();
 	}

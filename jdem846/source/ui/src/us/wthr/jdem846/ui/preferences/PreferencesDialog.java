@@ -58,7 +58,7 @@ public class PreferencesDialog extends Dialog
 	
 	private ComboBox cmbGeneralQuality;
 	private ImageQualityListModel qualityModel;
-	
+	private TextField txtTempPath;
 	
 	
 	private Slider sldPreviewingPreviewModelQuality;
@@ -122,7 +122,7 @@ public class PreferencesDialog extends Dialog
 		
 		qualityModel = new ImageQualityListModel();
 		cmbGeneralQuality = new ComboBox(qualityModel);
-		
+		txtTempPath = new TextField();
 		
 		
 		sldPreviewingPreviewModelQuality = new Slider(1, 100);
@@ -240,6 +240,8 @@ public class PreferencesDialog extends Dialog
 		generalPanel.add(new Label(""));
 		generalPanel.add(chkGeneralReportUsage);
 		
+		generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.tempPath")));
+		generalPanel.add(txtTempPath);
 		
 		
 		renderingPanel.add(new Label("Render Engine:"));
@@ -346,6 +348,7 @@ public class PreferencesDialog extends Dialog
 		chkGeneralLimitConsoleOutput.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.console.limitOuput"));
 		txtGeneralConsoleBufferSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.console.bufferSize"));
 		
+		txtTempPath.setText(JDem846Properties.getProperty("us.wthr.jdem846.general.temp", false));
 		
 		renderEngineListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.rendering.renderEngine"));
 		chkRenderingMultisampling.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.opengl.multisampling.enabled"));
@@ -402,7 +405,7 @@ public class PreferencesDialog extends Dialog
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.console.limitOuput", ""+chkGeneralLimitConsoleOutput.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.console.bufferSize", ""+txtGeneralConsoleBufferSize.getInteger());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.usage.report", chkGeneralReportUsage.getModel().isSelected());
-		
+		JDem846Properties.setProperty("us.wthr.jdem846.general.temp", txtTempPath.getText());
 		
 		
 		double modelQuality = (double)sldPreviewingPreviewModelQuality.getValue() / 100.0;
