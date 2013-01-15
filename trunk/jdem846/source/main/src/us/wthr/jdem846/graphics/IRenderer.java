@@ -66,7 +66,11 @@ public interface IRenderer
 
 	public boolean project(Vector v);
 
-	public FrameBuffer getFrameBuffer();
+	public ImageCapture captureImage();
+	
+	
 	
 	public void finish();
+	
+	public void dispose();
 }

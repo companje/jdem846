@@ -235,12 +235,12 @@ public class ServiceKernel extends Thread
 			{
 				log.info("Service '" + name + "' exited");
 
-				/*
-				 * try { serviceOnDestroy(name, service); } catch
-				 * (ServiceException e) {
-				 * log.error("Failed to destroy service '" + name + "': " +
-				 * e.getMessage(), e); }
-				 */
+				try {
+					serviceOnDestroy(name, service);
+				} catch (ServiceException e) {
+					log.error("Failed to destroy service '" + name + "': " + e.getMessage(), e);
+				}
+
 			}
 		});
 

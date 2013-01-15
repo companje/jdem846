@@ -52,7 +52,16 @@ public class HighCapacityMappedIntBuffer implements IIntBuffer
 		long byteIndex = index * INT_SIZE_BYTES;
 		byteBuffer.put(buffer, byteIndex, 0, 4);
 	}
-
+	
+	@Override
+	public void put(int[] values, long startIndex, int offset, int count)
+	{
+		// Really Slow & inefficient
+		for (int i = 0; i < count; i++) {
+			put(startIndex + i, values[offset + i]);
+		}
+	}
+	
 	@Override
 	public void put(Integer[] values, long startIndex, int offset, int count)
 	{
@@ -82,7 +91,11 @@ public class HighCapacityMappedIntBuffer implements IIntBuffer
 		this.close();
 	}
 
-	
-	
+	@Override
+	public IIntBuffer duplicate()
+	{
+		return null;
+	}
+
 	
 }

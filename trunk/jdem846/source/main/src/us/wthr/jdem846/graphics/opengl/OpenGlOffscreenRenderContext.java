@@ -25,6 +25,7 @@ public class OpenGlOffscreenRenderContext
 	
 	public OpenGlOffscreenRenderContext(int width, int height)
 	{
+		
 		glProfile = GLProfile.getDefault();
 		GLDrawableFactory fac = GLDrawableFactory.getFactory(glProfile);
 		glCapabilities = new GLCapabilities(glProfile);
@@ -52,6 +53,8 @@ public class OpenGlOffscreenRenderContext
 	{
 		drawable.destroy();
 		glContext.destroy();
+		
+		
 	}
 	
 	public void makeGlContextCurrent()

@@ -15,6 +15,9 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+import us.wthr.jdem846.buffers.BufferFactory;
+import us.wthr.jdem846.buffers.IFloatBuffer;
+import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.canvas.AbstractBuffer;
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.graphics.ImageCapture;
@@ -38,10 +41,16 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	private Map<String, String> properties = new HashMap<String, String>();
 	
 	private boolean[] maskBuffer;
-	private int[] rgbaBuffer;
-	private float[] longitudeBuffer;
-	private float[] latitudeBuffer;
-	private float[] elevationBuffer;
+	//private int[] rgbaBuffer;
+	//private float[] longitudeBuffer;
+	//private float[] latitudeBuffer;
+	//private float[] elevationBuffer;
+	
+	private IIntBuffer rgbaBuffer;
+	private IFloatBuffer longitudeBuffer;
+	private IFloatBuffer latitudeBuffer;
+	private IFloatBuffer elevationBuffer;
+	
 	
 	private ElevationHistogramModel elevationHistogramModel;
 
@@ -63,12 +72,13 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 			for (int x = 0; x < getWidth(); x++) {
 				int index = getIndex(x, y);
 				
-				rgbaBuffer[index] = imageCapture.get(x, y);
-				maskBuffer[index] = rgbaBuffer[index] != 0x0;
 				
-				latitudeBuffer[index] = 0;
-				longitudeBuffer[index] = 0;
-				elevationBuffer[index] = 0;
+				rgbaBuffer.put(index, imageCapture.get(x, y));
+				maskBuffer[index] = rgbaBuffer.get(index) != 0x0;
+				
+				latitudeBuffer.put(index, 0f);
+				longitudeBuffer.put(index, 0f);
+				elevationBuffer.put(index, 0f);
 			}
 			
 		}
@@ -80,10 +90,12 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 		super(width, height, 1);
 		
 		maskBuffer = new boolean[getBufferLength()];
-		rgbaBuffer = new int[getBufferLength()];
-		longitudeBuffer = new float[getBufferLength()];
-		latitudeBuffer = new float[getBufferLength()];
-		elevationBuffer = new float[getBufferLength()];
+		
+		long capacity = getBufferLength();
+		rgbaBuffer = BufferFactory.allocateIntBuffer(capacity);
+		longitudeBuffer = BufferFactory.allocateFloatBuffer(capacity);
+		latitudeBuffer = BufferFactory.allocateFloatBuffer(capacity);
+		elevationBuffer = BufferFactory.allocateFloatBuffer(capacity);
 		
 		reset();
 	}
@@ -94,9 +106,17 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	public void dispose()
 	{
 		maskBuffer = null;
+		
+		rgbaBuffer.dispose();
 		rgbaBuffer = null;
+		
+		longitudeBuffer.dispose();
 		longitudeBuffer = null;
+		
+		latitudeBuffer.dispose();
 		latitudeBuffer = null;
+		
+		elevationBuffer.dispose();
 		elevationBuffer = null;
 	}
 
@@ -106,10 +126,10 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	{
 		for (int i = 0; i < this.getBufferLength(); i++) {
 			maskBuffer[i] = false;
-			rgbaBuffer[i] = 0x0;
-			longitudeBuffer[i] = JDemElevationModel.NO_VALUE;
-			latitudeBuffer[i] = JDemElevationModel.NO_VALUE;
-			elevationBuffer[i] = (float) DemConstants.ELEV_NO_DATA;
+			rgbaBuffer.put(i, 0x0);
+			longitudeBuffer.put(i, JDemElevationModel.NO_VALUE);
+			latitudeBuffer.put(i, JDemElevationModel.NO_VALUE);
+			elevationBuffer.put(i, (float) DemConstants.ELEV_NO_DATA);
 		}
 	}
 	
@@ -138,7 +158,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	{
 		int index = this.getIndex(x, y);
 		if (index >= 0 && index < getBufferLength()) {
-			return rgbaBuffer[index];
+			return rgbaBuffer.get(index);
 		} else {
 			return 0x0;
 			// TODO: Throw
@@ -157,7 +177,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	{
 		int index = this.getIndex(x, y);
 		if (index >= 0 && index < getBufferLength()) {
-			return latitudeBuffer[index];
+			return latitudeBuffer.get(index);
 		} else {
 			return NO_VALUE;
 			// TODO: Throw
@@ -168,7 +188,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	{
 		int index = this.getIndex(x, y);
 		if (index >= 0 && index < getBufferLength()) {
-			return longitudeBuffer[index];
+			return longitudeBuffer.get(index);
 		} else {
 			return NO_VALUE;
 			// TODO: Throw
@@ -179,7 +199,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	{
 		int index = this.getIndex(x, y);
 		if (index >= 0 && index < getBufferLength()) {
-			return elevationBuffer[index];
+			return elevationBuffer.get(index);
 		} else {
 			return NO_VALUE;
 			// TODO: Throw
@@ -249,8 +269,8 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 				
 				int i = getIndex(x, y);
 				
-				if (i >= 0 && i < this.rgbaBuffer.length) {
-					this.rgbaBuffer[i] = ColorUtil.rgbaToInt(rgbaBuffer);
+				if (i >= 0 && i < this.rgbaBuffer.capacity()) {
+					this.rgbaBuffer.put(i, ColorUtil.rgbaToInt(rgbaBuffer));
 				}
 			}
 		}
@@ -306,7 +326,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 					ttlRead += 4;
 				}
 				fltValue = ByteConversions.bytesToFloat(buffer4);
-				latitudeBuffer[i] = fltValue;
+				latitudeBuffer.put(i, fltValue);
 				
 				if ((len = bais.read(buffer4, 0, 4)) != 4) {
 					throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
@@ -314,7 +334,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 					ttlRead += 4;
 				}
 				fltValue = ByteConversions.bytesToFloat(buffer4);
-				longitudeBuffer[i] = fltValue;
+				longitudeBuffer.put(i, fltValue);
 				
 				if ((len = bais.read(buffer4, 0, 4)) != 4) {
 					throw new IOException("Did not read 4 bytes as expected (read: " + len + ", total: " + (ttlRead + len) + ")");
@@ -322,7 +342,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 					ttlRead += 4;
 				}
 				fltValue = ByteConversions.bytesToFloat(buffer4);
-				elevationBuffer[i] = fltValue;
+				elevationBuffer.put(i, fltValue);
 				
 				maskBuffer[i] = true;
 				ttlRead += 1;
@@ -344,10 +364,10 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 				
 				//log.info("READ SKIP: " + skipLength);
 				
-				for (int j = i; j < i + skipLength && j < latitudeBuffer.length; j++) {
-					latitudeBuffer[j] = NO_VALUE;
-					longitudeBuffer[j] = NO_VALUE;
-					elevationBuffer[j] = (float) DemConstants.ELEV_NO_DATA;
+				for (int j = i; j < i + skipLength && j < latitudeBuffer.capacity(); j++) {
+					latitudeBuffer.put(j, NO_VALUE);
+					longitudeBuffer.put(j, NO_VALUE);
+					elevationBuffer.put(j, (float) DemConstants.ELEV_NO_DATA);
 					maskBuffer[j] = false;
 				}
 				
@@ -379,13 +399,13 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 			
 				bufferedOut.write(0x01);
 				
-				ByteConversions.floatToBytes(latitudeBuffer[i], buffer4);
+				ByteConversions.floatToBytes(latitudeBuffer.get(i), buffer4);
 				bufferedOut.write(buffer4, 0, 4);
 				
-				ByteConversions.floatToBytes(longitudeBuffer[i], buffer4);
+				ByteConversions.floatToBytes(longitudeBuffer.get(i), buffer4);
 				bufferedOut.write(buffer4, 0, 4);
 				
-				ByteConversions.floatToBytes(elevationBuffer[i], buffer4);
+				ByteConversions.floatToBytes(elevationBuffer.get(i), buffer4);
 				bufferedOut.write(buffer4, 0, 4);
 	
 				

@@ -238,9 +238,6 @@ public class JDem846Properties
 			if (propertyMatchesPrefixes(key, prefixList)) {
 				tmpProps.setProperty(key, properties.getProperty(key));
 			}
-			//if (!System.getProperties().containsKey(key)) {
-			//	tmpProps.setProperty(key, properties.getProperty(key));
-			//}
 		}
 		
 		OutputStream out = JDemResourceLoader.getAsOutputStream(path);

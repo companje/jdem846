@@ -21,6 +21,8 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
@@ -36,6 +38,8 @@ public class TempFiles
 {
 	private static Log log = Logging.getLog(TempFiles.class);
 	
+	private static List<File> cleanUpList = new LinkedList<File>();
+	
 	public static File getTemporaryFile(String prefix) throws IOException
 	{
 		return getTemporaryFile(prefix, ".tmp");
@@ -43,7 +47,7 @@ public class TempFiles
 	
 	public static File getTemporaryFile(String prefix, String suffix) throws IOException
 	{
-		File temp = File.createTempFile("jdem." + InstanceIdentifier.getInstanceId() + "." + prefix + ".", suffix, new File(JDem846Properties.getProperty("us.wthr.jdem846.temp")));
+		File temp = File.createTempFile("jdem." + InstanceIdentifier.getInstanceId() + "." + prefix + ".", suffix, new File(JDem846Properties.getProperty("us.wthr.jdem846.general.temp")));
 		return temp;
 	}
 	
@@ -70,7 +74,48 @@ public class TempFiles
 		return tempFile;
 	}
 	
-	public static void cleanUpTemporaryFiles()
+	public static void releaseFile(String path)
+	{
+		File f = new File(path);
+		releaseFile(f);
+	}
+	
+	public static void releaseFile(File f)
+	{
+		synchronized(cleanUpList) {
+			if (!cleanUpList.contains(f) && f.exists()) {
+				cleanUpList.add(f);
+			}
+		}
+	}
+	
+	public static void cleanUpReleasedFiles()
+	{
+		synchronized(cleanUpList) {
+			
+			List<File> removeList = new LinkedList<File>();
+			
+			for (File file : cleanUpList) {
+				if (file.delete()) {
+					removeList.add(file);
+					log.info("Deleted file " + file.getAbsolutePath());
+				}
+			}
+			
+			for (File file : removeList) {
+				cleanUpList.remove(file);
+			}
+		}
+	}
+	
+	protected static int getReleaseFilesCount()
+	{
+		synchronized (cleanUpList) {
+			return cleanUpList.size();
+		}
+	}
+	
+	public static void cleanUpTemporaryFiles(boolean wait)
 	{
 		File tempRoot = new File(getTemporaryRoot());
 		log.info("Cleaning up temporary files in " + tempRoot.getAbsolutePath());
@@ -83,15 +128,27 @@ public class TempFiles
 		});
 		
 		for (File file : files) {
-			if (file.exists()) {
-				file.deleteOnExit();
-				log.info("Cleaning file: " + file.getAbsolutePath());
-			}
+			releaseFile(file);
 		}
+		//	if (file.exists()) {
+		//		file.deleteOnExit();
+		//		log.info("Cleaning file: " + file.getAbsolutePath());
+		//	}
+		//}
+		
+		
+		long waitForAllToBeDeletedMillis = 20000;
+		long start = System.currentTimeMillis();
+		
+		while(getReleaseFilesCount() > 0 && (System.currentTimeMillis() - start < waitForAllToBeDeletedMillis)) {
+			cleanUpReleasedFiles();
+		}
+		
+		
 	}
 	
 	public static String getTemporaryRoot()
 	{
-		return JDem846Properties.getProperty("us.wthr.jdem846.temp");
+		return JDem846Properties.getProperty("us.wthr.jdem846.general.temp");
 	}
 }

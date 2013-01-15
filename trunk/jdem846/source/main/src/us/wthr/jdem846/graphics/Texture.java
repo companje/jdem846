@@ -3,11 +3,13 @@ package us.wthr.jdem846.graphics;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import us.wthr.jdem846.buffers.BufferFactory;
+import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.util.ColorUtil;
 
 public class Texture {
-	public IntBuffer texture = null;
+	public IIntBuffer texture = null;
 	public int width = 0;
 	public int height = 0;
 	public double north = 0;
@@ -20,13 +22,13 @@ public class Texture {
 	public double xResolution = 0;
 	public double yResolution = 0;
 	
-	public Texture(int width, int height, IntBuffer texture)
+	public Texture(int width, int height, IIntBuffer texture)
 	{
 		this(width, height, 0, 0, 0, 0, texture);
 	}
 	
 	
-	public Texture(int width, int height, double north, double south, double east, double west, IntBuffer texture)
+	public Texture(int width, int height, double north, double south, double east, double west, IIntBuffer texture)
 	{
 		this.width = width;
 		this.height = height;
@@ -234,7 +236,7 @@ public class Texture {
 	 */
 	public Texture copy(boolean copyTexture)
 	{
-		Texture copy = new Texture(width, height, texture.duplicate());	
+		Texture copy = new Texture(width, height, (IIntBuffer) texture.duplicate());	
 		return copy;
 	}
 	
@@ -271,7 +273,8 @@ public class Texture {
 		
 		int subtexLength = width * height;
 		
-		IntBuffer subtexBuffer = IntBuffer.allocate(subtexLength);
+		//IIntBuffer subtexBuffer = IntBuffer.allocate(subtexLength);
+		IIntBuffer subtexBuffer = BufferFactory.allocateIntBuffer(subtexLength);
 		for (int row = 0; row < height; row++) {
 			for (int col = 0; col < width; col++) {
 				int subtexIndex = (row * width) + col;
@@ -292,14 +295,21 @@ public class Texture {
 	
 	public IntBuffer getAsIntBuffer()
 	{
-		return texture;
+		return getAsByteBuffer().asIntBuffer();
 	}
 	
 	public ByteBuffer getAsByteBuffer()
 	{
-		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(texture.capacity() * 4);
+		int capacityBytes = (int) texture.capacityBytes();
+		
+		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(capacityBytes);
 		IntBuffer intBuffer = byteBuffer.asIntBuffer();
-		intBuffer.put(texture);
+		
+		for (int i = 0; i < texture.capacity(); i++) {
+			int value = texture.get(i);
+			intBuffer.put(i, value);
+		}
+
 		return byteBuffer;
 	}
 }

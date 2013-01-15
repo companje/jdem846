@@ -132,7 +132,7 @@ public class HighCapacityMappedByteBuffer implements IByteBuffer
 		buffer.getBuffer().put(indexWithinChunk, value);
 	}
 	
-	
+	@Override
 	public void put(byte[] values, long startIndex, int offset, int count)
 	{
 		// Really Slow & inefficient
@@ -167,6 +167,12 @@ public class HighCapacityMappedByteBuffer implements IByteBuffer
 	public void dispose()
 	{
 		this.close();
+	}
+	
+	@Override
+	public IByteBuffer duplicate()
+	{
+		return null;
 	}
 
 }

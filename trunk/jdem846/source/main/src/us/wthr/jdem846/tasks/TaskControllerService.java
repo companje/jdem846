@@ -80,6 +80,8 @@ public class TaskControllerService extends AbstractLockableService
 		
 		StartupLoadNotifyQueue.add("Starting task controller service");
 		
+		setLocked(true);
+		
 		defaultTaskGroup = new TaskGroup("DefaultTaskGroup");
 		defaultTaskGroup.setPersistentThread(true);
 		defaultTaskGroup.setDaemon(true);
@@ -117,9 +119,8 @@ public class TaskControllerService extends AbstractLockableService
 	public void onShutdown()
 	{
 		log.info("Task controller service on shutdown");
-		//defaultTaskGroup.setPersistentThread(false);
-		//defaultTaskGroup.cancelRemainingTasks();
-		
+		defaultTaskGroup.setPersistentThread(false);
+		defaultTaskGroup.cancelRemainingTasks();
 		
 		List<TaskGroup> taskGroups = getTaskGroups();
 		for (TaskGroup taskGroup : taskGroups) {
@@ -129,13 +130,15 @@ public class TaskControllerService extends AbstractLockableService
 		
 		this.setLocked(false);
 		
+		TaskControllerService.instance = null;
+		
 	}
 	
 	@Destroy
 	public void destroy()
 	{
 		log.info("Shutting down task controller service");
-		TaskControllerService.instance = null;
+		
 	}
 	
 

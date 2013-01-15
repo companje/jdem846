@@ -21,6 +21,8 @@ package us.wthr.jdem846.ui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.media.opengl.GLProfile;
+
 import us.wthr.jdem846.ServiceKernel;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -41,7 +43,7 @@ public class JDemUiMain extends BaseUIMain
 	@Override
 	public void beforeInit() throws Exception
 	{
-		
+		GLProfile.initSingleton();
 	}
 
 	@Override

@@ -447,60 +447,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		renderer.setModelGrid(modelGrid);
 
 		renderer.prepare();
-		//renderer.onProcessBefore();
 
-		/*
-		double latitudeResolution = modelDimensions.getModelLatitudeResolution();
-		double longitudeResolution = modelDimensions.getModelLongitudeResolution();
-
-		if (latitudeResolution <= 0) {
-			throw new RenderEngineException("Invalid latitude resolution: " + latitudeResolution);
-		}
-		
-		if (longitudeResolution <= 0) {
-			throw new RenderEngineException("Invalid longitude resolution: " + longitudeResolution);
-		}
-		
-		double north = globalOptionModel.getNorthLimit();
-		double south = globalOptionModel.getSouthLimit();
-		double east = globalOptionModel.getEastLimit();
-		double west = globalOptionModel.getWestLimit();
-		*/
-		
-		//if (progressTracker != null) {
-		//	progressTracker.beginTask("Final rendering", (int) MathExt.round((north - south) / latitudeResolution));
-		//}
-
-		/*
-		for (double latitude = north; latitude > south; latitude -= latitudeResolution) {
-			if (this.latitudeProcessedList != null) {
-				if (this.latitudeProcessedList.isLatitudeProcessed(latitude)) {
-					continue;
-				} else {
-					this.latitudeProcessedList.setLatitudeProcessed(latitude);
-				}
-			}
-
-			renderer.onLatitudeStart(latitude);
-
-			for (double longitude = west; longitude <= east; longitude += longitudeResolution) {
-				renderer.onModelPoint(latitude, longitude);
-			}
-
-			renderer.onLatitudeEnd(latitude);
-
-			if (progressTracker != null) {
-				progressTracker.worked(1);
-				if (progressTracker.isCanceled()) {
-					break;
-				}
-			}
-
-		}
-		
-		renderer.onProcessAfter();
-		renderer.dispose();
-		*/
 		try {
 			renderer.run();
 		} catch (GraphicsRenderException ex) {
@@ -508,18 +455,11 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		}
 		
 		ImageCapture imageCapture = renderer.capture();
-		return imageCapture;
-		/*
-		this.frameBufferController.finish();
-		while (frameBufferController.isAlive()) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException ex) {
-				log.warn("Thread sleep interrupted while waiting for grid process threads to complete: " + ex.getMessage(), ex);
-			}
-		}
-		*/
 		
+		renderer.dispose();
+		
+		return imageCapture;
+
 	}
 
 	@Override

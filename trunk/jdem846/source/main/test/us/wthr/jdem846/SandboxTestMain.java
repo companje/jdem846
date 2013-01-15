@@ -47,7 +47,7 @@ public class SandboxTestMain extends AbstractTestMain
 		
 		bigBuffer.dispose();
 		
-		TempFiles.cleanUpTemporaryFiles();
+		TempFiles.cleanUpTemporaryFiles(true);
 	}
 	
 	public SandboxTestMain() 

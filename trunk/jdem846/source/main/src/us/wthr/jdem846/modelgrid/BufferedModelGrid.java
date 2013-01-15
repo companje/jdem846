@@ -1,10 +1,9 @@
 package us.wthr.jdem846.modelgrid;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.buffers.BufferFactory;
+import us.wthr.jdem846.buffers.IFloatBuffer;
+import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -14,8 +13,10 @@ public class BufferedModelGrid extends BaseModelGrid
 {
 	private static Log log = Logging.getLog(BufferedModelGrid.class);
 
-	private FloatBuffer elevationGrid;
-	private IntBuffer rgbaGrid;
+	private IFloatBuffer elevationGrid;
+	private IIntBuffer rgbaGrid;
+	//private FloatBuffer elevationGrid;
+	//private IntBuffer rgbaGrid;
 
 	private boolean isDisposed = false;
 	
@@ -26,11 +27,14 @@ public class BufferedModelGrid extends BaseModelGrid
 
 		log.info("Allocating elevation and RGBA grid buffers of length " + gridLength);
 		
-		ByteBuffer bb = ByteBuffer.allocateDirect((int)gridLength * (Integer.SIZE / 8));
-		rgbaGrid = bb.asIntBuffer();
+		rgbaGrid = BufferFactory.allocateIntBuffer(gridLength);
+		elevationGrid = BufferFactory.allocateFloatBuffer(gridLength);
 		
-		bb = ByteBuffer.allocateDirect((int)gridLength * (Float.SIZE / 8));
-		elevationGrid = bb.asFloatBuffer();
+		//ByteBuffer bb = ByteBuffer.allocateDirect((int)gridLength * (Integer.SIZE / 8));
+		//rgbaGrid = bb.asIntBuffer();
+		
+	//	bb = ByteBuffer.allocateDirect((int)gridLength * (Float.SIZE / 8));
+		//elevationGrid = bb.asFloatBuffer();
 		
 		
 		//elevationGrid = FloatBuffer.allocate((int)gridLength);
@@ -45,11 +49,13 @@ public class BufferedModelGrid extends BaseModelGrid
 
 		log.info("Allocating elevation and RGBA grid buffers of length " + gridLength);
 		
-		ByteBuffer bb = ByteBuffer.allocateDirect((int)gridLength * (Integer.SIZE / 8));
-		rgbaGrid = bb.asIntBuffer();
+		rgbaGrid = BufferFactory.allocateIntBuffer(gridLength);
+		elevationGrid = BufferFactory.allocateFloatBuffer(gridLength);
+		//ByteBuffer bb = ByteBuffer.allocateDirect((int)gridLength * (Integer.SIZE / 8));
+		//rgbaGrid = bb.asIntBuffer();
 		
-		bb = ByteBuffer.allocateDirect((int)gridLength * (Float.SIZE / 8));
-		elevationGrid = bb.asFloatBuffer();
+		//bb = ByteBuffer.allocateDirect((int)gridLength * (Float.SIZE / 8));
+		//elevationGrid = bb.asFloatBuffer();
 		
 		//elevationGrid = new float[(int) gridLength];
 		//rgbaGrid = new int[(int) gridLength];
@@ -87,7 +93,7 @@ public class BufferedModelGrid extends BaseModelGrid
 	}
 
 	@Override
-	public IntBuffer getModelTexture()
+	public IIntBuffer getModelTexture()
 	{
 		return rgbaGrid;
 	}

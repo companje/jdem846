@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.ref.WeakReference;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
 import us.wthr.jdem846.exception.BufferException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.util.TempFiles;
 
 public class MMapBufferContainer
 {
@@ -67,47 +67,14 @@ public class MMapBufferContainer
 			throw new BufferException("Error closing mmap buffer: " + ex.getMessage(), ex);
 		}
 		
-		delete(buffer, file);
+		TempFiles.releaseFile(file);
+		
 		buffer = null;
 
 		isOpen = false;
 	}
 	
 	
-	/** Temporary and unreliable (but clever) solution. (http://jan.baresovi.cz/dr/en/en/java#memoryMap)
-	 * 
-	 * @param buffer
-	 * @param file
-	 */
-	protected static void delete(MappedByteBuffer buffer, final File file)
-	{
-		final WeakReference<MappedByteBuffer> weakRef = new WeakReference<MappedByteBuffer>(buffer);
-		buffer = null;
-		
-		Thread t = new Thread() {
-			public void run() {
-				System.gc();
-				long start = System.currentTimeMillis();
-				while(null != weakRef.get()) {
-					if (System.currentTimeMillis() - start > 2000) {
-						log.info("Giving up on garbage collector");
-						return;
-					}
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException ex) {
-						log.warn("Error sleeping: " + ex.getMessage(), ex);
-					}
-				}
-				log.info("Deleting " + file.getAbsolutePath());
-				file.delete();
-			}
-		};
-		
-		t.start();
-		
-		
-	}
 	
 	
 	public boolean isOpen()

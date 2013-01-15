@@ -10,6 +10,7 @@ import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.graphics.AxisEnum;
 import us.wthr.jdem846.graphics.BaseRenderer;
 import us.wthr.jdem846.graphics.IRenderer;
+import us.wthr.jdem846.graphics.ImageCapture;
 import us.wthr.jdem846.graphics.MatrixModeEnum;
 import us.wthr.jdem846.graphics.PrimitiveModeEnum;
 import us.wthr.jdem846.graphics.Texture;
@@ -320,8 +321,53 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		}
 
 	}
-
+	
 	@Override
+	public ImageCapture captureImage()
+	{
+		if (this.frameBuffer != null) {
+			this.frameBuffer.bindForCapture();
+		}
+
+		int[] vals = new int[4];
+		openGl.getGL().glGetIntegerv(GL.GL_VIEWPORT, vals, 0);
+
+		int width = vals[2];
+		int height = vals[3];
+
+		int length = width * height;
+		int bufferLength = length * 4;
+
+
+		ByteBuffer byteBuffer = ByteBuffer.allocate(bufferLength);
+
+		openGl.getGL().glPixelStorei(GL.GL_PACK_ALIGNMENT, 4);
+		openGl.getGL().glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, byteBuffer);
+
+		ImageCapture image = new ImageCapture(width, height, 0x0);
+		
+		int i = 0; // Index into target int[]
+		for (int row = 0; row < height; row++) {
+
+			for (int col = 0; col < width; col++) {
+
+				i = ((height - row - 1) * width * 4) + (col * 4);
+
+				int iR = byteBuffer.get(i);
+				int iG = byteBuffer.get(i + 1);
+				int iB = byteBuffer.get(i + 2);
+				int iA = byteBuffer.get(i + 3);
+
+				int pixelInt = ColorUtil.rgbaToInt(iR, iG, iB, iA);
+
+				image.set(col, row, pixelInt);
+			}
+		}
+
+		return image;
+	}
+
+	
 	public FrameBuffer getFrameBuffer()
 	{
 
@@ -338,11 +384,9 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		int length = width * height;
 		int bufferLength = length * 4;
 
-		// byte[] pixelBuffer = new byte[bufferLength];
-		ByteBuffer byteBuffer = ByteBuffer.allocate(bufferLength);
-		// ByteBuffer byteBuffer = ByteBuffer.wrap(pixelBuffer);
 
-		// openGl.getGL2().glReadBuffer(GL.GL_FRONT);
+		ByteBuffer byteBuffer = ByteBuffer.allocate(bufferLength);
+
 		openGl.getGL().glPixelStorei(GL.GL_PACK_ALIGNMENT, 4);
 		openGl.getGL().glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, byteBuffer);
 
@@ -359,15 +403,9 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 				int iG = byteBuffer.get(i + 1);
 				int iB = byteBuffer.get(i + 2);
 				int iA = byteBuffer.get(i + 3);
-				if (iG != -1 && iG != 0) {
-					int fdjuhfusd = 0;
-				}
 
 				int pixelInt = ColorUtil.rgbaToInt(iR, iG, iB, iA);
-				// int pixelInt =
-				// ((iR & 0x000000FF) << 24) |
-				// ((iG & 0x000000FF) << 16) | (iB & 0x000000FF << 8) | (iA &
-				// 0x000000FF);
+
 
 				frameBuffer.set(col, row, 0.0, pixelInt);
 			}
@@ -386,38 +424,12 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 			return true;
 		}
 	}
-	//
-	// //http://www.felixgers.de/teaching/jogl/imagingProg.html
-	// private IntBuffer transformPixelsRGBBuffer2ARGB(ByteBuffer byteBufferRGB,
-	// int width, int height)
-	// {
-	// int[] pixelInts = new int[width * height];
-	//
-	// // Convert RGB bytes to ARGB ints with no transparency.
-	// // Flip image vertically by reading the
-	// // rows of pixels in the byte buffer in reverse
-	// // - (0,0) is at bottom left in OpenGL.
-	// //
-	// // Points to first byte (red) in each row.
-	// int p = width * height * 3;
-	// int q; // Index into ByteBuffer
-	// int i = 0; // Index into target int[]
-	// int w3 = width * 3; // Number of bytes in each row
-	// for (int row = 0; row < height; row++) {
-	// p -= w3;
-	// q = p;
-	// for (int col = 0; col < width; col++) {
-	// int iR = byteBufferRGB.get(q++);
-	// int iG = byteBufferRGB.get(q++);
-	// int iB = byteBufferRGB.get(q++);
-	// pixelInts[i++] = 0xFF000000 | ((iR & 0x000000FF) << 16) | ((iG &
-	// 0x000000FF) << 8) | (iB & 0x000000FF);
-	// }
-	// }
-	//
-	//
-	// IntBuffer transformedBuffer = IntBuffer.wrap(pixelInts);
-	// return transformedBuffer;
-	// }
 
+	
+	
+	@Override
+	public void dispose()
+	{
+		openGl.dispose();
+	}
 }

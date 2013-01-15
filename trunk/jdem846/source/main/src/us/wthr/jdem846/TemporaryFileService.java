@@ -31,6 +31,8 @@ public class TemporaryFileService extends AbstractLockableService
 	
 	private static Log log = Logging.getLog(TemporaryFileService.class);
 	
+	public static final long FILE_CLEANUP_DELAY_MILLIS = 5000;
+	
 	public TemporaryFileService()
 	{
 		
@@ -48,8 +50,22 @@ public class TemporaryFileService extends AbstractLockableService
 	@ServiceRuntime
 	public void runtime()
 	{
-		log.info("Temporary File Service Runtime (short-lived)");
-
+		log.info("Temporary File Service Runtime");
+		setLocked(true);
+		
+		while(isLocked()) {
+			
+			TempFiles.cleanUpReleasedFiles();
+			
+			try {
+				Thread.sleep(FILE_CLEANUP_DELAY_MILLIS);
+			} catch (InterruptedException ex) {
+				log.error("Error in thread.sleep: " + ex.getMessage(), ex);
+				setLocked(false);
+			}
+		}
+		
+		log.info("Leaving temporary file service");
 	}
 	
 	
@@ -64,8 +80,13 @@ public class TemporaryFileService extends AbstractLockableService
 	{
 		log.info("Temporary File Service - On Shutdown");
 		
+		setLocked(false);
+		
+		System.gc();
+		
+		
 		// Clean Up
-		TempFiles.cleanUpTemporaryFiles();
+		TempFiles.cleanUpTemporaryFiles(true);
 	}
 	
 }
