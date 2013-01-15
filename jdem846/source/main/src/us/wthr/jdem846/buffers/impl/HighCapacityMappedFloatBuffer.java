@@ -68,6 +68,12 @@ public class HighCapacityMappedFloatBuffer implements IFloatBuffer
 	{
 		return capacity;
 	}
+	
+	@Override
+	public long capacityBytes()
+	{
+		return byteBuffer.capacityBytes();
+	}
 
 	@Override
 	public void dispose()

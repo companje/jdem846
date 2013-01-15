@@ -67,6 +67,12 @@ public class HighCapacityMappedDoubleBuffer implements IDoubleBuffer
 	{
 		return capacity;
 	}
+	
+	@Override
+	public long capacityBytes()
+	{
+		return byteBuffer.capacityBytes();
+	}
 
 	@Override
 	public void dispose()
