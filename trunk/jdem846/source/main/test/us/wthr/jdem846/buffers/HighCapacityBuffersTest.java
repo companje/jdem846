@@ -10,7 +10,9 @@ public class HighCapacityBuffersTest extends TestCase
 {
 	
 	private static Log log = null;
-
+	
+	private long bytesCapacityPerTest = 2684354560l; // About 2.5GB
+	
 	@Override
 	protected void setUp() throws Exception
 	{
@@ -38,18 +40,21 @@ public class HighCapacityBuffersTest extends TestCase
 
 	public void testByteBuffer()
 	{
-		long capacity = 894784853 * (long)(Integer.SIZE / 8);
+		
+		long capacity = bytesCapacityPerTest;
 		byte testValue = (byte)0xFF;
 		
 		IByteBuffer bigBuffer = BufferFactory.allocateByteBuffer(capacity);
 		
-		log.info("Writing junk data...");
+		log.info("Testing Byte Buffer with a capacity of " + bigBuffer.capacityBytes() + " bytes");
+		
+		log.info("Writing test data...");
 		for (long i = 0; i < capacity; i++) {
 			bigBuffer.put(i, testValue);
 		}
 		
 		
-		log.info("Verifying junk data...");
+		log.info("Verifying test data...");
 		for (long i = 0; i < capacity; i++) {
 			byte b = bigBuffer.get(i);
 			assertEquals(b, testValue);
@@ -63,18 +68,19 @@ public class HighCapacityBuffersTest extends TestCase
 	
 	public void testIntBuffer()
 	{
-		long capacity = 894784853;
+		long capacity = bytesCapacityPerTest / (Integer.SIZE / 8);
 		int testValue = 12345;
 		
 		IIntBuffer bigBuffer = BufferFactory.allocateIntBuffer(capacity);
+		log.info("Testing Integer Buffer with a capacity of " + bigBuffer.capacityBytes() + " bytes");
 		
-		log.info("Writing junk data...");
+		log.info("Writing test data...");
 		for (long i = 0; i < capacity; i++) {
 			bigBuffer.put(i, testValue);
 		}
 		
 		
-		log.info("Verifying junk data...");
+		log.info("Verifying test data...");
 		for (long i = 0; i < capacity; i++) {
 			int b = bigBuffer.get(i);
 			assertEquals(b, testValue);
@@ -89,18 +95,19 @@ public class HighCapacityBuffersTest extends TestCase
 	
 	public void testFloatBuffer()
 	{
-		long capacity = 894784853;
+		long capacity = bytesCapacityPerTest / (Float.SIZE / 8);
 		float testValue = 12345.4321f;
 		
 		IFloatBuffer bigBuffer = BufferFactory.allocateFloatBuffer(capacity);
+		log.info("Testing Float Buffer with a capacity of " + bigBuffer.capacityBytes() + " bytes");
 		
-		log.info("Writing junk data...");
+		log.info("Writing test data...");
 		for (long i = 0; i < capacity; i++) {
 			bigBuffer.put(i, testValue);
 		}
 		
 		
-		log.info("Verifying junk data...");
+		log.info("Verifying test data...");
 		for (long i = 0; i < capacity; i++) {
 			float b = bigBuffer.get(i);
 			assertEquals(b, testValue);
@@ -114,18 +121,19 @@ public class HighCapacityBuffersTest extends TestCase
 	
 	public void testDoubleBuffer()
 	{
-		long capacity = 447392426;
+		long capacity = bytesCapacityPerTest / (Double.SIZE / 8);
 		double testValue = 12345.4321;
 		
 		IDoubleBuffer bigBuffer = BufferFactory.allocateDoubleBuffer(capacity);
+		log.info("Testing Double Buffer with a capacity of " + bigBuffer.capacityBytes() + " bytes");
 		
-		log.info("Writing junk data...");
+		log.info("Writing test data...");
 		for (long i = 0; i < capacity; i++) {
 			bigBuffer.put(i, testValue);
 		}
 		
 		
-		log.info("Verifying junk data...");
+		log.info("Verifying test data...");
 		for (long i = 0; i < capacity; i++) {
 			double b = bigBuffer.get(i);
 			assertEquals(b, testValue);

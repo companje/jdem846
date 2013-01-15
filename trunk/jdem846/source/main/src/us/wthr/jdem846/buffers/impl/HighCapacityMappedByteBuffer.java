@@ -155,7 +155,14 @@ public class HighCapacityMappedByteBuffer implements IByteBuffer
 	{
 		return capacity;
 	}
-
+	
+	@Override
+	public long capacityBytes()
+	{
+		return capacity();
+	}
+	
+	
 	@Override
 	public void dispose()
 	{

@@ -17,6 +17,7 @@ public interface IBuffer<T>
 	public void put(T[] values, long startIndex, int offset, int count);
 	
 	public long capacity();
+	public long capacityBytes();
 	
 	public void dispose();
 }
