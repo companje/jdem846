@@ -83,7 +83,7 @@ public class BufferedModelGrid extends BaseModelGrid
 	public void reset()
 	{
 
-		for (int i = 0; i < gridLength; i++) {
+		for (long i = 0; i < gridLength; i++) {
 			elevationGrid.put(i, (float)DemConstants.ELEV_UNDETERMINED);
 			rgbaGrid.put(i, 0x0);
 			//elevationGrid[i] = (float) DemConstants.ELEV_UNDETERMINED;

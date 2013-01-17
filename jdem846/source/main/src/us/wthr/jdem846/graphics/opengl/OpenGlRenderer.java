@@ -19,6 +19,7 @@ import us.wthr.jdem846.graphics.framebuffer.FrameBufferFactory;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.util.ColorUtil;
 
@@ -90,6 +91,11 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 
 	}
 	
+	protected int getMaximumSystemTextureSize()
+	{
+		return JDem846Properties.getIntProperty("us.wthr.jdem846.rendering.maxTextureSize");
+	}
+	
 	protected int getMaximumTextureSize()
 	{
 		int[] list = {0};
@@ -99,12 +105,12 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	
 	public int getMaximumTextureWidth()
 	{
-		return getMaximumTextureSize();
+		return (int) MathExt.min(getMaximumSystemTextureSize(), getMaximumTextureSize());
 	}
 	
 	public int getMaximumTextureHeight()
 	{
-		return getMaximumTextureSize();
+		return (int) MathExt.min(getMaximumSystemTextureSize(), getMaximumTextureSize());
 	}
 	
 	@Override
