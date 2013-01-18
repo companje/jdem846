@@ -79,7 +79,7 @@ public class PreferencesDialog extends Dialog
 	private ComboBox cmbRenderingRenderEngine;
 	private CheckBox chkRenderingMultisampling;
 	private NumberTextField txtRenderingMultisamplingSamples;
-	
+	private NumberTextField txtRenderingMaxTextureSize;
 	
 	
 	private TextField txtDefaultsSubject;
@@ -144,6 +144,7 @@ public class PreferencesDialog extends Dialog
 		cmbRenderingRenderEngine = new ComboBox(renderEngineListModel);
 		chkRenderingMultisampling = new CheckBox("Multisampling");
 		txtRenderingMultisamplingSamples = new NumberTextField(false);
+		txtRenderingMaxTextureSize = new NumberTextField(false);
 		
 		/*
 		 renderEngineListModel
@@ -253,7 +254,8 @@ public class PreferencesDialog extends Dialog
 		renderingPanel.add(new Label("Multisample Samples:"));
 		renderingPanel.add(txtRenderingMultisamplingSamples);
 		
-		
+		renderingPanel.add(new Label("Maximum Texture Size:"));
+		renderingPanel.add(txtRenderingMaxTextureSize);
 		
 		previewPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.previewing.previewTextureQuality") + ":"));
 		previewPanel.add(sldPreviewingPreviewTextureQuality);
@@ -353,6 +355,7 @@ public class PreferencesDialog extends Dialog
 		renderEngineListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.rendering.renderEngine"));
 		chkRenderingMultisampling.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.opengl.multisampling.enabled"));
 		txtRenderingMultisamplingSamples.setText(JDem846Properties.getProperty("us.wthr.jdem846.rendering.opengl.multisampling.samples"));
+		txtRenderingMaxTextureSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.rendering.maxTextureSize"));
 		/*
 		 * 
 		renderEngineListModel
@@ -421,8 +424,8 @@ public class PreferencesDialog extends Dialog
 		JDem846Properties.setProperty("us.wthr.jdem846.rendering.renderEngine", renderEngineListModel.getSelectedItemValue());
 		JDem846Properties.setProperty("us.wthr.jdem846.rendering.opengl.multisampling.enabled", chkRenderingMultisampling.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.rendering.opengl.multisampling.samples", txtRenderingMultisamplingSamples.getInteger());
-	
-		
+		JDem846Properties.setProperty("us.wthr.jdem846.rendering.maxTextureSize", txtRenderingMaxTextureSize.getInteger());
+
 		//JDem846Properties.setProperty("us.wthr.jdem846.performance.pipelineRender", ""+chkPerfPipelineRendering.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.rendering.standardResolutionRetrieval", ""+chkPerfNearestNeighborDataRetrieval.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.rendering.interpolateToHigherResolution", ""+chkPerfInterpolateLowerResolutionData.getModel().isSelected());
@@ -445,7 +448,7 @@ public class PreferencesDialog extends Dialog
 	
 	protected void onOkClicked()
 	{
-		log.info("Preferences->ok");
+		log.debug("Preferences->ok");
 		
 		setValuesFromUserInterface();
 		
@@ -454,7 +457,7 @@ public class PreferencesDialog extends Dialog
 	
 	protected void onCancelClicked()
 	{
-		log.info("Preferences->cancel");
+		log.debug("Preferences->cancel");
 		this.setVisible(false);
 	}
 	
