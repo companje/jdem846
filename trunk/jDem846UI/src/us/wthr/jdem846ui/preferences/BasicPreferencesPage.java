@@ -30,6 +30,7 @@ public abstract class BasicPreferencesPage extends FieldEditorPreferencePage imp
 	public void init(IWorkbench workbench)
 	{
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		
 	}
 	
 	
@@ -37,6 +38,7 @@ public abstract class BasicPreferencesPage extends FieldEditorPreferencePage imp
 	protected void performDefaults()
 	{
 		super.performDefaults();
+		updateControlState();
 	}
 	
 	
@@ -45,7 +47,7 @@ public abstract class BasicPreferencesPage extends FieldEditorPreferencePage imp
 	{
 		super.performApply();
 		applyProperties();
-		
+		updateControlState();
 		this.getApplyButton().setEnabled(false);
 	}
 	
@@ -53,6 +55,7 @@ public abstract class BasicPreferencesPage extends FieldEditorPreferencePage imp
 	public boolean performOk() 
 	{
 		applyProperties();
+		updateControlState();
 		return super.performOk();
 	}
 	
@@ -64,6 +67,10 @@ public abstract class BasicPreferencesPage extends FieldEditorPreferencePage imp
 		}
 	}
 	
+	protected void updateControlState()
+	{
+		
+	}
 	
 	protected void applyProperty(ManagedProperty property )
 	{
@@ -75,6 +82,7 @@ public abstract class BasicPreferencesPage extends FieldEditorPreferencePage imp
 	{
 		log.info("Property Changed: " + event.getProperty());
 		this.getApplyButton().setEnabled(true);
+		updateControlState();
 	}
 	
 	public void addField(FieldEditor editor, IPropertyModifier modifier)

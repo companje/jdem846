@@ -270,7 +270,10 @@ public class ModelOptionControlsFactory
 
 		LabeledSpinner control = null;
 		if (bounds != null) {
-			control = LabeledSpinner.create(parent, property.getLabel(), (int) bounds.minimum() * 100, (int) bounds.maximum() * 100, 2, (int) bounds.stepSize() * 100);
+			int min = (int) (bounds.minimum() * 100.0);
+			int max = (int) (bounds.maximum() * 100.0);
+			int step = (int) (bounds.stepSize() * 100.0);
+			control = LabeledSpinner.create(parent, property.getLabel(), min, max, 2, step);
 		} else {
 			control = LabeledSpinner.create(parent, property.getLabel());
 		}
@@ -293,7 +296,10 @@ public class ModelOptionControlsFactory
 		});
 
 		try {
-			control.getControl().setSelection((int) ((Double) property.getValue() * 100));
+			
+			double value = ((Double) property.getValue() * 100.0);
+			int iValue = (int) value;
+			control.getControl().setSelection(iValue);
 		} catch (MethodContainerInvokeException e1) {
 			e1.printStackTrace();
 		}

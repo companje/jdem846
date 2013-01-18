@@ -26,6 +26,7 @@ import java.util.List;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
+import us.wthr.jdem846.io.LocalFile;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -38,24 +39,24 @@ public class TempFiles
 {
 	private static Log log = Logging.getLog(TempFiles.class);
 	
-	private static List<File> cleanUpList = new LinkedList<File>();
+	private static List<LocalFile> cleanUpList = new LinkedList<LocalFile>();
 	
-	public static File getTemporaryFile(String prefix) throws IOException
+	public static LocalFile getTemporaryFile(String prefix) throws IOException
 	{
 		return getTemporaryFile(prefix, ".tmp");
 	}
 	
-	public static File getTemporaryFile(String prefix, String suffix) throws IOException
+	public static LocalFile getTemporaryFile(String prefix, String suffix) throws IOException
 	{
 		File temp = File.createTempFile("jdem." + InstanceIdentifier.getInstanceId() + "." + prefix + ".", suffix, new File(JDem846Properties.getProperty("us.wthr.jdem846.general.temp")));
-		return temp;
+		return new LocalFile(temp, true);
 	}
 	
 	
 	
-	public static File getTemporaryFile(String prefix, String suffix, String copyFrom) throws Exception
+	public static LocalFile getTemporaryFile(String prefix, String suffix, String copyFrom) throws Exception
 	{
-		File tempFile = getTemporaryFile(prefix, suffix);
+		LocalFile tempFile = getTemporaryFile(prefix, suffix);
 		
 		
 		InputStream in = JDemResourceLoader.getAsInputStream(copyFrom);
@@ -76,11 +77,11 @@ public class TempFiles
 	
 	public static void releaseFile(String path)
 	{
-		File f = new File(path);
+		LocalFile f = new LocalFile(path);
 		releaseFile(f);
 	}
 	
-	public static void releaseFile(File f)
+	public static void releaseFile(LocalFile f)
 	{
 		synchronized(cleanUpList) {
 			if (!cleanUpList.contains(f) && f.exists()) {
@@ -128,7 +129,7 @@ public class TempFiles
 		});
 		
 		for (File file : files) {
-			releaseFile(file);
+			releaseFile(new LocalFile(file));
 		}
 		//	if (file.exists()) {
 		//		file.deleteOnExit();

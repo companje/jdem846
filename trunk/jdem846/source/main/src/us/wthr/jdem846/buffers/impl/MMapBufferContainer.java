@@ -1,6 +1,5 @@
 package us.wthr.jdem846.buffers.impl;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -8,9 +7,9 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
 import us.wthr.jdem846.exception.BufferException;
+import us.wthr.jdem846.io.LocalFile;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.util.TempFiles;
 
 public class MMapBufferContainer
 {
@@ -19,16 +18,16 @@ public class MMapBufferContainer
 	protected MappedByteBuffer buffer;
 	protected FileChannel channel;
 	protected RandomAccessFile randomAccessFile;
-	protected File file;
+	protected LocalFile file;
 	
 	protected boolean isOpen = false;
 	
 	public MMapBufferContainer(String path, int capacity)
 	{
-		this(new File(path), capacity);
+		this(new LocalFile(path), capacity);
 	}
 	
-	public MMapBufferContainer(File file, int capacity)
+	public MMapBufferContainer(LocalFile file, int capacity)
 	{
 		this.file = file;
 		
@@ -67,8 +66,8 @@ public class MMapBufferContainer
 			throw new BufferException("Error closing mmap buffer: " + ex.getMessage(), ex);
 		}
 		
-		TempFiles.releaseFile(file);
-		
+		file.releaseTemporaryFile();
+
 		buffer = null;
 
 		isOpen = false;

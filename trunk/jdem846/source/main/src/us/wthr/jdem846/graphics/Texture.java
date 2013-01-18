@@ -3,7 +3,6 @@ package us.wthr.jdem846.graphics;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import us.wthr.jdem846.buffers.BufferFactory;
 import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.util.ColorUtil;
@@ -271,17 +270,19 @@ public class Texture {
 			height = this.height - y;
 		}
 		
-		int subtexLength = width * height;
+		//int subtexLength = width * height;
+		
+		IIntBuffer subtexBuffer = new SubTextureIntBuffer(texture, this.width, this.height, x, y, width, height);
 		
 		//IIntBuffer subtexBuffer = IntBuffer.allocate(subtexLength);
-		IIntBuffer subtexBuffer = BufferFactory.allocateIntBuffer(subtexLength);
-		for (int row = 0; row < height; row++) {
-			for (int col = 0; col < width; col++) {
-				int subtexIndex = (row * width) + col;
-				int maintexIndex = index(x + col, y + row);
-				subtexBuffer.put(subtexIndex, getColor(maintexIndex));
-			}
-		}
+//		IIntBuffer subtexBuffer = BufferFactory.allocateIntBuffer(subtexLength);
+//		for (int row = 0; row < height; row++) {
+//			for (int col = 0; col < width; col++) {
+//				int subtexIndex = (row * width) + col;
+//				int maintexIndex = index(x + col, y + row);
+//				subtexBuffer.put(subtexIndex, getColor(maintexIndex));
+//			}
+//		}
 		
 		double north = this.north - ((double)y / (double)this.height) * ((double)this.height * this.yResolution);
 		double south = this.north - ((double)(y + height) / (double)this.height) * ((double)this.height * this.yResolution);

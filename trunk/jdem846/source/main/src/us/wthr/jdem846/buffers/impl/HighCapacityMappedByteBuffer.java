@@ -1,10 +1,10 @@
 package us.wthr.jdem846.buffers.impl;
 
-import java.io.File;
 import java.io.IOException;
 
 import us.wthr.jdem846.buffers.IByteBuffer;
 import us.wthr.jdem846.exception.BufferException;
+import us.wthr.jdem846.io.LocalFile;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -61,7 +61,7 @@ public class HighCapacityMappedByteBuffer implements IByteBuffer
 	
 	protected MMapBufferContainer createMappedByteBuffer(int capacity) throws IOException
 	{
-		File temp = TempFiles.getTemporaryFile("jdem-mmap");
+		LocalFile temp = TempFiles.getTemporaryFile("jdem-mmap");
 		MMapBufferContainer mmap = new MMapBufferContainer(temp, capacity);
 		return mmap;
 	}

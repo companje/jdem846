@@ -2,6 +2,7 @@ package us.wthr.jdem846ui.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
+import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 
 import us.wthr.jdem846.logging.Log;
@@ -27,6 +28,13 @@ public class GeneralPreferencesPage extends BasicPreferencesPage
 		
 		addField(new BooleanFieldEditor("us.wthr.jdem846.general.ui.console.limitOuput", "Limit Console", getFieldEditorParent()));
 		addField(new IntegerFieldEditor("us.wthr.jdem846.general.ui.console.bufferSize", "Max Console Length", getFieldEditorParent()));
+		
+		addField(new DirectoryFieldEditor("us.wthr.jdem846.general.temp", "Temporary File Location", getFieldEditorParent()));
+		//us.wthr.jdem846.general.temp
+		
+		//
+		
+		
 		
 		//this.getApplyButton().setEnabled(false);
 //		addField(new DirectoryFieldEditor("PATH", "&Directory preference:",

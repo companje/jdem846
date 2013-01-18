@@ -1,5 +1,6 @@
 package us.wthr.jdem846ui;
 
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
@@ -53,7 +54,11 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public void postStartup() {
 		super.postStartup();
-		//ModelPreviewChangeObserver.getInstance().update(true, true);
+		
+		PreferenceManager pm = PlatformUI.getWorkbench().getPreferenceManager( );
+		pm.remove("org.eclipse.ui.preferencePages.Workbench");
+		pm.remove("org.eclipse.help.ui.browsersPreferencePage");
+
 	}
 
 	public String getInitialWindowPerspectiveId() {
