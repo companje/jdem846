@@ -74,7 +74,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl.getGL().glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
 
 		openGl.getGL().glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-
+		//openGl.getGL().glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following renderer initialization");
 		}

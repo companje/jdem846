@@ -53,6 +53,8 @@ public class GlobalOptionModel implements OptionModel
 
 	private int numberOfThreads = 1;
 
+	private boolean promptToSaveModelGrid = false;
+	
 	private boolean useDiskCachedModelGrid = false;
 	private boolean disposeGridOnComplete = true;
 	private boolean createJdemElevationModel = true;
@@ -512,6 +514,23 @@ public class GlobalOptionModel implements OptionModel
 	{
 		this.numberOfThreads = numberOfThreads;
 	}
+	
+	
+	
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.promptToSaveModelGrid"
+			, label = "Prompt To Save Model Grid"
+			, tooltip = ""
+			, visible = true)
+	@Order(27)
+	public boolean getPromptToSaveModelGrid() 
+	{
+		return promptToSaveModelGrid;
+	}
+
+	public void setPromptToSaveModelGrid(boolean promptToSaveModelGrid) 
+	{
+		this.promptToSaveModelGrid = promptToSaveModelGrid;
+	}
 
 	public boolean getDisposeGridOnComplete()
 	{
@@ -596,6 +615,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.numberOfThreads = this.numberOfThreads;
 		copy.fieldOfView = this.fieldOfView;
 		copy.eyeDistance = this.eyeDistance;
+		copy.promptToSaveModelGrid = this.promptToSaveModelGrid;
 		return copy;
 	}
 

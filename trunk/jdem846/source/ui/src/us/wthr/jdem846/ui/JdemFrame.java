@@ -52,6 +52,9 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectMarshall;
 import us.wthr.jdem846.project.ProjectTypeEnum;
+import us.wthr.jdem846.prompt.FilePathPrompt;
+import us.wthr.jdem846.prompt.FilePathPromptCallback;
+import us.wthr.jdem846.prompt.FilePathPromptMode;
 import us.wthr.jdem846.ui.RecentProjectTracker.ProjectListListener;
 import us.wthr.jdem846.ui.TopButtonBar.ButtonClickedListener;
 import us.wthr.jdem846.ui.base.FileChooser;
@@ -252,6 +255,35 @@ public class JdemFrame extends Frame
 		};
 		Timer timer = new Timer();
 		timer.schedule(task, 500);
+		
+		
+		FilePathPrompt.setFilePathPromptCallback(new FilePathPromptCallback() {
+			@Override
+			public String prompt(FilePathPromptMode mode, String previous) {
+				
+				FileChooser chooser = new FileChooser();
+				//FileNameExtensionFilter filter = new FileNameExtensionFilter(I18N.get("us.wthr.jdem846.ui.projectFormat.generic.name"), "jdemprj", "jdemimg");
+				//chooser.setFileFilter(filter);
+				chooser.setMultiSelectionEnabled(false);
+			    int returnVal = JFileChooser.CANCEL_OPTION; 
+			    
+			    if (mode == FilePathPromptMode.OPEN) {
+			    	returnVal = chooser.showOpenDialog(JdemFrame.instance);
+			    } else {
+			    	returnVal = chooser.showSaveDialog(JdemFrame.instance);
+			    }
+			    
+			    String filePath = null;
+			    if(returnVal == JFileChooser.APPROVE_OPTION) {
+			    	File selectedFile = chooser.getSelectedFile();
+			    	filePath = selectedFile.getAbsolutePath();
+			    }
+				
+			    
+			    return filePath;
+			}
+		});
+		
 		
 		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.ready"));
 		
