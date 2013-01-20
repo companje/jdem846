@@ -28,6 +28,9 @@ import us.wthr.jdem846.model.processing.GridProcessMethodStack;
 import us.wthr.jdem846.modelgrid.IFillControlledModelGrid;
 import us.wthr.jdem846.modelgrid.IModelGrid;
 import us.wthr.jdem846.modelgrid.ModelGridFactory;
+import us.wthr.jdem846.modelgrid.ModelGridWriter;
+import us.wthr.jdem846.prompt.FilePathPrompt;
+import us.wthr.jdem846.prompt.FilePathPromptMode;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ProcessInterruptListener;
@@ -399,6 +402,18 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		}
 		
 		this.modelGrid.setCompleted(true);
+		if (globalOptionModel.getPromptToSaveModelGrid()) {
+			
+			String saveTo = FilePathPrompt.prompt(FilePathPromptMode.SAVE, null);
+			if (saveTo != null) {
+				try {
+					ModelGridWriter.write(saveTo, innerModelGrid);
+				} catch (Exception ex) {
+					log.error("Error writing model grid to file: " + ex.getMessage(), ex);
+				}
+			}
+		}
+		
 //		try {
 //			ModelGridWriter.write("C:\\jdem\\temp\\modelgrid_test.jdemgrid", innerModelGrid);
 //		} catch (IOException ex) {

@@ -21,6 +21,7 @@ import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.graphics.Texture;
 import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -460,6 +461,12 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 	public double getLongitudeResolution()
 	{
 		return longitudeResolution;
+	}
+	
+	public Texture getAsTexture()
+	{
+		Texture tex = new Texture(width, height, north, south, east, west, rasterBuffer);
+		return tex;
 	}
 
 	/**

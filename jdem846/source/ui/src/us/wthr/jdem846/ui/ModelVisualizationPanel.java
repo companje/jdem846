@@ -592,6 +592,9 @@ public class ModelVisualizationPanel extends Panel
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
 		globalOptionModel.setModelQuality(previewModelQuality);
 		globalOptionModel.setTextureQuality(previewTextureQuality);
+		
+		globalOptionModel.setPromptToSaveModelGrid(false);
+		
 		//longitudeSlices = this.minPreviewSlices + (previewQuality * (this.maxPreviewSlices - this.minPreviewSlices));
 		//latitudeSlices = longitudeSlices;
 		
