@@ -30,6 +30,7 @@ public class AbstractTestMain
 		bootstrapSystemProperties();
 		
 		JDem846Properties.initializeApplicationProperties();
+		JDem846Properties.initializeUserProperties();
 		
 		@SuppressWarnings("unused")
 		Log log = Logging.getLog(AbstractTestMain.class);
