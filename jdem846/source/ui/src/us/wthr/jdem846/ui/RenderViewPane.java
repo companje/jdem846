@@ -27,6 +27,8 @@ import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.ComponentException;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.export.ExportCompletedListener;
+import us.wthr.jdem846.export.ModelImageExporter;
 import us.wthr.jdem846.gis.Coordinate;
 import us.wthr.jdem846.gis.CoordinateTypeEnum;
 import us.wthr.jdem846.i18n.I18N;
@@ -698,18 +700,37 @@ public class RenderViewPane extends Panel
 	
 	protected void saveTo(String path) 
 	{
-		String extension = path.substring(path.lastIndexOf("."));
-		if (extension == null) {
-			extension = ".jdemimg";
-			path += extension;
-		}
+		ModelImageExporter.exportModelImage(jdemElevationModel, path, new ExportCompletedListener() {
+			@Override
+			public void onSaveSuccessful()
+			{
+				JOptionPane.showMessageDialog(getRootPane(),
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveSuccess.message"),
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveSuccess.title"),
+					    JOptionPane.INFORMATION_MESSAGE);
+			}
+			
+			@Override
+			public void onSaveFailed(Exception ex)
+			{
+				JOptionPane.showMessageDialog(getRootPane(),
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveFailed.message") + ": " + ex.getMessage(),
+					    I18N.get("us.wthr.jdem846.ui.outputImageViewPanel.saveFailed.title"),
+					    JOptionPane.ERROR_MESSAGE);
+			}
+		});
+		//String extension = path.substring(path.lastIndexOf("."));
+		//if (extension == null) {
+		//	extension = ".jdemimg";
+		//	path += extension;
+		//}
 		
-		if (extension.toLowerCase().equals(".jdemimg")) {
-			saveDemImageTo(path);
-		} else {
-			saveImageTo(path);
-		}
-		
+		//if (extension.toLowerCase().equals(".jdemimg")) {
+		//	saveDemImageTo(path);
+		//} else {
+		//	saveImageTo(path);
+		//}
+		//
 	}
 	
 	protected void saveDemImageTo(String path) 

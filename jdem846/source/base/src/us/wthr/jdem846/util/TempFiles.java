@@ -116,33 +116,49 @@ public class TempFiles
 		}
 	}
 	
+	public static void cleanUpTemporaryFiles()
+	{
+		cleanUpTemporaryFiles(false);
+	}
+	
 	public static void cleanUpTemporaryFiles(boolean wait)
 	{
+		cleanUpTemporaryFiles(true, wait);
+	}
+	
+	public static void cleanUpTemporaryFiles(boolean thisInstance, boolean wait)
+	{
+		log.info("Forcing garbage collection");
+		System.gc();
+		
 		File tempRoot = new File(getTemporaryRoot());
 		log.info("Cleaning up temporary files in " + tempRoot.getAbsolutePath());
+		
+		final String startsWith = (thisInstance) ? ("jdem." + InstanceIdentifier.getInstanceId() + ".") : ("jdem.");
 		
 		File files[] = tempRoot.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name)
 			{
-				return name.startsWith("jdem." + InstanceIdentifier.getInstanceId() + ".");
+				return name.startsWith(startsWith);
 			}
 		});
 		
 		for (File file : files) {
 			releaseFile(new LocalFile(file));
 		}
-		//	if (file.exists()) {
-		//		file.deleteOnExit();
-		//		log.info("Cleaning file: " + file.getAbsolutePath());
-		//	}
-		//}
-		
 		
 		long waitForAllToBeDeletedMillis = 20000;
 		long start = System.currentTimeMillis();
 		
 		while(getReleaseFilesCount() > 0 && (System.currentTimeMillis() - start < waitForAllToBeDeletedMillis)) {
 			cleanUpReleasedFiles();
+		}
+		
+		if (getReleaseFilesCount() > 0) {
+			for (File file : cleanUpList) {
+				file.deleteOnExit();
+				log.warn("Giving up on temporary file: " + file.getAbsolutePath());
+			}
 		}
 		
 		
