@@ -14,5 +14,12 @@ public class StandardFileTypes
 
 	public static final String[] GENERIC_DATA_FILE_EXTENSIONS = { "*.flt;*bil;*.png;*.jpg;*.shp;*.jdemgrid", "*" };
 	public static final String[] GENERIC_DATA_FILE_EXTENSIONS_WIN = { "*.flt;*.bil;*.png;*.jpg;*.shp;*.jdemgrid", "*.*" };
+	
+	
+	
+	public static final String[] EXPORT_DATA_FILE_TYPES = { "jDem Image Model Files", "PNG", "All Files (*)" };
+	public static final String[] EXPORT_DATA_FILE_TYPES_WIN = { "jDem Image Model Files", "PNG", "All Files (*.*)" };
 
+	public static final String[] EXPORT_DATA_FILE_EXTENSIONS = { "*.jdemimg", "*.png", "*" };
+	public static final String[] EXPORT_DATA_FILE_EXTENSIONS_WIN = { "*.jdemimg", "*.png", "*.*" };
 }

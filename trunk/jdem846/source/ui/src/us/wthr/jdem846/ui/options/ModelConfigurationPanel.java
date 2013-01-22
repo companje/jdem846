@@ -36,6 +36,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 	private ProcessTypeConfigurationPanel coloringConfiguration;
 	private ProcessTypeConfigurationPanel shadingConfiguration;
 	private ProcessTypeConfigurationPanel renderConfiguration;
+	private ProcessTypeConfigurationPanel lightingConfiguration;
 	private DynamicOptionsPanel globalOptionsPanel;
 
 	private GlobalOptionModel globalOptionModel;
@@ -73,12 +74,13 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		String defaultColoringProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.coloringProcessor.default");
 		String defaultShadingProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.shadingProcessor.default");
 		String defaultRenderProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.renderProcessor.default");
-
+		String defaultLightingProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.lightingProcessor.default");
+		
 		globalOptionsPanel = new DynamicOptionsPanel(globalOptionModelContainer);
 		coloringConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.COLORING, defaultColoringProcessor, optionModelList);
 		shadingConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.SHADING, defaultShadingProcessor, optionModelList);
 		renderConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.RENDER, defaultRenderProcessor, optionModelList);
-
+		lightingConfiguration = new ProcessTypeConfigurationPanel(GridProcessingTypesEnum.LIGHTING, defaultLightingProcessor, optionModelList);
 		// Add Listeners
 		// OptionModelChangeListener propertyChangeListener = new
 		// OptionModelChangeListener() {
@@ -91,7 +93,8 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		coloringConfiguration.addModelConfigurationChangeListener(this);
 		shadingConfiguration.addModelConfigurationChangeListener(this);
 		renderConfiguration.addModelConfigurationChangeListener(this);
-
+		lightingConfiguration.addModelConfigurationChangeListener(this);
+		
 		ScrollPane globalOptionsScroll = new ScrollPane(globalOptionsPanel);
 		globalOptionsScroll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -100,8 +103,9 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		tabPane.add("General", globalOptionsScroll);
 		tabPane.add("Coloring", coloringConfiguration);
 		tabPane.add("Shading", shadingConfiguration);
-		tabPane.add("Rendering", renderConfiguration);
-
+		//tabPane.add("Rendering", renderConfiguration);
+		tabPane.add("Lighting", lightingConfiguration);
+		
 		setLayout(new BorderLayout());
 		add(tabPane, BorderLayout.CENTER);
 
@@ -134,6 +138,9 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		String renderProcessId = renderConfiguration.getCurrentProcessId();
 		OptionModel renderOptionModel = renderConfiguration.getCurrentOptionModel();
 
+		String lightingProcessId = lightingConfiguration.getCurrentProcessId();
+		OptionModel lightingOptionModel = lightingConfiguration.getCurrentOptionModel();
+		
 		// modelProcessManifest.addProcessor(defaultLoadProcessor, new
 		// GridLoadOptionModel());
 		// modelProcessManifest.addProcessor(defaultSurfaceNormalsProcessor, new
@@ -141,7 +148,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 
 		modelProcessManifest.addWorker(coloringProcessId, coloringOptionModel);
 		modelProcessManifest.addWorker(shadingProcessId, shadingOptionModel);
-
+		modelProcessManifest.addWorker(lightingProcessId, lightingOptionModel);
 		// modelProcessManifest.addWorker(defaultShapesProcessor, new
 		// ShapeOptionModel());
 		// modelProcessManifest.addWorker(renderProcessId, renderOptionModel);
@@ -153,6 +160,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 	{
 		coloringConfiguration.refreshUI();
 		shadingConfiguration.refreshUI();
+		lightingConfiguration.refreshUI();
 		// renderConfiguration.refreshUI();
 		globalOptionsPanel.refreshUI();
 	}
@@ -161,6 +169,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 	{
 		coloringConfiguration.setControlErrorDisplayed(id, display, message);
 		shadingConfiguration.setControlErrorDisplayed(id, display, message);
+		lightingConfiguration.setControlErrorDisplayed(id, display, message);
 		// renderConfiguration.setControlErrorDisplayed(id, display, message);
 		globalOptionsPanel.setControlErrorDisplayed(id, display, message);
 	}
@@ -176,6 +185,7 @@ public class ModelConfigurationPanel extends Panel implements OptionModelChangeL
 		containers.add(globalOptionModelContainer);
 		containers.add(coloringConfiguration.getCurrentOptionModelContainer());
 		containers.add(shadingConfiguration.getCurrentOptionModelContainer());
+		containers.add(lightingConfiguration.getCurrentOptionModelContainer());
 		// containers.add(renderConfiguration.getCurrentOptionModelContainer());
 
 		List<OptionValidationException> validationExceptions = new LinkedList<OptionValidationException>();

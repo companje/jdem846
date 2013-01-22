@@ -25,7 +25,11 @@ import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.scripting.ScriptingContext;
 import us.wthr.jdem846.util.ColorUtil;
 
-@GridProcessing(id = "us.wthr.jdem846.model.processing.coloring.HillshadingProcessor", name = "Hillshading Process", type = GridProcessingTypesEnum.SHADING, optionModel = HillshadingOptionModel.class, enabled = true)
+@GridProcessing(id = "us.wthr.jdem846.model.processing.coloring.HillshadingProcessor"
+				, name = "Hillshading Process"
+				, type = GridProcessingTypesEnum.SHADING
+				, optionModel = HillshadingOptionModel.class
+				, enabled = true)
 public class HillshadingProcessor extends GridProcessor
 {
 	private static Log log = Logging.getLog(HillshadingProcessor.class);
@@ -74,7 +78,7 @@ public class HillshadingProcessor extends GridProcessor
 		HillshadingOptionModel optionModel = (HillshadingOptionModel) this.getOptionModel();
 		GlobalOptionModel globalOptionModel = this.getGlobalOptionModel();
 
-		lightingEnabled = optionModel.isLightingEnabled();
+		lightingEnabled = false;//optionModel.isLightingEnabled();
 
 		relativeLightIntensity = optionModel.getLightIntensity();
 		relativeDarkIntensity = optionModel.getDarkIntensity();
@@ -136,8 +140,8 @@ public class HillshadingProcessor extends GridProcessor
 		long lightOnDate = optionModel.getSunlightDate().getDate();
 		lightOnDate += lightOnTime;
 
-		sunlightPosition = new SunlightPositioning(modelContext, modelGrid, lightOnDate, viewPerspective);
-		sunlightPosition.getLightPositionByCoordinates(0.0, 0.0, sunsource);
+		sunlightPosition = new SunlightPositioning(lightOnDate);
+		sunlightPosition.getLightPosition(sunsource);
 
 		rayTraceShadows = optionModel.isRayTraceShadows();
 		shadowIntensity = optionModel.getShadowIntensity();

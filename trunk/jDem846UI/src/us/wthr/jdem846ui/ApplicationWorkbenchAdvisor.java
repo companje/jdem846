@@ -1,6 +1,8 @@
 package us.wthr.jdem846ui;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
@@ -8,7 +10,9 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
+import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846ui.observers.OptionValidationChangeObserver;
+import us.wthr.jdem846ui.observers.RenderedModelSelectionObserver;
 import us.wthr.jdem846ui.preferences.GeneralPreferencesPage;
 import us.wthr.jdem846ui.project.ProjectContext;
 import us.wthr.jdem846ui.project.ProjectException;
@@ -48,9 +52,19 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 		
 		OptionValidationChangeObserver.getInstance();
+		RenderedModelSelectionObserver.getInstance();
 		//IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
-
+	
+	public boolean preShutdown(){  
+		  
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();  
+		String dialogBoxTitle = "Confirm Exit";  
+		String question = "Exit " + JDem846Properties.getProperty("us.wthr.jdem846.applicationName") + "?";  
+		return MessageDialog.openQuestion(shell, dialogBoxTitle, question);  
+		  
+	}  
+	
 	@Override
 	public void postStartup() {
 		super.postStartup();

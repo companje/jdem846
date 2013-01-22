@@ -6,5 +6,6 @@ public enum GridProcessingTypesEnum
 	COLORING,
 	SHADING,
 	SHAPES,
-	RENDER
+	RENDER,
+	LIGHTING
 }
