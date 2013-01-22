@@ -12,6 +12,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import us.wthr.jdem846.ElevationModel;
@@ -29,6 +31,7 @@ import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846ui.project.IconEnum;
 import us.wthr.jdem846ui.project.ProjectChangeAdapter;
 import us.wthr.jdem846ui.project.ProjectContext;
+import us.wthr.jdem846ui.views.models.RenderedModelDisplayView;
 import us.wthr.jdem846ui.views.tree.TreeObject;
 import us.wthr.jdem846ui.views.tree.ViewContentProvider;
 
@@ -55,25 +58,33 @@ public class DataView extends ViewPart
 
 	public static void addTreeSelectionListener(TreeSelectionListener l)
 	{
-		DataView.treeSelectionListeners.add(l);
+		synchronized(treeSelectionListeners) {
+			DataView.treeSelectionListeners.add(l);
+		}
 	}
 
 	public static boolean removeTreeSelectionListener(TreeSelectionListener l)
 	{
-		return DataView.treeSelectionListeners.remove(l);
+		synchronized(treeSelectionListeners) {
+			return DataView.treeSelectionListeners.remove(l);
+		}
 	}
 
 	protected void fireOnSourceDataSelectionChanged(InputSourceData selectedData)
 	{
-		for (TreeSelectionListener listener : DataView.treeSelectionListeners) {
-			listener.onSourceDataSelectionChanged(selectedData);
+		synchronized(treeSelectionListeners) {
+			for (TreeSelectionListener listener : DataView.treeSelectionListeners) {
+				listener.onSourceDataSelectionChanged(selectedData);
+			}
 		}
 	}
 
 	protected void fireOnRenderedModelSelectionChanged(ElevationModel elevationModel)
 	{
-		for (TreeSelectionListener listener : DataView.treeSelectionListeners) {
-			listener.onRenderedModelSelectionChanged(elevationModel);
+		synchronized(treeSelectionListeners) {
+			for (TreeSelectionListener listener : DataView.treeSelectionListeners) {
+				listener.onRenderedModelSelectionChanged(elevationModel);
+			}
 		}
 	}
 
@@ -202,8 +213,17 @@ public class DataView extends ViewPart
 							} 
 							
 							if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof ElevationModel) {
+								
+								try {
+									PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(RenderedModelDisplayView.ID);
+								} catch (PartInitException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								
 								fireOnRenderedModelSelectionChanged((ElevationModel)((DataTreeObject) treeObject).getData());
 								selectedRenderedModel = true;
+								
 							} 
 	
 						}

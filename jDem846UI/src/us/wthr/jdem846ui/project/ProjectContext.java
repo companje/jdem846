@@ -12,6 +12,7 @@ import us.wthr.jdem846.exception.ModelContextException;
 import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.image.ImageDataContext;
 import us.wthr.jdem846.image.SimpleGeoImage;
+import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.GlobalOptionModel;
@@ -26,6 +27,7 @@ import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
+import us.wthr.jdem846.modelgrid.IModelGrid;
 import us.wthr.jdem846.modelgrid.ModelGridContext;
 import us.wthr.jdem846.project.ProcessMarshall;
 import us.wthr.jdem846.project.ProjectFiles;
@@ -326,6 +328,10 @@ public class ProjectContext
 
 	}
 
+	
+	
+	
+	
 	public void addShapeDataset(String filePath, String shapeDataDefinitionId) throws ProjectException
 	{
 		addShapeDataset(filePath, shapeDataDefinitionId, true);
@@ -374,6 +380,137 @@ public class ProjectContext
 		}
 
 	}
+	
+	public void removeSourceData(InputSourceData dataSource) throws DataSourceException
+	{
+		removeSourceData(dataSource, true);
+	}
+	
+	public void removeSourceData(InputSourceData dataSource, boolean triggerModelChanged) throws DataSourceException
+	{
+		if (dataSource == null) {
+			return;
+		}
+		
+		if (dataSource instanceof RasterData) {
+			removeElevationData((RasterData)dataSource, triggerModelChanged);
+		} else if (dataSource instanceof ShapeFileRequest) {
+			removeShapeData((ShapeFileRequest)dataSource, triggerModelChanged);
+		} else if (dataSource instanceof SimpleGeoImage) {
+			removeImageData((SimpleGeoImage)dataSource, triggerModelChanged);
+		} else if (dataSource instanceof IModelGrid) {
+			removeModelGridData(triggerModelChanged);
+		}
+	}
+	
+	
+	public void removeModelGridData() throws DataSourceException
+	{
+		removeModelGridData(true);
+	}
+	
+	public void removeModelGridData(boolean triggerModelChanged) throws DataSourceException
+	{
+		modelGridContext.unloadModelGrid();
+		
+		if (triggerModelChanged) {
+			projectChangeBroker.fireOnDataAdded(true);
+		}
+	}
+	
+	public void removeElevationData(int index) throws DataSourceException
+	{
+		removeElevationData(index, true);
+	}
+	
+	public void removeElevationData(int index, boolean triggerModelChanged) throws DataSourceException
+	{
+		rasterDataContext.removeRasterData(index);
+		
+		if (triggerModelChanged) {
+			projectChangeBroker.fireOnDataAdded(true);
+		}
+	}
+	
+	public void removeElevationData(RasterData rasterData) throws DataSourceException
+	{
+		removeElevationData(rasterData, true);
+	}
+	
+	public void removeElevationData(RasterData rasterData, boolean triggerModelChanged) throws DataSourceException
+	{
+		rasterDataContext.removeRasterData(rasterData);
+		
+		if (triggerModelChanged) {
+			projectChangeBroker.fireOnDataAdded(true);
+		}
+	}
+
+	public void removeShapeData(int index) throws DataSourceException
+	{
+		removeShapeData(index, true);
+	}
+	
+	public void removeShapeData(int index, boolean triggerModelChanged) throws DataSourceException
+	{
+		shapeDataContext.removeShapeFile(index);
+		
+		if (triggerModelChanged) {
+			projectChangeBroker.fireOnDataAdded(true);
+		}
+	}
+	
+	public void removeShapeData(ShapeFileRequest shapeFileRequest) throws DataSourceException
+	{
+		removeShapeData(shapeFileRequest, true);
+	}
+	
+	public void removeShapeData(ShapeFileRequest shapeFileRequest, boolean triggerModelChanged) throws DataSourceException
+	{
+		shapeDataContext.removeShapeFile(shapeFileRequest);
+		
+		if (triggerModelChanged) {
+			projectChangeBroker.fireOnDataAdded(true);
+		}
+	}
+
+	
+	public void removeImageData(int index) throws DataSourceException
+	{
+		removeImageData(index, true);
+	}
+	
+	public void removeImageData(int index, boolean triggerModelChanged) throws DataSourceException
+	{
+		SimpleGeoImage image = imageDataContext.removeImage(index);
+		if (image.isLoaded()) {
+			image.unload();
+		}
+
+		if (triggerModelChanged) {
+			projectChangeBroker.fireOnDataAdded(true);
+		}
+	}
+	
+	
+	public void removeImageData(SimpleGeoImage simpleGeoImage) throws DataSourceException
+	{
+		removeImageData(simpleGeoImage, true);
+	}
+	
+	public void removeImageData(SimpleGeoImage simpleGeoImage, boolean triggerModelChanged) throws DataSourceException
+	{
+		imageDataContext.removeImage(simpleGeoImage);
+		
+		if (simpleGeoImage.isLoaded()) {
+			simpleGeoImage.unload();
+		}
+
+		if (triggerModelChanged) {
+			projectChangeBroker.fireOnDataAdded(true);
+		}
+	}
+	
 
 	public ProjectChangeBroker getProjectChangeBroker()
 	{

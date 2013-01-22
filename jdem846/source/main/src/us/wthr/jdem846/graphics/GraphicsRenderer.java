@@ -51,6 +51,15 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 		
 	}
 	
+	public void setLighting(Vector position, double emission, double ambiant, double diffuse, double specular, double shininess)
+	{
+		
+	}
+	
+	public void normal(Vector normal)
+	{
+		
+	}
 	
 	public int getMaximumTextureWidth()
 	{

@@ -171,10 +171,10 @@ public class PreviewView extends ViewPart
 				}
 
 			}
-
-			image = new Image(canvas.getDisplay(), imageData);
-
-			canvas.redraw();
+			if (!canvas.isDisposed()) {
+				image = new Image(canvas.getDisplay(), imageData);
+				canvas.redraw();
+			}
 		}
 	}
 

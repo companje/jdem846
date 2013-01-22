@@ -1,6 +1,8 @@
 package us.wthr.jdem846.graphics;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.gis.planets.Planet;
+import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -25,6 +27,9 @@ public class TextureRenderer
 	
 	protected ElevationFetchCallback elevationFetchCallback;
 	
+	protected NormalsCalculator normalCalculator;
+	protected Vector normal = new Vector();
+	
 	public TextureRenderer(Texture texture, IRenderer renderer, View view, double modelLatitudeResolution, double modelLongitudeResolution, GlobalOptionModel globalOptionModel, ElevationFetchCallback elevationFetchCallback)
 	{
 		this.texture = texture;
@@ -34,6 +39,13 @@ public class TextureRenderer
 		this.modelLongitudeResolution = modelLongitudeResolution;
 		this.globalOptionModel = globalOptionModel;
 		this.elevationFetchCallback = elevationFetchCallback;
+		
+		Planet planet = PlanetsRegistry.getPlanet(globalOptionModel.getPlanet());
+		if (planet == null) {
+			planet = PlanetsRegistry.getPlanet("earth");
+		}
+		
+		normalCalculator = new NormalsCalculator(planet, modelLatitudeResolution, modelLongitudeResolution, elevationFetchCallback);
 	}
 	
 	
@@ -173,6 +185,11 @@ public class TextureRenderer
 			front = 1.0;
 		}
 		
+		
+		normalCalculator.calculateNormalSpherical(latitude, longitude, normal);
+		//ViewPerspective view = this.globalOptionModel.getViewAngle();
+		//Vectors.rotate(view.getRotateX(), view.getRotateY(), view.getRotateZ(), normal, Vectors.ZYX);
+		this.renderer.normal(normal);
 		
 		this.renderer.texCoord(left, front);
 		this.renderer.vertex(pointVector);

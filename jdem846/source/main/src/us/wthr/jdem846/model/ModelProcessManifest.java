@@ -116,7 +116,38 @@ public class ModelProcessManifest
 	{
 		return workerList.get(index);
 	}
+	
+	public ModelProcessContainer getProcessContainerById(String id)
+	{
+		for (ModelProcessContainer container : workerList) {
+			if (container.getProcessId().equals(id)) {
+				return container;
+			}
+		}
+		return null;
+	}
+	
+	public IGridWorker getGridWorkerById(String id)
+	{
+		for (ModelProcessContainer container : workerList) {
+			if (container.getProcessId().equals(id)) {
+				return container.getGridWorker();
+			}
+		}
+		return null;
+	}
 
+	public OptionModel getOptionModelByProcessId(String id)
+	{
+		for (ModelProcessContainer container : workerList) {
+			if (container.getProcessId().equals(id)) {
+				return container.getOptionModel();
+			}
+		}
+		return null;
+	}
+	
+	
 	public GlobalOptionModel getGlobalOptionModel()
 	{
 		return (GlobalOptionModel) this.globalOptionModelContainer.getOptionModel();

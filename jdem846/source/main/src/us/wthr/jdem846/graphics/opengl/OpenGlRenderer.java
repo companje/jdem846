@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
+import javax.media.opengl.fixedfunc.GLLightingFunc;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.GraphicsRenderException;
@@ -51,30 +52,29 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl = new OpenGlOffscreenRenderContext(width, height);
 		openGl.makeGlContextCurrent();
 
-		
 		boolean multisampling = JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.opengl.multisampling.enabled");
 		int samples = JDem846Properties.getIntProperty("us.wthr.jdem846.rendering.opengl.multisampling.samples");
 
-
 		openGl.getGL().glEnable(GL.GL_BLEND);
 		openGl.getGL().glEnable(GL.GL_TEXTURE_2D);
-		
+
 		if (multisampling) {
 			openGl.getGL().glEnable(GL.GL_MULTISAMPLE);
 		}
-		
+
 		openGl.getGL2().glShadeModel(GL2.GL_SMOOTH);
 		openGl.getGL().glEnable(GL2.GL_POLYGON_SMOOTH);
 
 		openGl.getGL().glEnable(GL.GL_DEPTH_TEST);
-		openGl.getGL().glDepthFunc(GL.GL_LEQUAL);
+		openGl.getGL().glDepthFunc(GL.GL_LESS);
+		// openGl.getGL().glDepthFunc(GL.GL_LEQUAL);
 
 		openGl.getGL().glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 		openGl.getGL().glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
 		openGl.getGL().glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
 
 		openGl.getGL().glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-		//openGl.getGL().glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
+		// openGl.getGL().glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following renderer initialization");
 		}
@@ -90,29 +90,70 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		}
 
 	}
-	
+
+	@Override
+	public void setLighting(Vector lightPosition, double emission, double ambient, double diffuse, double specular, double shininess)
+	{
+		// PoC Testing: OpenGL Lighting:
+
+		float lightPos[] = { (float) lightPosition.x, (float) lightPosition.y, (float) lightPosition.z, 1.0f };
+
+		openGl.getGL2().glEnable(GLLightingFunc.GL_LIGHTING);
+		openGl.getGL2().glEnable(GLLightingFunc.GL_LIGHT0);
+
+		openGl.getGL2().glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_POSITION, lightPos, 0);
+
+		float lmodel_ambient[] = { (float)ambient, (float)ambient, (float)ambient, 1.0f };
+		float local_view[] = { 0.0f };
+
+		openGl.getGL2().glEnable(GL.GL_DEPTH_TEST);
+		openGl.getGL2().glDepthFunc(GL.GL_LESS);
+
+		openGl.getGL2().glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, lmodel_ambient, 0);
+		openGl.getGL2().glLightModelfv(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, local_view, 0);
+
+		float ambientLight[] = { (float)ambient, (float)ambient, (float)ambient, 1.0f };
+		float diffuseLight[] = { (float)diffuse, (float)diffuse, (float)diffuse, 1.0f };
+		float specularLight[] = { (float)specular, (float)specular, (float)specular, 1.0f };
+		float emissionLight[] = { (float)emission, (float)emission, (float)emission, 1.0f };
+		float shininessLight[] = { (float)shininess };
+
+		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, ambientLight, 0);
+		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, diffuseLight, 0);
+		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, specularLight, 0);
+		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, shininessLight, 0);
+		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_EMISSION, emissionLight, 0);
+
+	}
+
+	public void normal(Vector normal)
+	{
+		double[] dv = { normal.x, normal.y, normal.z };
+		openGl.getGL2().glNormal3dv(dv, 0);
+	}
+
 	protected int getMaximumSystemTextureSize()
 	{
 		return JDem846Properties.getIntProperty("us.wthr.jdem846.rendering.maxTextureSize");
 	}
-	
+
 	protected int getMaximumTextureSize()
 	{
-		int[] list = {0};
+		int[] list = { 0 };
 		openGl.getGL().glGetIntegerv(GL.GL_MAX_TEXTURE_SIZE, list, 0);
 		return list[0];
 	}
-	
+
 	public int getMaximumTextureWidth()
 	{
 		return (int) MathExt.min(getMaximumSystemTextureSize(), getMaximumTextureSize());
 	}
-	
+
 	public int getMaximumTextureHeight()
 	{
 		return (int) MathExt.min(getMaximumSystemTextureSize(), getMaximumTextureSize());
 	}
-	
+
 	@Override
 	public void pushMatrix()
 	{
@@ -194,12 +235,11 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 			log.error("GL Context in error condition following bind of texture");
 		}
 
-		//ByteBuffer byteBuffer = ByteBuffer.allocate(tex.length * 4);
-		//IntBuffer intBuffer = byteBuffer.asIntBuffer();
-		//intBuffer.put(tex);
+		// ByteBuffer byteBuffer = ByteBuffer.allocate(tex.length * 4);
+		// IntBuffer intBuffer = byteBuffer.asIntBuffer();
+		// intBuffer.put(tex);
 
 		openGl.getGL2().glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-
 
 		openGl.getGL2().glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, tex.getWidth(), tex.getHeight(), 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, tex.getAsByteBuffer());
 		if (!this.checkGlContextSane()) {
@@ -327,7 +367,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		}
 
 	}
-	
+
 	@Override
 	public ImageCapture captureImage()
 	{
@@ -344,14 +384,13 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		int length = width * height;
 		int bufferLength = length * 4;
 
-
 		ByteBuffer byteBuffer = ByteBuffer.allocate(bufferLength);
 
 		openGl.getGL().glPixelStorei(GL.GL_PACK_ALIGNMENT, 4);
 		openGl.getGL().glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, byteBuffer);
 
 		ImageCapture image = new ImageCapture(width, height, 0x0);
-		
+
 		int i = 0; // Index into target int[]
 		for (int row = 0; row < height; row++) {
 
@@ -373,7 +412,6 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		return image;
 	}
 
-	
 	public FrameBuffer getFrameBuffer()
 	{
 
@@ -389,7 +427,6 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 
 		int length = width * height;
 		int bufferLength = length * 4;
-
 
 		ByteBuffer byteBuffer = ByteBuffer.allocate(bufferLength);
 
@@ -412,7 +449,6 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 
 				int pixelInt = ColorUtil.rgbaToInt(iR, iG, iB, iA);
 
-
 				frameBuffer.set(col, row, 0.0, pixelInt);
 			}
 		}
@@ -431,8 +467,6 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		}
 	}
 
-	
-	
 	@Override
 	public void dispose()
 	{

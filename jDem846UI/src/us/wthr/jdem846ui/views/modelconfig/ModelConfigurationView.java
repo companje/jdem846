@@ -28,6 +28,7 @@ public class ModelConfigurationView extends ViewPart {
 	
 	private ProcessTypeOptionPageContainer coloringOptionsPageContainer;
 	private ProcessTypeOptionPageContainer shadingOptionsPageContainer;
+	private ProcessTypeOptionPageContainer lightingOptionsPageContainer;
 	
 	private Composite parent;
 	private Composite configComposite;
@@ -73,7 +74,9 @@ public class ModelConfigurationView extends ViewPart {
 		String defaultColoringProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.coloringProcessor.default");
 		String defaultShadingProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.shadingProcessor.default");
 		String defaultRenderProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.renderProcessor.default");
-		
+		String defaultLightingProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.lightingProcessor.default");
+		//lightingOptionsPageContainer
+				
 		TabItem coloringOptionsTabItem = new TabItem(tabFolder, SWT.NONE);
 		coloringOptionsTabItem.setText("Coloring");
 		coloringOptionsPageContainer = new ProcessTypeOptionPageContainer(tabFolder, GridProcessingTypesEnum.COLORING, defaultColoringProcessor);
@@ -97,10 +100,25 @@ public class ModelConfigurationView extends ViewPart {
 			}
 		});
 		
+		
+		TabItem lightingOptionsTabItem = new TabItem(tabFolder, SWT.NONE);
+		lightingOptionsTabItem.setText("Lighting");
+		lightingOptionsPageContainer = new ProcessTypeOptionPageContainer(tabFolder, GridProcessingTypesEnum.LIGHTING, defaultLightingProcessor);
+		lightingOptionsTabItem.setControl(lightingOptionsPageContainer);
+		
+		lightingOptionsPageContainer.addProcessTypeSelectionChangeListener(new ProcessTypeSelectionChangeListener() {
+			public void onProcessTypeSelectionChanged() {
+				onProcessTypeSelectionsChanged();
+			}
+		});
+		
+		//defaultLightingProcessor
+		
 		try {
 			
 			ProjectContext.getInstance().getModelProcessManifest().addWorker(defaultColoringProcessor, ProjectContext.getInstance().getOptionModelContainer(defaultColoringProcessor).getOptionModel());
 			ProjectContext.getInstance().getModelProcessManifest().addWorker(defaultShadingProcessor, ProjectContext.getInstance().getOptionModelContainer(defaultShadingProcessor).getOptionModel());
+			ProjectContext.getInstance().getModelProcessManifest().addWorker(defaultLightingProcessor, ProjectContext.getInstance().getOptionModelContainer(defaultLightingProcessor).getOptionModel());
 		} catch (ProcessContainerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -122,10 +140,12 @@ public class ModelConfigurationView extends ViewPart {
 		
 		String selectedColoringProcessor = coloringOptionsPageContainer.getSelectedProcessType();
 		String selectedShadingProcessor = shadingOptionsPageContainer.getSelectedProcessType();
+		String selectedLightingProcessor = lightingOptionsPageContainer.getSelectedProcessType();
 		
 		try {
 			modelProcessManifest.addWorker(selectedColoringProcessor, ProjectContext.getInstance().getOptionModelContainer(selectedColoringProcessor).getOptionModel());
 			modelProcessManifest.addWorker(selectedShadingProcessor, ProjectContext.getInstance().getOptionModelContainer(selectedShadingProcessor).getOptionModel());
+			modelProcessManifest.addWorker(selectedLightingProcessor, ProjectContext.getInstance().getOptionModelContainer(selectedLightingProcessor).getOptionModel());
 		} catch (ProcessContainerException e) {
 			e.printStackTrace();
 		}

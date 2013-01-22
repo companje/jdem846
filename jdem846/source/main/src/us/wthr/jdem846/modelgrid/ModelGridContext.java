@@ -66,6 +66,14 @@ public class ModelGridContext implements DataContext
 		this.fillControlledModelGrid = fillControlledModelGrid;
 	}
 
+	public void unloadModelGrid() throws DataSourceException
+	{
+		this.modelGrid.dispose();
+		this.modelGrid = null;
+		this.userProvidedModelGridHeader = null;
+		this.gridLoadedFrom = null;
+	}
+	
 	public void importModelGrid(String filePath) throws DataSourceException
 	{
 		this.modelGrid = null;

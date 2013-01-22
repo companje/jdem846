@@ -2,9 +2,10 @@ package us.wthr.jdem846.modelgrid;
 
 import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 
-public interface IModelGrid
+public interface IModelGrid extends InputSourceData
 {
 
 	public IIntBuffer getModelTexture() throws DataSourceException;

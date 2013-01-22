@@ -12,9 +12,12 @@ import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.RgbaColor;
 import us.wthr.jdem846.model.ViewPerspective;
+import us.wthr.jdem846.model.processing.shading.RenderLightingOptionModel;
+import us.wthr.jdem846.model.processing.util.SunlightPositioning;
 import us.wthr.jdem846.modelgrid.IModelGrid;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.util.ColorUtil;
@@ -57,7 +60,11 @@ public class RenderProcess
 		this.renderer = RenderEngineFactory.createRenderer();
 		this.renderer.initialize(globalOptionModel.getWidth(), globalOptionModel.getHeight());
 		
+		
+		
+		
 		this.modelTexture = TextureFactory.createTexture(modelGrid);
+		
 	}
 
 	public void dispose()
@@ -168,6 +175,10 @@ public class RenderProcess
 
 		double radius = this.modelView.radius();
 
+		RenderLightingOptionModel lightingOptionModel = (RenderLightingOptionModel) this.modelContext.getModelProcessManifest().getOptionModelByProcessId("us.wthr.jdem846.model.processing.lighting.RenderLightingProcessor");
+		
+		
+		
 		if (view != null) {
 			this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
 			this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
@@ -176,7 +187,24 @@ public class RenderProcess
 			this.renderer.translate(view.getShiftX() * radius, view.getShiftY() * radius, view.getShiftZ() * radius);
 
 		}
+		
+		if (lightingOptionModel != null && lightingOptionModel.isLightingEnabled()) {
+			long lightOnTime = lightingOptionModel.getSunlightTime().getTime();
+			long lightOnDate = lightingOptionModel.getSunlightDate().getDate();
+			lightOnDate += lightOnTime;
 
+			Vector sunsource = new Vector();
+			SunlightPositioning sunlightPosition = new SunlightPositioning(lightOnDate);
+			sunlightPosition.getLightPosition(sunsource);
+
+			renderer.setLighting(sunsource
+					, lightingOptionModel.getEmmisive()
+					, lightingOptionModel.getAmbient()
+					, lightingOptionModel.getDiffuse()
+					, lightingOptionModel.getSpecular()
+					, lightingOptionModel.getSpotExponent());
+		}
+		
 		this.renderer.pushMatrix();
 		if (this.globalOptionModel.getUseScripting() && this.scriptProxy != null) {
 			try {
