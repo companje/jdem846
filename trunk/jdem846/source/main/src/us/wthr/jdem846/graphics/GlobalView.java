@@ -12,6 +12,7 @@ public class GlobalView extends AbstractView implements View
 	
 	protected double elevScaler = -1;
 	
+	
 	protected double getZoom()
 	{
 		return globalOptionModel.getViewAngle().getZoom();

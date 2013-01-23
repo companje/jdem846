@@ -26,8 +26,7 @@ public class TextureRenderer
 	protected GlobalOptionModel globalOptionModel;
 	
 	protected ElevationFetchCallback elevationFetchCallback;
-	
-	protected NormalsCalculator normalCalculator;
+
 	protected Vector normal = new Vector();
 	
 	public TextureRenderer(Texture texture, IRenderer renderer, View view, double modelLatitudeResolution, double modelLongitudeResolution, GlobalOptionModel globalOptionModel, ElevationFetchCallback elevationFetchCallback)
@@ -55,8 +54,6 @@ public class TextureRenderer
 		if (planet == null) {
 			planet = PlanetsRegistry.getPlanet("earth");
 		}
-		
-		normalCalculator = new NormalsCalculator(planet, modelLatitudeResolution, modelLongitudeResolution, elevationFetchCallback);
 	}
 	
 	
@@ -141,7 +138,7 @@ public class TextureRenderer
 
 			this.renderer.begin(PrimitiveModeEnum.TRIANGLE_STRIP);
 
-			for (double longitude = west; longitude <= east; longitude += modelLongitudeResolution) {
+			for (double longitude = west; longitude < east; longitude += modelLongitudeResolution) {
 				renderPointVertex(latitude, longitude, subTexture);
 				renderPointVertex(latitude - modelLatitudeResolution, longitude, subTexture);
 			}
@@ -196,8 +193,8 @@ public class TextureRenderer
 			front = 1.0;
 		}
 		
-		
-		normalCalculator.calculateNormalSpherical(latitude, longitude, normal);
+		view.getNormal(latitude, longitude, normal);
+		//normalCalculator.calculateNormalSpherical(latitude, longitude, normal);
 		//ViewPerspective view = this.globalOptionModel.getViewAngle();
 		//Vectors.rotate(view.getRotateX(), view.getRotateY(), view.getRotateZ(), normal, Vectors.ZYX);
 		this.renderer.normal(normal);

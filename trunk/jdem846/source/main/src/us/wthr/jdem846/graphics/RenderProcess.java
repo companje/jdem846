@@ -134,11 +134,11 @@ public class RenderProcess
 			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
 			this.renderer.loadIdentity();
 		} else if (PerspectiveTypeEnum.getPerspectiveTypeFromIdentifier(this.globalOptionModel.getPerspectiveType()) == PerspectiveTypeEnum.PERSPECTIVE) {
-
-			this.renderer.perspective(horizFieldOfView, aspect, near, far);
-
+			//this.renderer.perspective(horizFieldOfView, aspect, near, far);
+			this.renderer.perspective(horizFieldOfView, aspect, 1.0, 10000.0);
 			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
-
+			
+			
 			this.renderer.lookAt(0 // Eye X
 					, 0 // Eye Y
 					, eyeZ // Eye Z
@@ -148,7 +148,7 @@ public class RenderProcess
 					, 0 // Up X
 					, 1 // Up Y
 					, 0); // Up Z
-
+	
 			// this.renderer.loadIdentity();
 		}
 

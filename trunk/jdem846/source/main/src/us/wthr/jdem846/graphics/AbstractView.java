@@ -6,6 +6,7 @@ import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.modelgrid.IModelGrid;
 import us.wthr.jdem846.scripting.ScriptProxy;
@@ -19,7 +20,8 @@ public abstract class AbstractView implements View
 	protected ScriptProxy scriptProxy = null;
 	protected IModelGrid modelGrid = null;
 	protected Planet planet = null;
-
+	protected NormalsCalculator normals = null;
+	
 	protected double north;
 	protected double south;
 	protected double east;
@@ -31,7 +33,27 @@ public abstract class AbstractView implements View
 	protected double maxElevation;
 	protected double minElevation;
 	protected double resolution;
-
+	
+	
+	protected NormalsCalculator getNormalsCalculator()
+	{
+		if (normals == null) {
+			normals = new NormalsCalculator(planet, modelDimensions.getModelLatitudeResolution(), modelDimensions.getModelLongitudeResolution(), new ElevationFetchCallback() {
+				@Override
+				public double getElevation(double latitude, double longitude)
+				{
+					return modelGrid.getElevation(latitude, longitude, true);
+				}
+			});
+		}
+		return normals;
+	}
+	
+	public void getNormal(double latitude, double longitude, Vector normal)
+	{
+		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, normal);
+	}
+	
 	public void setModelContext(ModelContext arg)
 	{
 		modelContext = arg;

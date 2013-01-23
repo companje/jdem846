@@ -65,16 +65,18 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		}
 
 		openGl.getGL2().glShadeModel(GL2.GL_SMOOTH);
-		openGl.getGL().glEnable(GL2.GL_POLYGON_SMOOTH);
+		//openGl.getGL().glEnable(GL2.GL_POLYGON_SMOOTH);
 
 		openGl.getGL().glEnable(GL.GL_DEPTH_TEST);
-		openGl.getGL().glDepthFunc(GL.GL_LESS);
-		// openGl.getGL().glDepthFunc(GL.GL_LEQUAL);
+		//openGl.getGL().glDepthFunc(GL.GL_ALWAYS);
+		openGl.getGL().glDepthFunc(GL.GL_LEQUAL);
 
 		openGl.getGL().glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 		openGl.getGL().glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
 		openGl.getGL().glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
-
+		
+		//openGl.getGL().glHint(GL2.GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL2.GL_FASTEST);
+		
 		openGl.getGL().glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		// openGl.getGL().glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
 		if (!this.checkGlContextSane()) {
@@ -115,32 +117,52 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		
 		float lightPos[] = { (float) lightPosition.x, (float) lightPosition.y, (float) lightPosition.z, 1.0f };
 
-		openGl.getGL2().glEnable(GLLightingFunc.GL_LIGHTING);
-		openGl.getGL2().glEnable(GLLightingFunc.GL_LIGHT0);
+		//float lightPos[] = { 0.0f, 3.0f, 2.0f, 0.0f };
 
-		openGl.getGL2().glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_POSITION, lightPos, 0);
-
-		float lmodel_ambient[] = { (float)ambient, (float)ambient, (float)ambient, 1.0f };
+		
+		
+		//openGl.getGL2().glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_POSITION, lightPos, 0);
+		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPos, 0);
+		
+		float ambientl[] =
+		    { 0.0f, 0.0f, 0.0f, 1.0f };
+		    float diffusel[] =
+		    { 1.0f, 1.0f, 1.0f, 1.0f };
+		    float specularl[] =
+		    { 1.0f, 1.0f, 1.0f, 1.0f };
+		float lmodel_ambient[] = { (float)0.8, (float)0.8, (float)0.8, 1.0f };
 		float local_view[] = { 0.0f };
+		
+		openGl.getGL2().glShadeModel(GL2.GL_SMOOTH);
+		openGl.getGL2().glColorMaterial ( GL.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE ) ;
+		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambientl, 0);
+		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffusel, 0);
+		//openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specularl, 0);
 
-		openGl.getGL2().glEnable(GL.GL_DEPTH_TEST);
-		openGl.getGL2().glDepthFunc(GL.GL_LESS);
 
+		openGl.getGL2().glLightModeli( GL2.GL_LIGHT_MODEL_COLOR_CONTROL, GL2.GL_SEPARATE_SPECULAR_COLOR );
 		openGl.getGL2().glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, lmodel_ambient, 0);
 		openGl.getGL2().glLightModelfv(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, local_view, 0);
-
+		
+		openGl.getGL2().glEnable(GLLightingFunc.GL_LIGHTING);
+		openGl.getGL2().glEnable(GLLightingFunc.GL_LIGHT0);
+		
 		float ambientLight[] = { (float)ambient, (float)ambient, (float)ambient, 1.0f };
 		float diffuseLight[] = { (float)diffuse, (float)diffuse, (float)diffuse, 1.0f };
 		float specularLight[] = { (float)specular, (float)specular, (float)specular, 1.0f };
-		float emissionLight[] = { (float)emission, (float)emission, (float)emission, 1.0f };
+		float emissionLight[] = { (float)emission, (float)emission, (float)emission, 0.0f };
 		float shininessLight[] = { (float)shininess };
-
+		
 		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, ambientLight, 0);
 		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, diffuseLight, 0);
 		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, specularLight, 0);
 		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, shininessLight, 0);
 		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_EMISSION, emissionLight, 0);
-
+		
+		//openGl.getGL2().glEnable(GL2.GL_COLOR_MATERIAL);
+		//openGl.getGL2().glEnable(GL2.GL_RESCALE_NORMAL);
+		//openGl.getGL2().glEnable(GL2.GL_NORMALIZE);
+		
 	}
 	
 	public void disableLighting()
