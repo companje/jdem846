@@ -40,7 +40,9 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	protected OpenGlFrameBuffer frameBuffer;
 
 	protected int texture = 0;
-
+	
+	protected LightingConfig lightingConfig;
+	
 	public OpenGlRenderer()
 	{
 
@@ -91,11 +93,26 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 
 	}
 
+	public void enableLighting()
+	{
+		if (this.lightingConfig != null) {
+			setLighting(lightingConfig.lightPosition
+						, lightingConfig.emission
+						, lightingConfig.ambient
+						, lightingConfig.diffuse
+						, lightingConfig.specular
+						, lightingConfig.shininess);
+		}
+	}
+	
 	@Override
 	public void setLighting(Vector lightPosition, double emission, double ambient, double diffuse, double specular, double shininess)
 	{
 		// PoC Testing: OpenGL Lighting:
-
+		
+		this.lightingConfig = new LightingConfig(lightPosition, emission, ambient, diffuse, specular, shininess);
+		
+		
 		float lightPos[] = { (float) lightPosition.x, (float) lightPosition.y, (float) lightPosition.z, 1.0f };
 
 		openGl.getGL2().glEnable(GLLightingFunc.GL_LIGHTING);
@@ -125,7 +142,13 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_EMISSION, emissionLight, 0);
 
 	}
-
+	
+	public void disableLighting()
+	{
+		openGl.getGL2().glDisable(GLLightingFunc.GL_LIGHTING);
+		openGl.getGL2().glDisable(GLLightingFunc.GL_LIGHT0);
+	}
+	
 	public void normal(Vector normal)
 	{
 		double[] dv = { normal.x, normal.y, normal.z };
@@ -471,5 +494,25 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	public void dispose()
 	{
 		openGl.dispose();
+	}
+	
+	class LightingConfig 
+	{
+		Vector lightPosition;
+		double emission;
+		double ambient;
+		double diffuse;
+		double specular;
+		double shininess;
+		
+		public LightingConfig(Vector lightPosition, double emission, double ambient, double diffuse, double specular, double shininess)
+		{
+			this.lightPosition = lightPosition;
+			this.emission = emission;
+			this.ambient = ambient;
+			this.diffuse = diffuse;
+			this.specular = specular;
+			this.shininess = shininess;
+		}
 	}
 }
