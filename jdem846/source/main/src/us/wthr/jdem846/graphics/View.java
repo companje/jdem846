@@ -38,4 +38,6 @@ public interface View
 	public double eyeZ();
 
 	public void project(double latitude, double longitude, double elevation, Vector point);
+	
+	public void getNormal(double latitude, double longitude, Vector normal);
 }
