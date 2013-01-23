@@ -56,6 +56,16 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 		
 	}
 	
+	public void enableLighting()
+	{
+		
+	}
+	
+	public void disableLighting()
+	{
+		
+	}
+	
 	public void normal(Vector normal)
 	{
 		

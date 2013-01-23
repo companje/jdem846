@@ -13,6 +13,9 @@ public interface IRenderer
 	public void initialize(int width, int height);
 	
 	public void setLighting(Vector position, double emission, double ambiant, double diffuse, double specular, double shininess);
+	public void disableLighting();
+	public void enableLighting();
+	
 	public void normal(Vector normal);
 	
 	public void pushMatrix();

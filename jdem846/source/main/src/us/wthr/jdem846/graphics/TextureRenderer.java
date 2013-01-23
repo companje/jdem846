@@ -38,8 +38,19 @@ public class TextureRenderer
 		this.modelLatitudeResolution = modelLatitudeResolution;
 		this.modelLongitudeResolution = modelLongitudeResolution;
 		this.globalOptionModel = globalOptionModel;
-		this.elevationFetchCallback = elevationFetchCallback;
 		
+		if (elevationFetchCallback != null) {
+			this.elevationFetchCallback = elevationFetchCallback;
+		} else {
+			this.elevationFetchCallback = new ElevationFetchCallback() {
+
+				@Override
+				public double getElevation(double latitude, double longitude) {
+					return 0;
+				}
+				
+			};
+		}
 		Planet planet = PlanetsRegistry.getPlanet(globalOptionModel.getPlanet());
 		if (planet == null) {
 			planet = PlanetsRegistry.getPlanet("earth");
