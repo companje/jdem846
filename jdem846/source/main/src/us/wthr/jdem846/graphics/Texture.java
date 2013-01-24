@@ -249,15 +249,27 @@ public class Texture {
 		int y1 = (int) MathExt.ceil(((this.north - south) / (this.north - this.south)) * (double)this.height);
 		int x1 = (int) MathExt.ceil((1.0 - ((this.east - east) / (this.east - this.west))) * (double)this.width);
 		
+		if (x0 < 0)
+			x0 = 0;
+		if (y0 < 0)
+			y0 = 0;
+		if (x1 >= width)
+			x1 = width - 1;
+		if (y1 >= height)
+			y1 = height - 1;
+		
 		int width = x1 - x0;
 		int height = y1 - y0;
+		
+		width = (int) (MathExt.floor(((double)width / 4.0)) * 4.0);
+		height = (int) (MathExt.floor(((double)height / 4.0)) * 4.0);
 		
 		return getSubTexture(x0, y0, width, height);
 	}
 	
 	public Texture getSubTexture(int x, int y, int width, int height)
 	{
-		
+	// try forcing power of 4	
 		if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
 			return null; // or throw? Probably throw...
 		}

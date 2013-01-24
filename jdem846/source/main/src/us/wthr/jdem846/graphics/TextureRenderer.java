@@ -70,12 +70,12 @@ public class TextureRenderer
 			double useEast = useWest + maxWidthDegrees();
 			
 			
-			while (useSouth > texture.getSouth() - maxHeightDegrees()) {
+			while (useSouth >= texture.getSouth() - maxHeightDegrees()) {
 				
-				while(useEast < texture.getEast() + maxWidthDegrees()) {
+				while(useEast <= texture.getEast() + maxWidthDegrees()) {
 					
-					log.info("Rendering sub region N/S/E/W: " + useNorth + "/" + useSouth + "/" + useEast + "/" + useWest);
-					renderSubRegion(useNorth + modelLatitudeResolution, useSouth - modelLatitudeResolution, useEast + modelLongitudeResolution, useWest - modelLongitudeResolution);
+					
+					renderSubRegion(useNorth, useSouth, useEast, useWest);
 					
 					useWest = useEast;
 					useEast = useWest + maxWidthDegrees();
@@ -119,12 +119,16 @@ public class TextureRenderer
 			return;
 		}
 		
-		Texture subTexture = texture.getSubTexture(north, south, east, west);
-		north = subTexture.getNorth();
-		south = subTexture.getSouth();
-		east = subTexture.getEast();
-		west = subTexture.getWest();
+		Texture subTexture = texture.getSubTexture(north + modelLatitudeResolution
+												, south - modelLatitudeResolution
+												, east + modelLongitudeResolution
+												, west - modelLongitudeResolution);
+		//north = subTexture.getNorth();
+		//south = subTexture.getSouth();
+		//east = subTexture.getEast();
+		//west = subTexture.getWest();
 		
+		log.info("Rendering sub region N/S/E/W: " + north + "/" + south + "/" + east + "/" + west);
 		
 		int subTextureWidth = subTexture.getWidth();
 		int subTextureHeight = subTexture.getHeight();
@@ -169,10 +173,12 @@ public class TextureRenderer
 
 		view.project(latitude, longitude, elevation, pointVector);
 
+		
 		double north = subTexture.getNorth();
 		double south = subTexture.getSouth();
 		double east = subTexture.getEast();
 		double west = subTexture.getWest();
+		
 		
 		double left = (longitude - west) / (east - west);
 		double front = (north - latitude) / (north - south);

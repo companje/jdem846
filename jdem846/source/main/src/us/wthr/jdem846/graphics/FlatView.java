@@ -30,7 +30,8 @@ public class FlatView extends AbstractView implements View
 		//point.z = elevation;
 		
 		point.x = -(0.5 - longitudeToColumn(longitude));
-		point.z = (0.5 / this.resolution) - ((maxElevation - elevation) / (maxElevation - minElevation) / this.resolution);
+		point.z = (0.5 / this.resolution) - ((getMaxElevation() - elevation) / (getMaxElevation() - getMinElevation()) / this.resolution);
+		point.z = (!Double.isNaN(point.z)) ? point.z : 0.0;
 		point.y = (0.5 - latitudeToRow(latitude));
 		
 	}

@@ -12,7 +12,7 @@ public class ThreeDimensionalView extends AbstractView implements View
 
 		point.x = -(0.5 - longitudeToColumn(longitude));
 		point.z = (0.5 - latitudeToRow(latitude));
-		point.y = (0.5 / this.resolution) - ((maxElevation - elevation) / (maxElevation - minElevation) / this.resolution);
+		point.y = (0.5 / this.resolution) - ((getMaxElevation() - elevation) / (getMaxElevation() - getMinElevation()) / this.resolution);
 	}
 
 	protected double latitudeToRow(double latitude)

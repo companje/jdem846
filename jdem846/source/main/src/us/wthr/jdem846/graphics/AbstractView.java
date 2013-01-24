@@ -30,8 +30,8 @@ public abstract class AbstractView implements View
 	protected double width;
 	protected double height;
 
-	protected double maxElevation;
-	protected double minElevation;
+	protected double maxElevation = 0.0;
+	protected double minElevation = 0.0;
 	protected double resolution;
 	
 	
@@ -106,5 +106,28 @@ public abstract class AbstractView implements View
 	{
 		modelGrid = arg;
 	}
+
+	public double getMaxElevation()
+	{
+		return (!Double.isNaN(maxElevation)) ? maxElevation : 0.0;
+	}
+
+	public void setMaxElevation(double maxElevation)
+	{
+		this.maxElevation = maxElevation;
+	}
+
+	public double getMinElevation()
+	{
+		return (!Double.isNaN(minElevation)) ? minElevation : 0.0;
+	}
+
+	public void setMinElevation(double minElevation)
+	{
+		this.minElevation = minElevation;
+	}
+	
+	
+	
 
 }
