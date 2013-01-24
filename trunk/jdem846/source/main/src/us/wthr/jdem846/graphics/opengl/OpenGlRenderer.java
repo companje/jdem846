@@ -59,7 +59,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 
 		openGl.getGL().glEnable(GL.GL_BLEND);
 		openGl.getGL().glEnable(GL.GL_TEXTURE_2D);
-
+		
 		if (multisampling) {
 			openGl.getGL().glEnable(GL.GL_MULTISAMPLE);
 		}
@@ -75,9 +75,17 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl.getGL().glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
 		openGl.getGL().glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
 		
+		
+		openGl.getGL().glEnable(GL.GL_CULL_FACE);
+		openGl.getGL().glCullFace(GL.GL_BACK);
+		
 		//openGl.getGL().glHint(GL2.GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL2.GL_FASTEST);
 		
 		openGl.getGL().glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		
+		openGl.getGL2().glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+
+		 
 		// openGl.getGL().glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following renderer initialization");
@@ -286,14 +294,28 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 
 		openGl.getGL2().glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
 
+		
+		
 		openGl.getGL2().glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, tex.getWidth(), tex.getHeight(), 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, tex.getAsByteBuffer());
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following tex image 2d");
+			return;
 		}
-
+		
+		//openGl.getGL2().glGenerateMipmap(GL2.GL_TEXTURE_2D);
+		if (!this.checkGlContextSane()) {
+			log.error("GL Context in error condition following generate mipmaps");
+			return;
+		}
+		
 		openGl.getGL2().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
 		openGl.getGL2().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-
+		openGl.getGL2().glTexParameteri(GL.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP );
+		openGl.getGL2().glTexParameteri(GL.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP );
+		//openGl.getGL2().glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR_MIPMAP_LINEAR);
+		//openGl.getGL2().glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR_MIPMAP_LINEAR);
+		//openGl.getGL2().glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_GENERATE_MIPMAP, GL2.GL_TRUE);    //The flag is set to TRUE
+				
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following tex parameters");
 		}

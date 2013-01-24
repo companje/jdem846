@@ -1,9 +1,11 @@
 package us.wthr.jdem846;
 
-import us.wthr.jdem846.buffers.impl.HighCapacityMappedByteBuffer;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import us.wthr.jdem846.logging.Log;
-import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.util.TempFiles;
 
 public class SandboxTestMain extends AbstractTestMain
 {
@@ -20,34 +22,22 @@ public class SandboxTestMain extends AbstractTestMain
 			return;
 		}
 		
-		log = Logging.getLog(SandboxTestMain.class);
+		List<String> interpolations = new LinkedList<String>();
+		String template = "dfhdfusd ${foo.bar} fdfdush ${bar.foo[0]} fdfdf ${mega.deth?metal}";
 		
-		long capacity = 894784853 * (long)(Integer.SIZE / 8);
-		
-		HighCapacityMappedByteBuffer bigBuffer = new HighCapacityMappedByteBuffer(capacity);
-		
-		log.info("Writing junk data...");
-		for (long i = 0; i < capacity; i++) {
-			bigBuffer.put(i, (byte)0xFF);
+		Pattern pattern = Pattern.compile("\\$\\{[a-zA-Z0-9.\\[\\]\\?]+\\}");
+		Matcher matcher = pattern.matcher(template);
+		while (matcher.find()) {
+			String var = template.substring(matcher.start(), matcher.end());
+			String varStripped = var.substring(2, var.length() - 1);
+			interpolations.add(varStripped);
 		}
 		
 		
-		log.info("Verifying junk data...");
-		long bytesWithWrongData = 0;
-		for (long i = 0; i < capacity; i++) {
-			byte b = bigBuffer.get(i);
-			if (b != (byte)0xFF) {
-				bytesWithWrongData++;
-			}
+		for (String interpolation : interpolations) {
+			System.err.println("Found '" + interpolation + "'");
 		}
 		
-		log.info("" + bytesWithWrongData + " bytes had an incorrect value");
-		
-		log.info("Closing buffers...");
-		
-		bigBuffer.dispose();
-		
-		TempFiles.cleanUpTemporaryFiles(true);
 	}
 	
 	public SandboxTestMain() 
