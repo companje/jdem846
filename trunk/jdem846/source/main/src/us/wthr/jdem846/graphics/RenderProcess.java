@@ -221,6 +221,7 @@ public class RenderProcess
 															, modelDimensions.modelLatitudeResolution
 															, modelDimensions.modelLongitudeResolution
 															, globalOptionModel
+															, (globalOptionModel.getUseScripting()) ? scriptProxy : null
 															, new ElevationFetchCallback() {
 																@Override
 																public double getElevation(double latitude, double longitude)

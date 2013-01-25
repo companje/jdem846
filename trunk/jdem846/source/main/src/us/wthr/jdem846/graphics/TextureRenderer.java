@@ -1,13 +1,17 @@
 package us.wthr.jdem846.graphics;
 
 import us.wthr.jdem846.DemConstants;
+import us.wthr.jdem846.exception.ScriptingException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
+import us.wthr.jdem846.graphics.TextureMapConfiguration.InterpolationTypeEnum;
+import us.wthr.jdem846.graphics.TextureMapConfiguration.TextureWrapTypeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.GlobalOptionModel;
+import us.wthr.jdem846.scripting.ScriptProxy;
 
 public class TextureRenderer
 {
@@ -26,10 +30,21 @@ public class TextureRenderer
 	protected GlobalOptionModel globalOptionModel;
 	
 	protected ElevationFetchCallback elevationFetchCallback;
+	protected ScriptProxy scriptProxy = null;
 
 	protected Vector normal = new Vector();
 	
+	public TextureRenderer(Texture texture, IRenderer renderer, View view, double modelLatitudeResolution, double modelLongitudeResolution, GlobalOptionModel globalOptionModel)
+	{
+		this(texture, renderer, view, modelLatitudeResolution, modelLongitudeResolution, globalOptionModel, null, null);
+	}
+	
 	public TextureRenderer(Texture texture, IRenderer renderer, View view, double modelLatitudeResolution, double modelLongitudeResolution, GlobalOptionModel globalOptionModel, ElevationFetchCallback elevationFetchCallback)
+	{
+		this(texture, renderer, view, modelLatitudeResolution, modelLongitudeResolution, globalOptionModel, null, elevationFetchCallback);
+	}
+	
+	public TextureRenderer(Texture texture, IRenderer renderer, View view, double modelLatitudeResolution, double modelLongitudeResolution, GlobalOptionModel globalOptionModel, ScriptProxy scriptProxy, ElevationFetchCallback elevationFetchCallback)
 	{
 		this.texture = texture;
 		this.renderer = renderer;
@@ -37,6 +52,7 @@ public class TextureRenderer
 		this.modelLatitudeResolution = modelLatitudeResolution;
 		this.modelLongitudeResolution = modelLongitudeResolution;
 		this.globalOptionModel = globalOptionModel;
+		this.scriptProxy = scriptProxy;
 		
 		if (elevationFetchCallback != null) {
 			this.elevationFetchCallback = elevationFetchCallback;
@@ -135,7 +151,7 @@ public class TextureRenderer
 		
 		log.info("Subtexture height/width: " + subTextureHeight + "/" + subTextureWidth);
 		
-		renderer.bindTexture(subTexture);
+		renderer.bindTexture(subTexture, new TextureMapConfiguration(false, InterpolationTypeEnum.LINEAR, TextureWrapTypeEnum.CLAMP));
 		
 
 		for (double latitude = north; latitude > south; latitude -= modelLatitudeResolution) {
@@ -169,6 +185,16 @@ public class TextureRenderer
 			return;
 		} else {
 			this.lastElevation = elevation;
+		}
+		
+		
+		if (scriptProxy != null) {
+			try {
+				scriptProxy.onBeforeVertex(latitude, longitude, elevation, renderer, view);
+			} catch (ScriptingException ex) {
+				// TODO Throw!!
+				ex.printStackTrace();
+			}
 		}
 
 		view.project(latitude, longitude, elevation, pointVector);

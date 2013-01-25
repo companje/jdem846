@@ -31,6 +31,7 @@ public class ScalaScriptProxy implements ScriptProxy
 	private ScalaCallBack onLightLevelsCallBack;
 	private ScalaCallBack preRenderCallBack;
 	private ScalaCallBack postRenderCallBack;
+	private ScalaCallBack onBeforeVertexCallBack;
 	
 	private ScalaCallBack setModelContextCallBack;
 	private ScalaCallBack setLogCallBack;
@@ -54,6 +55,7 @@ public class ScalaScriptProxy implements ScriptProxy
 		onLightLevelsCallBack = new ScalaCallBack(scalaObject, getMethod("onLightLevels"));
 		preRenderCallBack = new ScalaCallBack(scalaObject, getMethod("preRender"));
 		postRenderCallBack = new ScalaCallBack(scalaObject, getMethod("postRender"));
+		onBeforeVertexCallBack = new ScalaCallBack(scalaObject, getMethod("onBeforeVertex"));
 		
 		setModelContextCallBack = new ScalaCallBack(scalaObject, getMethod("setModelContext"));
 		setLogCallBack = new ScalaCallBack(scalaObject, getMethod("setLog"));
@@ -164,6 +166,12 @@ public class ScalaScriptProxy implements ScriptProxy
 	public void postRender(IRenderer renderer, View view) throws ScriptingException
 	{
 		postRenderCallBack.call(renderer, view);
+	}
+	
+	@Override
+	public void onBeforeVertex(double latitude, double longitude, double elevation, IRenderer renderer, View view) throws ScriptingException
+	{
+		onBeforeVertexCallBack.call(latitude, longitude, elevation, renderer, view);
 	}
 	
 	protected boolean hasField(String fieldName)

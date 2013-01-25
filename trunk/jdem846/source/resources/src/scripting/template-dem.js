@@ -18,7 +18,7 @@ importPackage(Packages.us.wthr.jdem846.model.processing.util);
 importPackage(Packages.us.wthr.jdem846.model.processing.shading);
 importPackage(Packages.us.wthr.jdem846.globe);
 importPackage(Packages.us.wthr.jdem846.graphics);
-
+importPackage(Packages.us.wthr.jdem846.util);
 
 var log = null;
 var modelContext = null;
@@ -75,6 +75,10 @@ function onLightLevels(latitude, longitude)
 	
 }
 
+function onBeforeVertex(latitude, longitude, elevation, renderer, view)
+{
+	
+}
 
 function preRender(renderer, view)
 {
@@ -85,6 +89,8 @@ function postRender(renderer, view)
 {
 
 }
+
+
 
 function destroy()
 { 

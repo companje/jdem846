@@ -187,7 +187,18 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 
 		return null;
 	}
-
+	
+	
+	public int getColor(double latitude, double longitude) throws DataSourceException
+	{
+		int[] rgba = {0, 0, 0, 0};
+		if (getColor(latitude, longitude, rgba)) {
+			return ColorUtil.rgbaToInt(rgba);
+		} else {
+			return 0x0;
+		}
+	}
+	
 	public boolean getColor(double latitude, double longitude, int[] rgba) throws DataSourceException
 	{
 		return getColor(latitude, longitude, rgba, false);

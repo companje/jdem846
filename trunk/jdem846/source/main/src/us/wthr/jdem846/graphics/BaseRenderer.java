@@ -27,6 +27,12 @@ public abstract class BaseRenderer implements IRenderer
 	{
 		this.error = error;
 	}
+	
+	@Override
+	public boolean bindTexture(Texture texture)
+	{
+		return bindTexture(texture, new TextureMapConfiguration());
+	}
 
 	@Override
 	public void viewPort(int x, int y, int width, int height)

@@ -30,6 +30,7 @@ public class GroovyScriptProxy implements ScriptProxy
 	private CallBack onLightLevelsCallBack;
 	private CallBack preRenderCallBack;
 	private CallBack postRenderCallBack;
+	private CallBack onBeforeVertexCallBack;
 	
 	private boolean hasModelContext = false;
 	private boolean hasLog = false;
@@ -49,6 +50,7 @@ public class GroovyScriptProxy implements ScriptProxy
 		onLightLevelsCallBack = new CallBack(groovyObject, "onLightLevels");
 		preRenderCallBack = new CallBack(groovyObject, "preRender");
 		postRenderCallBack = new CallBack(groovyObject, "postRender");
+		onBeforeVertexCallBack = new CallBack(groovyObject, "onBeforeVertex");
 		
 		hasModelContext = CallBack.hasMethod(groovyObject, "getModelContext");
 		hasLog = CallBack.hasMethod(groovyObject, "getLog");
@@ -132,6 +134,13 @@ public class GroovyScriptProxy implements ScriptProxy
 	{
 		postRenderCallBack.call(renderer, view);
 	}
+	
+	@Override
+	public void onBeforeVertex(double latitude, double longitude, double elevation, IRenderer renderer, View view) throws ScriptingException
+	{
+		onBeforeVertexCallBack.call(latitude, longitude, elevation, renderer, view);
+	}
+	
 	
 	protected Object invokeMethod(String method, Object...args)
 	{

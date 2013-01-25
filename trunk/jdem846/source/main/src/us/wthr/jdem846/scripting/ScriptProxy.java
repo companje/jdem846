@@ -48,6 +48,7 @@ public interface ScriptProxy
 	
 	public void onLightLevels(double latitude, double longitude, double elevation, LightingValues lightingValues) throws ScriptingException;
 	
+	public void onBeforeVertex(double latitude, double longitude, double elevation, IRenderer renderer, View view) throws ScriptingException;
 	// TODO: Add copy()
 	
 	// getGradientColor

@@ -284,16 +284,16 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 	}
 	
 	@Override
-	public void bindTexture(Texture tex)
+	public boolean bindTexture(Texture tex, TextureMapConfiguration configuration)
 	{
 		if (tex == null) {
 			this.error = RenderCodesEnum.RENDER_ERR_INVALID_TEXTURE;
-			return;
+			return false;
 		}
 		
 		if (tex.getWidth() <= 0 || tex.getHeight() <= 0) {
 			this.error = RenderCodesEnum.RENDER_ERR_INVALID_DIMENSIONS;
-			return;
+			return false;
 		}
 		
 		this.currentTexture = tex;//new Texture(width, height, tex);
@@ -302,7 +302,7 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 			this.primitiveDrawer.setTexture(this.currentTexture);
 		}
 		
-		
+		return true;
 	}
 	
 	@Override

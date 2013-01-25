@@ -188,5 +188,14 @@ public class SunlightPositioning
 		xyz[1] = sunsource[1];
 		xyz[2] = sunsource[2];
 	}
+	
+	
+	public static Vector calculate(long dateTimeMillis)
+	{
+		Vector sunsource = new Vector();
+		SunlightPositioning sunlightPosition = new SunlightPositioning(dateTimeMillis);
+		sunlightPosition.getLightPosition(sunsource);
+		return sunsource;
+	}
 
 }
