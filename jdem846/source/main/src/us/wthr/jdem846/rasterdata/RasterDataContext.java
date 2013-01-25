@@ -557,27 +557,28 @@ public class RasterDataContext implements DataContext
 
 	public double getDataMinimumValue()
 	{
-		return dataMinimumValue;
+		return (!Double.isNaN(dataMinimumValue)) ? dataMinimumValue : 0.0;
 	}
 
 	public void setDataMinimumValue(double dataMinimumValue)
 	{
-		this.dataMinimumValue = dataMinimumValue;
+		this.dataMinimumValue = (!Double.isNaN(dataMinimumValue)) ? dataMinimumValue : 0.0;
 	}
 	
 	public double getDataMaximumValue()
 	{
-		return this.getScaledDataValue(dataMaximumValue);
+		double scaled = this.getScaledDataValue(dataMaximumValue);
+		return (!Double.isNaN(scaled)) ? scaled : dataMaximumValue;
 	}
 	
 	public double getDataMaximumValueTrue()
 	{
-		return dataMaximumValue;
+		return (!Double.isNaN(dataMaximumValue)) ? dataMaximumValue : 0.0;
 	}
 	
 	public void setDataMaximumValue(double dataMaximumValue)
 	{
-		this.dataMaximumValue = dataMaximumValue;
+		this.dataMaximumValue = (!Double.isNaN(dataMaximumValue)) ? dataMaximumValue : 0.0;
 	}
 	
 	

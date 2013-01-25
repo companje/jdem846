@@ -41,7 +41,6 @@ public class OpenGlOffscreenRenderContext
 		
 		drawable = fac.createOffscreenAutoDrawable(null, glCapabilities, null, width, height, null);
 		glContext = drawable.getContext();
-		
 	}
 	
 	public GLProfile getGlProfile()

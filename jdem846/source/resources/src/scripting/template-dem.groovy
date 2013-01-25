@@ -55,6 +55,11 @@ class JDemScript {
 		
 	}
 	
+	def onBeforeVertex = { latitude, longitude, elevation, renderer, view ->
+		
+		
+	}
+	
 	def destroy = { 
 	
 	}

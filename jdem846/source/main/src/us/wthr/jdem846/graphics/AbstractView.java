@@ -114,7 +114,7 @@ public abstract class AbstractView implements View
 
 	public void setMaxElevation(double maxElevation)
 	{
-		this.maxElevation = maxElevation;
+		this.maxElevation = (!Double.isNaN(maxElevation)) ? maxElevation : 0.0;
 	}
 
 	public double getMinElevation()
@@ -124,7 +124,7 @@ public abstract class AbstractView implements View
 
 	public void setMinElevation(double minElevation)
 	{
-		this.minElevation = minElevation;
+		this.minElevation = (!Double.isNaN(minElevation)) ? minElevation : 0.0;
 	}
 	
 	

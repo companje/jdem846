@@ -81,6 +81,10 @@ class JDemScript {
 		
 	}
 	
+	def onBeforeVertex(latitude: Double, longitude: Double, elevation: Double, renderer : IRenderer, view : View)
+	{
+	
+	}
 	
 	def preRender(renderer : GraphicsRenderer, view : View)
 	{

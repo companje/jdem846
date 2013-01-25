@@ -32,7 +32,7 @@ public class JavaScriptProxy implements ScriptProxy
 	private Function postRenderFunction = null;
 	private Function onGetPointColorFunction = null;
 	private Function onLightLevelsFunction = null;
-	
+	private Function onBeforeVertexFunction = null;
 
 	
 	public JavaScriptProxy(Scriptable scope) throws ScriptingException
@@ -51,6 +51,7 @@ public class JavaScriptProxy implements ScriptProxy
 		postRenderFunction = getFunction("postRender");
 		onGetPointColorFunction = getFunction("onGetPointColor");
 		onLightLevelsFunction = getFunction("onLightLevels");
+		onBeforeVertexFunction = getFunction("onBeforeVertex");
 		
 		setLog(Logging.getLog(JavaScriptProxy.class));
 	}
@@ -174,6 +175,13 @@ public class JavaScriptProxy implements ScriptProxy
 	{
 		Object functionArgs[] = {latitude, longitude, elevation, wrapJavaObject(lightingValues)};
 		this.onLightLevelsFunction.call(getContext(), scope, scope, functionArgs);
+	}
+	
+	@Override
+	public void onBeforeVertex(double latitude, double longitude, double elevation, IRenderer renderer, View view) throws ScriptingException
+	{
+		Object functionArgs[] = {latitude, longitude, elevation, wrapJavaObject(renderer), wrapJavaObject(view)};
+		onBeforeVertexFunction.call(getContext(), scope, scope, functionArgs);
 	}
 
 }
