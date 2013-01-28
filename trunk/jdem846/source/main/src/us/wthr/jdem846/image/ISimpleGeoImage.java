@@ -1,6 +1,6 @@
 package us.wthr.jdem846.image;
 
-public interface ISimpleGeoImageDefinition
+public interface ISimpleGeoImage
 {
 
 	public double getNorth();
@@ -26,5 +26,7 @@ public interface ISimpleGeoImageDefinition
 	public double getLatitudeResolution();
 
 	public double getLongitudeResolution();
-
+	
+	
+	public IImageDefinition getImageDefinition();
 }

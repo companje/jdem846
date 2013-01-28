@@ -13,7 +13,7 @@ public class Spheres
 	
 	protected static double fixThetaDegrees(double degrees)
 	{
-		
+		/*
 		while (degrees < 0.0) {
 			degrees += 360.0;
 		}
@@ -23,38 +23,28 @@ public class Spheres
 		}
 		
 		return degrees;
+		*/
 		
-		/*
 		double limited;
 		degrees /= 360.0;
 		limited = 360.0 * (degrees - MathExt.floor(degrees));
 		if (limited < 0)
 			limited += 360.0;
 		return limited;
-		*/
+		
 	}
 	
-	protected static double fixPhiDegrees(double phi)
+	protected static double fixPhiDegrees(double degrees)
 	{
+		degrees += 90.0;
 		
-		/*
-		while (phi < -90.0) {
-			phi += 180.0;
-		}
-		
-		while (phi >= 90.0) {
-			phi -= 180.0;
-		}
-		*/
-		while (phi < -90.0 || phi > 90.0) {
-            if (phi > 90.0) {
-                phi = phi - 90.0;
-            }
-            if (phi < -90.0) {
-                phi = phi + 90.0;
-            }
-        }
-		return phi;
+		double limited;
+		degrees /= 180.0;
+		limited = 180.0 * (degrees - MathExt.floor(degrees));
+		if (limited < 0)
+			limited += 180.0;
+		return limited - 90.0;
+
 	}
 	
 	//private static Vector vec = new Vector();

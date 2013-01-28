@@ -28,29 +28,17 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.util.ColorUtil;
 
-public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinition
+public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 {
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(SimpleGeoImage.class);
 
 	private String imageFile;
 
-	//private BufferedImage image = null;
-	//private Raster raster = null;
-	
 	private IIntBuffer rasterBuffer = null;
+
+	private IImageDefinition imageDefinition;
 	
-	private int height;
-	private int width;
-
-	private double north;
-	private double south;
-	private double east;
-	private double west;
-
-	private double longitudeResolution;
-	private double latitudeResolution;
-
 	private MapProjection mapProjection;
 	private CanvasProjection canvasProjection;
 
@@ -62,7 +50,7 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 
 	public SimpleGeoImage()
 	{
-
+		this.imageDefinition = new ImageDefinition();
 	}
 
 	public SimpleGeoImage(String imagePath, double north, double south, double east, double west) throws DataSourceException
@@ -76,27 +64,47 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 		} catch (IOException ex) {
 			throw new DataSourceException("Error determining image dimensions: " + ex.getMessage(), ex);
 		}
-
-		height = dimensions.height;
-		width = dimensions.width;
-
-		this.north = north;
-		this.south = south;
-		this.east = east;
-		this.west = west;
+		
+		this.imageDefinition = new ImageDefinition();
+		imageDefinition.setImageHeight(dimensions.height);
+		imageDefinition.setImageWidth(dimensions.width);
+		imageDefinition.setNorth(north);
+		imageDefinition.setSouth(south);
+		imageDefinition.setEast(east);
+		imageDefinition.setWest(west);
 
 		update();
 	}
 
 	public void update()
 	{
-		this.latitudeResolution = (north - south) / height;
-		this.longitudeResolution = (east - west) / width;
+		if (imageDefinition.getLatitudeResolution() == 0) {
+			imageDefinition.determineLatitudeResolution();
+		}
+		
+		if (imageDefinition.getLongitudeResolution() == 0) {
+			imageDefinition.determineLongitudeResolution();
+		}
 
-		mapProjection = new EquirectangularProjection(north, south, east, west, width, height);
-		canvasProjection = new CanvasProjection(mapProjection, north, south, east, west, width, height);
+		mapProjection = new EquirectangularProjection(imageDefinition.getNorth()
+													, imageDefinition.getSouth()
+													, imageDefinition.getEast()
+													, imageDefinition.getWest()
+													, imageDefinition.getImageWidth()
+													, imageDefinition.getImageHeight());
+		
+		canvasProjection = new CanvasProjection(mapProjection
+												, imageDefinition.getNorth()
+												, imageDefinition.getSouth()
+												, imageDefinition.getEast()
+												, imageDefinition.getWest()
+												, imageDefinition.getImageWidth()
+												, imageDefinition.getImageHeight());
 
-		coordinateSpaceAdjuster = new CoordinateSpaceAdjuster(north, south, east, west);
+		coordinateSpaceAdjuster = new CoordinateSpaceAdjuster(imageDefinition.getNorth()
+												, imageDefinition.getSouth()
+												, imageDefinition.getEast()
+												, imageDefinition.getWest());
 
 	}
 
@@ -209,7 +217,7 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
 		}
-		return getColor(latitude, longitude, latitudeResolution, longitudeResolution, rgba, nearestNeighbor);
+		return getColor(latitude, longitude, imageDefinition.getLatitudeResolution(), imageDefinition.getLongitudeResolution(), rgba, nearestNeighbor);
 	}
 
 	public boolean getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba) throws DataSourceException
@@ -247,16 +255,16 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 		}
 
 		if (effectiveLatitudeResolution == DemConstants.ELEV_UNDETERMINED) {
-			effectiveLatitudeResolution = latitudeResolution;
+			effectiveLatitudeResolution = imageDefinition.getLatitudeResolution();
 		}
 
 		if (effectiveLongitudeResolution == DemConstants.ELEV_UNDETERMINED) {
-			effectiveLongitudeResolution = longitudeResolution;
+			effectiveLongitudeResolution = imageDefinition.getLongitudeResolution();
 		}
 
 		int[] rgbaBuffer0 = new int[4];
 
-		if (latitude >= south && latitude <= north && longitude >= west && longitude <= east) {
+		if (latitude >= imageDefinition.getSouth() && latitude <= imageDefinition.getNorth() && longitude >= imageDefinition.getWest() && longitude <= imageDefinition.getEast()) {
 
 			if (nearestNeighbor) {
 				getColorNearestNeighbor(latitude, longitude, rgba);
@@ -272,15 +280,15 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 
 				double samples = 0;
 
-				double rows = (north - south) / latitudeResolution;
-				double columns = (east - west) / longitudeResolution;
+				double rows = (north - south) / imageDefinition.getLatitudeResolution();
+				double columns = (east - west) / imageDefinition.getLongitudeResolution();
 
 				if (rows < 1 && columns < 1) {
 					getColorBilinear(latitude, longitude, rgba);
 				} else {
 
-					for (double x = west; x <= east; x += longitudeResolution) {
-						for (double y = north; y >= south; y -= latitudeResolution) {
+					for (double x = west; x <= east; x += imageDefinition.getLongitudeResolution()) {
+						for (double y = north; y >= south; y -= imageDefinition.getLatitudeResolution()) {
 							if (getColorBilinear(y, x, rgbaBuffer0)) {
 								rgba[0] += rgbaBuffer0[0];
 								rgba[1] += rgbaBuffer0[1];
@@ -348,7 +356,7 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
 		}
-		if (latitude >= south && latitude <= north && longitude >= west && longitude <= east) {
+		if (latitude >= imageDefinition.getSouth() && latitude <= imageDefinition.getNorth() && longitude >= imageDefinition.getWest() && longitude <= imageDefinition.getEast()) {
 			try {
 				canvasProjection.getPoint(latitude, longitude, 0.0, mapPoint);
 			} catch (MapProjectionException ex) {
@@ -368,12 +376,26 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
 		}
-
+		
+		//if (x < 0) {
+		//	ColorUtil.intToRGBA(ColorUtil.RED, rgba);
+		//	return true;
+			//x = getWidth() - 1 - (0 - x);
+		//}
+		
+		//if (x >= getWidth()) {
+		//	ColorUtil.intToRGBA(ColorUtil.RED, rgba);
+		//	return true;
+			//x = 0 + (x - getWidth() - 1);
+		//}
+		
+		
 		if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
+			
 			return false; // Throw?
 		}
 
-		long index = (y * width) + x;
+		long index = (y * imageDefinition.getImageWidth()) + x;
 		if (index < 0 || index >= rasterBuffer.capacity()) {
 			return false; // Throw?
 		}
@@ -401,85 +423,97 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 	@Override
 	public double getNorth()
 	{
-		return north;
+		return imageDefinition.getNorth();
 	}
 
 	@Override
 	public void setNorth(double north)
 	{
-		this.north = north;
+		imageDefinition.setNorth(north);
 		update();
 	}
 
 	@Override
 	public double getSouth()
 	{
-		return south;
+		return imageDefinition.getSouth();
 	}
 	
 	@Override
 	public void setSouth(double south)
 	{
-		this.south = south;
+		imageDefinition.setSouth(south);
 		update();
 	}
 
 	@Override
 	public double getEast()
 	{
-		return east;
+		return imageDefinition.getEast();
 	}
 
 	@Override
 	public void setEast(double east)
 	{
-		this.east = east;
+		imageDefinition.setEast(east);
 		update();
 	}
 
 	@Override
 	public double getWest()
 	{
-		return west;
+		return imageDefinition.getWest();
 	}
 
 	@Override
 	public void setWest(double west)
 	{
-		this.west = west;
+		imageDefinition.setWest(west);
 		update();
 	}
 
 	@Override
 	public int getHeight()
 	{
-		return height;
+		return imageDefinition.getImageHeight();
 	}
 
 	@Override
 	public int getWidth()
 	{
-		return width;
+		return imageDefinition.getImageWidth();
 	}
 
 	@Override
 	public double getLatitudeResolution()
 	{
-		return latitudeResolution;
+		return imageDefinition.getLatitudeResolution();
 	}
 
 	@Override
 	public double getLongitudeResolution()
 	{
-		return longitudeResolution;
+		return imageDefinition.getLongitudeResolution();
 	}
 	
 	public Texture getAsTexture()
 	{
-		Texture tex = new Texture(width, height, north, south, east, west, rasterBuffer);
+		Texture tex = new Texture(imageDefinition.getImageWidth()
+								, imageDefinition.getImageHeight()
+								, imageDefinition.getNorth()
+								, imageDefinition.getSouth()
+								, imageDefinition.getEast()
+								, imageDefinition.getWest()
+								, rasterBuffer);
 		return tex;
 	}
 
+	
+	public IImageDefinition getImageDefinition()
+	{
+		return imageDefinition;
+	}
+	
 	/**
 	 * Creates copy.
 	 * 
@@ -487,7 +521,11 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImageDefinitio
 	 */
 	public SimpleGeoImage copy() throws DataSourceException
 	{
-		SimpleGeoImage copy = new SimpleGeoImage(imageFile, north, south, east, west);
+		SimpleGeoImage copy = new SimpleGeoImage(imageFile
+												, imageDefinition.getNorth()
+												, imageDefinition.getSouth()
+												, imageDefinition.getEast()
+												, imageDefinition.getWest());
 
 		if (this.isLoaded()) {
 			copy.rasterBuffer = this.rasterBuffer;

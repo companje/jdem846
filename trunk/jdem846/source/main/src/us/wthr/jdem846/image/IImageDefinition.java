@@ -1,12 +1,9 @@
-package us.wthr.jdem846.rasterdata.generic;
+package us.wthr.jdem846.image;
 
-import us.wthr.jdem846.ByteOrder;
-import us.wthr.jdem846.DataTypeEnum;
-import us.wthr.jdem846.InterleavingTypeEnum;
+//import us.wthr.jdem846.rasterdata.generic.DefinitionChangeListener;
 
-public interface IRasterDefinition
+public interface IImageDefinition
 {
-
 	public int getImageWidth();
 
 	public void setImageWidth(int imageWidth);
@@ -15,27 +12,8 @@ public interface IRasterDefinition
 
 	public void setImageHeight(int imageHeight);
 
-	public int getNumBands();
-
-	public void setNumBands(int numBands);
-
-	public int getHeaderSize();
-
-	public void setHeaderSize(int headerSize);
 
 	public long getFileSize();
-
-	public DataTypeEnum getDataType();
-
-	public void setDataType(DataTypeEnum dataType);
-
-	public ByteOrder getByteOrder();
-
-	public void setByteOrder(ByteOrder byteOrder);
-
-	public InterleavingTypeEnum getInterleavingType();
-
-	public void setInterleavingType(InterleavingTypeEnum interleavingType);
 
 	public double getNorth();
 
@@ -61,9 +39,6 @@ public interface IRasterDefinition
 
 	public void setLongitudeResolution(double longitudeResolution);
 
-	public double getNoData();
-
-	public void setNoData(double noData);
 
 	public boolean isLocked();
 
@@ -81,9 +56,9 @@ public interface IRasterDefinition
 
 	public void determineLongitudeResolution();
 
-	public void addDefinitionChangeListener(DefinitionChangeListener l);
+	//public void addDefinitionChangeListener(DefinitionChangeListener l);
 
-	public boolean removeDefinitionChangeListener(DefinitionChangeListener l);
+	//public boolean removeDefinitionChangeListener(DefinitionChangeListener l);
 
-	public IRasterDefinition copy();
+	public IImageDefinition copy();
 }
