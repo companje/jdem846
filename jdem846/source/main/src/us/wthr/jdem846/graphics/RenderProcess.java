@@ -9,6 +9,8 @@ import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.graphics.TextureMapConfiguration.InterpolationTypeEnum;
+import us.wthr.jdem846.graphics.TextureMapConfiguration.TextureWrapTypeEnum;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -215,6 +217,7 @@ public class RenderProcess
 		}
 		this.renderer.popMatrix();
 
+		TextureMapConfiguration textureMapConfig = new TextureMapConfiguration(true, InterpolationTypeEnum.LINEAR, TextureWrapTypeEnum.REPEAT);
 		TextureRenderer textureRenderer = new TextureRenderer(modelTexture
 															, renderer
 															, modelView
@@ -222,6 +225,7 @@ public class RenderProcess
 															, modelDimensions.modelLongitudeResolution
 															, globalOptionModel
 															, (globalOptionModel.getUseScripting()) ? scriptProxy : null
+															, textureMapConfig
 															, new ElevationFetchCallback() {
 																@Override
 																public double getElevation(double latitude, double longitude)

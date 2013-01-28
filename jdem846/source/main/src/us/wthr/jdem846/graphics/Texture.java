@@ -130,9 +130,22 @@ public class Texture {
 	
 	protected int index(int x, int y)
 	{
-		if (x < 0 || x >= width || y < 0 || y >= height) {
+		//if (x < 0 || x >= width || y < 0 || y >= height) {
+		//	return -1;
+		//}
+		
+		if (x < 0 || y < 0) {
 			return -1;
 		}
+		
+		if (x >= width) {
+			x = x - width;
+		}
+		
+		if (y >= height) {
+			y = y - height;
+		}
+		
 		int index = (y * width) + x;
 		return index;
 	}
@@ -261,26 +274,25 @@ public class Texture {
 		int width = x1 - x0;
 		int height = y1 - y0;
 		
-		width = (int) (MathExt.floor(((double)width / 4.0)) * 4.0);
-		height = (int) (MathExt.floor(((double)height / 4.0)) * 4.0);
+	//	width = (int) (MathExt.floor(((double)width / 4.0)) * 4.0);
+		//height = (int) (MathExt.floor(((double)height / 4.0)) * 4.0);
 		
 		return getSubTexture(x0, y0, width, height);
 	}
 	
 	public Texture getSubTexture(int x, int y, int width, int height)
 	{
-	// try forcing power of 4	
 		if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
 			return null; // or throw? Probably throw...
 		}
 		
-		if (x + width >= this.width) {
-			width = this.width - x;
-		}
+		//if (x + width >= this.width) {
+	//		width = this.width - x;
+	//	}
 		
-		if (y + height >= this.height) {
-			height = this.height - y;
-		}
+		//if (y + height >= this.height) {
+		//	height = this.height - y;
+		//}
 		
 		//int subtexLength = width * height;
 		

@@ -34,17 +34,34 @@ public class TextureRenderer
 
 	protected Vector normal = new Vector();
 	
+	protected TextureMapConfiguration textureMapConfig = null;
+	
 	public TextureRenderer(Texture texture, IRenderer renderer, View view, double modelLatitudeResolution, double modelLongitudeResolution, GlobalOptionModel globalOptionModel)
 	{
-		this(texture, renderer, view, modelLatitudeResolution, modelLongitudeResolution, globalOptionModel, null, null);
+		this(texture, renderer, view, modelLatitudeResolution, modelLongitudeResolution, globalOptionModel, null, null, null);
+	}
+	
+	public TextureRenderer(Texture texture, IRenderer renderer, View view, double modelLatitudeResolution, double modelLongitudeResolution, GlobalOptionModel globalOptionModel, TextureMapConfiguration textureMapConfig)
+	{
+		this(texture, renderer, view, modelLatitudeResolution, modelLongitudeResolution, globalOptionModel, null, textureMapConfig, null);
 	}
 	
 	public TextureRenderer(Texture texture, IRenderer renderer, View view, double modelLatitudeResolution, double modelLongitudeResolution, GlobalOptionModel globalOptionModel, ElevationFetchCallback elevationFetchCallback)
 	{
-		this(texture, renderer, view, modelLatitudeResolution, modelLongitudeResolution, globalOptionModel, null, elevationFetchCallback);
+		this(texture, renderer, view, modelLatitudeResolution, modelLongitudeResolution, globalOptionModel, null, null, elevationFetchCallback);
+	}
+	
+	public TextureRenderer(Texture texture, IRenderer renderer, View view, double modelLatitudeResolution, double modelLongitudeResolution, GlobalOptionModel globalOptionModel, TextureMapConfiguration textureMapConfig, ElevationFetchCallback elevationFetchCallback)
+	{
+		this(texture, renderer, view, modelLatitudeResolution, modelLongitudeResolution, globalOptionModel, null, textureMapConfig, elevationFetchCallback);
 	}
 	
 	public TextureRenderer(Texture texture, IRenderer renderer, View view, double modelLatitudeResolution, double modelLongitudeResolution, GlobalOptionModel globalOptionModel, ScriptProxy scriptProxy, ElevationFetchCallback elevationFetchCallback)
+	{
+		this(texture, renderer, view, modelLatitudeResolution, modelLongitudeResolution, globalOptionModel, scriptProxy, null, elevationFetchCallback);
+	}
+	
+	public TextureRenderer(Texture texture, IRenderer renderer, View view, double modelLatitudeResolution, double modelLongitudeResolution, GlobalOptionModel globalOptionModel, ScriptProxy scriptProxy, TextureMapConfiguration textureMapConfig, ElevationFetchCallback elevationFetchCallback)
 	{
 		this.texture = texture;
 		this.renderer = renderer;
@@ -53,6 +70,8 @@ public class TextureRenderer
 		this.modelLongitudeResolution = modelLongitudeResolution;
 		this.globalOptionModel = globalOptionModel;
 		this.scriptProxy = scriptProxy;
+		
+		this.textureMapConfig = (textureMapConfig != null) ? textureMapConfig : new TextureMapConfiguration(false, InterpolationTypeEnum.LINEAR, TextureWrapTypeEnum.CLAMP);
 		
 		if (elevationFetchCallback != null) {
 			this.elevationFetchCallback = elevationFetchCallback;
@@ -90,10 +109,12 @@ public class TextureRenderer
 				
 				while(useEast <= texture.getEast() + maxWidthDegrees()) {
 					
+					double regionEast = renderSubRegion(useNorth, useSouth, useEast + modelLongitudeResolution, useWest - modelLongitudeResolution);
 					
-					renderSubRegion(useNorth, useSouth, useEast, useWest);
-					
-					useWest = useEast;
+					if (regionEast == DemConstants.ELEV_NO_DATA || regionEast >= texture.getEast()) {
+						break;
+					}
+					useWest = regionEast;
 					useEast = useWest + maxWidthDegrees();
 				}
 				
@@ -112,7 +133,7 @@ public class TextureRenderer
 	
 	
 	
-	protected void renderSubRegion(double north, double south, double east, double west)
+	protected double renderSubRegion(double north, double south, double east, double west)
 	{
 		
 		if (north > globalOptionModel.getNorthLimit()) {
@@ -132,7 +153,7 @@ public class TextureRenderer
 		}
 		
 		if (south >= north || east <= west) {
-			return;
+			return DemConstants.ELEV_NO_DATA;
 		}
 		
 		Texture subTexture = texture.getSubTexture(north + modelLatitudeResolution
@@ -151,7 +172,7 @@ public class TextureRenderer
 		
 		log.info("Subtexture height/width: " + subTextureHeight + "/" + subTextureWidth);
 		
-		renderer.bindTexture(subTexture, new TextureMapConfiguration(false, InterpolationTypeEnum.LINEAR, TextureWrapTypeEnum.CLAMP));
+		renderer.bindTexture(subTexture, textureMapConfig);
 		
 
 		for (double latitude = north; latitude > south; latitude -= modelLatitudeResolution) {
@@ -159,15 +180,19 @@ public class TextureRenderer
 			this.renderer.begin(PrimitiveModeEnum.TRIANGLE_STRIP);
 
 			for (double longitude = west; longitude < east; longitude += modelLongitudeResolution) {
+
 				renderPointVertex(latitude, longitude, subTexture);
 				renderPointVertex(latitude - modelLatitudeResolution, longitude, subTexture);
 			}
+			
 
 			this.renderer.end();
 
 		}
 
 		this.renderer.unbindTexture();
+		
+		return east;
 	}
 	
 	
