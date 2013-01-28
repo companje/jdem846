@@ -347,6 +347,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 			openGl.getGL2().glTexParameteri(GL.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_EDGE );
 		}
 		
+
 		if (configuration.getCreateMipMaps()) {
 			if (configuration.getInterpolationType() == InterpolationTypeEnum.LINEAR) {
 				openGl.getGL2().glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR_MIPMAP_LINEAR);
@@ -359,7 +360,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 			openGl.getGL2().glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_GENERATE_MIPMAP, GL2.GL_TRUE);    //The flag is set to TRUE
 		}
 		
-		
+
 		
 				
 		if (!this.checkGlContextSane()) {
