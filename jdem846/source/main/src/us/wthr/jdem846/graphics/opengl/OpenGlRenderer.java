@@ -377,7 +377,10 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following unbinding texture");
 		}
-
+		if (texture != 0) {
+			int[] textures = {texture};
+			openGl.getGL2().glDeleteTextures(1, textures, 0);
+		}
 		this.texture = 0;
 	}
 
