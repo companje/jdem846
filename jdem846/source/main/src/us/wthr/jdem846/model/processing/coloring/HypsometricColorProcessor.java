@@ -4,6 +4,8 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.graphics.Colors;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.annotations.GridProcessing;
@@ -19,7 +21,6 @@ public class HypsometricColorProcessor extends GridFilter
 	private static Log log = Logging.getLog(HypsometricColorProcessor.class);
 
 	private ModelColoring modelColoring;
-	// private ElevationScaler elevationScaler;
 
 	protected double north;
 	protected double south;
@@ -29,9 +30,6 @@ public class HypsometricColorProcessor extends GridFilter
 	protected double maximumElevationTrue;
 	protected double minimumElevation;
 	protected double maximumElevation;
-
-	private int[] rgbaBufferA = new int[4];
-	private int[] rgbaBufferB = new int[4];
 
 	private boolean useScripting = true;
 
@@ -74,48 +72,59 @@ public class HypsometricColorProcessor extends GridFilter
 	{
 
 		double elevation = modelGrid.getElevation(latitude, longitude, true);
+		
+		IColor color = null;
 		try {
-			getPointColor(latitude, longitude, elevation, rgbaBufferA);
+			color = getPointColor(latitude, longitude, elevation);
 		} catch (DataSourceException ex) {
 			throw new RenderEngineException("Error getting point color: " + ex.getMessage(), ex);
 		}
 
-		modelGrid.setRgba(latitude, longitude, rgbaBufferA);
+		modelGrid.setRgba(latitude, longitude, color);
 
 	}
 
-	protected void getPointColor(double latitude, double longitude, double elevation, int[] rgba) throws DataSourceException, RenderEngineException
+	protected IColor getPointColor(double latitude, double longitude, double elevation) throws DataSourceException, RenderEngineException
 	{
 
 		boolean imageOverlayed = false;
+		
+		IColor color = Colors.TRANSPARENT;
+		
 		if (modelContext.getImageDataContext() != null
-				&& modelContext.getImageDataContext().getColor(latitude, longitude, modelDimensions.textureLatitudeResolution, modelDimensions.textureLongitudeResolution, rgba, nearestNeighbor)) {
+				&& (color = modelContext.getImageDataContext().getColor(latitude, longitude, modelDimensions.textureLatitudeResolution, modelDimensions.textureLongitudeResolution, nearestNeighbor)) != null) {
 			imageOverlayed = true;
 		}
 
-		if (imageOverlayed && rgba[3] < 0xFF) {
-			modelColoring.getGradientColor(elevation, minimumElevation, maximumElevation, rgbaBufferB);
-			double r = ((double) rgba[3] / 255.0);
-			ColorUtil.interpolateColor(rgbaBufferB, rgba, rgba, r);
+		if (imageOverlayed && color.getAlpha() < 0xFF) {
+			IColor color1 = modelColoring.getGradientColor(elevation, minimumElevation, maximumElevation);
+			double r = ((double) color.getAlpha() / 255.0);
+			color = ColorUtil.interpolateColor(color1, color, r);
 		}
 
 		if (!imageOverlayed) {
-			modelColoring.getGradientColor(elevation, minimumElevation, maximumElevation, rgba);
+			color = modelColoring.getGradientColor(elevation, minimumElevation, maximumElevation);
 		}
 
 		if (useScripting) {
-			onGetPointColor(latitude, longitude, elevation, minimumElevation, maximumElevation, rgba);
+			color = onGetPointColor(latitude, longitude, elevation, minimumElevation, maximumElevation, color);
 		}
+		
+		return color;
 
 	}
 
-	protected void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color) throws RenderEngineException
+	protected IColor onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, IColor color) throws RenderEngineException
 	{
 		try {
 			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
+			IColor result = null;
 			if (scriptProxy != null) {
-				scriptProxy.onGetPointColor(latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
+				result = scriptProxy.onGetPointColor(latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
 			}
+			
+			return (result != null) ? result : color;
+			
 		} catch (Exception ex) {
 			throw new RenderEngineException("Exception thrown in user script", ex);
 		}

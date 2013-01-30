@@ -70,20 +70,14 @@ public abstract class PrimitiveDraw
 		}
 	}
 	
-	protected void textureColor(double left, double front, boolean linear, int[] rgba)
-	{
-		int c = textureColor(left, front, linear);
-		ColorUtil.intToRGBA(c, rgba);
-	}
-	
-	protected int textureColor(double left, double front, boolean linear)
+	protected IColor textureColor(double left, double front, boolean linear)
 	{
 		if (texture != null && linear) { // Linear Interpolation
 			return texture.getColorLinear(left, front);
 		} else if (texture != null && !linear) { // Nearest Neighbor
 			return texture.getColorNearest(left, front);
 		} else {
-			return 0x0;
+			return Colors.TRANSPARENT;
 		}
 	}
 	

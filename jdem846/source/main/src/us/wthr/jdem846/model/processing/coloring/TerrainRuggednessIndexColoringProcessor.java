@@ -4,6 +4,8 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.graphics.Colors;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -112,14 +114,17 @@ public class TerrainRuggednessIndexColoringProcessor extends GridProcessor
 	protected void secondPass(double latitude, double longitude)
 	{
 		double tri = calculateTri(latitude, longitude);
+		
+		IColor color;
+		
 		if (tri != DemConstants.ELEV_NO_DATA) {
 			double ratio = (tri - minTri) / (maxTri - minTri);
-			modelColoring.getColorByPercent(ratio, colorBuffer);
+			color = modelColoring.getColorByPercent(ratio);
 		} else {
-			colorBuffer[3] = 0x0;
+			color = Colors.TRANSPARENT;
 		}
 
-		modelGrid.setRgba(latitude, longitude, colorBuffer);
+		modelGrid.setRgba(latitude, longitude, color);
 	}
 
 	protected double calculateTri(double latitude, double longitude)

@@ -150,27 +150,27 @@ public class Texture {
 		return index;
 	}
 	
-	public int getColor(double x, double y)
+	public IColor getColor(double x, double y)
 	{
 		return getColor((int)MathExt.round(x), (int) MathExt.round(y));
 	}
 	
-	public int getColor(int x, int y)
+	public IColor getColor(int x, int y)
 	{
 		int index = index(x, y);
 		return getColor(index);
 	}
 	
-	protected int getColor(int index)
+	protected IColor getColor(int index)
 	{
 		if (index >= 0 && index < texture.capacity()) {
-			return texture.get(index);
+			return new Color(texture.get(index));
 		} else {
-			return 0x0;
+			return Colors.TRANSPARENT;
 		}
 	}
 	
-	public int getColorNearest(double left, double front)
+	public IColor getColorNearest(double left, double front)
 	{
 		int x = (int) MathExt.round(left * (double)width);
 		int y = (int) MathExt.round(front * (double)height);
@@ -178,7 +178,7 @@ public class Texture {
 		return getColor(x, y);
 	}
 	
-	public int getColorLinear(double left, double front)
+	public IColor getColorLinear(double left, double front)
 	{
 		double x = (left * (double)width);
 		double y = (front * (double)height); 
@@ -195,10 +195,10 @@ public class Texture {
 		boolean b11 = isValidCoordinate(_x + 1, _y + 1);
 		
 		
-		int c00 = (b00) ? getColor(_x + 0, _y + 0) : 0x0;
-		int c01 = (b01) ? getColor(_x + 1, _y + 0) : 0x0;
-		int c10 = (b10) ? getColor(_x + 0, _y + 1) : 0x0;
-		int c11 = (b11) ? getColor(_x + 1, _y + 1) : 0x0;
+		IColor c00 = (b00) ? getColor(_x + 0, _y + 0) : null;
+		IColor c01 = (b01) ? getColor(_x + 1, _y + 0) : null;
+		IColor c10 = (b10) ? getColor(_x + 0, _y + 1) : null;
+		IColor c11 = (b11) ? getColor(_x + 1, _y + 1) : null;
 		
 		c00 = getValidColor(c00, b00, c01, b01, c10, b10, c11, b11);
 		c01 = getValidColor(c01, b01, c00, b00, c11, b11, c10, b10);
@@ -206,12 +206,11 @@ public class Texture {
 		c11 = getValidColor(c11, b11, c10, b10, c01, b01, c00, b00);
 	
 
-		int color =  ColorUtil.interpolateColor(c00, c01, c10, c11, xFrac, yFrac);
+		return ColorUtil.interpolateColor(c00, c01, c10, c11, xFrac, yFrac);
 
-		return color;
 	}
 	
-	protected int getValidColor(int c00, boolean b00, int c01, boolean b01, int c10, boolean b10, int c11, boolean b11)
+	protected IColor getValidColor(IColor c00, boolean b00, IColor c01, boolean b01, IColor c10, boolean b10, IColor c11, boolean b11)
 	{
 		if (b00)
 			return c00;
@@ -222,7 +221,7 @@ public class Texture {
 		if (b11)
 			return c11;
 		
-		return 0x0;
+		return Colors.TRANSPARENT;
 	}
 	
 	protected boolean isValidCoordinate(double x, double y)

@@ -22,7 +22,6 @@ import us.wthr.jdem846.model.processing.shading.RenderLightingOptionModel;
 import us.wthr.jdem846.model.processing.util.SunlightPositioning;
 import us.wthr.jdem846.modelgrid.IModelGrid;
 import us.wthr.jdem846.scripting.ScriptProxy;
-import us.wthr.jdem846.util.ColorUtil;
 
 public class RenderProcess
 {
@@ -136,8 +135,8 @@ public class RenderProcess
 			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
 			this.renderer.loadIdentity();
 		} else if (PerspectiveTypeEnum.getPerspectiveTypeFromIdentifier(this.globalOptionModel.getPerspectiveType()) == PerspectiveTypeEnum.PERSPECTIVE) {
-			//this.renderer.perspective(horizFieldOfView, aspect, near, far);
-			this.renderer.perspective(horizFieldOfView, aspect, 1.0, 100000.0);
+			this.renderer.perspective(horizFieldOfView, aspect, near, far);
+			//this.renderer.perspective(horizFieldOfView, aspect, 1.0, 10000.0);
 			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
 			
 			
@@ -168,9 +167,9 @@ public class RenderProcess
 
 		RgbaColor background = this.globalOptionModel.getBackgroundColor();
 		if (background != null) {
-			this.renderer.clear(background.getRgba());
+			this.renderer.clear(background.toColor());
 		} else {
-			this.renderer.clear(ColorUtil.BLACK);
+			this.renderer.clear(Colors.BLACK);
 		}
 
 		ViewPerspective view = this.globalOptionModel.getViewAngle();
@@ -190,6 +189,8 @@ public class RenderProcess
 
 		}
 		
+		
+		
 		if (lightingOptionModel != null && lightingOptionModel.isLightingEnabled()) {
 			long lightOnTime = lightingOptionModel.getSunlightTime().getTime();
 			long lightOnDate = lightingOptionModel.getSunlightDate().getDate();
@@ -206,6 +207,8 @@ public class RenderProcess
 					, lightingOptionModel.getSpecular()
 					, lightingOptionModel.getSpotExponent());
 		}
+		
+		
 		
 		this.renderer.pushMatrix();
 		if (this.globalOptionModel.getUseScripting() && this.scriptProxy != null) {
@@ -234,6 +237,7 @@ public class RenderProcess
 																}
 															});
 		textureRenderer.render();
+		
 		
 		this.renderer.pushMatrix();
 		if (this.globalOptionModel.getUseScripting() && this.scriptProxy != null) {

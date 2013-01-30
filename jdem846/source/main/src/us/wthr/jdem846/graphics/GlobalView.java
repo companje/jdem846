@@ -1,7 +1,6 @@
 package us.wthr.jdem846.graphics;
 
 import us.wthr.jdem846.DemConstants;
-import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vector;
 
@@ -83,16 +82,20 @@ public class GlobalView extends AbstractView implements View
 	@Override
 	public double nearClipDistance()
 	{
+		/*
 		double e = elevationFromSurface();
 		if (modelContext.getRasterDataContext().getDataMaximumValue() > 0) {
 			e -= scaleElevation(modelContext.getRasterDataContext().getDataMaximumValue());
 		}
 		return e;
+		*/
+		return 1.0;
 	}
 
 	@Override
 	public double farClipDistance()
 	{
+		/*
 		double r = radius();
 		double e = elevationFromSurface();
 
@@ -100,6 +103,8 @@ public class GlobalView extends AbstractView implements View
 		double d = MathExt.cos(a) * r;
 		double f = (r - d) + e;
 		return f;
+		*/
+		return 100000.0;
 	}
 
 	@Override

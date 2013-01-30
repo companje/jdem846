@@ -4,7 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import us.wthr.jdem846.image.ISimpleGeoImageDefinition;
+import us.wthr.jdem846.image.ISimpleGeoImage;
 import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -31,8 +31,8 @@ public class GeoImagePropertiesView extends Composite
 		{
 			public void onSourceDataSelectionChanged(InputSourceData selectedData)
 			{
-				if (selectedData != null && selectedData instanceof ISimpleGeoImageDefinition) {
-					ISimpleGeoImageDefinition definition = (ISimpleGeoImageDefinition) selectedData;
+				if (selectedData != null && selectedData instanceof ISimpleGeoImage) {
+					ISimpleGeoImage definition = (ISimpleGeoImage) selectedData;
 					geoImagePropertiesContainer.setImageDefinition(definition);
 				} else {
 					geoImagePropertiesContainer.setImageDefinition(null);

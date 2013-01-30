@@ -3,7 +3,6 @@ package us.wthr.jdem846.graphics;
 import us.wthr.jdem846.geom.util.SignTrianglePointTest;
 import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.util.ColorUtil;
 
 public class TriangleStripDraw extends PrimitiveDraw
 {
@@ -105,14 +104,15 @@ public class TriangleStripDraw extends PrimitiveDraw
 					double left = tri.getInterpolatedLeft(x, y);
 					double front = tri.getInterpolatedFront(x, y);
 					
-					int c = ColorUtil.TRANSPARENT;
+					IColor c = Colors.TRANSPARENT;
 					if (left >= 0 && front >= 0 && texture != null) {
 						c = this.textureColor(left, front, true);
 					} else {
-						c = tri.getInterpolatedColor(x, y);
+						int c0 = tri.getInterpolatedColor(x, y); // Temporary. Being lazy at the moment since I need to do something else
+						c = new Color(c0); 
 					}
 					
-					frameBuffer.set(x, y, z, c);
+					frameBuffer.set(x, y, z, c.asInt());
 				}
 			}
 		}

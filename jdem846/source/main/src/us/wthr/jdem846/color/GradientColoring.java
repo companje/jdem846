@@ -19,6 +19,9 @@ package us.wthr.jdem846.color;
 import java.io.File;
 
 import us.wthr.jdem846.exception.GradientLoadException;
+import us.wthr.jdem846.graphics.Color;
+import us.wthr.jdem846.graphics.Colors;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.scaling.ElevationScaler;
@@ -36,7 +39,7 @@ public class GradientColoring implements ModelColoring
 
 	private int units;
 
-	private static DemColor defaultColor = new DemColor(0, 0, 0, 0xFF);
+	private static IColor defaultColor = Colors.BLACK;
 	private GradientLoader gradient;
 	private String configFile = null;
 	private GradientColorStop[] colorStops = null;
@@ -123,7 +126,7 @@ public class GradientColoring implements ModelColoring
 
 
 	@Override
-	public void getColorByMeters(double meters, int[] color) 
+	public IColor getColorByMeters(double meters) 
 	{
 		GradientColorStop lower = null;
 		GradientColorStop upper = null;
@@ -143,8 +146,7 @@ public class GradientColoring implements ModelColoring
 		
 		
 		if (upper == null && lower == null) {
-			defaultColor.toList(color);
-			return;
+			return defaultColor;
 		} else if (upper == null) { // lower != null is implied by the first condition
 			upper = lower;
 		} else if (lower == null) { // upper != null is implied by the first condition
@@ -157,21 +159,20 @@ public class GradientColoring implements ModelColoring
 			color_ratio = 1.0;
 
 
-		color[0] = (int)Math.round(((lower.getColor().getRed() * (1.0 - color_ratio)) + (upper.getColor().getRed() * color_ratio)) * 255.0);
-		color[1] = (int)Math.round(((lower.getColor().getGreen() * (1.0 - color_ratio)) + (upper.getColor().getGreen() * color_ratio)) * 255.0);
-		color[2] = (int)Math.round(((lower.getColor().getBlue() * (1.0 - color_ratio)) + (upper.getColor().getBlue() * color_ratio)) * 255.0);
-		color[3] = 0xFF;
+		int r = (int)Math.round(((lower.getColor().getRed() * (1.0 - color_ratio)) + (upper.getColor().getRed() * color_ratio)));
+		int g = (int)Math.round(((lower.getColor().getGreen() * (1.0 - color_ratio)) + (upper.getColor().getGreen() * color_ratio)));
+		int b = (int)Math.round(((lower.getColor().getBlue() * (1.0 - color_ratio)) + (upper.getColor().getBlue() * color_ratio)));
+		int a = 0xFF;
 		
-		
+		return new Color(r, g, b, a);
 	}
 	
 	@Override
-	public void getColorByPercent(double ratio, int[] color) 
+	public IColor getColorByPercent(double ratio) 
 	{
 		
 		if (ratio < 0 || ratio > 1) {
-			defaultColor.toList(color);
-			return;
+			return defaultColor;
 			//return defaultColor.getCopy();
 		}
 		
@@ -189,8 +190,7 @@ public class GradientColoring implements ModelColoring
 		}
 		
 		if (upper == null && lower == null) {
-			defaultColor.toList(color);
-			return;
+			return defaultColor;
 		} else if (upper == null) { // lower != null is implied by the first condition
 			upper = lower;
 		} else if (lower == null) { // upper != null is implied by the first condition
@@ -199,8 +199,7 @@ public class GradientColoring implements ModelColoring
 		
 		
 		if (ratio == 0.0f || (upper.getPosition() - lower.getPosition()) == 0.0f) {
-			lower.getColor().toList(color);
-			return;
+			return new Color(lower.getColor());
 			//return lower.getColor().getCopy();
 		}
 		
@@ -209,11 +208,12 @@ public class GradientColoring implements ModelColoring
 			color_ratio = 1.0;
 
 		
-		color[0] = (int)Math.round(((lower.getColor().getRed() * (1.0 - color_ratio)) + (upper.getColor().getRed() * color_ratio)) * 255.0);
-		color[1] = (int)Math.round(((lower.getColor().getGreen() * (1.0 - color_ratio)) + (upper.getColor().getGreen() * color_ratio)) * 255.0);
-		color[2] = (int)Math.round(((lower.getColor().getBlue() * (1.0 - color_ratio)) + (upper.getColor().getBlue() * color_ratio)) * 255.0);
-		color[3] = 0xFF;
-		//return new DemColor(red, green, blue, 0xFF);
+		int r = (int)Math.round(((lower.getColor().getRed() * (1.0 - color_ratio)) + (upper.getColor().getRed() * color_ratio)));
+		int g = (int)Math.round(((lower.getColor().getGreen() * (1.0 - color_ratio)) + (upper.getColor().getGreen() * color_ratio)));
+		int b = (int)Math.round(((lower.getColor().getBlue() * (1.0 - color_ratio)) + (upper.getColor().getBlue() * color_ratio)));
+		int a = 0xFF;
+		
+		return new Color(r, g, b, a);
 	}
 
 	protected double getAdjustedElevation(double elevation)
@@ -226,7 +226,7 @@ public class GradientColoring implements ModelColoring
 	}
 	
 	@Override
-	public void getGradientColor(double elevation, double minElevation, double maxElevation, int[] color) 
+	public IColor getGradientColor(double elevation, double minElevation, double maxElevation) 
 	{
 		if (units == UNITS_PERCENT) {
 			double ratio = (elevation - minElevation) / (maxElevation - minElevation);
@@ -234,9 +234,11 @@ public class GradientColoring implements ModelColoring
 			if (ratio <= 0)
 				ratio = .001;
 			
-			getColorByPercent(ratio, color);
+			return getColorByPercent(ratio);
 		} else if (units == UNITS_METERS) {
-			getColorByMeters(elevation, color);
+			return getColorByMeters(elevation);
+		} else {
+			return Colors.TRANSPARENT;
 		}
 		
 		

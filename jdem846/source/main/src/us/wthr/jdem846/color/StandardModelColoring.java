@@ -22,6 +22,8 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.annotations.DemColoring;
 import us.wthr.jdem846.exception.GradientLoadException;
+import us.wthr.jdem846.graphics.Colors;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.scaling.ElevationScaler;
 
 @DemColoring(name="us.wthr.jdem846.color.standardModelColoring.name", identifier="standard-coloring",allowGradientConfig=false, needsMinMaxElevation=true)
@@ -61,26 +63,25 @@ public class StandardModelColoring implements ModelColoring
 
 	
 	@Override
-	public void getColorByMeters(double ratio, int[] color) 
+	public IColor getColorByMeters(double ratio) 
 	{
-		
+		return Colors.TRANSPARENT;
 	}
 	
 	@Override
-	public void getColorByPercent(double ratio, int[] color) 
+	public IColor getColorByPercent(double ratio) 
 	{
-		getColor(hypsometric, ratio, color);
+		return getColor(hypsometric, ratio);
 	}
 	
 	
-	public void getColor(ModelColoring coloring, double ratio, int[] color)
+	public IColor getColor(ModelColoring coloring, double ratio)
 	{
-		
+		return Colors.TRANSPARENT;
 	}
 
 	@Override
-	public void getGradientColor(double elevation, double min_elevation,
-			double max_elevation, int[] color)
+	public IColor getGradientColor(double elevation, double min_elevation, double max_elevation)
 	{
 		double effMin = 0;
 		double effMax = 0;
@@ -95,8 +96,7 @@ public class StandardModelColoring implements ModelColoring
 			
 			ratio = (elevation - effMin) / (effMax - effMin);
 			
-			bathymetric.getColorByPercent(ratio, color);
-			//getColor(bathymetric, ratio, color);
+			return bathymetric.getColorByPercent(ratio);
 		} else {
 			effMax = max_elevation;
 			
@@ -107,8 +107,7 @@ public class StandardModelColoring implements ModelColoring
 			
 			ratio = (elevation - effMin) / (effMax - effMin);
 			
-			hypsometric.getColorByPercent(ratio, color);
-			//getColor(bathymetric, ratio, color);
+			return hypsometric.getColorByPercent(ratio);
 		}
 		
 		

@@ -2,6 +2,7 @@ package us.wthr.jdem846.modelgrid;
 
 import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 
@@ -32,17 +33,17 @@ public interface IModelGrid extends InputSourceData
 
 	public void getRgbaByIndex(int index, int[] fill) throws DataSourceException;
 
-	public int getRgbaByIndex(int index) throws DataSourceException;
+	public IColor getRgbaByIndex(int index) throws DataSourceException;
 
-	public void setRgbaByIndex(int index, int rgba) throws DataSourceException;
+	public void setRgbaByIndex(int index, IColor rgba) throws DataSourceException;
 
 	public void setRgbaByIndex(int index, int[] rgba) throws DataSourceException;
 
 	public void getRgba(double latitude, double longitude, int[] fill) throws DataSourceException;
 
-	public int getRgba(double latitude, double longitude) throws DataSourceException;
+	public IColor getRgba(double latitude, double longitude) throws DataSourceException;
 
-	public void setRgba(double latitude, double longitude, int rgba) throws DataSourceException;
+	public void setRgba(double latitude, double longitude, IColor rgba) throws DataSourceException;
 
 	public void setRgba(double latitude, double longitude, int[] rgba) throws DataSourceException;
 

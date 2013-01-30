@@ -1,21 +1,28 @@
 package us.wthr.jdem846.model;
 
-import java.awt.Color;
+
 import java.util.Map;
 
-import us.wthr.jdem846.util.ColorUtil;
+import us.wthr.jdem846.graphics.Color;
+import us.wthr.jdem846.graphics.Colors;
+import us.wthr.jdem846.graphics.IColor;
 
 public class RgbaColor
 {
-	
-	private int[] rgba = new int[4];
-	
+	private IColor color;
+
 	public RgbaColor()
 	{
-		rgba[0] = 0x0;
-		rgba[1] = 0x0;
-		rgba[2] = 0x0;
-		rgba[3] = 0x0;
+		color = new Color(Colors.TRANSPARENT.getRed()
+							, Colors.TRANSPARENT.getGreen()
+							, Colors.TRANSPARENT.getBlue()
+							, Colors.TRANSPARENT.getAlpha()
+							);
+	}
+	
+	public RgbaColor(IColor c)
+	{
+		color = new Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
 	}
 	
 	public RgbaColor(int r, int g, int b, int a)
@@ -35,15 +42,12 @@ public class RgbaColor
 	
 	public void setRgba(int r, int g, int b, int a)
 	{
-		rgba[0] = r;
-		rgba[1] = g;
-		rgba[2] = b;
-		rgba[3] = a;
+		color = new Color(r, g, b, a);
 	}
 	
 	public void setRgba(int rgba)
 	{
-		ColorUtil.intToRGBA(rgba, this.rgba);
+		color = new Color(rgba);
 	}
 	
 	public void setRgba(int[] rgba)
@@ -54,15 +58,12 @@ public class RgbaColor
 	
 	public int getRgba()
 	{
-		return ColorUtil.rgbaToInt(rgba);
+		return color.asInt();
 	}
 	
 	public void getRgba(int[] fill)
 	{
-		fill[0] = rgba[0];
-		fill[1] = rgba[1];
-		fill[2] = rgba[2];
-		fill[3] = rgba[3];
+		color.toArray(fill);
 	}
 	
 	
@@ -79,30 +80,28 @@ public class RgbaColor
 	
 	public String toString()
 	{
-		String s = "rgba:[" + rgba[0] + "," + 
-						rgba[1] + "," +
-						rgba[2] + "," +
-						rgba[3] + "]";
+		String s = "rgba:[" + color.getRed() + "," + 
+							color.getGreen() + "," +
+							color.getBlue() + "," +
+							color.getAlpha() + "]";
 		return s;
 	}
 	
-	public Color toAwtColor()
+	public IColor toColor()
 	{
-		return new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
+		return color;
+	}
+	
+	public java.awt.Color toAwtColor()
+	{
+		return new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}
 	
 	public boolean equals(Object obj)
 	{
 		if (obj != null && obj instanceof RgbaColor) {
 			RgbaColor other = (RgbaColor) obj;
-			if (other.rgba[0] == this.rgba[0]
-					&& other.rgba[1] == this.rgba[1]
-					&& other.rgba[2] == this.rgba[2]
-					&& other.rgba[3] == this.rgba[3]) {
-				return true;
-			} else {
-				return false;
-			}
+			return other.color.equals(this.color);
 		} else {
 			return false;
 		}
@@ -111,7 +110,7 @@ public class RgbaColor
 	
 	public RgbaColor copy()
 	{
-		RgbaColor copy = new RgbaColor(this.rgba);
+		RgbaColor copy = new RgbaColor(this.color);
 		return copy;
 	}
 }

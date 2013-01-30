@@ -6,6 +6,8 @@ import java.util.List;
 import us.wthr.jdem846.DataContext;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.graphics.Color;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -92,53 +94,59 @@ public class ImageDataContext implements DataContext
 		}
 	}
 	
-	public boolean getColor(double latitude, double longitude, int[] rgba) throws DataSourceException
+	public IColor getColor(double latitude, double longitude) throws DataSourceException
 	{
-		return getColor(latitude, longitude, rgba, false);
+		return getColor(latitude, longitude, false);
 	}
 	
-	public boolean getColor(double latitude, double longitude, int[] rgba, boolean nearestNeighbor) throws DataSourceException
+	public IColor getColor(double latitude, double longitude,  boolean nearestNeighbor) throws DataSourceException
 	{
-		return getColor(latitude, longitude, DemConstants.ELEV_UNDETERMINED, DemConstants.ELEV_UNDETERMINED, rgba, nearestNeighbor);
+		return getColor(latitude, longitude, DemConstants.ELEV_UNDETERMINED, DemConstants.ELEV_UNDETERMINED, nearestNeighbor);
 	}
 	
-	public boolean getColor(double latitude, double longitude, double latitudeResolution, double longitudeResolution, int[] rgba) throws DataSourceException
+	public IColor getColor(double latitude, double longitude, double latitudeResolution, double longitudeResolution) throws DataSourceException
 	{
-		return getColor(latitude, longitude, latitudeResolution, longitudeResolution, rgba, false);
+		return getColor(latitude, longitude, latitudeResolution, longitudeResolution, false);
 	}
 	
-	public boolean getColor(double latitude, double longitude, double latitudeResolution, double longitudeResolution, int[] rgba, boolean nearestNeighbor) throws DataSourceException
+	public IColor getColor(double latitude, double longitude, double latitudeResolution, double longitudeResolution,  boolean nearestNeighbor) throws DataSourceException
 	{
-		boolean pixelLoaded = false;
 		int i = 0;
 		
+		IColor c = null;
+		
+		boolean pixelLoaded = false;
+		
+		int[] rgba = {0, 0, 0, 0};
 		int[] rgbaBufferA = {0, 0, 0, 0};//new int[4];
 		
 		for (SimpleGeoImage image : imageList) {
 			if (image.contains(latitude, longitude)) {
-				try {
-					image.getColor(latitude, longitude, latitudeResolution, longitudeResolution, rgbaBufferA, nearestNeighbor);
-				} catch (DataSourceException ex) {
-					throw new DataSourceException("Error retrieving color values: " + ex.getMessage(), ex);
+				
+				if ((c = image.getColor(latitude, longitude, latitudeResolution, longitudeResolution, nearestNeighbor)) != null) {
+					
+					pixelLoaded = true;
+					
+					if (i == 0) {
+						rgba[0] = c.getRed();
+						rgba[1] = c.getGreen();
+						rgba[2] = c.getBlue();
+						rgba[3] = c.getAlpha();
+					} else {
+						
+						c.toArray(rgbaBufferA);
+						
+						double r = 1.0 - ((double)rgbaBufferA[3] / 255.0);
+						int a = Math.max(rgbaBufferA[3], rgba[3]);
+						ColorUtil.interpolateColor(rgbaBufferA, rgba, rgba, r);
+						rgba[3] = a;
+						
+					}
+					
+					i++;
+					
 				}
 				
-				pixelLoaded = true;
-				
-				if (i == 0) {
-					rgba[0] = rgbaBufferA[0];
-					rgba[1] = rgbaBufferA[1];
-					rgba[2] = rgbaBufferA[2];
-					rgba[3] = rgbaBufferA[3];
-				} else {
-					
-					double r = 1.0 - ((double)rgbaBufferA[3] / 255.0);
-					int a = Math.max(rgbaBufferA[3], rgba[3]);
-					ColorUtil.interpolateColor(rgbaBufferA, rgba, rgba, r);
-					rgba[3] = a;
-					
-				}
-				
-				i++;
 			}
 			
 			if (pixelLoaded && rgba[3] == 255) {
@@ -146,7 +154,11 @@ public class ImageDataContext implements DataContext
 			}
 		}
 		
-		return pixelLoaded;
+		if (pixelLoaded) {
+			return new Color(rgba);
+		} else {
+			return null;
+		}
 	}
 	
 	

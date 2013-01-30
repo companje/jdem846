@@ -22,6 +22,7 @@ import java.awt.Graphics;
 import us.wthr.jdem846.color.ColoringInstance;
 import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Panel;
@@ -67,9 +68,9 @@ public class GradientSamplePanel extends Panel
 			//log.info("Value: " + value + ", " + min + "/" + max + "/" + range);
 			//double value = min + ((double)y / height);
 			
-			coloring.getGradientColor(value, min, max, rgba);
+			IColor ic = coloring.getGradientColor(value, min, max);
 			
-			Color color = new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
+			Color color = new Color(ic.getRed(), ic.getGreen(), ic.getBlue(), ic.getAlpha());
 			g.setColor(color);
 			g.drawLine(0, y, width, y);
 		}

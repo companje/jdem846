@@ -3,6 +3,7 @@ package us.wthr.jdem846.scripting.groovy;
 import groovy.lang.GroovyObject;
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.exception.ScriptingException;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.graphics.IRenderer;
 import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.logging.Log;
@@ -112,9 +113,9 @@ public class GroovyScriptProxy implements ScriptProxy
 	}
 	
 	@Override
-	public void onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, int[] color) throws ScriptingException
+	public IColor onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, IColor color) throws ScriptingException
 	{
-		onGetPointColorCallBack.call(latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
+		return (IColor) onGetPointColorCallBack.call(latitude, longitude, elevation, elevationMinimum, elevationMaximum, color);
 	}
 	
 	@Override

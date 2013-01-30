@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846.color;
 
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.scaling.ElevationScaler;
 
 public interface ModelColoring 
@@ -25,9 +26,9 @@ public interface ModelColoring
 	
 	public void setElevationScaler(ElevationScaler elevationScaler);
 	
-	public void getColorByPercent(double ratio, int[] color);
-	public void getColorByMeters(double meters, int[] color);
-	public void getGradientColor(double elevation, double min_elevation, double max_elevation, int[] color);
+	public IColor getColorByPercent(double ratio);
+	public IColor getColorByMeters(double meters);
+	public IColor getGradientColor(double elevation, double min_elevation, double max_elevation);
 
 	
 	

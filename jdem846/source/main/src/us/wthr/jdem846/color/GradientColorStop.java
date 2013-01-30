@@ -16,10 +16,13 @@
 
 package us.wthr.jdem846.color;
 
+import us.wthr.jdem846.graphics.Color;
+import us.wthr.jdem846.graphics.IColor;
+
 public class GradientColorStop 
 {
 	private double position;
-	private DemColor color;
+	private IColor color;
 	
 	public GradientColorStop(double position, double red, double green, double blue, double alpha)
 	{
@@ -40,10 +43,10 @@ public class GradientColorStop
     	}
     	
     	this.position = position;
-    	color = new DemColor(red, green, blue, alpha);
+    	color = new Color(red, green, blue, alpha);
 	}
 
-	public GradientColorStop(double position, DemColor color)
+	public GradientColorStop(double position, IColor color)
 	{
 		this.position = position;
 		this.color = color;
@@ -51,16 +54,16 @@ public class GradientColorStop
 	
 	public GradientColorStop copy()
 	{
-		return new GradientColorStop(this.position, this.color.copy());
+		return new GradientColorStop(this.position, new Color(color));
 	}
 	
 	
 	public String toString()
 	{
 		String s = "" + position + ", "
-			+ color.red + ", "
-			+ color.green + ", "
-			+ color.blue;
+			+ color.getRed() + ", "
+			+ color.getGreen() + ", "
+			+ color.getBlue();
 		
 		return s;
 	}
@@ -75,7 +78,7 @@ public class GradientColorStop
 		return position;
 	}
 	
-	public DemColor getColor()
+	public IColor getColor()
 	{
 		return color;
 	}

@@ -39,7 +39,19 @@ public abstract class BaseRenderer implements IRenderer
 	{
 		viewPort(x, y, width, height, FrameBufferModeEnum.STANDARD);
 	}
-
+	
+	@Override
+	public void clear(IColor backgroundColor)
+	{
+		clear((backgroundColor != null) ? backgroundColor.asInt() : 0x0);
+	}
+	
+	@Override
+	public void color(IColor color)
+	{
+		color((color != null) ? color.asInt() : 0x0);
+	}
+	
 	@Override
 	public void color(int[] color)
 	{

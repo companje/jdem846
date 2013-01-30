@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import us.wthr.jdem846.ElevationModel;
-import us.wthr.jdem846.image.ISimpleGeoImageDefinition;
+import us.wthr.jdem846.image.ISimpleGeoImage;
 import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -49,7 +49,7 @@ public class LayerPropertiesView extends ViewPart
 		{
 			public void onSourceDataSelectionChanged(InputSourceData selectedData)
 			{
-				if (selectedData != null && selectedData instanceof ISimpleGeoImageDefinition) {
+				if (selectedData != null && selectedData instanceof ISimpleGeoImage) {
 					activeView = geoImagePropertiesView;
 				} else if (selectedData != null && selectedData instanceof GenericRasterDataProvider) { 
 					activeView = rasterPropertiesView;

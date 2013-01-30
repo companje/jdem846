@@ -1,5 +1,7 @@
 package us.wthr.jdem846.util;
 
+import us.wthr.jdem846.graphics.Color;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.math.MathExt;
 
 /** General purpose color utilities. Include type conversions and some modification algorithms. 
@@ -21,6 +23,12 @@ public final class ColorUtil
 	public static final int GREEN =       ColorUtil.rgbaToInt(0x00, 0xFF, 0x00, 0xFF);
 	public static final int BLUE =        ColorUtil.rgbaToInt(0x00, 0x00, 0xFF, 0xFF);
 	public static final int TRANSPARENT = ColorUtil.rgbaToInt(0x00, 0x00, 0x00, 0x00);
+	
+	
+	public static IColor setOverlayChannel(IColor c, int value, int channel)
+	{
+		return new Color(setOverlayChannel(c.asInt(), value, channel));
+	}
 	
 	public static int setOverlayChannel(int c, int value, int channel)
 	{
@@ -96,6 +104,20 @@ public final class ColorUtil
 		}
 	}
 	
+	public static IColor overlayColor(IColor rgbaA, IColor rgbaB)
+	{
+		int[] bufferA = {0, 0, 0, 0};
+		int[] bufferB = {0, 0, 0, 0};
+		int[] bufferC = {0, 0, 0, 0};
+		
+		rgbaA.toArray(bufferA);
+		rgbaB.toArray(bufferB);
+		
+		overlayColor(bufferA, bufferB, bufferC);
+		
+		return new Color(bufferC);
+	}
+	
 	
 	public static int overlayColor(int rgbaA, int rgbaB)
 	{
@@ -159,6 +181,18 @@ public final class ColorUtil
 	}
 	
 
+	public static IColor adjustBrightness(IColor color, double brightness)
+	{
+		int[] _c = {0, 0, 0, 0};
+		color.toArray(_c);
+		
+		adjustBrightness(_c, brightness);
+		
+		return new Color(_c);
+		
+	}
+	
+	
 	public static void adjustBrightness(int[] color, double brightness)
 	{
 
@@ -183,10 +217,25 @@ public final class ColorUtil
 		checkColorChannelLevels(color);
 	}
 	
+	public static IColor adjustBrightnessAndContrast(IColor color, double brightness, double contrast)
+	{
+		return adjustContrast(adjustBrightness(color, brightness), contrast);
+	}
+	
 	public static void adjustBrightnessAndContrast(int[] color, double brightness, double contrast)
 	{
 		adjustBrightness(color, brightness);
 		adjustContrast(color, contrast);
+	}
+	
+	public static IColor adjustContrast(IColor color, double contrast)
+	{
+		int[] _c = {0, 0, 0, 0};
+		color.toArray(_c);
+		
+		adjustContrast(_c, contrast);
+		
+		return new Color(_c);
 	}
 	
 	public static void adjustContrast(int[] color, double contrast)
@@ -216,7 +265,23 @@ public final class ColorUtil
 			color[2] = 0;
 	}
 	
-	
+	public static IColor interpolateColor(IColor c00, IColor c01, IColor c10, IColor c11, double xFrac, double yFrac)
+	{
+		int[] _c00 = {0, 0, 0, 0};
+		int[] _c01 = {0, 0, 0, 0};
+		int[] _c10 = {0, 0, 0, 0};
+		int[] _c11 = {0, 0, 0, 0};
+		int[] _o = {0, 0, 0, 0};
+		
+		c00.toArray(_c00);
+		c01.toArray(_c01);
+		c10.toArray(_c10);
+		c11.toArray(_c11);
+		
+		interpolateColor(_c00, _c01, _c10, _c11, _o, xFrac, yFrac);
+		
+		return new Color(_o);
+	}
 	
 	public static int interpolateColor(int c00, int c01, int c10, int c11, double xFrac, double yFrac)
 	{
@@ -250,6 +315,21 @@ public final class ColorUtil
 		int c = (int) MathExt.round(MathExt.interpolate((double)c00[channel], (double)c01[channel], (double)c10[channel], (double)c11[channel], xFrac, yFrac));
 		c = ColorUtil.clamp(c);
 		out[channel] = c;
+	}
+	
+	
+	public static IColor interpolateColor(IColor c0, IColor c1, double ratio)
+	{
+		int[] _c0 = {0, 0, 0, 0};
+		int[] _c1 = {0, 0, 0, 0};
+		int[] _o = {0, 0, 0, 0};
+		
+		c0.toArray(_c0);
+		c1.toArray(_c1);
+		
+		interpolateColor(_c0, _c1, _o, ratio);
+		
+		return new Color(_o);
 	}
 	
 	public static int interpolateColor(int c0, int c1, double ratio)

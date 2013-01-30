@@ -6,6 +6,8 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
+import us.wthr.jdem846.graphics.Colors;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.processing.GridFilter;
@@ -133,7 +135,7 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 		if (doFilters && !basic) {
 
 			if (forceResetAndRunFilters) {
-				modelGrid.setRgba(latitude, longitude, 0x0);
+				modelGrid.setRgba(latitude, longitude, Colors.TRANSPARENT);
 			}
 
 			processFiltersOnPoint(latitude, longitude);
@@ -155,13 +157,13 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 	}
 
 	@Override
-	public int getRgbaByIndex(int index) throws DataSourceException
+	public IColor getRgbaByIndex(int index) throws DataSourceException
 	{
 		return modelGrid.getRgbaByIndex(index);
 	}
 
 	@Override
-	public void setRgbaByIndex(int index, int rgba) throws DataSourceException
+	public void setRgbaByIndex(int index, IColor rgba) throws DataSourceException
 	{
 		modelGrid.setRgbaByIndex(index, rgba);
 	}
@@ -180,13 +182,13 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 	}
 
 	@Override
-	public int getRgba(double latitude, double longitude) throws DataSourceException
+	public IColor getRgba(double latitude, double longitude) throws DataSourceException
 	{
 		return modelGrid.getRgba(latitude, longitude);
 	}
 
 	@Override
-	public void setRgba(double latitude, double longitude, int rgba) throws DataSourceException
+	public void setRgba(double latitude, double longitude, IColor rgba) throws DataSourceException
 	{
 		modelGrid.setRgba(latitude, longitude, rgba);
 	}
