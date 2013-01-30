@@ -170,7 +170,14 @@ public class TextureRenderer
 		int subTextureWidth = subTexture.getWidth();
 		int subTextureHeight = subTexture.getHeight();
 		
+		if (subTextureHeight <= 0 || subTextureWidth <= 0) {
+			log.warn("Cannot render subtexture with height/width of " + subTextureHeight + "/" + subTextureWidth);
+			return DemConstants.ELEV_NO_DATA;
+		}
+		
 		log.info("Subtexture height/width: " + subTextureHeight + "/" + subTextureWidth);
+		
+		
 		
 		renderer.bindTexture(subTexture, textureMapConfig);
 		
@@ -189,6 +196,7 @@ public class TextureRenderer
 			this.renderer.end();
 
 		}
+		
 
 		this.renderer.unbindTexture();
 		
