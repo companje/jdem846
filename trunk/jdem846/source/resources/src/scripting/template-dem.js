@@ -67,7 +67,7 @@ function onGetElevationAfter(latitude, longitude, elevation)
 
 function onGetPointColor(latitude, longitude, elevation, elevationMinimum, elevationMaximum, color)
 {
-	
+	return color;
 }
 
 function onLightLevels(latitude, longitude)

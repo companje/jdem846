@@ -21,6 +21,9 @@ import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.EquirectangularProjection;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.graphics.Color;
+import us.wthr.jdem846.graphics.Colors;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.graphics.Texture;
 import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
@@ -127,15 +130,16 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 		}
 
 		Raster raster = image.getRaster();
+		Raster alphaRaster = image.getAlphaRaster();
 		
-		if (image.getAlphaRaster() != null) {
+		if (alphaRaster != null) {
 			hasAlphaChannel = true;
 		} else {
 			hasAlphaChannel = false;
 		}
 		
 		int[] rgba = {0, 0, 0, 0};
-		
+
 		long capacity = raster.getWidth() * raster.getHeight();
 		this.rasterBuffer = BufferFactory.allocateIntBuffer(capacity);
 		for (int y = 0; y < raster.getHeight(); y++) {
@@ -144,7 +148,7 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 				raster.getPixel(x, y, rgba);
 				if (!hasAlphaChannel) {
 					rgba[3] = 0xFF;
-				}
+				} 
 				
 				long index = ((long) y * (long)raster.getWidth()) + ((long)x);
 				int c = ColorUtil.rgbaToInt(rgba);
@@ -197,58 +201,48 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 	}
 	
 	
-	public int getColor(double latitude, double longitude) throws DataSourceException
+	public IColor getColor(double latitude, double longitude) throws DataSourceException
 	{
-		int[] rgba = {0, 0, 0, 0};
-		if (getColor(latitude, longitude, rgba)) {
-			return ColorUtil.rgbaToInt(rgba);
-		} else {
-			return 0x0;
-		}
-	}
-	
-	public boolean getColor(double latitude, double longitude, int[] rgba) throws DataSourceException
-	{
-		return getColor(latitude, longitude, rgba, false);
+		return getColor(latitude, longitude, false);
 	}
 
-	public boolean getColor(double latitude, double longitude, int[] rgba, boolean nearestNeighbor) throws DataSourceException
+	public IColor getColor(double latitude, double longitude, boolean nearestNeighbor) throws DataSourceException
 	{
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
 		}
-		return getColor(latitude, longitude, imageDefinition.getLatitudeResolution(), imageDefinition.getLongitudeResolution(), rgba, nearestNeighbor);
+		return getColor(latitude, longitude, imageDefinition.getLatitudeResolution(), imageDefinition.getLongitudeResolution(), nearestNeighbor);
 	}
 
-	public boolean getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba) throws DataSourceException
+	public IColor getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution) throws DataSourceException
 	{
-		return getColor(latitude, longitude, effectiveLatitudeResolution, effectiveLongitudeResolution, rgba, false);
+		return getColor(latitude, longitude, effectiveLatitudeResolution, effectiveLongitudeResolution, false);
 	}
 
-	public boolean getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba, boolean nearestNeighbor) throws DataSourceException
+	public IColor getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, boolean nearestNeighbor) throws DataSourceException
 	{
 
-		double adjLatitude = 0;// coordinateSpaceAdjuster.adjustLatitude(latitude);
-		double adjLongitude = 0;// coordinateSpaceAdjuster.adjustLongitude(longitude);
+		double adjLatitude = 0;
+		double adjLongitude = 0;
 
 		if ((adjLatitude = coordinateSpaceAdjuster.adjustLatitude(latitude)) == DemConstants.ELEV_NO_DATA) {
-			return false;
+			return null;
 		}
 
 		if ((adjLongitude = coordinateSpaceAdjuster.adjustLongitude(longitude)) == DemConstants.ELEV_NO_DATA) {
-			return false;
+			return null;
 		}
 
-		return _getColor(adjLatitude, adjLongitude, effectiveLatitudeResolution, effectiveLongitudeResolution, rgba, nearestNeighbor);
+		return _getColor(adjLatitude, adjLongitude, effectiveLatitudeResolution, effectiveLongitudeResolution, nearestNeighbor);
 
 	}
 
-	protected boolean _getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba) throws DataSourceException
+	protected IColor _getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution) throws DataSourceException
 	{
-		return _getColor(latitude, longitude, effectiveLatitudeResolution, effectiveLongitudeResolution, rgba, false);
+		return _getColor(latitude, longitude, effectiveLatitudeResolution, effectiveLongitudeResolution, false);
 	}
 
-	protected boolean _getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, int[] rgba, boolean nearestNeighbor) throws DataSourceException
+	protected IColor _getColor(double latitude, double longitude, double effectiveLatitudeResolution, double effectiveLongitudeResolution, boolean nearestNeighbor) throws DataSourceException
 	{
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
@@ -262,12 +256,10 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 			effectiveLongitudeResolution = imageDefinition.getLongitudeResolution();
 		}
 
-		int[] rgbaBuffer0 = new int[4];
-
 		if (latitude >= imageDefinition.getSouth() && latitude <= imageDefinition.getNorth() && longitude >= imageDefinition.getWest() && longitude <= imageDefinition.getEast()) {
 
 			if (nearestNeighbor) {
-				getColorNearestNeighbor(latitude, longitude, rgba);
+				return getColorNearestNeighbor(latitude, longitude);
 			} else {
 
 				double north = latitude + (effectiveLatitudeResolution / 2.0);
@@ -276,24 +268,25 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 				double west = longitude - (effectiveLongitudeResolution / 2.0);
 				double east = longitude + (effectiveLongitudeResolution / 2.0);
 
-				resetRgbaBuffer(rgba);
-
 				double samples = 0;
 
 				double rows = (north - south) / imageDefinition.getLatitudeResolution();
 				double columns = (east - west) / imageDefinition.getLongitudeResolution();
 
 				if (rows < 1 && columns < 1) {
-					getColorBilinear(latitude, longitude, rgba);
+					return getColorBilinear(latitude, longitude);
 				} else {
-
+					
+					IColor c = null;
+					int[] rgba = {0, 0, 0, 0};
+					
 					for (double x = west; x <= east; x += imageDefinition.getLongitudeResolution()) {
 						for (double y = north; y >= south; y -= imageDefinition.getLatitudeResolution()) {
-							if (getColorBilinear(y, x, rgbaBuffer0)) {
-								rgba[0] += rgbaBuffer0[0];
-								rgba[1] += rgbaBuffer0[1];
-								rgba[2] += rgbaBuffer0[2];
-								rgba[3] += rgbaBuffer0[3];
+							if ((c = getColorBilinear(y, x)) != null) {
+								rgba[0] += c.getRed();
+								rgba[1] += c.getGreen();
+								rgba[2] += c.getBlue();
+								rgba[3] += c.getAlpha();
 								samples++;
 							}
 						}
@@ -305,15 +298,17 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 						rgba[2] = (int) MathExt.round((double) rgba[2] / samples);
 						rgba[3] = (int) MathExt.round((double) rgba[3] / samples);
 					}
+					
+					return new Color(rgba);
 				}
 			}
-			return true;
+
 		} else {
-			return false;
+			return null;
 		}
 	}
 
-	public boolean getColorBilinear(double latitude, double longitude, int[] rgba) throws DataSourceException
+	public IColor getColorBilinear(double latitude, double longitude) throws DataSourceException
 	{
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
@@ -328,11 +323,6 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 			throw new DataSourceException("Error getting x/y point from coordinates: " + ex.getMessage(), ex);
 		}
 
-		int[] rgbaBuffer00 = new int[4];
-		int[] rgbaBuffer01 = new int[4];
-		int[] rgbaBuffer10 = new int[4];
-		int[] rgbaBuffer11 = new int[4];
-
 		x00 = (int) mapPoint.column;
 		y00 = (int) mapPoint.row;
 		x01 = mapPoint.column;
@@ -341,17 +331,20 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 		double xFrac = x01 - x00;
 		double yFrac = y01 - y00;
 
-		getPixel((int) x00, (int) y00, rgbaBuffer00);
-		getPixel((int) x00 + 1, (int) y00, rgbaBuffer01);
-		getPixel((int) x00, (int) y00 + 1, rgbaBuffer10);
-		getPixel((int) x00 + 1, (int) y00 + 1, rgbaBuffer11);
+		IColor c00 = getPixel((int) x00, (int) y00);
+		IColor c01 = getPixel((int) x00 + 1, (int) y00);
+		IColor c10 = getPixel((int) x00, (int) y00 + 1);
+		IColor c11 = getPixel((int) x00 + 1, (int) y00 + 1);
 
-		ColorUtil.interpolateColor(rgbaBuffer00, rgbaBuffer01, rgbaBuffer10, rgbaBuffer11, rgba, xFrac, yFrac);
-
-		return true;
+		c00 = (c00 != null) ? c00 : Colors.TRANSPARENT;
+		c01 = (c01 != null) ? c01 : Colors.TRANSPARENT;
+		c10 = (c10 != null) ? c10 : Colors.TRANSPARENT;
+		c11 = (c11 != null) ? c11 : Colors.TRANSPARENT;
+		
+		return ColorUtil.interpolateColor(c00, c01, c10, c11, xFrac, yFrac);
 	}
 
-	public boolean getColorNearestNeighbor(double latitude, double longitude, int[] rgba) throws DataSourceException
+	public IColor getColorNearestNeighbor(double latitude, double longitude) throws DataSourceException
 	{
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
@@ -363,56 +356,36 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 				throw new DataSourceException("Error getting x/y point from coordinates: " + ex.getMessage(), ex);
 			}
 
-			getPixel((int) Math.round(mapPoint.column), (int) Math.round(mapPoint.row), rgba);
-
-			return true;
+			return getPixel((int) Math.round(mapPoint.column), (int) Math.round(mapPoint.row));
 		} else {
-			return false;
+			return null;
 		}
 	}
 
-	public boolean getPixel(int x, int y, int[] rgba) throws DataSourceException
+	public IColor getPixel(int x, int y) throws DataSourceException
 	{
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
 		}
-		
-		//if (x < 0) {
-		//	ColorUtil.intToRGBA(ColorUtil.RED, rgba);
-		//	return true;
-			//x = getWidth() - 1 - (0 - x);
-		//}
-		
-		//if (x >= getWidth()) {
-		//	ColorUtil.intToRGBA(ColorUtil.RED, rgba);
-		//	return true;
-			//x = 0 + (x - getWidth() - 1);
-		//}
-		
-		
+
 		if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
 			
-			return false; // Throw?
+			return null; // Throw?
 		}
 
 		long index = (y * imageDefinition.getImageWidth()) + x;
 		if (index < 0 || index >= rasterBuffer.capacity()) {
-			return false; // Throw?
+			return null; // Throw?
 		}
 		
 		int c = rasterBuffer.get(index);
-		ColorUtil.intToRGBA(c, rgba);
-
+		
+		IColor color = new Color(c);
 		if (!hasAlphaChannel) {
-			rgba[3] = 0xFF;
+			color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0xFF);
 		}
 
-		return true;
-	}
-
-	private void resetRgbaBuffer(int[] rgba)
-	{
-		rgba[0] = rgba[1] = rgba[2] = rgba[3] = 0x0;
+		return color;
 	}
 
 	public String getImageFile()

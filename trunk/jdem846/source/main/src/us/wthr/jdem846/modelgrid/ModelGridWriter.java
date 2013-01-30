@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -59,12 +60,12 @@ public class ModelGridWriter extends ModelGridFileIO
 	protected static long writeCell(IModelGrid modelGrid, int index, OutputStream out) throws IOException, DataSourceException
 	{
 		double elevation = modelGrid.getElevationByIndex(index);
-		int rgba = modelGrid.getRgbaByIndex(index);
+		IColor rgba = modelGrid.getRgbaByIndex(index);
 		
 		long bytesWritten = 0;
 		
 		bytesWritten += write(elevation, out);
-		bytesWritten += write(rgba, out);
+		bytesWritten += write(rgba.asInt(), out);
 		
 		return bytesWritten;
 	}

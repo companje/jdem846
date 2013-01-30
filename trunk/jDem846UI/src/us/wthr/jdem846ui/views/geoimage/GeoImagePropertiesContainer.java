@@ -8,6 +8,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -16,7 +17,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-import us.wthr.jdem846.image.ISimpleGeoImageDefinition;
+import us.wthr.jdem846.image.ISimpleGeoImage;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846ui.Activator;
 import us.wthr.jdem846ui.controls.LabeledSpinner;
@@ -33,11 +34,23 @@ public class GeoImagePropertiesContainer extends Composite
 	private LabeledSpinner spnSouth;
 	private LabeledSpinner spnEast;
 	private LabeledSpinner spnWest;
+	private LabeledSpinner spnLatitudeResolution;
+	private LabeledSpinner spnLongitudeResolution;
+	private LabeledSpinner spnImageWidth;
+	private LabeledSpinner spnImageHeight;
 
 	private Button btnApply;
 	private Button btnReset;
 	
-	private ISimpleGeoImageDefinition simpleGeoImage;
+	private Button btnDetermineNorth;
+	private Button btnDetermineSouth;
+	private Button btnDetermineEast;
+	private Button btnDetermineWest;
+
+	private Button btnDetermineLatitudeResolution;
+	private Button btnDetermineLongitudeResolution;
+	
+	private ISimpleGeoImage simpleGeoImage;
 	
 	public GeoImagePropertiesContainer(Composite parent, int style)
 	{
@@ -83,20 +96,127 @@ public class GeoImagePropertiesContainer extends Composite
 		Composite geoLocationComposite = toolkit.createComposite(geoLocationSection);
 		layout = new TableWrapLayout();
 		geoLocationComposite.setLayout(layout);
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 
+		
+		spnImageHeight = LabeledSpinner.create(geoLocationComposite, "Height:", 1, 1000000, 0, 1);
+		spnImageHeight.getControl().addSelectionListener(selectionListener);
+		new Label(geoLocationComposite, SWT.NONE);
+		
+		spnImageWidth = LabeledSpinner.create(geoLocationComposite, "Width:", 1, 1000000, 0, 1);
+		spnImageWidth.getControl().addSelectionListener(selectionListener);
+		new Label(geoLocationComposite, SWT.NONE);
+		
+		spnImageWidth.getControl().setEnabled(false);
+		spnImageHeight.getControl().setEnabled(false);
+		
 		spnNorth = LabeledSpinner.create(geoLocationComposite, "North:", -18000, 18000, 2, 100);
 		spnNorth.getControl().addSelectionListener(selectionListener);
+		btnDetermineNorth = new Button(geoLocationComposite, SWT.PUSH);
+		btnDetermineNorth.setImage(variableIcon);
+		btnDetermineNorth.setToolTipText("Autocalculate This Field");
+		btnDetermineNorth.setLayoutData(new TableWrapData(TableWrapData.RIGHT, TableWrapData.MIDDLE));
+		btnDetermineNorth.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
+				if (simpleGeoImage != null) {
+					simpleGeoImage.getImageDefinition().determineNorth();
+					initializeFromImage(simpleGeoImage);
+				}
+			}
+		});
+		
 		
 		spnSouth = LabeledSpinner.create(geoLocationComposite, "South:", -18000, 18000, 2, 100);
 		spnSouth.getControl().addSelectionListener(selectionListener);
+		btnDetermineSouth = new Button(geoLocationComposite, SWT.PUSH);
+		btnDetermineSouth.setImage(variableIcon);
+		btnDetermineSouth.setToolTipText("Autocalculate This Field");
+		btnDetermineSouth.setLayoutData(new TableWrapData(TableWrapData.RIGHT, TableWrapData.MIDDLE));
+		btnDetermineSouth.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
+				if (simpleGeoImage != null) {
+					simpleGeoImage.getImageDefinition().determineSouth();
+					initializeFromImage(simpleGeoImage);
+				}
+			}
+		});
 		
 		spnEast = LabeledSpinner.create(geoLocationComposite, "East:", -36000, 36000, 2, 100);
 		spnEast.getControl().addSelectionListener(selectionListener);
+		btnDetermineEast = new Button(geoLocationComposite, SWT.PUSH);
+		btnDetermineEast.setImage(variableIcon);
+		btnDetermineEast.setToolTipText("Autocalculate This Field");
+		btnDetermineEast.setLayoutData(new TableWrapData(TableWrapData.RIGHT, TableWrapData.MIDDLE));
+		btnDetermineEast.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
+				if (simpleGeoImage != null) {
+					simpleGeoImage.getImageDefinition().determineEast();
+					initializeFromImage(simpleGeoImage);
+				}
+			}
+		});
+		
 		
 		spnWest = LabeledSpinner.create(geoLocationComposite, "West:", -36000, 36000, 2, 100);
 		spnWest.getControl().addSelectionListener(selectionListener);
-
+		btnDetermineWest = new Button(geoLocationComposite, SWT.PUSH);
+		btnDetermineWest.setImage(variableIcon);
+		btnDetermineWest.setToolTipText("Autocalculate This Field");
+		btnDetermineWest.setLayoutData(new TableWrapData(TableWrapData.RIGHT, TableWrapData.MIDDLE));
+		btnDetermineWest.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
+				if (simpleGeoImage != null) {
+					simpleGeoImage.getImageDefinition().determineWest();
+					initializeFromImage(simpleGeoImage);
+				}
+			}
+		});
+		
+		
+		spnLatitudeResolution = LabeledSpinner.create(geoLocationComposite, "Latitude Resolution:", 0, 360 * RESOLUTION_MULTIPLE, RESOLUTION_DIGITS, RESOLUTION_MULTIPLE);
+		spnLatitudeResolution.getControl().addSelectionListener(selectionListener);
+		btnDetermineLatitudeResolution = new Button(geoLocationComposite, SWT.PUSH);
+		btnDetermineLatitudeResolution.setImage(variableIcon);
+		btnDetermineLatitudeResolution.setToolTipText("Autocalculate This Field");
+		btnDetermineLatitudeResolution.setLayoutData(new TableWrapData(TableWrapData.RIGHT, TableWrapData.MIDDLE));
+		btnDetermineLatitudeResolution.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
+				if (simpleGeoImage != null) {
+					simpleGeoImage.getImageDefinition().determineLatitudeResolution();
+					initializeFromImage(simpleGeoImage);
+				}
+			}
+		});
+		
+		
+		spnLongitudeResolution = LabeledSpinner.create(geoLocationComposite, "Longitude Resolution:", 0, 360 * RESOLUTION_MULTIPLE, RESOLUTION_DIGITS, RESOLUTION_MULTIPLE);
+		spnLongitudeResolution.getControl().addSelectionListener(selectionListener);
+		btnDetermineLongitudeResolution = new Button(geoLocationComposite, SWT.PUSH);
+		btnDetermineLongitudeResolution.setImage(variableIcon);
+		btnDetermineLongitudeResolution.setToolTipText("Autocalculate This Field");
+		btnDetermineLongitudeResolution.setLayoutData(new TableWrapData(TableWrapData.RIGHT, TableWrapData.MIDDLE));
+		btnDetermineLongitudeResolution.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
+				if (simpleGeoImage != null) {
+					simpleGeoImage.getImageDefinition().determineLongitudeResolution();
+					initializeFromImage(simpleGeoImage);
+				}
+			}
+		});
+		
+		
 		geoLocationSection.setClient(geoLocationComposite);
 		
 		
@@ -120,7 +240,7 @@ public class GeoImagePropertiesContainer extends Composite
 		btnReset.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event)
 			{
-				initializeFromImageDefinition(simpleGeoImage);
+				initializeFromImage(simpleGeoImage);
 			}
 		});
 		
@@ -129,10 +249,10 @@ public class GeoImagePropertiesContainer extends Composite
 		this.pack();
 	}
 	
-	public void setImageDefinition(ISimpleGeoImageDefinition simpleGeoImage)
+	public void setImageDefinition(ISimpleGeoImage simpleGeoImage)
 	{
 		this.simpleGeoImage = simpleGeoImage;
-		this.initializeFromImageDefinition(simpleGeoImage);
+		this.initializeFromImage(simpleGeoImage);
 	}
 
 	public void reset()
@@ -141,6 +261,8 @@ public class GeoImagePropertiesContainer extends Composite
 		spnSouth.getControl().setSelection(0);
 		spnEast.getControl().setSelection(0);
 		spnWest.getControl().setSelection(0);
+		spnLatitudeResolution.getControl().setSelection(0);
+		spnLongitudeResolution.getControl().setSelection(0);
 	}
 	
 	@Override
@@ -151,9 +273,11 @@ public class GeoImagePropertiesContainer extends Composite
 		spnSouth.getControl().setEnabled(enabled);
 		spnEast.getControl().setEnabled(enabled);
 		spnWest.getControl().setEnabled(enabled);
+		spnLatitudeResolution.getControl().setEnabled(enabled);
+		spnLongitudeResolution.getControl().setEnabled(enabled);
 	}
 
-	protected void initializeFromImageDefinition(ISimpleGeoImageDefinition img)
+	protected void initializeFromImage(ISimpleGeoImage img)
 	{
 
 		reset();
@@ -163,15 +287,18 @@ public class GeoImagePropertiesContainer extends Composite
 		} else {
 			this.setEnabled(true);
 		}
-		
+		spnImageWidth.getControl().setSelection(img.getWidth());
+		spnImageHeight.getControl().setSelection(img.getHeight());
 		spnNorth.getControl().setSelection((int) MathExt.round(img.getNorth() * 100));
 		spnSouth.getControl().setSelection((int) MathExt.round(img.getSouth() * 100));
 		spnEast.getControl().setSelection((int) MathExt.round(img.getEast() * 100));
 		spnWest.getControl().setSelection((int) MathExt.round(img.getWest() * 100));
+		spnLatitudeResolution.getControl().setSelection((int) MathExt.round(img.getLatitudeResolution() * RESOLUTION_MULTIPLE));
+		spnLongitudeResolution.getControl().setSelection((int) MathExt.round(img.getLongitudeResolution() * RESOLUTION_MULTIPLE));
 
 		
 	}
-	protected void updateImageDefinition(ISimpleGeoImageDefinition img)
+	protected void updateImageDefinition(ISimpleGeoImage img)
 	{
 		if (img == null) {
 			return;
@@ -181,7 +308,8 @@ public class GeoImagePropertiesContainer extends Composite
 		img.setSouth(spnSouth.getControl().getSelection() / 100.0);
 		img.setEast(spnEast.getControl().getSelection() / 100.0);
 		img.setWest(spnWest.getControl().getSelection() / 100.0);
-		
+		img.getImageDefinition().setLatitudeResolution(spnLatitudeResolution.getControl().getSelection() / (double) RESOLUTION_MULTIPLE);
+		img.getImageDefinition().setLongitudeResolution(spnLongitudeResolution.getControl().getSelection() / (double) RESOLUTION_MULTIPLE);
 	}
 	
 }

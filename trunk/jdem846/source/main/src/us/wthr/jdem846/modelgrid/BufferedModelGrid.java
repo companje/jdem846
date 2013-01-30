@@ -5,9 +5,10 @@ import us.wthr.jdem846.buffers.BufferFactory;
 import us.wthr.jdem846.buffers.IFloatBuffer;
 import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.graphics.Color;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.util.ColorUtil;
 
 public class BufferedModelGrid extends BaseModelGrid
 {
@@ -137,33 +138,33 @@ public class BufferedModelGrid extends BaseModelGrid
 	@Override
 	public void getRgbaByIndex(int index, int[] fill) throws DataSourceException
 	{
-		ColorUtil.intToRGBA(getRgbaByIndex(index), fill);
+		getRgbaByIndex(index).toArray(fill);
 	}
 
 	
 	
 	@Override
-	public int getRgbaByIndex(int index) throws DataSourceException
+	public IColor getRgbaByIndex(int index) throws DataSourceException
 	{
 		if (index >= 0 && index < this.gridLength) {
-			return rgbaGrid.get(index);
+			return new Color(rgbaGrid.get(index));
 		} else {
-			return 0x0;
+			return new Color(0x0);
 		}
 	}
 
 	@Override
-	public void setRgbaByIndex(int index, int rgba) throws DataSourceException
+	public void setRgbaByIndex(int index, IColor rgba) throws DataSourceException
 	{
 		if (index >= 0 && index < this.gridLength) {
-			rgbaGrid.put(index, rgba);
+			rgbaGrid.put(index, rgba.asInt());
 		}
 	}
 
 	@Override
 	public void setRgbaByIndex(int index, int[] rgba) throws DataSourceException
 	{
-		this.setRgbaByIndex(index, ColorUtil.rgbaToInt(rgba));
+		this.setRgbaByIndex(index, new Color(rgba));
 	}
 	
 	
@@ -171,20 +172,20 @@ public class BufferedModelGrid extends BaseModelGrid
 	@Override
 	public void getRgba(double latitude, double longitude, int[] fill)
 	{
-		ColorUtil.intToRGBA(getRgba(latitude, longitude), fill);
+		getRgba(latitude, longitude).toArray(fill);
 	}
 
 	
 	
 	@Override
-	public int getRgba(double latitude, double longitude)
+	public IColor getRgba(double latitude, double longitude)
 	{
 		int index = getIndex(latitude, longitude);
 		return getRgbaByIndex(index);
 	}
 
 	@Override
-	public void setRgba(double latitude, double longitude, int rgba)
+	public void setRgba(double latitude, double longitude, IColor rgba)
 	{
 		int index = getIndex(latitude, longitude);
 		setRgbaByIndex(index, rgba);
@@ -193,7 +194,7 @@ public class BufferedModelGrid extends BaseModelGrid
 	@Override
 	public void setRgba(double latitude, double longitude, int[] rgba)
 	{
-		this.setRgba(latitude, longitude, ColorUtil.rgbaToInt(rgba));
+		this.setRgba(latitude, longitude, new Color(rgba));
 	}
 
 

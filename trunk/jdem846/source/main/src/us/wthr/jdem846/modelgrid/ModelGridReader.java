@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.graphics.Color;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
@@ -90,7 +91,7 @@ public class ModelGridReader extends ModelGridFileIO {
 	protected static void readCell(InputStream in, ModelGridCell cell) throws IOException
 	{
 		cell.elevation = readDouble(in);
-		cell.rgba = readInt(in);
+		cell.rgba = new Color(readInt(in));
 	}
 	
 

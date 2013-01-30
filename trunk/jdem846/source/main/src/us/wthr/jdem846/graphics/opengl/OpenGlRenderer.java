@@ -79,8 +79,8 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl.getGL().glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
 		
 		
-		openGl.getGL().glEnable(GL.GL_CULL_FACE);
-		openGl.getGL().glCullFace(GL.GL_BACK);
+		//openGl.getGL().glEnable(GL.GL_CULL_FACE);
+		//openGl.getGL().glCullFace(GL.GL_BACK);
 		
 		//openGl.getGL().glHint(GL2.GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL2.GL_FASTEST);
 		

@@ -49,6 +49,7 @@ public interface IRenderer
 
 	public boolean isTextureBound();
 
+	public void clear(IColor backgroundColor);
 	public void clear(int backgroundColor);
 
 	public void rotate(double angle, AxisEnum axis);
@@ -60,15 +61,14 @@ public interface IRenderer
 	public void begin(PrimitiveModeEnum mode);
 
 	public void end();
-
+	
+	public void color(IColor color);
 	public void color(int[] color);
-
 	public void color(int color);
 
 	public void texCoord(double left, double front);
 
 	public void vertex(Vector v);
-
 	public void vertex(double x, double y, double z);
 
 	public boolean project(Vector v);

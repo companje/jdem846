@@ -47,7 +47,7 @@ class JDemScript {
 	
 	
 	def onGetPointColor = { latitude, longitude, elevation, elevationMinimum, elevationMaximum, color ->
-		
+		return color
 	}
 	
 	def onLightLevels = { latitude, longitude, lightingValues ->

@@ -17,15 +17,15 @@
 package us.wthr.jdem846.color;
 
 import us.wthr.jdem846.annotations.DemColoring;
+import us.wthr.jdem846.graphics.Color;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.scaling.ElevationScaler;
 
 @DemColoring(name="us.wthr.jdem846.color.greenTint.name", identifier="green-tint", allowGradientConfig=false, needsMinMaxElevation=false)
 public class GreenTint implements ModelColoring
 {
 
-	//private DemColor defaultColor = new DemColor(94, 201, 82, 255);
-	//private DemColor defaultColor = new DemColor(8, 92, 1, 255);
-	private DemColor defaultColor = new DemColor(146, 173, 144, 255);
+	private IColor defaultColor = new Color(146, 173, 144, 255);
 	
 	public GreenTint()
 	{
@@ -46,24 +46,21 @@ public class GreenTint implements ModelColoring
 	}
 	
 	@Override
-	public void getColorByMeters(double ratio, int[] color) 
+	public IColor getColorByMeters(double ratio) 
 	{
-		
+		return defaultColor;
 	}
 	
 	@Override
-	public void getColorByPercent(double ratio, int[] color) 
+	public IColor getColorByPercent(double ratio) 
 	{
-		defaultColor.toList(color);
-		//return defaultColor.getCopy();
+		return defaultColor;
 	}
 
 	@Override
-	public void getGradientColor(double elevation, double minElevation,
-			double maxElevation, int[] color) 
+	public IColor getGradientColor(double elevation, double minElevation, double maxElevation) 
 	{
-		defaultColor.toList(color);
-		//return defaultColor.getCopy();
+		return defaultColor;
 	}
 	
 	public double getMinimumSupported()

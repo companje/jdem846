@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.exception.DataSourceException;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.model.ElevationHistogramModel;
-import us.wthr.jdem846.util.ColorUtil;
 
 public class UserProvidedModelGrid implements IModelGrid
 {
@@ -144,13 +144,13 @@ public class UserProvidedModelGrid implements IModelGrid
 	}
 
 	@Override
-	public int getRgbaByIndex(int index) throws DataSourceException
+	public IColor getRgbaByIndex(int index) throws DataSourceException
 	{
 		return getInternalModelGrid().getRgbaByIndex(index);
 	}
 
 	@Override
-	public void setRgbaByIndex(int index, int rgba) throws DataSourceException
+	public void setRgbaByIndex(int index, IColor rgba) throws DataSourceException
 	{
 		// Do nothing. user provided model grids are read-only
 	}
@@ -164,17 +164,17 @@ public class UserProvidedModelGrid implements IModelGrid
 	@Override
 	public void getRgba(double latitude, double longitude, int[] fill) throws DataSourceException
 	{
-		ColorUtil.intToRGBA(getRgba(latitude, longitude), fill);
+		getRgba(latitude, longitude).toArray(fill);
 	}
 
 	@Override
-	public int getRgba(double latitude, double longitude) throws DataSourceException
+	public IColor getRgba(double latitude, double longitude) throws DataSourceException
 	{
 		return getInternalModelGrid().getRgba(latitude, longitude);
 	}
 
 	@Override
-	public void setRgba(double latitude, double longitude, int rgba) throws DataSourceException
+	public void setRgba(double latitude, double longitude, IColor rgba) throws DataSourceException
 	{
 		// Do nothing. user provided model grids are read-only
 	}
