@@ -10,6 +10,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.graphics.AxisEnum;
 import us.wthr.jdem846.graphics.BaseRenderer;
+import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.graphics.IRenderer;
 import us.wthr.jdem846.graphics.ImageCapture;
 import us.wthr.jdem846.graphics.MatrixModeEnum;
@@ -110,6 +111,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	{
 		if (this.lightingConfig != null) {
 			setLighting(lightingConfig.lightPosition
+						, lightingConfig.enableMaterial
 						, lightingConfig.emission
 						, lightingConfig.ambient
 						, lightingConfig.diffuse
@@ -118,36 +120,35 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		}
 	}
 	
+	
+	
 	@Override
-	public void setLighting(Vector lightPosition, double emission, double ambient, double diffuse, double specular, double shininess)
+	public void setLighting(Vector position, boolean enableMaterial, IColor emission, IColor ambiant, IColor diffuse, IColor specular, double shininess)
 	{
 		// PoC Testing: OpenGL Lighting:
 		
-		this.lightingConfig = new LightingConfig(lightPosition, emission, ambient, diffuse, specular, shininess);
+		this.lightingConfig = new LightingConfig(position, enableMaterial, emission, ambiant, diffuse, specular, shininess);
 		
 		
-		float lightPos[] = { (float) lightPosition.x, (float) lightPosition.y, (float) lightPosition.z, 1.0f };
+		float lightPos[] = { (float) position.x, (float) position.y, (float) position.z, 1.0f };
 
-		//float lightPos[] = { 0.0f, 3.0f, 2.0f, 0.0f };
-
-		
-		
-		//openGl.getGL2().glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_POSITION, lightPos, 0);
 		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPos, 0);
+
+		float lmodel_ambient[] = { (float)0.2, (float)0.2, (float)0.2, 1.0f };
 		
-		float ambientl[] =
-		    { 0.0f, 0.0f, 0.0f, 1.0f };
-		    float diffusel[] =
-		    { 1.0f, 1.0f, 1.0f, 1.0f };
-		    float specularl[] =
-		    { 1.0f, 1.0f, 1.0f, 1.0f };
-		float lmodel_ambient[] = { (float)0.8, (float)0.8, (float)0.8, 1.0f };
 		float local_view[] = { 0.0f };
 		
 		openGl.getGL2().glShadeModel(GL2.GL_SMOOTH);
-		openGl.getGL2().glColorMaterial ( GL.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE ) ;
-		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambientl, 0);
-		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffusel, 0);
+		
+		
+		
+		float light[] = new float[4];
+		
+		ambiant.toArray(light);
+		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, light, 0);
+		
+		diffuse.toArray(light);
+		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, light, 0);
 		//openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specularl, 0);
 
 
@@ -158,21 +159,28 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl.getGL2().glEnable(GLLightingFunc.GL_LIGHTING);
 		openGl.getGL2().glEnable(GLLightingFunc.GL_LIGHT0);
 		
-		float ambientLight[] = { (float)ambient, (float)ambient, (float)ambient, 1.0f };
-		float diffuseLight[] = { (float)diffuse, (float)diffuse, (float)diffuse, 1.0f };
-		float specularLight[] = { (float)specular, (float)specular, (float)specular, 1.0f };
-		float emissionLight[] = { (float)emission, (float)emission, (float)emission, 0.0f };
-		float shininessLight[] = { (float)shininess };
 		
-		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, ambientLight, 0);
-		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, diffuseLight, 0);
-		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, specularLight, 0);
-		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, shininessLight, 0);
-		openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_EMISSION, emissionLight, 0);
-		
-		//openGl.getGL2().glEnable(GL2.GL_COLOR_MATERIAL);
-		//openGl.getGL2().glEnable(GL2.GL_RESCALE_NORMAL);
-		//openGl.getGL2().glEnable(GL2.GL_NORMALIZE);
+		if (enableMaterial) {
+			openGl.getGL2().glEnable(GL2.GL_COLOR_MATERIAL);
+			openGl.getGL2().glColorMaterial ( GL.GL_FRONT, GL2.GL_AMBIENT_AND_DIFFUSE ) ;
+			
+			float shininessLight[] = { (float)shininess };
+			
+			ambiant.toArray(light);
+			openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, light, 0);
+			
+			diffuse.toArray(light);
+			openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, light, 0);
+			
+			specular.toArray(light);
+			openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, light, 0);
+			openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, shininessLight, 0);
+			
+			emission.toArray(light);
+			openGl.getGL2().glMaterialfv(GL.GL_FRONT, GL2.GL_EMISSION, light, 0);
+		} else {
+			openGl.getGL2().glDisable(GL2.GL_COLOR_MATERIAL);
+		}
 		
 	}
 	
@@ -595,15 +603,17 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	class LightingConfig 
 	{
 		Vector lightPosition;
-		double emission;
-		double ambient;
-		double diffuse;
-		double specular;
+		IColor emission;
+		IColor ambient;
+		IColor diffuse;
+		IColor specular;
 		double shininess;
+		boolean enableMaterial;
 		
-		public LightingConfig(Vector lightPosition, double emission, double ambient, double diffuse, double specular, double shininess)
+		public LightingConfig(Vector lightPosition, boolean enableMaterial, IColor emission, IColor ambient, IColor diffuse, IColor specular, double shininess)
 		{
 			this.lightPosition = lightPosition;
+			this.enableMaterial = enableMaterial;
 			this.emission = emission;
 			this.ambient = ambient;
 			this.diffuse = diffuse;

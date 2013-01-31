@@ -82,6 +82,12 @@ public class ImageWriter
 			throw new ImageException("Error flushing output stream: " + ex.getMessage(), ex);
 		}
 		
+		try {
+			out.close();
+		} catch (IOException ex) {
+			throw new ImageException("Error closing output stream: " + ex.getMessage(), ex);
+		}
+		
 	}
 	
 	/** Saves an image to disk. 

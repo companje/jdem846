@@ -254,10 +254,12 @@ public class Color implements IColor
 	
 	protected void clampValues()
 	{
+		/*
 		rgba[0] = ColorUtil.clamp(rgba[0]);
 		rgba[1] = ColorUtil.clamp(rgba[1]);
 		rgba[2] = ColorUtil.clamp(rgba[2]);
 		rgba[3] = ColorUtil.clamp(rgba[3]);
+		*/
 	}
 	
 	protected String toHex(int v)

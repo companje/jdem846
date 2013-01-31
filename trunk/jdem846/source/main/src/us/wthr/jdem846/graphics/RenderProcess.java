@@ -201,11 +201,12 @@ public class RenderProcess
 			sunlightPosition.getLightPosition(sunsource);
 
 			renderer.setLighting(sunsource
-					, lightingOptionModel.getEmmisive()
-					, lightingOptionModel.getAmbient()
-					, lightingOptionModel.getDiffuse()
-					, lightingOptionModel.getSpecular()
-					, lightingOptionModel.getSpotExponent());
+								, true
+								, lightingOptionModel.getEmmisive()
+								, lightingOptionModel.getAmbient()
+								, lightingOptionModel.getDiffuse()
+								, lightingOptionModel.getSpecular()
+								, lightingOptionModel.getSpotExponent());
 		}
 		
 		

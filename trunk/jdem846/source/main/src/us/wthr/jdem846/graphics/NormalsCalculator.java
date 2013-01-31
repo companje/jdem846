@@ -87,7 +87,12 @@ public class NormalsCalculator
 	
 	public void calculateNormalSpherical(double latitude, double longitude, Vector normal)
 	{
+		calculateNormalSpherical(latitude, longitude, normal, elevationFetchCallback);
 
+	}
+	
+	public void calculateNormalSpherical(double latitude, double longitude, Vector normal, ElevationFetchCallback elevationFetchCallback)
+	{
 		double eLat = latitude;
 		double eLon = longitude + longitudeResolution;
 
@@ -113,7 +118,8 @@ public class NormalsCalculator
 
 		calculateNormalSpherical(latitude, longitude, midElev, nElev, sElev, eElev, wElev, normal);
 	}
-
+	
+	
 	public void calculateNormalSpherical(double latitude, double longitude, double elevation, Vector normal)
 	{
 

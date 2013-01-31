@@ -40,4 +40,8 @@ public interface View
 	public void project(double latitude, double longitude, double elevation, Vector point);
 	
 	public void getNormal(double latitude, double longitude, Vector normal);
+	public void getNormal(double latitude, double longitude, Vector normal, boolean useModelElevation);
+	public void getNormal(double latitude, double longitude, double elevation, Vector normal);
+	public void getNormal(double latitude, double longitude, double midElev, double nElev, double sElev, double eElev, double wElev, Vector normal);
+	public void getNormal(double latitude, double longitude, Vector normal, ElevationFetchCallback elevationFetchCallback);
 }

@@ -258,7 +258,7 @@ public class TextureRenderer
 			front = 1.0;
 		}
 		
-		view.getNormal(latitude, longitude, normal);
+		view.getNormal(latitude, longitude, normal, elevationFetchCallback);
 		//normalCalculator.calculateNormalSpherical(latitude, longitude, normal);
 		//ViewPerspective view = this.globalOptionModel.getViewAngle();
 		//Vectors.rotate(view.getRotateX(), view.getRotateY(), view.getRotateZ(), normal, Vectors.ZYX);

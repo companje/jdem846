@@ -29,6 +29,18 @@ public abstract class BaseRenderer implements IRenderer
 	}
 	
 	@Override
+	public void setLighting(Vector position, boolean enableMaterial, double emission, double ambient, double diffuse, double specular, double shininess)
+	{
+
+		IColor emissionColor = new Color(emission, emission, emission, 1.0);
+		IColor ambientColor = new Color(ambient, ambient, ambient, 1.0);
+		IColor diffuseColor = new Color(diffuse, diffuse, diffuse, 1.0);
+		IColor specularColor = new Color(specular, specular, specular, 1.0);
+		
+		setLighting(position, enableMaterial, emissionColor, ambientColor, diffuseColor, specularColor, shininess);
+	}
+	
+	@Override
 	public boolean bindTexture(Texture texture)
 	{
 		return bindTexture(texture, new TextureMapConfiguration());
