@@ -51,8 +51,33 @@ public abstract class AbstractView implements View
 	
 	public void getNormal(double latitude, double longitude, Vector normal)
 	{
-		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, normal);
+		getNormal(latitude, longitude, normal, true);
 	}
+	
+	public void getNormal(double latitude, double longitude, Vector normal, boolean useModelElevation)
+	{
+		if (useModelElevation) {
+			getNormalsCalculator().calculateNormalSpherical(latitude, longitude, normal);
+		} else {
+			getNormalsCalculator().calculateNormalSpherical(latitude, longitude, radiusTrue(), normal);
+		}
+	}
+	
+	public void getNormal(double latitude, double longitude, double elevation, Vector normal)
+	{
+		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, elevation, elevation, elevation, elevation, elevation, normal);
+	}
+	
+	public void getNormal(double latitude, double longitude, double midElev, double nElev, double sElev, double eElev, double wElev, Vector normal)
+	{
+		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, midElev, nElev, sElev, eElev, wElev, normal);
+	}
+	
+	public void getNormal(double latitude, double longitude, Vector normal, ElevationFetchCallback elevationFetchCallback)
+	{
+		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, normal, elevationFetchCallback);
+	}
+	
 	
 	public void setModelContext(ModelContext arg)
 	{

@@ -51,7 +51,8 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 		
 	}
 	
-	public void setLighting(Vector position, double emission, double ambiant, double diffuse, double specular, double shininess)
+	@Override
+	public void setLighting(Vector position, boolean enableMaterial, IColor emission, IColor ambiant, IColor diffuse, IColor specular, double shininess)
 	{
 		
 	}

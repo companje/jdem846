@@ -2,14 +2,12 @@ package us.wthr.jdem846.export;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.exception.InvalidFileFormatException;
+import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.ProjectFiles;
@@ -103,10 +101,12 @@ public class ModelImageExporter
 
 		File writeFile = new File(path);
 		try {
-			ImageIO.write((BufferedImage)elevationModel.getImage(), formatName, writeFile);
+			
+			ImageWriter.saveImage((BufferedImage)elevationModel.getImage(), path);
+			//ImageIO.write((BufferedImage)elevationModel.getImage(), formatName, writeFile);
 			SharedStatusBar.setStatus("Image exported to " + writeFile);
 			this.fireExportSuccessfulListeners();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error("Failed to write image to disk: " + e.getMessage(), e);
 			this.fireExportFailedListeners(e);
 		} 
