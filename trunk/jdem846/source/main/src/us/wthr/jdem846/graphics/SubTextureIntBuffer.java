@@ -7,17 +7,17 @@ public class SubTextureIntBuffer implements IIntBuffer
 {
 	
 	private IIntBuffer parentBuffer;
-	private int subTextureX;
-	private int subTextureY;
-	private int subTextureWidth;
-	private int subTextureHeight;
+	private long subTextureX;
+	private long subTextureY;
+	private long subTextureWidth;
+	private long subTextureHeight;
 	
 	private long subTextureCapacity;
 	
-	private int parentTextureWidth;
-	private int parentTextureHeight;
+	private long parentTextureWidth;
+	private long parentTextureHeight;
 	
-	public SubTextureIntBuffer(IIntBuffer parentBuffer, int parentTextureWidth, int parentTextureHeight, int subTextureX, int subTextureY, int subTextureWidth, int subTextureHeight)
+	public SubTextureIntBuffer(IIntBuffer parentBuffer, long parentTextureWidth, long parentTextureHeight, long subTextureX, long subTextureY, long subTextureWidth, long subTextureHeight)
 	{
 		this.parentBuffer = parentBuffer;
 		this.parentTextureWidth = parentTextureWidth;
@@ -46,10 +46,10 @@ public class SubTextureIntBuffer implements IIntBuffer
 	
 	protected long indexToParentBufferIndex(long index)
 	{
-		int subTextureRow = (int) MathExt.floor((double)index / (double)subTextureWidth);
-		int subTextureColumn = (int) MathExt.floor((double)index - ((double) subTextureRow * (double)subTextureWidth));
+		long subTextureRow = (long) MathExt.floor((double)index / (double)subTextureWidth);
+		long subTextureColumn = (long) MathExt.floor((double)index - ((double) subTextureRow * (double)subTextureWidth));
 		
-		int parentTextureIndex = ((subTextureRow + subTextureY) * parentTextureWidth) + (subTextureColumn + subTextureX);
+		long parentTextureIndex = ((subTextureRow + subTextureY) * parentTextureWidth) + (subTextureColumn + subTextureX);
 		
 		return parentTextureIndex;
 	}
