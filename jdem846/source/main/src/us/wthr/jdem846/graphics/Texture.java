@@ -150,6 +150,28 @@ public class Texture {
 		return index;
 	}
 	
+	
+	public void setColor(double x, double y, IColor color)
+	{
+		setColor((int)MathExt.round(x), (int) MathExt.round(y), color);
+	}
+	
+	public void setColor(int x, int y, IColor color)
+	{
+		int index = index(x, y);
+		setColor(index, color);
+	}
+	
+	protected void setColor(int index, IColor color)
+	{
+		if (index >= 0 && index < texture.capacity()) {
+			texture.put(index, color.asInt());
+		} 
+	}
+	
+	
+	
+	
 	public IColor getColor(double x, double y)
 	{
 		return getColor((int)MathExt.round(x), (int) MathExt.round(y));

@@ -151,9 +151,11 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, light, 0);
 		//openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specularl, 0);
 
-
+		
 		openGl.getGL2().glLightModeli( GL2.GL_LIGHT_MODEL_COLOR_CONTROL, GL2.GL_SEPARATE_SPECULAR_COLOR );
-		openGl.getGL2().glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, lmodel_ambient, 0);
+		
+		ambiant.toArray(light);
+		openGl.getGL2().glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, light, 0);
 		openGl.getGL2().glLightModelfv(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, local_view, 0);
 		
 		openGl.getGL2().glEnable(GLLightingFunc.GL_LIGHTING);
