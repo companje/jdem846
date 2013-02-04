@@ -518,7 +518,7 @@ public class JdemFrame extends Frame
 		ProjectMarshall projectMarshall = null;
 
 		try {
-			projectMarshall = ProjectFiles.read(filePath);
+			projectMarshall = ProjectFiles.read(filePath, false);
 			
 			RecentProjectTracker.addProject(filePath);
 		} catch (FileNotFoundException ex) {

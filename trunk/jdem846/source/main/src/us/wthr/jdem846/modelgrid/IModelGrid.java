@@ -42,7 +42,10 @@ public interface IModelGrid extends InputSourceData
 	public void getRgba(double latitude, double longitude, int[] fill) throws DataSourceException;
 
 	public IColor getRgba(double latitude, double longitude) throws DataSourceException;
-
+	
+	public IColor getRgba(int x, int y) throws DataSourceException;
+	
+	
 	public void setRgba(double latitude, double longitude, IColor rgba) throws DataSourceException;
 
 	public void setRgba(double latitude, double longitude, int[] rgba) throws DataSourceException;

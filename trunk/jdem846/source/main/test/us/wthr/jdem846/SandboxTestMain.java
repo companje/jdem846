@@ -1,7 +1,8 @@
 package us.wthr.jdem846;
 
-import us.wthr.jdem846.graphics.Color;
 import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.project.ProjectMarshall;
+import us.wthr.jdem846.project.workspace.project.WorkspaceProjectReader;
 
 public class SandboxTestMain extends AbstractTestMain
 {
@@ -18,7 +19,18 @@ public class SandboxTestMain extends AbstractTestMain
 			return;
 		}
 		
-		for (int i = 0; i < 256; i++) {
+		ProjectMarshall project = null;
+		
+		
+		try {
+			project = WorkspaceProjectReader.readProject("C:/jdem/Data/Saturn/saturn_render_testing");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} 
+		
+		
+		
+/*		for (int i = 0; i < 256; i++) {
 			Color c0 = new Color(i, i, i, i);
 			String hex = c0.toString();
 			
@@ -32,7 +44,7 @@ public class SandboxTestMain extends AbstractTestMain
 			}
 			
 			
-		}
+		}*/
 		
 		
 		

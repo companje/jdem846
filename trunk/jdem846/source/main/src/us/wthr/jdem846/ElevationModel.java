@@ -1,15 +1,22 @@
 package us.wthr.jdem846;
 
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.model.ElevationHistogramModel;
 
 public interface ElevationModel extends IDataObject
 {
+	
+	public void load() throws FileNotFoundException, IOException, ProjectParseException;
+	public void unload();
+	public boolean isLoaded();
+	
 	public void dispose();
 	public void reset();
 	public boolean hasProperty(String key);

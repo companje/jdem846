@@ -174,6 +174,11 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 		modelGrid.setRgbaByIndex(index, rgba);
 	}
 	
+	@Override
+	public IColor getRgba(int x, int y) throws DataSourceException
+	{
+		return modelGrid.getRgba(x, y);
+	}
 	
 	@Override
 	public void getRgba(double latitude, double longitude, int[] fill) throws DataSourceException

@@ -98,7 +98,7 @@ public class RenderViewPane extends Panel
 
     private String lastExportPath = null;
     
-
+    private boolean isInitialized = false;
     
     public RenderViewPane(ElevationModel jdemElevationModel)
 	{
@@ -106,7 +106,7 @@ public class RenderViewPane extends Panel
 	}
     
     
-	public RenderViewPane(ModelContext _modelContext, ElevationModel jdemElevationModel)
+	public RenderViewPane(ModelContext _modelContext, final ElevationModel jdemElevationModel)
 	{
 		this.modelContext = _modelContext;
 		
@@ -202,8 +202,21 @@ public class RenderViewPane extends Panel
 		//imageDisplay.setBackground(Color.WHITE);
 		
 		if (jdemElevationModel != null) {
-			initializeWithJDemElevationModel(jdemElevationModel);
+			
 			currentState = RenderViewPane.COMPLETED;
+			
+			this.addComponentListener(new ComponentAdapter() {
+
+				@Override
+				public void componentShown(ComponentEvent e)
+				{
+					if (!isInitialized) {
+						initializeWithJDemElevationModel(jdemElevationModel);
+					}
+				}
+				
+			});
+			
 		} else if (modelContext != null) {
 			modelBuilder = new ModelBuilder();
 			renderTask = new RunnableTask("Model Render Task") {
@@ -348,7 +361,25 @@ public class RenderViewPane extends Panel
 	
 	protected void initializeWithJDemElevationModel(ElevationModel jdemElevationModel2)
 	{
+		if (isInitialized) {
+			return;
+		}
+		
 		this.jdemElevationModel = jdemElevationModel2;
+		
+		isInitialized = true;
+		
+		if (!jdemElevationModel2.isLoaded()) {
+			try {
+				jdemElevationModel2.load();
+			} catch (Exception ex) {
+				log.error("Error loading elevation model: " + ex.getMessage(), ex);
+				JOptionPane.showMessageDialog(getRootPane(),
+						"Error loading elevation model: " + ex.getMessage(),
+					    "Model Load Error",
+					    JOptionPane.ERROR_MESSAGE);
+			} 
+		}
 		
 		BufferedImage modelImage = (BufferedImage) jdemElevationModel2.getImage();
 
