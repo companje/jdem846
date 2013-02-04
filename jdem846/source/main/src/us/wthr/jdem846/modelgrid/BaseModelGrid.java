@@ -94,8 +94,8 @@ public abstract class BaseModelGrid implements IModelGrid
 
 	protected int getIndex(double latitude, double longitude)
 	{
-		int column = (int) Math.floor((longitude - west) / longitudeResolution);
-		int row = (int) Math.floor((north - latitude) / latitudeResolution);
+		int column = (int) Math.round((longitude - west) / longitudeResolution);
+		int row = (int) Math.round((north - latitude) / latitudeResolution);
 
 		if (column < 0 || column >= width) {
 			return -1;
@@ -106,6 +106,12 @@ public abstract class BaseModelGrid implements IModelGrid
 		}
 
 		int index = row * width + column;
+		return index;
+	}
+	
+	protected int getIndex(int x, int y)
+	{
+		int index = y * width + x;
 		return index;
 	}
 

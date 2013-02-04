@@ -24,12 +24,23 @@ public class BufferedModelGrid extends BaseModelGrid
 	
 	public BufferedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum, int width, int height)
 	{
+		this(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum, width, height, false);
+		
+	}
+	
+	public BufferedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum, int width, int height, boolean useHeap)
+	{
 		super(north, south, east, west, latitudeResolution, longitudeResolution, minimum, maximum, width, height);
 
 		log.info("Allocating elevation and RGBA grid buffers of length " + gridLength);
 		
-		rgbaGrid = BufferFactory.allocateIntBuffer(gridLength);
-		elevationGrid = BufferFactory.allocateFloatBuffer(gridLength);
+		if (useHeap && (((int)gridLength) > 0)) {
+			rgbaGrid = BufferFactory.allocateStandardCapacityIntBuffer((int)gridLength);
+			elevationGrid = BufferFactory.allocateStandardCapacityFloatBuffer((int)gridLength);
+		} else {
+			rgbaGrid = BufferFactory.allocateIntBuffer(gridLength);
+			elevationGrid = BufferFactory.allocateFloatBuffer(gridLength);
+		}
 		
 		//ByteBuffer bb = ByteBuffer.allocateDirect((int)gridLength * (Integer.SIZE / 8));
 		//rgbaGrid = bb.asIntBuffer();
@@ -167,6 +178,12 @@ public class BufferedModelGrid extends BaseModelGrid
 		this.setRgbaByIndex(index, new Color(rgba));
 	}
 	
+	
+	public IColor getRgba(int x, int y) throws DataSourceException
+	{
+		int index = getIndex(x, y);
+		return getRgbaByIndex(index);
+	}
 	
 	
 	@Override

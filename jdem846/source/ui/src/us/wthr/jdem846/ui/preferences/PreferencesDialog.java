@@ -59,6 +59,7 @@ public class PreferencesDialog extends Dialog
 	private ComboBox cmbGeneralQuality;
 	private ImageQualityListModel qualityModel;
 	private TextField txtTempPath;
+	private NumberTextField txtGeneralMaxBufferCapacity;
 	
 	
 	private Slider sldPreviewingPreviewModelQuality;
@@ -95,7 +96,7 @@ public class PreferencesDialog extends Dialog
 	{
 		this.setTitle(I18N.get("us.wthr.jdem846.ui.preferencesDialog.title"));
 		this.setModal(true);
-		this.setSize(430, 375);
+		this.setSize(430, 400);
 		this.setLocationRelativeTo(null);
 		
 		
@@ -123,7 +124,7 @@ public class PreferencesDialog extends Dialog
 		qualityModel = new ImageQualityListModel();
 		cmbGeneralQuality = new ComboBox(qualityModel);
 		txtTempPath = new TextField();
-		
+		txtGeneralMaxBufferCapacity = new NumberTextField(false);
 		
 		sldPreviewingPreviewModelQuality = new Slider(1, 100);
 		sldPreviewingPreviewTextureQuality = new Slider(1, 100);
@@ -244,6 +245,8 @@ public class PreferencesDialog extends Dialog
 		generalPanel.add(new Label(I18N.get("us.wthr.jdem846.ui.preferencesDialog.general.tempPath")));
 		generalPanel.add(txtTempPath);
 		
+		generalPanel.add(new Label("Maximum Buffer Size (bytes):"));
+		generalPanel.add(txtGeneralMaxBufferCapacity);
 		
 		renderingPanel.add(new Label("Render Engine:"));
 		renderingPanel.add(cmbRenderingRenderEngine);
@@ -351,11 +354,13 @@ public class PreferencesDialog extends Dialog
 		txtGeneralConsoleBufferSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.general.ui.console.bufferSize"));
 		
 		txtTempPath.setText(JDem846Properties.getProperty("us.wthr.jdem846.general.temp", false));
+		txtGeneralMaxBufferCapacity.setText(JDem846Properties.getProperty("us.wthr.jdem846.general.buffers.maxHeapBufferSizeBytes"));
 		
 		renderEngineListModel.setSelectedItemByValue(JDem846Properties.getProperty("us.wthr.jdem846.rendering.renderEngine"));
 		chkRenderingMultisampling.getModel().setSelected(JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.opengl.multisampling.enabled"));
 		txtRenderingMultisamplingSamples.setText(JDem846Properties.getProperty("us.wthr.jdem846.rendering.opengl.multisampling.samples"));
 		txtRenderingMaxTextureSize.setText(JDem846Properties.getProperty("us.wthr.jdem846.rendering.maxTextureSize"));
+		
 		/*
 		 * 
 		renderEngineListModel
@@ -409,7 +414,7 @@ public class PreferencesDialog extends Dialog
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.console.bufferSize", ""+txtGeneralConsoleBufferSize.getInteger());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.ui.usage.report", chkGeneralReportUsage.getModel().isSelected());
 		JDem846Properties.setProperty("us.wthr.jdem846.general.temp", txtTempPath.getText());
-		
+		JDem846Properties.setProperty("us.wthr.jdem846.general.buffers.maxHeapBufferSizeBytes", ""+txtGeneralMaxBufferCapacity.getInteger());
 		
 		double modelQuality = (double)sldPreviewingPreviewModelQuality.getValue() / 100.0;
 		double textureQuality = (double)sldPreviewingPreviewTextureQuality.getValue() / 100.0;

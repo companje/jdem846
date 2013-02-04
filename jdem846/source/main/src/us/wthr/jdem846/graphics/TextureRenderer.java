@@ -181,23 +181,25 @@ public class TextureRenderer
 		
 		renderer.bindTexture(subTexture, textureMapConfig);
 		
-
-		for (double latitude = north; latitude > south; latitude -= modelLatitudeResolution) {
-
-			this.renderer.begin(PrimitiveModeEnum.TRIANGLE_STRIP);
-
-			for (double longitude = west; longitude < east; longitude += modelLongitudeResolution) {
-
-				renderPointVertex(latitude, longitude, subTexture);
-				renderPointVertex(latitude - modelLatitudeResolution, longitude, subTexture);
+		try {
+			for (double latitude = north; latitude > south; latitude -= modelLatitudeResolution) {
+	
+				this.renderer.begin(PrimitiveModeEnum.TRIANGLE_STRIP);
+	
+				for (double longitude = west; longitude < east; longitude += modelLongitudeResolution) {
+	
+					renderPointVertex(latitude, longitude, subTexture);
+					renderPointVertex(latitude - modelLatitudeResolution, longitude, subTexture);
+				}
+				
+	
+				this.renderer.end();
+	
 			}
 			
-
-			this.renderer.end();
-
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		
-
 		this.renderer.unbindTexture();
 		
 		return east;
@@ -244,18 +246,22 @@ public class TextureRenderer
 
 		if (left < 0.0) {
 			left = 0.0;
+			return;
 		}
 		
 		if (left > 1.0) {
 			left = 1.0;
+			return;
 		}
 		
 		if (front < 0.0) {
 			front = 0.0;
+			return;
 		}
 		
 		if (front > 1.0) {
 			front = 1.0;
+			return;
 		}
 		
 		view.getNormal(latitude, longitude, normal, elevationFetchCallback);

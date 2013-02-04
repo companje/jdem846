@@ -160,7 +160,13 @@ public class UserProvidedModelGrid implements IModelGrid
 	{
 		// Do nothing. user provided model grids are read-only
 	}
-
+	
+	
+	public IColor getRgba(int x, int y) throws DataSourceException
+	{
+		return getInternalModelGrid().getRgba(x, y);
+	}
+	
 	@Override
 	public void getRgba(double latitude, double longitude, int[] fill) throws DataSourceException
 	{

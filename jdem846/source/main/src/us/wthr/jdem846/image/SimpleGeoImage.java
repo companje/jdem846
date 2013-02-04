@@ -115,8 +115,14 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 	{
 		return (rasterBuffer != null);
 	}
-
+	
+	
 	public void load() throws DataSourceException
+	{
+		load(false);
+	}
+	
+	public void load(boolean useHeap) throws DataSourceException
 	{
 		if (isLoaded()) {
 			throw new DataSourceException("Image data already loaded");
@@ -141,7 +147,13 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 		int[] rgba = {0, 0, 0, 0};
 
 		long capacity = raster.getWidth() * raster.getHeight();
-		this.rasterBuffer = BufferFactory.allocateIntBuffer(capacity);
+		
+		if (useHeap && ((int)capacity) > 0) { // If we're being asked to locate the data in heap memory and the capacity values doesn't overflow an integer type.
+			this.rasterBuffer = BufferFactory.allocateStandardCapacityIntBuffer((int)capacity);
+		} else {
+			this.rasterBuffer = BufferFactory.allocateIntBuffer(capacity);
+		}
+		
 		for (int y = 0; y < raster.getHeight(); y++) {
 			for (int x = 0; x < raster.getWidth(); x++) {
 				

@@ -286,11 +286,20 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 			configuration = new TextureMapConfiguration();
 		}
 		
-		if (tex.getHeight() <= 0 || tex.getHeight() >= this.getMaximumTextureHeight()) {
+		
+		if (tex.getHeight() <= 0) {
 			return false;
 		}
 		
-		if (tex.getWidth() <= 0 || tex.getWidth() >= this.getMaximumTextureWidth()) {
+		if (tex.getWidth() <= 0) {
+			return false;
+		}
+		
+		if (!configuration.getIgnoreMaxDimensions() && tex.getHeight() >= this.getMaximumTextureHeight()) {
+			return false;
+		}
+		
+		if (!configuration.getIgnoreMaxDimensions() && tex.getWidth() >= this.getMaximumTextureWidth()) {
 			return false;
 		}
 		
@@ -383,6 +392,10 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	@Override
 	public void unbindTexture()
 	{
+		if (!isTextureBound()) {
+			return;
+		}
+		
 		openGl.getGL2().glBindTexture(GL.GL_TEXTURE_2D, 0);
 		if (!this.checkGlContextSane()) {
 			log.error("GL Context in error condition following unbinding texture");

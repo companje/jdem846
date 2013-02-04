@@ -24,6 +24,24 @@ public class SimpleImageElevationModel implements ElevationModel
 	
 	
 	@Override
+	public void load()
+	{
+		
+	}
+	
+	@Override
+	public void unload()
+	{
+		
+	}
+	
+	@Override
+	public boolean isLoaded()
+	{
+		return (imageCapture != null);
+	}
+	
+	@Override
 	public void dispose()
 	{
 		imageCapture.dispose();

@@ -17,7 +17,7 @@ public class TextureMapConfiguration
 	protected boolean createMipMaps = false;
 	protected InterpolationTypeEnum interpolationType = InterpolationTypeEnum.NEAREST;
 	protected TextureWrapTypeEnum textureWrapType = TextureWrapTypeEnum.CLAMP;
-	
+	protected boolean ignoreMaxDimensions = false;
 	
 	public TextureMapConfiguration()
 	{
@@ -26,11 +26,16 @@ public class TextureMapConfiguration
 	
 	public TextureMapConfiguration(boolean createMipMaps, InterpolationTypeEnum interpolationType, TextureWrapTypeEnum textureWrapType)
 	{
+		this(createMipMaps, interpolationType, textureWrapType, false);
+	}
+	
+	public TextureMapConfiguration(boolean createMipMaps, InterpolationTypeEnum interpolationType, TextureWrapTypeEnum textureWrapType, boolean ignoreMaxDimensions)
+	{
 		this.createMipMaps = createMipMaps;
 		this.interpolationType = interpolationType;
 		this.textureWrapType = textureWrapType;
+		this.ignoreMaxDimensions = ignoreMaxDimensions;
 	}
-
 
 	public boolean getCreateMipMaps()
 	{
@@ -65,6 +70,16 @@ public class TextureMapConfiguration
 	public void setTextureWrapType(TextureWrapTypeEnum textureWrapType)
 	{
 		this.textureWrapType = textureWrapType;
+	}
+
+	public boolean getIgnoreMaxDimensions()
+	{
+		return ignoreMaxDimensions;
+	}
+
+	public void setIgnoreMaxDimensions(boolean ignoreMaxDimensions)
+	{
+		this.ignoreMaxDimensions = ignoreMaxDimensions;
 	}
 	
 	
