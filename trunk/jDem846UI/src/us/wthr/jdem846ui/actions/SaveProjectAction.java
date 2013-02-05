@@ -2,8 +2,6 @@ package us.wthr.jdem846ui.actions;
 
 import java.io.File;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import us.wthr.jdem846.logging.Log;
@@ -12,7 +10,7 @@ import us.wthr.jdem846ui.ICommandIds;
 import us.wthr.jdem846ui.project.GetSaveLocationCallback;
 import us.wthr.jdem846ui.project.ProjectContext;
 
-public class SaveProjectAction extends BasicAction
+public class SaveProjectAction extends DirectoryPromptingAction
 {
 	private static Log log = Logging.getLog(SaveProjectAction.class);
 	
@@ -31,14 +29,14 @@ public class SaveProjectAction extends BasicAction
 			public String getSaveLocation(String previousSaveLocation) {
 				File f = new File(previousSaveLocation);
 				if (previousSaveLocation == null || !f.exists() || !f.canWrite()) {
-					return promptForFilePath(previousSaveLocation);
+					return promptForProjectPath(previousSaveLocation);
 				} else {
 					return previousSaveLocation;
 				}
 			}
 		});
 	}
-	
+	/*
 	protected String promptForFilePath(String previousFile)
 	{
 		FileDialog dialog = new FileDialog (this.getWindow().getShell(), SWT.SAVE);
@@ -64,5 +62,5 @@ public class SaveProjectAction extends BasicAction
 		
 		
 		return dialog.open();
-	}
+	}*/
 }

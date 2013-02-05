@@ -30,8 +30,8 @@ private static Log log = null;
 		
 		log = Logging.getLog(ModelGridImageExtractor.class);
 
-		String modelGridFile = "C:/jdem/Data/Saturn//saturn-modelgrid.jdemgrid";
-		String imageFile = "C:/jdem/Data/Saturn//extracted-image.jpg";
+		String modelGridFile = "F:/Testing/wetmars-modelgrid.jdemgrid";
+		String imageFile = "F:/Testing/wetmars-extracted-image.jpg";
 		
 		
 		UserProvidedModelGrid modelGrid = new UserProvidedModelGrid(modelGridFile);

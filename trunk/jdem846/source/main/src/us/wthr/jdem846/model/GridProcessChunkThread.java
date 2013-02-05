@@ -2,7 +2,6 @@ package us.wthr.jdem846.model;
 
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.RenderEngineException;
-import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.processing.GridProcessMethodStack;
 
 public class GridProcessChunkThread extends Thread
@@ -43,10 +42,14 @@ public class GridProcessChunkThread extends Thread
 		
 		GridProcessMethodStack processStack = modelProgram.getProcessStack();
 		
-		
-		int longitudeWidth = (int) MathExt.ceil((east - west) / longitudeResolution);
-		
-		for (double latitude = north; latitude > south; latitude -= latitudeResolution) {
+		int width = modelProgram.getModelGrid().getWidth();
+		int height = modelProgram.getModelGrid().getHeight();
+
+		//for (double latitude = north; latitude > south; latitude -= latitudeResolution) {
+		for (int y = 0; y < height; y++) {
+			
+			double latitude = north - ((double)y * latitudeResolution);
+			
 			if (this.latitudeProcessedList != null) {
 				if (this.latitudeProcessedList.isLatitudeProcessed(latitude)) {
 					continue;
@@ -64,7 +67,7 @@ public class GridProcessChunkThread extends Thread
 			}
 			
 			//for (double longitude = west; longitude <= east; longitude += longitudeResolution) {
-			for (int x = 0; x < longitudeWidth; x++) {
+			for (int x = 0; x < width; x++) {
 				double longitude = west + ((double)x) * longitudeResolution;
 				try {
 					processStack.onModelPoint(latitude, longitude);
