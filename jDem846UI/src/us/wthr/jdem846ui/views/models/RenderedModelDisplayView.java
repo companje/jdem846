@@ -17,6 +17,8 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 import us.wthr.jdem846.ElevationModel;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846ui.View;
 import us.wthr.jdem846ui.actions.ExportModelAction;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
@@ -27,6 +29,8 @@ import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 
 public class RenderedModelDisplayView extends ViewPart
 {
+	private static Log log = Logging.getLog(RenderedModelDisplayView.class);
+	
 	public static final String ID = "jdem846ui.renderedModelDisplayView";
 	
 	private static RenderedModelDisplayView INSTANCE = null;
@@ -185,6 +189,15 @@ public class RenderedModelDisplayView extends ViewPart
 	public void setElevationModel(ElevationModel elevationModel)
 	{
 		this.elevationModel = elevationModel;
+		
+		if (!elevationModel.isLoaded()) {
+			try {
+				elevationModel.load();
+			} catch (Exception ex) {
+				log.error("Error loading elevation model: " + ex.getMessage(), ex);
+				return;
+			} 
+		}
 		
 		synchronized(imageMutex) {
 			

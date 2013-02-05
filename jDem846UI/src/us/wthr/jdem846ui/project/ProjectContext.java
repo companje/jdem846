@@ -189,7 +189,7 @@ public class ProjectContext
 
 		if (projectPath != null) {
 			try {
-				projectMarshall = ProjectFiles.read(projectPath);
+				projectMarshall = ProjectFiles.read(projectPath, false);
 
 				RecentProjectTracker.addProject(projectPath);
 			} catch (FileNotFoundException ex) {
