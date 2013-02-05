@@ -40,7 +40,7 @@ public class ModelConfigurationView extends ViewPart {
 		
 		ProjectContext.getInstance().addProjectChangeListener(new ProjectChangeAdapter() 
 		{
-			public void onProjectLoaded() {
+			public void onProjectLoaded(String filePath) {
 				createControls(true);
 			}
 		});

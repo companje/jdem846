@@ -116,10 +116,7 @@ public class Application implements IApplication {
 		if (loadProject != null && !fileExistsAndIsProject(loadProject)) {
 			loadProject = null;
 		}
-		
 
-		
-		
 		
 		//OptionValidationChangeObserver validationObserver = new OptionValidationChangeObserver();
 		//ElevationRangeChangeObserver rangeObserver = new ElevationRangeChangeObserver();
