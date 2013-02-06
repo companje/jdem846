@@ -23,10 +23,15 @@ public class ProjectFiles
 	
 	public static void write(ProjectMarshall projectMarshall, String path) throws IOException, ProjectParseException
 	{
-		String ext = path.substring(path.lastIndexOf("."));
+		String ext = null;
+		int i = 0;
+		
+		if ((i = path.lastIndexOf(".")) > 0) {
+			ext = path.substring(i);			
+		}
+		
 		if (ext == null) {
 			WorkspaceProjectWriter.writeProject(projectMarshall, path, true);
-			//throw new ProjectParseException("Invalid file format: " + path);
 		} else if (ext.equalsIgnoreCase(".jdem") || ext.equalsIgnoreCase(".json")) {
 			JsonProjectFileWriter.writeProject(projectMarshall, path);
 		} else if (ext.equalsIgnoreCase(".jdemimg") || ext.equalsIgnoreCase(".jdemprj") || ext.equalsIgnoreCase(".zdem") || ext.equalsIgnoreCase(".zip")) {
@@ -35,7 +40,6 @@ public class ProjectFiles
 			WorkspaceProjectWriter.writeProject(projectMarshall, path, true);
 		} else {
 			WorkspaceProjectWriter.writeProject(projectMarshall, path, true);
-			//throw new ProjectParseException("Unrecognized Extension: " + ext);
 		}
 	}
 	

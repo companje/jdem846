@@ -52,10 +52,12 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 	}
 	
 	@Override
-	public void setLighting(Vector position, boolean enableMaterial, IColor emission, IColor ambiant, IColor diffuse, IColor specular, double shininess)
+	public void setLighting(Vector position, IColor emission, IColor ambiant, IColor diffuse, IColor specular, double shininess)
 	{
 		
 	}
+	
+	
 	
 	public void enableLighting()
 	{
@@ -63,6 +65,17 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 	}
 	
 	public void disableLighting()
+	{
+		
+	}
+	
+	@Override
+	public void setMaterial(IColor emission, IColor ambiant, IColor diffuse, IColor specular, double shininess)
+	{
+		
+	}
+	
+	public void disableMaterial()
 	{
 		
 	}

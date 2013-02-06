@@ -2,6 +2,7 @@ package us.wthr.jdem846.scripting.javascript;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
+import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
@@ -168,7 +169,16 @@ public class JavaScriptProxy implements ScriptProxy
 	public IColor onGetPointColor(double latitude, double longitude, double elevation, double elevationMinimum, double elevationMaximum, IColor color) throws ScriptingException
 	{
 		Object functionArgs[] = {latitude, longitude, elevation, elevationMinimum, elevationMaximum, color};
-		return (IColor) this.onGetPointColorFunction.call(getContext(), scope, scope, functionArgs);
+		Object o = this.onGetPointColorFunction.call(getContext(), scope, scope, functionArgs);
+		
+		if (o instanceof IColor) {
+			return (IColor) o;
+		} else if (o instanceof NativeJavaObject) {
+			NativeJavaObject njo = (NativeJavaObject) o;
+			return (IColor) njo.unwrap();
+		}
+		
+		return null;
 	}
 
 	@Override
