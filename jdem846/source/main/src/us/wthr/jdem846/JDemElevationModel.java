@@ -455,6 +455,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	
 	public void writeModelData(OutputStream out) throws IOException
 	{
+
 		byte b = 0x0;
 		byte[] buffer4 = new byte[4];
 
@@ -471,13 +472,25 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 			
 				bufferedOut.write(0x01);
 				
-				ByteConversions.floatToBytes(latitudeBuffer.get(i), buffer4);
+				if (latitudeBuffer != null) {
+					ByteConversions.floatToBytes(latitudeBuffer.get(i), buffer4);
+				} else {
+					ByteConversions.floatToBytes(0.0f, buffer4);
+				}
 				bufferedOut.write(buffer4, 0, 4);
 				
-				ByteConversions.floatToBytes(longitudeBuffer.get(i), buffer4);
+				if (longitudeBuffer != null) {
+					ByteConversions.floatToBytes(longitudeBuffer.get(i), buffer4);
+				} else {
+					ByteConversions.floatToBytes(0.0f, buffer4);
+				}
 				bufferedOut.write(buffer4, 0, 4);
 				
-				ByteConversions.floatToBytes(elevationBuffer.get(i), buffer4);
+				if (elevationBuffer != null) {
+					ByteConversions.floatToBytes(elevationBuffer.get(i), buffer4);
+				} else {
+					ByteConversions.floatToBytes(0.0f, buffer4);
+				}
 				bufferedOut.write(buffer4, 0, 4);
 	
 				

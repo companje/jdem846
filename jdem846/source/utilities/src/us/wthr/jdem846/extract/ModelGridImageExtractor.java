@@ -52,9 +52,7 @@ private static Log log = null;
 				
 				if (color != null) {
 					color.toArray(rgba);
-					if (color.asInt() == 0x0) {
-						int i = 0;
-					}
+
 					raster.setPixel(x, y, rgba);
 				}
 

@@ -13,10 +13,14 @@ public interface IRenderer
 	public void initialize(int width, int height);
 	
 	
-	public void setLighting(Vector position, boolean enableMaterial, double emission, double ambiant, double diffuse, double specular, double shininess);
-	public void setLighting(Vector position, boolean enableMaterial, IColor emission, IColor ambiant, IColor diffuse, IColor specular, double shininess);
+	public void setLighting(Vector position, double emission, double ambiant, double diffuse, double specular, double shininess);
+	public void setLighting(Vector position, IColor emission, IColor ambiant, IColor diffuse, IColor specular, double shininess);
 	public void disableLighting();
 	public void enableLighting();
+	
+	public void setMaterial(double emission, double ambiant, double diffuse, double specular, double shininess);
+	public void setMaterial(IColor emission, IColor ambiant, IColor diffuse, IColor specular, double shininess);
+	public void disableMaterial();
 	
 	public void normal(Vector normal);
 	

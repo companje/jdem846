@@ -183,7 +183,7 @@ public class Texture {
 		return getColor(index);
 	}
 	
-	protected IColor getColor(int index)
+	public IColor getColor(int index)
 	{
 		if (index >= 0 && index < texture.capacity()) {
 			return new Color(texture.get(index));
