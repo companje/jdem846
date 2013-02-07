@@ -6,6 +6,7 @@ import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjection;
+import us.wthr.jdem846.math.Ellipsoid;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.modelgrid.IModelGrid;
@@ -34,7 +35,25 @@ public abstract class AbstractView implements View
 	protected double minElevation = 0.0;
 	protected double resolution;
 	
+	protected Ellipsoid ellipse;
 	
+	
+	public Ellipsoid getEllipsoid()
+	{
+		if (ellipse == null) {
+			double flattening = 1.0;
+			
+			Planet planet = getPlanet();
+			if (planet != null) {
+				flattening = planet.getFlattening();
+			}
+			
+			ellipse = new Ellipsoid(radius(), flattening);
+		}
+		return ellipse;
+	}
+	
+
 	protected NormalsCalculator getNormalsCalculator()
 	{
 		if (normals == null) {
@@ -153,6 +172,13 @@ public abstract class AbstractView implements View
 	}
 	
 	
+	protected Planet getPlanet()
+	{
+		if (planet == null) {
+			planet = PlanetsRegistry.getPlanet("earth");
+		}
+		return planet;
+	}
 	
 
 }

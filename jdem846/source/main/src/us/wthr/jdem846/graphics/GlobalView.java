@@ -2,7 +2,6 @@ package us.wthr.jdem846.graphics;
 
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vector;
 
 public class GlobalView extends AbstractView implements View
@@ -33,8 +32,10 @@ public class GlobalView extends AbstractView implements View
 	
 	public void project(double latitude, double longitude, double elevation, Vector point)
 	{
-		double radius = radius() + scaleElevation(elevation);
-		Spheres.getPoint3D(longitude, latitude, radius, point);
+		double scaledElevation = scaleElevation(elevation);
+		this.getEllipsoid().getXyzCoordinates(latitude, longitude, scaledElevation, point);
+		//Spheres.getPoint3D(longitude, latitude, radius, point);
+		//Spheres.getPointEllipsoid3D(longitude, latitude, radius, planet.getFlattening(), point);
 	}
 	
 	
@@ -46,6 +47,8 @@ public class GlobalView extends AbstractView implements View
 		//return (globalOptionModel.getEyeDistance() * (DemConstants.DEFAULT_GLOBAL_RADIUS / radiusTrue())) / zoom;
 		return scaleElevation(globalOptionModel.getEyeDistance());
 	}
+	
+
 	
 	@Override
 	public double radiusTrue()
@@ -59,12 +62,14 @@ public class GlobalView extends AbstractView implements View
 		return radius * getZoom();
 	}
 	
+
 	
+		
 	@Override
 	public double radius()
-	{
-		return ((double)this.globalOptionModel.getWidth() / 2.0);
-		//return getElevationScaler() * radiusTrue();
+	{	
+		double radius = ((double)this.globalOptionModel.getWidth() / 2.0);
+		return radius;
 	}
 
 
