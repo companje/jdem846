@@ -15,7 +15,8 @@ public class NormalsCalculator
 	private double longitudeResolution;
 
 	private double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
-
+	private Planet planet = null;
+	
 	private Vector normalBufferA = new Vector();
 	private Vector normalBufferB = new Vector();
 
@@ -45,12 +46,29 @@ public class NormalsCalculator
 	
 	public NormalsCalculator(Planet planet, double latitudeResolution, double longitudeResolution)
 	{
-		this((planet != null) ? planet.getMeanRadius() : DemConstants.EARTH_MEAN_RADIUS, latitudeResolution, longitudeResolution, null);
+		this(planet, latitudeResolution, longitudeResolution, null);
 	}
 	
 	public NormalsCalculator(Planet planet, double latitudeResolution, double longitudeResolution, ElevationFetchCallback elevationFetchCallback)
 	{
-		this((planet != null) ? planet.getMeanRadius() : DemConstants.EARTH_MEAN_RADIUS, latitudeResolution, longitudeResolution, elevationFetchCallback);
+		//this((planet != null) ? planet.getMeanRadius() : DemConstants.EARTH_MEAN_RADIUS, latitudeResolution, longitudeResolution, elevationFetchCallback);
+		this.planet = planet;
+		this.latitudeResolution = latitudeResolution;
+		this.longitudeResolution = longitudeResolution;
+		
+		if (elevationFetchCallback != null) {
+			this.elevationFetchCallback = elevationFetchCallback;	
+		} else {
+			this.elevationFetchCallback = new ElevationFetchCallback() {
+
+				@Override
+				public double getElevation(double latitude, double longitude)
+				{
+					return meanRadius;
+				}
+				
+			};
+		}
 	}
 	
 	public NormalsCalculator(double latitudeResolution, double longitudeResolution, ElevationFetchCallback elevationFetchCallback)
@@ -84,6 +102,7 @@ public class NormalsCalculator
 		}
 	}
 	
+
 	
 	public void calculateNormalSpherical(double latitude, double longitude, Vector normal)
 	{
@@ -161,7 +180,7 @@ public class NormalsCalculator
 
 	protected void fillPointXYZ(Vector P, double latitude, double longitude, double elevation)
 	{
-		double radius = meanRadius * 1000 + elevation;
+		
 
 		double _latitude = latitude;
 		double _longitude = longitude;
@@ -175,10 +194,20 @@ public class NormalsCalculator
 			}
 
 		}
-
-		Spheres.getPoint3D(_longitude, _latitude, radius, P);
+		
+		if (this.planet != null) {
+			planet.getEllipsoid().getXyzCoordinates(_latitude, _longitude, elevation, P);
+		} else {
+			double radius = meanRadius * 1000 + elevation;
+			Spheres.getPoint3D(_longitude, _latitude, radius, P);
+		}
+		
 
 	}
+	
+	
+	
+	
 
 	public void calculateNormalFlat(double latitude, double longitude, Vector normal)
 	{

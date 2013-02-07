@@ -24,7 +24,6 @@ public interface View
 	public void setModelGrid(IModelGrid modelGrid);
 
 	public double radiusTrue();
-
 	public double radius();
 
 	public double horizFieldOfView();

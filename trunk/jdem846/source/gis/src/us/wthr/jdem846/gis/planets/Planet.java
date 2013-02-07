@@ -1,5 +1,7 @@
 package us.wthr.jdem846.gis.planets;
 
+import us.wthr.jdem846.math.Ellipsoid;
+
 public class Planet
 {
 	private String name;
@@ -40,6 +42,8 @@ public class Planet
 	private double northPoleDeclination; // degrees
 	private double albedoGeometric; 
 	private double albedoBond;
+	
+	private Ellipsoid ellipse;
 	
 	public Planet()
 	{
@@ -389,5 +393,12 @@ public class Planet
 	}
 	
 	
+	public Ellipsoid getEllipsoid()
+	{
+		if (ellipse == null) {
+			ellipse = new Ellipsoid(this.equatorialRadius, this.polarRadius, this.flattening);
+		}
+		return ellipse;
+	}
 	
 }

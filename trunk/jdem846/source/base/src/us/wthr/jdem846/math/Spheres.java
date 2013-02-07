@@ -11,7 +11,7 @@ public class Spheres
 	
 	
 	
-	protected static double fixThetaDegrees(double degrees)
+	public static double fixThetaDegrees(double degrees)
 	{
 		/*
 		while (degrees < 0.0) {
@@ -34,7 +34,7 @@ public class Spheres
 		
 	}
 	
-	protected static double fixPhiDegrees(double degrees)
+	public static double fixPhiDegrees(double degrees)
 	{
 		degrees += 90.0;
 		
@@ -68,9 +68,19 @@ public class Spheres
 	}
 	
 	public static void getPoint3D(double theta, // Longitude, in degrees
-			double phi, // Latitude, in degrees
-			double radius, 
-			Vector v)
+								double phi, // Latitude, in degrees
+								double radius, 
+								Vector vec)
+	{
+		Vector v = getPoint3D(theta, phi, radius);
+		vec.x = v.x;
+		vec.y = v.y;
+		vec.z = v.z;
+	}
+	
+	public static Vector getPoint3D(double theta, // Longitude, in degrees
+								double phi, // Latitude, in degrees
+								double radius)
 	{
 		theta += 90.0;
 		theta = MathExt.radians(fixThetaDegrees(theta));
@@ -100,10 +110,10 @@ public class Spheres
 	    	_y = MathExt.abs(_y) * -1;
 	    }
 
-        v.x = _x;
-        v.y = _y;
-        v.z = _z;
-        
+        //v.x = _x;
+        //v.y = _y;
+        //v.z = _z;
+	    Vector v = new Vector(_x, _y, _z);
         
         v.x = MathExt.min(radius, v.x);
         v.x = MathExt.max(-radius, v.x);
@@ -114,6 +124,56 @@ public class Spheres
         v.z = MathExt.min(radius, v.z);
         v.z = MathExt.max(-radius, v.z);
         
+        return v;
+	}
+	
+	
+	public static void getPointEllipsoid3D(double theta, // Longitude, in degrees
+										double phi, // Latitude, in degrees
+										double equitorialRadius, 
+										double flattening,
+										Vector vec)
+	{
+		Vector v = getPointEllipsoid3D(theta, phi, equitorialRadius, flattening);
+		vec.x = v.x;
+		vec.y = v.y;
+		vec.z = v.z;
+	}
+		
+	public static Vector getPointEllipsoid3D(double theta, // Longitude, in degrees
+										double phi, // Latitude, in degrees
+										double equitorialRadius, 
+										double flattening)
+	{
+		phi = fixPhiDegrees(phi);
+		double radius = sphericalToEllipsoidRadius(equitorialRadius, flattening, phi);
+		
+		return getPoint3D(theta, phi, radius);
+	}
+	
+	
+	public static double sphericalToEllipsoidRadius(double equitorialRadius, double flattening, double latitude)
+	{
+		return sphericalToEllipsoidRadiusGeocentric(equitorialRadius, flattening, latitude);
+	}
+	
+	public static double sphericalToEllipsoidRadiusGeodetic(double equitorialRadius, double flattening, double latitude)
+	{
+		double polarRadius = equitorialRadius * (1.0 - flattening);
+		
+		//r = 1/sqrt(cos^2(x)/a^2 + sin^2(x)/b^2)		
+		double ellipsoidRadius = 1.0 / MathExt.sqrt(MathExt.sqr(MathExt.cos_d(latitude)) / MathExt.sqr(equitorialRadius) + MathExt.sqr(MathExt.sin_d(latitude)) / MathExt.sqr(polarRadius));
+		return ellipsoidRadius;
+	}
+	
+	public static double sphericalToEllipsoidRadiusGeocentric(double equitorialRadius, double flattening, double latitude)
+	{
+		double polarRadius = equitorialRadius * (1.0 - flattening);
+
+		double tanlat2 = MathExt.sqr(MathExt.tan(MathExt.radians(latitude)));
+		double ellipsoidRadius = polarRadius*MathExt.pow((1+tanlat2), 0.5) /  MathExt.pow(( (MathExt.sqr(polarRadius) / MathExt.sqr(equitorialRadius))+tanlat2), 0.5);
+		
+		return ellipsoidRadius;
 	}
 	
 	
