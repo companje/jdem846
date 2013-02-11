@@ -112,6 +112,10 @@ public class ElevationMinMaxEstimation
 			return minMaxEstimationMap.get(url);
 		}
 		
+		if (url == null || url.equalsIgnoreCase("null")) {
+			return null;
+		}
+		
 		File samplesFile = JDemResourceLoader.getAsFile(url);
 		
 		log.info("Opening " + url);

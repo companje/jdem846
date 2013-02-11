@@ -31,6 +31,12 @@ public class ProjectChangeAdapter implements ProjectChangeListener {
 	}
 	
 	@Override
+	public void onBeforeProjectLoaded(String filePathOld, String filePathNew)
+	{
+		
+	}
+	
+	@Override
 	public void onProjectLoaded(String filePath)
 	{
 		

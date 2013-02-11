@@ -11,7 +11,10 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
 import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846ui.observers.OptionValidationChangeObserver;
+import us.wthr.jdem846ui.observers.ProjectLoadedObserver;
 import us.wthr.jdem846ui.observers.RenderedModelSelectionObserver;
 import us.wthr.jdem846ui.preferences.GeneralPreferencesPage;
 import us.wthr.jdem846ui.project.ProjectContext;
@@ -19,6 +22,8 @@ import us.wthr.jdem846ui.project.ProjectException;
 
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
+	private static Log log = Logging.getLog(ApplicationWorkbenchAdvisor.class);
+	
 	private static final String PERSPECTIVE_ID = "jDem846UI.perspective";
 
 	private String initialProject = null;
@@ -45,14 +50,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		// TODO Auto-generated method stub
 		super.preStartup();
 		
-		try {
-			ProjectContext.initialize(initialProject);
-		} catch (ProjectException ex) {
-			ex.printStackTrace();
-		}
 		
-		OptionValidationChangeObserver.getInstance();
-		RenderedModelSelectionObserver.getInstance();
 		//IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 	
@@ -72,7 +70,27 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		PreferenceManager pm = PlatformUI.getWorkbench().getPreferenceManager( );
 		pm.remove("org.eclipse.ui.preferencePages.Workbench");
 		pm.remove("org.eclipse.help.ui.browsersPreferencePage");
+		
+		pm.remove("org.eclipse.debug.ui.DebugPreferencePage");
+		pm.remove("org.eclipse.jdt.ui.preferences.JavaBasePreferencePage");
+		pm.remove("org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage");
+		pm.remove("org.eclipse.team.ui.TeamPreferences");
+		pm.remove("org.eclipse.wst.html.ui.preferences.web");
+		pm.remove("org.eclipse.wst.jsdt.ui.preferences.JavaBasePreferencePage");
+		pm.remove("org.eclipse.wst.xml.ui.preferences.xml");
+		
+		OptionValidationChangeObserver.getInstance();
+		RenderedModelSelectionObserver.getInstance();
+		ProjectLoadedObserver.getInstance();
+		
+		try {
+			ProjectContext.initialize(initialProject);
+		} catch (ProjectException ex) {
+			ex.printStackTrace();
+		}
+		
 
+		
 	}
 
 	public String getInitialWindowPerspectiveId() {

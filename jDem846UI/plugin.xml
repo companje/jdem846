@@ -53,11 +53,6 @@
             class="us.wthr.jdem846ui.views.RegionOverviewView"
             id="jdem846ui.regionOverviewView" />
       
-      <view
-            name="Rendered Model Display"
-            class="us.wthr.jdem846ui.views.models.RenderedModelDisplayView"
-            id="jdem846ui.renderedModelDisplayView"
-            icon="icons/eclipse/gallery_view.gif" />
 
      
      <view
@@ -335,5 +330,32 @@
 			class="us.wthr.jdem846ui.preferences.DefaultsPreferencesPage" />
 	</extension>
 	
-
+	
+	<extension
+	       point="org.eclipse.ui.editors">'
+		<editor
+		      name="Preview"
+		      extensions="demprj"
+		      icon="icons/eclipse/globe2.gif"
+		      class="us.wthr.jdem846ui.editors.PreviewEditor"
+		      id="us.wthr.jdem846ui.editors.PreviewEditor">
+		</editor>
+		
+		<editor
+		      name="Model"
+		      extensions="jpg"
+		      icon="icons/eclipse/gallery_view.gif"
+		      class="us.wthr.jdem846ui.editors.RenderedModelEditor"
+		      id="us.wthr.jdem846ui.editors.RenderedModelEditor">
+		</editor>
+		
+		<editor
+		      name="Script"
+		      extensions="js"
+		      icon="icons/eclipse/scroll.png"
+		      class="us.wthr.jdem846ui.editors.JavascriptEditor"
+		      id="us.wthr.jdem846ui.editors.JavascriptEditor">
+		</editor>
+		
+	</extension>
 </plugin>
