@@ -1,4 +1,4 @@
-package us.wthr.jdem846ui.views.models;
+package us.wthr.jdem846ui.editors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;

@@ -1,11 +1,17 @@
 package us.wthr.jdem846.project;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+
 import us.wthr.jdem846.ElevationModel;
+import us.wthr.jdem846.JDem846Properties;
+import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -28,7 +34,7 @@ public class ProjectMarshall
 	private List<ElevationModel> modelList = new LinkedList<ElevationModel>();
 	
 	private String userScript = null;
-	private ScriptLanguageEnum scriptLanguage = null;
+	private ScriptLanguageEnum scriptLanguage = ScriptLanguageEnum.JAVASCRIPT;
 	
 	private String loadedFrom = null;
 	
@@ -160,6 +166,42 @@ public class ProjectMarshall
 		}
 		
 		return null;
+	}
+	
+	
+	public void loadDefaults() throws Exception
+	{
+		String scriptTemplatePath = JDem846Properties.getProperty("us.wthr.jdem846.userScript.javascript.template");
+		
+		
+		String scriptTemplate = loadTemplateFile(scriptTemplatePath);
+		this.setUserScript(scriptTemplate);
+	}
+	
+	protected String loadTemplateFile(String path) throws IOException
+	{
+		if (path == null) {
+			log.warn("Cannot load template file: path is null");
+			return null;
+		}
+
+		log.info("Loading script template file from path '" + path + "'");
+		StringBuffer templateBuffer = new StringBuffer();
+
+		BufferedInputStream in = new BufferedInputStream(JDemResourceLoader.getAsInputStream(path));
+		
+		
+		String script = IOUtils.toString(in);
+		return script;
+/*		
+		int length = 0;
+		byte[] buffer = new byte[1024];
+
+		while ((length = in.read(buffer)) > 0) {
+			templateBuffer.append(new String(buffer, 0, length));
+		}
+
+		return templateBuffer.toString();*/
 	}
 	
 }

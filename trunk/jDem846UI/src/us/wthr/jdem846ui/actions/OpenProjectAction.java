@@ -31,26 +31,8 @@ public class OpenProjectAction extends DirectoryPromptingAction
 			}
 		
 			
-/*			Location instanceLoc = Platform.getInstanceLocation(); 
-		    try {
-		    	
-		    	File f = new File(filePath);
-		    	if (filePath.toLowerCase().endsWith(".demprj")) {
-		    		f = f.getParentFile();
-		    	}
-				instanceLoc.set(new URL("file", null, f.getAbsolutePath()), false);
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		    
-		    
+			
+		    /*		    
 		    IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		    IWorkspaceRoot root = workspace.getRoot();
 		    IProject project  = root.getProject("dem");

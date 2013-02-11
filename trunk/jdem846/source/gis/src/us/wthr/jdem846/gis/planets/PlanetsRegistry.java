@@ -3,20 +3,18 @@ package us.wthr.jdem846.gis.planets;
 import groovy.util.ConfigObject;
 import groovy.util.ConfigSlurper;
 
-import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.io.IOUtils;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+
+import org.apache.commons.io.IOUtils;
 
 import us.wthr.jdem846.AppRegistry;
 import us.wthr.jdem846.JDem846Properties;
@@ -45,12 +43,14 @@ public class PlanetsRegistry implements AppRegistry
 	{
 		
 		try {
-			initGroovy();
+			//initGroovy();
+			initJson();
 		} catch (Exception ex) {
 			log.error("Error loading planets: " + ex.getMessage(), ex);
 		}
 	}
 	
+	@Deprecated
 	protected static void initGroovy() throws Exception
 	{
 		log.info("Loading planet information...");
@@ -68,7 +68,7 @@ public class PlanetsRegistry implements AppRegistry
 		
 	}
 	
-	
+	@Deprecated
 	protected static double getDoubleValue(ConfigObject configObject, String name)
 	{
 		
@@ -93,6 +93,7 @@ public class PlanetsRegistry implements AppRegistry
 		
 	}
 	
+	@Deprecated
 	protected static void initGroovyPlanetConfigObject(ConfigObject configObject)
 	{
 		String name = (String) configObject.get("name");

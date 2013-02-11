@@ -14,7 +14,6 @@ import us.wthr.jdem846.rasterdata.generic.GenericRasterDataProvider;
 import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 import us.wthr.jdem846ui.views.geoimage.GeoImagePropertiesView;
-import us.wthr.jdem846ui.views.models.RenderedModelPropertiesView;
 import us.wthr.jdem846ui.views.raster.RasterPropertiesView;
 
 public class LayerPropertiesView extends ViewPart
@@ -24,7 +23,6 @@ public class LayerPropertiesView extends ViewPart
 	
 	private GeoImagePropertiesView geoImagePropertiesView;
 	private RasterPropertiesView rasterPropertiesView;
-	private RenderedModelPropertiesView renderedModelPropertiesView;
 	
 	private Composite blankView;
 	private Composite activeView = null;
@@ -43,8 +41,7 @@ public class LayerPropertiesView extends ViewPart
 		blankView = new Composite(parent, SWT.NONE);
 		geoImagePropertiesView = new GeoImagePropertiesView(parent, SWT.NONE);
 		rasterPropertiesView = new RasterPropertiesView(parent, SWT.NONE);
-		renderedModelPropertiesView = new RenderedModelPropertiesView(parent, SWT.NONE);
-		
+
 		DataView.addTreeSelectionListener(new TreeSelectionAdapter()
 		{
 			public void onSourceDataSelectionChanged(InputSourceData selectedData)
@@ -63,12 +60,8 @@ public class LayerPropertiesView extends ViewPart
 			
 			public void onRenderedModelSelectionChanged(ElevationModel elevationModel)
 			{
-				if (elevationModel != null) {
-					activeView = renderedModelPropertiesView;
-				} else {
-					activeView = blankView;
-				}
-				
+				activeView = blankView;
+
 				stackLayout.topControl = activeView;
 				parent.layout();
 			}

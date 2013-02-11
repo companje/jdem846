@@ -20,12 +20,16 @@ public class ProjectChangeBroker
 
 	public boolean addProjectChangeListener(ProjectChangeListener l)
 	{
-		return this.listeners.add(l);
+		synchronized (listeners) {
+			return this.listeners.add(l);
+		}
 	}
 
 	public boolean removeProjectChangeListener(ProjectChangeListener l)
 	{
-		return this.listeners.remove(l);
+		synchronized (listeners) {
+			return this.listeners.remove(l);
+		}
 	}
 
 	public void fireOnDataAdded(boolean ignoreInterim)
@@ -36,7 +40,8 @@ public class ProjectChangeBroker
 
 		ignoreInterimEvents = ignoreInterim;
 
-		for (ProjectChangeListener listener : listeners) {
+		List<ProjectChangeListener> listenersList = getListenersListCopy();
+		for (ProjectChangeListener listener : listenersList) {
 			listener.onDataAdded();
 		}
 
@@ -51,7 +56,8 @@ public class ProjectChangeBroker
 
 		ignoreInterimEvents = ignoreInterim;
 
-		for (ProjectChangeListener listener : listeners) {
+		List<ProjectChangeListener> listenersList = getListenersListCopy();
+		for (ProjectChangeListener listener : listenersList) {
 			listener.onDataRemoved();
 		}
 
@@ -66,7 +72,8 @@ public class ProjectChangeBroker
 
 		ignoreInterimEvents = ignoreInterim;
 
-		for (ProjectChangeListener listener : listeners) {
+		List<ProjectChangeListener> listenersList = getListenersListCopy();
+		for (ProjectChangeListener listener : listenersList) {
 			listener.onOptionChanged(e);
 		}
 
@@ -81,7 +88,8 @@ public class ProjectChangeBroker
 
 		ignoreInterimEvents = ignoreInterim;
 
-		for (ProjectChangeListener listener : listeners) {
+		List<ProjectChangeListener> listenersList = getListenersListCopy();
+		for (ProjectChangeListener listener : listenersList) {
 			listener.onElevationModelAdded(elevationModel);
 		}
 
@@ -96,13 +104,31 @@ public class ProjectChangeBroker
 
 		ignoreInterimEvents = ignoreInterim;
 
-		for (ProjectChangeListener listener : listeners) {
+		List<ProjectChangeListener> listenersList = getListenersListCopy();
+		for (ProjectChangeListener listener : listenersList) {
 			listener.onElevationModelRemoved(elevationModel);
 		}
 
 		ignoreInterimEvents = false;
 	}
 
+	public void fireOnBeforeProjectLoaded(String filePathOld, String filePathNew, boolean ignoreInterim)
+	{
+		if (ignoreInterimEvents) {
+			return;
+		}
+
+		ignoreInterimEvents = ignoreInterim;
+		
+		List<ProjectChangeListener> listenersList = getListenersListCopy();
+		for (ProjectChangeListener listener : listenersList) {
+			listener.onBeforeProjectLoaded(filePathOld, filePathNew);
+		}
+
+		ignoreInterimEvents = false;
+	}
+	
+	
 	public void fireOnProjectLoaded(String filePath, boolean ignoreInterim)
 	{
 		if (ignoreInterimEvents) {
@@ -110,12 +136,24 @@ public class ProjectChangeBroker
 		}
 
 		ignoreInterimEvents = ignoreInterim;
-
-		for (ProjectChangeListener listener : listeners) {
+		
+		List<ProjectChangeListener> listenersList = getListenersListCopy();
+		for (ProjectChangeListener listener : listenersList) {
 			listener.onProjectLoaded(filePath);
 		}
 
 		ignoreInterimEvents = false;
 	}
-
+	
+	
+	protected List<ProjectChangeListener> getListenersListCopy()
+	{
+		List<ProjectChangeListener> copy = new LinkedList<ProjectChangeListener>();
+		synchronized(listeners) {
+			copy.addAll(listeners);
+		}
+		
+		return copy;
+	}
+	
 }

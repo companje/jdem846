@@ -1,5 +1,6 @@
-package us.wthr.jdem846ui.views.models;
+package us.wthr.jdem846ui.editors;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
@@ -13,8 +14,13 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.EditorPart;
 
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.logging.Log;
@@ -22,19 +28,13 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846ui.View;
 import us.wthr.jdem846ui.actions.ExportModelAction;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
-import us.wthr.jdem846ui.project.ProjectChangeAdapter;
-import us.wthr.jdem846ui.project.ProjectContext;
-import us.wthr.jdem846ui.views.data.DataView;
-import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 
-public class RenderedModelDisplayView extends ViewPart
+public class RenderedModelEditor extends EditorPart
 {
-	private static Log log = Logging.getLog(RenderedModelDisplayView.class);
+	public static final String ID = "us.wthr.jdem846ui.editors.RenderedModelEditor";
 	
-	public static final String ID = "jdem846ui.renderedModelDisplayView";
-	
-	private static RenderedModelDisplayView INSTANCE = null;
-	
+	private static Log log = Logging.getLog(RenderedModelEditor.class);
+
 	private ElevationModel elevationModel;
 	private Canvas canvas;
 	
@@ -45,18 +45,74 @@ public class RenderedModelDisplayView extends ViewPart
 	
 	private ExportModelAction exportModelAction;
 	
-	public RenderedModelDisplayView()
-	{
-		RenderedModelDisplayView.INSTANCE = this;
-	}
+	private TabFolder tabFolder;
+	private RenderedModelPropertiesContainer propertiesContainer;
 	
 	@Override
-	public void createPartControl(Composite parent) 
+	public void doSave(IProgressMonitor arg0)
+	{
+		
+	}
+
+	@Override
+	public void doSaveAs()
+	{
+		
+	}
+
+	@Override
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException
+	{
+		setSite(site);
+		setInput(input);
+		
+		this.setTitle(input.getName());
+	}
+
+	@Override
+	public boolean isDirty()
+	{
+		return false;
+	}
+
+	@Override
+	public boolean isSaveAsAllowed()
+	{
+
+		return false;
+	}
+
+	@Override
+	public void createPartControl(Composite parent)
 	{
 		this.parent = parent;
 		
+		tabFolder = new TabFolder (parent, SWT.TOP);
+		
+		TabItem displayTabItem = new TabItem(tabFolder, SWT.NONE);
+		displayTabItem.setText("Model");
+		
+		createDisplayControls(tabFolder);
+		displayTabItem.setControl(canvas);
+		
+		TabItem propertiesTabItem = new TabItem(tabFolder, SWT.NONE);
+		propertiesTabItem.setText("Properties");
+		this.propertiesContainer = new RenderedModelPropertiesContainer(tabFolder, SWT.NONE);
+		propertiesTabItem.setControl(propertiesContainer);
+		
+		ElevationModelEditorInput editorInput = (ElevationModelEditorInput) this.getEditorInput();
+		if (editorInput.getElevationModel() != null) {
+			this.setElevationModel(editorInput.getElevationModel());
+		}
+	}
+	
+	protected void createDisplayControls(Composite parent)
+	{
+		
+		log.info("Creating parts for elevation model display editor");
+		
 		exportModelAction = new ExportModelAction("Export...", View.ID);
-		IActionBars actionBars = getViewSite().getActionBars();
+		IActionBars actionBars = getEditorSite().getActionBars();
 		IMenuManager dropDownMenu = actionBars.getMenuManager();
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		dropDownMenu.add(exportModelAction);
@@ -115,25 +171,12 @@ public class RenderedModelDisplayView extends ViewPart
 			
 		});
 		
-		ProjectContext.getInstance().addProjectChangeListener(new ProjectChangeAdapter() 
-		{
-			public void onProjectLoaded() {
-				synchronized(imageMutex) {
-					 image = null;
-					 canvas.redraw();
-				}
-			}
-		});
 		
-		DataView.addTreeSelectionListener(new TreeSelectionAdapter()
-		{
-			public void onRenderedModelSelectionChanged(ElevationModel elevationModel)
-			{
-				setElevationModel(elevationModel);
-			}
-		});
+		
+	
 	}
-
+	
+	
 
 	protected double getZoomToFitScalePercentage()
 	{
@@ -179,16 +222,14 @@ public class RenderedModelDisplayView extends ViewPart
 	    Image scaled = new Image(canvas.getDisplay(), image.getImageData().scaledTo((int)(width*scalePercent),(int)(height*scalePercent)));
 	    return scaled;
 	}
-	
-	@Override
-	public void setFocus() {
-		canvas.setFocus();
-	}
-	
+
 	
 	public void setElevationModel(ElevationModel elevationModel)
 	{
 		this.elevationModel = elevationModel;
+		if (elevationModel == null) {
+			return;
+		}
 		
 		if (!elevationModel.isLoaded()) {
 			try {
@@ -198,6 +239,8 @@ public class RenderedModelDisplayView extends ViewPart
 				return;
 			} 
 		}
+		
+		this.propertiesContainer.setElevationModel(elevationModel);
 		
 		synchronized(imageMutex) {
 			
@@ -227,10 +270,12 @@ public class RenderedModelDisplayView extends ViewPart
 		}
 	}
 	
-	public static RenderedModelDisplayView getInstance()
+	@Override
+	public void setFocus()
 	{
-		return RenderedModelDisplayView.INSTANCE;
+		if (canvas != null) {
+			canvas.setFocus();
+		}
 	}
-	
-	
+
 }

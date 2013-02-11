@@ -7,10 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Platform;
 import org.scannotation.AnnotationDB;
-import org.scannotation.ClasspathUrlFinder;
 
 import us.wthr.jdem846.annotations.Discoverable;
 import us.wthr.jdem846.exception.AnnotationIndexerException;
@@ -109,13 +106,15 @@ public class DiscoverableAnnotationIndexer
 	
 	protected void findClassesWithAnnotation(String annotationClazzName) throws Exception
 	{
+		
 		Set<String> annotatedClasses = annotationIndex.get(annotationClazzName);
 		
-		for (String clazzName : annotatedClasses) {
-			log.info("	Found Annotated Class: " + clazzName);
-			DiscoverableAnnotationIndexer.annotatedClassMap.addAnnotatedClass(annotationClazzName, clazzName);
+		if (annotatedClasses != null) {
+			for (String clazzName : annotatedClasses) {
+				log.info("	Found Annotated Class: " + clazzName);
+				DiscoverableAnnotationIndexer.annotatedClassMap.addAnnotatedClass(annotationClazzName, clazzName);
+			}
 		}
-		
 	}
 	
 

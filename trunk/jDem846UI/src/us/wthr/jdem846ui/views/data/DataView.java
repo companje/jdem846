@@ -12,8 +12,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import us.wthr.jdem846.ElevationModel;
@@ -31,7 +29,6 @@ import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846ui.project.IconEnum;
 import us.wthr.jdem846ui.project.ProjectChangeAdapter;
 import us.wthr.jdem846ui.project.ProjectContext;
-import us.wthr.jdem846ui.views.models.RenderedModelDisplayView;
 import us.wthr.jdem846ui.views.tree.TreeObject;
 import us.wthr.jdem846ui.views.tree.ViewContentProvider;
 
@@ -58,34 +55,43 @@ public class DataView extends ViewPart
 
 	public static void addTreeSelectionListener(TreeSelectionListener l)
 	{
-		synchronized(treeSelectionListeners) {
+		synchronized (treeSelectionListeners) {
 			DataView.treeSelectionListeners.add(l);
 		}
 	}
 
 	public static boolean removeTreeSelectionListener(TreeSelectionListener l)
 	{
-		synchronized(treeSelectionListeners) {
+		synchronized (treeSelectionListeners) {
 			return DataView.treeSelectionListeners.remove(l);
 		}
 	}
 
 	protected void fireOnSourceDataSelectionChanged(InputSourceData selectedData)
 	{
-		synchronized(treeSelectionListeners) {
-			for (TreeSelectionListener listener : DataView.treeSelectionListeners) {
-				listener.onSourceDataSelectionChanged(selectedData);
-			}
+		List<TreeSelectionListener> treeSelectionListenersList = getSelectionListenersListCopy();
+		for (TreeSelectionListener listener : treeSelectionListenersList) {
+			listener.onSourceDataSelectionChanged(selectedData);
 		}
+
 	}
 
 	protected void fireOnRenderedModelSelectionChanged(ElevationModel elevationModel)
 	{
-		synchronized(treeSelectionListeners) {
-			for (TreeSelectionListener listener : DataView.treeSelectionListeners) {
-				listener.onRenderedModelSelectionChanged(elevationModel);
-			}
+		List<TreeSelectionListener> treeSelectionListenersList = getSelectionListenersListCopy();
+		for (TreeSelectionListener listener : treeSelectionListenersList) {
+			listener.onRenderedModelSelectionChanged(elevationModel);
 		}
+
+	}
+
+	protected List<TreeSelectionListener> getSelectionListenersListCopy()
+	{
+		List<TreeSelectionListener> copy = new LinkedList<TreeSelectionListener>();
+		synchronized (treeSelectionListeners) {
+			copy.addAll(treeSelectionListeners);
+		}
+		return copy;
 	}
 
 	private TreeObject createTreeModel()
@@ -169,16 +175,18 @@ public class DataView extends ViewPart
 
 	protected void resetAndUpdateModelAsync()
 	{
-		Display.getDefault().asyncExec(new Runnable() {
+		Display.getDefault().asyncExec(new Runnable()
+		{
 
 			@Override
-			public void run() {
+			public void run()
+			{
 				resetAndUpdateModel();
 			}
-			
+
 		});
 	}
-	
+
 	private void resetAndUpdateModel()
 	{
 		viewer.setInput(createTreeModel());
@@ -200,34 +208,27 @@ public class DataView extends ViewPart
 
 				boolean selectedSourceData = false;
 				boolean selectedRenderedModel = false;
-				
+
 				if (!event.getSelection().isEmpty()) {
 					if (event.getSelection() instanceof IStructuredSelection) {
 						IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 						for (Iterator<TreeObject> iter = selection.iterator(); iter.hasNext();) {
 							TreeObject treeObject = iter.next();
-	
+
 							if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof InputSourceData) {
-								fireOnSourceDataSelectionChanged((InputSourceData)((DataTreeObject) treeObject).getData());
+								fireOnSourceDataSelectionChanged((InputSourceData) ((DataTreeObject) treeObject).getData());
 								selectedSourceData = true;
-							} 
-							
+							}
+
 							if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof ElevationModel) {
-								
-								try {
-									PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(RenderedModelDisplayView.ID);
-								} catch (PartInitException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-								
-								fireOnRenderedModelSelectionChanged((ElevationModel)((DataTreeObject) treeObject).getData());
+
+								fireOnRenderedModelSelectionChanged((ElevationModel) ((DataTreeObject) treeObject).getData());
 								selectedRenderedModel = true;
-								
-							} 
-	
+
+							}
+
 						}
-	
+
 					}
 				}
 
@@ -253,24 +254,26 @@ public class DataView extends ViewPart
 				resetAndUpdateModelAsync();
 			}
 
-			
 			@Override
-			public void onElevationModelAdded(ElevationModel elevationModel) {
+			public void onElevationModelAdded(ElevationModel elevationModel)
+			{
 				log.info("Model added: Rebuilding rendered model list");
 				resetAndUpdateModelAsync();
 			}
 
 			@Override
-			public void onElevationModelRemoved(ElevationModel elevationModel) {
+			public void onElevationModelRemoved(ElevationModel elevationModel)
+			{
 				log.info("Model removed: Rebuilding rendered model list");
 				resetAndUpdateModelAsync();
 			}
-			
+
 			@Override
-			public void onProjectLoaded(String projectPath) {
+			public void onProjectLoaded(String projectPath)
+			{
 				resetAndUpdateModelAsync();
 			}
-			
+
 		});
 
 		resetAndUpdateModel();

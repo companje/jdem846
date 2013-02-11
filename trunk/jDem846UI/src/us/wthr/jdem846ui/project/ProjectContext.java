@@ -84,6 +84,8 @@ public class ProjectContext
 			log.info("Initializing project from " + projectPath);
 		}
 
+		this.projectChangeBroker.fireOnBeforeProjectLoaded(projectLoadedFrom, projectPath, true);
+		
 		defaultOptionModelContainerList = new LinkedList<OptionModelContainer>();
 		elevationModelList = new LinkedList<ElevationModel>();
 
@@ -95,6 +97,12 @@ public class ProjectContext
 			projectMarshall = loadMarshalledProject(projectPath);
 		} else {
 			projectMarshall = new ProjectMarshall();
+			try {
+				projectMarshall.loadDefaults();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 
 		if (projectMarshall.getElevationModels() != null) {
@@ -152,7 +160,7 @@ public class ProjectContext
 			scriptingContext.setScriptLanguage(projectMarshall.getScriptLanguage());
 			scriptingContext.setUserScript(projectMarshall.getUserScript());
 
-		}
+		} 
 		
 		
 
@@ -673,6 +681,14 @@ public class ProjectContext
 
 	public static ProjectContext getInstance()
 	{
+		if (ProjectContext.INSTANCE == null) {
+			try {
+				ProjectContext.initialize();
+			} catch (ProjectException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
+		}
 		return ProjectContext.INSTANCE;
 	}
 
