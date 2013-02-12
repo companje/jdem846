@@ -1,6 +1,7 @@
 package us.wthr.jdem846ui.editors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -28,6 +29,24 @@ public class JavascriptEditor extends CompilationUnitEditor
 	{
 		return false;
 	}
+	
+	@Override
+	protected boolean isLineNumberRulerVisible() { 
+		return false; 
+	} 
+
+
+	@Override
+	public void createPartControl(Composite parent)
+	{
+		super.createPartControl(parent);
+		//CompositeRuler compositeRuler = this.createCompositeRuler();
+		//IVerticalRulerColumn rulerColumn = this.createLineNumberRulerColumn();
+		//this.initializeLineNumberRulerColumn((LineNumberRulerColumn) rulerColumn);
+		//showOverviewRuler();
+		//this.getVerticalRuler().getControl().setVisible(true);
+	}
+
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException

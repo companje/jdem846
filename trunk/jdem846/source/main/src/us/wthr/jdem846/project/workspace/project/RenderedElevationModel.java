@@ -182,32 +182,39 @@ public class RenderedElevationModel implements ElevationModel
 	@Override
 	public void writeImageData(OutputStream zos, ImageTypeEnum imageTypeFromFormatName) throws IOException
 	{
-		if (!isLoaded()) {
+/*		if (!isLoaded()) {
 			try {
 				load();
 			} catch (ProjectParseException e) {
 				throw new IOException("Error writing image data: " + e.getMessage(), e);
 			}
+		}*/
+		
+		if (isLoaded()) {
+			elevationModel.writeImageData(zos, imageTypeFromFormatName);
 		}
-		elevationModel.writeImageData(zos, imageTypeFromFormatName);
 	}
 
 	@Override
 	public void writeModelData(OutputStream zos) throws IOException
 	{
-		if (!isLoaded()) {
+/*		if (!isLoaded()) {
 			try {
 				load();
 			} catch (ProjectParseException e) {
 				throw new IOException("Error writing image data: " + e.getMessage(), e);
 			}
+		}*/
+		
+		if (isLoaded()) {
+			elevationModel.writeModelData(zos);
 		}
-		elevationModel.writeModelData(zos);
 	}
 
 	@Override
 	public void writeProperties(OutputStream zos) throws IOException
 	{
+		
 		if (!isLoaded()) {
 			try {
 				load();
@@ -215,7 +222,10 @@ public class RenderedElevationModel implements ElevationModel
 				throw new IOException("Error writing image data: " + e.getMessage(), e);
 			}
 		}
-		elevationModel.writeProperties(zos);
+		
+		if (isLoaded()) {
+			elevationModel.writeProperties(zos);
+		}
 	}
 	
 	

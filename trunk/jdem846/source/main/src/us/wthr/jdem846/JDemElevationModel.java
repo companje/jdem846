@@ -58,7 +58,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	{
 		this(image.getWidth(), image.getHeight(), true, true, true, true, true);
 		
-		this.readModelData(dataIn);
+		//this.readModelData(dataIn);
 		this.loadImageData(image);
 		this.properties = this.readProperties(properties);
 		
@@ -114,6 +114,12 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	
 	protected void initializeBuffers(boolean mask, boolean rgba, boolean longitude, boolean latitude, boolean elevation)
 	{
+		// Disable lat/lon/elev buffers for now...
+		longitude = false;
+		latitude = false;
+		elevation = false;
+		
+		
 		if (mask) {
 			maskBuffer = new boolean[getBufferLength()];
 		}
