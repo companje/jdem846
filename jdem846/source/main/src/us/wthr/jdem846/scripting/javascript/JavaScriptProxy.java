@@ -3,6 +3,7 @@ package us.wthr.jdem846.scripting.javascript;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeJavaObject;
+import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
@@ -85,11 +86,15 @@ public class JavaScriptProxy implements ScriptProxy
 		}
 	}
 	
+
+	
 	@Override
 	public void setProperty(String name, Object value) throws ScriptingException
 	{
-		ScriptableObject.putProperty(scope, name, wrapJavaObject(value));
+		NativeObject scriptObject = (NativeObject) scope.get("scriptContext", scope);
+		ScriptableObject.putProperty(scriptObject, name, wrapJavaObject(value));
 	}
+	
 	
 	protected Object wrapJavaObject(Object value) throws ScriptingException
 	{

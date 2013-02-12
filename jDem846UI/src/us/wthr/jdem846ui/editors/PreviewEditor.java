@@ -1,7 +1,6 @@
 package us.wthr.jdem846ui.editors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -53,9 +52,9 @@ public class PreviewEditor extends EditorPart
 		
 		updatePreviewAction = new UpdatePreviewAction("Update Preview", View.ID);
 		IActionBars actionBars = getEditorSite().getActionBars();
-		IMenuManager dropDownMenu = actionBars.getMenuManager();
+		//IMenuManager dropDownMenu = actionBars.getMenuManager();
 		IToolBarManager toolBar = actionBars.getToolBarManager();
-		dropDownMenu.add(updatePreviewAction);
+		//dropDownMenu.add(updatePreviewAction);
 		toolBar.add(updatePreviewAction);
 		
 		updatePreviewAction.addActionListener(new ActionListener() {

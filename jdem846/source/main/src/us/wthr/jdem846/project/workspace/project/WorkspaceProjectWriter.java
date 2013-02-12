@@ -25,6 +25,11 @@ public class WorkspaceProjectWriter
 	
 	protected static void writeJDemElevationModel(ElevationModel model, int index, File projectBase) throws IOException
 	{
+		
+		if (!model.isLoaded()) {
+			return;
+		}
+		
 		File elevationModelBase = new File(projectBase, "models/" + index);
 		if (!elevationModelBase.exists()) {
 			elevationModelBase.mkdirs();

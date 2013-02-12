@@ -63,12 +63,12 @@ public class ElevationModelReader
 			propertiesInStream.close();
 		}
 		
-		
-		ZipEntry dataFile = zipFile.getEntry("models/" + index + "/model.dat");
-		log.info("Loading from " + dataFile.getName() + ". Compressed Size: " + dataFile.getCompressedSize() + ". Size: " + dataFile.getSize());
-		InputStream dataInStream = zipFile.getInputStream(dataFile);
+		// Elevation data files are disabled for now.
+		//ZipEntry dataFile = zipFile.getEntry("models/" + index + "/model.dat");
+		//log.info("Loading from " + dataFile.getName() + ". Compressed Size: " + dataFile.getCompressedSize() + ". Size: " + dataFile.getSize());
+		InputStream dataInStream = null;//zipFile.getInputStream(dataFile);
 		JDemElevationModel jdemElevationModel = new JDemElevationModel(image, dataInStream, jsonPropertiesTxt);
-		dataInStream.close();
+		//dataInStream.close();
 		
 		
 		ZipEntry histogramEntry = zipFile.getEntry("models/" + index + "/elevation-histogram.dat");
