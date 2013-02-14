@@ -25,7 +25,6 @@ public class SaveProjectAction extends DirectoryPromptingAction
 		super.run();
 		
 		ProjectContext.getInstance().save(new GetSaveLocationCallback() {
-
 			public String getSaveLocation(String previousSaveLocation) {
 				File f = new File(previousSaveLocation);
 				if (previousSaveLocation == null || !f.exists() || !f.canWrite()) {

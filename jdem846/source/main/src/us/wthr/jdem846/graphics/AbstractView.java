@@ -37,6 +37,21 @@ public abstract class AbstractView implements View
 	
 	protected Ellipsoid ellipse;
 	
+	protected double elevScaler = -1;
+	
+	
+	protected double getElevationScaler()
+	{
+		if (elevScaler == -1) {
+			elevScaler = radius() / radiusTrue();
+		}
+		return elevScaler;
+	}
+	
+	public double scaleElevation(double elevation)
+	{
+		return (elevation * getElevationScaler());
+	}
 	
 	public Ellipsoid getEllipsoid()
 	{
@@ -78,23 +93,31 @@ public abstract class AbstractView implements View
 		if (useModelElevation) {
 			getNormalsCalculator().calculateNormalSpherical(latitude, longitude, normal);
 		} else {
-			getNormalsCalculator().calculateNormalSpherical(latitude, longitude, radiusTrue(), normal);
+			getNormalsCalculator().calculateNormalSpherical(latitude, longitude, radius(), normal);
 		}
 	}
 	
 	public void getNormal(double latitude, double longitude, double elevation, Vector normal)
 	{
+		elevation = scaleElevation(elevation);
 		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, elevation, elevation, elevation, elevation, elevation, normal);
 	}
 	
 	public void getNormal(double latitude, double longitude, double midElev, double nElev, double sElev, double eElev, double wElev, Vector normal)
 	{
-		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, midElev, nElev, sElev, eElev, wElev, normal);
+		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, scaleElevation(midElev), scaleElevation(nElev), scaleElevation(sElev), scaleElevation(eElev), scaleElevation(wElev), normal);
 	}
 	
-	public void getNormal(double latitude, double longitude, Vector normal, ElevationFetchCallback elevationFetchCallback)
+	public void getNormal(double latitude, double longitude, Vector normal, final ElevationFetchCallback elevationFetchCallback)
 	{
-		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, normal, elevationFetchCallback);
+		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, normal, new ElevationFetchCallback() {
+
+			@Override
+			public double getElevation(double latitude, double longitude) {
+				return elevationFetchCallback.getElevation(latitude, longitude);
+			}
+			
+		});
 	}
 	
 	

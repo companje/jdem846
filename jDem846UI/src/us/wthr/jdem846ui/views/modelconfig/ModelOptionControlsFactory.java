@@ -122,7 +122,9 @@ public class ModelOptionControlsFactory
 
 				try {
 					boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
-					labeledColor.getControl().setEnabled(enabled);
+					if (!labeledColor.getControl().isDisposed()) {
+						labeledColor.getControl().setEnabled(enabled);
+					}
 				} catch (MethodContainerInvokeException e) {
 					e.printStackTrace();
 				}
@@ -177,7 +179,9 @@ public class ModelOptionControlsFactory
 
 				try {
 					boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
-					check.getControl().setEnabled(enabled);
+					if (!check.getControl().isDisposed()) {
+						check.getControl().setEnabled(enabled);
+					}
 				} catch (MethodContainerInvokeException e) {
 					e.printStackTrace();
 				}
@@ -242,7 +246,9 @@ public class ModelOptionControlsFactory
 
 				try {
 					boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
-					labeledDate.getControl().setEnabled(enabled);
+					if (!labeledDate.getControl().isDisposed()) {
+						labeledDate.getControl().setEnabled(enabled);
+					}
 				} catch (MethodContainerInvokeException e) {
 					e.printStackTrace();
 				}
@@ -306,7 +312,9 @@ public class ModelOptionControlsFactory
 
 		try {
 			boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
-			_spinner.setEnabled(enabled);
+			if (!_spinner.isDisposed()) {
+				_spinner.setEnabled(enabled);
+			}
 		} catch (MethodContainerInvokeException e) {
 			e.printStackTrace();
 		}
@@ -326,7 +334,9 @@ public class ModelOptionControlsFactory
 
 					try {
 						boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
-						_spinner.setEnabled(enabled);
+						if (!_spinner.isDisposed()) {
+							_spinner.setEnabled(enabled);
+						}
 					} catch (MethodContainerInvokeException e) {
 						e.printStackTrace();
 					}
@@ -360,14 +370,18 @@ public class ModelOptionControlsFactory
 		});
 
 		try {
-			control.getControl().setSelection((Integer) property.getValue());
+			if (!control.getControl().isDisposed()) {
+				control.getControl().setSelection((Integer) property.getValue());
+			}
 		} catch (MethodContainerInvokeException e1) {
 			e1.printStackTrace();
 		}
 
 		try {
 			boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
-			_spinner.setEnabled(enabled);
+			if (!_spinner.isDisposed()) {
+				_spinner.setEnabled(enabled);
+			}
 		} catch (MethodContainerInvokeException e) {
 			e.printStackTrace();
 		}
@@ -388,7 +402,9 @@ public class ModelOptionControlsFactory
 
 					try {
 						boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
-						_spinner.setEnabled(enabled);
+						if (!_spinner.isDisposed()) {
+							_spinner.setEnabled(enabled);
+						}
 					} catch (MethodContainerInvokeException e) {
 
 						e.printStackTrace();
@@ -440,8 +456,10 @@ public class ModelOptionControlsFactory
 			public void onOptionValidationResults(List<PropertyValidationResult> results, OptionModelChangeEvent originatingEvent)
 			{
 				try {
-					boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
-					control.getControl().setEnabled(enabled);
+					if (!control.getControl().isDisposed()) {
+						boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
+						control.getControl().setEnabled(enabled);
+					}
 				} catch (MethodContainerInvokeException e) {
 
 					e.printStackTrace();
@@ -530,7 +548,9 @@ public class ModelOptionControlsFactory
 
 				try {
 					boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
-					labeledTime.getControl().setEnabled(enabled);
+					if (!labeledTime.getControl().isDisposed()) {
+						labeledTime.getControl().setEnabled(enabled);
+					}
 				} catch (MethodContainerInvokeException e) {
 					e.printStackTrace();
 				}
