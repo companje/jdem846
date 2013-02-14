@@ -100,9 +100,9 @@
 			argumentOfPerihelion : 0.00, // degrees;
 	
 			// Physical characteristics
-			meanRadius : 1737.10, // km
-			equatorialRadius : 1738.14, //km
-			polarRadius : 1735.97, // km
+			meanRadius : 1737100, // m
+			equatorialRadius : 1738140, //m
+			polarRadius : 1735970, // m
 			flattening : 0.00125, 
 			circumferenceEquatorial : 0.00, //km
 			circumferenceMeridional : 0.00, // km
@@ -141,9 +141,9 @@
 			argumentOfPerihelion : 0.00, // degrees;
 	
 			// Physical characteristics
-			meanRadius : 69911.0, // km
-			equatorialRadius : 71492.0, //km
-			polarRadius : 66854.0, // km
+			meanRadius : 69911000, // m
+			equatorialRadius : 71492000, //m
+			polarRadius : 66854000, // m
 			flattening : 0.06487, 
 			circumferenceEquatorial : 0.00, //km
 			circumferenceMeridional : 0.00, // km
@@ -182,9 +182,9 @@
 			argumentOfPerihelion : 0.00, // degrees;
 	
 			// Physical characteristics
-			meanRadius : 60268.0, // km
-			equatorialRadius : 60268.0, //km
-			polarRadius : 54364.0, // km
+			meanRadius : 60268000, // m
+			equatorialRadius : 60268000, //m
+			polarRadius : 54364000, // m
 			flattening : 0.09796, 
 			circumferenceEquatorial : 0.00, //km
 			circumferenceMeridional : 0.00, // km

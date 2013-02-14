@@ -346,7 +346,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		this.unbindTexture();
 		
 		if (!this.checkGlContextSane()) {
-			log.error("GL Context in error condition prior to binding of texture");
+			log.warn("GL Context in error condition prior to binding of texture");
 			return false;
 		}
 
@@ -355,13 +355,13 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		this.texture = textures[0];
 
 		if (!this.checkGlContextSane()) {
-			log.error("GL Context in error condition following generation of texture");
+			log.warn("GL Context in error condition following generation of texture");
 			return false;
 		}
 		
 		openGl.getGL2().glBindTexture(GL.GL_TEXTURE_2D, texture);
 		if (!this.checkGlContextSane()) {
-			log.error("GL Context in error condition following bind of texture");
+			log.warn("GL Context in error condition following bind of texture");
 			return false;
 		}
 
@@ -375,14 +375,14 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		
 		openGl.getGL2().glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, tex.getWidth(), tex.getHeight(), 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, tex.getAsByteBuffer());
 		if (!this.checkGlContextSane()) {
-			log.error("GL Context in error condition following tex image 2d");
+			log.warn("GL Context in error condition following tex image 2d");
 			return false;
 		}
 		
 		if (configuration.getCreateMipMaps()) {
 			openGl.getGL2().glGenerateMipmap(GL2.GL_TEXTURE_2D);
 			if (!this.checkGlContextSane()) {
-				log.error("GL Context in error condition following generate mipmaps");
+				log.warn("GL Context in error condition following generate mipmaps");
 			}
 		}
 	
@@ -423,7 +423,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		
 				
 		if (!this.checkGlContextSane()) {
-			log.error("GL Context in error condition following tex parameters");
+			log.warn("GL Context in error condition following tex parameters");
 		}
 		
 		return true;
@@ -438,7 +438,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		
 		openGl.getGL2().glBindTexture(GL.GL_TEXTURE_2D, 0);
 		if (!this.checkGlContextSane()) {
-			log.error("GL Context in error condition following unbinding texture");
+			log.warn("GL Context in error condition following unbinding texture");
 		}
 		if (texture != 0) {
 			int[] textures = {texture};
@@ -531,17 +531,17 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	public void finish()
 	{
 		if (!this.checkGlContextSane()) {
-			log.error("GL Context in error condition prior to renderer finish operation");
+			log.warn("GL Context in error condition prior to renderer finish operation");
 		}
 
 		// openGl.getGL().glFlush();
 		if (!this.checkGlContextSane()) {
-			log.error("GL Context in error condition following gl flush");
+			log.warn("GL Context in error condition following gl flush");
 		}
 
 		// openGl.getGL().glFinish();
 		if (!this.checkGlContextSane()) {
-			log.error("GL Context in error condition following gl finish");
+			log.warn("GL Context in error condition following gl finish");
 		}
 
 		if (frameBuffer != null) {
@@ -642,7 +642,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	{
 		int error = 0;
 		if ((error = openGl.getGL().glGetError()) != GL.GL_NO_ERROR) {
-			log.error("GL Context is in error #" + error);
+			log.warn("GL Context is in error #" + error);
 			return false;
 		} else {
 			return true;
@@ -654,24 +654,5 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	{
 		openGl.dispose();
 	}
-	
-	class LightingConfig 
-	{
-		Vector lightPosition;
-		IColor emission;
-		IColor ambient;
-		IColor diffuse;
-		IColor specular;
-		double shininess;
-		
-		public LightingConfig(Vector lightPosition, IColor emission, IColor ambient, IColor diffuse, IColor specular, double shininess)
-		{
-			this.lightPosition = lightPosition;
-			this.emission = emission;
-			this.ambient = ambient;
-			this.diffuse = diffuse;
-			this.specular = specular;
-			this.shininess = shininess;
-		}
-	}
+
 }

@@ -169,6 +169,12 @@
       		id="jdem846ui.model.export">
       </command>
       <command
+            name="Delete Data"
+            description="Delete a rendered model from the project"
+            categoryId="jdem846ui.category"
+            id="jdem846ui.model.delete">
+      </command>
+      <command
             name="Zoom In"
             description="Zoom In"
             categoryId="jdem846ui.category"
@@ -213,6 +219,9 @@
      <image commandId="jdem846ui.zoom.out" icon="/icons/eclipse/zoom_out.gif" />
      <image commandId="jdem846ui.zoom.fit" icon="/icons/eclipse/zoom_fit.gif" />
      <image commandId="jdem846ui.zoom.actual" icon="/icons/eclipse/zoom_100.gif" />
+     
+     <image commandId="jdem846ui.model.delete" icon="/icons/eclipse/delete_config.gif" />
+     
   </extension>
   
   <extension point="org.eclipse.ui.menus">
@@ -246,7 +255,7 @@
         	<command commandId="jdem846ui.zoom.out" id="jdem846ui.toolbar.model.zoom.out" style="push" tooltip="Zoom Out" />
         	<command commandId="jdem846ui.zoom.fit" id="jdem846ui.toolbar.model.zoom.fit" style="push" tooltip="Zoom Fit" />
         	<command commandId="jdem846ui.zoom.actual" id="jdem846ui.toolbar.model.zoom.actual" style="push" tooltip="Zoom Actual" />
-        	
+        	<command commandId="jdem846ui.model.delete" id="jdem846ui.toolbar.model.delete" style="push" tooltip="Delete Model" />
         </toolbar>
         
      </menuContribution>
