@@ -23,4 +23,6 @@ public interface ICommandIds {
 	
 	public static final String CMD_EXPORT_MODEL = "jdem846ui.model.export";
 	
+	public static final String CMD_DELETE_MODEL = "jdem846ui.model.delete";
+	
 }

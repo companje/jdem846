@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -12,6 +15,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.ViewPart;
 
 import us.wthr.jdem846.ElevationModel;
@@ -26,6 +30,8 @@ import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846ui.ApplicationActionBarAdvisor;
+import us.wthr.jdem846ui.ICommandIds;
 import us.wthr.jdem846ui.project.IconEnum;
 import us.wthr.jdem846ui.project.ProjectChangeAdapter;
 import us.wthr.jdem846ui.project.ProjectContext;
@@ -193,6 +199,60 @@ public class DataView extends ViewPart
 		viewer.expandAll();
 	}
 
+	
+	
+	public void fillContextMenu(IMenuManager manager)
+	{
+		List<TreeObject<?>> selections = getSelectedTreeNode();
+		
+		boolean inputDataSelected = false;
+		boolean elevationModelSelected = false;
+		
+		for (TreeObject<?> treeObject : selections) {
+			if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof InputSourceData) {
+				inputDataSelected = true;
+			}
+			if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof ElevationModel) {
+				elevationModelSelected = true;
+			}
+		}
+		
+		
+		
+		manager.add(ApplicationActionBarAdvisor.getInstance().getAction(ICommandIds.CMD_ADD_DATA));
+		
+		if (inputDataSelected) {
+			manager.add(ApplicationActionBarAdvisor.getInstance().getAction(ICommandIds.CMD_REMOVE_DATA));
+		}
+		
+		if (elevationModelSelected) {
+			manager.add(ApplicationActionBarAdvisor.getInstance().getAction(ICommandIds.CMD_DELETE_MODEL));
+		}
+	}
+	
+	
+	protected List<TreeObject<?>> getSelectedTreeNode()
+	{
+		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+		return getSelectedTreeNode(selection);
+	}
+	
+	
+	protected List<TreeObject<?>> getSelectedTreeNode(IStructuredSelection selection)
+	{
+		List<TreeObject<?>> selections = new LinkedList<TreeObject<?>>();
+		
+		if (!selection.isEmpty()) {
+			for (Iterator<TreeObject<?>> iter = selection.iterator(); iter.hasNext();) {
+				TreeObject<?> treeObject = iter.next();
+				selections.add(treeObject);
+			}
+		}
+		
+		return selections;
+	}
+	
+	
 	@Override
 	public void createPartControl(Composite parent)
 	{
@@ -200,7 +260,20 @@ public class DataView extends ViewPart
 		viewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-
+		
+		
+		MenuManager menuMgr = new MenuManager();
+	    menuMgr.setRemoveAllWhenShown(true);
+	    menuMgr.addMenuListener(new IMenuListener() {
+	        public void menuAboutToShow(IMenuManager manager) {
+	        	DataView.this.fillContextMenu(manager);
+	        }
+	    });
+	    
+	    Menu menu = menuMgr.createContextMenu(viewer.getControl());
+	    viewer.getControl().setMenu(menu);
+	    getSite().registerContextMenu(menuMgr, viewer);
+		
 		viewer.addPostSelectionChangedListener(new ISelectionChangedListener()
 		{
 			public void selectionChanged(SelectionChangedEvent event)
@@ -208,30 +281,25 @@ public class DataView extends ViewPart
 
 				boolean selectedSourceData = false;
 				boolean selectedRenderedModel = false;
+				
 
-				if (!event.getSelection().isEmpty()) {
-					if (event.getSelection() instanceof IStructuredSelection) {
-						IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-						for (Iterator<TreeObject> iter = selection.iterator(); iter.hasNext();) {
-							TreeObject treeObject = iter.next();
+				List<TreeObject<?>> selections = getSelectedTreeNode((IStructuredSelection)event.getSelection());
+				for (TreeObject<?> treeObject : selections) {
+					if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof InputSourceData) {
+						fireOnSourceDataSelectionChanged((InputSourceData) ((DataTreeObject) treeObject).getData());
+						selectedSourceData = true;
+					}
 
-							if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof InputSourceData) {
-								fireOnSourceDataSelectionChanged((InputSourceData) ((DataTreeObject) treeObject).getData());
-								selectedSourceData = true;
-							}
+					if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof ElevationModel) {
 
-							if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof ElevationModel) {
-
-								fireOnRenderedModelSelectionChanged((ElevationModel) ((DataTreeObject) treeObject).getData());
-								selectedRenderedModel = true;
-
-							}
-
-						}
+						fireOnRenderedModelSelectionChanged((ElevationModel) ((DataTreeObject) treeObject).getData());
+						selectedRenderedModel = true;
 
 					}
 				}
-
+				
+				
+				
 				if (!selectedSourceData && !selectedRenderedModel) {
 					fireOnSourceDataSelectionChanged(null);
 					fireOnRenderedModelSelectionChanged(null);
@@ -277,6 +345,10 @@ public class DataView extends ViewPart
 		});
 
 		resetAndUpdateModel();
+		
+		
+		
+		
 	}
 
 	@Override

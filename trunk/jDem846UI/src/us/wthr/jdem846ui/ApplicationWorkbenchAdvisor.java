@@ -38,6 +38,9 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		PlatformUI.getPreferenceStore().setValue(
 				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, true);
 		super.initialize(configurer);
+		
+		// http://rajakannappan.blogspot.com/2009/10/eclipse-rcp-how-to-save-view-layouts.html
+		configurer.setSaveAndRestore(true);
 	}
 
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
@@ -47,11 +50,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	@Override
 	public void preStartup() {
-		// TODO Auto-generated method stub
 		super.preStartup();
-		
-		
-		//IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 	
 	public boolean preShutdown(){  

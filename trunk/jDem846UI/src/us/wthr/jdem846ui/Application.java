@@ -1,10 +1,12 @@
 package us.wthr.jdem846ui;
 
 import java.io.File;
+import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -121,10 +123,19 @@ public class Application implements IApplication {
 		//OptionValidationChangeObserver validationObserver = new OptionValidationChangeObserver();
 		//ElevationRangeChangeObserver rangeObserver = new ElevationRangeChangeObserver();
 		//ModelPreviewChangeObserver modelPreviewObserver = new ModelPreviewChangeObserver();
-	
+
+		
+		try {
+			setInstanceLocation();
+		} catch (Exception ex) {
+			log.error("Error setting user instance location: " + ex.getMessage(), ex);
+			return IApplication.EXIT_OK;
+		}
+		
 		Display display = PlatformUI.createDisplay();
 		try {
 			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor(loadProject));
+			
 			ServiceKernel.initiateApplicationShutdown();
 			
 			if (returnCode == PlatformUI.RETURN_RESTART) {
@@ -136,6 +147,43 @@ public class Application implements IApplication {
 		}
 	}
 
+	
+	protected void setInstanceLocation() throws Exception
+	{
+		Location instanceLoc = Platform.getInstanceLocation(); 
+		if (instanceLoc.isSet()) {
+			log.warn("Cannot set instance location: Already set to '" + instanceLoc.getURL().toString() + "'");
+			return;
+		}
+		
+		
+		String userDirectory = JDem846Properties.getProperty("us.wthr.jdem846.userSettingsPath");
+		
+		File f = new File(userDirectory);
+		if (!f.exists() && !f.mkdirs()) {
+			throw new Exception("Instance location '" + userDirectory + "' does not exists and I am unable to create it");
+		}
+		
+		if (!f.canRead()) {
+			throw new Exception("Instance location '" + userDirectory + "' exists but unable to read");
+		}
+		
+		if (!f.canWrite()) {
+			throw new Exception("Instance location '" + userDirectory + "' exists but unable to write");
+		}
+		
+		log.info("Setting instance location to '" + userDirectory + "'...");
+		
+		
+		
+		
+		try {
+			instanceLoc.set(new URL("file", null, f.getAbsolutePath()), false);
+		} catch (IllegalStateException ex) {
+			throw new Exception("Error setting instance location to '" + f.getAbsolutePath() + "'. Currently set to '" + instanceLoc.getURL().toString() + "'", ex);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
@@ -216,9 +264,9 @@ public class Application implements IApplication {
 			System.setProperty("us.wthr.jdem846.resourcesPath", System.getProperty("us.wthr.jdem846.installPath"));
 		}
 		
-		if (System.getProperty("us.wthr.jdem846.userSettingsPath") == null) {
-			System.setProperty("us.wthr.jdem846.userSettingsPath", System.getProperty("user.home") + "/.jdem846");
-		}
+		//if (System.getProperty("us.wthr.jdem846.userSettingsPath") == null) {
+		//	System.setProperty("us.wthr.jdem846.userSettingsPath", System.getProperty("user.home") + "/.jdem846");
+		//}
 		
 		
 		System.out.println("us.wthr.jdem846.installPath: " + System.getProperty("us.wthr.jdem846.installPath"));

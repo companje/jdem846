@@ -27,12 +27,13 @@ import us.wthr.jdem846ui.actions.ActionListener;
 import us.wthr.jdem846ui.actions.UpdatePreviewAction;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
 import us.wthr.jdem846ui.observers.ModelPreviewReadyListener;
+import us.wthr.jdem846ui.util.SwtImageUtil;
 import us.wthr.jdem846ui.views.preview.ModelMouseMovementTracker;
 
 public class PreviewEditor extends EditorPart
 {
 	private static Log log = Logging.getLog(PreviewEditor.class);
-	
+
 	public static final String ID = "us.wthr.jdem846ui.editors.PreviewEditor";
 
 	private Canvas canvas;
@@ -49,21 +50,22 @@ public class PreviewEditor extends EditorPart
 	public void createPartControl(Composite parent)
 	{
 		mouseTracker = new ModelMouseMovementTracker();
-		
+
 		updatePreviewAction = new UpdatePreviewAction("Update Preview", View.ID);
 		IActionBars actionBars = getEditorSite().getActionBars();
-		//IMenuManager dropDownMenu = actionBars.getMenuManager();
+		// IMenuManager dropDownMenu = actionBars.getMenuManager();
 		IToolBarManager toolBar = actionBars.getToolBarManager();
-		//dropDownMenu.add(updatePreviewAction);
+		// dropDownMenu.add(updatePreviewAction);
 		toolBar.add(updatePreviewAction);
-		
-		updatePreviewAction.addActionListener(new ActionListener() {
+
+		updatePreviewAction.addActionListener(new ActionListener()
+		{
 			public void onAction()
 			{
 				ModelPreviewChangeObserver.getInstance().update(true, true);
 			}
 		});
-		
+
 		ModelPreviewChangeObserver.getInstance().addModelPreviewReadyListener(new ModelPreviewReadyListener()
 		{
 			public void onPreviewReady(final ElevationModel elevationModel)
@@ -104,7 +106,7 @@ public class PreviewEditor extends EditorPart
 						int x = (int) ((canvas.getClientArea().width / 2.0) - (scaleToWidth / 2.0)) + 0;
 						int y = (int) ((canvas.getClientArea().height / 2.0) - (scaleToHeight / 2.0)) + 0;
 
-						Image scaledImage = getScaledImage(image, scalePercent);
+						Image scaledImage = SwtImageUtil.getScaledImage(image, scalePercent);
 
 						e.gc.drawImage(scaledImage, x, y);
 					}
@@ -132,7 +134,7 @@ public class PreviewEditor extends EditorPart
 					int previewWidth = canvas.getClientArea().width;
 					ModelPreviewChangeObserver.getInstance().setPreviewHeight(previewHeight);
 					ModelPreviewChangeObserver.getInstance().setPreviewWidth(previewWidth);
-	
+
 					if (previewHeight > 0 && previewWidth > 0) {
 						ModelPreviewChangeObserver.getInstance().update(false, false);
 					}
@@ -162,14 +164,14 @@ public class PreviewEditor extends EditorPart
 	@Override
 	public void doSave(IProgressMonitor arg0)
 	{
-		
+
 	}
 
 	@Override
 	public void doSaveAs()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -185,7 +187,7 @@ public class PreviewEditor extends EditorPart
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	protected void updatePreviewCanvas(ElevationModel elevationModel)
 	{
 		synchronized (imageMutex) {
@@ -249,12 +251,5 @@ public class PreviewEditor extends EditorPart
 		return (scaleWidth / imageWidth);
 	}
 
-	protected Image getScaledImage(Image image, double scalePercent)
-	{
-		int width = image.getBounds().width;
-		int height = image.getBounds().height;
-
-		Image scaled = new Image(canvas.getDisplay(), image.getImageData().scaledTo((int) (width * scalePercent), (int) (height * scalePercent)));
-		return scaled;
-	}
+	
 }

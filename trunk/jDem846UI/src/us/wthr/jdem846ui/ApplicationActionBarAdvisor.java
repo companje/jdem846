@@ -1,7 +1,11 @@
 package us.wthr.jdem846ui;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -9,11 +13,11 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 
 import us.wthr.jdem846ui.actions.AddDataAction;
+import us.wthr.jdem846ui.actions.DeleteRenderedModelAction;
 import us.wthr.jdem846ui.actions.ExportDataAction;
 import us.wthr.jdem846ui.actions.NewProjectAction;
 import us.wthr.jdem846ui.actions.OpenProjectAction;
@@ -33,113 +37,65 @@ import us.wthr.jdem846ui.actions.ZoomOutAction;
  */
 public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
-	// Actions - important to allocate these only in makeActions, and then use
-	// them
-	// in the fill methods. This ensures that the actions aren't recreated
-	// when fillActionBars is called with FILL_PROXY.
+	private Map<String, IAction> actionMap = new HashMap<String, IAction>();
 
-
-    // Actions - important to allocate these only in makeActions, and then use them
-    // in the fill methods.  This ensures that the actions aren't recreated
-    // when fillActionBars is called with FILL_PROXY.
-    private IWorkbenchAction exitAction;
-    private IWorkbenchAction prefsAction;
-    private IWorkbenchAction aboutAction;
-    private NewProjectAction newProjectAction;
-    private OpenProjectAction openProjectAction;
-    private SaveProjectAction saveProjectAction;
-    private SaveProjectAsAction saveProjectAsAction;
-    
-    private ZoomInAction zoomInAction;
-    private ZoomOutAction zoomOutAction;
-    private ZoomActualAction zoomActualAction;
-    private ZoomFitAction zoomFitAction;
-    
-    private AddDataAction addDataAction;
-    private RemoveDataAction removeDataAction;
-    private ExportDataAction exportDataAction;
-    private RenderAction renderAction;
-    
-    private IWorkbenchAction cutAction;
-    private IWorkbenchAction copyAction;
-    private IWorkbenchAction pasteAction;
-    private IWorkbenchAction undoAction;
-    private IWorkbenchAction redoAction;
-    
+	private static ApplicationActionBarAdvisor INSTANCE = null;
+	
+	
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
         super(configurer);
+        ApplicationActionBarAdvisor.INSTANCE = this;
+    }
+    
+    public static ApplicationActionBarAdvisor getInstance()
+    {
+    	return ApplicationActionBarAdvisor.INSTANCE;
+    }
+    
+    protected void putAction(IAction action, String id)
+    {
+    	register(action);
+    	actionMap.put(id,  action);
+    }
+    
+    public IAction getAction(String id)
+    {
+    	return actionMap.get(id);
     }
     
     protected void makeActions(final IWorkbenchWindow window) {
-        // Creates the actions and registers them.
-        // Registering is needed to ensure that key bindings work.
-        // The corresponding commands keybindings are defined in the plugin.xml file.
-        // Registering also provides automatic disposal of the actions when
-        // the window is closed.
+
+    	putAction(ActionFactory.QUIT.create(window), ActionFactory.QUIT.getId());
+    	putAction(ActionFactory.CUT.create(window), ActionFactory.CUT.getId());
+    	putAction(ActionFactory.COPY.create(window), ActionFactory.COPY.getId());
+    	putAction(ActionFactory.PASTE.create(window), ActionFactory.PASTE.getId());
+    	putAction(ActionFactory.UNDO.create(window), ActionFactory.UNDO.getId());
+    	putAction(ActionFactory.REDO.create(window), ActionFactory.REDO.getId());
+    	putAction(ActionFactory.PREFERENCES.create(window), ActionFactory.PREFERENCES.getId());
+    	putAction(ActionFactory.ABOUT.create(window), ActionFactory.ABOUT.getId());
+
+        
+    	putAction(new NewProjectAction(window, "New Project", View.ID), ICommandIds.CMD_NEW);
     	
-        exitAction = ActionFactory.QUIT.create(window);
-        register(exitAction);
+    	
+    	
         
+    	putAction(new NewProjectAction(window, "New Project", View.ID), ICommandIds.CMD_NEW);
+    	putAction(new OpenProjectAction(window, "Open Project", View.ID), ICommandIds.CMD_OPEN);
+    	putAction(new SaveProjectAction(window, "Save Project", View.ID), ICommandIds.CMD_SAVE);
+    	putAction(new SaveProjectAsAction(window, "Save Project As", View.ID), ICommandIds.CMD_SAVE_AS);
         
-        cutAction = ActionFactory.CUT.create(window);
-        register(cutAction);
+    	putAction(new AddDataAction(window, "Add", View.ID), ICommandIds.CMD_ADD_DATA);
+    	putAction(new RemoveDataAction(window, "Remove", View.ID), ICommandIds.CMD_REMOVE_DATA);
+    	putAction(new ExportDataAction(window, "Export", View.ID), ICommandIds.CMD_EXPORT_DATA);
+    	putAction(new RenderAction(window, "Render", View.ID), ICommandIds.CMD_RENDER);
         
-        copyAction = ActionFactory.COPY.create(window);
-        register(copyAction);
-        
-        pasteAction = ActionFactory.PASTE.create(window);
-        register(pasteAction);
-        
-        undoAction = ActionFactory.UNDO.create(window);
-        register(undoAction);
-        
-        redoAction = ActionFactory.REDO.create(window);
-        register(redoAction);
-        
-        prefsAction = ActionFactory.PREFERENCES.create(window);
-        register(prefsAction);
-        
-        aboutAction = ActionFactory.ABOUT.create(window);
-        register(aboutAction);
-        
-        newProjectAction = new NewProjectAction(window, "New Project", View.ID);
-        openProjectAction = new OpenProjectAction(window, "Open Project", View.ID);
-        saveProjectAction = new SaveProjectAction(window, "Save Project", View.ID);
-        saveProjectAsAction = new SaveProjectAsAction(window, "Save Project As", View.ID);
-        
-        addDataAction = new AddDataAction(window, "Add", View.ID);
-        removeDataAction = new RemoveDataAction(window, "Remove", View.ID);
-        exportDataAction = new ExportDataAction(window, "Export", View.ID);
-        renderAction = new RenderAction(window, "Render", View.ID);
-        
-        zoomInAction = new ZoomInAction(window, "Zoom In", View.ID);
-        zoomOutAction = new ZoomOutAction(window, "Zoom Out", View.ID);
-        zoomActualAction = new ZoomActualAction(window, "Zoom Actual", View.ID);
-        zoomFitAction = new ZoomFitAction(window, "Zoom Fit", View.ID);
-        
-        
-        register(newProjectAction);
-        register(openProjectAction);
-        register(saveProjectAction);
-        register(saveProjectAsAction);
-        register(addDataAction);
-        register(removeDataAction);
-        register(exportDataAction);
-        register(renderAction);
-        
-        register(zoomInAction);
-        register(zoomOutAction);
-        register(zoomActualAction);
-        register(zoomFitAction);
-        
-        //newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
-        //register(newWindowAction);
-        
-      //  openViewAction = new OpenViewAction(window, "Open Another Message View", View.ID);
-       // register(openViewAction);
-        
-      //  messagePopupAction = new MessagePopupAction("Open Message", window);
-       // register(messagePopupAction);
+    	putAction(new ZoomInAction(window, "Zoom In", View.ID), ICommandIds.CMD_ZOOM_IN);
+    	putAction(new ZoomOutAction(window, "Zoom Out", View.ID), ICommandIds.CMD_ZOOM_OUT);
+    	putAction(new ZoomActualAction(window, "Zoom Actual", View.ID), ICommandIds.CMD_ZOOM_ACTUAL);
+    	putAction(new ZoomFitAction(window, "Zoom Fit", View.ID), ICommandIds.CMD_ZOOM_FIT);
+    	putAction(new DeleteRenderedModelAction(window, "Delete Model", View.ID), ICommandIds.CMD_DELETE_MODEL);
+
     }
     
     protected void fillMenuBar(IMenuManager menuBar) {
@@ -158,62 +114,29 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         
         // File
         //fileMenu.add(newWindowAction);
-        fileMenu.add(newProjectAction);
-        fileMenu.add(openProjectAction);
+        fileMenu.add(getAction(ICommandIds.CMD_NEW));
+        fileMenu.add(getAction(ICommandIds.CMD_OPEN));
         fileMenu.add(new Separator());
-        fileMenu.add(saveProjectAction);
-        fileMenu.add(saveProjectAsAction);
-       // fileMenu.add(new Separator());
-       // fileMenu.add(messagePopupAction);
-       // fileMenu.add(openViewAction);
+        fileMenu.add(getAction(ICommandIds.CMD_SAVE));
+        fileMenu.add(getAction(ICommandIds.CMD_SAVE_AS));
         fileMenu.add(new Separator());
-        fileMenu.add(exitAction);
+        fileMenu.add(getAction(ActionFactory.QUIT.getId()));
         
-        editMenu.add(undoAction);
-        editMenu.add(redoAction);
+        editMenu.add(getAction(ActionFactory.UNDO.getId()));
+        editMenu.add(getAction(ActionFactory.REDO.getId()));
         editMenu.add(new Separator());
-        editMenu.add(cutAction);
-        editMenu.add(copyAction);
-        editMenu.add(pasteAction);
+        editMenu.add(getAction(ActionFactory.CUT.getId()));
+        editMenu.add(getAction(ActionFactory.COPY.getId()));
+        editMenu.add(getAction(ActionFactory.PASTE.getId()));
         
         
         
-        windowMenu.add(prefsAction);
+        windowMenu.add(getAction(ActionFactory.PREFERENCES.getId()));
         
         // Help
-        helpMenu.add(aboutAction);
+        helpMenu.add(getAction(ActionFactory.ABOUT.getId()));
     }
     
     protected void fillCoolBar(ICoolBarManager coolBar) {
-//        IToolBarManager mainToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-//        coolBar.add(new ToolBarContributionItem(mainToolbar, "main"));   
-//        mainToolbar.add(newProjectAction);
-//        mainToolbar.add(openProjectAction);
-//        mainToolbar.add(saveProjectAction);
-//        mainToolbar.add(saveProjectAsAction);
-        
-//        IToolBarManager editToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-//        coolBar.add(new ToolBarContributionItem(editToolbar, "edit"));   
-//        editToolbar.add(cutAction);
-//        editToolbar.add(copyAction);
-//        editToolbar.add(pasteAction);
-//        editToolbar.add(undoAction);
-//        editToolbar.add(redoAction);
-        
-//        IToolBarManager dataToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-//        coolBar.add(new ToolBarContributionItem(dataToolbar, "data"));
-//        dataToolbar.add(addDataAction);
-//        dataToolbar.add(removeDataAction);
-//        dataToolbar.add(exportDataAction);
-//        dataToolbar.add(renderAction);
-
-//        IToolBarManager modelToolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-//        coolBar.add(new ToolBarContributionItem(modelToolbar, "model"));
-//        modelToolbar.add(zoomInAction);
-//        modelToolbar.add(zoomOutAction);
-//        modelToolbar.add(zoomActualAction);
-//        modelToolbar.add(zoomFitAction);
-        //toolbar.add(openViewAction);
-       // toolbar.add(messagePopupAction);
     }
 }
