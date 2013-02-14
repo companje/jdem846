@@ -80,6 +80,18 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 		
 	}
 	
+	@Override
+	public void enableFog(IColor fogColor, FogModeEnum mode, double density, double start, double end)
+	{
+		
+	}
+	
+	@Override
+	public void disableFog()
+	{
+		
+	}
+	
 	public void normal(Vector normal)
 	{
 		

@@ -11,6 +11,8 @@ import us.wthr.jdem846.scripting.ScriptProxy;
 public interface View
 {
 
+	public double scaleElevation(double elevation);
+	
 	public void setModelContext(ModelContext arg);
 
 	public void setGlobalOptionModel(GlobalOptionModel arg);

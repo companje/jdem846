@@ -10,6 +10,7 @@ import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.graphics.AxisEnum;
 import us.wthr.jdem846.graphics.BaseRenderer;
+import us.wthr.jdem846.graphics.FogModeEnum;
 import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.graphics.IRenderer;
 import us.wthr.jdem846.graphics.ImageCapture;
@@ -149,10 +150,10 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		float light[] = new float[4];
 		
 		ambiant.toArray(light);
-		//openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, light, 0);
+		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, light, 0);
 		
 		diffuse.toArray(light);
-		//openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, light, 0);
+		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, light, 0);
 		
 		openGl.getGL2().glLightModeli( GL2.GL_LIGHT_MODEL_COLOR_CONTROL, GL2.GL_SEPARATE_SPECULAR_COLOR );
 		
@@ -178,6 +179,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		
 		openGl.getGL2().glDisable(GL2.GL_COLOR_MATERIAL);
 		openGl.getGL2().glColorMaterial ( GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE ) ;
+		openGl.getGL2().glShadeModel(GL2.GL_SMOOTH);
 		
 		float shininessLight[] = { (float)shininess };
 		
@@ -198,9 +200,37 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	
 	public void disableMaterial()
 	{
-		openGl.getGL2().glDisable(GL2.GL_COLOR_MATERIAL);
+		openGl.getGL2().glEnable(GL2.GL_COLOR_MATERIAL);
 	}
 	
+	public void enableFog(IColor fogColor, FogModeEnum mode, double density, double start, double end)
+	{
+		openGl.getGL2().glEnable(GL2.GL_FOG);
+		
+		if (mode == FogModeEnum.LINEAR) {
+			openGl.getGL2().glFogi(GL2.GL_FOG_MODE, GL2.GL_LINEAR);
+		} else if (mode == FogModeEnum.EXP) {
+			openGl.getGL2().glFogi(GL2.GL_FOG_MODE, GL2.GL_EXP);
+		} else if (mode == FogModeEnum.EXP2) {
+			openGl.getGL2().glFogi(GL2.GL_FOG_MODE, GL2.GL_EXP2);
+		}
+		
+		float[] c = new float[4];
+		fogColor.toArray(c);
+		openGl.getGL2().glFogfv(GL2.GL_FOG_COLOR, c, 0);
+		
+		openGl.getGL2().glFogf(GL2.GL_FOG_DENSITY, (float)density);
+		openGl.getGL2().glHint(GL2.GL_FOG_HINT, GL2.GL_FASTEST);
+		openGl.getGL2().glFogf(GL2.GL_FOG_START, (float)start);
+		openGl.getGL2().glFogf(GL2.GL_FOG_END, (float) end);
+		
+		
+	}
+	
+	public void disableFog()
+	{
+		openGl.getGL2().glDisable(GL2.GL_FOG);
+	}
 	
 	public void normal(Vector normal)
 	{

@@ -22,6 +22,9 @@ public interface IRenderer
 	public void setMaterial(IColor emission, IColor ambiant, IColor diffuse, IColor specular, double shininess);
 	public void disableMaterial();
 	
+	public void enableFog(IColor fogColor, FogModeEnum mode, double density, double start, double end);
+	public void disableFog();
+	
 	public void normal(Vector normal);
 	
 	public void pushMatrix();

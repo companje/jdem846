@@ -9,7 +9,7 @@ public class GlobalView extends AbstractView implements View
 	
 	private double dataMaximumValue = DemConstants.ELEV_UNDETERMINED;
 	
-	protected double elevScaler = -1;
+	
 	
 	
 	protected double getZoom()
@@ -17,18 +17,7 @@ public class GlobalView extends AbstractView implements View
 		return globalOptionModel.getViewAngle().getZoom();
 	}
 	
-	protected double getElevationScaler()
-	{
-		if (elevScaler == -1) {
-			elevScaler = radius() / radiusTrue();
-		}
-		return elevScaler;
-	}
-	
-	protected double scaleElevation(double elevation)
-	{
-		return (elevation * getElevationScaler());
-	}
+
 	
 	public void project(double latitude, double longitude, double elevation, Vector point)
 	{
@@ -55,9 +44,9 @@ public class GlobalView extends AbstractView implements View
 	{
 		double radius = 0;
 		if (planet != null) {
-			radius = planet.getMeanRadius() * 1000.0;
+			radius = planet.getMeanRadius();
 		} else {
-			radius = DemConstants.EARTH_MEAN_RADIUS * 1000.0;
+			radius = DemConstants.EARTH_MEAN_RADIUS;
 		}
 		return radius * getZoom();
 	}

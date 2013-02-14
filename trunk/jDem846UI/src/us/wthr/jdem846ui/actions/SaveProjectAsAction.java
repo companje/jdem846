@@ -11,7 +11,7 @@ public class SaveProjectAsAction extends DirectoryPromptingAction
 
 	public SaveProjectAsAction(IWorkbenchWindow window, String label, String viewId)
 	{
-		super(window, ICommandIds.CMD_SAVE, viewId, label, "/icons/eclipse/project_saveas.gif");
+		super(window, ICommandIds.CMD_SAVE_AS, viewId, label, "/icons/eclipse/project_saveas.gif");
 	}
 	
 	@Override
