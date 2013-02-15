@@ -20,6 +20,7 @@ public interface ICommandIds {
 	public static final String CMD_ZOOM_FIT = "jdem846ui.zoom.fit";
 	
 	public static final String CMD_UPDATE_PREVIEW = "jdem846ui.preview.update";
+	public static final String CMD_UPDATE_PREVIEW_WITH_DATA_REFRESH = "jdem846ui.preview.update.forceDataRefresh";
 	
 	public static final String CMD_EXPORT_MODEL = "jdem846ui.model.export";
 	

@@ -1,7 +1,6 @@
 package us.wthr.jdem846ui.editors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -104,6 +103,17 @@ public class RenderedModelEditor extends EditorPart
 		}
 	}
 	
+	
+	
+	@Override
+	public void dispose()
+	{
+		IActionBars actionBars = getEditorSite().getActionBars();
+		IToolBarManager toolBar = actionBars.getToolBarManager();
+		toolBar.remove(exportModelAction.getId());
+		super.dispose();
+	}
+
 	protected void createDisplayControls(Composite parent)
 	{
 		
@@ -111,9 +121,7 @@ public class RenderedModelEditor extends EditorPart
 		
 		exportModelAction = new ExportModelAction("Export...", View.ID);
 		IActionBars actionBars = getEditorSite().getActionBars();
-		IMenuManager dropDownMenu = actionBars.getMenuManager();
 		IToolBarManager toolBar = actionBars.getToolBarManager();
-		dropDownMenu.add(exportModelAction);
 		toolBar.add(exportModelAction);
 		
 		

@@ -98,9 +98,9 @@ public class HillshadingProcessor extends GridProcessor
 
 		planet = PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet());
 		if (planet != null) {
-			modelRadius = planet.getMeanRadius() * 1000;
+			modelRadius = planet.getMeanRadius();
 		} else {
-			modelRadius = DemConstants.EARTH_MEAN_RADIUS * 1000;
+			modelRadius = DemConstants.EARTH_MEAN_RADIUS;
 		}
 
 		ScriptingContext scriptingContext = modelContext.getScriptingContext();

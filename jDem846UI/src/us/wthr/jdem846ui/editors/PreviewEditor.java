@@ -1,7 +1,6 @@
 package us.wthr.jdem846ui.editors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -14,7 +13,6 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.part.EditorPart;
@@ -22,9 +20,6 @@ import org.eclipse.ui.part.EditorPart;
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846ui.View;
-import us.wthr.jdem846ui.actions.ActionListener;
-import us.wthr.jdem846ui.actions.UpdatePreviewAction;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
 import us.wthr.jdem846ui.observers.ModelPreviewReadyListener;
 import us.wthr.jdem846ui.util.SwtImageUtil;
@@ -45,12 +40,13 @@ public class PreviewEditor extends EditorPart
 
 	private ModelMouseMovementTracker mouseTracker;
 
-	private UpdatePreviewAction updatePreviewAction;
+	//private UpdatePreviewAction updatePreviewAction;
 
 	public void createPartControl(Composite parent)
 	{
 		mouseTracker = new ModelMouseMovementTracker();
 
+		/*
 		updatePreviewAction = new UpdatePreviewAction("Update Preview", View.ID);
 		IActionBars actionBars = getEditorSite().getActionBars();
 		// IMenuManager dropDownMenu = actionBars.getMenuManager();
@@ -65,7 +61,8 @@ public class PreviewEditor extends EditorPart
 				ModelPreviewChangeObserver.getInstance().update(true, true);
 			}
 		});
-
+		*/
+		
 		ModelPreviewChangeObserver.getInstance().addModelPreviewReadyListener(new ModelPreviewReadyListener()
 		{
 			public void onPreviewReady(final ElevationModel elevationModel)

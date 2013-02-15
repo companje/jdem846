@@ -226,9 +226,9 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 		
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
 		
-		globalOptionModel.setAverageOverlappedData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.averageOverlappedData"));
+		globalOptionModel.setAverageOverlappedData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.averageOverlappedData"));
 		globalOptionModel.setGetStandardResolutionElevation(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.standardResolutionRetrieval"));
-		globalOptionModel.setInterpolateData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.performance.interpolateToHigherResolution"));
+		globalOptionModel.setInterpolateData(JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.interpolateToHigherResolution"));
 		globalOptionModel.setModelQuality(JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewModelQuality"));
 		globalOptionModel.setTextureQuality(JDem846Properties.getDoubleProperty("us.wthr.jdem846.previewing.ui.previewTextureQuality"));
 
@@ -321,6 +321,7 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 		}
 		
 		try {
+			//modelContextWorkingCopy.updateContext();
 			modelContextWorkingCopy.updateContext();
 		} catch (ModelContextException ex) {
 			// TODO Display error message dialog
