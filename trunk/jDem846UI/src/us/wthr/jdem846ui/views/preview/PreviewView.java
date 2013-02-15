@@ -1,7 +1,5 @@
 package us.wthr.jdem846ui.views.preview;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -14,14 +12,11 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846ui.View;
-import us.wthr.jdem846ui.actions.ActionListener;
 import us.wthr.jdem846ui.actions.UpdatePreviewAction;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
 import us.wthr.jdem846ui.observers.ModelPreviewReadyListener;
@@ -49,6 +44,7 @@ public class PreviewView extends ViewPart
 	{
 		mouseTracker = new ModelMouseMovementTracker();
 		
+		/*
 		updatePreviewAction = new UpdatePreviewAction("Update Preview", View.ID);
 		IActionBars actionBars = getViewSite().getActionBars();
 		IMenuManager dropDownMenu = actionBars.getMenuManager();
@@ -62,6 +58,7 @@ public class PreviewView extends ViewPart
 				ModelPreviewChangeObserver.getInstance().update(true, true);
 			}
 		});
+		*/
 		
 		ModelPreviewChangeObserver.getInstance().addModelPreviewReadyListener(new ModelPreviewReadyListener()
 		{

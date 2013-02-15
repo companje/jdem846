@@ -80,7 +80,11 @@ public class BasicAction extends Action
 	protected void fireActionListeners()
 	{
 		for (ActionListener listener : actionListeners) {
-			listener.onAction();
+			try {
+				listener.onAction();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 	

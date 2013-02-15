@@ -33,9 +33,9 @@ public class DemConstants {
 	
 	public static final double COORDINATE_NOT_SET = -1000000;
 	
-	public static final double EARTH_MEAN_RADIUS = 6371.0;
-	public static final double MARS_MEAN_RADIUS = 3396.2;
-	public static final double MOON_MEAN_RADIUS = 1737.1;
+	public static final double EARTH_MEAN_RADIUS = 6371000;
+	public static final double MARS_MEAN_RADIUS = 3396200;
+	public static final double MOON_MEAN_RADIUS = 1737100;
 	
 	
 	public static final double ELEV_NO_DATA = -1000000;

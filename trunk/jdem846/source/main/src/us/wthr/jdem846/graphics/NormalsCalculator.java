@@ -198,7 +198,7 @@ public class NormalsCalculator
 		if (this.planet != null) {
 			planet.getEllipsoid().getXyzCoordinates(_latitude, _longitude, elevation, P);
 		} else {
-			double radius = meanRadius * 1000 + elevation;
+			double radius = meanRadius + elevation;
 			Spheres.getPoint3D(_longitude, _latitude, radius, P);
 		}
 		

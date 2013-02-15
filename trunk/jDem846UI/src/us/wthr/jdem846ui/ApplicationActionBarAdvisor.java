@@ -25,6 +25,8 @@ import us.wthr.jdem846ui.actions.RemoveDataAction;
 import us.wthr.jdem846ui.actions.RenderAction;
 import us.wthr.jdem846ui.actions.SaveProjectAction;
 import us.wthr.jdem846ui.actions.SaveProjectAsAction;
+import us.wthr.jdem846ui.actions.UpdatePreviewAction;
+import us.wthr.jdem846ui.actions.UpdatePreviewWithDataRefreshAction;
 import us.wthr.jdem846ui.actions.ZoomActualAction;
 import us.wthr.jdem846ui.actions.ZoomFitAction;
 import us.wthr.jdem846ui.actions.ZoomInAction;
@@ -87,6 +89,10 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         
     	putAction(new AddDataAction(window, "Add", View.ID), ICommandIds.CMD_ADD_DATA);
     	putAction(new RemoveDataAction(window, "Remove", View.ID), ICommandIds.CMD_REMOVE_DATA);
+    	
+    	putAction(new UpdatePreviewAction(window, "Update Preview", View.ID), ICommandIds.CMD_UPDATE_PREVIEW);
+    	putAction(new UpdatePreviewWithDataRefreshAction(window, "Update Preview", View.ID), ICommandIds.CMD_UPDATE_PREVIEW);
+    	
     	putAction(new ExportDataAction(window, "Export", View.ID), ICommandIds.CMD_EXPORT_DATA);
     	putAction(new RenderAction(window, "Render", View.ID), ICommandIds.CMD_RENDER);
         

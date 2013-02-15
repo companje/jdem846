@@ -679,7 +679,7 @@ public class RasterDataContext implements DataContext
 		clone.longitudeResolution = getLongitudeResolution();
 		clone.effectiveLatitudeResolution = getEffectiveLatitudeResolution();
 		clone.effectiveLongitudeResolution = getEffectiveLongitudeResolution();
-		clone.dataMaximumValue = getDataMaximumValue();
+		clone.dataMaximumValue = getDataMaximumValueTrue();
 		clone.dataMinimumValue = getDataMinimumValue();
 		clone.isDisposed = isDisposed(); // Should be false at this point...		
 		clone.metersResolution = getMetersResolution();

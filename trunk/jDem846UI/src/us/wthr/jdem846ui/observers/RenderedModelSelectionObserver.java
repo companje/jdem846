@@ -36,22 +36,28 @@ public class RenderedModelSelectionObserver
 		{
 			public void onRenderedModelSelectionChanged(ElevationModel elevationModel)
 			{
-				if (elevationModel != null) {
-					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-					try {
-						if (isEditorOpen(elevationModel)) {
-							page.activate(getEditorReferenceForElevationModel(elevationModel).getEditor(false));
-						} else {
-							log.info("Rendered Model Selected");
-							IEditorPart editor = page.openEditor(new ElevationModelEditorInput(elevationModel), RenderedModelEditor.ID);
-						}
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				}
+				
 			}
 		});
 		
+	}
+	
+	
+	public void openElevationModel(ElevationModel elevationModel)
+	{
+		if (elevationModel != null) {
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			try {
+				if (isEditorOpen(elevationModel)) {
+					page.activate(getEditorReferenceForElevationModel(elevationModel).getEditor(false));
+				} else {
+					log.info("Rendered Model Selected");
+					IEditorPart editor = page.openEditor(new ElevationModelEditorInput(elevationModel), RenderedModelEditor.ID);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 
 	

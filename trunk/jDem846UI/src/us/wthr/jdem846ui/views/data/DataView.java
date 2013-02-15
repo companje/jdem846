@@ -13,6 +13,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -32,6 +34,7 @@ import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846ui.ApplicationActionBarAdvisor;
 import us.wthr.jdem846ui.ICommandIds;
+import us.wthr.jdem846ui.observers.RenderedModelSelectionObserver;
 import us.wthr.jdem846ui.project.IconEnum;
 import us.wthr.jdem846ui.project.ProjectChangeAdapter;
 import us.wthr.jdem846ui.project.ProjectContext;
@@ -306,7 +309,26 @@ public class DataView extends ViewPart
 				}
 			}
 		});
+		
+		viewer.getControl().addMouseListener(new MouseAdapter() {
 
+			@Override
+			public void mouseDoubleClick(MouseEvent arg0)
+			{
+				List<TreeObject<?>> selections = getSelectedTreeNode();
+				for (TreeObject<?> treeObject : selections) {
+
+					if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof ElevationModel) {
+
+						RenderedModelSelectionObserver.getInstance().openElevationModel((ElevationModel) ((DataTreeObject) treeObject).getData());
+
+					}
+				}
+			}
+
+		});
+		
+		
 		ProjectContext.getInstance().addProjectChangeListener(new ProjectChangeAdapter()
 		{
 

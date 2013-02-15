@@ -12,7 +12,7 @@ public class ThreeDimensionalView extends AbstractView implements View
 
 		point.x = -(0.5 - longitudeToColumn(longitude));
 		point.z = (0.5 - latitudeToRow(latitude));
-		point.y = (0.5 / this.resolution) - ((getMaxElevation() - elevation) / (getMaxElevation() - getMinElevation()) / this.resolution);
+		point.y = (0.5 / (this.resolution / 1000.0)) - ((getMaxElevation() - elevation) / (getMaxElevation() - getMinElevation()) / (this.resolution / 1000.0));
 	}
 
 	protected double latitudeToRow(double latitude)
@@ -58,7 +58,7 @@ public class ThreeDimensionalView extends AbstractView implements View
 	@Override
 	public double farClipDistance()
 	{
-		return 1.0;//-this.radius();
+		return 1000000;//-this.radius();
 	}
 
 	@Override
