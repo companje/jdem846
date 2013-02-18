@@ -2,11 +2,17 @@ package us.wthr.jdem846.model;
 
 import java.util.Map;
 
+import us.wthr.jdem846.math.Vector;
+
 public class ViewPerspective
 {
-	private double rotateX = 30;
-	private double rotateY = 0;
-	private double rotateZ = 0;
+	
+	private double rotateX = 30; // Pitch
+	private double rotateY = 0; // Yaw
+	private double rotateZ = 0; // Roll
+	
+	private Vector focalPoint = new Vector(0, 0, -1);
+	
 	
 	private double shiftX = 0;
 	private double shiftY = 0;
@@ -37,31 +43,55 @@ public class ViewPerspective
 		setZoom(zoom);
 	}
 
+	/** Pitch
+	 * 
+	 * @return
+	 */
 	public double getRotateX()
 	{
 		return rotateX;
 	}
 
+	/** Pitch
+	 * 
+	 * @param rotateX
+	 */
 	public void setRotateX(double rotateX)
 	{
 		this.rotateX = rotateX;
 	}
 
+	/** Yaw
+	 * 
+	 * @return
+	 */
 	public double getRotateY()
 	{
 		return rotateY;
 	}
 
+	/** Yaw
+	 * 
+	 * @param rotateY
+	 */
 	public void setRotateY(double rotateY)
 	{
 		this.rotateY = rotateY;
 	}
-
+	
+	/** Roll
+	 * 
+	 * @return
+	 */
 	public double getRotateZ()
 	{
 		return rotateZ;
 	}
 
+	/** Roll
+	 * 
+	 * @param rotateZ
+	 */
 	public void setRotateZ(double rotateZ)
 	{
 		this.rotateZ = rotateZ;
@@ -106,6 +136,7 @@ public class ViewPerspective
 	{
 		this.zoom = zoom;
 	}
+	
 	
 	public static ViewPerspective fromString(String s)
 	{
@@ -166,6 +197,8 @@ public class ViewPerspective
 			return false;
 		}
 	}
+	
+	
 	
 	
 	public ViewPerspective copy()

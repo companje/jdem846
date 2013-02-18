@@ -127,7 +127,8 @@ public class TextureRenderer
 
 
 		} else {
-			renderSubRegion(texture.getNorth(), texture.getSouth(), texture.getEast(), texture.getWest());
+			renderTexture(texture, texture.getNorth(), texture.getSouth(), texture.getEast(), texture.getWest());
+			//renderSubRegion(texture.getNorth(), texture.getSouth(), texture.getEast(), texture.getWest());
 		}
 	}
 	
@@ -178,8 +179,17 @@ public class TextureRenderer
 		log.info("Subtexture height/width: " + subTextureHeight + "/" + subTextureWidth);
 		
 		
+		renderTexture(subTexture, north, south, east, west);
 		
-		renderer.bindTexture(subTexture, textureMapConfig);
+		
+		return east;
+	}
+	
+	
+	
+	protected void renderTexture(Texture texture, double north, double south, double east, double west)
+	{
+		renderer.bindTexture(texture, textureMapConfig);
 		
 		try {
 			for (double latitude = north; latitude > south; latitude -= modelLatitudeResolution) {
@@ -188,8 +198,8 @@ public class TextureRenderer
 	
 				for (double longitude = west; longitude < east; longitude += modelLongitudeResolution) {
 	
-					renderPointVertex(latitude, longitude, subTexture);
-					renderPointVertex(latitude - modelLatitudeResolution, longitude, subTexture);
+					renderPointVertex(latitude, longitude, texture);
+					renderPointVertex(latitude - modelLatitudeResolution, longitude, texture);
 				}
 				
 	
@@ -201,11 +211,7 @@ public class TextureRenderer
 			ex.printStackTrace();
 		}
 		this.renderer.unbindTexture();
-		
-		return east;
 	}
-	
-	
 	
 	
 

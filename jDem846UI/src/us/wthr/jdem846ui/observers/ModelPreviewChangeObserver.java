@@ -17,6 +17,7 @@ import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelBuilder;
 import us.wthr.jdem846.model.OptionModelChangeEvent;
 import us.wthr.jdem846.model.exceptions.ContextPrepareException;
+import us.wthr.jdem846ui.daemons.PreviewRenderDaemon;
 import us.wthr.jdem846ui.project.ProjectContext;
 
 public class ModelPreviewChangeObserver extends ProjectChangeObserver {
@@ -86,7 +87,7 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 
 	protected void setWorkingCopyOptions()
 	{
-
+		modelContextWorkingCopy.setPreview(true);
 		GlobalOptionModel globalOptionModel = modelContextWorkingCopy.getModelProcessManifest().getGlobalOptionModel();
 		
 		globalOptionModel.setUseScripting(true);
@@ -183,7 +184,8 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 		}
 
 		log.info("Scheduling preview render task");
-		task.schedule();
+		PreviewRenderDaemon.schedulePreview(task);
+		//task.schedule();
 		
 		return true;
 	}

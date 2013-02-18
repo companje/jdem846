@@ -82,7 +82,7 @@ public class ModelRenderer extends GridProcessor implements RenderProcessor
 	{
 		this.lastElevation = this.modelContext.getRasterDataContext().getDataMaximumValue();
 		//this.renderer = new GraphicsRenderer();
-		this.renderer = new OpenGlRenderer();
+		this.renderer = new OpenGlRenderer(modelContext.isPreview());
 		if (this.frameBuffer != null) {
 			this.renderer.setFrameBuffer(frameBuffer);
 		}

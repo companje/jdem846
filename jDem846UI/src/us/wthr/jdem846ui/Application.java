@@ -22,6 +22,7 @@ import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.InstanceIdentifier;
+import us.wthr.jdem846ui.daemons.PreviewRenderDaemon;
 
 /**
  * This class controls all aspects of the application's execution
@@ -131,6 +132,9 @@ public class Application implements IApplication {
 			log.error("Error setting user instance location: " + ex.getMessage(), ex);
 			return IApplication.EXIT_OK;
 		}
+		
+		PreviewRenderDaemon previewRenderThread = new PreviewRenderDaemon();
+		previewRenderThread.start();
 		
 		Display display = PlatformUI.createDisplay();
 		try {

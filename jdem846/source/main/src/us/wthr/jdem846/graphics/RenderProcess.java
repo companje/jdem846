@@ -58,7 +58,7 @@ public class RenderProcess
 	{
 		this.lastElevation = this.modelContext.getRasterDataContext().getDataMaximumValue();
 		
-		this.renderer = RenderEngineFactory.createRenderer();
+		this.renderer = RenderEngineFactory.createRenderer(modelContext.isPreview());
 		this.renderer.initialize(globalOptionModel.getWidth(), globalOptionModel.getHeight());
 		
 		
@@ -71,6 +71,8 @@ public class RenderProcess
 	public void dispose()
 	{
 		this.image = null;
+		
+		this.renderer.dispose();
 		this.renderer = null;
 	}
 

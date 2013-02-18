@@ -9,7 +9,13 @@ public class RenderEngineFactory
 {
 	private static Log log = Logging.getLog(RenderEngineFactory.class);
 	
+	
 	public static IRenderer createRenderer()
+	{
+		return createRenderer(false);
+	}
+	
+	public static IRenderer createRenderer(boolean isPreview)
 	{
 		IRenderer renderer = null;
 		
@@ -23,7 +29,7 @@ public class RenderEngineFactory
 			renderer = new GraphicsRenderer();
 		} else if (renderEngine.equalsIgnoreCase("opengl")) {
 			log.info("Initializing OpenGL renderer");
-			renderer = new OpenGlRenderer();
+			renderer = new OpenGlRenderer(isPreview);
 		} else {
 			// Throw!!
 		}
