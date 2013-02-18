@@ -45,6 +45,11 @@ public class PreviewRunTask extends Job {
 		return Status.OK_STATUS;
 	}
 	
-	
+	public void run() throws Exception
+	{
+		active = true;
+		callback.render(dataModelChange, optionsChanged, force);
+		active = false;
+	}
 	
 }

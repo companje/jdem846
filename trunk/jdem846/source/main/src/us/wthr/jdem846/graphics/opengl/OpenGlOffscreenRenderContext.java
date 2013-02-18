@@ -12,7 +12,7 @@ import javax.media.opengl.glu.gl2.GLUgl2;
 
 import us.wthr.jdem846.JDem846Properties;
 
-public class OpenGlOffscreenRenderContext
+public class OpenGlOffscreenRenderContext implements OpenGlRenderContext
 {
 	
 	protected GLProfile glProfile;
@@ -41,6 +41,7 @@ public class OpenGlOffscreenRenderContext
 		
 		drawable = fac.createOffscreenAutoDrawable(null, glCapabilities, null, width, height, null);
 		glContext = drawable.getContext();
+		
 	}
 	
 	public GLProfile getGlProfile()
@@ -58,6 +59,9 @@ public class OpenGlOffscreenRenderContext
 	
 	public void makeGlContextCurrent()
 	{
+		if (drawable.getNativeSurface().isSurfaceLockedByOtherThread()) {
+			throw new RuntimeException("Surface is locked by another thread.");
+		}
 		this.glContext.makeCurrent();
 	}
 	

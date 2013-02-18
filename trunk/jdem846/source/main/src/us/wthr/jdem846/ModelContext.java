@@ -67,6 +67,8 @@ public class ModelContext
 
 	private boolean isDisposed = false;
 
+	private boolean isPreview = false;
+	
 	protected ModelContext(RasterDataContext rasterDataContext, ShapeDataContext shapeDataContext, ImageDataContext imageDataContext, ModelGridContext modelGridContext, ModelProcessManifest modelProcessManifest, ScriptingContext scriptingContext,
 			String contextId)
 	{
@@ -334,6 +336,17 @@ public class ModelContext
 		}
 	}
 
+	
+	public boolean isPreview()
+	{
+		return isPreview;
+	}
+
+	public void setPreview(boolean isPreview)
+	{
+		this.isPreview = isPreview;
+	}
+
 	public ModelContext copy() throws DataSourceException
 	{
 		return copy(false);
@@ -371,6 +384,7 @@ public class ModelContext
 		clone.southLimit = this.southLimit;
 		clone.eastLimit = this.eastLimit;
 		clone.westLimit = this.westLimit;
+		clone.isPreview = this.isPreview;
 		if (this.modelDimensions != null) {
 			clone.modelDimensions = this.modelDimensions.copy();
 		}

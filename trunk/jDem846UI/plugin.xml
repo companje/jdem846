@@ -327,6 +327,10 @@
                value="icons/jdem846-icon-16.png,icons/jdem846-icon-32.png,icons/jdem846-icon-48.png">
          </property>
          <property name="preferenceCustomization" value="plugin_customization.properties"/>
+         <property
+               name="appName"
+               value="jDem846">
+         </property>
       </product>
       
 

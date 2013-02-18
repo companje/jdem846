@@ -49,15 +49,22 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	protected LightingConfig lightingConfig;
 	protected LightingConfig materialConfig;
 	
-	public OpenGlRenderer()
+	protected boolean isPreview = false;
+	
+	public OpenGlRenderer(boolean isPreview)
 	{
-
+		this.isPreview = isPreview;
 	}
 
 	@Override
 	public void initialize(int width, int height)
 	{
-		openGl = new OpenGlOffscreenRenderContext(width, height);
+		if (this.isPreview) {
+			log.info("Model is a preview: Using OpenGL preview context");
+			openGl = OpenGlOffscreenPreviewRenderContext.getInstance();
+		} else {
+			openGl = new OpenGlOffscreenRenderContext(width, height);
+		}
 		openGl.makeGlContextCurrent();
 
 		boolean multisampling = JDem846Properties.getBooleanProperty("us.wthr.jdem846.rendering.opengl.multisampling.enabled");

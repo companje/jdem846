@@ -17,9 +17,12 @@ public class GlobalOptionModelEnabler implements IOptionEnabler
 			return enable;
 		}
 
-		if ((propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.perspectiveType") || propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.eyeDistance")
-				|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.viewAngle") || propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.fieldOfView"))
+		if ((propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.perspectiveType")
+				|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.viewAngle") 
+				|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.fieldOfView"))
 				&& globalOptionModel.getRenderProjection().equals("us.wthr.jdem846.render.canvasProjection.flat")) {
+			enable = false;
+		} else if (propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.eyeDistance") && (globalOptionModel.getRenderProjection().equals("us.wthr.jdem846.render.canvasProjection.flat") || globalOptionModel.getRenderProjection().equals("us.wthr.jdem846.render.canvasProjection.3d"))) {
 			enable = false;
 		} else if ((propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.northLimit") || propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.southLimit")
 				|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.eastLimit") || propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.westLimit"))
