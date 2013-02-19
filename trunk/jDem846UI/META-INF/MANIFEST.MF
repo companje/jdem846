@@ -23,7 +23,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.wst.jsdt.web.core;bundle-version="1.0.400",
  org.eclipse.wst.jsdt.web.ui;bundle-version="1.0.400",
  org.eclipse.wst.jsdt.web.support.jsp;bundle-version="1.0.400",
- org.eclipse.rse.efs;bundle-version="2.1.300"
+ org.eclipse.rse.efs;bundle-version="2.1.300",
+ org.swtchart;bundle-version="0.8.0",
+ org.swtchart.ext;bundle-version="0.8.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,

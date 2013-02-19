@@ -10,6 +10,7 @@ import us.wthr.jdem846.graphics.Colors;
 import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.ElevationHistogramModel;
 import us.wthr.jdem846.model.processing.GridFilter;
 import us.wthr.jdem846.model.processing.GridFilterMethodStack;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
@@ -330,6 +331,12 @@ public class FillControlledModelGrid extends BaseModelGrid implements IFillContr
 
 		return instance;
 
+	}
+
+	@Override
+	public ElevationHistogramModel getElevationHistogramModel()
+	{
+		return modelGrid.getElevationHistogramModel();
 	}
 
 

@@ -179,13 +179,6 @@ public class ElevationHistogramModel
 		}
 		
 		out.flush();
-		/*
-		 * private int[] distribution;
-	
-	private int minimum;
-	private int maximum;
-	private int bins;
-		 */
 		
 	}
 	

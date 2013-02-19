@@ -42,11 +42,11 @@ public class WorkspaceProjectWriter
 		imageOut.close();
 		
 		
-		File dataFile = new File(elevationModelBase, "model.dat");
-		OutputStream dataOut = new BufferedOutputStream(new FileOutputStream(dataFile));
-		model.writeModelData(dataOut);
-		dataOut.flush();
-		dataOut.close();
+		//File dataFile = new File(elevationModelBase, "model.dat");
+		//OutputStream dataOut = new BufferedOutputStream(new FileOutputStream(dataFile));
+		//model.writeModelData(dataOut);
+		//dataOut.flush();
+		//dataOut.close();
 		
 
 		ElevationHistogramModel histogram = model.getElevationHistogramModel();

@@ -16,8 +16,6 @@ public class BufferedModelGrid extends BaseModelGrid
 
 	private IFloatBuffer elevationGrid;
 	private IIntBuffer rgbaGrid;
-	//private FloatBuffer elevationGrid;
-	//private IntBuffer rgbaGrid;
 
 	private boolean isDisposed = false;
 	
@@ -41,18 +39,7 @@ public class BufferedModelGrid extends BaseModelGrid
 			rgbaGrid = BufferFactory.allocateIntBuffer(gridLength);
 			elevationGrid = BufferFactory.allocateFloatBuffer(gridLength);
 		}
-		
-		//ByteBuffer bb = ByteBuffer.allocateDirect((int)gridLength * (Integer.SIZE / 8));
-		//rgbaGrid = bb.asIntBuffer();
-		
-	//	bb = ByteBuffer.allocateDirect((int)gridLength * (Float.SIZE / 8));
-		//elevationGrid = bb.asFloatBuffer();
-		
-		
-		//elevationGrid = FloatBuffer.allocate((int)gridLength);
-		//rgbaGrid = IntBuffer.allocate((int)gridLength);
-		//elevationGrid = new float[(int) gridLength];
-		//rgbaGrid = new int[(int) gridLength];
+
 	}
 	
 	public BufferedModelGrid(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution, double minimum, double maximum)
@@ -63,17 +50,6 @@ public class BufferedModelGrid extends BaseModelGrid
 		
 		rgbaGrid = BufferFactory.allocateIntBuffer(gridLength);
 		elevationGrid = BufferFactory.allocateFloatBuffer(gridLength);
-		//ByteBuffer bb = ByteBuffer.allocateDirect((int)gridLength * (Integer.SIZE / 8));
-		//rgbaGrid = bb.asIntBuffer();
-		
-		//bb = ByteBuffer.allocateDirect((int)gridLength * (Float.SIZE / 8));
-		//elevationGrid = bb.asFloatBuffer();
-		
-		//elevationGrid = new float[(int) gridLength];
-		//rgbaGrid = new int[(int) gridLength];
-		//elevationGrid = FloatBuffer.allocate((int)gridLength);
-		//rgbaGrid = IntBuffer.allocate((int)gridLength);
-		// reset();
 	}
 
 	
@@ -98,8 +74,6 @@ public class BufferedModelGrid extends BaseModelGrid
 		for (long i = 0; i < gridLength; i++) {
 			elevationGrid.put(i, (float)DemConstants.ELEV_UNDETERMINED);
 			rgbaGrid.put(i, 0x0);
-			//elevationGrid[i] = (float) DemConstants.ELEV_UNDETERMINED;
-			//rgbaGrid[i] = 0x0;
 		}
 
 	}
@@ -126,6 +100,10 @@ public class BufferedModelGrid extends BaseModelGrid
 		if (index >= 0 && index < this.gridLength) {
 			elevationGrid.put(index, (float)elevation);
 			getElevationHistogramModel().add(elevation);
+		}
+		
+		if (this.getElevationHistogramModel() != null) {
+			this.getElevationHistogramModel().add(elevation);
 		}
 	}
 
