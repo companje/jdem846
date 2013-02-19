@@ -100,7 +100,7 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 		globalOptionModel.setUseDiskCachedModelGrid(false);
 		globalOptionModel.setDisposeGridOnComplete(false);
 		//globalOptionModel.setPixelStackDepth(1);
-		globalOptionModel.setCreateJdemElevationModel(false);
+		globalOptionModel.setCreateJdemElevationModel(true);
 		globalOptionModel.setForceResetAndRunFilters(true);
 		globalOptionModel.setNumberOfThreads(1);
 		

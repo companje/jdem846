@@ -67,6 +67,12 @@
             id="jdem846ui.layerPropertiesView"
             icon="icons/eclipse/binary.gif" />        
      
+     <view
+            name="Model Statistics"
+            class="us.wthr.jdem846ui.views.models.ModelStatisticsView"
+            id="jdem846ui.modelStatisticsView"
+            icon="icons/eclipse/chart.gif" /> 
+     
 	<view
          name="Tasks"
          icon="icons/eclipse/progress_task.gif"
@@ -375,8 +381,8 @@
 		      name="Model"
 		      extensions="jpg"
 		      icon="icons/eclipse/gallery_view.gif"
-		      class="us.wthr.jdem846ui.editors.RenderedModelEditor"
-		      id="us.wthr.jdem846ui.editors.RenderedModelEditor">
+		      class="us.wthr.jdem846ui.editors.renderedmodel.RenderedModelEditor"
+		      id="us.wthr.jdem846ui.editors.renderedmodel.RenderedModelEditor">
 		</editor>
 		
 		<editor

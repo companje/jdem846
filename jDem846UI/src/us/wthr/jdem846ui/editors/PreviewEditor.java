@@ -22,6 +22,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
 import us.wthr.jdem846ui.observers.ModelPreviewReadyListener;
+import us.wthr.jdem846ui.observers.RenderedModelSelectionObserver;
 import us.wthr.jdem846ui.util.SwtImageUtil;
 import us.wthr.jdem846ui.views.preview.ModelMouseMovementTracker;
 
@@ -39,7 +40,7 @@ public class PreviewEditor extends EditorPart
 	private Image image;
 
 	private ModelMouseMovementTracker mouseTracker;
-
+	private ElevationModel elevationModel;
 	//private UpdatePreviewAction updatePreviewAction;
 
 	public void createPartControl(Composite parent)
@@ -68,7 +69,7 @@ public class PreviewEditor extends EditorPart
 			public void onPreviewReady(final ElevationModel elevationModel)
 			{
 				log.info("Model preview is ready");
-
+				
 				Display.getDefault().asyncExec(new Runnable()
 				{
 
@@ -154,8 +155,13 @@ public class PreviewEditor extends EditorPart
 
 	public void setFocus()
 	{
-		if (canvas != null)
+		if (this.elevationModel != null) {
+			RenderedModelSelectionObserver.getInstance().fireRenderedModelSelected(elevationModel);
+		}
+		
+		if (canvas != null) {
 			canvas.setFocus();
+		}
 	}
 
 	@Override
@@ -187,6 +193,9 @@ public class PreviewEditor extends EditorPart
 
 	protected void updatePreviewCanvas(ElevationModel elevationModel)
 	{
+		this.elevationModel = elevationModel;
+		RenderedModelSelectionObserver.getInstance().fireRenderedModelSelected(elevationModel);
+		
 		synchronized (imageMutex) {
 
 			int width = (elevationModel != null) ? elevationModel.getWidth() : canvas.getClientArea().width;

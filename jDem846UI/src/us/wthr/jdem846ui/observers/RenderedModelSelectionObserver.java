@@ -1,5 +1,8 @@
 package us.wthr.jdem846ui.observers;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -10,7 +13,7 @@ import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846ui.editors.ElevationModelEditorInput;
-import us.wthr.jdem846ui.editors.RenderedModelEditor;
+import us.wthr.jdem846ui.editors.renderedmodel.RenderedModelEditor;
 import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 
@@ -20,6 +23,8 @@ public class RenderedModelSelectionObserver
 	private static Log log = Logging.getLog(RenderedModelSelectionObserver.class);
 	
 	private static RenderedModelSelectionObserver INSTANCE;
+	
+	private static List<RenderedModelSelectionListener> selectionListeners = new LinkedList<RenderedModelSelectionListener>();
 	
 	static {
 		RenderedModelSelectionObserver.INSTANCE = new RenderedModelSelectionObserver();
@@ -40,6 +45,23 @@ public class RenderedModelSelectionObserver
 			}
 		});
 		
+	}
+	
+	public void addRenderedModelSelectionListener(RenderedModelSelectionListener l)
+	{
+		this.selectionListeners.add(l);
+	}
+	
+	public boolean removeRenderedModelSelectionListener(RenderedModelSelectionListener l)
+	{
+		return this.selectionListeners.remove(l);
+	}
+	
+	public void fireRenderedModelSelected(ElevationModel elevationModel)
+	{
+		for (RenderedModelSelectionListener listener : this.selectionListeners) {
+			listener.onRenderedModelSelected(elevationModel);
+		}
 	}
 	
 	
@@ -90,5 +112,11 @@ public class RenderedModelSelectionObserver
 	public static RenderedModelSelectionObserver getInstance()
 	{
 		return RenderedModelSelectionObserver.INSTANCE;
+	}
+	
+	
+	
+	public interface RenderedModelSelectionListener {
+		public void onRenderedModelSelected(ElevationModel elevationModel);
 	}
 }

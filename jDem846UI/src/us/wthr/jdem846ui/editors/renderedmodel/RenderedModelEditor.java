@@ -1,4 +1,4 @@
-package us.wthr.jdem846ui.editors;
+package us.wthr.jdem846ui.editors.renderedmodel;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IToolBarManager;
@@ -25,10 +25,13 @@ import us.wthr.jdem846ui.actions.ActionListener;
 import us.wthr.jdem846ui.actions.BasicZoomAction;
 import us.wthr.jdem846ui.actions.ExportModelAction;
 import us.wthr.jdem846ui.controls.ImageDisplay;
+import us.wthr.jdem846ui.editors.ElevationModelEditorInput;
+import us.wthr.jdem846ui.editors.RenderedModelPropertiesContainer;
+import us.wthr.jdem846ui.observers.RenderedModelSelectionObserver;
 
 public class RenderedModelEditor extends EditorPart
 {
-	public static final String ID = "us.wthr.jdem846ui.editors.RenderedModelEditor";
+	public static final String ID = "us.wthr.jdem846ui.editors.renderedmodel.RenderedModelEditor";
 	
 	private static Log log = Logging.getLog(RenderedModelEditor.class);
 
@@ -39,6 +42,8 @@ public class RenderedModelEditor extends EditorPart
 	
 	private Long imageMutex = new Long(0);
 	private ImageDisplay imageDisplay;
+	private ElevationHistogram elevationHistogramDisplay;
+	private TonalHistogram tonalHistogramDisplay;
 	
 	private ExportModelAction exportModelAction;
 	
@@ -96,6 +101,17 @@ public class RenderedModelEditor extends EditorPart
 		propertiesTabItem.setText("Properties");
 		this.propertiesContainer = new RenderedModelPropertiesContainer(tabFolder, SWT.NONE);
 		propertiesTabItem.setControl(propertiesContainer);
+		
+		
+		TabItem histogramTabItem = new TabItem(tabFolder, SWT.NONE);
+		histogramTabItem.setText("Elevation Histogram");
+		this.elevationHistogramDisplay = new ElevationHistogram(tabFolder, SWT.NONE);
+		histogramTabItem.setControl(elevationHistogramDisplay);
+		
+		TabItem imageHistogramTabItem = new TabItem(tabFolder, SWT.NONE);
+		imageHistogramTabItem.setText("Tonal Histogram");
+		this.tonalHistogramDisplay = new TonalHistogram(tabFolder, SWT.NONE);
+		imageHistogramTabItem.setControl(this.tonalHistogramDisplay);
 		
 		ElevationModelEditorInput editorInput = (ElevationModelEditorInput) this.getEditorInput();
 		if (editorInput.getElevationModel() != null) {
@@ -184,6 +200,8 @@ public class RenderedModelEditor extends EditorPart
 		}
 		
 		this.propertiesContainer.setElevationModel(elevationModel);
+		this.elevationHistogramDisplay.setElevationHistogramModel(elevationModel.getElevationHistogramModel());
+		this.tonalHistogramDisplay.setElevationModel(elevationModel);
 		
 		synchronized(imageMutex) {
 			
@@ -218,6 +236,11 @@ public class RenderedModelEditor extends EditorPart
 		if (imageDisplay != null) {
 			imageDisplay.setFocus();
 		}
+		
+		if (this.elevationModel != null) {
+			RenderedModelSelectionObserver.getInstance().fireRenderedModelSelected(elevationModel);
+		}
+		
 	}
 
 }
