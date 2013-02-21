@@ -60,6 +60,12 @@ public interface IRenderer
 
 	public void clear(IColor backgroundColor);
 	public void clear(int backgroundColor);
+	
+	public void clear();
+	public void clearColorBuffer();
+	public void clearColorBuffer(int backgroundColor);
+	public void clearDepthBuffer();
+	
 
 	public void rotate(double angle, AxisEnum axis);
 

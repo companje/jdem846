@@ -49,10 +49,12 @@ var StorageContext = (function() {
 	 * will return null;
 	 * 
 	 */
-	StorageContext.prototype.get = function(name, ifNullCallback) {
+	StorageContext.prototype.get = function(name, ifNullCallback, forceReload) {
 		var obj = null;
+		if (forceReload === undefined)
+			forceReload = false;
 		
-		if (!this.hasResource(name) && ifNullCallback !== undefined) {
+		if ((forceReload || !this.hasResource(name)) && ifNullCallback !== undefined) {
 			obj = ifNullCallback();
 			this.put(name, obj);
 		} else if (this.hasResource(name)) {

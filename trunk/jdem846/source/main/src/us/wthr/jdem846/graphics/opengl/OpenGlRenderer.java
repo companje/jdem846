@@ -460,16 +460,25 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		return (texture != 0);
 	}
 
+
 	@Override
-	public void clear(int backgroundColor)
+	public void clearColorBuffer(int backgroundColor)
 	{
 		int[] rgba = { 0, 0, 0, 0 };
 		ColorUtil.intToRGBA(backgroundColor, rgba);
-		openGl.getGL().glClearDepth(1.0f);
+		
 		openGl.getGL().glClearColor((float) rgba[0] / 255.0f, (float) rgba[1] / 255.0f, (float) rgba[2] / 255.0f, (float) rgba[3] / 255.0f);
 		openGl.getGL().glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 	}
-
+	
+	@Override
+	public void clearDepthBuffer()
+	{
+		openGl.getGL().glClearDepth(1.0f);
+		openGl.getGL().glClear(GL2.GL_DEPTH_BUFFER_BIT);
+	}
+	
+	
 	@Override
 	public void rotate(double angle, AxisEnum axis)
 	{
