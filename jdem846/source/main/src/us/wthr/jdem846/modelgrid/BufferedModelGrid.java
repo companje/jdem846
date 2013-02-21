@@ -4,11 +4,14 @@ import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.buffers.BufferFactory;
 import us.wthr.jdem846.buffers.IFloatBuffer;
 import us.wthr.jdem846.buffers.IIntBuffer;
+import us.wthr.jdem846.buffers.cache.CacheRange;
+import us.wthr.jdem846.buffers.cache.ICacheRangeVisitor;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.graphics.Color;
 import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.MathExt;
 
 public class BufferedModelGrid extends BaseModelGrid
 {
@@ -32,13 +35,7 @@ public class BufferedModelGrid extends BaseModelGrid
 
 		log.info("Allocating elevation and RGBA grid buffers of length " + gridLength);
 		
-		if (useHeap && (((int)gridLength) > 0)) {
-			rgbaGrid = BufferFactory.allocateStandardCapacityIntBuffer((int)gridLength);
-			elevationGrid = BufferFactory.allocateStandardCapacityFloatBuffer((int)gridLength);
-		} else {
-			rgbaGrid = BufferFactory.allocateIntBuffer(gridLength);
-			elevationGrid = BufferFactory.allocateFloatBuffer(gridLength);
-		}
+		initializeBuffers(useHeap);
 
 	}
 	
@@ -48,10 +45,54 @@ public class BufferedModelGrid extends BaseModelGrid
 
 		log.info("Allocating elevation and RGBA grid buffers of length " + gridLength);
 		
-		rgbaGrid = BufferFactory.allocateIntBuffer(gridLength);
-		elevationGrid = BufferFactory.allocateFloatBuffer(gridLength);
+		initializeBuffers(false);
 	}
 
+	
+	protected void initializeBuffers(boolean useHeap)
+	{
+		final int cacheRows = 200;
+		int memCapacity = cacheRows * this.getWidth();
+		ICacheRangeVisitor cacheRangeVisitor = new ICacheRangeVisitor() {
+			public CacheRange getCacheRange(long targetIndex)
+			{
+				
+				long row = (long) MathExt.floor((double)targetIndex / (double)getWidth());
+				//long column = (long) MathExt.floor((double)targetIndex - ((double) row * (double)getWidth()));
+				
+				long startCacheRow = row - (cacheRows / 2);
+				if (startCacheRow < 0) {
+					startCacheRow = 0;
+				}
+				
+				long endCacheRow = startCacheRow + cacheRows;
+				if (endCacheRow >= getHeight()) {
+					endCacheRow = getHeight() - 1;
+				}
+				
+				long startCacheIndex = getIndex((int)0, (int)startCacheRow);
+				long endCacheIndex = getIndex((int)getWidth() - 1, (int)endCacheRow);
+				long cacheLength = endCacheIndex - startCacheIndex;
+				
+				
+				
+				return new CacheRange(startCacheIndex, (int) cacheLength);
+			}
+		};
+		
+		//this.rgbaGrid = new MemCachingIntBuffer(gridLength, memCapacity * 2, cacheRangeVisitor);
+		//this.elevationGrid = new MemCachingFloatBuffer(gridLength, memCapacity * 2, cacheRangeVisitor);
+		//elevationGrid = BufferFactory.allocateFloatBuffer(gridLength);
+		
+		if (useHeap && (((int)gridLength) > 0)) {
+			rgbaGrid = BufferFactory.allocateStandardCapacityIntBuffer((int)gridLength);
+			elevationGrid = BufferFactory.allocateStandardCapacityFloatBuffer((int)gridLength);
+		} else {
+			rgbaGrid = BufferFactory.allocateIntBuffer(gridLength);
+			elevationGrid = BufferFactory.allocateFloatBuffer(gridLength);
+		}
+		
+	}
 	
 	
 	@Override

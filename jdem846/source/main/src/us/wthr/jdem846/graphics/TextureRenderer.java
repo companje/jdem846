@@ -217,8 +217,7 @@ public class TextureRenderer
 
 	protected void renderPointVertex(double latitude, double longitude, Texture subTexture)
 	{
-		//double elevation = 0;//this.modelGrid.getElevation(latitude, longitude, true);
-		
+
 		double elevation = elevationFetchCallback.getElevation(latitude, longitude);
 		
 		if (elevation == DemConstants.ELEV_NO_DATA) {
@@ -271,9 +270,6 @@ public class TextureRenderer
 		}
 		
 		view.getNormal(latitude, longitude, normal, elevationFetchCallback);
-		//normalCalculator.calculateNormalSpherical(latitude, longitude, normal);
-		//ViewPerspective view = this.globalOptionModel.getViewAngle();
-		//Vectors.rotate(view.getRotateX(), view.getRotateY(), view.getRotateZ(), normal, Vectors.ZYX);
 		this.renderer.normal(normal);
 		
 		this.renderer.texCoord(left, front);

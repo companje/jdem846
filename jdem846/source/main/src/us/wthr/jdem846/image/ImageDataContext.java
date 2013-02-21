@@ -80,7 +80,7 @@ public class ImageDataContext implements DataContext
 	{
 		for (SimpleGeoImage image : imageList) {
 			if (!image.isLoaded()) {
-				image.load();
+				image.load(true);
 			}
 		}
 	}
