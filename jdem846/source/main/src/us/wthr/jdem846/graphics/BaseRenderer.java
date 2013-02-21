@@ -80,7 +80,27 @@ public abstract class BaseRenderer implements IRenderer
 	{
 		color(ColorUtil.rgbaToInt(color));
 	}
-
+	
+	@Override
+	public void clear()
+	{
+		clear(0x0);
+	}
+	
+	@Override
+	public void clear(int backgroundColor)
+	{
+		clearColorBuffer(backgroundColor);
+		clearDepthBuffer();
+	}
+	
+	@Override
+	public void clearColorBuffer()
+	{
+		clearColorBuffer(0x0);
+	}
+	
+	
 	@Override
 	public void vertex(Vector v)
 	{

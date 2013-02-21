@@ -346,8 +346,10 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 		return (this.currentTexture != null);
 	}
 	
+
+	
 	@Override
-	public void clear(int backgroundColor)
+	public void clearColorBuffer(int backgroundColor)
 	{
 		if (this.frameBuffer != null) {
 			this.frameBuffer.reset(true, backgroundColor);
@@ -355,6 +357,14 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 			this.error = RenderCodesEnum.RENDER_ERR_NO_FRAME_BUFFER_DEFINED;
 		}
 	}
+	
+	@Override
+	public void clearDepthBuffer()
+	{
+		
+	}
+	
+	
 	
 	@Override
 	public void rotate(double angle, AxisEnum axis)

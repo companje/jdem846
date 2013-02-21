@@ -1,5 +1,12 @@
 package us.wthr.jdem846;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.imageio.ImageIO;
+
+import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.math.Plane;
 import us.wthr.jdem846.math.Spheres;
@@ -19,7 +26,52 @@ public class SandboxTestMain extends AbstractTestMain
 			e.printStackTrace();
 			return;
 		}
-		double radius = 60268000;
+		
+		try {
+			
+			int startX = 32;
+			int endX = startX + 32;;
+			
+			int numWide = endX - startX;
+			int numHigh = 32;
+			
+			int dimension = 512;
+			
+			int totalWidth = dimension * numWide;
+			int totalHeight = dimension * numHigh;
+			
+			System.out.println("Image width/height: " + totalWidth + "/" + totalHeight);
+			
+			
+			BufferedImage composite = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
+			
+			Graphics2D g2d = (Graphics2D) composite.createGraphics();
+			
+			for (int x = startX; x < endX; x++) {
+				for (int y = 0; y < numHigh; y++) {
+					
+					String filePath = "C:\\Users\\kgill\\Desktop\\Mars\\tx_" + x + "_" + y + ".png";
+					System.out.println("Loading " + filePath);
+					BufferedImage tile = ImageIO.read(new File(filePath));
+					
+					int tileX = (x - startX) * dimension;
+					int tileY = y * dimension;
+					
+					g2d.drawImage(tile, tileX, tileY, null);
+					
+				}
+			}
+		
+			g2d.dispose();
+			
+			File writeComposite = new File("C:\\Users\\kgill\\Desktop\\Mars\\tx_composite_B.jpg");
+			ImageWriter.saveImage(composite, writeComposite.getAbsolutePath());
+			//ImageIO.write(composite, "JPG", writeComposite);
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		/*double radius = 60268000;
 		
 		Vector p0 = new Vector();
 		Vector p1 = new Vector();
@@ -50,7 +102,7 @@ public class SandboxTestMain extends AbstractTestMain
 			//}
 		}
 		
-		System.err.println("Points were in the shadow: " + anyPointsInShadow);
+		System.err.println("Points were in the shadow: " + anyPointsInShadow);*/
 		 //X/Y/Z: 0.018730007437911395/-136.11805408976977/-136.11805408977233
 		 //2013.02.06 12:33:58.977 EST     INFO JavaScriptProxy Sun Z/Y/Z: -54289586911.33092/-18629619855.001747/-135611588101.05907
 		

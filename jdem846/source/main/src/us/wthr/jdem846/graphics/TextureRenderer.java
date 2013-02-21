@@ -98,27 +98,32 @@ public class TextureRenderer
 		
 		if (mainTextureHeightPixels() > maxRegionHeightPixels() || mainTextureWidthPixels() > maxRegionWidthPixels()) {
 
-			double useNorth = texture.getNorth();
-			double useWest = texture.getWest();
+			double startNorth = (texture.getNorth() <= globalOptionModel.getNorthLimit()) ? texture.getNorth() : globalOptionModel.getNorthLimit();
+			double startWest = (texture.getWest() >= globalOptionModel.getWestLimit()) ? texture.getWest() : globalOptionModel.getWestLimit();
+			double useNorth = startNorth;
+			double useWest = startWest;
 			
 			double useSouth = useNorth - maxHeightDegrees();
 			double useEast = useWest + maxWidthDegrees();
 			
+			double southLimit = (texture.getSouth() > globalOptionModel.getSouthLimit()) ? texture.getSouth() : globalOptionModel.getSouthLimit();
+			double eastLimit = (texture.getEast() < globalOptionModel.getEastLimit()) ? texture.getEast() : globalOptionModel.getEastLimit();
 			
-			while (useSouth >= texture.getSouth() - maxHeightDegrees()) {
+			
+			while (useSouth >= southLimit - maxHeightDegrees()) {
 				
-				while(useEast <= texture.getEast() + maxWidthDegrees()) {
+				while(useEast <= eastLimit + maxWidthDegrees()) {
 					
 					double regionEast = renderSubRegion(useNorth, useSouth, useEast + modelLongitudeResolution, useWest - modelLongitudeResolution);
 					
-					if (regionEast == DemConstants.ELEV_NO_DATA || regionEast >= texture.getEast()) {
+					if (regionEast == DemConstants.ELEV_NO_DATA || regionEast >= texture.getEast() || regionEast >= globalOptionModel.getEastLimit()) {
 						break;
 					}
 					useWest = regionEast;
 					useEast = useWest + maxWidthDegrees();
 				}
 				
-				useWest = texture.getWest();
+				useWest = startWest;
 				useEast = useWest + maxWidthDegrees();
 				
 				useNorth = useSouth;
