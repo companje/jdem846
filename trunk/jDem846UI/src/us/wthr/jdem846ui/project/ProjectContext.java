@@ -375,7 +375,7 @@ public class ProjectContext
 
 		try {
 			image = new SimpleGeoImage(filePath, north, south, east, west);
-			image.load();
+			image.load(true);
 		} catch (DataSourceException ex) {
 			log.warn("Invalid file format: " + ex.getMessage(), ex);
 			throw new ProjectException("Invalid file format: " + ex.getMessage(), ex);

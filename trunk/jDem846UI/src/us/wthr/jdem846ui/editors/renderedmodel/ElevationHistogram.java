@@ -52,7 +52,7 @@ public class ElevationHistogram extends Composite
 		// create line series
 		ILineSeries lineSeries = (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE, "Frequency");
 		lineSeries.setSymbolType(PlotSymbolType.NONE);
-		lineSeries.setLineWidth(2);
+		lineSeries.setLineWidth(1);
 		lineSeries.setAntialias(SWT.ON);
 		lineSeries.setYSeries(ySeries);
 
