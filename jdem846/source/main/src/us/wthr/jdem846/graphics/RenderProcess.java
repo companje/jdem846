@@ -222,6 +222,9 @@ public class RenderProcess
 								, lightingOptionModel.getDiffuse()
 								, lightingOptionModel.getSpecular()
 								, lightingOptionModel.getSpotExponent());
+		} else {
+			renderer.disableLighting();
+			renderer.disableMaterial();
 		}
 		
 		

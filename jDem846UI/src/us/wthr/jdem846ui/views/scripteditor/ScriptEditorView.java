@@ -8,8 +8,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import us.wthr.jdem846ui.project.ProjectChangeAdapter;
-import us.wthr.jdem846ui.project.ProjectContext;
+import us.wthr.jdem846.project.context.ProjectChangeAdapter;
+import us.wthr.jdem846.project.context.ProjectContext;
 
 /**
  * http://www.realsolve.co.uk/site/tech/jface-text.php

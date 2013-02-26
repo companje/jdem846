@@ -7,7 +7,7 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-import us.wthr.jdem846ui.project.ProjectContext;
+import us.wthr.jdem846.project.context.ProjectContext;
 
 public class ScriptStorage implements IStorage
 {

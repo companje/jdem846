@@ -1,9 +1,13 @@
-package us.wthr.jdem846ui.project;
+package us.wthr.jdem846.project.context;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.ModelContext;
@@ -22,7 +26,6 @@ import us.wthr.jdem846.model.OptionModelChangeEvent;
 import us.wthr.jdem846.model.OptionModelChangeListener;
 import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.exceptions.ContextPrepareException;
-import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
@@ -59,8 +62,8 @@ public class ProjectContext
 	private ScriptingContext scriptingContext;
 	private ModelGridContext modelGridContext;
 
-	private List<OptionModel> defaultOptionModelList;
-	private List<OptionModelContainer> defaultOptionModelContainerList;
+	//private List<OptionModel> defaultOptionModelList;
+	private Map<String, OptionModelContainer> optionModelContainerList;
 
 	private List<ElevationModel> elevationModelList;
 
@@ -86,8 +89,8 @@ public class ProjectContext
 
 		this.projectChangeBroker.fireOnBeforeProjectLoaded(projectLoadedFrom, projectPath, true);
 		
-		defaultOptionModelContainerList = new LinkedList<OptionModelContainer>();
-		elevationModelList = new LinkedList<ElevationModel>();
+		optionModelContainerList = new HashMap<String, OptionModelContainer>();
+		elevationModelList = new ArrayList<ElevationModel>();
 
 		this.projectLoadedFrom = projectPath;
 
@@ -112,22 +115,36 @@ public class ProjectContext
 		rasterDataContext = new RasterDataContext();
 
 		try {
-			defaultOptionModelList = createDefaultOptionModelList(projectMarshall);
+			createOptionModelList(projectMarshall);
 		} catch (Exception ex) {
 			log.error("Error creating option model list: " + ex.getMessage(), ex);
 			// TODO: Display error dialog
 
-			defaultOptionModelList = new LinkedList<OptionModel>();
+			//defaultOptionModelList = new LinkedList<OptionModel>();
 		}
 
 		try {
 			modelProcessManifest = new ModelProcessManifest();
-			if (defaultOptionModelList != null && defaultOptionModelList.size() > 0) {
-				modelProcessManifest.setGlobalOptionModel((GlobalOptionModel) defaultOptionModelList.get(0));
-			}
+			modelProcessManifest.setGlobalOptionModel(getGlobalOptionModel());
 		} catch (ProcessContainerException ex) {
 			log.error("Error creating default model process manifest: " + ex.getMessage(), ex);
 		}
+
+		
+		List<ProcessMarshall> processMarshalls = projectMarshall.getProcesses();
+		for (ProcessMarshall processMarshall : processMarshalls) {
+			
+			try {
+				OptionModelContainer container = getOptionModelContainer(processMarshall.getId());
+				OptionModel optionModel = container.getOptionModel();
+				modelProcessManifest.addWorker(processMarshall.getId(), optionModel);
+			} catch (ProcessContainerException ex) {
+				log.error("Error loading process worker '" + processMarshall.getId() + "': " + ex.getMessage(), ex);
+			}
+			
+		}
+		
+
 
 		shapeDataContext = new ShapeDataContext();
 		imageDataContext = new ImageDataContext();
@@ -164,27 +181,9 @@ public class ProjectContext
 		
 		
 
-		OptionModelChangeListener optionModelChangeListener = new OptionModelChangeListener()
-		{
-			public void onPropertyChanged(OptionModelChangeEvent e)
-			{
-				log.info("Project context option changed");
-				if (!ignoreOptionChanges) {
-					projectChangeBroker.fireOnOptionChanged(e, true);
-				}
-			}
-		};
+		
 
-		for (OptionModel optionModel : defaultOptionModelList) {
-			try {
-				OptionModelContainer optionModelContainer = new OptionModelContainer(optionModel);
-				optionModelContainer.addOptionModelChangeListener(optionModelChangeListener);
-				defaultOptionModelContainerList.add(optionModelContainer);
-			} catch (InvalidProcessOptionException ex) {
-				// TODO Auto-generated catch block
-				ex.printStackTrace();
-			}
-		}
+		
 
 		
 		projectChangeBroker.fireOnProjectLoaded(projectPath, true);
@@ -217,15 +216,27 @@ public class ProjectContext
 		return projectMarshall;
 	}
 
-	protected List<OptionModel> createDefaultOptionModelList(ProjectMarshall projectMarshall) throws Exception
+	protected void createOptionModelList(ProjectMarshall projectMarshall) throws Exception
 	{
-		List<OptionModel> defaultOptionModelList = new LinkedList<OptionModel>();
-
 		GlobalOptionModel globalOptionModel = new GlobalOptionModel();
-
+		
+		OptionModelChangeListener optionModelChangeListener = new OptionModelChangeListener()
+		{
+			public void onPropertyChanged(OptionModelChangeEvent e)
+			{
+				log.info("Project context option changed");
+				if (!ignoreOptionChanges) {
+					projectChangeBroker.fireOnOptionChanged(e, true);
+				}
+			}
+		};
+		
+		OptionModelContainer globalOptionModelContainer = new OptionModelContainer(globalOptionModel);
+		globalOptionModelContainer.addOptionModelChangeListener(optionModelChangeListener);
+		
 		if (projectMarshall != null && projectMarshall.getGlobalOptions() != null) {
 
-			OptionModelContainer globalOptionModelContainer = new OptionModelContainer(globalOptionModel);
+			
 
 			for (String option : projectMarshall.getGlobalOptions().keySet()) {
 				String value = projectMarshall.getGlobalOptions().get(option);
@@ -238,18 +249,21 @@ public class ProjectContext
 				}
 			}
 		}
+		
+		this.optionModelContainerList.put(globalOptionModel.getClass().getCanonicalName(), globalOptionModelContainer);
+		
 
-		defaultOptionModelList.add(globalOptionModel);
-
+		
 		List<ProcessInstance> processList = ModelProcessRegistry.getInstances();
 		for (ProcessInstance processInstance : processList) {
 
 			ProcessMarshall processMarshall = projectMarshall.getProcessMarshall(processInstance.getId());
 
 			OptionModel optionModel = processInstance.createOptionModel();
-
+			OptionModelContainer optionModelContainer = new OptionModelContainer(optionModel);
+			
 			if (processMarshall != null) {
-				OptionModelContainer optionModelContainer = new OptionModelContainer(optionModel);
+				
 
 				for (String option : processMarshall.getOptions().keySet()) {
 					String value = processMarshall.getOptions().get(option);
@@ -260,14 +274,12 @@ public class ProjectContext
 						// TODO: Display error dialog
 					}
 				}
-
+				
 			}
-
-			defaultOptionModelList.add(optionModel);
+			optionModelContainer.addOptionModelChangeListener(optionModelChangeListener);
+			optionModelContainerList.put(processInstance.getId(), optionModelContainer);
 
 		}
-
-		return defaultOptionModelList;
 	}
 	
 	public void addModelGridDataset(String filePath) throws ProjectException
@@ -562,20 +574,27 @@ public class ProjectContext
 
 	public List<OptionModel> getDefaultOptionModelList()
 	{
-		return defaultOptionModelList;
+		List<OptionModel> optionList = new ArrayList<OptionModel>();
+		for (Entry<String, OptionModelContainer> entry : optionModelContainerList.entrySet()) {
+			optionList.add(entry.getValue().getOptionModel());
+		}
+		return optionList;
 	}
 
 	public List<OptionModelContainer> getDefaultOptionModelContainerList()
 	{
-		return defaultOptionModelContainerList;
+		List<OptionModelContainer> containerList = new ArrayList<OptionModelContainer>();
+		for (Entry<String, OptionModelContainer> entry : optionModelContainerList.entrySet()) {
+			containerList.add(entry.getValue());
+		}
+		return containerList;
 	}
 
 	public OptionModelContainer getOptionModelContainer(Class<?> clazz)
 	{
-
-		for (OptionModelContainer optionModelContainer : defaultOptionModelContainerList) {
-			if (optionModelContainer.getOptionModel().getClass().equals(clazz)) {
-				return optionModelContainer;
+		for (Entry<String, OptionModelContainer> entry : optionModelContainerList.entrySet()) {
+			if (entry.getValue().getOptionModel().getClass().equals(clazz)) {
+				return entry.getValue();
 			}
 		}
 
@@ -584,6 +603,8 @@ public class ProjectContext
 
 	public OptionModelContainer getOptionModelContainer(String processId)
 	{
+		return optionModelContainerList.get(processId);
+		/*
 		ProcessInstance processInstance = ModelProcessRegistry.getInstance(processId);
 
 		if (processInstance != null) {
@@ -595,8 +616,19 @@ public class ProjectContext
 			log.info("Process not found with id " + processId);
 			return null;
 		}
+		*/
 	}
 
+	public OptionModelContainer getGlobalOptionModelContainer()
+	{
+		return optionModelContainerList.get(GlobalOptionModel.class.getCanonicalName());
+	}
+	
+	public GlobalOptionModel getGlobalOptionModel()
+	{
+		return (GlobalOptionModel) getGlobalOptionModelContainer().getOptionModel();
+	}
+	
 	public List<ElevationModel> getElevationModelList()
 	{
 		List<ElevationModel> listCopy = new LinkedList<ElevationModel>(elevationModelList);

@@ -19,8 +19,8 @@ import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
+import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846ui.controls.LabeledCombo;
-import us.wthr.jdem846ui.project.ProjectContext;
 
 public class ProcessTypeOptionPageContainer extends Composite {
 	private static Log log = Logging.getLog(ProcessTypeOptionPageContainer.class);

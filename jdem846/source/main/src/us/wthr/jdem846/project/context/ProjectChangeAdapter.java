@@ -1,4 +1,4 @@
-package us.wthr.jdem846ui.project;
+package us.wthr.jdem846.project.context;
 
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.model.OptionModelChangeEvent;

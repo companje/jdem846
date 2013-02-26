@@ -3,9 +3,9 @@ package us.wthr.jdem846ui.actions;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import us.wthr.jdem846.exception.ModelContextException;
+import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846ui.ICommandIds;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
-import us.wthr.jdem846ui.project.ProjectContext;
 
 public class UpdatePreviewWithDataRefreshAction extends BasicAction
 {

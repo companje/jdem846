@@ -3,8 +3,8 @@ package us.wthr.jdem846ui.actions;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import us.wthr.jdem846.input.InputSourceData;
+import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846ui.ICommandIds;
-import us.wthr.jdem846ui.project.ProjectContext;
 import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 
