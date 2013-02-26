@@ -79,7 +79,7 @@ public class TonalHistogram extends Composite
 	{
 		ILineSeries lineSeries = (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE, title);
 		lineSeries.setSymbolType(PlotSymbolType.NONE);
-		lineSeries.setLineWidth(2);
+		lineSeries.setLineWidth(1);
 		lineSeries.setAntialias(SWT.ON);
 		lineSeries.setLineColor(color);
 		lineSeries.enableArea(true);

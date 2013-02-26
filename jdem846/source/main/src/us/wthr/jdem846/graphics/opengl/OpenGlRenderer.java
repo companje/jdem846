@@ -148,7 +148,7 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 		openGl.getGL2().glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPos, 0);
 
 
-		float local_view[] = { 0.0f };
+		float local_view[] = { 1.0f };
 		
 		openGl.getGL2().glShadeModel(GL2.GL_SMOOTH);
 		

@@ -161,6 +161,14 @@ public class RenderProcess
 
 	}
 
+	
+	protected Vector getEyePosition()
+	{
+		Vector v = new Vector(0, 0, 1);
+		
+		return v;
+	}
+	
 	protected void render() throws GraphicsRenderException
 	{
 		this.setPerspective();
