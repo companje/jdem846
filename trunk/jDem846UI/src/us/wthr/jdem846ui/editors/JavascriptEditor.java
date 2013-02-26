@@ -9,9 +9,9 @@ import org.eclipse.wst.jsdt.internal.ui.javaeditor.CompilationUnitEditor;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.scripting.ScriptingContext;
-import us.wthr.jdem846ui.project.ProjectContext;
 
 public class JavascriptEditor extends CompilationUnitEditor
 {

@@ -11,7 +11,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
-import us.wthr.jdem846ui.project.ProjectContext;
+import us.wthr.jdem846.project.context.ProjectContext;
 
 public class ModelMouseMovementTracker implements MouseListener, MouseMoveListener, MouseWheelListener, MouseTrackListener
 {

@@ -1,4 +1,4 @@
-package us.wthr.jdem846ui.project;
+package us.wthr.jdem846.project.context;
 
 public interface GetSaveLocationCallback 
 {

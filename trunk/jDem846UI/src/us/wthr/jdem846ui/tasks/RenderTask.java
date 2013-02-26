@@ -18,7 +18,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ModelBuilder;
 import us.wthr.jdem846.model.ProgressTracker;
 import us.wthr.jdem846.model.exceptions.ContextPrepareException;
-import us.wthr.jdem846ui.project.ProjectContext;
+import us.wthr.jdem846.project.context.ProjectContext;
 
 public class RenderTask extends Job 
 {

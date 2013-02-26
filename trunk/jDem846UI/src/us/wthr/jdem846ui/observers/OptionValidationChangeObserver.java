@@ -10,7 +10,7 @@ import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.PropertyValidationResult;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.exceptions.OptionValidationException;
-import us.wthr.jdem846ui.project.ProjectContext;
+import us.wthr.jdem846.project.context.ProjectContext;
 
 public class OptionValidationChangeObserver extends ProjectChangeObserver
 {

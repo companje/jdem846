@@ -15,9 +15,9 @@ import us.wthr.jdem846.model.ModelProcessManifest;
 import us.wthr.jdem846.model.OptionModelContainer;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
+import us.wthr.jdem846.project.context.ProjectChangeAdapter;
+import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846ui.observers.ModelPreviewChangeObserver;
-import us.wthr.jdem846ui.project.ProjectChangeAdapter;
-import us.wthr.jdem846ui.project.ProjectContext;
 
 public class ModelConfigurationView extends ViewPart {
 	private static Log log = Logging.getLog(ModelConfigurationView.class);

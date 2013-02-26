@@ -27,6 +27,7 @@ import us.wthr.jdem846.model.RgbaColor;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.annotations.ValueBounds;
 import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
+import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846ui.controls.LabeledCheck;
 import us.wthr.jdem846ui.controls.LabeledColor;
 import us.wthr.jdem846ui.controls.LabeledCombo;
@@ -36,7 +37,6 @@ import us.wthr.jdem846ui.controls.LabeledSpinner;
 import us.wthr.jdem846ui.controls.LabeledTime;
 import us.wthr.jdem846ui.observers.OptionValidationChangeObserver;
 import us.wthr.jdem846ui.observers.OptionValidationResultsListener;
-import us.wthr.jdem846ui.project.ProjectContext;
 
 // TODO: Do something with all the exceptions...
 

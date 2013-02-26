@@ -6,9 +6,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.project.context.GetSaveLocationCallback;
+import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846ui.ICommandIds;
-import us.wthr.jdem846ui.project.GetSaveLocationCallback;
-import us.wthr.jdem846ui.project.ProjectContext;
 
 public class SaveProjectAction extends DirectoryPromptingAction
 {

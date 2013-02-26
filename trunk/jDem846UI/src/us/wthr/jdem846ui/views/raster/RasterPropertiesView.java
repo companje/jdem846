@@ -7,9 +7,9 @@ import org.eclipse.swt.widgets.Composite;
 import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.project.context.ProjectChangeAdapter;
+import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846.rasterdata.generic.GenericRasterDataProvider;
-import us.wthr.jdem846ui.project.ProjectChangeAdapter;
-import us.wthr.jdem846ui.project.ProjectContext;
 import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 

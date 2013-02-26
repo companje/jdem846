@@ -28,6 +28,8 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.modelgrid.ModelGridContext;
 import us.wthr.jdem846.modelgrid.ModelGridHeader;
+import us.wthr.jdem846.project.context.ProjectChangeAdapter;
+import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
@@ -36,8 +38,6 @@ import us.wthr.jdem846ui.ApplicationActionBarAdvisor;
 import us.wthr.jdem846ui.ICommandIds;
 import us.wthr.jdem846ui.observers.RenderedModelSelectionObserver;
 import us.wthr.jdem846ui.project.IconEnum;
-import us.wthr.jdem846ui.project.ProjectChangeAdapter;
-import us.wthr.jdem846ui.project.ProjectContext;
 import us.wthr.jdem846ui.views.tree.TreeObject;
 import us.wthr.jdem846ui.views.tree.ViewContentProvider;
 

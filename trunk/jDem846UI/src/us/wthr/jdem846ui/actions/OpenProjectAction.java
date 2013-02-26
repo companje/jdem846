@@ -4,9 +4,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.project.context.ProjectContext;
+import us.wthr.jdem846.project.context.ProjectException;
 import us.wthr.jdem846ui.ICommandIds;
-import us.wthr.jdem846ui.project.ProjectContext;
-import us.wthr.jdem846ui.project.ProjectException;
 
 public class OpenProjectAction extends DirectoryPromptingAction
 {

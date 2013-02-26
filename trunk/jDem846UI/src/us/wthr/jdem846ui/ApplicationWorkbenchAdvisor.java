@@ -13,12 +13,12 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.project.context.ProjectContext;
+import us.wthr.jdem846.project.context.ProjectException;
 import us.wthr.jdem846ui.observers.OptionValidationChangeObserver;
 import us.wthr.jdem846ui.observers.ProjectLoadedObserver;
 import us.wthr.jdem846ui.observers.RenderedModelSelectionObserver;
 import us.wthr.jdem846ui.preferences.GeneralPreferencesPage;
-import us.wthr.jdem846ui.project.ProjectContext;
-import us.wthr.jdem846ui.project.ProjectException;
 
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 

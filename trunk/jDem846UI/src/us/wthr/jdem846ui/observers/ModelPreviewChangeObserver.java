@@ -17,8 +17,8 @@ import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.ModelBuilder;
 import us.wthr.jdem846.model.OptionModelChangeEvent;
 import us.wthr.jdem846.model.exceptions.ContextPrepareException;
+import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846ui.daemons.PreviewRenderDaemon;
-import us.wthr.jdem846ui.project.ProjectContext;
 
 public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 	

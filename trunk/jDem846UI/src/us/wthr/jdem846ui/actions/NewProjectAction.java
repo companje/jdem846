@@ -2,9 +2,9 @@ package us.wthr.jdem846ui.actions;
 
 import org.eclipse.ui.IWorkbenchWindow;
 
+import us.wthr.jdem846.project.context.ProjectContext;
+import us.wthr.jdem846.project.context.ProjectException;
 import us.wthr.jdem846ui.ICommandIds;
-import us.wthr.jdem846ui.project.ProjectContext;
-import us.wthr.jdem846ui.project.ProjectException;
 
 public class NewProjectAction extends BasicAction
 {
