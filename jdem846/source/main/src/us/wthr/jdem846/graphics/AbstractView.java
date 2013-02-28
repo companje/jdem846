@@ -21,7 +21,9 @@ public abstract class AbstractView implements View
 	protected ScriptProxy scriptProxy = null;
 	protected IModelGrid modelGrid = null;
 	protected Planet planet = null;
-	protected NormalsCalculator normals = null;
+	
+	protected FlatNormalsCalculator flatNormals = null;
+	protected SphericalNormalsCalculator sphericalNormals = null;
 	
 	protected double north;
 	protected double south;
@@ -39,6 +41,7 @@ public abstract class AbstractView implements View
 	
 	protected double elevScaler = -1;
 	
+	protected boolean useFlatNormals = false;
 	
 	protected double getElevationScaler()
 	{
@@ -69,17 +72,35 @@ public abstract class AbstractView implements View
 	}
 	
 
-	protected NormalsCalculator getNormalsCalculator()
+	protected INormalsCalculator getNormalsCalculator()
 	{
-		if (normals == null) {
-			normals = new NormalsCalculator(planet, modelDimensions.getModelLatitudeResolution(), modelDimensions.getModelLongitudeResolution(), new ElevationFetchCallback() {
-				@Override
-				public double getElevation(double latitude, double longitude)
-				{
-					return modelGrid.getElevation(latitude, longitude, true);
-				}
-			});
+		
+		INormalsCalculator normals = null;
+		
+		if (useFlatNormals) {
+			if (flatNormals == null) {
+				flatNormals = new FlatNormalsCalculator(planet, modelDimensions.getModelLatitudeResolution(), modelDimensions.getModelLongitudeResolution(), new ElevationFetchCallback() {
+					@Override
+					public double getElevation(double latitude, double longitude)
+					{
+						return modelGrid.getElevation(latitude, longitude, true);
+					}
+				});
+			}
+			normals = flatNormals;
+		} else {
+			if (sphericalNormals == null) {
+				sphericalNormals = new SphericalNormalsCalculator(planet, modelDimensions.getModelLatitudeResolution(), modelDimensions.getModelLongitudeResolution(), new ElevationFetchCallback() {
+					@Override
+					public double getElevation(double latitude, double longitude)
+					{
+						return modelGrid.getElevation(latitude, longitude, true);
+					}
+				});
+			}
+			normals = sphericalNormals;
 		}
+		
 		return normals;
 	}
 	
@@ -91,26 +112,26 @@ public abstract class AbstractView implements View
 	public void getNormal(double latitude, double longitude, Vector normal, boolean useModelElevation)
 	{
 		if (useModelElevation) {
-			getNormalsCalculator().calculateNormalSpherical(latitude, longitude, normal);
+			getNormalsCalculator().calculateNormal(latitude, longitude, normal);
 		} else {
-			getNormalsCalculator().calculateNormalSpherical(latitude, longitude, radius(), normal);
+			getNormalsCalculator().calculateNormal(latitude, longitude, radius(), normal);
 		}
 	}
 	
 	public void getNormal(double latitude, double longitude, double elevation, Vector normal)
 	{
 		elevation = scaleElevation(elevation);
-		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, elevation, elevation, elevation, elevation, elevation, normal);
+		getNormalsCalculator().calculateNormal(latitude, longitude, elevation, elevation, elevation, elevation, elevation, normal);
 	}
 	
 	public void getNormal(double latitude, double longitude, double midElev, double nElev, double sElev, double eElev, double wElev, Vector normal)
 	{
-		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, scaleElevation(midElev), scaleElevation(nElev), scaleElevation(sElev), scaleElevation(eElev), scaleElevation(wElev), normal);
+		getNormalsCalculator().calculateNormal(latitude, longitude, scaleElevation(midElev), scaleElevation(nElev), scaleElevation(sElev), scaleElevation(eElev), scaleElevation(wElev), normal);
 	}
 	
 	public void getNormal(double latitude, double longitude, Vector normal, final ElevationFetchCallback elevationFetchCallback)
 	{
-		getNormalsCalculator().calculateNormalSpherical(latitude, longitude, normal, new ElevationFetchCallback() {
+		getNormalsCalculator().calculateNormal(latitude, longitude, normal, new ElevationFetchCallback() {
 
 			@Override
 			public double getElevation(double latitude, double longitude) {
@@ -201,6 +222,18 @@ public abstract class AbstractView implements View
 			planet = PlanetsRegistry.getPlanet("earth");
 		}
 		return planet;
+	}
+
+	@Override
+	public boolean getUseFlatNormals()
+	{
+		return useFlatNormals;
+	}
+
+	@Override
+	public void setUseFlatNormals(boolean useFlatNormals)
+	{
+		this.useFlatNormals = useFlatNormals;
 	}
 	
 

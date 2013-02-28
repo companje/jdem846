@@ -1,9 +1,14 @@
 package us.wthr.jdem846ui;
 
+import java.io.File;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -15,6 +20,10 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846.project.context.ProjectException;
+import us.wthr.jdem846.prompt.FilePathPrompt;
+import us.wthr.jdem846.prompt.FilePathPromptCallback;
+import us.wthr.jdem846.prompt.FilePathPromptMode;
+import us.wthr.jdem846ui.actions.StandardFileTypes;
 import us.wthr.jdem846ui.observers.OptionValidationChangeObserver;
 import us.wthr.jdem846ui.observers.ProjectLoadedObserver;
 import us.wthr.jdem846ui.observers.RenderedModelSelectionObserver;
@@ -66,6 +75,18 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void postStartup() {
 		super.postStartup();
 		
+		
+		FilePathPrompt.setFilePathPromptCallback(new FilePathPromptCallback() {
+
+			@Override
+			public String prompt(FilePathPromptMode mode, String previous)
+			{
+				return "C:\\Users\\GillFamily\\Google Drive\\jDem Visuals\\Earth Flooding\\earthflooding.jdemgrid";
+				//return promptForFilePath(previous);
+			}
+			
+		});
+		
 		PreferenceManager pm = PlatformUI.getWorkbench().getPreferenceManager( );
 		pm.remove("org.eclipse.ui.preferencePages.Workbench");
 		pm.remove("org.eclipse.help.ui.browsersPreferencePage");
@@ -90,6 +111,50 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		
 
 		
+	}
+	
+	protected IWorkbenchWindow getAWindow()
+	{
+		if (PlatformUI.getWorkbench().getWorkbenchWindows().length > 0) {
+			return PlatformUI.getWorkbench().getWorkbenchWindows()[0];
+		} else {
+			return null;
+		}
+	}
+	
+	protected String promptForFilePath(String previousFile)
+	{
+		FileDialog dialog = null;
+		
+		try {
+			
+			new FileDialog (getAWindow().getShell(), SWT.OPEN);
+		} catch (Exception ex) {
+			log.warn("Error creating file dialog: " + ex.getMessage(), ex);
+			return null;
+		}
+		String [] filterNames = StandardFileTypes.PROJECT_PROJECT_FILE_TYPES;
+		String [] filterExtensions = StandardFileTypes.PROJECT_PROJECT_FILE_EXTENSIONS;
+		String filterPath = "/";
+		String platform = SWT.getPlatform();
+		if (platform.equals("win32") || platform.equals("wpf")) {
+			filterNames = StandardFileTypes.PROJECT_PROJECT_FILE_TYPES_WIN;
+			filterExtensions = StandardFileTypes.PROJECT_PROJECT_FILE_EXTENSIONS_WIN;
+			filterPath = "c:\\";
+		}
+		dialog.setFilterNames (filterNames);
+		dialog.setFilterExtensions (filterExtensions);
+		
+		if (previousFile != null) {
+			File f = new File(previousFile);
+			dialog.setFileName(f.getName());
+			dialog.setFilterPath(f.getAbsolutePath());
+		} else {
+			dialog.setFilterPath(filterPath);
+		}
+		
+		
+		return dialog.open();
 	}
 
 	public String getInitialWindowPerspectiveId() {
