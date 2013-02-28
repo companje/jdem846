@@ -2,6 +2,9 @@ package us.wthr.jdem846.model.processing.shading;
 
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
+import us.wthr.jdem846.graphics.ElevationFetchCallback;
+import us.wthr.jdem846.graphics.FlatNormalsCalculator;
+import us.wthr.jdem846.graphics.INormalsCalculator;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -9,7 +12,6 @@ import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridProcessor;
-import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 
 @GridProcessing(id = "us.wthr.jdem846.model.processing.shading.SlopeShadingProcessor", name = "Slope Shading Process", type = GridProcessingTypesEnum.SHADING, optionModel = SlopeShadingOptionModel.class, enabled = false)
 public class SlopeShadingProcessor extends GridProcessor
@@ -18,7 +20,7 @@ public class SlopeShadingProcessor extends GridProcessor
 
 	protected int[] rgbaBuffer = new int[4];
 	private Vector normal = new Vector();
-	private SurfaceNormalCalculator normalsCalculator;
+	private INormalsCalculator normalsCalculator;
 
 	private int pass = 0;
 	private double minSlope = 10000000;
@@ -45,8 +47,18 @@ public class SlopeShadingProcessor extends GridProcessor
 		relativeDarkIntensity = optionModel.getDarkIntensity();
 		spotExponent = optionModel.getSpotExponent();
 
-		normalsCalculator = new SurfaceNormalCalculator(modelGrid, PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet()), getModelDimensions().getTextureLatitudeResolution(),
-				getModelDimensions().getTextureLongitudeResolution());
+		normalsCalculator = new FlatNormalsCalculator(PlanetsRegistry.getPlanet(getGlobalOptionModel().getPlanet())
+													, getModelDimensions().getTextureLatitudeResolution()
+													, getModelDimensions().getTextureLongitudeResolution()
+													, new ElevationFetchCallback() {
+
+			@Override
+			public double getElevation(double latitude, double longitude)
+			{
+				return modelGrid.getElevation(latitude, longitude, true);
+			}
+			
+		});
 	}
 
 	public void process() throws RenderEngineException
@@ -87,7 +99,7 @@ public class SlopeShadingProcessor extends GridProcessor
 		//ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 
 		// modelPoint.getNormal(normal);
-		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
+		normalsCalculator.calculateNormal(latitude, longitude, normal);
 		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal.z), -1));
 
 		minSlope = MathExt.min(minSlope, slope);
@@ -100,7 +112,7 @@ public class SlopeShadingProcessor extends GridProcessor
 		//ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 
 		// modelPoint.getNormal(normal);
-		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
+		normalsCalculator.calculateNormal(latitude, longitude, normal);
 		double slope = MathExt.degrees(MathExt.pow(MathExt.cos(normal.z), -1));
 
 		double shade = 1.0 - (2.0 * ((slope - minSlope) / (maxSlope - minSlope)));

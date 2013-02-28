@@ -103,6 +103,8 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 		globalOptionModel.setCreateJdemElevationModel(true);
 		globalOptionModel.setForceResetAndRunFilters(true);
 		globalOptionModel.setNumberOfThreads(1);
+		globalOptionModel.setPreviewRendering(true);
+		globalOptionModel.setPromptToSaveModelGrid(false);
 		
 		try {
 			modelContextWorkingCopy.updateContext();

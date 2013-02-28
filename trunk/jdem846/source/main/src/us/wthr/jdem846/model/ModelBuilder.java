@@ -402,7 +402,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		}
 		
 		this.modelGrid.setCompleted(true);
-		if (globalOptionModel.getPromptToSaveModelGrid()) {
+		if (!globalOptionModel.isPreviewRendering() && globalOptionModel.getPromptToSaveModelGrid()) {
 			
 			String saveTo = FilePathPrompt.prompt(FilePathPromptMode.SAVE, null);
 			if (saveTo != null) {

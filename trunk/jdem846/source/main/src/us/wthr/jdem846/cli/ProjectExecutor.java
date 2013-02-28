@@ -45,6 +45,11 @@ public class ProjectExecutor
 	private List<OptionModel> defaultOptionModelList;
 	private List<OptionModelContainer> defaultOptionModelContainerList;
 	
+	public ProjectExecutor()
+	{
+		log = Logging.getLog(ProjectExecutor.class);
+	}
+	
 	protected static void bootstrapSystemProperties()
 	{
 		
@@ -148,7 +153,7 @@ public class ProjectExecutor
 		
 		log.info("Loading project '" + runPlan.getProjectPath() + "'");
 		ProjectContext.initialize(runPlan.getProjectPath());
-
+		ProjectContext.getInstance().addModelGridDataset("C:\\Users\\GillFamily\\Google Drive\\jDem Visuals\\Earth Flooding\\earthflooding.jdemgrid");
 		ElevationModel elevationModel = run(runPlan);
 		
 		if (elevationModel != null) {

@@ -6,6 +6,9 @@ import us.wthr.jdem846.exception.RayTracingException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
+import us.wthr.jdem846.graphics.ElevationFetchCallback;
+import us.wthr.jdem846.graphics.INormalsCalculator;
+import us.wthr.jdem846.graphics.SphericalNormalsCalculator;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -20,7 +23,6 @@ import us.wthr.jdem846.model.processing.GridProcessor;
 import us.wthr.jdem846.model.processing.shading.RayTracing.RasterDataFetchHandler;
 import us.wthr.jdem846.model.processing.util.LightingCalculator;
 import us.wthr.jdem846.model.processing.util.SunlightPositioning;
-import us.wthr.jdem846.model.processing.util.SurfaceNormalCalculator;
 import us.wthr.jdem846.scripting.ScriptProxy;
 import us.wthr.jdem846.scripting.ScriptingContext;
 import us.wthr.jdem846.util.ColorUtil;
@@ -59,7 +61,7 @@ public class HillshadingProcessor extends GridProcessor
 	protected double shadowIntensity;
 
 	private Vector normal = new Vector();
-	private SurfaceNormalCalculator normalsCalculator;
+	private INormalsCalculator normalsCalculator;
 
 	private SunlightPositioning sunlightPosition;
 	private ViewPerspective viewPerspective;
@@ -159,7 +161,15 @@ public class HillshadingProcessor extends GridProcessor
 			lightSourceRayTracer = null;
 		}
 
-		normalsCalculator = new SurfaceNormalCalculator(modelGrid, planet, getModelDimensions().getTextureLatitudeResolution(), getModelDimensions().getTextureLongitudeResolution(), viewPerspective);
+		normalsCalculator = new SphericalNormalsCalculator(planet, getModelDimensions().getTextureLatitudeResolution(), getModelDimensions().getTextureLongitudeResolution(), new ElevationFetchCallback() {
+
+			@Override
+			public double getElevation(double latitude, double longitude)
+			{
+				return modelGrid.getElevation(latitude, longitude, true);
+			}
+			
+		});
 
 	}
 
@@ -215,7 +225,7 @@ public class HillshadingProcessor extends GridProcessor
 		modelGrid.getRgba(latitude, longitude, rgbaBuffer);
 
 		if (lightingEnabled) {
-			normalsCalculator.calculateNormalSpherical(latitude, longitude, normal);
+			normalsCalculator.calculateNormal(latitude, longitude, normal);
 
 			if (advancedLightingControl) {
 				advancedLightingCalculator.calculateColor(normal, latitude, longitude, elevation, modelRadius, spotExponent, blockAmt, sunsource, rgbaBuffer);

@@ -10,7 +10,9 @@ import us.wthr.jdem846.model.annotations.ValueBounds;
 public class RenderLightingOptionModel implements OptionModel
 {
 	private boolean lightingEnabled = true;
-
+	
+	private boolean flatLighting = false;
+	
 	private LightingDate sunlightDate = new LightingDate(System.currentTimeMillis());
 	private LightingTime sunlightTime = new LightingTime(System.currentTimeMillis());
 
@@ -166,7 +168,23 @@ public class RenderLightingOptionModel implements OptionModel
 	{
 		this.spotExponent = spotExponent;
 	}
+	
+	
+	@ProcessOption(id = "us.wthr.jdem846.model.RenderLightingOptionModel.flatLighting"
+			, label = "Flat Lighting"
+			, tooltip = ""
+			, enabler = RenderLightingOptionPropertyEnabler.class
+			, visible = true)
+	@Order(195)
+	public boolean getFlatLighting()
+	{
+		return flatLighting;
+	}
 
+	public void setFlatLighting(boolean flatLighting)
+	{
+		this.flatLighting = flatLighting;
+	}
 
 	public RenderLightingOptionModel copy()
 	{
@@ -176,7 +194,7 @@ public class RenderLightingOptionModel implements OptionModel
 		copy.sunlightDate = this.sunlightDate.copy();
 		copy.sunlightTime = this.sunlightTime.copy();
 		copy.spotExponent = this.spotExponent;
-
+		copy.flatLighting = this.flatLighting;
 		return copy;
 	}
 }

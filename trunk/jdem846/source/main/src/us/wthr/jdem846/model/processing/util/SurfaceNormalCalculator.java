@@ -2,13 +2,13 @@ package us.wthr.jdem846.model.processing.util;
 
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.graphics.ElevationFetchCallback;
-import us.wthr.jdem846.graphics.NormalsCalculator;
+import us.wthr.jdem846.graphics.FlatNormalsCalculator;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.modelgrid.IModelGrid;
 
-public class SurfaceNormalCalculator extends NormalsCalculator
+public class SurfaceNormalCalculator extends FlatNormalsCalculator
 {
 	private static Log log = Logging.getLog(SurfaceNormalCalculator.class);
 

@@ -72,7 +72,7 @@ public class AspectColoringProcessor extends GridFilter
 			throws RenderEngineException
 	{
 		
-		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
+		normalsCalculator.calculateNormal(latitude, longitude, normal);
 		double degrees = Aspect.aspectInDegrees(normal);
 
 		getCategoryColor(degrees, rgbaBuffer);

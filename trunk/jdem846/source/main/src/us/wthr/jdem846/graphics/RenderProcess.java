@@ -171,6 +171,8 @@ public class RenderProcess
 	
 	protected void render() throws GraphicsRenderException
 	{
+		
+		
 		this.setPerspective();
 
 		this.renderer.pushMatrix();
@@ -186,9 +188,9 @@ public class RenderProcess
 
 		double radius = this.modelView.radius();
 
+		
 		RenderLightingOptionModel lightingOptionModel = (RenderLightingOptionModel) this.modelContext.getModelProcessManifest().getOptionModelByProcessId("us.wthr.jdem846.model.processing.lighting.RenderLightingProcessor");
-		
-		
+		this.modelView.setUseFlatNormals(lightingOptionModel.getFlatLighting());
 		
 		if (view != null) {
 			this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);

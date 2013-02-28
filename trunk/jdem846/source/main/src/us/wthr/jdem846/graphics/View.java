@@ -45,4 +45,7 @@ public interface View
 	public void getNormal(double latitude, double longitude, double elevation, Vector normal);
 	public void getNormal(double latitude, double longitude, double midElev, double nElev, double sElev, double eElev, double wElev, Vector normal);
 	public void getNormal(double latitude, double longitude, Vector normal, ElevationFetchCallback elevationFetchCallback);
+	
+	public boolean getUseFlatNormals();
+	public void setUseFlatNormals(boolean useFlatNormals);
 }

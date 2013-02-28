@@ -56,7 +56,7 @@ public class AspectShadingProcessor extends GridProcessor
 		//ModelPoint modelPoint = modelGrid.get(latitude, longitude);
 		modelGrid.getElevation(latitude, longitude, false);
 			
-		normalsCalculator.calculateNormalFlat(latitude, longitude, normal);
+		normalsCalculator.calculateNormal(latitude, longitude, normal);
 		// modelPoint.getNormal(normal);
 		double degrees = Aspect.aspectInDegrees(normal);
 		if (degrees > 180) {
