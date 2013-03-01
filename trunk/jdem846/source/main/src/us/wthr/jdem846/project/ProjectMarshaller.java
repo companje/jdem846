@@ -5,6 +5,7 @@ import us.wthr.jdem846.exception.ProjectMarshalException;
 import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.model.ModelProcessContainer;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
+import us.wthr.jdem846.modelgrid.UserProvidedModelGrid;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
@@ -40,6 +41,10 @@ public class ProjectMarshaller
 			
 			for (SimpleGeoImage simpleGeoImage : modelContext.getImageDataContext().getImageList()) {
 				pm.getImageFiles().add(simpleGeoImage);
+			}
+			
+			if (modelContext.getModelGridContext().getModelGrid() instanceof UserProvidedModelGrid) {
+				pm.setModelGrid(((UserProvidedModelGrid)modelContext.getModelGridContext().getModelGrid()).getFilePath());
 			}
 			
 			pm.setUserScript(modelContext.getScriptingContext().getUserScript());

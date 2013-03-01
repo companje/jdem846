@@ -73,6 +73,13 @@ public class JsonProjectFileWriter
 		return jsonObject;
 	}
 	
+	protected static JSONObject createModelGridObject(String modelGrid)
+	{
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.element("type", "modelGrid");
+		jsonObject.element("path", modelGrid);
+		return jsonObject;
+	}
 	
 	protected static JSONArray createLayersObject(ProjectMarshall projectMarshall)
 	{
@@ -91,6 +98,11 @@ public class JsonProjectFileWriter
 		for (SimpleGeoImage image : projectMarshall.getImageFiles()) {
 			JSONObject imageObj = createImageObject(image);
 			layersArray.add(imageObj);
+		}
+		
+		if (projectMarshall.getModelGrid() != null) {
+			JSONObject modelGridObj = createModelGridObject(projectMarshall.getModelGrid());
+			layersArray.add(modelGridObj);
 		}
 		
 		return layersArray;
