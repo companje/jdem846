@@ -2,11 +2,12 @@ package us.wthr.jdem846.rasterdata;
 
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.input.InputSourceData;
+import us.wthr.jdem846.rasterdata.generic.IRasterDefinition;
 
 public interface RasterData extends InputSourceData
 {
 
-	public void create(String file) throws DataSourceException;
+	public void create(String file, IRasterDefinition rasterDefinition) throws DataSourceException;
 
 	public void dispose() throws DataSourceException;
 
@@ -61,5 +62,7 @@ public interface RasterData extends InputSourceData
 	public void clearBuffer() throws DataSourceException;
 
 	public IRasterDataValidator getValidator();
+	
+	public IRasterDefinition getRasterDefinition();
 
 }

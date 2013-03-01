@@ -39,6 +39,8 @@ import us.wthr.jdem846.project.ProjectMarshaller;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
+import us.wthr.jdem846.rasterdata.RasterDataSource;
+import us.wthr.jdem846.rasterdata.generic.IRasterDefinition;
 import us.wthr.jdem846.scripting.ScriptingContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
@@ -159,8 +161,8 @@ public class ProjectContext
 		if (projectMarshall != null) {
 			// TODO: Load saved project into model
 
-			for (String filePath : projectMarshall.getRasterFiles()) {
-				addElevationDataset(filePath, false);
+			for (RasterDataSource rasterDataSource : projectMarshall.getRasterFiles()) {
+				addElevationDataset(rasterDataSource, false);
 			}
 
 			for (ShapeFileRequest shapeFile : projectMarshall.getShapeFiles()) {
@@ -288,15 +290,25 @@ public class ProjectContext
 
 	public void addElevationDataset(final String filePath) throws ProjectException
 	{
-		addElevationDataset(filePath, true);
+		addElevationDataset(filePath, null, true);
+	}
+	
+	public void addElevationDataset(RasterDataSource rasterDataSource) throws ProjectException
+	{
+		addElevationDataset(rasterDataSource, true);
 	}
 
-	protected void addElevationDataset(final String filePath, final boolean triggerModelChanged) throws ProjectException
+	public void addElevationDataset(RasterDataSource rasterDataSource, final boolean triggerModelChanged) throws ProjectException
+	{
+		addElevationDataset(rasterDataSource.getFilePath(), rasterDataSource.getDefinition(), triggerModelChanged);
+	}
+	
+	protected void addElevationDataset(final String filePath, final IRasterDefinition rasterDefinition, final boolean triggerModelChanged) throws ProjectException
 	{
 
 		RasterData rasterData = null;
 		try {
-			rasterData = RasterDataProviderFactory.loadRasterData(filePath);
+			rasterData = RasterDataProviderFactory.loadRasterData(filePath, rasterDefinition);
 		} catch (DataSourceException ex) {
 			log.warn("Invalid file format: " + ex.getMessage(), ex);
 			throw new ProjectException("Invalid file format: " + ex.getMessage(), ex);

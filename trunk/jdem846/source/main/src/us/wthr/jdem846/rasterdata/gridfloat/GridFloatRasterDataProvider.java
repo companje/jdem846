@@ -7,6 +7,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.generic.GenericRasterDataProvider;
+import us.wthr.jdem846.rasterdata.generic.IRasterDefinition;
 import us.wthr.jdem846.rasterdata.generic.RasterDefinition;
 
 public class GridFloatRasterDataProvider extends GenericRasterDataProvider
@@ -24,7 +25,7 @@ public class GridFloatRasterDataProvider extends GenericRasterDataProvider
 
 
 	@Override
-	public void create(String filePath) throws DataSourceException
+	public void create(String filePath, IRasterDefinition rasterDefinition) throws DataSourceException
 	{
 		dataFile = new File(filePath);
 		if (!dataFile.exists()) {
@@ -34,7 +35,8 @@ public class GridFloatRasterDataProvider extends GenericRasterDataProvider
 		String headerFilePath = filePath.replace(".flt", ".hdr");
 		header = new GridFloatHeader(headerFilePath);
 		
-		RasterDefinition rasterDefinition = new RasterDefinition();
+		// Override the provided raster data. Believe the header file...
+		rasterDefinition = new RasterDefinition();
 		rasterDefinition.setDataType(DataTypeEnum.Float32);
 		rasterDefinition.setByteOrder(header.getByteOrder());
 		rasterDefinition.setImageHeight(header.getRows());

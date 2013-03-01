@@ -29,11 +29,6 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 	}
 
 	@Override
-	public void create(String file) throws DataSourceException
-	{
-		create(file, new RasterDefinition());
-	}
-
 	public void create(String file, IRasterDefinition rasterDefinition) throws DataSourceException
 	{
 		dataFile = new File(file);
@@ -181,6 +176,7 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 		dataReader.clearBuffer();
 	}
 
+	@Override
 	public IRasterDefinition getRasterDefinition()
 	{
 		return rasterDefinition;

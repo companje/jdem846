@@ -5,6 +5,7 @@ import java.io.File;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.generic.IRasterDefinition;
 
 public class RasterDataProviderFactory
 {
@@ -17,7 +18,7 @@ public class RasterDataProviderFactory
 	}
 	
 	
-	public static RasterData loadRasterData(String filePath) throws DataSourceException
+	public static RasterData loadRasterData(String filePath, IRasterDefinition rasterDefinition) throws DataSourceException
 	{
 		
 		String extension = filePath.substring(filePath.lastIndexOf(".") + 1);
@@ -36,13 +37,13 @@ public class RasterDataProviderFactory
 		}
 		
 		if (useFormatType == null) {
-			throw new DataSourceException("Cannot determine file type: unrecognized extension: '" + extension + "'");
+			useFormatType = RasterDataFormatEnum.GENERIC;
 		}
 		
-		return loadRasterData(useFormatType, filePath);
+		return loadRasterData(useFormatType, filePath, rasterDefinition);
 	}
 	
-	public static RasterData loadRasterData(RasterDataFormatEnum formatType, String filePath) throws DataSourceException
+	public static RasterData loadRasterData(RasterDataFormatEnum formatType, String filePath, IRasterDefinition rasterDefinition) throws DataSourceException
 	{
 		
 		if (formatType == null) {
@@ -63,7 +64,7 @@ public class RasterDataProviderFactory
 			throw new DataSourceException("Failed to create instance of data provider class '" + formatType.provider().getName() + "': " + ex.getMessage(), ex);
 		}
 		
-		rasterData.create(filePath);
+		rasterData.create(filePath, rasterDefinition);
 		
 		return rasterData;
 	}

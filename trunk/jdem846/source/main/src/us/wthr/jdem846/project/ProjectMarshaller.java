@@ -7,6 +7,7 @@ import us.wthr.jdem846.model.ModelProcessContainer;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.modelgrid.UserProvidedModelGrid;
 import us.wthr.jdem846.rasterdata.RasterData;
+import us.wthr.jdem846.rasterdata.RasterDataSource;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
 public class ProjectMarshaller
@@ -32,7 +33,7 @@ public class ProjectMarshaller
 	
 	
 			for (RasterData rasterData : modelContext.getRasterDataContext().getRasterDataList()) {
-				pm.getRasterFiles().add(rasterData.getFilePath());
+				pm.getRasterFiles().add(new RasterDataSource(rasterData.getFilePath(), rasterData.getRasterDefinition()));
 			}
 			
 			for (ShapeFileRequest shapeFileRequest : modelContext.getShapeDataContext().getShapeFiles()) {

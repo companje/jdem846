@@ -6,12 +6,15 @@ import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.modelgrid.IModelGrid;
+import us.wthr.jdem846.scaling.ElevationScaler;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
 public interface View
 {
 
 	public double scaleElevation(double elevation);
+	
+	public void setElevationScaler(ElevationScaler scaler);
 	
 	public void setModelContext(ModelContext arg);
 

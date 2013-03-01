@@ -12,6 +12,11 @@ public class FlatView extends AbstractView implements View
 	@Override
 	public void project(double latitude, double longitude, double elevation, Vector point)
 	{
+		if (scaler != null) {
+			elevation = scaler.scale(elevation);
+		}
+		
+		
 		if (this.mapProjection != null) {
 			try {
 				this.mapProjection.getPoint(latitude, longitude, elevation, mapPoint);
@@ -23,12 +28,7 @@ public class FlatView extends AbstractView implements View
 			latitude = mapPoint.row;
 			
 		} 
-		
-		
-		//point.x = longitudeToColumn(longitude);
-		//point.y = latitudeToRow(latitude);
-		//point.z = elevation;
-		
+
 		point.x = -(0.5 - longitudeToColumn(longitude));
 		point.z = (0.5 / (this.resolution / 1000.0)) - ((getMaxElevation() - elevation) / (getMaxElevation() - getMinElevation()) / (this.resolution / 1000.0));
 		point.z = (!Double.isNaN(point.z)) ? point.z : 0.0;
@@ -90,14 +90,14 @@ public class FlatView extends AbstractView implements View
 	public double nearClipDistance()
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		return scaleElevation(modelGrid.getMaximum());
 	}
 
 	@Override
 	public double farClipDistance()
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		return scaleElevation(modelGrid.getMinimum());
 	}
 
 	@Override

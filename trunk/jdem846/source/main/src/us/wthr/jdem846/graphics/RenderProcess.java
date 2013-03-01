@@ -21,6 +21,7 @@ import us.wthr.jdem846.model.ViewPerspective;
 import us.wthr.jdem846.model.processing.shading.RenderLightingOptionModel;
 import us.wthr.jdem846.model.processing.util.SunlightPositioning;
 import us.wthr.jdem846.modelgrid.IModelGrid;
+import us.wthr.jdem846.scaling.ElevationScaler;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
 public class RenderProcess
@@ -34,7 +35,8 @@ public class RenderProcess
 	protected ScriptProxy scriptProxy = null;
 	protected IModelGrid modelGrid = null;
 	protected Planet planet = null;
-
+	protected ElevationScaler scaler = null;
+	
 	protected ImageCapture image = null;
 
 	protected Vertex vtx = new Vertex();
@@ -131,8 +133,8 @@ public class RenderProcess
 					, radius // Right
 					, -radius // Bottom
 					, radius // Top
-					, -radius // Near
-					, radius); // Far
+					, -near // Near
+					, far); // Far
 
 			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
 			this.renderer.loadIdentity();
@@ -250,13 +252,7 @@ public class RenderProcess
 															, globalOptionModel
 															, (globalOptionModel.getUseScripting()) ? scriptProxy : null
 															, textureMapConfig
-															, new ElevationFetchCallback() {
-																@Override
-																public double getElevation(double latitude, double longitude)
-																{
-																	return modelGrid.getElevation(latitude, longitude, true);
-																}
-															});
+															, new ScaledElevationFetchCallback(modelGrid, scaler));
 		textureRenderer.render();
 		
 		
@@ -319,4 +315,16 @@ public class RenderProcess
 	{
 		modelGrid = arg;
 	}
+
+	public ElevationScaler getScaler()
+	{
+		return scaler;
+	}
+
+	public void setScaler(ElevationScaler scaler)
+	{
+		this.scaler = scaler;
+	}
+	
+	
 }

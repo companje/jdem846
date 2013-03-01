@@ -10,7 +10,6 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.model.exceptions.ContextPrepareException;
-import us.wthr.jdem846.scaling.ElevationScaler;
 
 public class RasterDataContext implements DataContext
 {
@@ -40,7 +39,7 @@ public class RasterDataContext implements DataContext
 	private boolean isDisposed = false;
 	
 
-	private ElevationScaler elevationScaler;
+	//private ElevationScaler elevationScaler;
 	
 	
 	private boolean avgOfAllRasterValues = false;
@@ -353,11 +352,7 @@ public class RasterDataContext implements DataContext
 				double rasterValue = rasterData.getData(latitude, longitude, interpolate);
 				
 				if (!avgOfAllRasterValues) {
-					if (scaled) {
-						return getScaledDataValue(rasterValue);
-					} else {
-						return rasterValue;
-					}
+					return rasterValue;
 				}
 				
 				if (rasterValue != DemConstants.ELEV_NO_DATA && !Double.isNaN(rasterValue)) {
@@ -371,13 +366,7 @@ public class RasterDataContext implements DataContext
 
 		if (dataMatches > 0) {
 			double data = (value / dataMatches);
-			
-			if (scaled) {
-				return getScaledDataValue(data);
-			} else {
-				return data;
-			}
-			
+			return data;
 		} else {
 			return DemConstants.ELEV_NO_DATA;
 		}
@@ -421,19 +410,14 @@ public class RasterDataContext implements DataContext
 		
 		if (samples > 0) {
 			data = (data / samples);
-			
-			if (scaled) {
-				return getScaledDataValue(data);
-			} else {
-				return data;
-			}
-			
+			return data;
 		} else {
 			return DemConstants.ELEV_NO_DATA;
 		}
 		
 	}
 	
+	/*
 	protected double getScaledDataValue(double data)
 	{
 		double _scaled = data;
@@ -442,7 +426,7 @@ public class RasterDataContext implements DataContext
 		}
 		return _scaled;
 	}
-
+	*/
 	
 	public RasterDataContext getSubSet(double north, double south, double east, double west) throws DataSourceException
 	{
@@ -567,14 +551,9 @@ public class RasterDataContext implements DataContext
 	
 	public double getDataMaximumValue()
 	{
-		double scaled = this.getScaledDataValue(dataMaximumValue);
-		return (!Double.isNaN(scaled)) ? scaled : dataMaximumValue;
+		return dataMaximumValue;
 	}
 	
-	public double getDataMaximumValueTrue()
-	{
-		return (!Double.isNaN(dataMaximumValue)) ? dataMaximumValue : 0.0;
-	}
 	
 	public void setDataMaximumValue(double dataMaximumValue)
 	{
@@ -610,20 +589,6 @@ public class RasterDataContext implements DataContext
 	}
 	
 	
-
-	public ElevationScaler getElevationScaler() 
-	{
-		return elevationScaler;
-	}
-
-	public void setElevationScaler(ElevationScaler elevationScaler) 
-	{
-		this.elevationScaler = elevationScaler;
-	}
-
-	
-	
-	
 	
 	public boolean isAvgOfAllRasterValues() 
 	{
@@ -643,16 +608,6 @@ public class RasterDataContext implements DataContext
 	public void setInterpolate(boolean interpolate)
 	{
 		this.interpolate = interpolate;
-	}
-
-	public boolean isScaled() 
-	{
-		return scaled;
-	}
-
-	public void setScaled(boolean scaled) 
-	{
-		this.scaled = scaled;
 	}
 
 	public RasterDataContext copy() throws DataSourceException
@@ -679,14 +634,14 @@ public class RasterDataContext implements DataContext
 		clone.longitudeResolution = getLongitudeResolution();
 		clone.effectiveLatitudeResolution = getEffectiveLatitudeResolution();
 		clone.effectiveLongitudeResolution = getEffectiveLongitudeResolution();
-		clone.dataMaximumValue = getDataMaximumValueTrue();
+		clone.dataMaximumValue = getDataMaximumValue();
 		clone.dataMinimumValue = getDataMinimumValue();
 		clone.isDisposed = isDisposed(); // Should be false at this point...		
 		clone.metersResolution = getMetersResolution();
 		clone.avgOfAllRasterValues = this.avgOfAllRasterValues;
 		clone.interpolate = this.interpolate;
 		clone.scaled = this.scaled;
-		clone.elevationScaler = (this.elevationScaler != null) ? this.elevationScaler.copy() : null;
+		//clone.elevationScaler = (this.elevationScaler != null) ? this.elevationScaler.copy() : null;
 		for (RasterData rasterData : rasterDataList) {
 			clone.rasterDataList.add(rasterData.copy());
 		}
