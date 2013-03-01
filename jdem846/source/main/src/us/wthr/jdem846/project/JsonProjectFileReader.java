@@ -12,12 +12,18 @@ import net.sf.json.JSONSerializer;
 
 import org.apache.commons.io.IOUtils;
 
+import us.wthr.jdem846.ByteOrder;
+import us.wthr.jdem846.DataTypeEnum;
+import us.wthr.jdem846.InterleavingTypeEnum;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterDataSource;
+import us.wthr.jdem846.rasterdata.generic.IRasterDefinition;
+import us.wthr.jdem846.rasterdata.generic.RasterDefinition;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
@@ -96,7 +102,85 @@ public class JsonProjectFileReader
 	protected static void parseRasterLayer(ProjectMarshall projectMarshall, JSONObject layerObj) throws ProjectParseException
 	{
 		String path = layerObj.getString("path");
-		projectMarshall.getRasterFiles().add(path);
+		
+		IRasterDefinition rasterDefinition = new RasterDefinition();
+		
+		if (layerObj.has("north")) {
+			double north = layerObj.getDouble("north");
+			rasterDefinition.setNorth(north);
+		}
+		
+		if (layerObj.has("south")) {
+			double south = layerObj.getDouble("south");
+			rasterDefinition.setSouth(south);
+		}
+		
+		if (layerObj.has("east")) {
+			double east = layerObj.getDouble("east");
+			rasterDefinition.setEast(east);
+		}
+		
+		if (layerObj.has("west")) {
+			double west = layerObj.getDouble("west");
+			rasterDefinition.setWest(west);
+		}
+		
+		if (layerObj.has("latitudeResolution")) {
+			double latitudeResolution = layerObj.getDouble("latitudeResolution");
+			rasterDefinition.setLatitudeResolution(latitudeResolution);
+		}
+		
+		if (layerObj.has("longitudeResolution")) {
+			double longitudeResolution = layerObj.getDouble("longitudeResolution");
+			rasterDefinition.setLongitudeResolution(longitudeResolution);
+		}
+		
+		if (layerObj.has("noData")) {
+			double noData = layerObj.getDouble("noData");
+			rasterDefinition.setNoData(noData);
+		}
+		
+		if (layerObj.has("imageWidth")) {
+			int imageWidth = layerObj.getInt("imageWidth");
+			rasterDefinition.setImageWidth(imageWidth);
+		}
+		
+		if (layerObj.has("imageHeight")) {
+			int imageHeight = layerObj.getInt("imageHeight");
+			rasterDefinition.setImageHeight(imageHeight);
+		}
+		
+		if (layerObj.has("numBands")) {
+			int numBands = layerObj.getInt("numBands");
+			rasterDefinition.setNumBands(numBands);
+		}
+		
+		if (layerObj.has("headerSize")) {
+			int headerSize = layerObj.getInt("headerSize");
+			rasterDefinition.setHeaderSize(headerSize);
+		}
+		
+		if (layerObj.has("dataType")) {
+			DataTypeEnum dataType = DataTypeEnum.valueOf(layerObj.getString("dataType"));
+			rasterDefinition.setDataType(dataType);
+		}
+		
+		if (layerObj.has("byteOrder")) {
+			ByteOrder byteOrder = ByteOrder.valueOf(layerObj.getString("byteOrder"));
+			rasterDefinition.setByteOrder(byteOrder);
+		}
+		
+		if (layerObj.has("interleavingType")) {
+			InterleavingTypeEnum interleavingType = InterleavingTypeEnum.valueOf(layerObj.getString("interleavingType"));
+			rasterDefinition.setInterleavingType(interleavingType);
+		}
+		
+		if (layerObj.has("locked")) {
+			boolean locked = layerObj.getBoolean("locked");
+			rasterDefinition.setLocked(locked);
+		}
+		
+		projectMarshall.getRasterFiles().add(new RasterDataSource(path, rasterDefinition));
 	}
 	
 	protected static void parseImageLayer(ProjectMarshall projectMarshall, JSONObject layerObj) throws ProjectParseException

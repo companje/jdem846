@@ -593,7 +593,7 @@ public class ModelVisualizationPanel extends Panel
 		globalOptionModel.setModelQuality(previewModelQuality);
 		globalOptionModel.setTextureQuality(previewTextureQuality);
 		
-		globalOptionModel.setPromptToSaveModelGrid(false);
+		globalOptionModel.setSaveModelGrid(false);
 		
 		//longitudeSlices = this.minPreviewSlices + (previewQuality * (this.maxPreviewSlices - this.minPreviewSlices));
 		//latitudeSlices = longitudeSlices;

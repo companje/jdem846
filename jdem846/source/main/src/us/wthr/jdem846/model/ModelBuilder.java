@@ -29,8 +29,6 @@ import us.wthr.jdem846.modelgrid.IFillControlledModelGrid;
 import us.wthr.jdem846.modelgrid.IModelGrid;
 import us.wthr.jdem846.modelgrid.ModelGridFactory;
 import us.wthr.jdem846.modelgrid.ModelGridWriter;
-import us.wthr.jdem846.prompt.FilePathPrompt;
-import us.wthr.jdem846.prompt.FilePathPromptMode;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.render.InterruptibleProcess;
 import us.wthr.jdem846.render.ProcessInterruptListener;
@@ -52,6 +50,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 	private IFillControlledModelGrid modelGrid;
 	private IModelGrid innerModelGrid = null;
 
+	private ElevationScaler elevationScaler = null;
 	private ModelGridDimensions modelDimensions;
 	private GlobalOptionModel globalOptionModel;
 	private LatitudeProcessedList latitudeProcessedList = null;
@@ -118,20 +117,18 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		
 
 		double minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
-		double maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
+		double maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
 
-		ElevationScaler elevationScaler = null;
 		ElevationScalerEnum elevationScalerEnum = ElevationScalerEnum.getElevationScalerEnumFromIdentifier(globalOptionModel.getElevationScale());
 		try {
-			elevationScaler = ElevationScalerFactory.createElevationScaler(elevationScalerEnum, globalOptionModel.getElevationMultiple(), minimumElevation, maximumElevationTrue);
+			elevationScaler = ElevationScalerFactory.createElevationScaler(elevationScalerEnum, globalOptionModel.getElevationMultiple(), minimumElevation, maximumElevation);
 		} catch (Exception ex) {
 			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
 		}
-		modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
+		//modelContext.getRasterDataContext().setElevationScaler(elevationScaler);
 
 		modelContext.getRasterDataContext().setAvgOfAllRasterValues(globalOptionModel.getAverageOverlappedData());
 		modelContext.getRasterDataContext().setInterpolate(globalOptionModel.getInterpolateData());
-		modelContext.getRasterDataContext().setScaled(true);
 
 		// +
 		if (progressTracker != null) {
@@ -201,7 +198,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		for (int i = 0; i < numberOfThreads; i++) {
 			ModelProgram modelProgram;
 
-			View view = ViewFactory.getViewInstance(modelContext, globalOptionModel, modelDimensions, mapProjection, modelContext.getScriptingContext().getScriptProxy(), modelGrid);
+			//View view = ViewFactory.getViewInstance(modelContext, globalOptionModel, modelDimensions, mapProjection, modelContext.getScriptingContext().getScriptProxy(), modelGrid, elevationScaler);
 
 			try {
 				modelProgram = modelProcessManifest.createModelProgram(null, null);
@@ -402,12 +399,12 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		}
 		
 		this.modelGrid.setCompleted(true);
-		if (!globalOptionModel.isPreviewRendering() && globalOptionModel.getPromptToSaveModelGrid()) {
+		if (!globalOptionModel.isPreviewRendering() && globalOptionModel.getSaveModelGrid()) {
 			
-			String saveTo = FilePathPrompt.prompt(FilePathPromptMode.SAVE, null);
-			if (saveTo != null) {
+			FilePath saveTo = globalOptionModel.getModelGridSavePath();
+			if (saveTo != null && saveTo.isValid(true)) {
 				try {
-					ModelGridWriter.write(saveTo, innerModelGrid);
+					ModelGridWriter.write(saveTo.getPath(), innerModelGrid);
 				} catch (Exception ex) {
 					log.error("Error writing model grid to file: " + ex.getMessage(), ex);
 				}
@@ -448,8 +445,8 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 			throw new RenderEngineException("Error creating map projection: " + ex.getMessage(), ex);
 		}
 
-		View view = ViewFactory.getViewInstance(modelContext, globalOptionModel, modelDimensions, mapProjection, modelContext.getScriptingContext().getScriptProxy(), modelGrid);
-
+		View view = ViewFactory.getViewInstance(modelContext, globalOptionModel, modelDimensions, mapProjection, modelContext.getScriptingContext().getScriptProxy(), modelGrid, elevationScaler);
+		
 		//ModelRenderer renderer = new ModelRenderer();
 		RenderProcess renderer = new RenderProcess(view);
 		//renderer.setView(view);
@@ -460,7 +457,8 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		renderer.setModelDimensions(modelDimensions);
 		renderer.setScript(modelContext.getScriptingContext().getScriptProxy());
 		renderer.setModelGrid(modelGrid);
-
+		renderer.setScaler(elevationScaler);
+		
 		renderer.prepare();
 
 		try {
@@ -549,8 +547,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		elevationModel.setProperty("data-resolution-longitude", "" + modelDimensions.longitudeResolution);
 
 		elevationModel.setProperty("elevation-minimum", "" + modelContext.getRasterDataContext().getDataMinimumValue());
-		elevationModel.setProperty("elevation-maximum-true", "" + modelContext.getRasterDataContext().getDataMaximumValueTrue());
-		elevationModel.setProperty("elevation-maximum-scaled", "" + modelContext.getRasterDataContext().getDataMaximumValue());
+		elevationModel.setProperty("elevation-maximum", "" + modelContext.getRasterDataContext().getDataMaximumValue());
 		elevationModel.setProperty("elevation-minmax-estimated", "" + globalOptionModel.isEstimateElevationRange());
 
 		elevationModel.setProperty("model-columns", "" + modelDimensions.outputWidth);

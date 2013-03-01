@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Spinner;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.AzimuthElevationAngles;
+import us.wthr.jdem846.model.FilePath;
 import us.wthr.jdem846.model.LightingDate;
 import us.wthr.jdem846.model.LightingTime;
 import us.wthr.jdem846.model.OptionListModel;
@@ -33,6 +34,7 @@ import us.wthr.jdem846ui.controls.LabeledColor;
 import us.wthr.jdem846ui.controls.LabeledCombo;
 import us.wthr.jdem846ui.controls.LabeledControl;
 import us.wthr.jdem846ui.controls.LabeledDate;
+import us.wthr.jdem846ui.controls.LabeledFilePicker;
 import us.wthr.jdem846ui.controls.LabeledSpinner;
 import us.wthr.jdem846ui.controls.LabeledTime;
 import us.wthr.jdem846ui.observers.OptionValidationChangeObserver;
@@ -67,10 +69,48 @@ public class ModelOptionControlsFactory
 			return ModelOptionControlsFactory.createDateControl(parent, optionModel, propertyContainer);
 		} else if (propertyContainer.getType().equals(LightingTime.class)) {
 			return ModelOptionControlsFactory.createTimeControl(parent, optionModel, propertyContainer);
+		} else if (propertyContainer.getType().equals(FilePath.class)) {
+			return ModelOptionControlsFactory.createFilePickerControl(parent, optionModel, propertyContainer);
 		} else {
 			return null;
 		}
 
+	}
+	
+	public static LabeledFilePicker createFilePickerControl(Composite parent, final OptionModel optionModel, final OptionModelPropertyContainer property)
+	{
+		final LabeledFilePicker labeledPicker = LabeledFilePicker.create(parent, property.getLabel(), SWT.NONE);
+		
+		try {
+			boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
+			labeledPicker.getControl().setEnabled(enabled);
+		} catch (MethodContainerInvokeException e) {
+			e.printStackTrace();
+		}
+		
+		OptionValidationChangeObserver.getInstance().addOptionValidationResultsListener(new OptionValidationResultsListener()
+		{
+			public void onOptionValidationResults(List<PropertyValidationResult> results, OptionModelChangeEvent originatingEvent)
+			{
+				//try {
+					// Update value to control
+				//} catch (MethodContainerInvokeException e1) {
+				//	e1.printStackTrace();
+				//}
+
+				try {
+					boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
+					if (!labeledPicker.getControl().isDisposed()) {
+						labeledPicker.getControl().setEnabled(enabled);
+					}
+				} catch (MethodContainerInvokeException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+		
+		return labeledPicker;
 	}
 
 	public static LabeledColor createColorControl(Composite parent, final OptionModel optionModel, final OptionModelPropertyContainer property)

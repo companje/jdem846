@@ -53,7 +53,8 @@ public class GlobalOptionModel implements OptionModel
 
 	private int numberOfThreads = 1;
 
-	private boolean promptToSaveModelGrid = false;
+	private boolean saveModelGrid = false;
+	private FilePath modelGridSavePath = null;
 	
 	private boolean useDiskCachedModelGrid = false;
 	private boolean disposeGridOnComplete = true;
@@ -517,19 +518,36 @@ public class GlobalOptionModel implements OptionModel
 	
 	
 	
-	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.promptToSaveModelGrid"
-			, label = "Prompt To Save Model Grid"
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.saveModelGrid"
+			, label = "Save Model Grid"
 			, tooltip = ""
 			, visible = true)
 	@Order(27)
-	public boolean getPromptToSaveModelGrid() 
+	public boolean getSaveModelGrid() 
 	{
-		return promptToSaveModelGrid;
+		return saveModelGrid;
 	}
 
-	public void setPromptToSaveModelGrid(boolean promptToSaveModelGrid) 
+	public void setSaveModelGrid(boolean saveModelGrid) 
 	{
-		this.promptToSaveModelGrid = promptToSaveModelGrid;
+		this.saveModelGrid = saveModelGrid;
+	}
+	
+	
+	
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.modelGridSavePath"
+			, label = "Save Model Grid To"
+			, tooltip = ""
+			, visible = true)
+	@Order(28)
+	public FilePath getModelGridSavePath()
+	{
+		return modelGridSavePath;
+	}
+
+	public void setModelGridSavePath(FilePath modelGridSavePath)
+	{
+		this.modelGridSavePath = modelGridSavePath;
 	}
 
 	public boolean getDisposeGridOnComplete()
@@ -615,7 +633,8 @@ public class GlobalOptionModel implements OptionModel
 		copy.numberOfThreads = this.numberOfThreads;
 		copy.fieldOfView = this.fieldOfView;
 		copy.eyeDistance = this.eyeDistance;
-		copy.promptToSaveModelGrid = this.promptToSaveModelGrid;
+		copy.saveModelGrid = this.saveModelGrid;
+		copy.modelGridSavePath = (modelGridSavePath != null) ? this.modelGridSavePath.copy() : null;
 		return copy;
 	}
 

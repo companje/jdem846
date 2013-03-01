@@ -10,6 +10,7 @@ import us.wthr.jdem846.math.Ellipsoid;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.modelgrid.IModelGrid;
+import us.wthr.jdem846.scaling.ElevationScaler;
 import us.wthr.jdem846.scripting.ScriptProxy;
 
 public abstract class AbstractView implements View
@@ -22,6 +23,7 @@ public abstract class AbstractView implements View
 	protected IModelGrid modelGrid = null;
 	protected Planet planet = null;
 	
+	protected ElevationScaler scaler = null;
 	protected FlatNormalsCalculator flatNormals = null;
 	protected SphericalNormalsCalculator sphericalNormals = null;
 	
@@ -42,6 +44,12 @@ public abstract class AbstractView implements View
 	protected double elevScaler = -1;
 	
 	protected boolean useFlatNormals = false;
+	
+	@Override
+	public void setElevationScaler(ElevationScaler scaler)
+	{
+		this.scaler = scaler;
+	}
 	
 	protected double getElevationScaler()
 	{
@@ -79,24 +87,18 @@ public abstract class AbstractView implements View
 		
 		if (useFlatNormals) {
 			if (flatNormals == null) {
-				flatNormals = new FlatNormalsCalculator(planet, modelDimensions.getModelLatitudeResolution(), modelDimensions.getModelLongitudeResolution(), new ElevationFetchCallback() {
-					@Override
-					public double getElevation(double latitude, double longitude)
-					{
-						return modelGrid.getElevation(latitude, longitude, true);
-					}
-				});
+				flatNormals = new FlatNormalsCalculator(planet
+														, modelDimensions.getModelLatitudeResolution()
+														, modelDimensions.getModelLongitudeResolution()
+														, new ScaledElevationFetchCallback(modelGrid, scaler));
 			}
 			normals = flatNormals;
 		} else {
 			if (sphericalNormals == null) {
-				sphericalNormals = new SphericalNormalsCalculator(planet, modelDimensions.getModelLatitudeResolution(), modelDimensions.getModelLongitudeResolution(), new ElevationFetchCallback() {
-					@Override
-					public double getElevation(double latitude, double longitude)
-					{
-						return modelGrid.getElevation(latitude, longitude, true);
-					}
-				});
+				sphericalNormals = new SphericalNormalsCalculator(planet
+																, modelDimensions.getModelLatitudeResolution()
+																, modelDimensions.getModelLongitudeResolution()
+																, new ScaledElevationFetchCallback(modelGrid, scaler));
 			}
 			normals = sphericalNormals;
 		}

@@ -27,7 +27,6 @@ public class HypsometricColorProcessor extends GridFilter
 	protected double east;
 	protected double west;
 
-	protected double maximumElevationTrue;
 	protected double minimumElevation;
 	protected double maximumElevation;
 
@@ -54,14 +53,13 @@ public class HypsometricColorProcessor extends GridFilter
 
 		minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
 		maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
-		maximumElevationTrue = modelContext.getRasterDataContext().getDataMaximumValueTrue();
+
 
 		try {
 			modelColoring = ColoringRegistry.getInstance(optionModel.getColorTint()).getImpl().copy();
 		} catch (Exception ex) {
 			throw new RenderEngineException("Failed to create coloring instance copy: " + ex.getMessage(), ex);
 		}
-		modelColoring.setElevationScaler(modelContext.getRasterDataContext().getElevationScaler());
 
 		nearestNeighbor = getGlobalOptionModel().getStandardResolutionElevation();
 

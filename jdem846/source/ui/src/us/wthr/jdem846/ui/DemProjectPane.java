@@ -71,6 +71,8 @@ import us.wthr.jdem846.project.ProjectMarshaller;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
+import us.wthr.jdem846.rasterdata.RasterDataSource;
+import us.wthr.jdem846.rasterdata.generic.IRasterDefinition;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.scripting.ScriptingContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
@@ -180,8 +182,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 		if (projectMarshall != null) {
 			// TODO: Load saved project into model
 
-			for (String filePath : projectMarshall.getRasterFiles()) {
-				addElevationDataset(filePath, false);
+			for (RasterDataSource rasterDataSource : projectMarshall.getRasterFiles()) {
+				addElevationDataset(rasterDataSource.getFilePath(), rasterDataSource.getDefinition(), false); 
 			}
 
 			for (ShapeFileRequest shapeFile : projectMarshall.getShapeFiles()) {
@@ -725,7 +727,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 							} else if (extension != null && (extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("png"))) {
 								addImageryData(file.getAbsolutePath(), false);
 							} else {
-								addElevationDataset(file.getAbsolutePath(), false);
+								// Swing UI does not yet support generic raster definitions, supply null in this case
+								addElevationDataset(file.getAbsolutePath(), null, false);
 							}
 
 							double progress = (((double) i / (double) selectedFiles.length));
@@ -914,12 +917,12 @@ public class DemProjectPane extends JdemPanel implements Savable
 			onDataModelChanged();
 	}
 
-	protected void addElevationDataset(final String filePath, final boolean triggerModelChanged)
+	protected void addElevationDataset(final String filePath, final IRasterDefinition rasterDefinition, final boolean triggerModelChanged)
 	{
 
 		RasterData rasterData = null;
 		try {
-			rasterData = RasterDataProviderFactory.loadRasterData(filePath);
+			rasterData = RasterDataProviderFactory.loadRasterData(filePath, rasterDefinition);
 		} catch (DataSourceException ex) {
 			log.warn("Invalid file format: " + ex.getMessage(), ex);
 			JOptionPane.showMessageDialog(instance.getRootPane(), I18N.get("us.wthr.jdem846.ui.projectPane.add.elevation.loadFailed.invalidFormat.message") + ": " + "", // ex.getExtension(),

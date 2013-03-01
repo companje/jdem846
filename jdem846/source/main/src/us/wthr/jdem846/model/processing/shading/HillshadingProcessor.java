@@ -149,7 +149,7 @@ public class HillshadingProcessor extends GridProcessor
 		shadowIntensity = optionModel.getShadowIntensity();
 		if (rayTraceShadows) {
 			lightSourceRayTracer = new RayTracing(latitudeResolution, longitudeResolution, modelRadius, modelContext.getNorth(), modelContext.getSouth(), modelContext.getEast(),
-					modelContext.getWest(), modelContext.getRasterDataContext().getDataMaximumValue(), modelContext.getRasterDataContext().getElevationScaler(), new RasterDataFetchHandler()
+					modelContext.getWest(), modelContext.getRasterDataContext().getDataMaximumValue(), null/*modelContext.getRasterDataContext().getElevationScaler()*/, new RasterDataFetchHandler()
 					{
 						public double getRasterData(double latitude, double longitude) throws Exception
 						{

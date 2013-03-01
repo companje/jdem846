@@ -104,7 +104,7 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 		globalOptionModel.setForceResetAndRunFilters(true);
 		globalOptionModel.setNumberOfThreads(1);
 		globalOptionModel.setPreviewRendering(true);
-		globalOptionModel.setPromptToSaveModelGrid(false);
+		globalOptionModel.setSaveModelGrid(false);
 		
 		try {
 			modelContextWorkingCopy.updateContext();

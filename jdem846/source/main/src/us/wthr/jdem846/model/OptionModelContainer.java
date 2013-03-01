@@ -307,7 +307,9 @@ public class OptionModelContainer
 		
 		for (OptionModelPropertyContainer property : this.propertyContainerList) {
 			try {
-				propertyMap.put(property.getId(), property.getValue().toString());
+				if (property.getValue() != null) {
+					propertyMap.put(property.getId(), property.getValue().toString());
+				}
 			} catch (MethodContainerInvokeException ex) {
 				throw new ModelContainerException("Error retrieving property value: " + ex.getMessage(), ex);
 			}

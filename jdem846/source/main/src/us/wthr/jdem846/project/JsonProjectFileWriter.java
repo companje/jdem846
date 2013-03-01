@@ -13,6 +13,7 @@ import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.rasterdata.RasterDataSource;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
 
 
@@ -44,11 +45,31 @@ public class JsonProjectFileWriter
 	
 	
 	
-	protected static JSONObject createRasterObject(String path)
+	protected static JSONObject createRasterObject(RasterDataSource rasterDataSource)
 	{
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.element("type", "raster");
-		jsonObject.element("path", path);
+		jsonObject.element("path", rasterDataSource.getFilePath());
+		
+		jsonObject.element("north", rasterDataSource.getDefinition().getNorth());
+		jsonObject.element("south", rasterDataSource.getDefinition().getSouth());
+		jsonObject.element("east", rasterDataSource.getDefinition().getEast());
+		jsonObject.element("west", rasterDataSource.getDefinition().getWest());
+		jsonObject.element("latitudeResolution", rasterDataSource.getDefinition().getLatitudeResolution());
+		jsonObject.element("longitudeResolution", rasterDataSource.getDefinition().getLongitudeResolution());
+		jsonObject.element("imageWidth", rasterDataSource.getDefinition().getImageWidth());
+		jsonObject.element("imageHeight", rasterDataSource.getDefinition().getImageHeight());
+		jsonObject.element("numBands", rasterDataSource.getDefinition().getNumBands());
+		jsonObject.element("headerSize", rasterDataSource.getDefinition().getHeaderSize());
+		jsonObject.element("dataType", rasterDataSource.getDefinition().getDataType());
+		jsonObject.element("byteOrder", rasterDataSource.getDefinition().getByteOrder());
+		jsonObject.element("interleavingType", rasterDataSource.getDefinition().getInterleavingType());
+		jsonObject.element("noData", rasterDataSource.getDefinition().getNoData());
+		jsonObject.element("locked", rasterDataSource.getDefinition().isLocked());
+
+		
+		
+		
 		return jsonObject;
 	}
 	
@@ -85,8 +106,8 @@ public class JsonProjectFileWriter
 	{
 		JSONArray layersArray = new JSONArray();
 		
-		for (String path : projectMarshall.getRasterFiles()) {
-			JSONObject rasterObj = createRasterObject(path);
+		for (RasterDataSource rasterDataSource : projectMarshall.getRasterFiles()) {
+			JSONObject rasterObj = createRasterObject(rasterDataSource);
 			layersArray.add(rasterObj);
 		}
 		

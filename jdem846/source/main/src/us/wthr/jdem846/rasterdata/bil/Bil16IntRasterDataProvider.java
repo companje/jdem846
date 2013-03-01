@@ -7,6 +7,7 @@ import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.generic.GenericRasterDataProvider;
+import us.wthr.jdem846.rasterdata.generic.IRasterDefinition;
 import us.wthr.jdem846.rasterdata.generic.RasterDefinition;
 
 public class Bil16IntRasterDataProvider extends GenericRasterDataProvider
@@ -27,7 +28,7 @@ public class Bil16IntRasterDataProvider extends GenericRasterDataProvider
 	}
 
 	@Override
-	public void create(String filePath) throws DataSourceException
+	public void create(String filePath, IRasterDefinition rasterDefinition) throws DataSourceException
 	{
 		dataFile = new File(filePath);
 		if (!dataFile.exists()) {
@@ -37,7 +38,8 @@ public class Bil16IntRasterDataProvider extends GenericRasterDataProvider
 		String headerFilePath = filePath.replace(".bil", ".hdr");
 		header = new Bil16IntHeader(headerFilePath);
 
-		RasterDefinition rasterDefinition = new RasterDefinition();
+		// Override the provided raster data. Believe the header file...
+		rasterDefinition = new RasterDefinition();
 		rasterDefinition.setDataType(DataTypeEnum.Int16);
 		rasterDefinition.setByteOrder(header.getByteOrder());
 		rasterDefinition.setImageHeight(header.getRows());
