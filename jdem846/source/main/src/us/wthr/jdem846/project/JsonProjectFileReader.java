@@ -138,6 +138,17 @@ public class JsonProjectFileReader
 		
 	}
 	
+	protected static void parseModelGridLayer(ProjectMarshall projectMarshall, JSONObject layerObj) throws ProjectParseException
+	{
+		String path = layerObj.getString("path");
+		if (path != null) {
+			projectMarshall.setModelGrid(path);
+		} else {
+			throw new ProjectParseException("Incomplete information for model grid layer: missing path");
+		}
+		
+	}
+	
 	protected static void parseLayers(ProjectMarshall projectMarshall, JSONArray layersArray) throws ProjectParseException
 	{
 		for (int i = 0; i < layersArray.size(); i++) {
@@ -151,6 +162,8 @@ public class JsonProjectFileReader
 				JsonProjectFileReader.parseShapeLayer(projectMarshall, layersObj);
 			} else if (type.equalsIgnoreCase("image")) {
 				JsonProjectFileReader.parseImageLayer(projectMarshall, layersObj);
+			} else if (type.equalsIgnoreCase("modelGrid")) {
+				JsonProjectFileReader.parseModelGridLayer(projectMarshall, layersObj);
 			} else {
 				throw new ProjectParseException("Unrecognized layer type: " + type);
 			}

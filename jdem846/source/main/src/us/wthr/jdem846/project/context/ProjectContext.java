@@ -62,7 +62,7 @@ public class ProjectContext
 	private ScriptingContext scriptingContext;
 	private ModelGridContext modelGridContext;
 
-	//private List<OptionModel> defaultOptionModelList;
+	// private List<OptionModel> defaultOptionModelList;
 	private Map<String, OptionModelContainer> optionModelContainerList;
 
 	private List<ElevationModel> elevationModelList;
@@ -88,7 +88,7 @@ public class ProjectContext
 		}
 
 		this.projectChangeBroker.fireOnBeforeProjectLoaded(projectLoadedFrom, projectPath, true);
-		
+
 		optionModelContainerList = new HashMap<String, OptionModelContainer>();
 		elevationModelList = new ArrayList<ElevationModel>();
 
@@ -120,7 +120,7 @@ public class ProjectContext
 			log.error("Error creating option model list: " + ex.getMessage(), ex);
 			// TODO: Display error dialog
 
-			//defaultOptionModelList = new LinkedList<OptionModel>();
+			// defaultOptionModelList = new LinkedList<OptionModel>();
 		}
 
 		try {
@@ -130,10 +130,9 @@ public class ProjectContext
 			log.error("Error creating default model process manifest: " + ex.getMessage(), ex);
 		}
 
-		
 		List<ProcessMarshall> processMarshalls = projectMarshall.getProcesses();
 		for (ProcessMarshall processMarshall : processMarshalls) {
-			
+
 			try {
 				OptionModelContainer container = getOptionModelContainer(processMarshall.getId());
 				OptionModel optionModel = container.getOptionModel();
@@ -141,10 +140,8 @@ public class ProjectContext
 			} catch (ProcessContainerException ex) {
 				log.error("Error loading process worker '" + processMarshall.getId() + "': " + ex.getMessage(), ex);
 			}
-			
-		}
-		
 
+		}
 
 		shapeDataContext = new ShapeDataContext();
 		imageDataContext = new ImageDataContext();
@@ -173,19 +170,16 @@ public class ProjectContext
 			for (SimpleGeoImage imageRef : projectMarshall.getImageFiles()) {
 				addImageryData(imageRef.getImageFile(), imageRef.getNorth(), imageRef.getSouth(), imageRef.getEast(), imageRef.getWest(), false);
 			}
-			
+
+			if (projectMarshall.getModelGrid() != null) {
+				modelGridContext.importModelGrid(projectMarshall.getModelGrid());
+			}
+
 			scriptingContext.setScriptLanguage(projectMarshall.getScriptLanguage());
 			scriptingContext.setUserScript(projectMarshall.getUserScript());
 
-		} 
-		
-		
+		}
 
-		
-
-		
-
-		
 		projectChangeBroker.fireOnProjectLoaded(projectPath, true);
 
 	}
@@ -219,7 +213,7 @@ public class ProjectContext
 	protected void createOptionModelList(ProjectMarshall projectMarshall) throws Exception
 	{
 		GlobalOptionModel globalOptionModel = new GlobalOptionModel();
-		
+
 		OptionModelChangeListener optionModelChangeListener = new OptionModelChangeListener()
 		{
 			public void onPropertyChanged(OptionModelChangeEvent e)
@@ -230,13 +224,11 @@ public class ProjectContext
 				}
 			}
 		};
-		
+
 		OptionModelContainer globalOptionModelContainer = new OptionModelContainer(globalOptionModel);
 		globalOptionModelContainer.addOptionModelChangeListener(optionModelChangeListener);
-		
-		if (projectMarshall != null && projectMarshall.getGlobalOptions() != null) {
 
-			
+		if (projectMarshall != null && projectMarshall.getGlobalOptions() != null) {
 
 			for (String option : projectMarshall.getGlobalOptions().keySet()) {
 				String value = projectMarshall.getGlobalOptions().get(option);
@@ -249,11 +241,9 @@ public class ProjectContext
 				}
 			}
 		}
-		
-		this.optionModelContainerList.put(globalOptionModel.getClass().getCanonicalName(), globalOptionModelContainer);
-		
 
-		
+		this.optionModelContainerList.put(globalOptionModel.getClass().getCanonicalName(), globalOptionModelContainer);
+
 		List<ProcessInstance> processList = ModelProcessRegistry.getInstances();
 		for (ProcessInstance processInstance : processList) {
 
@@ -261,9 +251,8 @@ public class ProjectContext
 
 			OptionModel optionModel = processInstance.createOptionModel();
 			OptionModelContainer optionModelContainer = new OptionModelContainer(optionModel);
-			
+
 			if (processMarshall != null) {
-				
 
 				for (String option : processMarshall.getOptions().keySet()) {
 					String value = processMarshall.getOptions().get(option);
@@ -274,24 +263,24 @@ public class ProjectContext
 						// TODO: Display error dialog
 					}
 				}
-				
+
 			}
 			optionModelContainer.addOptionModelChangeListener(optionModelChangeListener);
 			optionModelContainerList.put(processInstance.getId(), optionModelContainer);
 
 		}
 	}
-	
+
 	public void addModelGridDataset(String filePath) throws ProjectException
 	{
 		addModelGridDataset(filePath, true);
 	}
-	
+
 	protected void addModelGridDataset(String filePath, boolean triggerModelChanged) throws ProjectException
 	{
-		
+
 		modelGridContext.importModelGrid(filePath);
-		
+
 		if (triggerModelChanged) {
 			projectChangeBroker.fireOnDataAdded(true);
 		}
@@ -348,10 +337,6 @@ public class ProjectContext
 
 	}
 
-	
-	
-	
-	
 	public void addShapeDataset(String filePath, String shapeDataDefinitionId) throws ProjectException
 	{
 		addShapeDataset(filePath, shapeDataDefinitionId, true);
@@ -400,67 +385,66 @@ public class ProjectContext
 		}
 
 	}
-	
+
 	public void removeSourceData(InputSourceData dataSource) throws DataSourceException
 	{
 		removeSourceData(dataSource, true);
 	}
-	
+
 	public void removeSourceData(InputSourceData dataSource, boolean triggerModelChanged) throws DataSourceException
 	{
 		if (dataSource == null) {
 			return;
 		}
-		
+
 		if (dataSource instanceof RasterData) {
-			removeElevationData((RasterData)dataSource, triggerModelChanged);
+			removeElevationData((RasterData) dataSource, triggerModelChanged);
 		} else if (dataSource instanceof ShapeFileRequest) {
-			removeShapeData((ShapeFileRequest)dataSource, triggerModelChanged);
+			removeShapeData((ShapeFileRequest) dataSource, triggerModelChanged);
 		} else if (dataSource instanceof SimpleGeoImage) {
-			removeImageData((SimpleGeoImage)dataSource, triggerModelChanged);
+			removeImageData((SimpleGeoImage) dataSource, triggerModelChanged);
 		} else if (dataSource instanceof IModelGrid) {
 			removeModelGridData(triggerModelChanged);
 		}
 	}
-	
-	
+
 	public void removeModelGridData() throws DataSourceException
 	{
 		removeModelGridData(true);
 	}
-	
+
 	public void removeModelGridData(boolean triggerModelChanged) throws DataSourceException
 	{
 		modelGridContext.unloadModelGrid();
-		
+
 		if (triggerModelChanged) {
 			projectChangeBroker.fireOnDataAdded(true);
 		}
 	}
-	
+
 	public void removeElevationData(int index) throws DataSourceException
 	{
 		removeElevationData(index, true);
 	}
-	
+
 	public void removeElevationData(int index, boolean triggerModelChanged) throws DataSourceException
 	{
 		rasterDataContext.removeRasterData(index);
-		
+
 		if (triggerModelChanged) {
 			projectChangeBroker.fireOnDataAdded(true);
 		}
 	}
-	
+
 	public void removeElevationData(RasterData rasterData) throws DataSourceException
 	{
 		removeElevationData(rasterData, true);
 	}
-	
+
 	public void removeElevationData(RasterData rasterData, boolean triggerModelChanged) throws DataSourceException
 	{
 		rasterDataContext.removeRasterData(rasterData);
-		
+
 		if (triggerModelChanged) {
 			projectChangeBroker.fireOnDataAdded(true);
 		}
@@ -470,36 +454,35 @@ public class ProjectContext
 	{
 		removeShapeData(index, true);
 	}
-	
+
 	public void removeShapeData(int index, boolean triggerModelChanged) throws DataSourceException
 	{
 		shapeDataContext.removeShapeFile(index);
-		
-		if (triggerModelChanged) {
-			projectChangeBroker.fireOnDataAdded(true);
-		}
-	}
-	
-	public void removeShapeData(ShapeFileRequest shapeFileRequest) throws DataSourceException
-	{
-		removeShapeData(shapeFileRequest, true);
-	}
-	
-	public void removeShapeData(ShapeFileRequest shapeFileRequest, boolean triggerModelChanged) throws DataSourceException
-	{
-		shapeDataContext.removeShapeFile(shapeFileRequest);
-		
+
 		if (triggerModelChanged) {
 			projectChangeBroker.fireOnDataAdded(true);
 		}
 	}
 
-	
+	public void removeShapeData(ShapeFileRequest shapeFileRequest) throws DataSourceException
+	{
+		removeShapeData(shapeFileRequest, true);
+	}
+
+	public void removeShapeData(ShapeFileRequest shapeFileRequest, boolean triggerModelChanged) throws DataSourceException
+	{
+		shapeDataContext.removeShapeFile(shapeFileRequest);
+
+		if (triggerModelChanged) {
+			projectChangeBroker.fireOnDataAdded(true);
+		}
+	}
+
 	public void removeImageData(int index) throws DataSourceException
 	{
 		removeImageData(index, true);
 	}
-	
+
 	public void removeImageData(int index, boolean triggerModelChanged) throws DataSourceException
 	{
 		SimpleGeoImage image = imageDataContext.removeImage(index);
@@ -511,17 +494,16 @@ public class ProjectContext
 			projectChangeBroker.fireOnDataAdded(true);
 		}
 	}
-	
-	
+
 	public void removeImageData(SimpleGeoImage simpleGeoImage) throws DataSourceException
 	{
 		removeImageData(simpleGeoImage, true);
 	}
-	
+
 	public void removeImageData(SimpleGeoImage simpleGeoImage, boolean triggerModelChanged) throws DataSourceException
 	{
 		imageDataContext.removeImage(simpleGeoImage);
-		
+
 		if (simpleGeoImage.isLoaded()) {
 			simpleGeoImage.unload();
 		}
@@ -530,7 +512,6 @@ public class ProjectContext
 			projectChangeBroker.fireOnDataAdded(true);
 		}
 	}
-	
 
 	public ProjectChangeBroker getProjectChangeBroker()
 	{
@@ -605,30 +586,29 @@ public class ProjectContext
 	{
 		return optionModelContainerList.get(processId);
 		/*
-		ProcessInstance processInstance = ModelProcessRegistry.getInstance(processId);
-
-		if (processInstance != null) {
-			Class<?> clazz = processInstance.getOptionModelClass();
-
-			return ProjectContext.getInstance().getOptionModelContainer(clazz);
-
-		} else {
-			log.info("Process not found with id " + processId);
-			return null;
-		}
-		*/
+		 * ProcessInstance processInstance =
+		 * ModelProcessRegistry.getInstance(processId);
+		 * 
+		 * if (processInstance != null) { Class<?> clazz =
+		 * processInstance.getOptionModelClass();
+		 * 
+		 * return ProjectContext.getInstance().getOptionModelContainer(clazz);
+		 * 
+		 * } else { log.info("Process not found with id " + processId); return
+		 * null; }
+		 */
 	}
 
 	public OptionModelContainer getGlobalOptionModelContainer()
 	{
 		return optionModelContainerList.get(GlobalOptionModel.class.getCanonicalName());
 	}
-	
+
 	public GlobalOptionModel getGlobalOptionModel()
 	{
 		return (GlobalOptionModel) getGlobalOptionModelContainer().getOptionModel();
 	}
-	
+
 	public List<ElevationModel> getElevationModelList()
 	{
 		List<ElevationModel> listCopy = new LinkedList<ElevationModel>(elevationModelList);

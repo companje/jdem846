@@ -30,6 +30,7 @@ public class ProjectMarshall
 	private List<String> rasterFiles = new LinkedList<String>();
 	private List<ShapeFileRequest> shapeFiles = new LinkedList<ShapeFileRequest>();
 	private List<SimpleGeoImage> imageFiles = new LinkedList<SimpleGeoImage>();
+	private String modelGrid = null;
 	
 	private List<ElevationModel> modelList = new LinkedList<ElevationModel>();
 	
@@ -121,6 +122,18 @@ public class ProjectMarshall
 		this.imageFiles = imageFiles;
 	}
 
+	
+	
+	public String getModelGrid()
+	{
+		return modelGrid;
+	}
+
+	public void setModelGrid(String modelGrid)
+	{
+		this.modelGrid = modelGrid;
+	}
+
 	public String getUserScript()
 	{
 		return userScript;
@@ -193,15 +206,7 @@ public class ProjectMarshall
 		
 		String script = IOUtils.toString(in);
 		return script;
-/*		
-		int length = 0;
-		byte[] buffer = new byte[1024];
 
-		while ((length = in.read(buffer)) > 0) {
-			templateBuffer.append(new String(buffer, 0, length));
-		}
-
-		return templateBuffer.toString();*/
 	}
 	
 }
