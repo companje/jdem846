@@ -32,6 +32,8 @@ public class OptionValueTypeConverter
 			return RgbaColor.fromString(object);
 		} else if (type.equals(ViewPerspective.class)) {
 			return ViewPerspective.fromString(object);
+		} else if (type.equals(FilePath.class)) {
+			return FilePath.fromString(object);
 		} else {
 			log.warn("###### Unsupported data type: " + type.getName());
 			return null;

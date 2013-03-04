@@ -54,7 +54,7 @@ public class GlobalOptionModel implements OptionModel
 	private int numberOfThreads = 1;
 
 	private boolean saveModelGrid = false;
-	private FilePath modelGridSavePath = null;
+	private FilePath modelGridSavePath = new FilePath("");
 	
 	private boolean useDiskCachedModelGrid = false;
 	private boolean disposeGridOnComplete = true;

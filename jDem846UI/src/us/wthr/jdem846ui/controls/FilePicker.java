@@ -3,6 +3,7 @@ package us.wthr.jdem846ui.controls;
 import java.io.File;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -40,11 +41,16 @@ public class FilePicker extends Composite
 			}
 		});
 		
-		
+	
 
 		txtPath.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.MIDDLE));
 		btnBrowse.setLayoutData(new TableWrapData(TableWrapData.LEFT, TableWrapData.MIDDLE));
 		
+	}
+	
+	public void addModifyListener(ModifyListener listener)
+	{
+		txtPath.addModifyListener(listener);
 	}
 	
 	public void addSelectionListener(SelectionListener listener)
@@ -59,15 +65,21 @@ public class FilePicker extends Composite
 	
 	public void setFilePath(String path)
 	{
-		txtPath.setText(path);
+		if (!txtPath.isDisposed()) {
+			txtPath.setText(path);
+		}
 	}
 	
 	@Override
 	public void setEnabled(boolean enabled)
 	{
 		super.setEnabled(enabled);
-		txtPath.setEnabled(enabled);
-		btnBrowse.setEnabled(enabled);
+		if (!txtPath.isDisposed()) {
+			txtPath.setEnabled(enabled);
+		}
+		if (!btnBrowse.isDisposed()) {
+			btnBrowse.setEnabled(enabled);
+		}
 	}
 	
 

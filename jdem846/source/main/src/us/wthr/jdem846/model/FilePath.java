@@ -57,7 +57,7 @@ public class FilePath
 	
 	public static FilePath fromString(String s)
 	{
-		s = s.replace("file:[", "").replace("]", "");
+		s = s.replace("file:[", "").replace("];", "");
 		return new FilePath(s);
 	}
 	
