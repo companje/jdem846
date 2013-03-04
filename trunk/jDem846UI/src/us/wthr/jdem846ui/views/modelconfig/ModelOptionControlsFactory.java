@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -81,6 +83,31 @@ public class ModelOptionControlsFactory
 	{
 		final LabeledFilePicker labeledPicker = LabeledFilePicker.create(parent, property.getLabel(), SWT.NONE);
 		
+		labeledPicker.getControl().addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e)
+			{
+				log.info("File location modified");
+				try {
+					property.setValue(labeledPicker.getControl().getFilePath());
+				} catch (MethodContainerInvokeException ex) {
+					log.error("Error setting file path property: " + ex.getMessage(), ex);
+				}
+			}
+			
+		});
+		
+
+		try {
+			FilePath filePath = (FilePath) property.getValue();
+			if (filePath != null && !labeledPicker.getControl().isDisposed()) {
+				labeledPicker.getControl().setFilePath(filePath.getPath());
+			}
+		} catch (MethodContainerInvokeException ex) {
+			log.error("Error setting field value from property: " + ex.getMessage(), ex);
+		}
+		
 		try {
 			boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
 			labeledPicker.getControl().setEnabled(enabled);
@@ -92,19 +119,22 @@ public class ModelOptionControlsFactory
 		{
 			public void onOptionValidationResults(List<PropertyValidationResult> results, OptionModelChangeEvent originatingEvent)
 			{
-				//try {
-					// Update value to control
-				//} catch (MethodContainerInvokeException e1) {
-				//	e1.printStackTrace();
-				//}
+				try {
+					FilePath filePath = (FilePath) property.getValue();
+					if (filePath != null && !labeledPicker.getControl().isDisposed()) {
+						labeledPicker.getControl().setFilePath(filePath.getPath());
+					}
+				} catch (MethodContainerInvokeException ex) {
+					log.error("Error setting field value from property: " + ex.getMessage(), ex);
+				}
 
 				try {
 					boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
 					if (!labeledPicker.getControl().isDisposed()) {
 						labeledPicker.getControl().setEnabled(enabled);
 					}
-				} catch (MethodContainerInvokeException e) {
-					e.printStackTrace();
+				} catch (MethodContainerInvokeException ex) {
+					log.error("Error setting field enable state: " + ex.getMessage(), ex);
 				}
 
 			}
