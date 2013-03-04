@@ -89,13 +89,14 @@ var ScriptContext = (function() {
 		this.modelGrid = null;
 		this.modelDimensions = null;
 		this.globalOptionModel = null;
+		this.elevationScaler = null;
 	}
 	
 	/** Scales an elevation according to the configured multiple and scaling formula.
 	 * 
 	 */
 	ScriptContext.prototype.scaleElevation = function(elevation) {
-		return this.modelContext.getRasterDataContext().getElevationScaler().scale(elevation);
+		return this.elevationScaler.scale(elevation);
 	};
 	
 	/** Fetches an option model from the model context by the process id.

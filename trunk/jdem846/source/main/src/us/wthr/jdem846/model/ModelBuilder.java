@@ -262,6 +262,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 				scriptProxy.setProperty("modelGrid", modelGrid);
 				scriptProxy.setProperty("globalOptionModel", globalOptionModel);
 				scriptProxy.setProperty("modelDimensions", modelDimensions);
+				scriptProxy.setProperty("elevationScaler", elevationScaler);
 			} catch (ScriptingException ex) {
 				throw new RenderEngineException("Error setting script properties: " + ex.getMessage(), ex);
 			}
