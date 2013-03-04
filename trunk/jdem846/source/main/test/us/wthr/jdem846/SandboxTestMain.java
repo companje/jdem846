@@ -22,19 +22,19 @@ public class SandboxTestMain extends AbstractTestMain
 			return;
 		}
 		
+		SandboxTestMain main = new SandboxTestMain();
+		main.run();
 		
-		double start = -10900.0;
-		double stop = 8900.0;
 		
-		int frameNum = 1000000;
-		for (double e = start; e <= stop; e+=1) {
-			System.setProperty("seaLevel.elevation", "" + e);
+		//int frameNum = 1000000;
+		//for (double e = start; e <= stop; e+=1) {
+		//	System.setProperty("seaLevel.elevation", "" + e);
 			
-			
+			/*
 			ProjectRunPlan runPlan = new ProjectRunPlan("C:\\Users\\GillFamily\\Google Drive\\jDem Visuals\\Earth Flooding"
-														, "C:\\Users\\GillFamily\\Google Drive\\jDem Visuals\\Earth Flooding\\frames\\frame-" + frameNum + ".jpg");
+														, "C:\\Users\\GillFamily\\Google Drive\\jDem Visuals\\Earth Flooding\\test-output.jpg");
 			
-			
+			runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.eyeDistance", ""+2500);
 			ProjectExecutor exec = new ProjectExecutor();
 			try {
 				exec.executeProject(runPlan);
@@ -42,11 +42,77 @@ public class SandboxTestMain extends AbstractTestMain
 				// TODO Auto-generated catch block
 				ex.printStackTrace();
 			}
-			frameNum++;
+			*/
+		//	frameNum++;
+	//	}
+	}
+	
+	public void run()
+	{
+		int start = -10900;
+		int stop = 8900;
+		int step = 10;
+		int threads = 1;
+		int framesPerThread = (stop - start) / threads;
+
+		System.err.println("Frames per thread: " + framesPerThread);
+		String projectPath = "C:\\Users\\GillFamily\\Google Drive\\jDem Visuals\\Earth Flooding";
+		
+		int frameIndexStart = 0;
+		for (int threadStart = start; threadStart < stop; threadStart+=framesPerThread) {
+			int threadEnd = threadStart + framesPerThread;
+			
+			RenderThread thread = new RenderThread(projectPath, (double)threadStart, (double)threadEnd, (double)step, frameIndexStart);
+			thread.start();
+			
+			frameIndexStart += framesPerThread;
 		}
 	}
 	
 	
+	class RenderThread extends Thread
+	{
+		private String projectPath;
+		private double start = 0;
+		private double stop = 0;
+		private double step = 0;
+		private int frameIndexStart;
+		
+		public RenderThread(String projectPath, double start, double stop, double step, int frameIndexStart)
+		{
+			this.projectPath = projectPath;
+			this.start = start;
+			this.stop = stop;
+			this.step = step;
+			this.frameIndexStart = frameIndexStart;
+		}
+		
+		public void run()
+		{
+			
+			System.err.println("Starting thread from " + start + " to " + stop);
+			int frameNum = 1000000 + frameIndexStart;
+			for (double e = start; e <= stop; e+=step) {
+				//System.setProperty("seaLevel.elevation", "" + e);
+				
+				System.err.println("Starting render for elevation " + e);
+				
+				ProjectRunPlan runPlan = new ProjectRunPlan(projectPath
+															, "E:\\frames\\frame-" + frameNum + ".jpg");
+				
+				runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.eyeDistance", ""+e);
+				ProjectExecutor exec = new ProjectExecutor();
+				try {
+					exec.executeProject(runPlan);
+				} catch (Exception ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
+				frameNum++;
+			}
+		}
+		
+	}
 	
 	
 	public SandboxTestMain() 
