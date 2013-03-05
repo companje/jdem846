@@ -84,9 +84,16 @@ public class ModelGridContext implements DataContext
 			UserProvidedModelGrid userProvidedModelGrid = new UserProvidedModelGrid(filePath);
 			this.userProvidedModelGridHeader = userProvidedModelGrid.getModelGridHeader();
 			this.modelGrid = userProvidedModelGrid;
+			this.fillControlledModelGrid = userProvidedModelGrid;
 		} 
 	}
 
+	
+	public boolean isUserProvided()
+	{
+		return (gridLoadedFrom != null);
+	}
+	
 	public void exportModelGrid(String filePath) throws DataSourceException
 	{
 
@@ -109,7 +116,7 @@ public class ModelGridContext implements DataContext
 		ModelGridContext context = new ModelGridContext();
 		
 		context.modelGrid = this.modelGrid;
-		context.fillControlledModelGrid = context.fillControlledModelGrid;
+		context.fillControlledModelGrid = this.fillControlledModelGrid;
 
 		context.gridLoadedFrom = this.gridLoadedFrom;
 		context.userProvidedModelGridHeader = this.userProvidedModelGridHeader;

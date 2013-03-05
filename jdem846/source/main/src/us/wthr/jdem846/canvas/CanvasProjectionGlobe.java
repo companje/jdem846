@@ -191,20 +191,12 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 			double longitudeResolution,
 			double scaleFactor)
 	{
-		//double minSideLength = MathExt.min(outputWidth, outputHeight) - 20;
-		//double radius = (minSideLength / 2.0)  * scaleFactor;
-		double meanRadius = DemConstants.EARTH_MEAN_RADIUS;
 		
-		double minSideLength = MathExt.min(outputWidth, outputHeight) - 20;
-		double radius = minSideLength;// * scaleFactor;
-		//double radiusAdjusted = (radius / meanRadius) * (meanRadius + 0);
-		
-		
+		double radius = outputWidth / 2.0;
 		double circumference = 2 * MathExt.PI * radius;
 		
 		double xdimRatio = (double)circumference / (double)dataColumns;
 		double ydimRatio = (double)circumference / (double)dataRows;
-		
 		
 		double outputLongitudeResolution = longitudeResolution / xdimRatio;
 		double outputLatitudeResolution = latitudeResolution / ydimRatio;

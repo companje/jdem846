@@ -33,7 +33,7 @@ public class GeneralPreferencesPage extends BasicPreferencesPage
 		//us.wthr.jdem846.general.temp
 		
 		//
-		
+		addField(new IntegerFieldEditor("us.wthr.jdem846.general.buffers.maxHeapBufferSizeBytes", "Max Heap Buffer Size (bytes)", getFieldEditorParent()));
 		
 		
 		//this.getApplyButton().setEnabled(false);
