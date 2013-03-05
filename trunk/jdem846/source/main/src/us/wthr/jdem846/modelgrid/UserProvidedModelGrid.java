@@ -7,8 +7,11 @@ import us.wthr.jdem846.buffers.IIntBuffer;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.model.ElevationHistogramModel;
+import us.wthr.jdem846.model.processing.GridFilter;
+import us.wthr.jdem846.model.processing.GridFilterMethodStack;
+import us.wthr.jdem846.rasterdata.RasterDataContext;
 
-public class UserProvidedModelGrid implements IModelGrid
+public class UserProvidedModelGrid implements IModelGrid, IFillControlledModelGrid
 {
 	
 	private File file;
@@ -271,6 +274,43 @@ public class UserProvidedModelGrid implements IModelGrid
 
 	@Override
 	public void setMaximum(double maximum)
+	{
+		// Do nothing. user provided model grids are read-only
+	}
+
+	@Override
+	public boolean getForceResetAndRunFilters()
+	{
+		// Do nothing. user provided model grids are read-only
+		return false;
+	}
+
+	@Override
+	public void setForceResetAndRunFilters(boolean forceResetAndRunFilters)
+	{
+		// Do nothing. user provided model grids are read-only
+	}
+
+	@Override
+	public IFillControlledModelGrid createDependentInstance(RasterDataContext rasterDataContext) throws DataSourceException
+	{
+		return this;
+	}
+
+	@Override
+	public void processFiltersOnPoint(double latitude, double longitude)
+	{
+		// Do nothing. user provided model grids are read-only
+	}
+
+	@Override
+	public void setGridFilters(GridFilterMethodStack gridFilters)
+	{
+		// Do nothing. user provided model grids are read-only
+	}
+
+	@Override
+	public void addGridFilter(GridFilter gridFilter)
 	{
 		// Do nothing. user provided model grids are read-only
 	}

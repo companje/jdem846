@@ -162,13 +162,16 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 			modelGrid.setForceResetAndRunFilters(globalOptionModel.getForceResetAndRunFilters());
 			modelContext.getModelGridContext().setFillControlledModelGrid(modelGrid);
 			
-			int dataRows = (int) MathExt.round((globalOptionModel.getNorthLimit() - globalOptionModel.getSouthLimit()) / modelDimensions.getTextureLatitudeResolution());
-			this.latitudeProcessedList = new LatitudeProcessedList(globalOptionModel.getNorthLimit(), modelDimensions.getTextureLatitudeResolution(), dataRows);
+		//	int dataRows = (int) MathExt.round((globalOptionModel.getNorthLimit() - globalOptionModel.getSouthLimit()) / modelDimensions.getTextureLatitudeResolution());
+			
+		} 
+		
+		if (this.latitudeProcessedList == null) {
+			this.latitudeProcessedList = new LatitudeProcessedList(globalOptionModel.getNorthLimit(), modelDimensions.getTextureLatitudeResolution(), modelGrid.getHeight());
 		} else {
-
 			this.latitudeProcessedList.reset();
-
 		}
+	
 
 		// +
 		if (progressTracker != null) {

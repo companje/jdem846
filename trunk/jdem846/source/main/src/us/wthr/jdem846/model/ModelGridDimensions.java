@@ -59,32 +59,38 @@ public class ModelGridDimensions extends ModelDimensions
 		
 		
 		LatLonResolution latLonOutputRes = null;
-		CanvasProjectionTypeEnum canvasProjectionType = CanvasProjectionTypeEnum.getCanvasProjectionEnumFromIdentifier(globalOptionModel.getRenderProjection());
-		
-		if (canvasProjectionType == CanvasProjectionTypeEnum.PROJECT_3D) {
-			latLonOutputRes = CanvasProjection3d.calculateOutputResolutions(outputWidth,
-															outputHeight,
-															dataColumns,
-															dataRows,
-															latitudeResolution,
-															longitudeResolution,
-															scaleX);
-		} else if (canvasProjectionType == CanvasProjectionTypeEnum.PROJECT_SPHERE) {
-			latLonOutputRes = CanvasProjectionGlobe.calculateOutputResolutions(outputWidth,
-															outputHeight,
-															dataColumns,
-															dataRows,
-															latitudeResolution,
-															longitudeResolution,
-															scaleX);
-		} else  {
-			latLonOutputRes = CanvasProjection.calculateOutputResolutions(outputWidth,
-															outputHeight,
-															dataColumns,
-															dataRows,
-															latitudeResolution,
-															longitudeResolution,
-															scaleX);
+		if(!modelContext.getModelGridContext().isUserProvided()) {
+			
+			CanvasProjectionTypeEnum canvasProjectionType = CanvasProjectionTypeEnum.getCanvasProjectionEnumFromIdentifier(globalOptionModel.getRenderProjection());
+			
+			
+			if (canvasProjectionType == CanvasProjectionTypeEnum.PROJECT_3D) {
+				latLonOutputRes = CanvasProjection3d.calculateOutputResolutions(outputWidth,
+																outputHeight,
+																dataColumns,
+																dataRows,
+																latitudeResolution,
+																longitudeResolution,
+																scaleX);
+			} else if (canvasProjectionType == CanvasProjectionTypeEnum.PROJECT_SPHERE) {
+				latLonOutputRes = CanvasProjectionGlobe.calculateOutputResolutions(outputWidth,
+																outputHeight,
+																dataColumns,
+																dataRows,
+																latitudeResolution,
+																longitudeResolution,
+																scaleX);
+			} else  {
+				latLonOutputRes = CanvasProjection.calculateOutputResolutions(outputWidth,
+																outputHeight,
+																dataColumns,
+																dataRows,
+																latitudeResolution,
+																longitudeResolution,
+																scaleX);
+			}
+		} else {
+			latLonOutputRes = new LatLonResolution(latitudeResolution, longitudeResolution);
 		}
 		
 		modelLatitudeResolution = latLonOutputRes.latitudeResolution;
@@ -99,6 +105,14 @@ public class ModelGridDimensions extends ModelDimensions
 		
 		double modelQuality = globalOptionModel.getModelQuality();
 		double textureQuality = globalOptionModel.getTextureQuality();
+		
+		if (modelQuality > textureQuality) {
+			modelQuality = textureQuality;
+		}
+		
+		if (modelContext.getModelGridContext().isUserProvided()) {
+			textureQuality = 1.0;
+		}
 		
 		modelLatitudeResolution /= modelQuality;
 		modelLongitudeResolution /= modelQuality;

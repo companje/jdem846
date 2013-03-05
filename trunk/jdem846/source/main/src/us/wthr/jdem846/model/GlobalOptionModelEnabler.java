@@ -37,11 +37,7 @@ public class GlobalOptionModelEnabler implements IOptionEnabler
 		
 		if (modelContext.getModelGridContext() != null 
 				&& modelContext.getModelGridContext().getGridLoadedFrom() != null
-				&& (propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.width")
-						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.height")
-						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.maintainAspectRatio")
-						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.estimateElevationRange")
-						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.elevationMultiple")
+				&& (propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.estimateElevationRange")
 						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.elevationScale")
 						|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.textureQuality")
 				)) {
