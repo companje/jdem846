@@ -13,18 +13,6 @@ public class Spheres
 	
 	public static double fixThetaDegrees(double degrees)
 	{
-		/*
-		while (degrees < 0.0) {
-			degrees += 360.0;
-		}
-		
-		while (degrees >= 360.0) {
-			degrees -= 360.0;
-		}
-		
-		return degrees;
-		*/
-		
 		double limited;
 		degrees /= 360.0;
 		limited = 360.0 * (degrees - MathExt.floor(degrees));
@@ -82,6 +70,7 @@ public class Spheres
 								double phi, // Latitude, in degrees
 								double radius)
 	{
+
 		theta += 90.0;
 		theta = MathExt.radians(fixThetaDegrees(theta));
 		phi = MathExt.radians(fixPhiDegrees(phi));
@@ -110,9 +99,6 @@ public class Spheres
 	    	_y = MathExt.abs(_y) * -1;
 	    }
 
-        //v.x = _x;
-        //v.y = _y;
-        //v.z = _z;
 	    Vector v = new Vector(_x, _y, _z);
         
         v.x = MathExt.min(radius, v.x);
@@ -125,6 +111,7 @@ public class Spheres
         v.z = MathExt.max(-radius, v.z);
         
         return v;
+        
 	}
 	
 	

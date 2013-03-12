@@ -3,6 +3,7 @@ package us.wthr.jdem846;
 import us.wthr.jdem846.cli.ProjectExecutor;
 import us.wthr.jdem846.cli.ProjectRunPlan;
 import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Plane;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vector;
@@ -49,23 +50,53 @@ public class SandboxTestMain extends AbstractTestMain
 	
 	public void run()
 	{
-		int start = -10900;
-		int stop = 8900;
-		int step = 10;
-		int threads = 1;
-		int framesPerThread = (stop - start) / threads;
-
-		System.err.println("Frames per thread: " + framesPerThread);
-		String projectPath = "C:\\Users\\GillFamily\\Google Drive\\jDem Visuals\\Earth Flooding";
+		double start = 0;
+		double stop = 360;
+		double step = 0.25;
+		double startAngle = 185.0;
+		long startTime = -4620000;
 		
-		int frameIndexStart = 0;
-		for (int threadStart = start; threadStart < stop; threadStart+=framesPerThread) {
-			int threadEnd = threadStart + framesPerThread;
+
+		String projectPath = "C:\\Users\\GillFamily\\Google Drive\\Wet Mars\\wet-mars-v6-remodeled";
+		
+		
+		
+		int frameNum = 1000000;
+		
+		for (double angle = start; angle < stop; angle+=step) {
+			String framePath = "F:\\animations\\frames-hd\\frame-" + frameNum + ".jpg";
+			double rotation = startAngle + angle;
+			long frameTime = startTime + (long)MathExt.round((86400000 * (angle / (stop - start))));
 			
-			RenderThread thread = new RenderThread(projectPath, (double)threadStart, (double)threadEnd, (double)step, frameIndexStart);
-			thread.start();
-			
-			frameIndexStart += framesPerThread;
+			if (frameNum >= 1000682 && frameNum < 1000901) {
+				doFrame(projectPath, framePath, rotation, frameTime);
+			}
+			frameNum++;
+		}
+
+	}
+	
+	
+	public void doFrame(String projectPath, String savePath, double angle, long time)
+	{
+		System.err.println("Starting render for rotation angle " + angle);
+		
+		ProjectRunPlan runPlan = new ProjectRunPlan(projectPath
+													, savePath);
+		
+		String viewAngle = "rotate:[-17.0," + angle + ",0.0];shift:[0.0,0.0,0.0];zoom:[1.0]";
+		String sunlightTime = "time:[" + time + "]";
+		
+		//runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.useScripting", "false");
+		runPlan.addOptionOverride("us.wthr.jdem846.model.RenderLightingOptionModel.sunlightTime", sunlightTime);
+		runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.viewAngle", viewAngle);
+		runPlan.addOptionOverride("s.wthr.jdem846.model.GlobalOptionModel.saveModelGrid", "false");
+		ProjectExecutor exec = new ProjectExecutor();
+		try {
+			exec.executeProject(runPlan);
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
 		}
 	}
 	
@@ -100,7 +131,8 @@ public class SandboxTestMain extends AbstractTestMain
 				ProjectRunPlan runPlan = new ProjectRunPlan(projectPath
 															, "E:\\frames\\frame-" + frameNum + ".jpg");
 				
-				runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.eyeDistance", ""+e);
+				String viewAngle = "rotate:[-17.0," + e + ",0.0];shift:[0.0,0.0,0.0];zoom:[1.0]";
+				runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.viewAngle", ""+e);
 				ProjectExecutor exec = new ProjectExecutor();
 				try {
 					exec.executeProject(runPlan);

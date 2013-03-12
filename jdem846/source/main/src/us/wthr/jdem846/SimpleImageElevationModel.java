@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+import javax.imageio.stream.FileImageOutputStream;
+
 import us.wthr.jdem846.graphics.ImageCapture;
 import us.wthr.jdem846.image.ImageTypeEnum;
 import us.wthr.jdem846.math.MathExt;
@@ -170,6 +172,13 @@ public class SimpleImageElevationModel implements ElevationModel
 	}
 
 
+	@Override
+	public void writeImageData(FileImageOutputStream zos,
+			ImageTypeEnum imageTypeFromFormatName) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public void writeModelData(OutputStream zos) throws IOException {
 		// TODO Auto-generated method stub
