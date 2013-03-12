@@ -243,7 +243,7 @@ public class RenderProcess
 		}
 		this.renderer.popMatrix();
 
-		TextureMapConfiguration textureMapConfig = new TextureMapConfiguration(true, InterpolationTypeEnum.LINEAR, TextureWrapTypeEnum.CLAMP_TO_EDGE);
+		TextureMapConfiguration textureMapConfig = new TextureMapConfiguration(true, InterpolationTypeEnum.NEAREST, TextureWrapTypeEnum.REPEAT);
 		TextureRenderer textureRenderer = new TextureRenderer(modelTexture
 															, renderer
 															, modelView

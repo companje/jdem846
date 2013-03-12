@@ -4,14 +4,16 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.stream.FileImageOutputStream;
 
 import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.logging.Log;
@@ -65,12 +67,14 @@ public class ImageWriter
 	{
 		File writeTo = new File(fileName);
 		
-		OutputStream out = null;
+		FileImageOutputStream out = null;
 		
 		try {
-			out = new BufferedOutputStream(new FileOutputStream(writeTo), 1048576);
+			out = new FileImageOutputStream(writeTo);
 		} catch (FileNotFoundException ex) {
 			throw new ImageException("Target file '" + fileName + "' not found: " + ex.getMessage(), ex);
+		} catch (IOException ex) {
+			throw new ImageException("Error creating file output stream for image: " + ex.getMessage(), ex);
 		}
 		
 		
@@ -97,6 +101,45 @@ public class ImageWriter
 	 * @param format Format number.
 	 * @throws ImageException If the format is invalid or there is a write error.
 	 */
+	public static void saveImage(BufferedImage image, FileImageOutputStream out, ImageTypeEnum format) throws ImageException
+	{
+		
+		if (!ImageTypeEnum.isSupportedFormat(format)) {
+			throw new ImageException("Unsupported format: " + format);
+		}
+		
+		if (format == ImageTypeEnum.JPEG) {
+			image = ImageWriter.recodeImageForJpeg(image);
+			try {
+				writeJpeg(image, out, 1.0f);
+			} catch (IOException ex) {
+				throw new ImageException("Error writing JPEG image: " + ex.getMessage(), ex);
+			}
+		} else {
+		
+			String formatName = format.formatName();
+			if (formatName == null) {
+				throw new ImageException("Format string not found for type: " + format);
+			}
+			
+			try {
+				ImageIO.write(image, formatName, out);
+			} catch (IOException ex) {
+				throw new ImageException("Error writing image to disk: " + ex.getMessage(), ex);
+			}
+		}
+		
+		
+	}
+	
+	
+	/** Saves an image to disk. 
+	 * 
+	 * @param image Image to save to disk.
+	 * @param out Target output stream
+	 * @param format Format number.
+	 * @throws ImageException If the format is invalid or there is a write error.
+	 */
 	public static void saveImage(BufferedImage image, OutputStream out, ImageTypeEnum format) throws ImageException
 	{
 		
@@ -106,25 +149,43 @@ public class ImageWriter
 		
 		if (format == ImageTypeEnum.JPEG) {
 			image = ImageWriter.recodeImageForJpeg(image);
-		}
+
+		} 
 		
 		String formatName = format.formatName();
 		if (formatName == null) {
 			throw new ImageException("Format string not found for type: " + format);
 		}
 		
-		//File writeTo = new File(fileName);
-		
 		try {
 			ImageIO.write(image, formatName, out);
 		} catch (IOException ex) {
 			throw new ImageException("Error writing image to disk: " + ex.getMessage(), ex);
 		}
-		
-		
+
 	}
 	
-	
+	/**
+	 * See: http://www.universalwebservices.net/web-programming-resources/java/adjust-jpeg-image-compression-quality-when-saving-images-in-java
+	 * @param image
+	 * @param out
+	 * @throws IOException 
+	 */
+	protected static void writeJpeg(BufferedImage bufferedImage, FileImageOutputStream out, float quality) throws IOException
+	{
+		Iterator<javax.imageio.ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpeg");
+		javax.imageio.ImageWriter writer = iter.next();
+		ImageWriteParam iwp = writer.getDefaultWriteParam();
+		
+		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		iwp.setCompressionQuality(quality);   // an integer between 0 and 1
+										// 1 specifies minimum compression and maximum quality
+		
+		writer.setOutput(out);
+		IIOImage image = new IIOImage(bufferedImage, null, null);
+		writer.write(null, image, iwp);
+		writer.dispose();
+	}
 	
 
 	/** Rerenders an image in a format supported by the JPEG specification.

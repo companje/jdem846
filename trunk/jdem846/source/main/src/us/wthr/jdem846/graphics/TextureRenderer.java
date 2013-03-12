@@ -71,7 +71,7 @@ public class TextureRenderer
 		this.globalOptionModel = globalOptionModel;
 		this.scriptProxy = scriptProxy;
 		
-		this.textureMapConfig = (textureMapConfig != null) ? textureMapConfig : new TextureMapConfiguration(false, InterpolationTypeEnum.LINEAR, TextureWrapTypeEnum.CLAMP);
+		this.textureMapConfig = (textureMapConfig != null) ? textureMapConfig : new TextureMapConfiguration(false, InterpolationTypeEnum.LINEAR, TextureWrapTypeEnum.REPEAT);
 		
 		if (elevationFetchCallback != null) {
 			this.elevationFetchCallback = elevationFetchCallback;
@@ -132,7 +132,8 @@ public class TextureRenderer
 
 
 		} else {
-			renderTexture(texture, texture.getNorth(), texture.getSouth(), texture.getEast(), texture.getWest());
+			renderTexture(texture, globalOptionModel.getNorthLimit(), globalOptionModel.getSouthLimit(), globalOptionModel.getEastLimit(), globalOptionModel.getWestLimit());
+			//renderTexture(texture, texture.getNorth(), texture.getSouth(), texture.getEast(), texture.getWest());
 			//renderSubRegion(texture.getNorth(), texture.getSouth(), texture.getEast(), texture.getWest());
 		}
 	}
@@ -222,7 +223,6 @@ public class TextureRenderer
 
 	protected void renderPointVertex(double latitude, double longitude, Texture subTexture)
 	{
-
 		double elevation = elevationFetchCallback.getElevation(latitude, longitude);
 		
 		if (elevation == DemConstants.ELEV_NO_DATA) {
@@ -255,23 +255,23 @@ public class TextureRenderer
 		double front = (north - latitude) / (north - south);
 
 		if (left < 0.0) {
-			left = 0.0;
-			return;
+			//left = left + 1.0;
+			//return;
 		}
 		
 		if (left > 1.0) {
-			left = 1.0;
-			return;
+			//left = left - 1.0;
+			//return;
 		}
 		
 		if (front < 0.0) {
-			front = 0.0;
-			return;
+			//front = front + 1.0;
+			//return;
 		}
 		
 		if (front > 1.0) {
-			front = 1.0;
-			return;
+			//front = front - 1.0;
+			//return;
 		}
 		
 		view.getNormal(latitude, longitude, normal, elevationFetchCallback);

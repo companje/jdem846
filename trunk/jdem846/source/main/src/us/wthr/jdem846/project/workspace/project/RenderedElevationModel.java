@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+import javax.imageio.stream.FileImageOutputStream;
+
 import us.wthr.jdem846.ElevationModel;
 import us.wthr.jdem846.JDemElevationModel;
 import us.wthr.jdem846.exception.ProjectParseException;
@@ -182,19 +184,19 @@ public class RenderedElevationModel implements ElevationModel
 	@Override
 	public void writeImageData(OutputStream zos, ImageTypeEnum imageTypeFromFormatName) throws IOException
 	{
-/*		if (!isLoaded()) {
-			try {
-				load();
-			} catch (ProjectParseException e) {
-				throw new IOException("Error writing image data: " + e.getMessage(), e);
-			}
-		}*/
-		
 		if (isLoaded()) {
 			elevationModel.writeImageData(zos, imageTypeFromFormatName);
 		}
 	}
-
+	
+	@Override
+	public void writeImageData(FileImageOutputStream os, ImageTypeEnum imageTypeFromFormatName) throws IOException
+	{
+		if (isLoaded()) {
+			elevationModel.writeImageData(os, imageTypeFromFormatName);
+		}
+	}
+	
 	@Override
 	public void writeModelData(OutputStream zos) throws IOException
 	{

@@ -12,6 +12,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.stream.FileImageOutputStream;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -355,8 +357,20 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 		
 	}
 	
-	
 	public void writeImageData(OutputStream out, ImageTypeEnum imageFormat) throws IOException
+	{
+		BufferedImage image = getImage();
+		
+		try {
+			ImageWriter.saveImage(image, out, imageFormat);
+		} catch (ImageException ex) {
+			throw new IOException("Error writing image to output stream: " + ex.getMessage(), ex);
+		}
+
+	}
+	
+	
+	public void writeImageData(FileImageOutputStream out, ImageTypeEnum imageFormat) throws IOException
 	{
 		BufferedImage image = getImage();
 		

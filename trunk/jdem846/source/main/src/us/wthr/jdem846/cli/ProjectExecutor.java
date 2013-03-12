@@ -153,7 +153,7 @@ public class ProjectExecutor
 		
 		log.info("Loading project '" + runPlan.getProjectPath() + "'");
 		ProjectContext.initialize(runPlan.getProjectPath());
-		ProjectContext.getInstance().addModelGridDataset("C:\\Users\\GillFamily\\Google Drive\\jDem Visuals\\Earth Flooding\\earthflooding.jdemgrid");
+		//ProjectContext.getInstance().addModelGridDataset("C:\\Users\\GillFamily\\Google Drive\\jDem Visuals\\Earth Flooding\\earthflooding.jdemgrid");
 		ElevationModel elevationModel = run(runPlan);
 		
 		if (elevationModel != null) {
@@ -234,6 +234,8 @@ public class ProjectExecutor
 			if (optWestLimit != DemConstants.ELEV_NO_DATA)
 				modelContext.setWestLimit(optWestLimit);
 		}
+		
+		modelContext.getImageDataContext().loadImageData();
 		
 		try {
 			modelContext.updateContext();
