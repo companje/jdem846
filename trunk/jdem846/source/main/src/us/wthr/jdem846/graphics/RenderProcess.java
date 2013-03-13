@@ -140,7 +140,7 @@ public class RenderProcess
 			this.renderer.loadIdentity();
 		} else if (PerspectiveTypeEnum.getPerspectiveTypeFromIdentifier(this.globalOptionModel.getPerspectiveType()) == PerspectiveTypeEnum.PERSPECTIVE) {
 			//this.renderer.perspective(horizFieldOfView, aspect, near, far);
-			this.renderer.perspective(horizFieldOfView, aspect, 0.1, 100000.0);
+			this.renderer.perspective(horizFieldOfView, aspect, 1.0, 100000.0);
 			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
 			
 			
@@ -243,7 +243,7 @@ public class RenderProcess
 		}
 		this.renderer.popMatrix();
 
-		TextureMapConfiguration textureMapConfig = new TextureMapConfiguration(true, InterpolationTypeEnum.NEAREST, TextureWrapTypeEnum.REPEAT);
+		TextureMapConfiguration textureMapConfig = new TextureMapConfiguration(true, InterpolationTypeEnum.LINEAR, TextureWrapTypeEnum.CLAMP_TO_EDGE);
 		TextureRenderer textureRenderer = new TextureRenderer(modelTexture
 															, renderer
 															, modelView
