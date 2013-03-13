@@ -196,6 +196,10 @@ public class PreviewEditor extends EditorPart
 		this.elevationModel = elevationModel;
 		RenderedModelSelectionObserver.getInstance().fireRenderedModelSelected(elevationModel);
 		
+		if (canvas.isDisposed()) {
+			return;
+		}
+		
 		synchronized (imageMutex) {
 
 			int width = (elevationModel != null) ? elevationModel.getWidth() : canvas.getClientArea().width;

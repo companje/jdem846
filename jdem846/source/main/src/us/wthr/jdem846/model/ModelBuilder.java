@@ -91,10 +91,13 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 	{
 		this.modelProcessManifest = modelContext.getModelProcessManifest();
 		globalOptionModel = modelProcessManifest.getGlobalOptionModel();
-
+		this.modelContext = modelContext;
+		
 		if (progressTracker != null) {
 			progressTracker.beginTask("Preparing model builder", 6 + globalOptionModel.getNumberOfThreads());
 		}
+
+		doesSufficientDataExist();
 
 		modelPrograms.clear();
 
@@ -112,7 +115,7 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 
 		ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext);
 
-		this.modelContext = modelContext;
+		
 		this.modelDimensions = modelDimensions;
 		
 
@@ -289,9 +292,21 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		prepared = true;
 	}
 
+	
+	protected boolean doesSufficientDataExist() throws RenderEngineException
+	{
+		if (modelContext.getRasterDataContext().getRasterDataListSize() == 0 && modelContext.getImageDataContext().getImageListSize() == 0 && !modelContext.getModelGridContext().isUserProvided()) {
+			throw new RenderEngineException("Insufficient input data provided to generate model");
+		} else {
+			return true;
+		}
+	}
+	
 	@Override
 	public ElevationModel process() throws RenderEngineException
 	{
+		doesSufficientDataExist();
+		
 		this.onProcessBefore();
 		
 		if (!this.modelGrid.isCompleted()) {
@@ -593,8 +608,8 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 	protected void onInitialize() throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
-			if (scriptProxy != null) {
+			ScriptProxy scriptProxy = (modelContext != null && modelContext.getScriptingContext() != null) ? modelContext.getScriptingContext().getScriptProxy() : null;
+			if (scriptProxy != null && globalOptionModel.getUseScripting()) {
 				scriptProxy.initialize();
 			}
 		} catch (Exception ex) {
@@ -620,8 +635,8 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		}
 
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
-			if (scriptProxy != null) {
+			ScriptProxy scriptProxy = (modelContext != null && modelContext.getScriptingContext() != null) ? modelContext.getScriptingContext().getScriptProxy() : null;
+			if (scriptProxy != null && globalOptionModel.getUseScripting()) {
 				scriptProxy.onProcessBefore();
 			}
 		} catch (Exception ex) {
@@ -647,8 +662,8 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		}
 
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
-			if (scriptProxy != null) {
+			ScriptProxy scriptProxy = (modelContext != null && modelContext.getScriptingContext() != null) ? modelContext.getScriptingContext().getScriptProxy() : null;
+			if (scriptProxy != null && globalOptionModel.getUseScripting()) {
 				scriptProxy.onProcessAfter();
 			}
 		} catch (Exception ex) {
@@ -660,8 +675,8 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 	public void onDestroy() throws RenderEngineException
 	{
 		try {
-			ScriptProxy scriptProxy = modelContext.getScriptingContext().getScriptProxy();
-			if (scriptProxy != null) {
+			ScriptProxy scriptProxy = (modelContext != null && modelContext.getScriptingContext() != null) ? modelContext.getScriptingContext().getScriptProxy() : null;
+			if (scriptProxy != null && globalOptionModel.getUseScripting()) {
 				scriptProxy.destroy();
 			}
 		} catch (Exception ex) {

@@ -119,15 +119,17 @@ public class ModelOptionControlsFactory
 		{
 			public void onOptionValidationResults(List<PropertyValidationResult> results, OptionModelChangeEvent originatingEvent)
 			{
-				try {
-					FilePath filePath = (FilePath) property.getValue();
-					if (filePath != null && !labeledPicker.getControl().isDisposed()) {
-						labeledPicker.getControl().setFilePath(filePath.getPath());
+				if (originatingEvent != null && !originatingEvent.getPropertyId().equals(property.getId())) {
+					try {
+						FilePath filePath = (FilePath) property.getValue();
+						if (filePath != null && !labeledPicker.getControl().isDisposed()) {
+							labeledPicker.getControl().setFilePath(filePath.getPath());
+						}
+					} catch (MethodContainerInvokeException ex) {
+						log.error("Error setting field value from property: " + ex.getMessage(), ex);
 					}
-				} catch (MethodContainerInvokeException ex) {
-					log.error("Error setting field value from property: " + ex.getMessage(), ex);
 				}
-
+				
 				try {
 					boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
 					if (!labeledPicker.getControl().isDisposed()) {
@@ -143,6 +145,35 @@ public class ModelOptionControlsFactory
 		return labeledPicker;
 	}
 
+	
+	/*
+	 * OptionValidationChangeObserver.getInstance().addOptionValidationResultsListener(new OptionValidationResultsListener()
+		{
+			public void onOptionValidationResults(List<PropertyValidationResult> results, OptionModelChangeEvent originatingEvent)
+			{
+				if (originatingEvent != null && !originatingEvent.getPropertyId().equals(property.getId())) {
+					try {
+						if (!_spinner.isDisposed()) {
+							_spinner.setSelection((int) ((Double) property.getValue() * 100));
+						}
+					} catch (MethodContainerInvokeException e1) {
+						e1.printStackTrace();
+					}
+
+					try {
+						boolean enabled = property.isPropertyEnabled(ProjectContext.getInstance().getModelContext(), optionModel);
+						if (!_spinner.isDisposed()) {
+							_spinner.setEnabled(enabled);
+						}
+					} catch (MethodContainerInvokeException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
+		});
+	 */
+	
 	public static LabeledColor createColorControl(Composite parent, final OptionModel optionModel, final OptionModelPropertyContainer property)
 	{
 		final LabeledColor labeledColor = LabeledColor.create(parent, property.getLabel(), SWT.NONE);
