@@ -10,6 +10,7 @@ import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.layers.LayerPropertiesView;
 import us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView;
 import us.wthr.jdem846ui.views.models.ModelStatisticsView;
+import us.wthr.jdem846ui.views.preview.MiniPreviewView;
 import us.wthr.jdem846ui.views.preview.PreviewView;
 import us.wthr.jdem846ui.views.scripteditor.ScriptEditorView;
 
@@ -31,11 +32,15 @@ public class Perspective implements IPerspectiveFactory
 
 		IFolderLayout bottomLeftFolder = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.40f, "topLeft");
 		bottomLeftFolder.addView(LayerPropertiesView.ID);
-
+		
+		
+		
 
 		IFolderLayout topRightFolder = layout.createFolder("topRight", IPageLayout.RIGHT, 0.60f, editorArea);
 		topRightFolder.addView(ModelConfigurationView.ID);
 		
+		IFolderLayout bottomRightFolder = layout.createFolder("bottomRight", IPageLayout.BOTTOM, 0.40f, "topRight");
+		bottomRightFolder.addView(MiniPreviewView.ID);
 
 		IFolderLayout bottomFolder = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.75f, editorArea);
 		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.displayLogViewPanel")) {

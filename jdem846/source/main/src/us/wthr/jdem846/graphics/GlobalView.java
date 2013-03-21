@@ -90,7 +90,11 @@ public class GlobalView extends AbstractView implements View
 	@Override
 	public double farClipDistance()
 	{
-		
+		double r = radius();
+		double e = elevationFromSurface();
+		double f = MathExt.sqrt(e * (2 * r + e));
+		return f;
+		/*
 		double r = radius();
 		double e = elevationFromSurface();
 
@@ -100,6 +104,7 @@ public class GlobalView extends AbstractView implements View
 		return f;
 		
 		//return 100000.0;
+		 */
 	}
 
 	@Override
