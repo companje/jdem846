@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: jdem846
-Bundle-SymbolicName: jdem846;singleton:=true
+Bundle-Name: us.wthr.jdem846
+Bundle-SymbolicName: us.wthr.jdem846;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-ClassPath: jdem846.jar,
  lib/dom4j-1.6.1.jar,
@@ -36,13 +36,7 @@ Bundle-ClassPath: jdem846.jar,
  .,
  lib/js-14.jar,
  lib/js.jar
-Export-Package: javax.media.opengl,
- org.scannotation;
-  uses:="javax.servlet,
-   javassist.bytecode,
-   org.scannotation.archiveiterator,
-   javassist.bytecode.annotation",
- us.wthr.jdem846;uses:="junit.framework",
+Export-Package: us.wthr.jdem846;uses:="junit.framework",
  us.wthr.jdem846.animate,
  us.wthr.jdem846.annotation,
  us.wthr.jdem846.annotations,
@@ -200,5 +194,6 @@ Export-Package: javax.media.opengl,
  us.wthr.jdem846.utilities.converter;uses:="us.wthr.jdem846.ui",
  us.wthr.jdem846.wkt
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
- org.eclipse.ui;bundle-version="3.7.0"
+ org.eclipse.ui;bundle-version="3.7.0",
+ javax.media.opengl;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
