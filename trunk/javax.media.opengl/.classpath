@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="native/win32/amd64/gluegen-rt-natives-windows-amd64.jar"/>
+	<classpathentry exported="true" kind="lib" path="native/win32/amd64/joal-natives-windows-amd64.jar"/>
+	<classpathentry exported="true" kind="lib" path="native/win32/amd64/jocl-natives-windows-amd64.jar"/>
+	<classpathentry exported="true" kind="lib" path="native/win32/amd64/jogl-all-natives-windows-amd64.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="gluegen-rt.jar"/>
+	<classpathentry exported="true" kind="lib" path="gluegen.jar"/>
+	<classpathentry exported="true" kind="lib" path="joal.jar"/>
+	<classpathentry exported="true" kind="lib" path="jocl.jar"/>
+	<classpathentry exported="true" kind="lib" path="jogl-all.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
