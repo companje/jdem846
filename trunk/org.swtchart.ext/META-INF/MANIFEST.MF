@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SWTChart Extension Plug-in
+Bundle-SymbolicName: org.swtchart.ext
+Bundle-Version: 0.8.0.201203011744
+Bundle-ClassPath: org.swtchart.ext_0.8.0.v20120301.jar
+Export-Package: org.swtchart.ext
+Require-Bundle: org.eclipse.jface,
+ org.swtchart
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
