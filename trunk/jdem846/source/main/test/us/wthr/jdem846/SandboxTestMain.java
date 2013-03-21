@@ -57,12 +57,17 @@ public class SandboxTestMain extends AbstractTestMain
 		long startTime = -4620000;
 		
 
-		String projectPath = "C:\\Users\\GillFamily\\Google Drive\\Wet Mars\\wet-mars-v6-remodeled";
+		String projectPath = "C:\\Users\\GillFamily\\Google Drive\\Wet Mars\\wet-mars-v6-remodeled-satimg";
 		
 		
-		
-		int frameNum = 1000000;
-		
+		int multiple = 5;
+		int frameNum = 1000030 + multiple;
+		String framePath = "F:\\animations\\single-frames\\frame-" + frameNum + ".jpg";
+		double angle = (1000.0 * step);
+		double rotation = startAngle + angle;
+		long frameTime = startTime + (long)MathExt.round((86400000 * (angle / (stop - start))));
+		doFrame(projectPath, framePath, rotation, frameTime, multiple);
+		/*
 		for (double angle = start; angle < stop; angle+=step) {
 			String framePath = "F:\\animations\\frames-hd\\frame-" + frameNum + ".jpg";
 			double rotation = startAngle + angle;
@@ -73,11 +78,11 @@ public class SandboxTestMain extends AbstractTestMain
 			}
 			frameNum++;
 		}
-
+		*/
 	}
 	
 	
-	public void doFrame(String projectPath, String savePath, double angle, long time)
+	public void doFrame(String projectPath, String savePath, double angle, long time, double elevationMultiple)
 	{
 		System.err.println("Starting render for rotation angle " + angle);
 		
@@ -88,6 +93,10 @@ public class SandboxTestMain extends AbstractTestMain
 		String sunlightTime = "time:[" + time + "]";
 		
 		//runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.useScripting", "false");
+		runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.modelQuality", ""+0.85);
+		runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.width", ""+4000);
+		runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.height", ""+4000);
+		runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.elevationMultiple", ""+elevationMultiple);
 		runPlan.addOptionOverride("us.wthr.jdem846.model.RenderLightingOptionModel.sunlightTime", sunlightTime);
 		runPlan.addOptionOverride("us.wthr.jdem846.model.GlobalOptionModel.viewAngle", viewAngle);
 		runPlan.addOptionOverride("s.wthr.jdem846.model.GlobalOptionModel.saveModelGrid", "false");

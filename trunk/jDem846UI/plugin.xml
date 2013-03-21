@@ -47,7 +47,11 @@
             class="us.wthr.jdem846ui.views.preview.PreviewView"
             id="jdem846ui.previewView" 
             icon="icons/eclipse/globe2.gif"/>
-      
+      <view
+            name="Quick Preview"
+            class="us.wthr.jdem846ui.views.preview.MiniPreviewView"
+            id="jdem846ui.miniPreviewView" 
+            icon="icons/eclipse/globe2.gif"/>
       <view
             name="Region Overview"
             class="us.wthr.jdem846ui.views.RegionOverviewView"
