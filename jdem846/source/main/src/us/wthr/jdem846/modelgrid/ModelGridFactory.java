@@ -47,10 +47,12 @@ public class ModelGridFactory
 		ModelProcessManifest modelProcessManifest = modelContext.getModelProcessManifest();
 		GlobalOptionModel globalOptionModel = modelProcessManifest.getGlobalOptionModel();
 		ModelGridDimensions modelDimensions = ModelGridDimensions.getModelDimensions(modelContext);
-
+		
+		ScriptProxy scriptProxy = (globalOptionModel.getUseScripting()) ? modelContext.getScriptingContext().getScriptProxy() : null;
+		
 		IFillControlledModelGrid fillControlledModelGrid = ModelGridFactory.createFillControlledModelGrid(globalOptionModel.getNorthLimit(), globalOptionModel.getSouthLimit(), globalOptionModel.getEastLimit(), globalOptionModel.getWestLimit(),
 				modelDimensions.getTextureLatitudeResolution(), modelDimensions.getTextureLongitudeResolution(), modelContext.getRasterDataContext().getDataMinimumValue(), modelContext.getRasterDataContext().getDataMaximumValue(), (modelContext
-						.getImageDataContext().getImageListSize() > 0), modelContext.getRasterDataContext(), modelGrid, (globalOptionModel.getUseScripting() ? modelContext.getScriptingContext().getScriptProxy() : null));
+						.getImageDataContext().getImageListSize() > 0), modelContext.getRasterDataContext(), modelGrid, scriptProxy);
 
 		return fillControlledModelGrid;
 	}

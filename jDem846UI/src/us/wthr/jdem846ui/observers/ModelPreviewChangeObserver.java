@@ -241,14 +241,18 @@ public class ModelPreviewChangeObserver extends ProjectChangeObserver {
 		useScripting = JDem846Properties.getBooleanProperty("us.wthr.jdem846.previewing.ui.scripting");
 		if (globalOptionModel.getUseScripting() && useScripting) {
 			globalOptionModel.setUseScripting(useScripting);
+			
+			try {
+				modelContextWorkingCopy.getScriptingContext().prepare();
+			} catch (ContextPrepareException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			globalOptionModel.setUseScripting(false);
 		}
 		
-		try {
-			modelContextWorkingCopy.getScriptingContext().prepare();
-		} catch (ContextPrepareException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 
 //		if (modelContextWorkingCopy.getRasterDataContext().getRasterDataListSize() == 0) {
 //			modelContextWorkingCopy.setNorthLimit(90);

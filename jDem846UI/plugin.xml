@@ -330,7 +330,7 @@
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="us.wthr.jdem846ui.application"
+            application="us.wthr.jdem846.ui.application"
             name="jDem846">
          <property
                name="windowImages"
