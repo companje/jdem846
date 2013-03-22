@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: us.wthr.jdem846ui
-Bundle-SymbolicName: us.wthr.jdem846ui;singleton:=true
-Bundle-Version: 0.0.1.poc
+Bundle-Name: us.wthr.jdem846.ui
+Bundle-SymbolicName: us.wthr.jdem846.ui;singleton:=true
+Bundle-Version: 0.0.1
 Bundle-Activator: us.wthr.jdem846ui.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.7.100",
@@ -25,34 +25,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.efs;bundle-version="2.1.300",
  org.swtchart;bundle-version="0.8.0",
  org.swtchart.ext;bundle-version="0.8.0",
- us.wthr.jdem846.dependencies;bundle-version="1.0.0",
- us.wthr.jdem846;bundle-version="1.0.0",
- javax.media.opengl;bundle-version="1.0.0"
-Bundle-ActivationPolicy: lazy
+ javax.media.opengl;bundle-version="1.0.0",
+ us.wthr.jdem846.core;bundle-version="1.0.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: .,
- lib/commons-beanutils-1.8.0.jar,
- lib/commons-collections-3.2.1.jar,
- lib/commons-io-1.4.jar,
- lib/commons-lang-2.6.jar,
- lib/commons-logging-1.1.1.jar,
- lib/commons-math3-3.0.jar,
- lib/dom4j-1.6.1.jar,
- lib/ezmorph-1.0.6.jar,
- lib/groovy-all-1.8.2.jar,
- lib/groovy-all-1.8.6.jar,
- lib/groovypp-all-0.9.0_1.8.2.jar,
- lib/javaproj-1.0.6.jar,
- lib/javassist.jar,
- lib/jaxen-1.1-beta-6.jar,
- lib/jcalendar-1.4.jar,
- lib/jcommon-1.0.17.jar,
- lib/jfreechart-1.0.14.jar,
- lib/json-lib-2.4-jdk15.jar,
- lib/jsyntaxpane-0.9.4.jar,
- lib/jsyntaxpane-0.9.5-b29.jar,
- lib/scala-compiler.jar,
- lib/scala-library.jar,
- lib/scannotation-1.0.2.jar
+Bundle-ClassPath: .
 Import-Package: com.ibm.icu.text;version="4.4.2.1",
  javax.media.opengl
+Bundle-ActivationPolicy: lazy

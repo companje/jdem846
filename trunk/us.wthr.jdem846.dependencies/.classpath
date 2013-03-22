@@ -20,7 +20,6 @@
 	<classpathentry exported="true" kind="lib" path="jfreechart-1.0.14.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgoodies-common-1.2.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgoodies-looks-2.4.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="js-14.jar"/>
 	<classpathentry exported="true" kind="lib" path="js.jar"/>
 	<classpathentry exported="true" kind="lib" path="json-lib-2.4-jdk15.jar"/>
 	<classpathentry exported="true" kind="lib" path="jsyntaxpane-0.9.5-b29.jar"/>

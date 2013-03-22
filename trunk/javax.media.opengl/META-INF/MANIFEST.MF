@@ -158,7 +158,7 @@ Export-Package: com.jogamp.common,
  jogamp.opengl.x11.glx,
  net.highteq.nativetaglet
 Require-Bundle: org.eclipse.core.runtime;resolution:=optional,
- org.apache.ant,
+ org.apache.ant;resolution:=optional,
  org.eclipse.draw2d;resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-NativeCode: native/win32/amd64/gluegen-rt.dll;
@@ -171,4 +171,5 @@ Bundle-NativeCode: native/win32/amd64/gluegen-rt.dll;
  native/win32/amd64/nativewindow_win32.dll;
  native/win32/amd64/newt.dll;
  osname=win32; processor=x86; processor=x86_64
+Bundle-ActivationPolicy: lazy
 

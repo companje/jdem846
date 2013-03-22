@@ -3,6 +3,7 @@
 	<name>us.wthr.jdem846.dependencies</name>
 	<comment></comment>
 	<projects>
+		<project>jdem846</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
