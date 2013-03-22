@@ -29,5 +29,10 @@
 	<classpathentry exported="true" kind="lib" path="scala-compiler.jar"/>
 	<classpathentry exported="true" kind="lib" path="scala-library.jar"/>
 	<classpathentry exported="true" kind="lib" path="scannotation-1.0.2.jar"/>
+	<classpathentry kind="lib" path="joda-time-2.2.jar" sourcepath="joda-time/joda-time-2.2-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/us.wthr.jdem846.dependencies/joda-time/joda-time-2.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
