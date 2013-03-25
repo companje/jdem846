@@ -3,15 +3,16 @@
 
 <product name="jDem846" uid="us.wthr.jdem846ui.windows.amd64" id="us.wthr.jdem846.ui.product" application="us.wthr.jdem846.ui.application" version="0.1" useFeatures="false" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Dus.wthr.jdem846.installPath=C:\jdem\jdem846\jdem846\bin</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="icons/jdem846-icon-16.png" i32="icons/jdem846-icon-32.png" i48="icons/jdem846-icon-48.png"/>
+
 
    <launcher>
       <solaris/>
@@ -19,6 +20,7 @@
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
       <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</windows>
@@ -155,8 +157,5 @@
       <plugin id="us.wthr.jdem846.ui"/>
    </plugins>
 
-   <configurations>
-      <property name="us.wthr.jdem846.installPath" value="C:\jdem\jdem846\jdem846\bin" />
-   </configurations>
 
 </product>

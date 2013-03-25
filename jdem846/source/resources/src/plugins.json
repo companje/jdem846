@@ -1,0 +1,143 @@
+{
+	modules : [
+		{
+			type : "filter",
+			id : "us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor",
+			class : "us.wthr.jdem846.model.processing.coloring.HypsometricColorProcessor",
+			name : "Hypsometric Color Process", 
+			category : "COLORING",
+			optionModel : "us.wthr.jdem846.model.processing.coloring.HypsometricColorOptionModel", 
+			enabled : true
+		},
+		{
+			type : "filter",
+			id : "us.wthr.jdem846.model.processing.coloring.AspectColoringProcessor",
+			class : "us.wthr.jdem846.model.processing.coloring.AspectColoringProcessor",
+			name : "Aspect Color Process", 
+			category : "COLORING",
+			optionModel : "us.wthr.jdem846.model.processing.coloring.AspectColoringOptionModel", 
+			enabled : true
+		},
+		{
+			type : "filter",
+			id : "us.wthr.jdem846.model.processing.coloring.RoughnessColoringProcessor",
+			class : "us.wthr.jdem846.model.processing.coloring.RoughnessColoringProcessor",
+			name : "Roughness Color Process", 
+			category : "COLORING",
+			optionModel : "us.wthr.jdem846.model.processing.coloring.RoughnessColoringOptionModel", 
+			enabled : false
+		},
+		{
+			type : "filter",
+			id : "us.wthr.jdem846.model.processing.coloring.TerrainRuggednessIndexColoringProcessor",
+			class : "us.wthr.jdem846.model.processing.coloring.TerrainRuggednessIndexColoringProcessor",
+			name : "TRI Color Process", 
+			category : "COLORING",
+			optionModel : "us.wthr.jdem846.model.processing.coloring.TerrainRuggednessIndexColoringOptionModel", 
+			enabled : false
+		},
+		{
+			type : "filter",
+			id : "us.wthr.jdem846.model.processing.coloring.TopographicPositionIndexColoringProcessor",
+			class : "us.wthr.jdem846.model.processing.coloring.TopographicPositionIndexColoringProcessor",
+			name : "TPI Color Process", 
+			category : "COLORING",
+			optionModel : "us.wthr.jdem846.model.processing.coloring.TopographicPositionIndexColoringOptionModel", 
+			enabled : false
+		},
+		{
+			type : "processor",
+			id : "us.wthr.jdem846.model.processing.shading.AspectShadingProcessor",
+			class : "us.wthr.jdem846.model.processing.shading.AspectShadingProcessor",
+			name : "Aspect Shading Process", 
+			category : "SHADING",
+			optionModel : "us.wthr.jdem846.model.processing.shading.AspectShadingOptionModel", 
+			enabled : true
+		},
+		{
+			type : "processor",
+			id : "us.wthr.jdem846.model.processing.shading.GdalHillshadingProcessor",
+			class : "us.wthr.jdem846.model.processing.shading.GdalHillshadingProcessor",
+			name : "GDAL Hillshading Process", 
+			category : "SHADING",
+			optionModel : "us.wthr.jdem846.model.processing.shading.GdalHillshadingOptionModel", 
+			enabled : true
+		},
+		{
+			type : "processor",
+			id : "us.wthr.jdem846.model.processing.coloring.HillshadingProcessor",
+			class : "us.wthr.jdem846.model.processing.coloring.HillshadingProcessor",
+			name : "Hillshading Process", 
+			category : "SHADING",
+			optionModel : "us.wthr.jdem846.model.processing.coloring.HillshadingOptionModel", 
+			enabled : true
+		},
+		{
+			type : "processor",
+			id : "us.wthr.jdem846.model.processing.shading.SlopeShadingProcessor",
+			class : "us.wthr.jdem846.model.processing.shading.SlopeShadingProcessor",
+			name : "Slope Shading Process", 
+			category : "SHADING",
+			optionModel : "us.wthr.jdem846.model.processing.shading.SlopeShadingOptionModel", 
+			enabled : false
+		},
+		{
+			type : "processor",
+			id : "us.wthr.jdem846.model.processing.lighting.RenderLightingProcessor",
+			class : "us.wthr.jdem846.model.processing.lighting.RenderLightingProcessor",
+			name : "Model Lighting", 
+			category : "LIGHTING",
+			optionModel : "us.wthr.jdem846.model.processing.lighting.RenderLightingOptionModel", 
+			enabled : true
+		},
+		{
+			type : "coloring"
+			class : "us.wthr.jdem846.color.StandardModelColoring",
+			name : "us.wthr.jdem846.color.standardModelColoring.name",
+			id : "standard-coloring",
+			allowGradientConfig : false,
+			needsMinMaxElevation : true
+		},
+		{
+			type : "registry",
+			class : "us.wthr.jdem846.color.ColoringRegistry"
+		},
+		{
+			type : "registry",
+			class : "us.wthr.jdem846.color.ColorRegistry"
+		},
+		{
+			type : "registry",
+			class : "us.wthr.jdem846.model.processing.ModelProcessRegistry"
+		},
+		{
+			type : "registry",
+			class : "us.wthr.jdem846.gis.DatumsListRegistry"
+		},
+		{
+			type : "registry",
+			class : "us.wthr.jdem846.gis.planets.PlanetsRegistry"
+		},
+		{ 
+			type : "service",
+			class : "us.wthr.jdem846.tasks.TaskControllerService",
+			name : "us.wthr.jdem846.tasks.taskControllerService", 
+			enabled : true, 
+			deamon : true
+		},
+		{ 
+			type : "service",
+			class : "us.wthr.jdem846.UserPropertiesStorageService",
+			name : "us.wthr.jdem846.userPropertiesStorageService", 
+			enabled : true, 
+			deamon : true
+		},
+		{ 
+			type : "service",
+			class : "us.wthr.jdem846.TemporaryFileService",
+			name : "us.wthr.jdem846.tempfileservice", 
+			enabled : true, 
+			deamon : true
+		},
+	]
+}
