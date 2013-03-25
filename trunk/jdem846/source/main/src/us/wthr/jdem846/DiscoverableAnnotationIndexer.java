@@ -1,18 +1,21 @@
 package us.wthr.jdem846;
 
-import java.io.File;
+import java.lang.annotation.Annotation;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.scannotation.AnnotationDB;
+import org.reflections.Reflections;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 import us.wthr.jdem846.annotations.Discoverable;
 import us.wthr.jdem846.exception.AnnotationIndexerException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.annotations.GridProcessing;
 
 /** Creates an index of classes annotated with annotations that are annotated 
  * with the Discoverable annotation. annotation. ;-)
@@ -23,28 +26,58 @@ import us.wthr.jdem846.logging.Logging;
 public class DiscoverableAnnotationIndexer
 {
 	private static Log log = Logging.getLog(DiscoverableAnnotationIndexer.class);
-	
-	private static Map<String, Set<String>> annotationIndex = null;
+
 	private static AnnotatedClassMap annotatedClassMap = new AnnotatedClassMap();
 	
+	private static Reflections reflections = null;
 	
-	/** Index all the annotations automatically at first usage.
-	 * 
-	 */
-	static {
-		try {
-			DiscoverableAnnotationIndexer.initialization();
-		} catch (AnnotationIndexerException ex) {
-			log.error("Failure in annotation indexer: " + ex.getMessage(), ex);
-		}
-	}
+	private static List<ClassLoader> classLoaders = new ArrayList<ClassLoader>();
+	private static List<URL> urls = new ArrayList<URL>();
+	private static List<String> packageFilters = new ArrayList<String>();
 	
 	protected DiscoverableAnnotationIndexer()
 	{
 		
 	}
 	
-	protected static void initialization() throws AnnotationIndexerException
+	public static void addClassLoaders(ClassLoader ... classLoaders)
+	{
+		for (ClassLoader classLoader : classLoaders) {
+			DiscoverableAnnotationIndexer.classLoaders.add(classLoader);
+		}
+	}
+	
+	public static void addUrls(URL ... urls)
+	{
+		for (URL url : urls) {
+			DiscoverableAnnotationIndexer.urls.add(url);
+		}
+	}
+	
+	protected static Reflections getReflections()
+	{
+		if (DiscoverableAnnotationIndexer.reflections == null) {
+			ConfigurationBuilder config = new ConfigurationBuilder();
+			config.addClassLoader(DiscoverableAnnotationIndexer.class.getClassLoader());
+			config.addClassLoaders(DiscoverableAnnotationIndexer.classLoaders);
+			config.addUrls(DiscoverableAnnotationIndexer.urls);
+			
+			FilterBuilder filterBuilder = new FilterBuilder();
+			filterBuilder.include("us.wthr.jdem846.*");
+			
+			for (String packageFilter : DiscoverableAnnotationIndexer.packageFilters) {
+				filterBuilder.include(packageFilter);
+			}
+			
+			config.filterInputsBy(filterBuilder);
+			
+			reflections = new Reflections(config);
+		}
+		return reflections;
+	}
+	
+	
+	public static void createIndex() throws AnnotationIndexerException
 	{
 		DiscoverableAnnotationIndexer indexer = new DiscoverableAnnotationIndexer();
 		indexer.initDiscoverable();
@@ -53,83 +86,54 @@ public class DiscoverableAnnotationIndexer
 	
 	protected void initDiscoverable() throws AnnotationIndexerException
 	{	
+		List<Class<?>> discoverableAnnotations = null;
 		try {
-			loadAnnotationIndex();
+			discoverableAnnotations = findClassesWithAnnotation(Discoverable.class);
 		} catch (Exception ex) {
-			throw new AnnotationIndexerException("Failed to load annotation index: " + ex.getMessage(), ex);
+			throw new AnnotationIndexerException("Error finding classes with annotation '" + GridProcessing.class.getCanonicalName() + "': " + ex.getMessage(), ex);
 		}
 		
-		Set<String> discoverableAnnotations = findDiscoverableAnnotations();
 		
 		if (discoverableAnnotations != null) {
-			for (String clazzName : discoverableAnnotations) {
-				log.info("Found Discoverable Annotation: " + clazzName);
+			for (Class<?> discoverableAnnotation : discoverableAnnotations) {
+				List<Class<?>> annotatedClasses = null;
 				try {
-					findClassesWithAnnotation(clazzName);
+					annotatedClasses = findClassesWithAnnotation((Class<? extends Annotation>)discoverableAnnotation);
 				} catch (Exception ex) {
-					throw new AnnotationIndexerException("Error finding classes with annotation '" + clazzName + "': " + ex.getMessage(), ex);
+					throw new AnnotationIndexerException("Error finding classes with annotation '" + discoverableAnnotation.getCanonicalName() + "': " + ex.getMessage(), ex);
 				}
 				
-				
+				if (annotatedClasses != null) {
+					for (Class<?> annotatedClass : annotatedClasses) {
+						annotatedClassMap.addAnnotatedClass(discoverableAnnotation.getName(), annotatedClass.getCanonicalName());
+					}
+				}
 				
 			}
-		} else {
-			this.log.warn("No discoverable annotations found!");
 		}
 		
 	}
 	
-	protected void loadAnnotationIndex() throws Exception
-	{
-		log.info("Loading annotation index");
-		
-		AnnotationDB db = new AnnotationDB();
 
-		File installPath = new File(System.getProperty("us.wthr.jdem846.installPath"));
-		URL url = installPath.toURI().toURL();
-		log.info("Scanning Classpath URL: " + url);
-		StartupLoadNotifyQueue.add("Searching for modules in " + url);
-		
-		db.scanArchives(url);
-			
-			
-		//URL[] urls = ClasspathUrlFinder.findClassPaths();
-		//for (URL url : urls) {	
-		//	log.info("Scanning Classpath URL: " + url);
-		//	StartupLoadNotifyQueue.add("Searching for modules in " + url);
-		//	db.scanArchives(url);
-		//}
-		//db.crossReferenceImplementedInterfaces();
-		 	
-		DiscoverableAnnotationIndexer.annotationIndex = db.getAnnotationIndex();
-	}
 	
-	protected void findClassesWithAnnotation(String annotationClazzName) throws Exception
+	protected List<Class<?>> findClassesWithAnnotation(Class<? extends Annotation> annotationClass) throws Exception
 	{
+		List<Class<?>> clazzList = new ArrayList<Class<?>>();
 		
-		Set<String> annotatedClasses = annotationIndex.get(annotationClazzName);
+		log.info("Searching for classes with annotation '" + annotationClass.getName() + "'");
+
+		Set<Class<?>> annotatedClazzList = getReflections().getTypesAnnotatedWith(annotationClass);
 		
-		if (annotatedClasses != null) {
-			for (String clazzName : annotatedClasses) {
-				log.info("	Found Annotated Class: " + clazzName);
-				DiscoverableAnnotationIndexer.annotatedClassMap.addAnnotatedClass(annotationClazzName, clazzName);
-			}
+		for (Class<?> clazz : annotatedClazzList) {
+			String clazzName = clazz.getCanonicalName();
+			log.info("	Found Annotated Class: " + clazzName);
+			clazzList.add(clazz);
 		}
-	}
-	
-
-	
-	
-	protected Set<String> findDiscoverableAnnotations()
-	{
-		log.info("Searching for discoverable type annotations");
-		Set<String> discoverableAnnotations = DiscoverableAnnotationIndexer.annotationIndex.get(Discoverable.class.getName());
 		
-		return discoverableAnnotations;
-
+		return clazzList;
 	}
 	
-	
+
 	
 	public static List<String> getAnnotatedClassList(String annotationClassName)
 	{

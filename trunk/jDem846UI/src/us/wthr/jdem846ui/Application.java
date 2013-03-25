@@ -10,7 +10,9 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Bundle;
 
+import us.wthr.jdem846.DiscoverableAnnotationIndexer;
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.JDemResourceLoader;
 import us.wthr.jdem846.RegistryKernel;
@@ -68,6 +70,32 @@ public class Application implements IApplication {
 		}
 		
 		
+		
+		log.info("Searching for annotated classes...");
+		Bundle bundle = Platform.getBundle("us.wthr.jdem846.core");
+
+		log.info("In Development Mode: " + Platform.inDevelopmentMode());
+		log.info("In Debug Mode: " + Platform.inDebugMode());
+		log.info("Location: " + Platform.getLocation());
+		log.info("User Location: " + Platform.getUserLocation().getURL());
+		log.info("Install Location: " + Platform.getInstallLocation().getURL());
+		log.info("Instance Location: " + Platform.getInstanceLocation().getURL());
+
+		String bundleLocation = bundle.getLocation();
+		if (bundleLocation != null) {
+			bundleLocation = bundleLocation.replace("initial@reference:file:", "");
+			log.info("Adding Bundle Location: " + bundleLocation);
+			
+			if (Platform.inDevelopmentMode()) {
+				DiscoverableAnnotationIndexer.addUrls(new URL("file://" + bundleLocation + "/bin"));
+			} else {
+				DiscoverableAnnotationIndexer.addUrls(new URL("file://" + Platform.getInstallLocation().getURL() + "/" + bundleLocation));
+			}
+		}
+		
+		DiscoverableAnnotationIndexer.createIndex();
+		
+
 		try {
 			RegistryKernel regKernel = new RegistryKernel();
 			regKernel.init();
@@ -262,7 +290,7 @@ public class Application implements IApplication {
 	{
 		
 		if (System.getProperty("us.wthr.jdem846.installPath") == null) {
-			System.setProperty("us.wthr.jdem846.installPath", System.getProperty("user.dir"));
+			System.setProperty("us.wthr.jdem846.installPath", Platform.getInstallLocation().getURL().toString());
 		}
 		if (System.getProperty("us.wthr.jdem846.resourcesPath") == null) {
 			System.setProperty("us.wthr.jdem846.resourcesPath", System.getProperty("us.wthr.jdem846.installPath"));
