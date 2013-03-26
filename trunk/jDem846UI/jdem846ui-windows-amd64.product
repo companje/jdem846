@@ -14,7 +14,7 @@
    <windowImages i16="icons/jdem846-icon-16.png" i32="icons/jdem846-icon-32.png" i48="icons/jdem846-icon-48.png"/>
 
 
-   <launcher>
+   <launcher name="jdem846">
       <solaris/>
       <win useIco="false">
          <bmp/>

@@ -288,13 +288,13 @@
            </parameter>
         </command>
         
-        <!--
+        
         <separator name="additions" visible="false" />
         <command commandId="jdem846ui.data.add" label="Shape" style="push" visible="false">
            <parameter name="jdem846ui.data.add.type" value="Shape" >
            </parameter>
         </command>
-        -->
+        
      </menuContribution>
      <menuContribution locationURI="menu:jdem846ui.toolbar.preview.update">
         <command commandId="jdem846ui.preview.update.forceDataRefresh" label="Update Preview with Data Refresh" style="push">

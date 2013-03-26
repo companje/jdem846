@@ -36,7 +36,11 @@ public class Vertex implements Comparable<Vertex>
 	
 	public Vertex(double x, double y, double z, int[] rgba)
 	{
-		set(x, y, z, ColorUtil.rgbaToInt(rgba));
+		if (rgba != null) {
+			set(x, y, z, ColorUtil.rgbaToInt(rgba));
+		} else {
+			set(x, y, z, 0xFF);
+		}
 	}
 	
 	

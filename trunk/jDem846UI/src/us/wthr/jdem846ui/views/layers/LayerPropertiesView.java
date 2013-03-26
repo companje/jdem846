@@ -11,10 +11,12 @@ import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.generic.GenericRasterDataProvider;
+import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 import us.wthr.jdem846ui.views.geoimage.GeoImagePropertiesView;
 import us.wthr.jdem846ui.views.raster.RasterPropertiesView;
+import us.wthr.jdem846ui.views.shape.ShapePropertiesView;
 
 public class LayerPropertiesView extends ViewPart
 {
@@ -23,6 +25,7 @@ public class LayerPropertiesView extends ViewPart
 	
 	private GeoImagePropertiesView geoImagePropertiesView;
 	private RasterPropertiesView rasterPropertiesView;
+	private ShapePropertiesView shapePropertiesView;
 	
 	private Composite blankView;
 	private Composite activeView = null;
@@ -41,7 +44,8 @@ public class LayerPropertiesView extends ViewPart
 		blankView = new Composite(parent, SWT.NONE);
 		geoImagePropertiesView = new GeoImagePropertiesView(parent, SWT.NONE);
 		rasterPropertiesView = new RasterPropertiesView(parent, SWT.NONE);
-
+		shapePropertiesView = new ShapePropertiesView(parent, SWT.NONE);
+		
 		DataView.addTreeSelectionListener(new TreeSelectionAdapter()
 		{
 			public void onSourceDataSelectionChanged(InputSourceData selectedData)
@@ -50,6 +54,8 @@ public class LayerPropertiesView extends ViewPart
 					activeView = geoImagePropertiesView;
 				} else if (selectedData != null && selectedData instanceof GenericRasterDataProvider) { 
 					activeView = rasterPropertiesView;
+				} else if (selectedData != null && selectedData instanceof ShapeFileRequest) {
+					activeView = shapePropertiesView;
 				} else {
 					activeView = blankView;
 				}

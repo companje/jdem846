@@ -208,9 +208,13 @@ public class JsonProjectFileReader
 	protected static void parseShapeLayer(ProjectMarshall projectMarshall, JSONObject layerObj) throws ProjectParseException
 	{
 		String path = layerObj.getString("path");
-		String definitionId = layerObj.getString("defId");
+		String definitionId = null;
 		
-		if (path != null && definitionId != null) {
+		if (layerObj.has("defId")) {
+			definitionId = layerObj.getString("defId");
+		}
+		
+		if (path != null) {
 			try {
 				projectMarshall.getShapeFiles().add(new ShapeFileRequest(path, definitionId, false));
 			} catch (ShapeFileException ex) {
