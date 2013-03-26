@@ -24,7 +24,7 @@ public class GeneralPreferencesPage extends BasicPreferencesPage
 		addField(new IntegerFieldEditor("us.wthr.jdem846.performance.tileSize", "Cache Size (Rows of Data)", getFieldEditorParent()));
 		
 		addField(new BooleanFieldEditor("us.wthr.jdem846.general.ui.jdemFrame.displayMemoryMonitor", "Display Memory Monitor", getFieldEditorParent()));
-		addField(new BooleanFieldEditor("us.wthr.jdem846.general.ui.displayLogViewPanel", "Display Console", getFieldEditorParent()));
+		//addField(new BooleanFieldEditor("us.wthr.jdem846.general.ui.displayLogViewPanel", "Display Console", getFieldEditorParent()));
 		
 		addField(new BooleanFieldEditor("us.wthr.jdem846.general.ui.console.limitOuput", "Limit Console", getFieldEditorParent()));
 		addField(new IntegerFieldEditor("us.wthr.jdem846.general.ui.console.bufferSize", "Max Console Length", getFieldEditorParent()));

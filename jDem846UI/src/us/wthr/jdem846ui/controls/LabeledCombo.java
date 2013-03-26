@@ -16,7 +16,7 @@ public class LabeledCombo extends LabeledControl<Combo>
 	
 	public static LabeledCombo create(Composite parent, String labelText)
 	{
-		return LabeledCombo.create(parent, labelText, SWT.NONE);
+		return LabeledCombo.create(parent, labelText, SWT.READ_ONLY);
 	}
 	
 	public static LabeledCombo create(Composite parent, String labelText, int style)

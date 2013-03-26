@@ -23,6 +23,8 @@ import us.wthr.jdem846.exception.RegistryException;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinition;
+import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinitionLoader;
 import us.wthr.jdem846.util.InstanceIdentifier;
 import us.wthr.jdem846ui.daemons.PreviewRenderDaemon;
 
@@ -163,6 +165,12 @@ public class Application implements IApplication {
 		
 		PreviewRenderDaemon previewRenderThread = new PreviewRenderDaemon();
 		previewRenderThread.start();
+		
+		ShapeDataDefinitionLoader loader = new ShapeDataDefinitionLoader();
+		
+		for (ShapeDataDefinition shapeDataDefinition : loader.getShapeDataDefinitions()) {
+			log.info("Shape Definition: " + shapeDataDefinition.getName() + " " + shapeDataDefinition.getId());
+		}
 		
 		Display display = PlatformUI.createDisplay();
 		try {

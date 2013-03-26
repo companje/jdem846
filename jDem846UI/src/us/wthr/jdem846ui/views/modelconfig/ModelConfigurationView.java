@@ -70,7 +70,7 @@ public class ModelConfigurationView extends ViewPart {
 		ModelOptionPage globalOptionPage = new ModelOptionPage(tabFolder, globalOptionModelContainer);
 		generalOptionsTabItem.setControl(globalOptionPage);
 		
-
+		String defaultShapesProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.shapesProcessor.default");
 		String defaultColoringProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.coloringProcessor.default");
 		String defaultShadingProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.shadingProcessor.default");
 		String defaultRenderProcessor = JDem846Properties.getProperty("us.wthr.jdem846.ui.options.modelConfiguration.renderProcessor.default");
@@ -115,8 +115,8 @@ public class ModelConfigurationView extends ViewPart {
 		//defaultLightingProcessor
 		
 		try {
-			
 			ProjectContext.getInstance().getModelProcessManifest().addWorker(defaultColoringProcessor, ProjectContext.getInstance().getOptionModelContainer(defaultColoringProcessor).getOptionModel());
+			ProjectContext.getInstance().getModelProcessManifest().addWorker(defaultShapesProcessor, ProjectContext.getInstance().getOptionModelContainer(defaultShapesProcessor).getOptionModel());
 			ProjectContext.getInstance().getModelProcessManifest().addWorker(defaultShadingProcessor, ProjectContext.getInstance().getOptionModelContainer(defaultShadingProcessor).getOptionModel());
 			ProjectContext.getInstance().getModelProcessManifest().addWorker(defaultLightingProcessor, ProjectContext.getInstance().getOptionModelContainer(defaultLightingProcessor).getOptionModel());
 		} catch (ProcessContainerException e) {

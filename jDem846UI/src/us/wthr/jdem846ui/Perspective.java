@@ -4,7 +4,6 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
-import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846ui.views.LogConsoleView;
 import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.layers.LayerPropertiesView;
@@ -39,13 +38,12 @@ public class Perspective implements IPerspectiveFactory
 		IFolderLayout topRightFolder = layout.createFolder("topRight", IPageLayout.RIGHT, 0.60f, editorArea);
 		topRightFolder.addView(ModelConfigurationView.ID);
 		
-		IFolderLayout bottomRightFolder = layout.createFolder("bottomRight", IPageLayout.BOTTOM, 0.40f, "topRight");
+		IFolderLayout bottomRightFolder = layout.createFolder("bottomRight", IPageLayout.BOTTOM, 0.75f, "topRight");
 		bottomRightFolder.addView(MiniPreviewView.ID);
 
 		IFolderLayout bottomFolder = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.75f, editorArea);
-		if (JDem846Properties.getBooleanProperty("us.wthr.jdem846.general.ui.displayLogViewPanel")) {
-			bottomFolder.addView(LogConsoleView.ID);
-		}
+		bottomFolder.addPlaceholder(LogConsoleView.ID);
+
 		bottomFolder.addView("org.eclipse.ui.views.ProgressView");
 		bottomFolder.addView(ModelStatisticsView.ID);
 		//bottomFolder.addView(RenderedModelDisplayView.ID);
