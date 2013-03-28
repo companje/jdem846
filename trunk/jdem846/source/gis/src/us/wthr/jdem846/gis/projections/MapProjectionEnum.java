@@ -16,19 +16,19 @@ public enum MapProjectionEnum
 	TRANSVERSEMERCATOR("us.wthr.jdem846.render.mapProjection.transverseMercatorProjection.name", TransverseMercatorProjection.class);
 	
 	private final String projectionName;
-	private final Class<MapProjection> provider;
+	private final Class<? extends MapProjection> provider;
 	
 	
-	MapProjectionEnum(String projectionName, Class<?> provider)
+	MapProjectionEnum(String projectionName, Class<? extends MapProjection> provider)
 	{
 		this.projectionName = projectionName;
-		this.provider = (Class<MapProjection>) provider;
+		this.provider = provider;
 	}
 	
 	
 	public String identifier() { return projectionName; }
 	public String projectionName() { return I18N.get(projectionName, projectionName); }
-	public Class<MapProjection> provider() { return provider; }
+	public Class<? extends MapProjection> provider() { return provider; }
 	
 	public static MapProjectionEnum getMapProjectionEnumFromIdentifier(String identifier)
 	{

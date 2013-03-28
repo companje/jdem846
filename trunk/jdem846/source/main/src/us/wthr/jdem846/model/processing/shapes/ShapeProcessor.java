@@ -9,7 +9,6 @@ import us.wthr.jdem846.ModelDimensions;
 import us.wthr.jdem846.canvas.CanvasProjection;
 import us.wthr.jdem846.canvas.CanvasProjectionFactory;
 import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
-import us.wthr.jdem846.exception.ImageException;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.geom.Edge;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
@@ -21,7 +20,6 @@ import us.wthr.jdem846.graphics.FlatView;
 import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.graphics.ImmutableColor;
 import us.wthr.jdem846.graphics.View;
-import us.wthr.jdem846.image.ImageWriter;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
@@ -100,12 +98,12 @@ public class ShapeProcessor extends GridFilter
 		process();
 		
 		shapeImage = (BufferedImage) canvas.getFinalizedImage();
-		try {
+/*		try {
 			ImageWriter.saveImage(shapeImage, "C:/jdem/temp/shapecanvas.png");
 		} catch (ImageException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	public void process() throws RenderEngineException

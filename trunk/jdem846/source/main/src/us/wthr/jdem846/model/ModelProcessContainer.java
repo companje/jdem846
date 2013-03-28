@@ -3,6 +3,7 @@ package us.wthr.jdem846.model;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
+import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.IGridWorker;
 
 public class ModelProcessContainer
@@ -24,6 +25,11 @@ public class ModelProcessContainer
 		}
 	}
 
+	public GridProcessingTypesEnum getProcessPhaseType()
+	{
+		return gridWorker.getClass().getAnnotation(GridProcessing.class).type();
+	}
+	
 	public String getProcessId()
 	{
 		return gridWorker.getClass().getAnnotation(GridProcessing.class).id();

@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -49,17 +48,17 @@ public class RenderedModelSelectionObserver
 	
 	public void addRenderedModelSelectionListener(RenderedModelSelectionListener l)
 	{
-		this.selectionListeners.add(l);
+		RenderedModelSelectionObserver.selectionListeners.add(l);
 	}
 	
 	public boolean removeRenderedModelSelectionListener(RenderedModelSelectionListener l)
 	{
-		return this.selectionListeners.remove(l);
+		return RenderedModelSelectionObserver.selectionListeners.remove(l);
 	}
 	
 	public void fireRenderedModelSelected(ElevationModel elevationModel)
 	{
-		for (RenderedModelSelectionListener listener : this.selectionListeners) {
+		for (RenderedModelSelectionListener listener : RenderedModelSelectionObserver.selectionListeners) {
 			listener.onRenderedModelSelected(elevationModel);
 		}
 	}
@@ -74,7 +73,7 @@ public class RenderedModelSelectionObserver
 					page.activate(getEditorReferenceForElevationModel(elevationModel).getEditor(false));
 				} else {
 					log.info("Rendered Model Selected");
-					IEditorPart editor = page.openEditor(new ElevationModelEditorInput(elevationModel), RenderedModelEditor.ID);
+					page.openEditor(new ElevationModelEditorInput(elevationModel), RenderedModelEditor.ID);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

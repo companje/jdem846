@@ -1,28 +1,20 @@
 package us.wthr.jdem846.ui.histogram;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Polygon;
-import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.model.ElevationHistogramModel;
-import us.wthr.jdem846.ui.base.Panel;
-
-import org.jfree.chart.*;
-import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.general.DatasetUtilities;
-import org.jfree.data.statistics.*;
-import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.general.DatasetUtilities;
+
+import us.wthr.jdem846.model.ElevationHistogramModel;
+import us.wthr.jdem846.ui.base.Panel;
 
 @SuppressWarnings("serial")
 public class ElevationHistogram extends Panel

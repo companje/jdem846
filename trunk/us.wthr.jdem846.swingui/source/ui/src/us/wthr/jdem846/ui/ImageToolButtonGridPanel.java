@@ -1,21 +1,20 @@
 package us.wthr.jdem846.ui;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.List;
+
 import us.wthr.jdem846.JDem846Properties;
-import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Button;
-import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.panels.FlexGridPanel;
 
 @SuppressWarnings("serial")
 public class ImageToolButtonGridPanel extends FlexGridPanel
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ImageToolButtonGridPanel.class);
 	
 	

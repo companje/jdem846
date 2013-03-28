@@ -619,7 +619,7 @@ public class JdemFrame extends Frame
 			    JOptionPane.INFORMATION_MESSAGE);
 		*/
 		
-		ScriptProjectPane projectPane = new ScriptProjectPane(projectMarshall);
+		//ScriptProjectPane projectPane = new ScriptProjectPane(projectMarshall);
 		
 		/*
 		projectPane.addCreateModelListener(new CreateModelListener() {
@@ -629,7 +629,7 @@ public class JdemFrame extends Frame
 		});
 		*/
 		
-		String title = I18N.get("us.wthr.jdem846.ui.defaultProjectTitle");
+/*		String title = I18N.get("us.wthr.jdem846.ui.defaultProjectTitle");
 		if (projectMarshall != null && projectMarshall.getLoadedFrom() != null) {
 			File f = new File(projectMarshall.getLoadedFrom());
 			title = f.getName();
@@ -641,7 +641,7 @@ public class JdemFrame extends Frame
 		projectPane.setTitle(title);
 
 		SharedStatusBar.setStatus(I18N.get("us.wthr.jdem846.ui.jdemFrame.status.ready"));
-		
+		*/
 	}
 
 	

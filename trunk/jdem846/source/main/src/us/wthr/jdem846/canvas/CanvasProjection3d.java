@@ -14,7 +14,6 @@ import us.wthr.jdem846.model.ViewPerspective;
 
 public class CanvasProjection3d extends CanvasProjection
 {
-	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(CanvasProjection3d.class);
 	
 	protected double[] cameraVector;

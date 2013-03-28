@@ -1,6 +1,5 @@
 package us.wthr.jdem846.canvas;
 
-import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.projections.MapPoint;
 import us.wthr.jdem846.gis.projections.MapProjection;
@@ -28,23 +27,7 @@ public class CanvasProjection
 	private double maxX;
 	private double minY;
 	private double maxY;
-	
-	//protected ModelContext modelContext;
-	
-	/*
-	public CanvasProjection(ModelContext modelContext)
-	{
-		setUp(modelContext,
-				modelContext.getMapProjection(), 
-				modelContext.getNorth(), 
-				modelContext.getSouth(),
-				modelContext.getEast(),
-				modelContext.getWest(),
-				modelContext.getModelDimensions().getOutputWidth(),
-				modelContext.getModelDimensions().getOutputHeight());
-	}
-	*/
-	
+
 
 	
 	public CanvasProjection(MapProjection mapProjection,

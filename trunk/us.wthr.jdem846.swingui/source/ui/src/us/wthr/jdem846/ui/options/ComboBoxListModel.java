@@ -66,7 +66,7 @@ public class ComboBoxListModel<E> implements ComboBoxModel
 	@Override
 	public void setSelectedItem(Object anItem)
 	{
-		optionListModel.setSelectedItem(anItem);
+		optionListModel.setSelectedItem((OptionListModelItem<E>)anItem);
 	}
 
 	@Override

@@ -79,16 +79,16 @@ public class FeatureTypeStrokeLoader
 		FeatureTypeStroke featureTypeStroke = null;
 		
 		
-		List lineStrokeList = doc.selectNodes( "//jdem846/line-strokes/line-stroke" );
-		for (Iterator iter = lineStrokeList.iterator(); iter.hasNext(); ) {
+		List<?> lineStrokeList = doc.selectNodes( "//jdem846/line-strokes/line-stroke" );
+		for (Iterator<?> iter = lineStrokeList.iterator(); iter.hasNext(); ) {
 			Node lineStrokeNode = (Node) iter.next();
 			Node nameAttribute = lineStrokeNode.selectSingleNode("@name");
 			
 			featureTypeStroke = new FeatureTypeStroke(nameAttribute.getText());
 			
-			List strokeList = lineStrokeNode.selectNodes("stroke");
+			List<?> strokeList = lineStrokeNode.selectNodes("stroke");
 			
-			for (Iterator strokeIter = strokeList.iterator(); strokeIter.hasNext(); ) {
+			for (Iterator<?> strokeIter = strokeList.iterator(); strokeIter.hasNext(); ) {
 				Node strokeNode = (Node) strokeIter.next();
 				
 				float width = 1.0f;

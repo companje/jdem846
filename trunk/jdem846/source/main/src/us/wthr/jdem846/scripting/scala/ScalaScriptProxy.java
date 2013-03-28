@@ -16,7 +16,6 @@ import us.wthr.jdem846.scripting.ScriptProxy;
 
 public class ScalaScriptProxy implements ScriptProxy
 {
-	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(ScalaScriptProxy.class);
 	
 	private Object scalaObject;

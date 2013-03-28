@@ -19,14 +19,8 @@ package us.wthr.jdem846.ui.panels;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyVetoException;
-import java.beans.VetoableChangeListener;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,8 +35,6 @@ import us.wthr.jdem846.ui.base.SplitPane;
 @SuppressWarnings("serial")
 public class DockingContainerPanel extends Panel
 {
-	
-	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(DockingContainerPanel.class);
 	
 	private SideDockingPanel leftPanel = null;

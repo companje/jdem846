@@ -41,8 +41,6 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 {
 	private static Log log = Logging.getLog(ModelBuilder.class);
 
-	private ModelProgram modelProgram = null;
-
 	private List<ModelProgram> modelPrograms = new ArrayList<ModelProgram>();
 
 	private ModelProcessManifest modelProcessManifest;
@@ -66,8 +64,6 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 	private boolean useScripting = true;
 
 	private boolean isProcessing = false;
-
-	private boolean dataLoaded = false;
 
 	private ProgressTracker progressTracker = null;
 
@@ -183,16 +179,6 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 
 		useScripting = globalOptionModel.getUseScripting();
 
-		MapProjection mapProjection = null;
-
-		try {
-
-			mapProjection = globalOptionModel.getMapProjectionInstance();
-
-		} catch (MapProjectionException ex) {
-			throw new RenderEngineException("Error creating map projection: " + ex.getMessage(), ex);
-		}
-
 		int numberOfThreads = globalOptionModel.getNumberOfThreads();
 		//this.frameBufferController = new ManagedConcurrentFrameBufferController(globalOptionModel.getWidth(), globalOptionModel.getHeight(), numberOfThreads);
 
@@ -228,7 +214,6 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 			}
 
 			GridFilterMethodStack filterStack = modelProgram.getFilterStack();
-			GridProcessMethodStack processStack = modelProgram.getProcessStack();
 
 			programModelGrid.setGridFilters(filterStack);
 
@@ -451,8 +436,6 @@ public class ModelBuilder extends InterruptibleProcess implements IModelBuilder
 		this.latitudeProcessedList.reset();
 		//frameBufferController.start();
 
-		dataLoaded = true;
-		
 		log.info("Initializing final rendering...");
 		MapProjection mapProjection = null;
 

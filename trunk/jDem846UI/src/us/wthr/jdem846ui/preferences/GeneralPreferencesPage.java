@@ -10,6 +10,7 @@ import us.wthr.jdem846.logging.Logging;
 
 public class GeneralPreferencesPage extends BasicPreferencesPage
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(GeneralPreferencesPage.class);
 	public static final String ID = "jDem846UI.preferences.general";
 	

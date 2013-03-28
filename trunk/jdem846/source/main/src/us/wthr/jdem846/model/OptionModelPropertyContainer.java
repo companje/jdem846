@@ -27,6 +27,7 @@ public class OptionModelPropertyContainer
 
 	public OptionModelPropertyContainer(Object declaringObject, Method m0, Method m1) throws InvalidProcessOptionException
 	{
+		
 		this(new OptionModelMethodContainer(declaringObject, m0), new OptionModelMethodContainer(declaringObject, m1));
 	}
 
@@ -142,7 +143,7 @@ public class OptionModelPropertyContainer
 		return annotated.getValueBounds();
 	}
 
-	public Object getValue() throws MethodContainerInvokeException
+	public<E> E getValue() throws MethodContainerInvokeException
 	{
 		return getter.getValue();
 	}

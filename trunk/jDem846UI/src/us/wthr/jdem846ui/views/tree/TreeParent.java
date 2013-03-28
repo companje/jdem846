@@ -2,6 +2,9 @@ package us.wthr.jdem846ui.views.tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 
 
@@ -23,8 +26,8 @@ public class TreeParent<E> extends TreeObject<E> {
 		child.setParent(null);
 	}
 	
-	public TreeObject<E>[] getChildren() {
-		return (TreeObject<E>[]) children.toArray(new TreeObject<?>[children.size()]);
+	public Set<TreeObject<E>> getChildren() {
+		return Sets.newHashSet(children);
 	}
 	
 	public boolean hasChildren() {

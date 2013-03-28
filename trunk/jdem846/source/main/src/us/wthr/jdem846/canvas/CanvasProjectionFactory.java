@@ -2,16 +2,14 @@ package us.wthr.jdem846.canvas;
 
 import us.wthr.jdem846.ModelContext;
 import us.wthr.jdem846.ModelDimensions;
-import us.wthr.jdem846.ModelOptionNamesEnum;
-import us.wthr.jdem846.Projection;
 import us.wthr.jdem846.exception.CanvasException;
 import us.wthr.jdem846.gis.exceptions.MapProjectionException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
 import us.wthr.jdem846.gis.projections.MapProjection;
 import us.wthr.jdem846.model.GlobalOptionModel;
-import us.wthr.jdem846.model.ModelGridDimensions;
 import us.wthr.jdem846.model.ViewPerspective;
+
 
 public class CanvasProjectionFactory
 {

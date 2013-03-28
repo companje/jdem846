@@ -10,6 +10,7 @@ import us.wthr.jdem846.modelgrid.IModelGrid;
 
 public class SurfaceNormalCalculator extends FlatNormalsCalculator
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(SurfaceNormalCalculator.class);
 
 	public SurfaceNormalCalculator(IModelGrid modelGrid, Planet planet, double latitudeResolution, double longitudeResolution)

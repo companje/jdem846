@@ -16,6 +16,7 @@
 
 package us.wthr.jdem846;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -117,7 +118,7 @@ public class ServiceKernel extends Thread
 		try {
 			if (clazzList != null) {
 				for (Class<?> clazz : clazzList) {
-					initializeService((Class<AppService>) clazz);
+					initializeService(clazz);
 				}
 			}
 		} catch (Exception ex) {
@@ -181,19 +182,13 @@ public class ServiceKernel extends Thread
 		executeAnnotatedMethod(name, service, Initialize.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected void initializeService(Class<AppService> clazz) throws ServiceException
+	protected void initializeService(Class<?> clazz) throws ServiceException
 	{
-		/*
-		 * Class<AppService> clazz = null; try { clazz = (Class<AppService>)
-		 * Class.forName(clazzName, true,
-		 * Thread.currentThread().getContextClassLoader());
-		 * //serviceClasses.put(clazzName, clazz); }
-		 * catch(ClassNotFoundException ex) { //ex.printStackTrace();
-		 * log.error("Failed to load class '" + clazzName + "': " +
-		 * ex.getMessage(), ex); throw new ServiceException(clazzName,
-		 * "Failed to load class '" + clazzName + "'", ex); }
-		 */
+		
+		if (!AppService.class.isAssignableFrom(clazz)) {
+			log.info("Not An AppService Class: " + clazz.getName());
+			return;
+		}
 
 		Service annotation = (Service) clazz.getAnnotation(Service.class);
 		String name = annotation.name();
@@ -208,7 +203,7 @@ public class ServiceKernel extends Thread
 
 		AppService instance = null;
 		try {
-			instance = clazz.newInstance();
+			instance = (AppService) clazz.newInstance();
 		} catch (Exception ex) {
 			// ex.printStackTrace();
 			log.error("Failed to create new instance of '" + clazz.getName() + "': " + ex.getMessage(), ex);
@@ -217,15 +212,6 @@ public class ServiceKernel extends Thread
 
 		serviceInitialize(name, instance);
 
-		/*
-		 * Method initialize = getAnnotatedMethod(clazz, Initialize.class); if
-		 * (initialize != null) { try { initialize.invoke(instance); } catch
-		 * (Exception ex) { //ex.printStackTrace();
-		 * log.error("Failed to invoke initialization method on '" + clazzName +
-		 * "': " + ex.getMessage(), ex); throw new ServiceException(clazzName,
-		 * "Failed to invoke initialization method on '" + clazzName + "'", ex);
-		 * } }
-		 */
 
 		ServiceThread serviceThread = new ServiceThread(serviceThreadGroup, instance, name, deamon);
 
@@ -250,9 +236,9 @@ public class ServiceKernel extends Thread
 
 	}
 
-	protected void executeAnnotatedMethod(String name, AppService service, Class annotation) throws ServiceException
+	protected void executeAnnotatedMethod(String name, AppService service, Class<? extends Annotation> annotation) throws ServiceException
 	{
-		Method method = getAnnotatedMethod((Class<AppService>) service.getClass(), annotation);
+		Method method = getAnnotatedMethod(service.getClass(), annotation);
 		if (method != null) {
 			try {
 				method.invoke(service);
@@ -263,8 +249,7 @@ public class ServiceKernel extends Thread
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Method getAnnotatedMethod(Class<AppService> clazz, Class annotation)
+	protected Method getAnnotatedMethod(Class<?> clazz, Class<? extends Annotation> annotation)
 	{
 		Method[] methods = clazz.getMethods();
 		for (Method method : methods) {

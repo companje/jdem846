@@ -62,7 +62,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 		
 		//this.readModelData(dataIn);
 		this.loadImageData(image);
-		this.properties = this.readProperties(properties);
+		this.properties = JDemElevationModel.readProperties(properties);
 		
 	}
 	
@@ -71,7 +71,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 		this(image.getWidth(), image.getHeight(), true, true, false, false, false);
 		
 		this.loadImageData(image);
-		this.properties = this.readProperties(properties);
+		this.properties = JDemElevationModel.readProperties(properties);
 		
 	}
 	
@@ -95,7 +95,7 @@ public class JDemElevationModel extends AbstractBuffer implements ElevationModel
 	public JDemElevationModel(String properties) throws IOException
 	{
 		this(1, 1, false, false, false, false, false);
-		this.properties = this.readProperties(properties);
+		this.properties = JDemElevationModel.readProperties(properties);
 	}
 	
 	

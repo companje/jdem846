@@ -20,8 +20,7 @@ public class JDemClassLoader extends ClassLoader
 	
 	private ArrayList<JarFile> jarList;
 	private Map<String, Object> classMap = new HashMap<String, Object>();
-	private Map<String, Object> resourceMap = new HashMap<String, Object>();
-	
+
 	protected JDemClassLoader(File libPath, ClassLoader parent)  throws Exception
 	{
 		super(parent);
@@ -31,20 +30,19 @@ public class JDemClassLoader extends ClassLoader
 	
 	protected void initialize() throws Exception
 	{
-		ArrayList<JarFile> jarList = getJarFiles();
 
 	}
 	
 	@Override
-	protected Class findClass(String name)
+	protected Class<?> findClass(String name)
 	{
 		if (classMap.containsKey(name)) {
-			return (Class) classMap.get(name);
+			return (Class<?>) classMap.get(name);
 		}
 		
 		try {
 			for (JarFile jarFile : jarList) {
-				Class clazz = findClass(jarFile, name);
+				Class<?> clazz = findClass(jarFile, name);
 				if (clazz != null) {
 					classMap.put(name, clazz);
 					return clazz;
@@ -57,7 +55,7 @@ public class JDemClassLoader extends ClassLoader
 		return null;
 	}
 
-	protected Class findClass(JarFile jarFile, String name) throws Exception
+	protected Class<?> findClass(JarFile jarFile, String name) throws Exception
 	{
 		
 		JarEntry entry = jarFile.getJarEntry(name + ".class");
@@ -69,7 +67,7 @@ public class JDemClassLoader extends ClassLoader
 		InputStream in = jarFile.getInputStream(entry);
 		in.read(bytes);
 		
-		Class clazz = defineClass(name, bytes, 0, bytes.length, null);
+		Class<?> clazz = defineClass(name, bytes, 0, bytes.length, null);
 		return clazz;
 		
 	}
@@ -116,7 +114,7 @@ public class JDemClassLoader extends ClassLoader
 			return this.findSystemClass(name);
 		} catch (Exception ex) { }
 		
-		Class clazz = findClass(name);
+		Class<?> clazz = findClass(name);
 		if (clazz == null) {
 			throw new ClassNotFoundException("Class not found: " + name);
 		} else {

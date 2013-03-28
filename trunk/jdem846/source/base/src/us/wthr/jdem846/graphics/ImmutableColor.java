@@ -1,6 +1,5 @@
 package us.wthr.jdem846.graphics;
 
-@SuppressWarnings("serial")
 public final class ImmutableColor extends Color
 {
 
