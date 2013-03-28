@@ -1,8 +1,5 @@
 package us.wthr.jdem846.scripting.groovy;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 

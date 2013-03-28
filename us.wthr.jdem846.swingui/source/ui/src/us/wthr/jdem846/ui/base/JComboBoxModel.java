@@ -47,7 +47,7 @@ public class JComboBoxModel<E> implements ComboBoxModel
 	
 	
 	
-	public Object getSelectedItem() 
+	public ComboBoxItem<E> getSelectedItem() 
 	{
 		return selectedItem;
 	}
@@ -85,7 +85,7 @@ public class JComboBoxModel<E> implements ComboBoxModel
 	}
 
 	@Override
-	public Object getElementAt(int index) 
+	public ComboBoxItem<E> getElementAt(int index) 
 	{	
 		return itemList.get(index);
 	}

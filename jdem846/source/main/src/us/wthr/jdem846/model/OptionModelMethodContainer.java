@@ -185,11 +185,11 @@ public class OptionModelMethodContainer
 		return boundsAnnotation;
 	}
 
-	public Object getValue() throws MethodContainerInvokeException
+	public<E> E getValue() throws MethodContainerInvokeException
 	{
 		if (isGetter()) {
 			try {
-				return method.invoke(declaringObject);
+				return (E) method.invoke(declaringObject);
 			} catch (Exception ex) {
 				throw new MethodContainerInvokeException("Error invoking method: " + ex.getMessage(), ex);
 			}

@@ -32,7 +32,6 @@ import us.wthr.jdem846.ui.base.TabPane;
 @SuppressWarnings("serial")
 public class EmbeddedTabbedPane extends TabPane
 {
-	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(EmbeddedTabbedPane.class);
 	
 	public EmbeddedTabbedPane()

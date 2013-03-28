@@ -189,8 +189,8 @@ public abstract class BaseUIMain extends AbstractMain
 		PlasticTheme plasticTheme = null;
 		
 		try {
-			Class<PlasticTheme> clazz = (Class<PlasticTheme>) Class.forName(theme);
-			plasticTheme = clazz.newInstance();
+			Class<?> clazz =  Class.forName(theme);
+			plasticTheme = (PlasticTheme) clazz.newInstance();
 		} catch (Exception ex) {
 			log.warn("Failed to load pastic theme '" + theme + "': " + ex.getMessage(), ex);
 		}

@@ -5,6 +5,7 @@ import java.awt.Paint;
 
 import org.jfree.chart.renderer.category.AreaRenderer;
 
+@SuppressWarnings("serial")
 public class HistogramRenderer extends AreaRenderer
 {
 	private Paint[] colors;

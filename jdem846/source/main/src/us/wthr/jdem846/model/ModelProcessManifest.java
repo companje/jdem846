@@ -1,7 +1,8 @@
 package us.wthr.jdem846.model;
 
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import us.wthr.jdem846.graphics.View;
 import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
@@ -10,11 +11,14 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.exceptions.InvalidProcessOptionException;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.model.exceptions.ProcessContainerException;
+import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
 import us.wthr.jdem846.model.processing.GridWorker;
 import us.wthr.jdem846.model.processing.IGridWorker;
 import us.wthr.jdem846.model.processing.ModelProcessRegistry;
 import us.wthr.jdem846.model.processing.ProcessInstance;
 import us.wthr.jdem846.model.processing.RenderProcessor;
+
+import com.google.common.collect.Lists;
 
 public class ModelProcessManifest
 {
@@ -22,7 +26,7 @@ public class ModelProcessManifest
 
 	private OptionModelContainer globalOptionModelContainer;
 
-	private List<ModelProcessContainer> workerList = new LinkedList<ModelProcessContainer>();
+	private Map<GridProcessingTypesEnum, ModelProcessContainer> workerList = new HashMap<GridProcessingTypesEnum, ModelProcessContainer>();
 
 	public ModelProcessManifest() throws ProcessContainerException
 	{
@@ -45,7 +49,7 @@ public class ModelProcessManifest
 	{
 		ModelProgram modelProgram = new ModelProgram();
 
-		for (ModelProcessContainer container : workerList) {
+		for (ModelProcessContainer container : getWorkerList()) {
 
 			IGridWorker worker = container.getGridWorker().getClass().newInstance();
 			OptionModel optionModel = container.getOptionModel();
@@ -64,6 +68,11 @@ public class ModelProcessManifest
 		return modelProgram;
 	}
 
+	public void remove(GridProcessingTypesEnum type)
+	{
+		workerList.remove(type);
+	}
+	
 	public void removeAll()
 	{
 		workerList.clear();
@@ -97,17 +106,40 @@ public class ModelProcessManifest
 		addProcessContainer(new ModelProcessContainer(gridWorker, optionModel));
 	}
 
+
 	public void addProcessContainer(ModelProcessContainer processContainer)
 	{
-		workerList.add(processContainer);
+		workerList.put(processContainer.getProcessPhaseType(), processContainer);
 	}
-
-	public List<ModelProcessContainer> getProcessList()
+	
+	public List<ModelProcessContainer> getWorkerList()
 	{
-		return workerList;
+		List<ModelProcessContainer> list = Lists.newArrayList();
+		
+		if (workerList.containsKey(GridProcessingTypesEnum.DATA_LOAD)) {
+			list.add(workerList.get(GridProcessingTypesEnum.DATA_LOAD));
+		}
+		
+		if (workerList.containsKey(GridProcessingTypesEnum.COLORING)) {
+			list.add(workerList.get(GridProcessingTypesEnum.COLORING));
+		}
+		
+		if (workerList.containsKey(GridProcessingTypesEnum.SHADING)) {
+			list.add(workerList.get(GridProcessingTypesEnum.SHADING));
+		}
+		
+		if (workerList.containsKey(GridProcessingTypesEnum.SHAPES)) {
+			list.add(workerList.get(GridProcessingTypesEnum.SHAPES));
+		}
+		
+		if (workerList.containsKey(GridProcessingTypesEnum.LIGHTING)) {
+			list.add(workerList.get(GridProcessingTypesEnum.LIGHTING));
+		}
+		
+		return list;
 	}
 
-	public int getProcessListSize()
+	public int getWorkerListSize()
 	{
 		return workerList.size();
 	}
@@ -119,7 +151,7 @@ public class ModelProcessManifest
 	
 	public ModelProcessContainer getProcessContainerById(String id)
 	{
-		for (ModelProcessContainer container : workerList) {
+		for (ModelProcessContainer container : workerList.values()) {
 			if (container.getProcessId().equals(id)) {
 				return container;
 			}
@@ -129,7 +161,7 @@ public class ModelProcessManifest
 	
 	public IGridWorker getGridWorkerById(String id)
 	{
-		for (ModelProcessContainer container : workerList) {
+		for (ModelProcessContainer container : workerList.values()) {
 			if (container.getProcessId().equals(id)) {
 				return container.getGridWorker();
 			}
@@ -139,7 +171,7 @@ public class ModelProcessManifest
 
 	public OptionModel getOptionModelByProcessId(String id)
 	{
-		for (ModelProcessContainer container : workerList) {
+		for (ModelProcessContainer container : workerList.values()) {
 			if (container.getProcessId().equals(id)) {
 				return container.getOptionModel();
 			}
@@ -173,7 +205,7 @@ public class ModelProcessManifest
 			return globalOptionModelContainer;
 		}
 
-		for (ModelProcessContainer processContainer : this.workerList) {
+		for (ModelProcessContainer processContainer : this.workerList.values()) {
 			OptionModelContainer optionModelContainer = processContainer.getOptionModelContainer();
 			if (optionModelContainer != null && optionModelContainer.hasPropertyByName(name)) {
 				return optionModelContainer;
@@ -190,7 +222,7 @@ public class ModelProcessManifest
 			return globalOptionModelContainer;
 		}
 
-		for (ModelProcessContainer processContainer : this.workerList) {
+		for (ModelProcessContainer processContainer : this.workerList.values()) {
 			OptionModelContainer optionModelContainer = processContainer.getOptionModelContainer();
 			if (optionModelContainer != null && optionModelContainer.hasPropertyById(id)) {
 				return optionModelContainer;
@@ -255,7 +287,7 @@ public class ModelProcessManifest
 			throw new ProcessContainerException("Error creating copy of option model container: " + ex.getMessage(), ex);
 		}
 
-		for (ModelProcessContainer processContainer : this.workerList) {
+		for (ModelProcessContainer processContainer : this.workerList.values()) {
 			copy.addProcessContainer(new ModelProcessContainer(processContainer.getGridWorker(), processContainer.getOptionModel()));
 		}
 

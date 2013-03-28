@@ -76,8 +76,8 @@ public class ShapeDataDefinitionLoader
 		ShapeDataDefinition shapeDataDefinition = null;
 		
 		
-		List shapeDataDefinitionList = doc.selectNodes( "//jdem846/shape-types/shape-type" );
-		for (Iterator iter = shapeDataDefinitionList.iterator(); iter.hasNext(); ) {
+		List<?> shapeDataDefinitionList = doc.selectNodes( "//jdem846/shape-types/shape-type" );
+		for (Iterator<?> iter = shapeDataDefinitionList.iterator(); iter.hasNext(); ) {
 			Node shapeDataDefinitionNode = (Node) iter.next();
 			Node nameAttribute = shapeDataDefinitionNode.selectSingleNode("@name");
 			Node idAttribute = shapeDataDefinitionNode.selectSingleNode("@id");
@@ -94,8 +94,8 @@ public class ShapeDataDefinitionLoader
 				shapeDataDefinition.setFeatureTypeColumn(featureTypeColumn);
 			}
 			
-			List columnList = shapeDataDefinitionNode.selectNodes("columns/column");
-			for (Iterator columnIter = columnList.iterator(); columnIter.hasNext(); ) {
+			List<?> columnList = shapeDataDefinitionNode.selectNodes("columns/column");
+			for (Iterator<?> columnIter = columnList.iterator(); columnIter.hasNext(); ) {
 				Node columnNode = (Node) columnIter.next();
 				Node columnNameNode = columnNode.selectSingleNode("@name");
 				

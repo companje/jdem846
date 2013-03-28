@@ -2,7 +2,6 @@ package us.wthr.jdem846.graphics;
 
 import us.wthr.jdem846.util.ColorUtil;
 
-@SuppressWarnings("serial")
 public class MutableColor extends Color
 {
 

@@ -17,6 +17,7 @@ import us.wthr.jdem846.exception.AnnotationIndexerException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /** Creates an index of classes annotated with annotations that are annotated 
@@ -105,19 +106,19 @@ public class DiscoverableAnnotationIndexer
 	
 	protected void initDiscoverable() throws AnnotationIndexerException
 	{	
-		List<Class<?>> discoverableAnnotations = null;
+		List<Class<? extends Annotation>> discoverableAnnotations = null;
 		try {
-			discoverableAnnotations = findClassesWithAnnotation(Discoverable.class);
+			discoverableAnnotations = getDiscoverableAnnotations();
 		} catch (Exception ex) {
 			throw new AnnotationIndexerException("Error finding classes with annotation '" + Discoverable.class.getCanonicalName() + "': " + ex.getMessage(), ex);
 		}
 		
 		
 		if (discoverableAnnotations != null) {
-			for (Class<?> discoverableAnnotation : discoverableAnnotations) {
+			for (Class<? extends Annotation> discoverableAnnotation : discoverableAnnotations) {
 				List<Class<?>> annotatedClasses = null;
 				try {
-					annotatedClasses = findClassesWithAnnotation((Class<? extends Annotation>)discoverableAnnotation);
+					annotatedClasses = findClassesWithAnnotation(discoverableAnnotation);
 				} catch (Exception ex) {
 					throw new AnnotationIndexerException("Error finding classes with annotation '" + discoverableAnnotation.getCanonicalName() + "': " + ex.getMessage(), ex);
 				}
@@ -133,6 +134,24 @@ public class DiscoverableAnnotationIndexer
 		
 	}
 	
+	
+	protected List<Class<? extends Annotation>> getDiscoverableAnnotations() throws AnnotationIndexerException
+	{
+		List<Class<? extends Annotation>> discoverableAnnotations = Lists.newArrayList();
+		try {
+			List<Class<?>> foundClasses = findClassesWithAnnotation(Discoverable.class);
+			
+			for (Class<?> foundClass : foundClasses) {
+				if (foundClass.isAnnotation()) {
+					discoverableAnnotations.add((Class<? extends Annotation>)foundClass);
+				}
+			}
+			
+		} catch (Exception ex) {
+			throw new AnnotationIndexerException("Error finding classes with annotation '" + Discoverable.class.getCanonicalName() + "': " + ex.getMessage(), ex);
+		}
+		return discoverableAnnotations;
+	}
 
 	
 	protected List<Class<?>> findClassesWithAnnotation(Class<? extends Annotation> annotationClass) throws Exception

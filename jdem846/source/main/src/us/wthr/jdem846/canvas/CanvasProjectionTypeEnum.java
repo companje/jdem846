@@ -8,20 +8,20 @@ public enum CanvasProjectionTypeEnum
 	PROJECT_SPHERE("us.wthr.jdem846.render.canvasProjection.sphere", CanvasProjectionGlobe.class);
 	
 	private final String projectionName;
-	private final Class<CanvasProjection> provider;
+	private final Class<? extends CanvasProjection> provider;
 	
 	
-	CanvasProjectionTypeEnum(String projectionName, Class<?> provider)
+	CanvasProjectionTypeEnum(String projectionName, Class<? extends CanvasProjection> provider)
 	{
 		this.projectionName = projectionName;
-		this.provider = (Class<CanvasProjection>) provider;
+		this.provider = provider;
 	}
 	
 	public String projectionName() { return projectionName; }
 	
 
 	public String identifier() { return projectionName; }
-	public Class<CanvasProjection> provider() { return provider; }
+	public Class<? extends CanvasProjection> provider() { return provider; }
 	
 	public static CanvasProjectionTypeEnum getCanvasProjectionEnumFromIdentifier(String identifier)
 	{

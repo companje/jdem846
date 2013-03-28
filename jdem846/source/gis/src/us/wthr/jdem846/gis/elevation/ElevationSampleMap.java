@@ -8,8 +8,6 @@ public class ElevationSampleMap
 	private static Log log = Logging.getLog(ElevationSampleMap.class);
 	
 	private double north;
-	private double south;
-	private double east;
 	private double west;
 	private double latitudeResolution;
 	private double longitudeResolution;
@@ -22,8 +20,6 @@ public class ElevationSampleMap
 	public ElevationSampleMap(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution)
 	{
 		this.north = north;
-		this.south = south;
-		this.east = east;
 		this.west = west;
 		this.latitudeResolution = latitudeResolution;
 		this.longitudeResolution = longitudeResolution;

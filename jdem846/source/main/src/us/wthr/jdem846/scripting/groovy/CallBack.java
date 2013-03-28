@@ -3,7 +3,6 @@ package us.wthr.jdem846.scripting.groovy;
 import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import us.wthr.jdem846.exception.ScriptingException;
@@ -20,7 +19,7 @@ public class CallBack
 		Closure
 	}
 	
-	private Closure closure = null;
+	private Closure<?> closure = null;
 	private Method method = null;
 	private CallBackType callbackType;
 	private GroovyObject groovyObject;
@@ -63,7 +62,7 @@ public class CallBack
 	
 	public Object call() throws ScriptingException
 	{
-		return call(null);
+		return call((Object[])null);
 	}
 	
 	public Object call(Object ... args) throws ScriptingException
@@ -118,11 +117,11 @@ public class CallBack
 		return null;
 	}
 	
-	protected static Closure getClosure(GroovyObject groovyObject, String methodName) throws ScriptingException
+	protected static Closure<?> getClosure(GroovyObject groovyObject, String methodName) throws ScriptingException
 	{
 		String closureName = methodNameToCallbackGetter(methodName);
 		Method m = null;
-		Closure c = null;
+		Closure<?> c = null;
 		
 		for (Method method : groovyObject.getClass().getMethods()) {
 			if (method.getName().equals(closureName)) {
@@ -134,7 +133,7 @@ public class CallBack
 		if (m != null) {
 			try {
 				Object o = m.invoke(groovyObject);
-				c = (Closure) o;
+				c = (Closure<?>) o;
 			} catch (Exception ex) {
 				throw new ScriptingException("Error fetching closure " + methodName + ": " + ex.getMessage(), ex);
 			}

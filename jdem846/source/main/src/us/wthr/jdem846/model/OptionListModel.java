@@ -3,38 +3,33 @@ package us.wthr.jdem846.model;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class OptionListModel<E>
 {
 	private List<OptionListModelItem<E>> itemList = new LinkedList<OptionListModelItem<E>>();
 	private OptionListModelItem<E> selectedItem = null;
 	private List<ModelDataListener> listDataListeners = new LinkedList<ModelDataListener>();
-	
-	
-	
+
 	public OptionListModel()
 	{
-		
+
 	}
-	
+
 	public void addItem(OptionListModelItem<E> item)
 	{
 		itemList.add(item);
 	}
-	
+
 	public void addItem(String label, E value)
 	{
 		itemList.add(new OptionListModelItem<E>(label, value));
 	}
-	
-	
-	
-	public Object getSelectedItem() 
+
+	public OptionListModelItem<E> getSelectedItem()
 	{
 		return selectedItem;
 	}
 
-	public void setSelectedItem(Object anItem) 
+	public <T extends OptionListModelItem<E>> void setSelectedItem(T anItem)
 	{
 		selectedItem = (OptionListModelItem<E>) anItem;
 	}
@@ -48,7 +43,7 @@ public class OptionListModel<E>
 			}
 		}
 	}
-	
+
 	public E getSelectedItemValue()
 	{
 		if (selectedItem != null) {
@@ -57,7 +52,7 @@ public class OptionListModel<E>
 			return null;
 		}
 	}
-	
+
 	public int getSelectionIndex()
 	{
 		if (selectedItem != null) {
@@ -66,7 +61,7 @@ public class OptionListModel<E>
 			return 0;
 		}
 	}
-	
+
 	public int getIndexOfLabel(String label)
 	{
 		int i = 0;
@@ -78,8 +73,8 @@ public class OptionListModel<E>
 		}
 		return 0;
 	}
-	
-	public int getIndexOfValue(E value)
+
+	public <T> int getIndexOfValue(T value)
 	{
 		int i = 0;
 		for (OptionListModelItem<E> item : itemList) {
@@ -90,9 +85,9 @@ public class OptionListModel<E>
 		}
 		return 0;
 	}
-	
-	public Object getElementAt(int index) 
-	{	
+
+	public OptionListModelItem<E> getElementAt(int index)
+	{
 		return itemList.get(index);
 	}
 
@@ -100,23 +95,20 @@ public class OptionListModel<E>
 	{
 		return itemList.get(index).getValue();
 	}
-	
+
 	public int getSize()
 	{
 		return itemList.size();
 	}
 
-	
-	
-	public void addListDataListener(ModelDataListener l) 
+	public void addListDataListener(ModelDataListener l)
 	{
 		listDataListeners.add(l);
 	}
-	
-	
-	public void removeListDataListener(ModelDataListener l) 
+
+	public void removeListDataListener(ModelDataListener l)
 	{
 		listDataListeners.remove(l);
-		
+
 	}
 }

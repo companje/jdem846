@@ -521,10 +521,10 @@ public class ModelOptionControlsFactory
 	{
 		final LabeledCombo control = LabeledCombo.create(parent, property.getLabel(), SWT.READ_ONLY);
 
-		OptionListModel listModel = null;
+		OptionListModel<?> listModel = null;
 
 		try {
-			listModel = (OptionListModel) property.getListModelClass().newInstance();
+			listModel = (OptionListModel<?>) property.getListModelClass().newInstance();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -574,9 +574,9 @@ public class ModelOptionControlsFactory
 	private static class ComboSelectionListener implements Listener
 	{
 		private OptionModelPropertyContainer property;
-		private OptionListModel listModel;
+		private OptionListModel<?> listModel;
 
-		public ComboSelectionListener(OptionModelPropertyContainer property, OptionListModel listModel)
+		public ComboSelectionListener(OptionModelPropertyContainer property, OptionListModel<?> listModel)
 		{
 			this.property = property;
 			this.listModel = listModel;

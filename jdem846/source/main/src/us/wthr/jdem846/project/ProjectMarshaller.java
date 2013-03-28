@@ -25,7 +25,7 @@ public class ProjectMarshaller
 				throw new ProjectMarshalException("Error marshalling global option model: " + ex.getMessage(), ex);
 			}
 			
-			for (ModelProcessContainer processContainer : modelContext.getModelProcessManifest().getProcessList()) {
+			for (ModelProcessContainer processContainer : modelContext.getModelProcessManifest().getWorkerList()) {
 				
 				ProcessMarshall processMarshall = ProjectMarshaller.marshalProcess(processContainer);
 				pm.getProcesses().add(processMarshall);

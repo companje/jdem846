@@ -1,8 +1,5 @@
 package us.wthr.jdem846.ui.options;
 
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
@@ -13,7 +10,6 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.OptionModelPropertyContainer;
 import us.wthr.jdem846.model.annotations.ValueBounds;
 import us.wthr.jdem846.model.exceptions.MethodContainerInvokeException;
-import us.wthr.jdem846.ui.NumberTextField;
 import us.wthr.jdem846.ui.base.Spinner;
 
 @SuppressWarnings("serial")

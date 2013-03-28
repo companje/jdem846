@@ -16,7 +16,6 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.ui.base.ComboBox;
-import us.wthr.jdem846.ui.base.ComboBoxItem;
 import us.wthr.jdem846.ui.base.Dialog;
 import us.wthr.jdem846.ui.base.FileChooser;
 import us.wthr.jdem846.ui.base.JComboBoxModel;
@@ -51,7 +50,7 @@ public class DataExportDialog extends Dialog
 		// Create components
 		formatModel = new ExportFormatListModel();
 		cmbExportFormat = new ComboBox(formatModel);
-		formatModel.setSelectedItemByValue((String)((ComboBoxItem<String>)formatModel.getElementAt(0)).getValue());
+		formatModel.setSelectedItemByValue(formatModel.getElementAt(0).getValue());
 		
 		txtExportLocation = new TextField();
 		Button btnBrowse = new Button(I18N.get("us.wthr.jdem846.ui.browse") + "...");

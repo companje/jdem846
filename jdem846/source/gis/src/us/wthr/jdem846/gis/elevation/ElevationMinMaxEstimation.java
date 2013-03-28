@@ -18,10 +18,7 @@ public class ElevationMinMaxEstimation
 	
 	private static Map<String, ElevationMinMaxEstimation> minMaxEstimationMap = new HashMap<String, ElevationMinMaxEstimation>();
 	
-	private double north;
-	private double south;
-	private double east;
-	private double west;
+
 	private double latitudeResolution;
 	private double longitudeResolution;
 	
@@ -29,15 +26,10 @@ public class ElevationMinMaxEstimation
 	
 	protected ElevationMinMaxEstimation(double north, double south, double east, double west, double latitudeResolution, double longitudeResolution)
 	{
-		this.north = north;
-		this.south = south;
-		this.east = east;
-		this.west = west;
 		this.latitudeResolution = latitudeResolution;
 		this.longitudeResolution = longitudeResolution;
 		
 		sampleMap = new ElevationSampleMap(north, south, east, west, latitudeResolution, longitudeResolution);
-		
 	}
 	
 	

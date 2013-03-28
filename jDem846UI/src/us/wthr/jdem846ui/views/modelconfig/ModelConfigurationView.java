@@ -114,6 +114,7 @@ public class ModelConfigurationView extends ViewPart {
 		
 		//defaultLightingProcessor
 		
+		
 		try {
 			ProjectContext.getInstance().getModelProcessManifest().addWorker(defaultColoringProcessor, ProjectContext.getInstance().getOptionModelContainer(defaultColoringProcessor).getOptionModel());
 			ProjectContext.getInstance().getModelProcessManifest().addWorker(defaultShapesProcessor, ProjectContext.getInstance().getOptionModelContainer(defaultShapesProcessor).getOptionModel());
@@ -123,6 +124,7 @@ public class ModelConfigurationView extends ViewPart {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		
 		if (redraw) {
 			parent.layout(true);
@@ -136,7 +138,7 @@ public class ModelConfigurationView extends ViewPart {
 		log.info("Process type selections changed");
 		
 		ModelProcessManifest modelProcessManifest = ProjectContext.getInstance().getModelProcessManifest();
-		modelProcessManifest.removeAll();
+		//modelProcessManifest.removeAll();
 		
 		String selectedColoringProcessor = coloringOptionsPageContainer.getSelectedProcessType();
 		String selectedShadingProcessor = shadingOptionsPageContainer.getSelectedProcessType();

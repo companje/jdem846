@@ -103,7 +103,7 @@ public class DataView extends ViewPart
 		return copy;
 	}
 
-	private TreeObject createTreeModel()
+	private TreeObject<?> createTreeModel()
 	{
 		DataTreeParent dataSources = new DataTreeParent("Data Sources", IconEnum.DATA_SOURCE_CATEGORY);
 		DataTreeParent renderedModels = new DataTreeParent("Completed Models", IconEnum.RENDERED_MODEL_CATEGORY);
@@ -246,7 +246,7 @@ public class DataView extends ViewPart
 		List<TreeObject<?>> selections = new LinkedList<TreeObject<?>>();
 		
 		if (!selection.isEmpty()) {
-			for (Iterator<TreeObject<?>> iter = selection.iterator(); iter.hasNext();) {
+			for (Iterator<TreeObject<?>> iter = (Iterator<TreeObject<?>>) selection.iterator(); iter.hasNext();) {
 				TreeObject<?> treeObject = iter.next();
 				selections.add(treeObject);
 			}

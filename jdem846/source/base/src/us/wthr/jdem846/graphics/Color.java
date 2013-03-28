@@ -8,7 +8,6 @@ import us.wthr.jdem846.util.ColorUtil;
  * @author Kevin M. Gill <kmsmgill@gmail.com>
  *
  */
-@SuppressWarnings("serial")
 public class Color implements IColor
 {
 

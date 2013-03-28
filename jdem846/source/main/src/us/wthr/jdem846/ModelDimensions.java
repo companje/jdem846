@@ -1,18 +1,8 @@
 package us.wthr.jdem846;
 
-import us.wthr.jdem846.canvas.CanvasProjection;
-import us.wthr.jdem846.canvas.CanvasProjection3d;
-import us.wthr.jdem846.canvas.CanvasProjectionGlobe;
-import us.wthr.jdem846.canvas.CanvasProjectionTypeEnum;
-import us.wthr.jdem846.canvas.LatLonResolution;
-import us.wthr.jdem846.image.ImageDataContext;
-import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.model.GlobalOptionModel;
-import us.wthr.jdem846.rasterdata.RasterData;
-import us.wthr.jdem846.rasterdata.RasterDataContext;
+
 
 public abstract class ModelDimensions
 {

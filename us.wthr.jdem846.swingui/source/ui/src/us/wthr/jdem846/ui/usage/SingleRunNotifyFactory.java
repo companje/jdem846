@@ -5,18 +5,15 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
-import java.net.NetworkInterface;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
 
 import us.wthr.jdem846.JDem846Properties;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.MathExt;
 
 public class SingleRunNotifyFactory
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(SingleRunNotifyFactory.class);
 	
 	protected SingleRunNotifyFactory()

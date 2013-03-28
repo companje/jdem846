@@ -21,11 +21,14 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
-      
+      <category
+      		id="us.wthr.jdem846.category"
+      		name="Digital Elevation Modeling"/>
       <view
             name="Data Sources"
             allowMultiple="false"
             icon="icons/eclipse/sundial.gif"
+            category="us.wthr.jdem846.category"
             class="us.wthr.jdem846ui.views.data.DataView"
             id="jdem846ui.dataView" />
       
@@ -33,6 +36,7 @@
             name="Log Console"
             class="us.wthr.jdem846ui.views.LogConsoleView"
             id="jdem846ui.logConsoleView"
+            category="us.wthr.jdem846.category"
             icon="icons/eclipse/console_view.gif" />
             
       <view
@@ -40,41 +44,34 @@
             allowMultiple="false"
             class="us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView"
             id="jdem846ui.modelConfigurationView"
+            category="us.wthr.jdem846.category"
             icon="icons/eclipse/configure.gif" />
       
-      <view
-            name="Preview"
-            class="us.wthr.jdem846ui.views.preview.PreviewView"
-            id="jdem846ui.previewView" 
-            icon="icons/eclipse/globe2.gif"/>
+
       <view
             name="Quick Preview"
             class="us.wthr.jdem846ui.views.preview.MiniPreviewView"
             id="jdem846ui.miniPreviewView" 
+            category="us.wthr.jdem846.category"
             icon="icons/eclipse/globe2.gif"/>
       <view
             name="Region Overview"
             class="us.wthr.jdem846ui.views.RegionOverviewView"
+            category="us.wthr.jdem846.category"
             id="jdem846ui.regionOverviewView" />
-      
-
-     
-     <view
-            name="Script Editor"
-            class="us.wthr.jdem846ui.views.scripteditor.ScriptEditorView"
-            id="jdem846ui.scriptEditorView"
-            icon="icons/eclipse/scroll.png" />
 
      <view
             name="Layer Properties"
             class="us.wthr.jdem846ui.views.layers.LayerPropertiesView"
             id="jdem846ui.layerPropertiesView"
+            category="us.wthr.jdem846.category"
             icon="icons/eclipse/binary.gif" />        
      
      <view
             name="Model Statistics"
             class="us.wthr.jdem846ui.views.models.ModelStatisticsView"
             id="jdem846ui.modelStatisticsView"
+            category="us.wthr.jdem846.category"
             icon="icons/eclipse/chart.gif" /> 
      
 	<view

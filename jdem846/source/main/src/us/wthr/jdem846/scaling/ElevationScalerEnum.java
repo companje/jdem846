@@ -13,19 +13,19 @@ public enum ElevationScalerEnum
 	
 	
 	private final String scalerName;
-	private final Class<ElevationScaler> provider;
+	private final Class<? extends ElevationScaler> provider;
 	
 	
-	ElevationScalerEnum(String scalerName, Class<?> provider)
+	ElevationScalerEnum(String scalerName, Class<? extends ElevationScaler> provider)
 	{
 		this.scalerName = scalerName;
-		this.provider = (Class<ElevationScaler>) provider;
+		this.provider = provider;
 	}
 	
 	
 	public String identifier() { return scalerName; }
 	public String scalerName() { return I18N.get(scalerName, scalerName); }
-	public Class<ElevationScaler> provider() { return provider; }
+	public Class<? extends ElevationScaler> provider() { return provider; }
 	
 	public static ElevationScalerEnum getElevationScalerEnumFromIdentifier(String identifier)
 	{

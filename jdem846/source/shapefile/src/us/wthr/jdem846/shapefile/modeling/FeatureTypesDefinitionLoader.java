@@ -79,8 +79,8 @@ public class FeatureTypesDefinitionLoader
 		FeatureTypesDefinition featureTypeDefinition = null;
 		//Node node = null;
 		
-		List featureTypeDefinitionList = doc.selectNodes( "//jdem846/feature-types/feature-type-definition" );
-		for (Iterator iter = featureTypeDefinitionList.iterator(); iter.hasNext(); ) {
+		List<?> featureTypeDefinitionList = doc.selectNodes( "//jdem846/feature-types/feature-type-definition" );
+		for (Iterator<?> iter = featureTypeDefinitionList.iterator(); iter.hasNext(); ) {
 			Node featureTypeDefinitionNode = (Node) iter.next();
 			Node nameAttribute = featureTypeDefinitionNode.selectSingleNode("@name");
 			Node idAttribute = featureTypeDefinitionNode.selectSingleNode("@id");
@@ -93,8 +93,8 @@ public class FeatureTypesDefinitionLoader
 			}
 			
 			
-			List featureTypeGroupList = featureTypeDefinitionNode.selectNodes("type-groups/type-group");
-			for (Iterator featureTypeGroupIter = featureTypeGroupList.iterator(); featureTypeGroupIter.hasNext(); ) {
+			List<?> featureTypeGroupList = featureTypeDefinitionNode.selectNodes("type-groups/type-group");
+			for (Iterator<?> featureTypeGroupIter = featureTypeGroupList.iterator(); featureTypeGroupIter.hasNext(); ) {
 				Node featureTypeGroupNode = (Node) featureTypeGroupIter.next();
 				
 				Node featureTypeGroupNameAttribute = featureTypeGroupNode.selectSingleNode("@name");
@@ -110,8 +110,8 @@ public class FeatureTypesDefinitionLoader
 			}
 			
 			
-			List featureTypeList = featureTypeDefinitionNode.selectNodes("type");
-			for (Iterator featureTypeIter = featureTypeList.iterator(); featureTypeIter.hasNext(); ) {
+			List<?> featureTypeList = featureTypeDefinitionNode.selectNodes("type");
+			for (Iterator<?> featureTypeIter = featureTypeList.iterator(); featureTypeIter.hasNext(); ) {
 				Node featureTypeNode = (Node) featureTypeIter.next();
 				
 				Node featureTypeCodeAttribute = featureTypeNode.selectSingleNode("@code");

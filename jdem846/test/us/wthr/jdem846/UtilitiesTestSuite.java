@@ -29,7 +29,6 @@ public class UtilitiesTestSuite extends TestSuite
 		suite.addTestSuite(us.wthr.jdem846.util.ByteConversionsTest.class);
 		suite.addTestSuite(us.wthr.jdem846.scaling.FloatRasterTest.class);
 		suite.addTestSuite(us.wthr.jdem846.scaling.ResizeDimensionsTest.class);
-		suite.addTestSuite(us.wthr.jdem846.ModelOptionsTest.class);
 		
 		//$JUnit-END$
 		return suite;

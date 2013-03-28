@@ -17,8 +17,7 @@ import us.wthr.jdem846.model.ViewPerspective;
 
 public class CanvasProjectionGlobe extends CanvasProjection3d
 {
-	
-	@SuppressWarnings("unused")
+
 	private static Log log = Logging.getLog(CanvasProjectionGlobe.class);
 	
 	
@@ -26,8 +25,6 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 	private double D; // In meters
 	private double fov;
 	private double aspect;
-	private double zNear;
-	private double zFar;
 	
 	public CanvasProjectionGlobe(MapProjection mapProjection,
 			double north,
@@ -102,7 +99,6 @@ public class CanvasProjectionGlobe extends CanvasProjection3d
 		
 		this.minSideLength = MathExt.min(getWidth(), getHeight()) - 20;
 		
-		double latRes = modelDimensions.getLatitudeResolution();
 		double effLatRes = modelDimensions.getTextureLatitudeResolutionTrue();
 		
 		//Planet planet = PlanetsRegistry.getPlanet(modelContext.getModelOptions().getOption(ModelOptionNamesEnum.PLANET));

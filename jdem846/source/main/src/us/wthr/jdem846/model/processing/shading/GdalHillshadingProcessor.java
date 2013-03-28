@@ -23,6 +23,7 @@ import us.wthr.jdem846.util.ColorUtil;
 				)
 public class GdalHillshadingProcessor extends GridProcessor
 {
+	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(GdalHillshadingProcessor.class);
 	
 	double azimuth;

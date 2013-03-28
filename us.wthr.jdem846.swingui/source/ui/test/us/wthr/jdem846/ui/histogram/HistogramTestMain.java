@@ -1,11 +1,8 @@
 package us.wthr.jdem846.ui.histogram;
 
-import java.awt.image.BufferedImage;
-
 import javax.swing.JFrame;
 
 import us.wthr.jdem846.AbstractTestMain;
-import us.wthr.jdem846.image.ImageIcons;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 
