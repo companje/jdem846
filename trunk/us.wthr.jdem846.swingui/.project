@@ -3,6 +3,9 @@
 	<name>us.wthr.jdem846.swingui</name>
 	<comment></comment>
 	<projects>
+		<project>javax.media.opengl</project>
+		<project>jdem846</project>
+		<project>us.wthr.jdem846.dependencies</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

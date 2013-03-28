@@ -3,5 +3,10 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/javax.media.opengl"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jdem846"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.swtchart"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.swtchart.ext"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/us.wthr.jdem846.dependencies"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

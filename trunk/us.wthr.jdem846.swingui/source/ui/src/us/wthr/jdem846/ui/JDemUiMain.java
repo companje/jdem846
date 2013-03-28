@@ -49,6 +49,7 @@ public class JDemUiMain extends BaseUIMain
 	@Override
 	public void afterInit() throws Exception
 	{
+		super.afterInit();
 		log = Logging.getLog(JDemUiMain.class);
 		frame = JdemFrame.getInstance();
 		
