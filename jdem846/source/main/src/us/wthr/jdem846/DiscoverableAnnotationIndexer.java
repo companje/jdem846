@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.reflections.Reflections;
+import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
@@ -15,7 +16,8 @@ import us.wthr.jdem846.annotations.Discoverable;
 import us.wthr.jdem846.exception.AnnotationIndexerException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.model.annotations.GridProcessing;
+
+import com.google.common.collect.Sets;
 
 /** Creates an index of classes annotated with annotations that are annotated 
  * with the Discoverable annotation. annotation. ;-)
@@ -35,23 +37,40 @@ public class DiscoverableAnnotationIndexer
 	private static List<URL> urls = new ArrayList<URL>();
 	private static List<String> packageFilters = new ArrayList<String>();
 	
+	static {
+		addClassLoaders(AbstractMain.class.getClassLoader());
+	}
+	
 	protected DiscoverableAnnotationIndexer()
 	{
 		
+		
+		
+	}
+	
+	public static void addClassLoaders(Set<ClassLoader> classLoaders)
+	{
+		for (ClassLoader classLoader : classLoaders) {
+			DiscoverableAnnotationIndexer.classLoaders.add(classLoader);
+			addUrls(ClasspathHelper.forClassLoader(classLoader));
+		}
 	}
 	
 	public static void addClassLoaders(ClassLoader ... classLoaders)
 	{
-		for (ClassLoader classLoader : classLoaders) {
-			DiscoverableAnnotationIndexer.classLoaders.add(classLoader);
+		addClassLoaders(Sets.newHashSet(classLoaders));
+	}
+	
+	public static void addUrls(Set<URL> urls)
+	{
+		for (URL url : urls) {
+			DiscoverableAnnotationIndexer.urls.add(url);
 		}
 	}
 	
 	public static void addUrls(URL ... urls)
 	{
-		for (URL url : urls) {
-			DiscoverableAnnotationIndexer.urls.add(url);
-		}
+		addUrls(Sets.newHashSet(urls));
 	}
 	
 	protected static Reflections getReflections()
@@ -90,7 +109,7 @@ public class DiscoverableAnnotationIndexer
 		try {
 			discoverableAnnotations = findClassesWithAnnotation(Discoverable.class);
 		} catch (Exception ex) {
-			throw new AnnotationIndexerException("Error finding classes with annotation '" + GridProcessing.class.getCanonicalName() + "': " + ex.getMessage(), ex);
+			throw new AnnotationIndexerException("Error finding classes with annotation '" + Discoverable.class.getCanonicalName() + "': " + ex.getMessage(), ex);
 		}
 		
 		

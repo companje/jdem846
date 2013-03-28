@@ -14,7 +14,6 @@ import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectMarshall;
 import us.wthr.jdem846.project.ProjectMarshaller;
 import us.wthr.jdem846.project.ProjectTypeEnum;
-import us.wthr.jdem846.ui.SharedStatusBar;
 
 public class ModelImageExporter
 {
@@ -104,7 +103,7 @@ public class ModelImageExporter
 			
 			ImageWriter.saveImage((BufferedImage)elevationModel.getImage(), path);
 			//ImageIO.write((BufferedImage)elevationModel.getImage(), formatName, writeFile);
-			SharedStatusBar.setStatus("Image exported to " + writeFile);
+			//SharedStatusBar.setStatus("Image exported to " + writeFile);
 			this.fireExportSuccessfulListeners();
 		} catch (Exception e) {
 			log.error("Failed to write image to disk: " + e.getMessage(), e);

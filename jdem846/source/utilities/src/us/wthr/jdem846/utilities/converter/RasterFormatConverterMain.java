@@ -1,9 +1,10 @@
 package us.wthr.jdem846.utilities.converter;
 
+import us.wthr.jdem846.AbstractMain;
 import us.wthr.jdem846.logging.Log;
-import us.wthr.jdem846.ui.BaseUIMain;
 
-public class RasterFormatConverterMain extends BaseUIMain
+
+public class RasterFormatConverterMain extends AbstractMain
 {
 	private static Log log = null;
 
@@ -13,7 +14,15 @@ public class RasterFormatConverterMain extends BaseUIMain
 	{
 		
 	}
+	
+	@Override
+	public void afterCoreInit() throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
+	
 	@Override
 	public void afterInit() throws Exception
 	{
@@ -38,6 +47,7 @@ public class RasterFormatConverterMain extends BaseUIMain
 		
 	}
 
+	
 	
 	
 	

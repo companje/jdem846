@@ -36,6 +36,7 @@ import us.wthr.jdem846.project.ProcessMarshall;
 import us.wthr.jdem846.project.ProjectFiles;
 import us.wthr.jdem846.project.ProjectMarshall;
 import us.wthr.jdem846.project.ProjectMarshaller;
+import us.wthr.jdem846.project.RecentProjectTracker;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.rasterdata.RasterDataProviderFactory;
@@ -44,7 +45,6 @@ import us.wthr.jdem846.rasterdata.generic.IRasterDefinition;
 import us.wthr.jdem846.scripting.ScriptingContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
 import us.wthr.jdem846.shapefile.ShapeFileRequest;
-import us.wthr.jdem846.ui.RecentProjectTracker;
 
 public class ProjectContext
 {
