@@ -95,9 +95,12 @@ public class ShapeProcessor extends GridFilter
 		
 		canvas = new ShapeRenderCanvas(modelContext, canvasBufferImage);
 		
-		process();
-		
-		shapeImage = (BufferedImage) canvas.getFinalizedImage();
+		if (modelContext.getShapeDataContext().getShapeDataListSize() > 0) {
+			process();
+			shapeImage = (BufferedImage) canvas.getFinalizedImage();
+		} else {
+			shapeImage = null;
+		}
 /*		try {
 			ImageWriter.saveImage(shapeImage, "C:/jdem/temp/shapecanvas.png");
 		} catch (ImageException e) {
@@ -312,17 +315,17 @@ public class ShapeProcessor extends GridFilter
 	@Override
 	public void onModelPoint(double latitude, double longitude) throws RenderEngineException
 	{
-		
-		IColor color = getCanvasColor(latitude, longitude);
-		if (color != null) {
-			
-			IColor gridColor = modelGrid.getRgba(latitude, longitude);
-			
-			color = ColorUtil.overlayColor(color, gridColor);
-			
-			modelGrid.setRgba(latitude, longitude, color);
+		if (shapeImage != null) {
+			IColor color = getCanvasColor(latitude, longitude);
+			if (color != null) {
+				
+				IColor gridColor = modelGrid.getRgba(latitude, longitude);
+				
+				color = ColorUtil.overlayColor(color, gridColor);
+				
+				modelGrid.setRgba(latitude, longitude, color);
+			}
 		}
-		
 
 
 	}
