@@ -25,7 +25,7 @@ public class ViewContentProvider implements IStructuredContentProvider,
 
 	public Object[] getChildren(Object parent) {
 		if (parent instanceof TreeParent) {
-			return ((TreeParent<?>) parent).getChildren().toArray();
+			return ((TreeParent) parent).getChildren().toArray();
 		}
 		return new Object[0];
 	}

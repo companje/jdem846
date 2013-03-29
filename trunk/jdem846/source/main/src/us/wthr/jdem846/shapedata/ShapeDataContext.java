@@ -1,15 +1,17 @@
 package us.wthr.jdem846.shapedata;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 
 import us.wthr.jdem846.DataContext;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.model.exceptions.ContextPrepareException;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeBase;
+import us.wthr.jdem846.shapefile.ShapeFileReference;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
+
+import com.google.common.collect.Sets;
 
 
 public class ShapeDataContext implements DataContext
@@ -22,7 +24,7 @@ public class ShapeDataContext implements DataContext
 	private double north = 90.0;
 	private double south = -90.0;
 	
-	private List<ShapeFileRequest> shapeFiles = new LinkedList<ShapeFileRequest>();
+	private Set<ShapeBase> shapeFiles = Sets.newHashSet();
 	
 	private boolean isDisposed = false;
 	
@@ -39,10 +41,10 @@ public class ShapeDataContext implements DataContext
 		north = -90.0;
 		south = 90.0;
 		
-		for (ShapeFileRequest shapeFileRequest : shapeFiles) {
+		//for (ShapeFileReference shapeFileRequest : shapeFiles) {
 			// TODO: Get the geographic ranges
 			
-		}
+		//}
 		
 	}
 	
@@ -52,9 +54,17 @@ public class ShapeDataContext implements DataContext
 			throw new DataSourceException("Shape data proxy already disposed.");
 		}
 		
-		for (ShapeFileRequest shapeFileRequest : shapeFiles) {
-			shapeFileRequest.dispose();
+		for (ShapeBase shapeBase : shapeFiles) {
+			//try {
+			//	shapeBase.close();
+			//} catch (ShapeFileException ex) {
+			//	throw new DataSourceException("Error closing shape data: " + ex.getMessage(), ex);
+			//}
 		}
+		
+		//for (ShapeFileReference shapeFileRequest : shapeFiles) {
+		//	shapeFileRequest.dispose();
+		//}
 		
 		
 		// TODO: Finish
@@ -70,7 +80,12 @@ public class ShapeDataContext implements DataContext
 	
 	public void addShapeFile(String path, String shapeDataDefinitionId) throws ShapeFileException, DataSourceException
 	{
-		shapeFiles.add(new ShapeFileRequest(path, shapeDataDefinitionId));
+		ShapeFileReference shapeFileRef = new ShapeFileReference(path, shapeDataDefinitionId);
+		try {
+			shapeFiles.add(shapeFileRef.open());
+		} catch (Exception ex) {
+			throw new DataSourceException("Error opening shape data: " + ex.getMessage(), ex);
+		}
 		try {
 			prepare();
 		} catch (ContextPrepareException ex) {
@@ -78,9 +93,9 @@ public class ShapeDataContext implements DataContext
 		}
 	}
 	
-	public void addShapeFile(ShapeFileRequest shapeFileRequest) throws DataSourceException
+	public void addShapeFile(ShapeBase shapeBase) throws DataSourceException
 	{
-		shapeFiles.add(shapeFileRequest);
+		shapeFiles.add(shapeBase);
 		try {
 			prepare();
 		} catch (ContextPrepareException ex) {
@@ -88,20 +103,8 @@ public class ShapeDataContext implements DataContext
 		}
 	}
 	
-	public ShapeFileRequest removeShapeFile(int index) throws DataSourceException
-	{
-		ShapeFileRequest removed = shapeFiles.remove(index);
-		if (removed != null) {
-			try {
-				prepare();
-			} catch (ContextPrepareException ex) {
-				throw new DataSourceException("Failed to prepare shade data context: " + ex.getMessage(), ex);
-			}
-		}
-		return removed;
-	}
 	
-	public boolean removeShapeFile(ShapeFileRequest shapeFileRequest) throws DataSourceException
+	public boolean removeShapeFile(ShapeFileReference shapeFileRequest) throws DataSourceException
 	{
 		boolean result = shapeFiles.remove(shapeFileRequest);
 		if (result) {
@@ -114,7 +117,7 @@ public class ShapeDataContext implements DataContext
 		return result;
 	}
 	
-	public List<ShapeFileRequest> getShapeFiles()
+	public Set<ShapeBase> getShapeFiles()
 	{
 		return shapeFiles;
 	}
@@ -125,9 +128,9 @@ public class ShapeDataContext implements DataContext
 	}
 	
 
-	public void setShapeFiles(List<ShapeFileRequest> shapeFiles)
+	public void setShapeFiles(Set<ShapeBase> shapeFiles)
 	{
-		this.shapeFiles = shapeFiles;
+		this.shapeFiles.addAll(shapeFiles);
 	}
 	
 	
@@ -163,12 +166,9 @@ public class ShapeDataContext implements DataContext
 		clone.south = getSouth();
 		clone.east = getEast();
 		clone.west = getWest();
-		clone.isDisposed = isDisposed(); // Should be false at this point...	
+		clone.isDisposed = isDisposed(); // Should be false at this point...// So then throw!
 		
-		for (ShapeFileRequest shapeFileRequest : shapeFiles) {
-			clone.shapeFiles.add(shapeFileRequest.copy());
-		}
-		
+		clone.shapeFiles.addAll(shapeFiles);
 
 		return clone;
 	}

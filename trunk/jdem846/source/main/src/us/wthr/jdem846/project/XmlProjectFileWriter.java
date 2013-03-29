@@ -29,7 +29,7 @@ import org.dom4j.io.XMLWriter;
 import us.wthr.jdem846.DemConstants;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeFileReference;
 
 
 
@@ -90,7 +90,7 @@ public class XmlProjectFileWriter
         	inputFiles.addElement("input").addText(inputFile);
         }
         
-        for (ShapeFileRequest shapeFileRequest : projectModel.getShapeFiles()) {
+        for (ShapeFileReference shapeFileRequest : projectModel.getShapeFiles()) {
         	
         	Element shapeFileElement = inputFiles.addElement("shapefile");
         	shapeFileElement.addElement("path").addText(shapeFileRequest.getPath());

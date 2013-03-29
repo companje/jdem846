@@ -394,5 +394,13 @@
 		      id="us.wthr.jdem846ui.editors.JavascriptEditor">
 		</editor>
 		
+		<editor
+		      name="DBase"
+		      extensions="dbf"
+		      icon="icons/eclipse/datasheet.gif"
+		      class="us.wthr.jdem846ui.editors.DBaseEditor"
+		      id="us.wthr.jdem846ui.editors.DBaseEditor">
+		</editor>
+		
 	</extension>
 </plugin>

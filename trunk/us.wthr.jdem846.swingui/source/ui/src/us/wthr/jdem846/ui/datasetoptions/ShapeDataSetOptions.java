@@ -23,7 +23,7 @@ import java.awt.event.ItemListener;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeFileReference;
 import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinition;
 import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinitionLoader;
 import us.wthr.jdem846.ui.TitledRoundedPanel;
@@ -36,12 +36,12 @@ public class ShapeDataSetOptions extends TitledRoundedPanel
 {
 	private static Log log = Logging.getLog(ShapeDataSetOptions.class);
 	
-	private ShapeFileRequest shapeFileRequest;
+	private ShapeFileReference shapeFileRequest;
 	
 	private ComboBox jcmbShapeStyles;
 	private ShapeStylesListModel shapeStylesModel;
 	
-	public ShapeDataSetOptions(ShapeFileRequest shapeFileRequest)
+	public ShapeDataSetOptions(ShapeFileReference shapeFileRequest)
 	{
 		super(I18N.get("us.wthr.jdem846.ui.datasetoptions.shapeOptions.title"));
 		

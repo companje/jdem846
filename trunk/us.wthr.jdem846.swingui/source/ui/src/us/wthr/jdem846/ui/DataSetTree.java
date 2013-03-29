@@ -21,8 +21,10 @@ import java.awt.Component;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -46,7 +48,8 @@ import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterData;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeBase;
+import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.base.ScrollPane;
 import us.wthr.jdem846.ui.base.Tree;
@@ -217,18 +220,29 @@ public class DataSetTree extends Panel
 		}
 		
 		if (modelContext.getShapeDataContext() != null && modelContext.getShapeDataContext().getShapeDataListSize() > 0) {
-			List<ShapeFileRequest> shapeFileRequests = modelContext.getShapeDataContext().getShapeFiles();
-			for (int i = 0; i < shapeFileRequests.size(); i++) {
-				ShapeFileRequest shapeFileRequest = shapeFileRequests.get(i);
+			Set<ShapeBase> shapeBases = modelContext.getShapeDataContext().getShapeFiles();
+			//Iterator<ShapeBase> iter = shapeBases.iterator();
+			
+			int i = 0;
+			for (Iterator<ShapeBase> iter = shapeBases.iterator(); iter.hasNext(); ) {
 				
-				Icon icon = null;
 				
-				if (shapeFileRequest.getDatasetType() == DataSetTypes.SHAPE_POLYGON)
-					icon = polygonIcon;
-				else if (shapeFileRequest.getDatasetType() == DataSetTypes.SHAPE_POLYLINE)
-					icon = polylineIcon;
-				
-				shapeNode.add(new DatasetTreeNode(icon, shapeFileRequest, i));
+				try {
+					ShapeBase shapeBase = iter.next();
+					
+					Icon icon = null;
+					
+					if (shapeBase.getShapeType() == DataSetTypes.SHAPE_POLYGON)
+						icon = polygonIcon;
+					else if (shapeBase.getShapeType() == DataSetTypes.SHAPE_POLYLINE)
+						icon = polylineIcon;
+					
+					shapeNode.add(new DatasetTreeNode(icon, shapeBase, i));
+					i++;
+				} catch (Exception ex) {
+					// TODO Throw
+					ex.printStackTrace();
+				}
 			}
 		} else {
 			shapeNode.add(new DatasetTreeNode(noDataIcon, I18N.get("us.wthr.jdem846.ui.dataSetTree.node.noData")));
@@ -331,12 +345,17 @@ public class DataSetTree extends Panel
 		
 		
 		
-		public DatasetTreeNode(Icon icon, ShapeFileRequest shapeFileRequest, int index)
+		public DatasetTreeNode(Icon icon, ShapeBase shapeBase, int index)
 		{
-			super((new File(shapeFileRequest.getPath()).getName()));
+			super((new File(shapeBase.getShapeFileReference().getPath()).getName()));
 			this.index = index;
 			this.icon = icon;
-			this.type = shapeFileRequest.getDatasetType();
+			try {
+				this.type = shapeBase.getShapeType();
+			} catch (ShapeFileException ex) {
+				// TODO Throw
+				ex.printStackTrace();
+			}
 		}
 		
 		public DatasetTreeNode(Icon icon, SimpleGeoImage image, int index)

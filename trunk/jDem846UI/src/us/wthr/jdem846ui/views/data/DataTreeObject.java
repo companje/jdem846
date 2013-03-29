@@ -4,19 +4,21 @@ import us.wthr.jdem846.IDataObject;
 import us.wthr.jdem846ui.project.IconEnum;
 import us.wthr.jdem846ui.views.tree.TreeObject;
 
-public class DataTreeObject extends TreeObject<IDataObject> {
+public class DataTreeObject<T> extends TreeObject<IDataObject> {
 
 	private IconEnum icon;
-	private IDataObject data;
-
-	public DataTreeObject(String name, IDataObject data, IconEnum icon) {
-		super(name, IDataObject.class);
+	private T data;
+	protected TreeSelectionListener selectionListener;
+	
+	public DataTreeObject(String name, T data, IconEnum icon, TreeSelectionListener selectionListener) {
+		super(name, (Class<IDataObject>) data.getClass());
 		this.icon = icon;
 		this.data = data;
+		this.selectionListener = selectionListener;
 	}
 
 	
-	public IDataObject getData() {
+	public T getData() {
 		return data;
 	}
 

@@ -1,6 +1,5 @@
 package us.wthr.jdem846ui.views.data;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,11 +32,15 @@ import us.wthr.jdem846.project.context.ProjectContext;
 import us.wthr.jdem846.rasterdata.RasterData;
 import us.wthr.jdem846.rasterdata.RasterDataContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeBase;
 import us.wthr.jdem846ui.ApplicationActionBarAdvisor;
 import us.wthr.jdem846ui.ICommandIds;
-import us.wthr.jdem846ui.observers.RenderedModelSelectionObserver;
 import us.wthr.jdem846ui.project.IconEnum;
+import us.wthr.jdem846ui.views.geoimage.GeoImageTreeObject;
+import us.wthr.jdem846ui.views.modelgrid.ModelGridTreeObject;
+import us.wthr.jdem846ui.views.models.ElevationModelTreeObject;
+import us.wthr.jdem846ui.views.raster.RasterTreeObject;
+import us.wthr.jdem846ui.views.shape.ShapeTreeObject;
 import us.wthr.jdem846ui.views.tree.TreeObject;
 import us.wthr.jdem846ui.views.tree.ViewContentProvider;
 
@@ -52,9 +55,29 @@ public class DataView extends ViewPart
 
 	private static DataView INSTANCE;
 
+	private TreeSelectionListener treeSelectionListener;
+	
 	public DataView()
 	{
 		DataView.INSTANCE = this;
+		
+		treeSelectionListener = new TreeSelectionListener()
+		{
+
+			@Override
+			public void onSourceDataSelectionChanged(InputSourceData selectedData)
+			{
+				DataView.INSTANCE.fireOnSourceDataSelectionChanged(selectedData);
+			}
+
+			@Override
+			public void onRenderedModelSelectionChanged(ElevationModel elevationModel)
+			{
+				DataView.INSTANCE.fireOnRenderedModelSelectionChanged(elevationModel);
+			}
+			
+		};
+		
 	}
 
 	public static DataView getInstance()
@@ -105,10 +128,10 @@ public class DataView extends ViewPart
 
 	private TreeObject<?> createTreeModel()
 	{
-		DataTreeParent dataSources = new DataTreeParent("Data Sources", IconEnum.DATA_SOURCE_CATEGORY);
-		DataTreeParent renderedModels = new DataTreeParent("Completed Models", IconEnum.RENDERED_MODEL_CATEGORY);
+		DataTreeParent dataSources = new DataTreeParent("Data Sources", IconEnum.DATA_SOURCE_CATEGORY, treeSelectionListener);
+		DataTreeParent renderedModels = new DataTreeParent("Completed Models", IconEnum.RENDERED_MODEL_CATEGORY, treeSelectionListener);
 
-		DataTreeParent root = new DataTreeParent("", IconEnum.NONE);
+		DataTreeParent root = new DataTreeParent("", IconEnum.NONE, treeSelectionListener);
 		root.addChild(dataSources);
 		root.addChild(renderedModels);
 
@@ -121,42 +144,29 @@ public class DataView extends ViewPart
 	protected void createRenderedModelTreeModel(DataTreeParent parent)
 	{
 		for (ElevationModel elevationModel : ProjectContext.getInstance().getElevationModelList()) {
-			String modelSubject = elevationModel.getProperty("subject");
-			String renderDate = elevationModel.getProperty("render-date");
-
-			String name = renderDate;
-			if (modelSubject != null && modelSubject.length() > 0) {
-				name = modelSubject + " - " + renderDate;
-			}
-
-			DataTreeObject obj = new DataTreeObject(name, elevationModel, IconEnum.RENDERED_MODEL_OBJECT);
-			parent.addChild(obj);
+			parent.addChild(new ElevationModelTreeObject(elevationModel, treeSelectionListener));
 		}
 	}
 
 	protected void createDataSourceTreeModel(DataTreeParent parent)
 	{
 
-		DataTreeParent p0 = new DataTreeParent("Elevation Data", IconEnum.RASTER_CATEGORY);
-		DataTreeParent p1 = new DataTreeParent("Shape Data", IconEnum.SHAPE_CATEGORY);
-		DataTreeParent p2 = new DataTreeParent("Image Data", IconEnum.IMAGE_CATEGORY);
-		DataTreeParent p3 = new DataTreeParent("ModelGrid Data", IconEnum.MODELGRID_CATEGORY);
+		DataTreeParent p0 = new DataTreeParent("Elevation Data", IconEnum.RASTER_CATEGORY, treeSelectionListener);
+		DataTreeParent p1 = new DataTreeParent("Shape Data", IconEnum.SHAPE_CATEGORY, treeSelectionListener);
+		DataTreeParent p2 = new DataTreeParent("Image Data", IconEnum.IMAGE_CATEGORY, treeSelectionListener);
+		DataTreeParent p3 = new DataTreeParent("ModelGrid Data", IconEnum.MODELGRID_CATEGORY, treeSelectionListener);
 
 		parent.addChild(p0);
 		RasterDataContext rasterDataContext = ProjectContext.getInstance().getRasterDataContext();
 		for (RasterData rasterData : rasterDataContext.getRasterDataList()) {
-			File f = new File(rasterData.getFilePath());
-			DataTreeObject obj = new DataTreeObject(f.getName(), rasterData, IconEnum.RASTER_DATA);
-			p0.addChild(obj);
+			p0.addChild(new RasterTreeObject(rasterData, treeSelectionListener));
 		}
 
 		ShapeDataContext shapeDataContext = ProjectContext.getInstance().getShapeDataContext();
 		if (shapeDataContext.getShapeDataListSize() > 0) {
 			parent.addChild(p1);
-			for (ShapeFileRequest shapeFile : shapeDataContext.getShapeFiles()) {
-				File f = new File(shapeFile.getPath());
-				DataTreeObject obj = new DataTreeObject(f.getName(), shapeFile, IconEnum.SHAPE_DATA);
-				p1.addChild(obj);
+			for (ShapeBase shapeBase : shapeDataContext.getShapeFiles()) {
+				p1.addChild(new ShapeTreeObject(shapeBase, treeSelectionListener));
 			}
 		}
 
@@ -164,9 +174,7 @@ public class DataView extends ViewPart
 		if (imageDataContext.getImageListSize() > 0) {
 			parent.addChild(p2);
 			for (SimpleGeoImage image : imageDataContext.getImageList()) {
-				File f = new File(image.getImageFile());
-				DataTreeObject obj = new DataTreeObject(f.getName(), image, IconEnum.IMAGE_DATA);
-				p2.addChild(obj);
+				p2.addChild(new GeoImageTreeObject(image, treeSelectionListener));
 			}
 		}
 
@@ -175,9 +183,7 @@ public class DataView extends ViewPart
 		String gridLoadedFrom = (modelGridContext != null) ? modelGridContext.getGridLoadedFrom() : null;
 		if (modelGridHeader != null && gridLoadedFrom != null) {
 			parent.addChild(p3);
-			File f = new File(gridLoadedFrom);
-			DataTreeObject obj = new DataTreeObject(f.getName(), modelGridHeader, IconEnum.MODELGRID_DATA);
-			p3.addChild(obj);
+			p3.addChild(new ModelGridTreeObject(gridLoadedFrom, modelGridHeader, treeSelectionListener));
 		}
 
 	}
@@ -212,10 +218,10 @@ public class DataView extends ViewPart
 		boolean elevationModelSelected = false;
 		
 		for (TreeObject<?> treeObject : selections) {
-			if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof InputSourceData) {
+			if (treeObject instanceof DataTreeObject && ((DataTreeObject<?>) treeObject).getData() instanceof InputSourceData) {
 				inputDataSelected = true;
 			}
-			if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof ElevationModel) {
+			if (treeObject instanceof DataTreeObject && ((DataTreeObject<?>) treeObject).getData() instanceof ElevationModel) {
 				elevationModelSelected = true;
 			}
 		}
@@ -288,6 +294,9 @@ public class DataView extends ViewPart
 
 				List<TreeObject<?>> selections = getSelectedTreeNode((IStructuredSelection)event.getSelection());
 				for (TreeObject<?> treeObject : selections) {
+					treeObject.onSelected();
+					
+					/*
 					if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof InputSourceData) {
 						fireOnSourceDataSelectionChanged((InputSourceData) ((DataTreeObject) treeObject).getData());
 						selectedSourceData = true;
@@ -299,14 +308,15 @@ public class DataView extends ViewPart
 						selectedRenderedModel = true;
 
 					}
+					*/
 				}
 				
 				
 				
-				if (!selectedSourceData && !selectedRenderedModel) {
-					fireOnSourceDataSelectionChanged(null);
-					fireOnRenderedModelSelectionChanged(null);
-				}
+				//if (!selectedSourceData && !selectedRenderedModel) {
+				//	fireOnSourceDataSelectionChanged(null);
+				//	fireOnRenderedModelSelectionChanged(null);
+				//}
 			}
 		});
 		
@@ -317,12 +327,7 @@ public class DataView extends ViewPart
 			{
 				List<TreeObject<?>> selections = getSelectedTreeNode();
 				for (TreeObject<?> treeObject : selections) {
-
-					if (treeObject instanceof DataTreeObject && ((DataTreeObject) treeObject).getData() instanceof ElevationModel) {
-
-						RenderedModelSelectionObserver.getInstance().openElevationModel((ElevationModel) ((DataTreeObject) treeObject).getData());
-
-					}
+					treeObject.onDoubleClick();
 				}
 			}
 

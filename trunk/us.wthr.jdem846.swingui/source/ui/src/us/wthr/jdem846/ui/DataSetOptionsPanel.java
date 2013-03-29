@@ -26,7 +26,7 @@ import java.util.List;
 import us.wthr.jdem846.i18n.I18N;
 import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.rasterdata.RasterData;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeFileReference;
 import us.wthr.jdem846.ui.base.Button;
 import us.wthr.jdem846.ui.base.Panel;
 import us.wthr.jdem846.ui.datasetoptions.ElevationDataSetOptions;
@@ -38,7 +38,7 @@ public class DataSetOptionsPanel extends Panel
 {
 	//private DataSource dataSource;
 	private RasterData rasterData;
-	private ShapeFileRequest shapeFileRequest;
+	private ShapeFileReference shapeFileRequest;
 	private SimpleGeoImage simpleGeoImage;
 	private Button btnUpdatePreview;
 	private Component currentConfigPanel = null;
@@ -101,7 +101,7 @@ public class DataSetOptionsPanel extends Panel
 		btnUpdatePreview.setVisible(true);
 	}
 	
-	public void setShapeDataSet(ShapeFileRequest shapeFileRequest)
+	public void setShapeDataSet(ShapeFileReference shapeFileRequest)
 	{
 		ShapeDataSetOptions panel = new ShapeDataSetOptions(shapeFileRequest);
 		if (currentConfigPanel != null) {

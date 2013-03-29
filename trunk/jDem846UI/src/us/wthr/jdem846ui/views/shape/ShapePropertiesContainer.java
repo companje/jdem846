@@ -16,7 +16,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeBase;
 import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinition;
 import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinitionLoader;
 import us.wthr.jdem846ui.Activator;
@@ -29,7 +29,7 @@ public class ShapePropertiesContainer extends Composite
 	private Button btnApply;
 	private Button btnReset;
 	
-	private ShapeFileRequest shapeFile;
+	private ShapeBase shapeFile;
 	private LabeledCombo cmbShapeDefinitionType;
 	
 	private ShapeDataDefinitionLoader shapeDataDefinitionLoader;
@@ -103,14 +103,14 @@ public class ShapePropertiesContainer extends Composite
 		this.pack();
 	}
 	
-	public void setShapeDefinition(ShapeFileRequest shapeFile)
+	public void setShapeDefinition(ShapeBase shapeFile)
 	{
 		this.shapeFile = shapeFile;
 		
 		
 		if (shapeFile != null) {
 			
-			int index = getIndexOfString(cmbShapeDefinitionType, getDefinitionNameFromId(shapeFile.getShapeDataDefinitionId()));
+			int index = getIndexOfString(cmbShapeDefinitionType, getDefinitionNameFromId(shapeFile.getShapeFileReference().getShapeDataDefinitionId()));
 			if (index >= 0) {
 				cmbShapeDefinitionType.getControl().select(index);
 			}
@@ -130,8 +130,7 @@ public class ShapePropertiesContainer extends Composite
 		}
 		
 		String shapeDataDefinitionId = getDefinitionIdFromName(cmbShapeDefinitionType.getControl().getText());
-		shapeFile.setShapeDataDefinitionId(shapeDataDefinitionId);
-		
+		shapeFile.getShapeFileReference().setShapeDataDefinitionId(shapeDataDefinitionId);
 	}
 	
 	protected String getDefinitionNameFromId(String id)

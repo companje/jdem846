@@ -1,16 +1,16 @@
 package us.wthr.jdem846ui.views.tree;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import com.google.common.collect.Sets;
+import us.wthr.jdem846.IDataObject;
+
+import com.google.common.collect.Lists;
 
 
 
-public class TreeParent<E> extends TreeObject<E> {
+public class TreeParent<E extends IDataObject> extends TreeObject<E> {
 	
-	private List<TreeObject<E>> children = new ArrayList<TreeObject<E>>();
+	private List<TreeObject<E>> children = Lists.newLinkedList();
 
 	public TreeParent(String name, Class<E> clazz) {
 		super(name, clazz);
@@ -26,8 +26,9 @@ public class TreeParent<E> extends TreeObject<E> {
 		child.setParent(null);
 	}
 	
-	public Set<TreeObject<E>> getChildren() {
-		return Sets.newHashSet(children);
+	public List<TreeObject<E>> getChildren() {
+		return Lists.newLinkedList(children);
+		//return Sets.newHashSet(children);
 	}
 	
 	public boolean hasChildren() {

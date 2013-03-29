@@ -1,6 +1,8 @@
 package us.wthr.jdem846ui.views;
 
-public class Selectable<E> {
+import us.wthr.jdem846.IDataObject;
+
+public class Selectable<E extends IDataObject> {
 	
 	private Class<E> clazz;
 	

@@ -44,7 +44,7 @@ import us.wthr.jdem846.rasterdata.RasterDataSource;
 import us.wthr.jdem846.rasterdata.generic.IRasterDefinition;
 import us.wthr.jdem846.scripting.ScriptingContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeFileReference;
 
 public class ProjectContext
 {
@@ -165,7 +165,7 @@ public class ProjectContext
 				addElevationDataset(rasterDataSource, false);
 			}
 
-			for (ShapeFileRequest shapeFile : projectMarshall.getShapeFiles()) {
+			for (ShapeFileReference shapeFile : projectMarshall.getShapeFiles()) {
 				addShapeDataset(shapeFile.getPath(), shapeFile.getShapeDataDefinitionId(), false);
 			}
 
@@ -411,8 +411,8 @@ public class ProjectContext
 
 		if (dataSource instanceof RasterData) {
 			removeElevationData((RasterData) dataSource, triggerModelChanged);
-		} else if (dataSource instanceof ShapeFileRequest) {
-			removeShapeData((ShapeFileRequest) dataSource, triggerModelChanged);
+		} else if (dataSource instanceof ShapeFileReference) {
+			removeShapeData((ShapeFileReference) dataSource, triggerModelChanged);
 		} else if (dataSource instanceof SimpleGeoImage) {
 			removeImageData((SimpleGeoImage) dataSource, triggerModelChanged);
 		} else if (dataSource instanceof IModelGrid) {
@@ -462,26 +462,13 @@ public class ProjectContext
 		}
 	}
 
-	public void removeShapeData(int index) throws DataSourceException
-	{
-		removeShapeData(index, true);
-	}
 
-	public void removeShapeData(int index, boolean triggerModelChanged) throws DataSourceException
-	{
-		shapeDataContext.removeShapeFile(index);
-
-		if (triggerModelChanged) {
-			projectChangeBroker.fireOnDataAdded(true);
-		}
-	}
-
-	public void removeShapeData(ShapeFileRequest shapeFileRequest) throws DataSourceException
+	public void removeShapeData(ShapeFileReference shapeFileRequest) throws DataSourceException
 	{
 		removeShapeData(shapeFileRequest, true);
 	}
 
-	public void removeShapeData(ShapeFileRequest shapeFileRequest, boolean triggerModelChanged) throws DataSourceException
+	public void removeShapeData(ShapeFileReference shapeFileRequest, boolean triggerModelChanged) throws DataSourceException
 	{
 		shapeDataContext.removeShapeFile(shapeFileRequest);
 

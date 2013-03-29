@@ -11,7 +11,7 @@ import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.generic.GenericRasterDataProvider;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeBase;
 import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 import us.wthr.jdem846ui.views.geoimage.GeoImagePropertiesView;
@@ -54,7 +54,7 @@ public class LayerPropertiesView extends ViewPart
 					activeView = geoImagePropertiesView;
 				} else if (selectedData != null && selectedData instanceof GenericRasterDataProvider) { 
 					activeView = rasterPropertiesView;
-				} else if (selectedData != null && selectedData instanceof ShapeFileRequest) {
+				} else if (selectedData != null && selectedData instanceof ShapeBase) {
 					activeView = shapePropertiesView;
 				} else {
 					activeView = blankView;

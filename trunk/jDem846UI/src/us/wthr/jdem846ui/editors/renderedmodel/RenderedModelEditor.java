@@ -68,7 +68,7 @@ public class RenderedModelEditor extends EditorPart
 		setSite(site);
 		setInput(input);
 		
-		this.setTitle(input.getName());
+		this.setPartName(input.getName());
 	}
 
 	@Override

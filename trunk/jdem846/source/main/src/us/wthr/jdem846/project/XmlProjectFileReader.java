@@ -31,7 +31,7 @@ import org.dom4j.io.SAXReader;
 import us.wthr.jdem846.exception.ProjectParseException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeFileReference;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 
 @Deprecated
@@ -125,7 +125,7 @@ public class XmlProjectFileReader
 			}
 			
 			try {
-				projectModel.getShapeFiles().add(new ShapeFileRequest(path, shapeDataDefinitionId, false));
+				projectModel.getShapeFiles().add(new ShapeFileReference(path, shapeDataDefinitionId, false));
 			} catch (ShapeFileException ex) {
 				throw new ProjectParseException("Failed to load shapefile data when parsing project file", ex);
 			}
