@@ -14,7 +14,7 @@ import us.wthr.jdem846.image.SimpleGeoImage;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataSource;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeFileReference;
 
 
 public class JsonProjectFileWriter
@@ -85,7 +85,7 @@ public class JsonProjectFileWriter
 		return jsonObject;
 	}
 	
-	protected static JSONObject createShapeObject(ShapeFileRequest shapeFileReq)
+	protected static JSONObject createShapeObject(ShapeFileReference shapeFileReq)
 	{
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.element("type", "shapefile");
@@ -111,7 +111,7 @@ public class JsonProjectFileWriter
 			layersArray.add(rasterObj);
 		}
 		
-		for (ShapeFileRequest shapeFileReq : projectMarshall.getShapeFiles()) {
+		for (ShapeFileReference shapeFileReq : projectMarshall.getShapeFiles()) {
 			JSONObject shapeObj = createShapeObject(shapeFileReq);
 			layersArray.add(shapeObj);
 		}

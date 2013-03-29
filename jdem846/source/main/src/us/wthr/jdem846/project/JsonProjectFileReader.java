@@ -25,7 +25,7 @@ import us.wthr.jdem846.rasterdata.RasterDataSource;
 import us.wthr.jdem846.rasterdata.generic.IRasterDefinition;
 import us.wthr.jdem846.rasterdata.generic.RasterDefinition;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeFileReference;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 
 public class JsonProjectFileReader
@@ -216,7 +216,7 @@ public class JsonProjectFileReader
 		
 		if (path != null) {
 			try {
-				projectMarshall.getShapeFiles().add(new ShapeFileRequest(path, definitionId, false));
+				projectMarshall.getShapeFiles().add(new ShapeFileReference(path, definitionId, false));
 			} catch (ShapeFileException ex) {
 				throw new ProjectParseException("Failed to load shapefile data when parsing project file", ex);
 			}

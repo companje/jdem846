@@ -18,14 +18,15 @@ package us.wthr.jdem846.shapefile;
 
 import java.io.File;
 import java.io.RandomAccessFile;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 
 import us.wthr.jdem846.ByteOrder;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 import us.wthr.jdem846.util.ByteConversions;
+
+import com.google.common.collect.Sets;
 
 public class ShapeFile
 {
@@ -42,7 +43,7 @@ public class ShapeFile
 	private File shapeFile;
 	private RandomAccessFile file;
 	
-	private List<Shape> shapes = new LinkedList<Shape>();
+	private Set<Shape> shapes = Sets.newHashSet();
 
 	private ShapeIndexFile indexFile;
 	
@@ -226,12 +227,12 @@ public class ShapeFile
 		this.shapeFile = shapeFile;
 	}
 
-	public List<Shape> getShapes()
+	public Set<Shape> getShapes()
 	{
 		return shapes;
 	}
 
-	public void setShapes(List<Shape> shapes)
+	public void setShapes(Set<Shape> shapes)
 	{
 		this.shapes = shapes;
 	}

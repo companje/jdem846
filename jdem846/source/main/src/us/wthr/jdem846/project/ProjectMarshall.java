@@ -17,7 +17,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.rasterdata.RasterDataSource;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeFileReference;
 
 public class ProjectMarshall
 {
@@ -29,7 +29,7 @@ public class ProjectMarshall
 	private List<ProcessMarshall> processes = new LinkedList<ProcessMarshall>();
 	
 	private List<RasterDataSource> rasterFiles = new LinkedList<RasterDataSource>();
-	private List<ShapeFileRequest> shapeFiles = new LinkedList<ShapeFileRequest>();
+	private List<ShapeFileReference> shapeFiles = new LinkedList<ShapeFileReference>();
 	private List<SimpleGeoImage> imageFiles = new LinkedList<SimpleGeoImage>();
 	private String modelGrid = null;
 	
@@ -93,7 +93,7 @@ public class ProjectMarshall
 		this.rasterFiles = rasterFiles;
 	}
 
-	public List<ShapeFileRequest> getShapeFiles()
+	public List<ShapeFileReference> getShapeFiles()
 	{
 		return shapeFiles;
 	}
@@ -108,7 +108,7 @@ public class ProjectMarshall
 		return this.modelList;
 	}
 
-	public void setShapeFiles(List<ShapeFileRequest> shapeFiles)
+	public void setShapeFiles(List<ShapeFileReference> shapeFiles)
 	{
 		this.shapeFiles = shapeFiles;
 	}

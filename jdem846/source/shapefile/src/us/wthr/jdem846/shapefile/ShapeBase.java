@@ -17,13 +17,15 @@
 package us.wthr.jdem846.shapefile;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import us.wthr.jdem846.IDataObject;
 import us.wthr.jdem846.dbase.DBaseFieldDescriptor;
 import us.wthr.jdem846.dbase.DBaseFile;
 import us.wthr.jdem846.dbase.DBaseRecord;
 import us.wthr.jdem846.dbase.exception.DBaseException;
+import us.wthr.jdem846.input.InputSourceData;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 import us.wthr.jdem846.shapefile.modeling.FeatureType;
 import us.wthr.jdem846.shapefile.modeling.FeatureTypeStrokeLoader;
@@ -32,9 +34,10 @@ import us.wthr.jdem846.shapefile.modeling.FeatureTypesDefinitionLoader;
 import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinition;
 import us.wthr.jdem846.shapefile.modeling.ShapeDataDefinitionLoader;
 
-public class ShapeBase
+public class ShapeBase implements InputSourceData, IDataObject
 {
 	
+	private ShapeFileReference shapeFileReference;
 	private ShapeFile shapeFile = null;
 	private ShapeDataDefinition shapeDataDefinition;
 	private DBaseFile dBase;
@@ -43,20 +46,32 @@ public class ShapeBase
 	private FeatureTypesDefinitionLoader featureTypesDefinitionLoader;
 	private FeatureTypesDefinition featureTypesDefinition;
 	
-	public ShapeBase(String shapeFilePath, String dataDefinitionId) throws Exception
+	
+	public ShapeBase(ShapeFileReference shapeFileReference) throws Exception
 	{
-		shapeFile = new ShapeFile(shapeFilePath);
+
+		this.shapeFileReference = shapeFileReference;
+		shapeFile = new ShapeFile(shapeFileReference.getPath());
 		
-		dBase = new DBaseFile(shapeFilePath.replace(".shp", ".dbf"));
+		dBase = new DBaseFile(shapeFileReference.getPath().replace(".shp", ".dbf"));
 		
 		featureTypeStrokeLoader = new FeatureTypeStrokeLoader();
 		featureTypesDefinitionLoader = new FeatureTypesDefinitionLoader(featureTypeStrokeLoader);
 		
 		ShapeDataDefinitionLoader shapeDataDefinitionLoader = new ShapeDataDefinitionLoader();
-		shapeDataDefinition = shapeDataDefinitionLoader.getShapeDataDefinition(dataDefinitionId);
+		shapeDataDefinition = shapeDataDefinitionLoader.getShapeDataDefinition(shapeFileReference.getShapeDataDefinitionId());
 		if (shapeDataDefinition != null)
 			featureTypesDefinition = featureTypesDefinitionLoader.getFeatureTypesDefinition(shapeDataDefinition.getFeatureTypeDefinitionId());
-		
+	}
+	
+	public ShapeBase(String shapeFilePath, String dataDefinitionId) throws Exception
+	{
+		this(new ShapeFileReference(shapeFilePath, dataDefinitionId));
+	}
+	
+	public DBaseFile getDBaseFile()
+	{
+		return dBase;
 	}
 	
 	public void close() throws ShapeFileException
@@ -114,9 +129,9 @@ public class ShapeBase
 		return shapeFile.getShapeCount();
 	}
 	
-	public List<Shape> getShapes()
+	public Set<Shape> getShapes()
 	{
-		List<Shape> shapes = shapeFile.getShapes();
+		Set<Shape> shapes = shapeFile.getShapes();
 		// TODO: Do stuff
 		return shapes;
 	}
@@ -142,5 +157,17 @@ public class ShapeBase
 		return infoMap;
 	}
 
+	public ShapeFileReference getShapeFileReference()
+	{
+		return shapeFileReference;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return shapeFileReference.getPath().hashCode();
+	}
+
+	
 	
 }

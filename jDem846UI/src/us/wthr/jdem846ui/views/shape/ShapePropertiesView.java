@@ -9,7 +9,7 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.project.context.ProjectChangeAdapter;
 import us.wthr.jdem846.project.context.ProjectContext;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeBase;
 import us.wthr.jdem846ui.views.data.DataView;
 import us.wthr.jdem846ui.views.data.TreeSelectionAdapter;
 import us.wthr.jdem846ui.views.geoimage.GeoImagePropertiesView;
@@ -31,8 +31,8 @@ public class ShapePropertiesView extends Composite
 		{
 			public void onSourceDataSelectionChanged(InputSourceData selectedData)
 			{
-				if (selectedData != null && selectedData instanceof ShapeFileRequest) {
-					ShapeFileRequest definition = (ShapeFileRequest) selectedData;
+				if (selectedData != null && selectedData instanceof ShapeBase) {
+					ShapeBase definition = (ShapeBase) selectedData;
 					shapePropertiesContainer.setShapeDefinition(definition);
 				} else {
 					shapePropertiesContainer.setShapeDefinition(null);

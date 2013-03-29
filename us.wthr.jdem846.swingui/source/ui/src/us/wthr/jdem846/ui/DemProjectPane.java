@@ -76,7 +76,7 @@ import us.wthr.jdem846.rasterdata.generic.IRasterDefinition;
 import us.wthr.jdem846.scripting.ScriptLanguageEnum;
 import us.wthr.jdem846.scripting.ScriptingContext;
 import us.wthr.jdem846.shapedata.ShapeDataContext;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
+import us.wthr.jdem846.shapefile.ShapeFileReference;
 import us.wthr.jdem846.ui.DataSetTree.DatasetSelectionListener;
 import us.wthr.jdem846.ui.ModelVisualizationPanel.ProjectionChangeListener;
 import us.wthr.jdem846.ui.MonitoredThread.ProgressListener;
@@ -186,7 +186,7 @@ public class DemProjectPane extends JdemPanel implements Savable
 				addElevationDataset(rasterDataSource.getFilePath(), rasterDataSource.getDefinition(), false); 
 			}
 
-			for (ShapeFileRequest shapeFile : projectMarshall.getShapeFiles()) {
+			for (ShapeFileReference shapeFile : projectMarshall.getShapeFiles()) {
 				addShapeDataset(shapeFile.getPath(), shapeFile.getShapeDataDefinitionId(), false);
 			}
 
@@ -344,7 +344,9 @@ public class DemProjectPane extends JdemPanel implements Savable
 						break;
 					case DataSetTypes.SHAPE_POLYGON:
 					case DataSetTypes.SHAPE_POLYLINE:
-						datasetOptionsPanel.setShapeDataSet(shapeDataContext.getShapeFiles().get(index));
+						
+						// TODO FIX
+						//datasetOptionsPanel.setShapeDataSet(shapeDataContext.getShapeFiles().get(index));
 						break;
 					case DataSetTypes.IMAGERY:
 						datasetOptionsPanel.setSimpleGeoImage(imageDataContext.getImageList().get(index));
@@ -827,7 +829,8 @@ public class DemProjectPane extends JdemPanel implements Savable
 			if (type == DataSetTypes.ELEVATION) {
 				removeElevationData(index);
 			} else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE) {
-				removeShapeData(index);
+				//removeShapeData(index);
+				// TODO FIX
 			} else if (type == DataSetTypes.IMAGERY) {
 				removeImageData(index);
 			}
@@ -846,18 +849,6 @@ public class DemProjectPane extends JdemPanel implements Savable
 		}
 
 		rasterDataContext.removeRasterData(index);
-		onDataModelChanged();
-	}
-
-	protected void removeShapeData(int index) throws DataSourceException
-	{
-		log.info("Removing shape data #" + index);
-		if (index < 0) {
-			JOptionPane.showMessageDialog(getRootPane(), I18N.get("us.wthr.jdem846.ui.projectPane.remove.nothingSelected.message"), I18N.get("us.wthr.jdem846.ui.projectPane.remove.nothingSelected.title"), JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		shapeDataContext.removeShapeFile(index);
 		onDataModelChanged();
 	}
 
@@ -1148,8 +1139,9 @@ public class DemProjectPane extends JdemPanel implements Savable
 				rasterDataContext.getRasterDataList().add(toIndex, rasterData);
 
 			} else if (type == DataSetTypes.SHAPE_POLYGON || type == DataSetTypes.SHAPE_POLYLINE) {
-				ShapeFileRequest sfr = shapeDataContext.removeShapeFile(fromIndex);
-				shapeDataContext.getShapeFiles().add(toIndex, sfr);
+				// TODO FIX
+				//ShapeFileReference sfr = shapeDataContext.removeShapeFile(fromIndex);
+				//shapeDataContext.getShapeFiles().add(toIndex, sfr);
 			} else if (type == DataSetTypes.IMAGERY) {
 				SimpleGeoImage image = imageDataContext.removeImage(fromIndex);
 				imageDataContext.getImageList().add(toIndex, image);

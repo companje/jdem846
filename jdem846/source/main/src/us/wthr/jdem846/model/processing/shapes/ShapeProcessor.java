@@ -33,7 +33,6 @@ import us.wthr.jdem846.shapefile.PointTranslateHandler;
 import us.wthr.jdem846.shapefile.Shape;
 import us.wthr.jdem846.shapefile.ShapeBase;
 import us.wthr.jdem846.shapefile.ShapeConstants;
-import us.wthr.jdem846.shapefile.ShapeFileRequest;
 import us.wthr.jdem846.shapefile.ShapeLayer;
 import us.wthr.jdem846.shapefile.ShapePath;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
@@ -59,7 +58,10 @@ public class ShapeProcessor extends GridFilter
 
 	private View canvasView;
 	
-	private BufferedImage shapeImage;
+	private RenderedShapeCanvas renderedShapeCanvas = null;
+	//private BufferedImage shapeImage;
+	
+	//private int lastShapeSetHash = 0;
 	
 	public ShapeProcessor()
 	{
@@ -71,6 +73,8 @@ public class ShapeProcessor extends GridFilter
 	{
 		log.info("Preparing Shape Rendering Process");
 
+		
+		
 		try {
 			mapProjection = MapProjectionProviderFactory.getMapProjection("us.wthr.jdem846.render.mapProjection.equirectangularProjection.name", globalOptionModel.getNorthLimit(), globalOptionModel.getSouthLimit(), globalOptionModel.getEastLimit(),
 					globalOptionModel.getWestLimit(), globalOptionModel.getWidth(), globalOptionModel.getHeight());
@@ -91,24 +95,41 @@ public class ShapeProcessor extends GridFilter
 				modelContext.getRasterDataContext().getDataMaximumValue(), (ModelDimensions) modelDimensions, globalOptionModel.getViewAngle());
 
 		
-		BufferedImage canvasBufferImage = new BufferedImage(globalOptionModel.getWidth(), globalOptionModel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		//lastShapeSetHash
+		//if (shapeImage != null && getShapeDataContext().getShapeFiles().hashCode() != lastShapeSetHash) {
 		
-		canvas = new ShapeRenderCanvas(modelContext, canvasBufferImage);
-		
-		if (modelContext.getShapeDataContext().getShapeDataListSize() > 0) {
-			process();
-			shapeImage = (BufferedImage) canvas.getFinalizedImage();
-		} else {
-			shapeImage = null;
+		if (getShapeDataContext().getShapeFiles().size() > 0 && rerenderNeeded()) {
+
+			BufferedImage canvasBufferImage = new BufferedImage(globalOptionModel.getWidth(), globalOptionModel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+				
+			canvas = new ShapeRenderCanvas(modelContext, canvasBufferImage, globalOptionModel.getWidth(), globalOptionModel.getHeight());
+				
+			if (modelContext.getShapeDataContext().getShapeDataListSize() > 0) {
+				process();
+				renderedShapeCanvas = new RenderedShapeCanvas((BufferedImage) canvas.getFinalizedImage(), getShapeDataContext().getShapeFiles().hashCode());
+			} 
+		} else if (getShapeDataContext().getShapeFiles().size() == 0) {
+			renderedShapeCanvas = null;
 		}
-/*		try {
-			ImageWriter.saveImage(shapeImage, "C:/jdem/temp/shapecanvas.png");
-		} catch (ImageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 	}
 
+	protected boolean rerenderNeeded()
+	{
+		if (renderedShapeCanvas == null) {
+			return true;
+		}
+		
+		if (renderedShapeCanvas != null 
+				&& getShapeDataContext().getShapeFiles().size() > 0 
+				&& renderedShapeCanvas.hashCode() != RenderedShapeCanvas.createHashCode(getShapeDataContext().getShapeFiles().hashCode(), globalOptionModel.getWidth(), globalOptionModel.getHeight())) {
+			return true;
+		}
+		
+		return false;
+	}
+
+		
+		
 	public void process() throws RenderEngineException
 	{
 		log.info("Running Shape Rendering Process");
@@ -117,17 +138,17 @@ public class ShapeProcessor extends GridFilter
 		// return;
 		// }
 
-		int numLayers = getShapeDataContext().getShapeDataListSize();
-		int layerNumber = 0;
+		//int numLayers = getShapeDataContext().getShapeDataListSize();
+		//int layerNumber = 0;
 
-		for (ShapeFileRequest shapeFilePath : getShapeDataContext().getShapeFiles()) {
-			layerNumber++;
+		for (ShapeBase shapeBase : getShapeDataContext().getShapeFiles()) {
+			//layerNumber++;
 			try {
-				log.info("Loading shapefile from " + shapeFilePath.getPath());
+				//log.info("Loading shapefile from " + shapeFilePath.getPath());
 
-				ShapeBase shapeBase = shapeFilePath.open();
+				//ShapeBase shapeBase = shapeFilePath.open();
 				ShapeLayer shapeLayer = buildShapeLayer(shapeBase);
-				shapeBase.close();
+				//shapeBase.close();
 
 				renderLayer(shapeLayer);
 
@@ -315,7 +336,7 @@ public class ShapeProcessor extends GridFilter
 	@Override
 	public void onModelPoint(double latitude, double longitude) throws RenderEngineException
 	{
-		if (shapeImage != null) {
+		if (renderedShapeCanvas != null) {
 			IColor color = getCanvasColor(latitude, longitude);
 			if (color != null) {
 				
@@ -342,8 +363,8 @@ public class ShapeProcessor extends GridFilter
 			throw new RenderEngineException("Error projecting point: " + ex.getMessage(), ex);
 		}
 		
-		if (shapeImage != null && mapPoint.row >= 0 && mapPoint.row < globalOptionModel.getHeight() && mapPoint.column >= 0 && mapPoint.column < globalOptionModel.getWidth()) {
-			int c = shapeImage.getRGB((int)MathExt.round(mapPoint.column), (int)MathExt.round(mapPoint.row));
+		if (renderedShapeCanvas != null && mapPoint.row >= 0 && mapPoint.row < globalOptionModel.getHeight() && mapPoint.column >= 0 && mapPoint.column < globalOptionModel.getWidth()) {
+			int c = renderedShapeCanvas.getShapeImage().getRGB((int)MathExt.round(mapPoint.column), (int)MathExt.round(mapPoint.row));
 			
 			int[] rgba = new int[4];
 			ColorUtil.intToRGBA(c, rgba, ColorIntFormatEnum.ARGB);

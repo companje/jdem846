@@ -54,19 +54,16 @@ public class ShapeRenderCanvas
 
 	private MapPoint mapPoint = new MapPoint();
 
-	public ShapeRenderCanvas(ModelContext modelContext)
-	{
-		this(modelContext, null);
-	}
 
-	public ShapeRenderCanvas(ModelContext modelContext, BufferedImage masterImage)
+
+	public ShapeRenderCanvas(ModelContext modelContext, BufferedImage masterImage, int width, int height)
 	{
 		this.modelContext = modelContext;
 		backgroundColor = new Color(Color.TRANSLUCENT);// ColorSerializationUtil.stringToColor(modelContext.getModelOptions().getBackgroundColor());
 		modelDimensions = modelContext.getModelDimensions();
 
-		width = modelContext.getModelDimensions().getOutputWidth();
-		height = modelContext.getModelDimensions().getOutputHeight();
+		this.width = width;
+		this.height = height;
 
 		isAntiAliased = true;// modelContext.getModelOptions().getBooleanOption(ModelOptionNamesEnum.ANTIALIASED);
 

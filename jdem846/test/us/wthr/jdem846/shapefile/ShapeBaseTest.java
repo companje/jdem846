@@ -16,9 +16,9 @@
 
 package us.wthr.jdem846.shapefile;
 
+import junit.framework.TestCase;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import junit.framework.TestCase;
 
 public class ShapeBaseTest extends TestCase
 {
@@ -30,7 +30,10 @@ public class ShapeBaseTest extends TestCase
 	@SuppressWarnings("unused")
 	public void testShapeBaseInit() throws Exception
 	{
-		ShapeBase shapeBase = new ShapeBase("C:/srv/elevation/Shapefiles/BP14669/Foundation/Trans_RoadSegment.shp", "usgs-transportation-roads");
+		
+		ShapeFileReference shapeFileReference = new ShapeFileReference("C:/srv/elevation/Shapefiles/BP14669/Foundation/Trans_RoadSegment.shp", "usgs-transportation-roads");
+		
+		ShapeBase shapeBase = new ShapeBase(shapeFileReference);
 	
 	
 	}

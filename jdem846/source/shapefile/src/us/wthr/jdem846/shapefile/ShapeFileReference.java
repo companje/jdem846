@@ -23,9 +23,9 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.shapefile.exception.ShapeFileException;
 
-public class ShapeFileRequest implements InputSourceData
+public class ShapeFileReference implements InputSourceData
 {
-	private static Log log = Logging.getLog(ShapeFileRequest.class);
+	private static Log log = Logging.getLog(ShapeFileReference.class);
 	
 	private String path;
 	private String shapeDataDefinitionId;
@@ -34,17 +34,17 @@ public class ShapeFileRequest implements InputSourceData
 	
 	private boolean isDisposed = false;
 	
-	protected ShapeFileRequest()
+	protected ShapeFileReference()
 	{
 		
 	}
 	
-	public ShapeFileRequest(String path, String shapeDataDefinitionId) throws ShapeFileException
+	public ShapeFileReference(String path, String shapeDataDefinitionId) throws ShapeFileException
 	{
 		this(path, shapeDataDefinitionId, true);
 	}
 	
-	public ShapeFileRequest(String path, String shapeDataDefinitionId, boolean loadTypes) throws ShapeFileException
+	public ShapeFileReference(String path, String shapeDataDefinitionId, boolean loadTypes) throws ShapeFileException
 	{
 		this.path = path;
 		this.shapeDataDefinitionId = shapeDataDefinitionId;
@@ -106,22 +106,22 @@ public class ShapeFileRequest implements InputSourceData
 
 	public boolean equals(Object object)
 	{
-		if (!(object instanceof ShapeFileRequest))
+		if (!(object instanceof ShapeFileReference))
 			return false;
 		
-		ShapeFileRequest other = (ShapeFileRequest) object;
+		ShapeFileReference other = (ShapeFileReference) object;
 		return this.path.equals(other.path);
 	}
 	
 	public ShapeBase open() throws Exception
 	{
-		ShapeBase shapeBase = new ShapeBase(getPath(), getShapeDataDefinitionId());
+		ShapeBase shapeBase = new ShapeBase(this);
 		return shapeBase;
 	}
 	
-	public ShapeFileRequest copy()
+	public ShapeFileReference copy()
 	{
-		ShapeFileRequest shapeFileRequest = new ShapeFileRequest();
+		ShapeFileReference shapeFileRequest = new ShapeFileReference();
 		
 		shapeFileRequest.path = this.path;
 		shapeFileRequest.shapeDataDefinitionId = this.shapeDataDefinitionId;

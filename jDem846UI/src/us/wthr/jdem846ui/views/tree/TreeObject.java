@@ -1,15 +1,14 @@
 package us.wthr.jdem846ui.views.tree;
 
+import us.wthr.jdem846.IDataObject;
 import us.wthr.jdem846ui.views.Selectable;
 
 
-public class TreeObject<E> extends Selectable<E> {
+public class TreeObject<E extends IDataObject> extends Selectable<E> {
 	
 	private String name;
 	private TreeParent<E> parent;
-	
-	
-	
+
 	public TreeObject(String name, Class<E> clazz)
 	{
 		super(clazz);
@@ -40,6 +39,26 @@ public class TreeObject<E> extends Selectable<E> {
 	public String toString()
 	{
 		return this.name;
+	}
+	
+	public void onClick()
+	{
+		
+	}
+	
+	public void onDoubleClick()
+	{
+		
+	}
+	
+	public void onRightClick()
+	{
+		
+	}
+	
+	public void onSelected()
+	{
+		
 	}
 	
 }
