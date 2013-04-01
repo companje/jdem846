@@ -12,6 +12,8 @@ import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.util.ByteConversions;
 
+import com.google.common.primitives.Ints;
+
 public class GenericRasterDataReader
 {
 	private static Log log = Logging.getLog(GenericRasterDataReader.class);
@@ -30,17 +32,18 @@ public class GenericRasterDataReader
 	{
 		this.dataFile = dataFile;
 		this.rasterDefinition = rasterDefinition;
-		this.rasterDefinition.addDefinitionChangeListener(new DefinitionChangeListener()
-		{
-
-			@Override
-			public void onDefinitionChanged(IRasterDefinition rasterDefinition)
+		if (rasterDefinition != null) {
+			this.rasterDefinition.addDefinitionChangeListener(new DefinitionChangeListener()
 			{
-				definitionChanged();
-			}
-
-		});
-
+	
+				@Override
+				public void onDefinitionChanged(IRasterDefinition rasterDefinition)
+				{
+					definitionChanged();
+				}
+	
+			});
+		}
 	}
 
 	protected void definitionChanged()
@@ -214,13 +217,22 @@ public class GenericRasterDataReader
 	private int readUInt16(RandomAccessFile dataReader) throws IOException
 	{
 		dataReader.readFully(this.wordBuffer, 0, 2);
-		return ByteConversions.bytesToShort(wordBuffer, this.rasterDefinition.getByteOrder());
+		byte[] bytes = {0, 0, wordBuffer[1], wordBuffer[0]};
+		return Ints.fromByteArray(bytes);
+		//return Shorts.fromBytes(wordBuffer[1], wordBuffer[0]);
+		//return UnsignedBytes.
+		//return ByteConversions.bytesToShort(wordBuffer, this.rasterDefinition.getByteOrder());
 	}
 
 	private int readInt16(RandomAccessFile dataReader) throws IOException
 	{
-		dataReader.readFully(this.wordBuffer, 0, 2);
-		return ByteConversions.bytesToShort(wordBuffer, this.rasterDefinition.getByteOrder());
+		short v = (short) readUInt16(dataReader);
+		return v;
+		//dataReader.readFully(this.wordBuffer, 0, 2);
+		//byte[] bytes = {wordBuffer[1], wordBuffer[0], 0, 0};
+		//return Ints.fromByteArray(bytes);
+		//return Shorts.fromBytes(wordBuffer[1], wordBuffer[0]);
+		//return ByteConversions.bytesToShort(wordBuffer, this.rasterDefinition.getByteOrder());
 	}
 
 	private int readCInt16(RandomAccessFile dataReader) throws IOException
@@ -302,9 +314,14 @@ public class GenericRasterDataReader
 		if (dataType == DataTypeEnum.Byte) {
 			o = buffer[offset];
 		} else if (dataType == DataTypeEnum.UInt16) {
-			o = ByteConversions.bytesToShort(buffer[offset], buffer[offset + 1], byteOrder);
+			//o = ByteConversions.bytesToShort(buffer[offset], buffer[offset + 1], byteOrder);
+			byte[] bytes = {0, 0, buffer[offset + 1], buffer[offset]};
+			o = Ints.fromByteArray(bytes);
 		} else if (dataType == DataTypeEnum.Int16) {
-			o = ByteConversions.bytesToShort(buffer[offset], buffer[offset + 1], byteOrder);
+			//o = ByteConversions.bytesToShort(buffer[offset], buffer[offset + 1], byteOrder);
+			byte[] bytes = {0, 0, buffer[offset + 1], buffer[offset]};
+			short v = (short) Ints.fromByteArray(bytes);
+			o = v;
 		} else if (dataType == DataTypeEnum.Uint32) {
 			o = ByteConversions.bytesToInt(buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3], byteOrder);
 		} else if (dataType == DataTypeEnum.Int32) {

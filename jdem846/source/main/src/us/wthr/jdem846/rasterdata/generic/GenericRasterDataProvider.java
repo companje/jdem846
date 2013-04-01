@@ -32,7 +32,7 @@ public class GenericRasterDataProvider extends AbstractRasterDataProvider
 	public void create(String file, IRasterDefinition rasterDefinition) throws DataSourceException
 	{
 		dataFile = new File(file);
-		setRasterDefinition(rasterDefinition);
+		setRasterDefinition((rasterDefinition != null) ? rasterDefinition : this.rasterDefinition);
 		refreshDefinitionData();
 		this.dataReader = new CachingGenericRasterDataReader(dataFile, this.rasterDefinition);
 	}
