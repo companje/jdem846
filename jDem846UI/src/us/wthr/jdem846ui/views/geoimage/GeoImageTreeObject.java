@@ -13,4 +13,10 @@ public class GeoImageTreeObject extends DataTreeObject<SimpleGeoImage>
 	{
 		super((new File(data.getImageFile()).getName()), data, IconEnum.IMAGE_DATA, selectionListener);
 	}
+	
+	@Override
+	public void onSelected()
+	{
+		super.selectionListener.onSourceDataSelectionChanged(getData());
+	}
 }

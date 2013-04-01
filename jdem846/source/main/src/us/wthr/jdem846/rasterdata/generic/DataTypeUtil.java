@@ -37,25 +37,23 @@ public class DataTypeUtil {
 	{
 		Number[][] array = null;
 		
-		if (dataType == DataTypeEnum.Byte) {
+		if (dataType.clazz().equals(Byte.class)) {
 			array = new Byte[rows][columns];
-		} else if (dataType == DataTypeEnum.UInt16
-					|| dataType == DataTypeEnum.Int16
-					|| dataType == DataTypeEnum.Uint32
-					|| dataType == DataTypeEnum.Int32
-					|| dataType == DataTypeEnum.CInt16
-					|| dataType == DataTypeEnum.CInt32) {
+		} else if (dataType.clazz().equals(Short.class)) {
+			array = new Short[rows][columns];
+		} else if (dataType.clazz().equals(Integer.class)) {
 			array = new Integer[rows][columns];
-		} else if (dataType == DataTypeEnum.Float32
-					|| dataType == DataTypeEnum.CFloat32) {
+		} else if (dataType.clazz().equals(Long.class)) {
+			array = new Long[rows][columns];
+		} else if (dataType.clazz().equals(Float.class)) {
 			array = new Float[rows][columns];
-		} else if (dataType == DataTypeEnum.Float64
-					|| dataType == DataTypeEnum.CFloat64) {
+		} else if (dataType.clazz().equals(Double.class)) {
 			array = new Double[rows][columns];
 		} else {
 			throw new DataSourceException("Invalid or unsupported data type specified: " + dataType.name());
 		}
 		
+
 		return array;
 	}
 	

@@ -27,6 +27,8 @@ public interface ISimpleGeoImage
 
 	public double getLongitudeResolution();
 	
+	public double getLayerTransparency();
+	
 	
 	public IImageDefinition getImageDefinition();
 }

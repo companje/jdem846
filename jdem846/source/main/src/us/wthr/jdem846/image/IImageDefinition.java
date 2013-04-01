@@ -39,6 +39,8 @@ public interface IImageDefinition
 
 	public void setLongitudeResolution(double longitudeResolution);
 
+	public double getLayerTransparency();
+	public void setLayerTransparency(double layerTransparency);
 
 	public boolean isLocked();
 

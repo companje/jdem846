@@ -38,7 +38,8 @@ public class GeoImagePropertiesContainer extends Composite
 	private LabeledSpinner spnLongitudeResolution;
 	private LabeledSpinner spnImageWidth;
 	private LabeledSpinner spnImageHeight;
-
+	private LabeledSpinner spnLayerTransparency;
+	
 	private Button btnApply;
 	private Button btnReset;
 	
@@ -215,9 +216,40 @@ public class GeoImagePropertiesContainer extends Composite
 				}
 			}
 		});
-		
-		
+
 		geoLocationSection.setClient(geoLocationComposite);
+		
+		
+		
+		
+		
+		
+		Section layerPropertiesSection = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
+		td = new TableWrapData(TableWrapData.FILL_GRAB);
+
+		layerPropertiesSection.setLayoutData(td);
+		layerPropertiesSection.addExpansionListener(new ExpansionAdapter()
+		{
+			public void expansionStateChanged(ExpansionEvent e)
+			{
+				form.reflow(true);
+			}
+		});
+		geoLocationSection.setText("Geolocation");
+
+		Composite layerPropertiesComposite = toolkit.createComposite(layerPropertiesSection);
+		layout = new TableWrapLayout();
+		layerPropertiesComposite.setLayout(layout);
+		layout.numColumns = 3;
+		
+		spnLayerTransparency = LabeledSpinner.create(layerPropertiesComposite, "Layer Transparency:", 0, 100, 2, 100);
+		spnLayerTransparency.getControl().addSelectionListener(selectionListener);
+		new Label(layerPropertiesComposite, SWT.NONE);
+		
+		layerPropertiesSection.setClient(layerPropertiesComposite);
+		
+		
+		
 		
 		
 		
@@ -263,6 +295,7 @@ public class GeoImagePropertiesContainer extends Composite
 		spnWest.getControl().setSelection(0);
 		spnLatitudeResolution.getControl().setSelection(0);
 		spnLongitudeResolution.getControl().setSelection(0);
+		spnLayerTransparency.getControl().setSelection(0);
 	}
 	
 	@Override
@@ -275,6 +308,7 @@ public class GeoImagePropertiesContainer extends Composite
 		spnWest.getControl().setEnabled(enabled);
 		spnLatitudeResolution.getControl().setEnabled(enabled);
 		spnLongitudeResolution.getControl().setEnabled(enabled);
+		spnLayerTransparency.getControl().setEnabled(enabled);
 	}
 
 	protected void initializeFromImage(ISimpleGeoImage img)
@@ -295,7 +329,7 @@ public class GeoImagePropertiesContainer extends Composite
 		spnWest.getControl().setSelection((int) MathExt.round(img.getWest() * 100));
 		spnLatitudeResolution.getControl().setSelection((int) MathExt.round(img.getLatitudeResolution() * RESOLUTION_MULTIPLE));
 		spnLongitudeResolution.getControl().setSelection((int) MathExt.round(img.getLongitudeResolution() * RESOLUTION_MULTIPLE));
-
+		spnLayerTransparency.getControl().setSelection((int) MathExt.round(img.getLayerTransparency() * 100));
 		
 	}
 	protected void updateImageDefinition(ISimpleGeoImage img)
@@ -310,6 +344,7 @@ public class GeoImagePropertiesContainer extends Composite
 		img.setWest(spnWest.getControl().getSelection() / 100.0);
 		img.getImageDefinition().setLatitudeResolution(spnLatitudeResolution.getControl().getSelection() / (double) RESOLUTION_MULTIPLE);
 		img.getImageDefinition().setLongitudeResolution(spnLongitudeResolution.getControl().getSelection() / (double) RESOLUTION_MULTIPLE);
+		img.getImageDefinition().setLayerTransparency(spnLayerTransparency.getControl().getSelection() / 100.0);
 	}
 	
 }

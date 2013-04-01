@@ -55,8 +55,13 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 	{
 		this.imageDefinition = new ImageDefinition();
 	}
-
+	
 	public SimpleGeoImage(String imagePath, double north, double south, double east, double west) throws DataSourceException
+	{
+		this(imagePath, north, south, east, west, 1.0);
+	}
+	
+	public SimpleGeoImage(String imagePath, double north, double south, double east, double west, double layerTransparency) throws DataSourceException
 	{
 		imageFile = imagePath;
 
@@ -75,7 +80,8 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 		imageDefinition.setSouth(south);
 		imageDefinition.setEast(east);
 		imageDefinition.setWest(west);
-
+		imageDefinition.setLayerTransparency(layerTransparency);
+		
 		update();
 	}
 
@@ -393,13 +399,22 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 		int c = rasterBuffer.get(index);
 		
 		IColor color = new Color(c);
+		
 		if (!hasAlphaChannel) {
-			color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0xFF);
+			color = new Color(color.getRed(), color.getGreen(), color.getBlue(), getTransparency(0xFF));
+		} else {
+			color = new Color(color.getRed(), color.getGreen(), color.getBlue(), getTransparency(color.getAlpha()));
 		}
 
 		return color;
 	}
-
+	
+	protected int getTransparency(int alpha)
+	{
+		return (int) MathExt.round((double)alpha * imageDefinition.getLayerTransparency());
+	}
+	
+	
 	public String getImageFile()
 	{
 		return imageFile;
@@ -481,6 +496,12 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 		return imageDefinition.getLongitudeResolution();
 	}
 	
+	@Override
+	public double getLayerTransparency()
+	{
+		return imageDefinition.getLayerTransparency();
+	}
+	
 	public Texture getAsTexture()
 	{
 		Texture tex = new Texture(imageDefinition.getImageWidth()
@@ -510,7 +531,8 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 												, imageDefinition.getNorth()
 												, imageDefinition.getSouth()
 												, imageDefinition.getEast()
-												, imageDefinition.getWest());
+												, imageDefinition.getWest()
+												, imageDefinition.getLayerTransparency());
 
 		if (this.isLoaded()) {
 			copy.rasterBuffer = this.rasterBuffer;
