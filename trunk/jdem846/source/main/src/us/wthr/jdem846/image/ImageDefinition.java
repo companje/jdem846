@@ -18,6 +18,7 @@ public class ImageDefinition implements IImageDefinition
 	private int imageWidth = 0;
 	private int imageHeight = 0;
 
+	private double layerTransparency = 1.0;
 
 	private List<IImageDefinitionChangeListener> changeListeners = new LinkedList<IImageDefinitionChangeListener>();
 
@@ -138,6 +139,22 @@ public class ImageDefinition implements IImageDefinition
 		}
 	}
 
+	
+	@Override
+	public double getLayerTransparency()
+	{
+		return layerTransparency;
+	}
+
+	@Override
+	public void setLayerTransparency(double layerTransparency)
+	{
+		if (!locked) {
+			this.layerTransparency = layerTransparency;
+			this.fireDefinitionChangeListener();
+		}
+	}
+
 	public boolean isLocked()
 	{
 		return locked;
@@ -216,6 +233,7 @@ public class ImageDefinition implements IImageDefinition
 		clone.imageHeight = this.imageHeight;
 		clone.latitudeResolution = this.latitudeResolution;
 		clone.longitudeResolution = this.longitudeResolution;
+		clone.layerTransparency = this.layerTransparency;
 		clone.locked = this.locked;
 		return clone;
 	}

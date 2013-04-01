@@ -163,6 +163,49 @@ saturn {
 	albedoGeometric = 0.00
 	albedoBond = 0.00
 }
+
+
+mercury {
+	name = "Mercury"
+	elevationSamples = null
+	
+	// Orbital characteristics
+	aphelion = 0.00 // km
+	perihelion = 0.00 // km
+	semiMajorAxis = 0.00 //km
+	eccentricity = 0.00
+	orbitalPeriod = 0.00 // days
+	synodicPeriod = 0.00 // days
+	averageOrbitalSpeed = 0.00 // km/s
+	meanAnomaly = 0.00 // degrees
+	inclinationToEcliptic = 0.00 // degrees
+	inclinationToSunsEquator = 0.00 // degrees
+	inclinationToInvariablePlane = 0.00 // degrees
+	longitudeOfAscendingNode = 0.00 // degrees
+	argumentOfPerihelion = 0.00 // degrees;
+
+	// Physical characteristics
+	meanRadius = 2439700 // m
+	equatorialRadius = 2439700 // m
+	polarRadius = 2439700 // m
+	flattening = 0.00
+	circumferenceEquatorial = 0.00 //km
+	circumferenceMeridional = 0.00 // km
+	surfaceArea = 0.00 // km^2
+	volume = 0.00 // km^3
+	mass = 0.00 // kg
+	meanDensity = 0.00 // g/cm^3
+	equatorialSurfaceGravity = 0.00 // m/s^2
+	escapeVelocity = 0.00 // km/s
+	siderealRotationPeriod = 0.00 // d
+	equatorialRotationVelocity = 0.00 // km/h
+	axialTilt = 0.00 //degrees
+	northPoleRightAscension = 0.00 // degrees
+	northPoleDeclination = 0.00 // degrees
+	albedoGeometric = 0.00
+	albedoBond = 0.00
+}
+
 /*
 object {
 	name = ""

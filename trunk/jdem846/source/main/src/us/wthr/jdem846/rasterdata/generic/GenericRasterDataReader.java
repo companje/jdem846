@@ -5,14 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import us.wthr.jdem846.ByteOrder;
-import us.wthr.jdem846.DataTypeEnum;
 import us.wthr.jdem846.exception.DataSourceException;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.util.ByteConversions;
-
-import com.google.common.primitives.Ints;
+import us.wthr.jdem846.util.BytesUtil;
 
 public class GenericRasterDataReader
 {
@@ -25,9 +21,10 @@ public class GenericRasterDataReader
 
 	private RandomAccessFile dataReader = null;
 
-	private byte[] wordBuffer;
 	private byte[] lineBuffer;
 
+	private byte[] buffer8 = new byte[8];
+	
 	public GenericRasterDataReader(File dataFile, IRasterDefinition rasterDefinition)
 	{
 		this.dataFile = dataFile;
@@ -48,7 +45,7 @@ public class GenericRasterDataReader
 
 	protected void definitionChanged()
 	{
-		wordBuffer = new byte[this.rasterDefinition.getDataType().numberOfBytes()];
+		
 	}
 
 	public void dispose() throws DataSourceException
@@ -58,7 +55,6 @@ public class GenericRasterDataReader
 		}
 
 		lineBuffer = null;
-		wordBuffer = null;
 
 		// TODO: Finish
 		isDisposed = true;
@@ -172,116 +168,23 @@ public class GenericRasterDataReader
 
 	protected Number readSingleValue(RandomAccessFile dataReader) throws DataSourceException, IOException
 	{
-		DataTypeEnum dataType = this.rasterDefinition.getDataType();
-
-		if (this.wordBuffer == null || this.wordBuffer.length != dataType.numberOfBytes()) {
-			this.wordBuffer = new byte[dataType.numberOfBytes()];
-		}
-
-		Number o = null;
-
-		if (dataType == DataTypeEnum.Byte) {
-			o = readByte(dataReader);
-		} else if (dataType == DataTypeEnum.UInt16) {
-			o = readUInt16(dataReader);
-		} else if (dataType == DataTypeEnum.Int16) {
-			o = readInt16(dataReader);
-		} else if (dataType == DataTypeEnum.Uint32) {
-			o = readUInt32(dataReader);
-		} else if (dataType == DataTypeEnum.Int32) {
-			o = readInt32(dataReader);
-		} else if (dataType == DataTypeEnum.CInt16) {
-			o = readCInt16(dataReader);
-		} else if (dataType == DataTypeEnum.CInt32) {
-			o = readCInt32(dataReader);
-		} else if (dataType == DataTypeEnum.Float32) {
-			o = readFloat32(dataReader);
-		} else if (dataType == DataTypeEnum.CFloat32) {
-			o = readCFloat32(dataReader);
-		} else if (dataType == DataTypeEnum.Float64) {
-			o = readDouble64(dataReader);
-		} else if (dataType == DataTypeEnum.CFloat64) {
-			o = readCDouble64(dataReader);
-		} else {
-			throw new DataSourceException("Invalid or unsupported data type specified: " + dataType.name());
-		}
+		Number o = readNext(dataReader);
 
 		return o;
 	}
 
-	private byte readByte(RandomAccessFile dataReader) throws IOException
+	
+	private Number readNext(RandomAccessFile dataReader) throws IOException
 	{
-		return dataReader.readByte();
+		dataReader.readFully(buffer8, 0, rasterDefinition.getDataType().numberOfBytes());
+		return BytesUtil.fromBytes(buffer8
+				, 0
+				, rasterDefinition.getDataType()
+				, rasterDefinition.getByteOrder());
 	}
+	
 
-	private int readUInt16(RandomAccessFile dataReader) throws IOException
-	{
-		dataReader.readFully(this.wordBuffer, 0, 2);
-		byte[] bytes = {0, 0, wordBuffer[1], wordBuffer[0]};
-		return Ints.fromByteArray(bytes);
-		//return Shorts.fromBytes(wordBuffer[1], wordBuffer[0]);
-		//return UnsignedBytes.
-		//return ByteConversions.bytesToShort(wordBuffer, this.rasterDefinition.getByteOrder());
-	}
 
-	private int readInt16(RandomAccessFile dataReader) throws IOException
-	{
-		short v = (short) readUInt16(dataReader);
-		return v;
-		//dataReader.readFully(this.wordBuffer, 0, 2);
-		//byte[] bytes = {wordBuffer[1], wordBuffer[0], 0, 0};
-		//return Ints.fromByteArray(bytes);
-		//return Shorts.fromBytes(wordBuffer[1], wordBuffer[0]);
-		//return ByteConversions.bytesToShort(wordBuffer, this.rasterDefinition.getByteOrder());
-	}
-
-	private int readCInt16(RandomAccessFile dataReader) throws IOException
-	{
-
-		return 0x0;
-	}
-
-	private int readUInt32(RandomAccessFile dataReader) throws IOException
-	{
-		dataReader.readFully(this.wordBuffer, 0, 4);
-		return ByteConversions.bytesToInt(wordBuffer, rasterDefinition.getByteOrder());
-	}
-
-	private int readInt32(RandomAccessFile dataReader) throws IOException
-	{
-		dataReader.readFully(this.wordBuffer, 0, 4);
-		return ByteConversions.bytesToInt(wordBuffer, rasterDefinition.getByteOrder());
-	}
-
-	private int readCInt32(RandomAccessFile dataReader) throws IOException
-	{
-
-		return 0x0;
-	}
-
-	private float readFloat32(RandomAccessFile dataReader) throws IOException
-	{
-		dataReader.readFully(this.wordBuffer, 0, 4);
-		return ByteConversions.bytesToFloat(wordBuffer, rasterDefinition.getByteOrder());
-	}
-
-	private float readCFloat32(RandomAccessFile dataReader) throws IOException
-	{
-
-		return 0.0F;
-	}
-
-	private double readDouble64(RandomAccessFile dataReader) throws IOException
-	{
-		dataReader.readFully(this.wordBuffer, 0, 8);
-		return ByteConversions.bytesToDouble(wordBuffer, rasterDefinition.getByteOrder());
-	}
-
-	private double readCDouble64(RandomAccessFile dataReader) throws IOException
-	{
-
-		return 0.0;
-	}
 
 	protected void readLine(RandomAccessFile dataReader, int startColumn, Number[] line) throws DataSourceException, IOException
 	{
@@ -307,42 +210,9 @@ public class GenericRasterDataReader
 
 	protected Number convertBytes(byte[] buffer, int offset) throws DataSourceException
 	{
-		Number o = null;
-		DataTypeEnum dataType = rasterDefinition.getDataType();
-		ByteOrder byteOrder = rasterDefinition.getByteOrder();
-
-		if (dataType == DataTypeEnum.Byte) {
-			o = buffer[offset];
-		} else if (dataType == DataTypeEnum.UInt16) {
-			//o = ByteConversions.bytesToShort(buffer[offset], buffer[offset + 1], byteOrder);
-			byte[] bytes = {0, 0, buffer[offset + 1], buffer[offset]};
-			o = Ints.fromByteArray(bytes);
-		} else if (dataType == DataTypeEnum.Int16) {
-			//o = ByteConversions.bytesToShort(buffer[offset], buffer[offset + 1], byteOrder);
-			byte[] bytes = {0, 0, buffer[offset + 1], buffer[offset]};
-			short v = (short) Ints.fromByteArray(bytes);
-			o = v;
-		} else if (dataType == DataTypeEnum.Uint32) {
-			o = ByteConversions.bytesToInt(buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3], byteOrder);
-		} else if (dataType == DataTypeEnum.Int32) {
-			o = ByteConversions.bytesToInt(buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3], byteOrder);
-		} else if (dataType == DataTypeEnum.CInt16) {
-			o = null;
-		} else if (dataType == DataTypeEnum.CInt32) {
-			o = null;
-		} else if (dataType == DataTypeEnum.Float32) {
-			o = ByteConversions.bytesToFloat(buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3], byteOrder);
-		} else if (dataType == DataTypeEnum.CFloat32) {
-			o = null;
-		} else if (dataType == DataTypeEnum.Float64) {
-			o = ByteConversions.bytesToDouble(buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3], buffer[offset + 4], buffer[offset + 5], buffer[offset + 6],
-					buffer[offset + 7], byteOrder);
-		} else if (dataType == DataTypeEnum.CFloat64) {
-			o = null;
-		} else {
-			throw new DataSourceException("Invalid or unsupported data type specified: " + dataType.name());
-		}
-
-		return o;
+		return BytesUtil.fromBytes(buffer
+									, offset
+									, rasterDefinition.getDataType()
+									, rasterDefinition.getByteOrder());
 	}
 }
