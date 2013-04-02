@@ -35,7 +35,13 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 {
 	@SuppressWarnings("unused")
 	private static Log log = Logging.getLog(SimpleGeoImage.class);
-
+	
+	private enum RoundingType {
+		ROUND,
+		FLOOR,
+		CEIL
+	}
+	
 	private String imageFile;
 
 	private IIntBuffer rasterBuffer = null;
@@ -331,42 +337,75 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
 		}
-
-		double x00, y00;
-		double x01, y01;
-
-		try {
-			canvasProjection.getPoint(latitude, longitude, 0.0, mapPoint);
-		} catch (MapProjectionException ex) {
-			throw new DataSourceException("Error getting x/y point from coordinates: " + ex.getMessage(), ex);
+		
+		PixelValue p00 = getColorNearestNeighbor(latitude, RoundingType.FLOOR, longitude, RoundingType.FLOOR, true, true);
+		PixelValue p01 = getColorNearestNeighbor(latitude, RoundingType.FLOOR, longitude, RoundingType.CEIL, true, true);
+		PixelValue p10 = getColorNearestNeighbor(latitude, RoundingType.CEIL, longitude, RoundingType.FLOOR, true, true);
+		PixelValue p11 = getColorNearestNeighbor(latitude, RoundingType.CEIL, longitude, RoundingType.CEIL, true, true);
+		
+		p00 = getFirstNotNull(p00, p01, p10, p11);
+		p01 = getFirstNotNull(p01, p11, p00, p10);
+		p10 = getFirstNotNull(p10, p00, p11, p01);
+		p11 = getFirstNotNull(p11, p01, p10, p00);
+		
+		if (p00 == null) {
+			return null;
 		}
+		
+		IColor c00 = p00.getColor();
+		IColor c01 = p01.getColor();
+		IColor c10 = p10.getColor();
+		IColor c11 = p11.getColor();
+		
+		c00 = getFirstNotNull(c00, c01, c10, c11, Colors.TRANSPARENT);
+		c01 = getFirstNotNull(c01, c11, c00, c10, Colors.TRANSPARENT);
+		c10 = getFirstNotNull(c10, c00, c11, c01, Colors.TRANSPARENT);
+		c11 = getFirstNotNull(c11, c01, c10, c00, Colors.TRANSPARENT);
 
-		x00 = (int) mapPoint.column;
-		y00 = (int) mapPoint.row;
-		x01 = mapPoint.column;
-		y01 = mapPoint.row;
-
-		double xFrac = x01 - x00;
-		double yFrac = y01 - y00;
-
-		IColor c00 = getPixel((int) x00, (int) y00);
-		IColor c01 = getPixel((int) x00 + 1, (int) y00);
-		IColor c10 = getPixel((int) x00, (int) y00 + 1);
-		IColor c11 = getPixel((int) x00 + 1, (int) y00 + 1);
-
-		c00 = (c00 != null) ? c00 : Colors.TRANSPARENT;
-		c01 = (c01 != null) ? c01 : Colors.TRANSPARENT;
-		c10 = (c10 != null) ? c10 : Colors.TRANSPARENT;
-		c11 = (c11 != null) ? c11 : Colors.TRANSPARENT;
+		double xFrac = p01.getColumnDecimal() - p00.getColumn();
+		double yFrac = p10.getRowDecimal() - p00.getRow();
 		
 		return ColorUtil.interpolateColor(c00, c01, c10, c11, xFrac, yFrac);
+		
+	}
+	
+	protected <T> T getFirstNotNull(T ... values)
+	{
+		if (values == null) {
+			return null;
+		}
+		
+		for (T t : values) {
+			if (t != null) {
+				return t;
+			}
+		}
+		
+		return null;
 	}
 
 	public IColor getColorNearestNeighbor(double latitude, double longitude) throws DataSourceException
 	{
+		PixelValue pv = getColorNearestNeighbor(latitude, RoundingType.ROUND, longitude, RoundingType.ROUND, true, true);
+		return (pv != null) ? pv.getColor() : null;
+	}
+	
+	public PixelValue getColorNearestNeighbor(double latitude, RoundingType latitudeRoundType, double longitude, RoundingType longitudeRoundType, boolean adjustCoordinates, boolean wrap) throws DataSourceException
+	{
 		if (!isLoaded()) {
 			throw new DataSourceException("Image data not loaded");
 		}
+		
+		if (adjustCoordinates) {
+			if ((latitude = coordinateSpaceAdjuster.adjustLatitude(latitude)) == DemConstants.ELEV_NO_DATA) {
+				return null;
+			}
+	
+			if ((longitude = coordinateSpaceAdjuster.adjustLongitude(longitude)) == DemConstants.ELEV_NO_DATA) {
+				return null;
+			}
+		}
+		
 		if (latitude >= imageDefinition.getSouth() && latitude <= imageDefinition.getNorth() && longitude >= imageDefinition.getWest() && longitude <= imageDefinition.getEast()) {
 			try {
 				canvasProjection.getPoint(latitude, longitude, 0.0, mapPoint);
@@ -374,7 +413,41 @@ public class SimpleGeoImage implements InputSourceData, ISimpleGeoImage
 				throw new DataSourceException("Error getting x/y point from coordinates: " + ex.getMessage(), ex);
 			}
 
-			return getPixel((int) Math.round(mapPoint.column), (int) Math.round(mapPoint.row));
+			int column = 0;
+			int row = 0;
+			
+			if (latitudeRoundType == RoundingType.ROUND) {
+				row = (int) Math.round(mapPoint.row);
+			} else if (latitudeRoundType == RoundingType.CEIL) {
+				row = (int) Math.ceil(mapPoint.row);
+			} else if (latitudeRoundType == RoundingType.FLOOR) {
+				row = (int) Math.floor(mapPoint.row);
+			}
+			
+			if (longitudeRoundType == RoundingType.ROUND) {
+				column = (int) Math.round(mapPoint.column);
+			} else if (longitudeRoundType == RoundingType.CEIL) {
+				column = (int) Math.ceil(mapPoint.column);
+			} else if (longitudeRoundType == RoundingType.FLOOR) {
+				column = (int) Math.floor(mapPoint.column);
+			}
+			
+			int useColumn = column;
+			int useRow = row;
+			
+			if (wrap && useRow >= getHeight()) {
+				useRow = useRow - getHeight();
+			}
+			
+			if (wrap && useColumn >= getWidth()) {
+				useColumn = useColumn - getWidth();
+			}
+			
+			
+			IColor color = getPixel(useColumn, row);
+			
+			PixelValue pixelValue = new PixelValue(color, row, mapPoint.row, column, mapPoint.column);
+			return pixelValue;
 		} else {
 			return null;
 		}

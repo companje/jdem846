@@ -67,7 +67,7 @@ public class GridProcessChunkThread extends Thread
 			}
 			
 			//for (double longitude = west; longitude <= east; longitude += longitudeResolution) {
-			for (int x = 0; x < width; x++) {
+			for (int x = 0; x <= width; x++) {
 				double longitude = west + ((double)x) * longitudeResolution;
 				try {
 					processStack.onModelPoint(latitude, longitude);
