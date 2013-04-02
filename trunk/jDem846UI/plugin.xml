@@ -74,6 +74,13 @@
             category="us.wthr.jdem846.category"
             icon="icons/eclipse/chart.gif" /> 
      
+     <view
+            name="Gradients"
+            class="us.wthr.jdem846ui.views.gradient.GradientView"
+            id="jdem846ui.gradientView"
+            category="us.wthr.jdem846.category"
+            icon="icons/eclipse/gradient.gif" /> 
+     
 	<view
          name="Tasks"
          icon="icons/eclipse/progress_task.gif"

@@ -6,6 +6,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 import us.wthr.jdem846ui.views.LogConsoleView;
 import us.wthr.jdem846ui.views.data.DataView;
+import us.wthr.jdem846ui.views.gradient.GradientView;
 import us.wthr.jdem846ui.views.layers.LayerPropertiesView;
 import us.wthr.jdem846ui.views.modelconfig.ModelConfigurationView;
 import us.wthr.jdem846ui.views.models.ModelStatisticsView;
@@ -40,7 +41,8 @@ public class Perspective implements IPerspectiveFactory
 		
 		IFolderLayout bottomRightFolder = layout.createFolder("bottomRight", IPageLayout.BOTTOM, 0.75f, "topRight");
 		bottomRightFolder.addView(MiniPreviewView.ID);
-
+		bottomRightFolder.addView(GradientView.ID);
+		
 		IFolderLayout bottomFolder = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.75f, editorArea);
 		bottomFolder.addPlaceholder(LogConsoleView.ID);
 

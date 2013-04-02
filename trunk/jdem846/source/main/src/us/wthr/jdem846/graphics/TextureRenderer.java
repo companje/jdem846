@@ -202,13 +202,12 @@ public class TextureRenderer
 	
 				this.renderer.begin(PrimitiveModeEnum.TRIANGLE_STRIP);
 	
-				for (double longitude = west; longitude < east; longitude += modelLongitudeResolution) {
+				for (double longitude = west; longitude <= east; longitude += modelLongitudeResolution) {
 	
 					renderPointVertex(latitude, longitude, texture);
 					renderPointVertex(latitude - modelLatitudeResolution, longitude, texture);
 				}
-				
-	
+
 				this.renderer.end();
 	
 			}

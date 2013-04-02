@@ -145,8 +145,7 @@ public class ImageDataContext implements DataContext
 					
 					i++;
 					
-				}
-				
+				} 
 			}
 			
 			if (pixelLoaded && rgba[3] == 255) {
