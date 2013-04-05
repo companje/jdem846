@@ -10,6 +10,9 @@ import us.wthr.jdem846.color.ColoringRegistry;
 import us.wthr.jdem846.color.ModelColoring;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.model.OptionModelChangeEvent;
+import us.wthr.jdem846.project.context.ProjectChangeAdapter;
+import us.wthr.jdem846.project.context.ProjectContext;
 
 public class GradientView extends ViewPart
 {
@@ -36,19 +39,45 @@ public class GradientView extends ViewPart
 			ex.printStackTrace(); // TODO Handle this better
 			return;
 		}
+
+		Composite composite = new Composite(parent, SWT.SINGLE| SWT.BORDER | SWT.BORDER_SOLID);
 		
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		gridLayout.horizontalSpacing = 0;
-		parent.setLayout(gridLayout);
+		composite.setLayout(gridLayout);
 		
 		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
-		gradientStrip = new GradientStrip(parent, SWT.NONE, gradient);
+		gradientStrip = new GradientStrip(composite, SWT.NONE, gradient);
 		gradientStrip.setLayoutData(gridData);
 		
 		gridData = new GridData(GridData.END, GridData.FILL, false, true);
-		indicatorsStrip = new StopIndicatorsStrip(parent, SWT.NONE, gradient, new StopIndicatorConfig(4, 10, 1));
+		indicatorsStrip = new StopIndicatorsStrip(composite, SWT.NONE, gradient, new StopIndicatorConfig(4, 10, 1));
 		indicatorsStrip.setLayoutData(gridData);
+		
+		ProjectContext.getInstance().addProjectChangeListener(new ProjectChangeAdapter() {
+			@Override
+			public void onOptionChanged(OptionModelChangeEvent e)
+			{
+				if (e.getPropertyId().equals("us.wthr.jdem846.model.HypsometricColorOptionModel.colorTint")) {
+					
+					setGradient((String)e.getNewValue());
+					
+				}
+			}
+		});
+		
+	}
+	
+	protected void setGradient(String id)
+	{
+		try {
+			ModelColoring gradient = getGradient(id);
+			gradientStrip.setGradient(gradient);
+			indicatorsStrip.setGradient(gradient);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	protected ModelColoring getGradient(String id) throws Exception

@@ -202,12 +202,23 @@ public class TextureRenderer
 	
 				this.renderer.begin(PrimitiveModeEnum.TRIANGLE_STRIP);
 	
+				boolean didEast = false;
+				
 				for (double longitude = west; longitude <= east; longitude += modelLongitudeResolution) {
 	
 					renderPointVertex(latitude, longitude, texture);
 					renderPointVertex(latitude - modelLatitudeResolution, longitude, texture);
+					
+					if (longitude == east) {
+						didEast = true;
+					}
 				}
 
+				if (!didEast) {
+					renderPointVertex(latitude, east, texture);
+					renderPointVertex(latitude - modelLatitudeResolution, east, texture);
+				}
+				
 				this.renderer.end();
 	
 			}
