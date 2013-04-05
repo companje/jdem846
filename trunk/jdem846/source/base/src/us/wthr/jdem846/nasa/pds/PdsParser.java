@@ -144,7 +144,7 @@ public class PdsParser
 			PdsLine peekLine = peekLine();
 			if (peekLine.getField().equals("object")) {
 				PdsObjectMap subObject = readObject();
-				pdsObject.setField(subObject.getName(), new PdsFieldValue<PdsObjectMap>(subObject));
+				subObject.addSubObject(subObject);
 			} else {
 				line = readLine();
 			}

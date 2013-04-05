@@ -17,8 +17,9 @@ public class PdsTestSandboxMain
 
 		PdsTestSandboxMain testing = new PdsTestSandboxMain();
 
-		String testFile = "C:\\Users\\kgill\\Google Drive\\JDem846\\Data\\Mercury\\messenger\\gdr\\img\\hdem_2.lbl";
-
+		//String testFile = "C:\\Users\\kgill\\Google Drive\\JDem846\\Data\\Mercury\\messenger\\gdr\\img\\hdem_2.lbl";
+		//String testFile = "C:\\Users\\GillFamily\\Google Drive\\JDem846\\Data\\Mercury\\messenger\\gdr\\img\\hdem_2.lbl";
+		String testFile = "C:\\Users\\GillFamily\\Google Drive\\JDem846\\Filetype Specifications\\datadictionary_1r89\\pdsdd.full";
 		try {
 			testing.parse(testFile);
 		} catch (Exception ex) {

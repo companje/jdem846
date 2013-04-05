@@ -19,10 +19,6 @@
 	<classpathentry kind="src" path="source/utilities/test"/>
 	<classpathentry kind="src" path="source/resources/test"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/javax.media.opengl">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="javax.media.opengl/native/win32/amd64"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/javax.media.opengl"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

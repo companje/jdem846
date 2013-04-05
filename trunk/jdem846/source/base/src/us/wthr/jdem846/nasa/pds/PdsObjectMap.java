@@ -1,36 +1,49 @@
 package us.wthr.jdem846.nasa.pds;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class PdsObjectMap
 {
-	private String name;
+	private String type;
 	private File file;
 	
 	private Map<String, PdsFieldValue<?>> fieldMap = Maps.newHashMap();
+	private List<PdsObjectMap> objects = Lists.newArrayList();
 	
 	public PdsObjectMap(String name)
 	{
-		setName(name);
+		setType(name);
 	}
 	
+	
+	public void addSubObject(PdsObjectMap subObject)
+	{
+		this.objects.add(subObject);
+	}
+	
+	public List<PdsObjectMap> getSubObjects()
+	{
+		return objects;
+	}
 	
 	public void setField(String name, PdsFieldValue<?> fieldValue)
 	{
 		fieldMap.put(name, fieldValue);
 	}
 	
-	protected void setName(String name)
+	protected void setType(String type)
 	{
-		this.name = name;
+		this.type = type;
 	}
 	
-	public String getName()
+	public String getType()
 	{
-		return name;
+		return type;
 	}
 	
 	public void setFile(File file)
