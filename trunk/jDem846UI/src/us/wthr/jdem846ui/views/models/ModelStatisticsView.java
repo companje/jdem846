@@ -64,9 +64,10 @@ public class ModelStatisticsView extends ViewPart
 	protected void setElevationModel(ElevationModel elevationModel)
 	{
 		this.elevationModel = elevationModel;
-		elevationHistogramDisplay.setElevationHistogramModel(elevationModel.getElevationHistogramModel());
-		tonalHistogramDisplay.setElevationModel(elevationModel);
-		
+		if (elevationModel != null) {
+			elevationHistogramDisplay.setElevationHistogramModel(elevationModel.getElevationHistogramModel());
+			tonalHistogramDisplay.setElevationModel(elevationModel);
+		}
 		parent.layout();
 	}
 	

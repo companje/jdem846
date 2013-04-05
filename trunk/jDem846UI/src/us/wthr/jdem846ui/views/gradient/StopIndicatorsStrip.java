@@ -3,6 +3,7 @@ package us.wthr.jdem846ui.views.gradient;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -17,10 +18,14 @@ import org.eclipse.swt.widgets.Composite;
 import us.wthr.jdem846.color.GradientColorStop;
 import us.wthr.jdem846.color.GradientLoader;
 import us.wthr.jdem846.color.ModelColoring;
+import us.wthr.jdem846.logging.Log;
+import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.MathExt;
 
 public class StopIndicatorsStrip extends Composite
 {
+	private static Log log = Logging.getLog(StopIndicatorsStrip.class);
+	
 	private Canvas canvas;
 	private ModelColoring gradient;
 	private double minStopValue;
@@ -71,6 +76,26 @@ public class StopIndicatorsStrip extends Composite
 			}
 		});
 
+		canvas.addMouseTrackListener(new MouseTrackListener() {
+			@Override
+			public void mouseEnter(MouseEvent arg0)
+			{
+				
+			}
+
+			@Override
+			public void mouseExit(MouseEvent arg0)
+			{
+				checkMouseCursorForPosition(-10, -10);
+			}
+
+			@Override
+			public void mouseHover(MouseEvent arg0)
+			{
+				
+			}
+		});
+
 		this.setSize(15, 50);
 
 		setGradient(gradient);
@@ -110,6 +135,11 @@ public class StopIndicatorsStrip extends Composite
 		gc.fillRectangle(0, 0, canvas.getClientArea().width, canvas.getClientArea().height);
 		
 		GradientLoader loader = gradient.getGradientLoader();
+		if (loader == null || loader.getColorStops() == null) {
+			
+			return;
+		}
+		
 		for (GradientColorStop stop : loader.getColorStops()) {
 			
 			int y = getStopYPosition(stop);
@@ -188,6 +218,8 @@ public class StopIndicatorsStrip extends Composite
 	protected double getMinimumStopValue()
 	{
 		GradientLoader loader = gradient.getGradientLoader();
+		if (loader == null || loader.getColorStops() == null)
+			return 0;
 		GradientColorStop stop = loader.getColorStops().get(0);
 		if (stop != null) {
 			return stop.getPosition();
@@ -199,6 +231,8 @@ public class StopIndicatorsStrip extends Composite
 	protected double getMaximumStopValue()
 	{
 		GradientLoader loader = gradient.getGradientLoader();
+		if (loader == null || loader.getColorStops() == null)
+			return 0;
 		GradientColorStop stop = loader.getColorStops().get(loader.getColorStops().size() - 1);
 		if (stop != null) {
 			return stop.getPosition();

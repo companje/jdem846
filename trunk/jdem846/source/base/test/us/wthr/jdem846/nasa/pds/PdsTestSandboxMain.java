@@ -3,23 +3,47 @@ package us.wthr.jdem846.nasa.pds;
 import java.util.Map;
 import java.util.Queue;
 
+import us.wthr.jdem846.AbstractTestMain;
+import us.wthr.jdem846.DiscoverableAnnotationIndexer;
+import us.wthr.jdem846.exception.AnnotationIndexerException;
+import us.wthr.jdem846.logging.Log;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class PdsTestSandboxMain
+public class PdsTestSandboxMain extends AbstractTestMain
 {
-
+	private static Log log = null;
+	
 	private Queue<PdsLine> lineQueue = Lists.newLinkedList();
 	private Map<String, String> quotedStrings = Maps.newHashMap();
 
 	public static void main(String[] args)
 	{
 
+		try {
+			AbstractTestMain.initialize(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		
 		PdsTestSandboxMain testing = new PdsTestSandboxMain();
-
+		
+		try {
+			DiscoverableAnnotationIndexer.createIndex();
+		} catch (AnnotationIndexerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		//String testFile = "C:\\Users\\kgill\\Google Drive\\JDem846\\Data\\Mercury\\messenger\\gdr\\img\\hdem_2.lbl";
 		//String testFile = "C:\\Users\\GillFamily\\Google Drive\\JDem846\\Data\\Mercury\\messenger\\gdr\\img\\hdem_2.lbl";
-		String testFile = "C:\\Users\\GillFamily\\Google Drive\\JDem846\\Filetype Specifications\\datadictionary_1r89\\pdsdd.full";
+		//String testFile = "C:\\Users\\GillFamily\\Google Drive\\JDem846\\Filetype Specifications\\datadictionary_1r89\\pdsdd.full";
+		String testFile = "C:\\Users\\kgill\\Google Drive\\JDem846\\Filetype Specifications\\datadictionary_1r89\\pdsdd.full";
+		
 		try {
 			testing.parse(testFile);
 		} catch (Exception ex) {
@@ -32,6 +56,11 @@ public class PdsTestSandboxMain
 	{
 		PdsParser parser = new PdsParser();
 		PdsObjectMap root = parser.parse(testFile);
+		
+		for (PdsObjectMap objectMap : root.getSubObjects()) {
+			System.err.println("Object Type: " + objectMap.getType());
+		}
+		
 	}
 
 	/*

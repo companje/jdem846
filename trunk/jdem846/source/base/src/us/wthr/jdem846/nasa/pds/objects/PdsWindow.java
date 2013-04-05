@@ -1,4 +1,4 @@
-package us.wthr.jdem846.nasa.pds;
+package us.wthr.jdem846.nasa.pds.objects;
 
 import us.wthr.jdem846.nasa.pds.annotations.PdsField;
 import us.wthr.jdem846.nasa.pds.annotations.PdsObject;
