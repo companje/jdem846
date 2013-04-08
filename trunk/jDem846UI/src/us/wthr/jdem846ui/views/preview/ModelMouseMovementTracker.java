@@ -94,7 +94,7 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 	public void mouseScrolled(MouseEvent event)
 	{
 		ViewPerspective view = getViewPerspective();
-		view.setZoom(view.getZoom() + (event.count * -0.1));
+		view.setZoom(view.getZoom() + (event.count * -0.01));
 		setViewPerspective(view);
 	}
 
