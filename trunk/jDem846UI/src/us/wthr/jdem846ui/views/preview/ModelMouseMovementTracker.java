@@ -8,8 +8,10 @@ import org.eclipse.swt.events.MouseWheelListener;
 
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
+import us.wthr.jdem846.math.Vector;
+import us.wthr.jdem846.math.Vectors;
 import us.wthr.jdem846.model.GlobalOptionModel;
-import us.wthr.jdem846.model.ViewPerspective;
+import us.wthr.jdem846.model.ViewerPosition;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.project.context.ProjectContext;
 
@@ -33,30 +35,30 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 
 	}
 
-	protected ViewPerspective getViewPerspective()
+	protected ViewerPosition getViewer()
 	{
-		ViewPerspective viewPerspective = null;
+		ViewerPosition viewer = null;
 
 		try {
-			viewPerspective = (ViewPerspective) ProjectContext.getInstance().getOptionModelContainer(GlobalOptionModel.class).getPropertyValueById("us.wthr.jdem846.model.GlobalOptionModel.viewAngle");
+			viewer = (ViewerPosition) ProjectContext.getInstance().getOptionModelContainer(GlobalOptionModel.class).getPropertyValueById("us.wthr.jdem846.model.GlobalOptionModel.viewerPosition");
 		} catch (ModelContainerException ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		}
 
-		if (viewPerspective == null) {
-			viewPerspective = new ViewPerspective();
+		if (viewer == null) {
+			viewer = new ViewerPosition();
 		}
 
-		return viewPerspective;
+		return viewer;
 
 	}
 
-	protected void setViewPerspective(ViewPerspective viewPerspective)
+	protected void setViewer(ViewerPosition viewer)
 	{
 
 		try {
-			ProjectContext.getInstance().getOptionModelContainer(GlobalOptionModel.class).setPropertyValueById("us.wthr.jdem846.model.GlobalOptionModel.viewAngle", viewPerspective);
+			ProjectContext.getInstance().getOptionModelContainer(GlobalOptionModel.class).setPropertyValueById("us.wthr.jdem846.model.GlobalOptionModel.viewerPosition", viewer);
 		} catch (ModelContainerException ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
@@ -93,9 +95,7 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 	@Override
 	public void mouseScrolled(MouseEvent event)
 	{
-		ViewPerspective view = getViewPerspective();
-		view.setZoom(view.getZoom() + (event.count * -0.01));
-		setViewPerspective(view);
+		moveViewForward(event.count);	
 	}
 
 	// /////////////////////////////////////
@@ -141,32 +141,16 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 		lastY = -1;
 		downX = -1;
 		downY = -1;
-
-		// ignoreUpdate = true;
-		// fireProjectionChangeListeners();
-		// ignoreUpdate = false;
 	}
 
 	protected void onMouseDraggedRightButton(MouseEvent e)
 	{
-		ViewPerspective view = getViewPerspective();
-		int x = e.x;
-		int y = e.y;
-
-		if (lastX != -1 && lastY != -1) {
-			int deltaY = y - lastY;
-			view.setShiftZ(view.getShiftZ() + (deltaY * 0.01));
-		}
-
-		lastX = x;
-		lastY = y;
-
-		setViewPerspective(view);
+		rotateViewInStaticPosition(e.x, e.y);
 	}
 
 	protected void onMouseDraggedMiddleButton(MouseEvent e)
 	{
-		ViewPerspective view = getViewPerspective();
+		//ViewPerspective view = getViewPerspective();
 		int x = e.x;
 		int y = e.y;
 
@@ -175,34 +159,75 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 			int deltaX = x - lastX;
 			int deltaY = y - lastY;
 
-			view.setShiftX(view.getShiftX() - (deltaX * 0.01));
-			view.setShiftY(view.getShiftY() - (deltaY * 0.01));
+		//	view.setShiftX(view.getShiftX() - (deltaX * 0.01));
+		//	view.setShiftY(view.getShiftY() - (deltaY * 0.01));
 		}
 
 		lastX = x;
 		lastY = y;
 
-		setViewPerspective(view);
+		//setViewPerspective(view);
 	}
 
 	protected void onMouseDraggedLeftButton(MouseEvent e)
 	{
-		ViewPerspective view = getViewPerspective();
-		int x = e.x;
-		int y = e.y;
+		rotateViewAroundOrigin(e.x, e.y);
+	}
+	
+	
+	protected void moveViewForward(int count)
+	{
+		Vector moveVector = new Vector(0, 0, ((double)count * -0.01));
+		
+		ViewerPosition viewer = getViewer();
+		
+		Vectors.rotateY(viewer.getYaw(), moveVector);
+		viewer.getPosition().z = viewer.getPosition().z + moveVector.z;
+		viewer.getPosition().x = viewer.getPosition().x + moveVector.x;
+		
+		setViewer(viewer);
+	}
+	
+	protected void rotateViewAroundOrigin(int mouseX, int mouseY)
+	{
+		ViewerPosition viewer = getViewer();
 
 		if (lastX != -1 && lastY != -1) {
 
-			int deltaX = x - lastX;
-			int deltaY = y - lastY;
-
-			view.setRotateX(view.getRotateX() + (deltaY / view.getZoom()));
-			view.setRotateY(view.getRotateY() + (deltaX / view.getZoom()));
+			int deltaX = mouseX - lastX;
+			int deltaY = mouseY - lastY;
+			
+			viewer.setPitch(viewer.getPitch() + deltaY * 0.5);
+			viewer.setYaw(viewer.getYaw() - deltaX * 0.5);
+			Vectors.rotate(-deltaY * 0.5, -deltaX * 0.5, 0.0, viewer.getPosition());
+			Vectors.rotate(-deltaY * 0.5, -deltaX * 0.5, 0.0, viewer.getFocalPoint());
+			
 		}
 
-		lastX = x;
-		lastY = y;
-
-		setViewPerspective(view);
+		lastX = mouseX;
+		lastY = mouseY;
+		
+		setViewer(viewer);
 	}
+	
+	protected void rotateViewInStaticPosition(int mouseX, int mouseY)
+	{
+		ViewerPosition viewer = getViewer();
+
+		if (lastX != -1 && lastY != -1) {
+
+			int deltaX = mouseX - lastX;
+			int deltaY = mouseY - lastY;
+			
+			viewer.setPitch(viewer.getPitch() + deltaY * 0.3);
+			viewer.setYaw(viewer.getYaw() - deltaX * 0.3);
+			Vectors.rotate(deltaY * 0.3, deltaX * 0.3, 0.0, viewer.getFocalPoint());
+		}
+
+		lastX = mouseX;
+		lastY = mouseY;
+		
+		setViewer(viewer);
+	}
+	
 }

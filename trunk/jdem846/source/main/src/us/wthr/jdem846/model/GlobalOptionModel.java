@@ -33,7 +33,12 @@ public class GlobalOptionModel implements OptionModel
 	private double westLimit = -180.0;
 	private RgbaColor backgroundColor = new RgbaColor(255, 255, 255, 255);
 	private double elevationMultiple = 1.0;
+	
+	
 	private ViewPerspective viewAngle = ViewPerspective.fromString("rotate:[30.0,0,0];shift:[0,0,0];zoom:[1.0]");
+	private ViewerPosition viewerPosition = new ViewerPosition();
+	
+	
 	private String elevationScale = ElevationScalerEnum.LINEAR.identifier();
 	private String mapProjection = MapProjectionEnum.EQUIRECTANGULAR.identifier();
 	private String renderProjection = CanvasProjectionTypeEnum.PROJECT_FLAT.identifier();
@@ -63,6 +68,8 @@ public class GlobalOptionModel implements OptionModel
 	private boolean previewRendering = false;
 	private boolean forceResetAndRunFilters = false;
 
+	
+	
 	public GlobalOptionModel()
 	{
 
@@ -89,7 +96,7 @@ public class GlobalOptionModel implements OptionModel
 				, visible = true
 				, validator = ModelHeightWidthValidator.class
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(1)
+	@Order(10)
 	@ValueBounds(minimum = 1)
 	public int getWidth()
 	{
@@ -106,7 +113,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = "Model image height"
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(2)
+	@Order(20)
 	@ValueBounds(minimum = 1)
 	public int getHeight()
 	{
@@ -124,7 +131,7 @@ public class GlobalOptionModel implements OptionModel
 			tooltip = "Maintain model dimensions aspect ratio in relation to raster data bounds",
 			visible = true,
 			enabler = GlobalOptionModelEnabler.class)
-	@Order(3)
+	@Order(30)
 	public boolean getMaintainAspectRatio()
 	{
 		return maintainAspectRatio;
@@ -140,7 +147,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, listModel = PlanetListModel.class)
-	@Order(4)
+	@Order(40)
 	public String getPlanet()
 	{
 		return planet;
@@ -156,7 +163,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(5)
+	@Order(50)
 	public boolean isEstimateElevationRange()
 	{
 		return estimateElevationRange;
@@ -172,7 +179,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(6)
+	@Order(60)
 	public boolean getLimitCoordinates()
 	{
 		return limitCoordinates;
@@ -188,7 +195,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(7)
+	@Order(70)
 	@ValueBounds(minimum = -90.0, maximum = 90.0, stepSize = .1)
 	public double getNorthLimit()
 	{
@@ -205,7 +212,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(8)
+	@Order(80)
 	@ValueBounds(minimum = -90.0, maximum = 90.0, stepSize = .1)
 	public double getSouthLimit()
 	{
@@ -222,7 +229,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(9)
+	@Order(90)
 	@ValueBounds(minimum = -360.0, maximum = 360.0, stepSize = .1)
 	public double getEastLimit()
 	{
@@ -239,7 +246,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(10)
+	@Order(100)
 	@ValueBounds(minimum = -360.0, maximum = 360.0, stepSize = .1)
 	public double getWestLimit()
 	{
@@ -256,7 +263,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = "Model image background color"
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(11)
+	@Order(110)
 	public RgbaColor getBackgroundColor()
 	{
 		return backgroundColor;
@@ -272,7 +279,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(12)
+	@Order(120)
 	@ValueBounds(minimum = 0, stepSize = 0.1)
 	public double getElevationMultiple()
 	{
@@ -290,7 +297,7 @@ public class GlobalOptionModel implements OptionModel
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class
 				, listModel = ElevationScalerListModel.class)
-	@Order(13)
+	@Order(130)
 	public String getElevationScale()
 	{
 		return elevationScale;
@@ -307,7 +314,7 @@ public class GlobalOptionModel implements OptionModel
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class
 				, listModel = MapProjectionListModel.class)
-	@Order(14)
+	@Order(140)
 	public String getMapProjection()
 	{
 		return mapProjection;
@@ -323,7 +330,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, listModel = RenderProjectionListModel.class)
-	@Order(15)
+	@Order(150)
 	public String getRenderProjection()
 	{
 		return renderProjection;
@@ -340,7 +347,7 @@ public class GlobalOptionModel implements OptionModel
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class
 				, listModel = PerspectiveTypeListModel.class)
-	@Order(16)
+	@Order(160)
 	public String getPerspectiveType()
 	{
 		return perspectiveType;
@@ -356,7 +363,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(17)
+	@Order(170)
 	public ViewPerspective getViewAngle()
 	{
 		return viewAngle;
@@ -366,13 +373,30 @@ public class GlobalOptionModel implements OptionModel
 	{
 		this.viewAngle = viewAngle;
 	}
+	
+	
+	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.viewerPosition"
+			, label = "Viewer Position"
+			, tooltip = ""
+			, visible = true
+			, enabler = GlobalOptionModelEnabler.class)
+	@Order(175)
+	public ViewerPosition getViewerPosition()
+	{
+		return viewerPosition;
+	}
+
+	public void setViewerPosition(ViewerPosition viewerPosition)
+	{
+		this.viewerPosition = viewerPosition;
+	}
 
 	@ProcessOption(id = "us.wthr.jdem846.model.GlobalOptionModel.fieldOfView"
 				, label = "Field of View"
 				, tooltip = ""
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(18)
+	@Order(180)
 	@ValueBounds(minimum = 1, maximum = 90)
 	public double getFieldOfView()
 	{
@@ -390,7 +414,7 @@ public class GlobalOptionModel implements OptionModel
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
 	@ValueBounds(minimum = 1, maximum = 5000.07e6)
-	@Order(19)
+	@Order(190)
 	public double getEyeDistance()
 	{
 		return eyeDistance;
@@ -406,7 +430,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(22)
+	@Order(220)
 	@ValueBounds(minimum = 0, maximum = 10.0, stepSize = 0.05)
 	public double getTextureQuality()
 	{
@@ -423,7 +447,7 @@ public class GlobalOptionModel implements OptionModel
 				, tooltip = ""
 				, visible = true
 				, enabler = GlobalOptionModelEnabler.class)
-	@Order(23)
+	@Order(230)
 	@ValueBounds(minimum = 0, maximum = 10.0, stepSize = 0.05)
 	public double getModelQuality()
 	{
@@ -504,7 +528,7 @@ public class GlobalOptionModel implements OptionModel
 				, label = "Number of Threads"
 				, tooltip = ""
 				, visible = true)
-	@Order(26)
+	@Order(260)
 	@ValueBounds(minimum = 1, maximum = 10, stepSize = 1)
 	public int getNumberOfThreads()
 	{
@@ -522,7 +546,7 @@ public class GlobalOptionModel implements OptionModel
 			, label = "Save Model Grid"
 			, tooltip = ""
 			, visible = true)
-	@Order(27)
+	@Order(270)
 	public boolean getSaveModelGrid() 
 	{
 		return saveModelGrid;
@@ -539,7 +563,7 @@ public class GlobalOptionModel implements OptionModel
 			, label = "Save Model Grid To"
 			, tooltip = ""
 			, visible = true)
-	@Order(28)
+	@Order(280)
 	public FilePath getModelGridSavePath()
 	{
 		return modelGridSavePath;
@@ -619,6 +643,7 @@ public class GlobalOptionModel implements OptionModel
 		copy.renderProjection = this.renderProjection;
 		copy.perspectiveType = this.perspectiveType;
 		copy.viewAngle = this.viewAngle.copy();
+		copy.viewerPosition = this.viewerPosition.copy();
 		copy.modelQuality = this.modelQuality;
 		copy.textureQuality = this.textureQuality;
 		copy.averageOverlappedData = this.averageOverlappedData;

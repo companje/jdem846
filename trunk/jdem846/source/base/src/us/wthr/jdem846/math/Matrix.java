@@ -17,7 +17,7 @@ public class Matrix
 	};
 	
 	
-	private double[] matrix = new double[16];
+	public double[] matrix = new double[16];
 	
 	
 	public Matrix(boolean loadIdentity)
@@ -77,6 +77,17 @@ public class Matrix
 		this.fill(0);
 	}
 	
+	public Matrix(float[] values)
+	{
+		if (values != null && values.length >= 16) {
+			for (int i = 0; i < 16; i++) {
+				this.matrix[i] = values[i];
+			}
+		} else {
+			fill(0);
+		}
+	}
+
 	public void fill(double v)
 	{
 		for (int i = 0; i < 16; i++) {
@@ -281,5 +292,21 @@ public class Matrix
 		this.matrix[13] = this.matrix[1] * x + this.matrix[5] * y + this.matrix[9]  * z + this.matrix[13];
 		this.matrix[14] = this.matrix[2] * x + this.matrix[6] * y + this.matrix[10] * z + this.matrix[14];
 		this.matrix[15] = this.matrix[3] * x + this.matrix[7] * y + this.matrix[11] * z + this.matrix[15];
+	}
+	
+	public void transposeRotation()
+	{
+		Matrix tmp = new Matrix(this.matrix);
+		this.matrix[1] = tmp.matrix[4];
+		this.matrix[4] = tmp.matrix[1];
+		
+		this.matrix[2] = tmp.matrix[8];
+		this.matrix[8] = tmp.matrix[2];
+		
+		//this.matrix[3] = tmp.matrix[12];
+		//this.matrix[12] = tmp.matrix[3];
+		
+		this.matrix[6] = tmp.matrix[9];
+		this.matrix[9] = tmp.matrix[6];
 	}
 }

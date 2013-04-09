@@ -17,7 +17,7 @@ import us.wthr.jdem846.logging.Logging;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.GlobalOptionModel;
 import us.wthr.jdem846.model.RgbaColor;
-import us.wthr.jdem846.model.ViewPerspective;
+import us.wthr.jdem846.model.ViewerPosition;
 import us.wthr.jdem846.model.processing.shading.RenderLightingOptionModel;
 import us.wthr.jdem846.model.processing.util.SunlightPositioning;
 import us.wthr.jdem846.modelgrid.IModelGrid;
@@ -119,7 +119,9 @@ public class RenderProcess
 
 		this.renderer.matrixMode(MatrixModeEnum.PROJECTION);
 		this.renderer.loadIdentity();
-
+		
+		ViewerPosition viewer = globalOptionModel.getViewerPosition();
+		
 		double aspect = (double) width / (double) height;
 		double near = this.modelView.nearClipDistance();
 		double far = this.modelView.farClipDistance();
@@ -139,11 +141,21 @@ public class RenderProcess
 			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
 			this.renderer.loadIdentity();
 		} else if (PerspectiveTypeEnum.getPerspectiveTypeFromIdentifier(this.globalOptionModel.getPerspectiveType()) == PerspectiveTypeEnum.PERSPECTIVE) {
-			this.renderer.perspective(horizFieldOfView, aspect, 0.1, far);
-			//this.renderer.perspective(horizFieldOfView, aspect, 0.1, 100000.0);
+			//this.renderer.perspective(horizFieldOfView, aspect, 0.1, far);
+			this.renderer.perspective(horizFieldOfView, aspect, 0.1, 100000.0);
 			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
 			
+			this.renderer.lookAt(viewer.getPosition().x * eyeZ
+								, viewer.getPosition().y * eyeZ
+								, viewer.getPosition().z * eyeZ
+								, viewer.getFocalPoint().x  * eyeZ
+								, viewer.getFocalPoint().y * eyeZ
+								, viewer.getFocalPoint().z  * eyeZ
+								, 0
+								, 1
+								, 0);
 			
+			/*
 			this.renderer.lookAt(0 // Eye X
 					, 0 // Eye Y
 					, eyeZ // Eye Z
@@ -153,7 +165,7 @@ public class RenderProcess
 					, 0 // Up X
 					, 1 // Up Y
 					, 0); // Up Z
-	
+			*/
 			// this.renderer.loadIdentity();
 		}
 
@@ -186,15 +198,15 @@ public class RenderProcess
 			this.renderer.clear(Colors.BLACK);
 		}
 
-		ViewPerspective view = this.globalOptionModel.getViewAngle();
+		//ViewPerspective view = this.globalOptionModel.getViewAngle();
 
-		double radius = this.modelView.radius();
+		//double radius = this.modelView.radius();
 
 		
 		RenderLightingOptionModel lightingOptionModel = (RenderLightingOptionModel) this.modelContext.getModelProcessManifest().getOptionModelByProcessId("us.wthr.jdem846.model.processing.lighting.RenderLightingProcessor");
 		this.modelView.setUseFlatNormals(lightingOptionModel.getFlatLighting());
 		
-		if (view != null) {
+/*		if (view != null) {
 			this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
 			this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
 			this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
@@ -202,7 +214,7 @@ public class RenderProcess
 			this.renderer.translate(view.getShiftX() * radius, view.getShiftY() * radius, view.getShiftZ() * radius);
 
 		}
-		
+		*/
 		
 		
 		if (lightingOptionModel != null && lightingOptionModel.isLightingEnabled()) {
