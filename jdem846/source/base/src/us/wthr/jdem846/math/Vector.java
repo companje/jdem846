@@ -71,6 +71,16 @@ public class Vector
 			len = 1.0;
 		return new Vector(x / len, y / len, z / len, w / len);
 	}
+	
+	public void normalize()
+	{
+		Vector n = getNormalized();
+		this.x = n.x;
+		this.y = n.y;
+		this.z = n.z;
+		this.w = n.w;
+	}
+	
 
 	public Vector getInversed()
 	{

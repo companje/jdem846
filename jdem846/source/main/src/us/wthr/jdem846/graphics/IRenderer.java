@@ -12,7 +12,7 @@ public interface IRenderer
 
 	public void initialize(int width, int height);
 	
-	
+
 	public void setLighting(Vector position, double emission, double ambiant, double diffuse, double specular, double shininess);
 	public void setLighting(Vector position, IColor emission, IColor ambiant, IColor diffuse, IColor specular, double shininess);
 	public void disableLighting();

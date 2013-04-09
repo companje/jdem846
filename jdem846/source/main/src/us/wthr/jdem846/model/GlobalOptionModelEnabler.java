@@ -19,7 +19,8 @@ public class GlobalOptionModelEnabler implements IOptionEnabler
 
 		if ((propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.perspectiveType")
 				|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.viewAngle") 
-				|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.fieldOfView"))
+				|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.fieldOfView")
+				|| propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.viewerPosition"))
 				&& globalOptionModel.getRenderProjection().equals("us.wthr.jdem846.render.canvasProjection.flat")) {
 			enable = false;
 		} else if (propertyId.equals("us.wthr.jdem846.model.GlobalOptionModel.eyeDistance") && (globalOptionModel.getRenderProjection().equals("us.wthr.jdem846.render.canvasProjection.flat") || globalOptionModel.getRenderProjection().equals("us.wthr.jdem846.render.canvasProjection.3d"))) {
