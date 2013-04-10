@@ -197,24 +197,8 @@ public class RenderProcess
 		} else {
 			this.renderer.clear(Colors.BLACK);
 		}
-
-		//ViewPerspective view = this.globalOptionModel.getViewAngle();
-
-		//double radius = this.modelView.radius();
-
-		
 		RenderLightingOptionModel lightingOptionModel = (RenderLightingOptionModel) this.modelContext.getModelProcessManifest().getOptionModelByProcessId("us.wthr.jdem846.model.processing.lighting.RenderLightingProcessor");
 		this.modelView.setUseFlatNormals(lightingOptionModel.getFlatLighting());
-		
-/*		if (view != null) {
-			this.renderer.rotate(view.getRotateX(), AxisEnum.X_AXIS);
-			this.renderer.rotate(view.getRotateY(), AxisEnum.Y_AXIS);
-			this.renderer.rotate(view.getRotateZ(), AxisEnum.Z_AXIS);
-
-			this.renderer.translate(view.getShiftX() * radius, view.getShiftY() * radius, view.getShiftZ() * radius);
-
-		}
-		*/
 		
 		
 		if (lightingOptionModel != null && lightingOptionModel.isLightingEnabled()) {

@@ -558,5 +558,11 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 	{
 		
 	}
-
+	
+	@Override
+	public void setBillboard(Vector cam, Vector objPos)
+	{
+		
+	}
+	
 }

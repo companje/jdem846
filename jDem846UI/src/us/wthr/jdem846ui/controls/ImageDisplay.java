@@ -226,6 +226,10 @@ public class ImageDisplay extends Composite
 			return 0.0;
 		}
 		
+		if (canvas.isDisposed()) {
+			return 0.0;
+		}
+		
 		double imageWidth = image.getImageData().width;
 		double imageHeight = image.getImageData().height;
 		
