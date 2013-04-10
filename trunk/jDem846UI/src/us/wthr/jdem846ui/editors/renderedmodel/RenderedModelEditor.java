@@ -173,7 +173,9 @@ public class RenderedModelEditor extends EditorPart
 		((BasicZoomAction)ApplicationActionBarAdvisor.getInstance().getAction(ICommandIds.CMD_ZOOM_FIT)).addActionListener(new ActionListener() {
 			@Override
 			public void onAction() {
-				imageDisplay.zoomFit();
+				if (!imageDisplay.isDisposed()) {
+					imageDisplay.zoomFit();
+				}
 			}
 		});
 	
