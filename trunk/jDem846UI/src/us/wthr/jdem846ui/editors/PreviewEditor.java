@@ -47,23 +47,6 @@ public class PreviewEditor extends EditorPart
 	{
 		mouseTracker = new ModelMouseMovementTracker();
 
-		/*
-		updatePreviewAction = new UpdatePreviewAction("Update Preview", View.ID);
-		IActionBars actionBars = getEditorSite().getActionBars();
-		// IMenuManager dropDownMenu = actionBars.getMenuManager();
-		IToolBarManager toolBar = actionBars.getToolBarManager();
-		// dropDownMenu.add(updatePreviewAction);
-		toolBar.add(updatePreviewAction);
-
-		updatePreviewAction.addActionListener(new ActionListener()
-		{
-			public void onAction()
-			{
-				ModelPreviewChangeObserver.getInstance().update(true, true);
-			}
-		});
-		*/
-		
 		ModelPreviewChangeObserver.getInstance().addModelPreviewReadyListener(new ModelPreviewReadyListener()
 		{
 			public void onPreviewReady(final ElevationModel elevationModel)
@@ -145,6 +128,8 @@ public class PreviewEditor extends EditorPart
 		canvas.addMouseMoveListener(mouseTracker);
 		canvas.addMouseWheelListener(mouseTracker);
 		canvas.addMouseTrackListener(mouseTracker);
+		canvas.addKeyListener(mouseTracker);
+		
 	}
 
 	public void init(IEditorSite site, IEditorInput input)

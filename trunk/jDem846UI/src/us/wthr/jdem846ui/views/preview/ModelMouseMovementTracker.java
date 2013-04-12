@@ -1,5 +1,7 @@
 package us.wthr.jdem846ui.views.preview;
 
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -15,7 +17,7 @@ import us.wthr.jdem846.model.ViewerPosition;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.project.context.ProjectContext;
 
-public class ModelMouseMovementTracker implements MouseListener, MouseMoveListener, MouseWheelListener, MouseTrackListener
+public class ModelMouseMovementTracker implements MouseListener, MouseMoveListener, MouseWheelListener, MouseTrackListener, KeyListener
 {
 	private static Log log = Logging.getLog(ModelMouseMovementTracker.class);
 
@@ -142,6 +144,30 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 		downX = -1;
 		downY = -1;
 	}
+	
+	
+	////////////////////////////////////////
+	// KeyListener
+	////////////////////////////////////////
+	
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		switch (e.character) {
+		case 'i':
+			moveViewForward(1);
+			break;
+		case 'o':
+			moveViewForward(-1);
+			break;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e)
+	{
+		
+	}
 
 	protected void onMouseDraggedRightButton(MouseEvent e)
 	{
@@ -150,6 +176,7 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 
 	protected void onMouseDraggedMiddleButton(MouseEvent e)
 	{
+		/*
 		//ViewPerspective view = getViewPerspective();
 		int x = e.x;
 		int y = e.y;
@@ -167,6 +194,8 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 		lastY = y;
 
 		//setViewPerspective(view);
+		 */
+		 
 	}
 
 	protected void onMouseDraggedLeftButton(MouseEvent e)
