@@ -9,12 +9,18 @@ public class GlobalView extends AbstractView implements View
 	
 	private double dataMaximumValue = DemConstants.ELEV_UNDETERMINED;
 	
-	
+	protected double getCameraDistanceToCenterOfObject()
+	{
+		Vector objPos = globalOptionModel.getViewerPosition().getFocalPoint();
+		Vector camPos = globalOptionModel.getViewerPosition().getPosition();
+		double distance = objPos.getDistanceTo(camPos);
+		return distance;
+	}
 	
 	
 	protected double getZoom()
 	{
-		return globalOptionModel.getViewAngle().getZoom();
+		return 2.0 / getCameraDistanceToCenterOfObject();
 	}
 	
 
@@ -34,7 +40,7 @@ public class GlobalView extends AbstractView implements View
 	{
 		//double zoom = globalOptionModel.getViewAngle().getZoom();
 		//return (globalOptionModel.getEyeDistance() * (DemConstants.DEFAULT_GLOBAL_RADIUS / radiusTrue())) / zoom;
-		return scaleElevation(globalOptionModel.getEyeDistance());
+		return scaleElevation(globalOptionModel.getEyeDistance() * (getCameraDistanceToCenterOfObject() / 2.0));
 	}
 	
 
@@ -94,17 +100,6 @@ public class GlobalView extends AbstractView implements View
 		double e = elevationFromSurface();
 		double f = MathExt.sqrt(e * (2 * r + e));
 		return f;
-		/*
-		double r = radius();
-		double e = elevationFromSurface();
-
-		double a = MathExt.sec_d(r / (r + e));
-		double d = MathExt.cos(a) * r;
-		double f = (r - d) + e;
-		return f;
-		
-		//return 100000.0;
-		 */
 	}
 
 	@Override
