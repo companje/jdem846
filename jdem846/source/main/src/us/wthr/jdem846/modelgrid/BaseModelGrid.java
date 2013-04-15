@@ -46,7 +46,7 @@ public abstract class BaseModelGrid implements IModelGrid
 		double _height = (this.north - this.south + latitudeResolution) / latitudeResolution;
 		double _width = (this.east - this.west + longitudeResolution) / longitudeResolution;
 
-		this.height = (int) MathExt.ceil(_height);
+		this.height = (int) MathExt.round(_height);
 		this.width = (int) MathExt.ceil(_width);
 
 		gridLength = (long) height * (long) width;

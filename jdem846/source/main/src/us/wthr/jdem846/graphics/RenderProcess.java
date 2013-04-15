@@ -135,7 +135,7 @@ public class RenderProcess
 					, radius // Right
 					, -radius // Bottom
 					, radius // Top
-					, 0 // Near
+					, near // Near
 					, far); // Far
 
 			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
