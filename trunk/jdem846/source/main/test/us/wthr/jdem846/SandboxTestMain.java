@@ -183,7 +183,7 @@ public class SandboxTestMain extends AbstractTestMain
 
 			//System.err.println("Intersect Point: " + intersect.x + "/" + intersect.y + "/" + intersect.z);
 			
-			double intersectRadius = intersect.getLength();
+			double intersectRadius = intersect.length();
 			System.err.println("Intersect Radius: " + intersectRadius + ", Intersect Distance: " + intersectDistance);
 			if (intersectRadius >= innerRingRadius && intersectRadius <= outterRingRadius) {
 				return true;
