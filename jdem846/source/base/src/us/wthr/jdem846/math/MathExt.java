@@ -8,6 +8,7 @@ public class MathExt
 	public static final double TWOPI = MathExt.PI * 2.0; 
 	public static final double HALFPI = (MathExt.PI / 2.0);
 	public static final double FORTPI = (MathExt.PI / 4.0);
+	public static final double PIOVER180 = (MathExt.PI / 180.0);
 	public static final double EPS10 = 1.e-10;
 	
 	protected final static double C00 = 1.0;

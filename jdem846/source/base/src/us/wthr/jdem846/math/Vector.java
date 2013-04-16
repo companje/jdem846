@@ -2,6 +2,11 @@ package us.wthr.jdem846.math;
 
 public class Vector
 {
+	
+	public static final Vector X_AXIS = new Vector(1, 0, 0);
+	public static final Vector Y_AXIS = new Vector(0, 1, 0);
+	public static final Vector Z_AXIS = new Vector(0, 0, 1);
+	
 	public double x = 0;
 	public double y = 0;
 	public double z = 0;
@@ -42,21 +47,35 @@ public class Vector
 		v.z = this.z;
 	}
 
-	public double getLength()
+	public void set(double x, double y, double z)
+	{
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
+	public double length()
 	{
 		return MathExt.sqrt(MathExt.sqr(x) + MathExt.sqr(y) + MathExt.sqr(z));
+	}
+
+	public void scale(double f)
+	{
+		this.x *= f;
+		this.y *= f;
+		this.z *= f;
 	}
 
 	public double getDistanceTo(Vector other)
 	{
 		Vector v = new Vector();
 		Vectors.subtract(this, other, v);
-		return v.getLength();
+		return v.length();
 	}
 
 	public Vector getUnitVector()
 	{
-		double len = this.getLength();
+		double len = this.length();
 		if (len <= 0.0) {
 			return new Vector(0, 0, 0);
 		} else {
@@ -66,12 +85,12 @@ public class Vector
 
 	public Vector getNormalized()
 	{
-		double len = this.getLength();
+		double len = this.length();
 		if (len == 0.0)
 			len = 1.0;
 		return new Vector(x / len, y / len, z / len, w / len);
 	}
-	
+
 	public void normalize()
 	{
 		Vector n = getNormalized();
@@ -80,7 +99,6 @@ public class Vector
 		this.z = n.z;
 		this.w = n.w;
 	}
-	
 
 	public Vector getInversed()
 	{
@@ -119,6 +137,26 @@ public class Vector
 		return new Vector(this.x - other.x, this.y - other.y, this.z - other.z, this.w - other.w);
 	}
 
+	public void add(Vector b)
+	{
+		add(this, b);
+	}
+
+	/** this = a + b */
+	public void add(Vector a, Vector b)
+	{
+		x = a.x + b.x;
+		y = a.y + b.y;
+		z = a.z + b.z;
+	}
+
+	public Vector plus(Vector arg)
+	{
+		Vector tmp = new Vector();
+		tmp.add(this, arg);
+		return tmp;
+	}
+
 	public Vector getDirectionTo(Vector other)
 	{
 		return other.subtract(this).getNormalized();
@@ -128,20 +166,18 @@ public class Vector
 	{
 		double ldotv = plane.getPlaneVector().dotProduct(direction);
 		if (ldotv == 0) {
-			return 0; // If I wasn't being lazy then I should be checking for infinity instead
+			return 0; // If I wasn't being lazy then I should be checking for
+						// infinity instead
 		}
 		return -plane.getPlaneVector().dotProduct4(this) / ldotv;
 	}
-	
+
 	public Vector intersectPoint(Vector direction, double intersectDistance)
 	{
 		if (intersectDistance == 0) {
 			return null;
 		}
-		Vector intersect = new Vector(
-				this.x + (direction.x * intersectDistance),
-				this.y + (direction.y * intersectDistance),
-				this.z + (direction.z * intersectDistance));
+		Vector intersect = new Vector(this.x + (direction.x * intersectDistance), this.y + (direction.y * intersectDistance), this.z + (direction.z * intersectDistance));
 		return intersect;
 	}
 
