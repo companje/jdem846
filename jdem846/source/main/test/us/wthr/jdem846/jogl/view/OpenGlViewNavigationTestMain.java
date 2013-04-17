@@ -77,6 +77,8 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		glProfile = GLProfile.getDefault();
 		caps = new GLCapabilities(glProfile);
 		caps.setDoubleBuffered(true);
+		caps.setSampleBuffers(true);
+		caps.setNumSamples(4);
 		canvas = new GLCanvas(caps);
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(this);
@@ -130,7 +132,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		// gl.glEnable(GL.GL_BLEND);
 		gl.glEnable(GL.GL_TEXTURE_2D);
 
-		// gl.glEnable(GL.GL_MULTISAMPLE);
+		gl.glEnable(GL.GL_MULTISAMPLE);
 
 		gl.glShadeModel(GL2.GL_SMOOTH);
 		// gl.glEnable(GL2.GL_POLYGON_SMOOTH);
@@ -163,7 +165,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		// gl.glFogf(GL2.GL_FOG_END, 50.0f);
 
 		try {
-			InputStream stream = getClass().getResourceAsStream("world.200411.3x1000x500.jpg");
+			InputStream stream = getClass().getResourceAsStream("world.topo.bathy.200408.3x5400x2700.jpg");
 			TextureData data = TextureIO.newTextureData(glProfile, stream, false, "jpg");
 			planetTexture = TextureIO.newTexture(data);
 		} catch (IOException exc) {
@@ -236,6 +238,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		
 		//glu.gluLookAt(position.x, position.y, position.z, 0, 0, 0, 0, 1, 0);
 		glu.gluLookAt(0, 0, examineView.getDistance() - radius, 0, 0, 0, 0, 1, 0);
+		
 		gl.glMultMatrixd(examineView.getModelView().matrix, 0);
 		//gl.glTranslated(0, 0, radius);
 		//gl.glRotated(examineView.getPitch(), 1, 0, 0);
