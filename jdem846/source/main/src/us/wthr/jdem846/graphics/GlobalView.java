@@ -11,16 +11,18 @@ public class GlobalView extends AbstractView implements View
 	
 	protected double getCameraDistanceToCenterOfObject()
 	{
-		Vector objPos = globalOptionModel.getViewerPosition().getFocalPoint();
-		Vector camPos = globalOptionModel.getViewerPosition().getPosition();
-		double distance = objPos.getDistanceTo(camPos);
-		return distance;
+		//Vector objPos = globalOptionModel.getViewerPosition().getFocalPoint();
+		//Vector camPos = globalOptionModel.getViewerPosition().getPosition();
+		//double distance = objPos.getDistanceTo(camPos);
+		//return distance;
+		return globalOptionModel.getViewerPosition().getDistance();
 	}
 	
 	
 	protected double getZoom()
 	{
-		return 2.0 / getCameraDistanceToCenterOfObject();
+		//return 2.0 / getCameraDistanceToCenterOfObject();
+		return globalOptionModel.getViewerPosition().getScale();
 	}
 	
 
@@ -63,7 +65,7 @@ public class GlobalView extends AbstractView implements View
 	@Override
 	public double radius()
 	{	
-		double radius = ((double)this.globalOptionModel.getWidth() / 2.0);
+		double radius = 0.5;
 		return radius;
 	}
 

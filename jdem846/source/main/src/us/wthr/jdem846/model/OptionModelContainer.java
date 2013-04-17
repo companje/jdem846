@@ -349,10 +349,15 @@ public class OptionModelContainer
 	
 	public void setPropertyValueByName(String propertyName, Object value) throws ModelContainerException
 	{
+		setPropertyValueByName(propertyName, value, true);
+	}
+	
+	public void setPropertyValueByName(String propertyName, Object value, boolean runValidation) throws ModelContainerException
+	{
 		OptionModelPropertyContainer propertyContainer = getPropertyByName(propertyName);
 		if (propertyContainer != null) {
 			try {
-				propertyContainer.setValue(value);
+				propertyContainer.setValue(value, runValidation);
 			} catch (MethodContainerInvokeException ex) {
 				throw new ModelContainerException("Exception setting property value: " + ex.getMessage(), ex);
 			}
@@ -380,10 +385,15 @@ public class OptionModelContainer
 	
 	public void setPropertyValueById(String propertyId, Object value) throws ModelContainerException
 	{
+		setPropertyValueById(propertyId, value, true);
+	}
+	
+	public void setPropertyValueById(String propertyId, Object value, boolean runValidation) throws ModelContainerException
+	{
 		OptionModelPropertyContainer propertyContainer = getPropertyById(propertyId);
 		if (propertyContainer != null) {
 			try {
-				propertyContainer.setValue(value);
+				propertyContainer.setValue(value, runValidation);
 			} catch (MethodContainerInvokeException ex) {
 				throw new ModelContainerException("Exception setting property value: " + ex.getMessage(), ex);
 			}

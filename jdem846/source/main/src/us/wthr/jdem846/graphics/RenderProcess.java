@@ -145,7 +145,8 @@ public class RenderProcess
 			this.renderer.perspective(horizFieldOfView, aspect, 0.1, 100000.0);
 			this.renderer.matrixMode(MatrixModeEnum.MODELVIEW);
 			
-			this.renderer.lookAt(viewer.getPosition().x * eyeZ
+			this.renderer.lookAt(0, 0, viewer.getDistance() - 0.5, 0, 0, 0, 0, 1, 0);
+			/*this.renderer.lookAt(viewer.getPosition().x * eyeZ
 								, viewer.getPosition().y * eyeZ
 								, viewer.getPosition().z * eyeZ
 								, viewer.getFocalPoint().x  * eyeZ
@@ -153,7 +154,7 @@ public class RenderProcess
 								, viewer.getFocalPoint().z  * eyeZ
 								, 0
 								, 1
-								, 0);
+								, 0);*/
 			
 			/*
 			this.renderer.lookAt(0 // Eye X
@@ -188,7 +189,7 @@ public class RenderProcess
 		
 		
 		this.setPerspective();
-
+		
 		this.renderer.pushMatrix();
 
 		RgbaColor background = this.globalOptionModel.getBackgroundColor();
@@ -227,7 +228,8 @@ public class RenderProcess
 			renderer.disableMaterial();
 		}
 		
-		
+		ViewerPosition viewer = globalOptionModel.getViewerPosition();
+		renderer.multMatrix(viewer.toMatrix());
 		
 		this.renderer.pushMatrix();
 		if (this.globalOptionModel.getUseScripting() && this.scriptProxy != null) {

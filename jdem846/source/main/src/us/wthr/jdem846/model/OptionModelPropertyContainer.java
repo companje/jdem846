@@ -150,10 +150,15 @@ public class OptionModelPropertyContainer
 
 	public void setValue(Object object) throws MethodContainerInvokeException
 	{
+		setValue(object, true);
+	}
+	
+	public void setValue(Object object, boolean runValidation) throws MethodContainerInvokeException
+	{
 		Object oldValue = getValue();
 		setter.setValue(object);
 
-		fireOptionModelChangeListeners(oldValue, object);
+		fireOptionModelChangeListeners(oldValue, object, runValidation);
 	}
 
 	public Class<?> getType()
@@ -166,10 +171,10 @@ public class OptionModelPropertyContainer
 		return order;
 	}
 
-	public void fireOptionModelChangeListeners(Object oldValue, Object newValue)
+	public void fireOptionModelChangeListeners(Object oldValue, Object newValue, boolean runValidation)
 	{
 
-		OptionModelChangeEvent e = new OptionModelChangeEvent(getPropertyName(), getId(), oldValue, newValue);
+		OptionModelChangeEvent e = new OptionModelChangeEvent(getPropertyName(), getId(), oldValue, newValue, runValidation);
 
 		for (OptionModelChangeListener listener : changeListeners) {
 			listener.onPropertyChanged(e);
