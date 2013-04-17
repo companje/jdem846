@@ -292,6 +292,12 @@ public class OpenGlRenderer extends BaseRenderer implements IRenderer
 	{
 		openGl.getGL2().glLoadIdentity();
 	}
+	
+	@Override
+	public void multMatrix(Matrix m)
+	{
+		openGl.getGL2().glMultMatrixd(m.matrix, 0);
+	}
 
 	@Override
 	public void ortho(double left, double right, double bottom, double top, double nearval, double farval)

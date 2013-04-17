@@ -1,8 +1,5 @@
-package us.wthr.jdem846.jogl.view;
+package us.wthr.jdem846.math;
 
-import us.wthr.jdem846.math.MathExt;
-import us.wthr.jdem846.math.Matrix;
-import us.wthr.jdem846.math.Vector;
 
 public class Quaternion
 {
@@ -56,7 +53,15 @@ public class Quaternion
 		this.q2 = q.q2;
 		this.q3 = q.q3;
 	}
-
+	
+	public void set(double q0, double q1, double q2, double q3)
+	{
+		this.q0 = q0;
+		this.q1 = q1;
+		this.q2 = q2;
+		this.q3 = q3;
+	}
+	
 	public boolean withinEpsilon(Quaternion arg, double epsilon)
 	{
 		return ((MathExt.abs(q0 - arg.q0) < epsilon) && (MathExt.abs(q1 - arg.q1) < epsilon) && (MathExt.abs(q2 - arg.q2) < epsilon) && (MathExt.abs(q3 - arg.q3) < epsilon));
@@ -212,7 +217,7 @@ public class Quaternion
 		return "(" + q0 + ", " + q1 + ", " + q2 + ", " + q3 + ")";
 	}
 
-	private void setQ(int i, double val)
+	public void setQ(int i, double val)
 	{
 		switch (i) {
 		case 0:
@@ -227,6 +232,22 @@ public class Quaternion
 		case 3:
 			q3 = val;
 			break;
+		default:
+			throw new IndexOutOfBoundsException();
+		}
+	}
+	
+	public double getQ(int i)
+	{
+		switch(i) {
+		case 0:
+			return q0;
+		case 1:
+			return q1;
+		case 2:
+			return q2;
+		case 3:
+			return q3;
 		default:
 			throw new IndexOutOfBoundsException();
 		}

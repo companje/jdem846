@@ -130,6 +130,7 @@ public class PreviewEditor extends EditorPart
 		canvas.addMouseTrackListener(mouseTracker);
 		canvas.addKeyListener(mouseTracker);
 		
+		mouseTracker.updateFromViewerPosition();
 	}
 
 	public void init(IEditorSite site, IEditorInput input)

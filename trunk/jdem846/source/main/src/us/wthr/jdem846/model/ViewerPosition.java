@@ -2,18 +2,18 @@ package us.wthr.jdem846.model;
 
 import java.util.Map;
 
-import us.wthr.jdem846.math.Vector;
+import us.wthr.jdem846.math.Matrix;
+import us.wthr.jdem846.math.Quaternion;
 
 public class ViewerPosition
 {
-	private double pitch = 0;
-	private double roll = 0;
-	private double yaw = 0;
+	private Quaternion orientation = new Quaternion();
+	private double distance = 2;
+	private double scale = 1.0;
+	private double pitch = 0.0;
+	private double yaw = 0.0;
+	private double roll = 0.0;
 
-	
-	private Vector position = new Vector(0, 0, 1);
-	private Vector focalPoint = new Vector(0, 0, -1);
-	
 	public ViewerPosition()
 	{
 		
@@ -24,9 +24,10 @@ public class ViewerPosition
 		this.pitch = other.pitch;
 		this.roll = other.roll;
 		this.yaw = other.yaw;
+		this.distance = other.distance;
+		this.scale = other.scale;
+		this.orientation = new Quaternion(other.orientation);
 		
-		this.position = new Vector(other.position);
-		this.focalPoint = new Vector(other.focalPoint);
 	}
 
 	public double getPitch()
@@ -65,51 +66,83 @@ public class ViewerPosition
 		this.yaw = yaw;
 	}
 
-	public Vector getPosition()
+
+	public Quaternion getOrientation()
 	{
-		return position;
+		return orientation;
 	}
 
-	public void setPosition(Vector position)
+	public void setOrientation(Quaternion orientation)
 	{
-		this.position = position;
+		this.orientation = orientation;
 	}
 
-	public Vector getFocalPoint()
+	public double getDistance()
 	{
-		return focalPoint;
+		return distance;
 	}
 
-	public void setFocalPoint(Vector focalPoint)
+	public void setDistance(double distance)
 	{
-		this.focalPoint = focalPoint;
+		this.distance = distance;
 	}
 
+	public double getScale()
+	{
+		return scale;
+	}
+
+	public void setScale(double scale)
+	{
+		this.scale = scale;
+	}
+
+	public Matrix toMatrix()
+	{
+		return toMatrix(true);
+	}
+	
+	public Matrix toMatrix(boolean rotated)
+	{
+		Matrix modelView = new Matrix(true);
+
+		modelView.translate(0, 0, 0.5);
+		modelView.rotate(pitch, 1, 0, 0);
+		modelView.rotate(yaw, 0, 1, 0);
+		modelView.rotate(roll, 0, 0, 1);
+		modelView.translate(0, 0, -0.5);
+		
+		if (rotated) {
+			Matrix m = new Matrix(true);
+			orientation.toMatrix(m);
+			modelView.multiply(m);
+		}
+		
+		modelView.scale(scale, scale, scale);
+		return modelView;
+	}
+	
 	public static ViewerPosition fromString(String s)
 	{
-
 		Map<String, double[]> values = SimpleNumberListMapSerializer.parseDoubleListString(s);
 		
-		double[] position = values.get("position");
-		double[] focalPoint = values.get("focalPoint");
+		double[] quarternion = values.get("quarternion");
 		double[] pitch = values.get("pitch");
 		double[] roll = values.get("roll");
 		double[] yaw = values.get("yaw");
-		
+		double[] distance = values.get("distance");
+		double[] scale = values.get("scale");
 		
 		ViewerPosition viewer = new ViewerPosition();
 		viewer.setPitch(pitch[0]);
 		viewer.setRoll(roll[0]);
 		viewer.setYaw(yaw[0]);
+		viewer.setDistance(distance[0]);
+		viewer.setScale(scale[0]);
 		
-		viewer.getPosition().x = position[0];
-		viewer.getPosition().y = position[1];
-		viewer.getPosition().z = position[2];
-		
-		viewer.getFocalPoint().x = focalPoint[0];
-		viewer.getFocalPoint().y = focalPoint[1];
-		viewer.getFocalPoint().z = focalPoint[2];
-		
+		Quaternion orientation = new Quaternion();
+		orientation.set(quarternion[0], quarternion[1], quarternion[2], quarternion[3]);
+		viewer.setOrientation(orientation);
 		return viewer;
 	}
 	
@@ -121,14 +154,15 @@ public class ViewerPosition
 				getRoll() + "];" +
 				"yaw:[" + 
 				getYaw() + "];" +
-				"position:[" +
-				getPosition().x + "," +
-				getPosition().y + "," + 
-				getPosition().z + "];" +
-				"focalPoint:[" +
-				getFocalPoint().x + "," +
-				getFocalPoint().y + "," + 
-				getFocalPoint().z + "];";
+				"distance:[" + 
+				getDistance() + "];" +
+				"scale:[" + 
+				getScale() + "];" +
+				"quarternion:[" + 
+				orientation.getQ(0) + "," +
+				orientation.getQ(1) + "," +
+				orientation.getQ(2) + "," +
+				orientation.getQ(3) + "];";
 		return s;
 			
 	}

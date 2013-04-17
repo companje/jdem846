@@ -3,6 +3,7 @@ package us.wthr.jdem846.graphics;
 import us.wthr.jdem846.exception.GraphicsRenderException;
 import us.wthr.jdem846.graphics.framebuffer.FrameBuffer;
 import us.wthr.jdem846.graphics.framebuffer.FrameBufferModeEnum;
+import us.wthr.jdem846.math.Matrix;
 import us.wthr.jdem846.math.Vector;
 
 public interface IRenderer
@@ -44,6 +45,7 @@ public interface IRenderer
 
 	public void matrixMode(MatrixModeEnum mode) throws GraphicsRenderException;
 
+	public void multMatrix(Matrix m);
 	public void loadIdentity();
 
 	public void ortho(double left, double right, double bottom, double top, double nearval, double farval);

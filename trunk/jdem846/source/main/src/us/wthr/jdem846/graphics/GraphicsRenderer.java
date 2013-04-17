@@ -114,7 +114,8 @@ public class GraphicsRenderer extends BaseRenderer implements IRenderer
 		}
 	}
 	
-	protected void multMatrix(Matrix m)
+	@Override
+	public void multMatrix(Matrix m)
 	{
 		if (this.currentMatrixStack != null && this.currentMatrixStack.depth() > 0 && m != null) {
 			this.multMatrix(this.currentMatrixStack.top(), m);

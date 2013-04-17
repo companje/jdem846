@@ -1,5 +1,7 @@
 package us.wthr.jdem846ui.views.preview;
 
+import java.util.Map;
+
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -8,11 +10,14 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.MouseWheelListener;
 
+import us.wthr.jdem846.graphics.ExamineView;
+import us.wthr.jdem846.graphics.ExamineView.ModelViewChangeListener;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
-import us.wthr.jdem846.math.Vector;
-import us.wthr.jdem846.math.Vectors;
+import us.wthr.jdem846.math.Matrix;
+import us.wthr.jdem846.math.Quaternion;
 import us.wthr.jdem846.model.GlobalOptionModel;
+import us.wthr.jdem846.model.SimpleNumberListMapSerializer;
 import us.wthr.jdem846.model.ViewerPosition;
 import us.wthr.jdem846.model.exceptions.ModelContainerException;
 import us.wthr.jdem846.project.context.ProjectContext;
@@ -21,15 +26,35 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 {
 	private static Log log = Logging.getLog(ModelMouseMovementTracker.class);
 
-	private int buttonDown = -1;
-	private int downX = -1;
-	private int downY = -1;
+	private double radius = .5;
+	private double rotateSpeed = 1.5;
+	private double zoomSpeed = 0.05;
+	
+	private boolean mouse1Down = false;
+	private boolean mouse2Down = false;
+	private boolean mouse3Down = false;
+	
 	private int lastX = -1;
 	private int lastY = -1;
 
+	private ExamineView examineView = new ExamineView();
+	
 	public ModelMouseMovementTracker()
 	{
-
+		examineView.setMinDistance(.52);
+		examineView.setMaxDistance(20);
+		examineView.setDistance(2);
+		
+		examineView.setModelRadius(.5);
+		examineView.setMaxScale((examineView.getDistance() - radius) / radius);
+		
+		examineView.addModelViewChangeListener(new ModelViewChangeListener() {
+			public void onModelViewChanged(Matrix modelView)
+			{
+				updateToViewerPosition();
+			}
+		});
+		
 	}
 
 	public void dispose()
@@ -60,12 +85,43 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 	{
 
 		try {
-			ProjectContext.getInstance().getOptionModelContainer(GlobalOptionModel.class).setPropertyValueById("us.wthr.jdem846.model.GlobalOptionModel.viewerPosition", viewer);
+			ProjectContext.getInstance().getOptionModelContainer(GlobalOptionModel.class).setPropertyValueById("us.wthr.jdem846.model.GlobalOptionModel.viewerPosition", viewer, false);
 		} catch (ModelContainerException ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		}
 
+	}
+	
+	public void updateFromViewerPosition()
+	{
+		ViewerPosition viewer = getViewer();
+		
+		Map<String, double[]> values = SimpleNumberListMapSerializer.parseDoubleListString(viewer.toString());
+		
+		double[] quarternion = values.get("quarternion");
+		double[] pitch = values.get("pitch");
+		double[] roll = values.get("roll");
+		double[] yaw = values.get("yaw");
+		double[] distance = values.get("distance");
+		double[] scale = values.get("scale");
+
+		examineView.setPitch(pitch[0]);
+		examineView.setRoll(roll[0]);
+		examineView.setYaw(yaw[0]);
+		examineView.setDistance(distance[0]);
+		examineView.scale(scale[0]);
+		
+		Quaternion orientation = new Quaternion();
+		orientation.set(quarternion[0], quarternion[1], quarternion[2], quarternion[3]);
+		examineView.setOrientation(orientation);
+	}
+	
+	protected void updateToViewerPosition()
+	{
+		String s = examineView.toString();
+		ViewerPosition viewer = ViewerPosition.fromString(s);
+		setViewer(viewer);
 	}
 
 	// /////////////////////////////////////
@@ -97,7 +153,11 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 	@Override
 	public void mouseScrolled(MouseEvent event)
 	{
-		moveViewForward(event.count);	
+		
+		int c = event.count;
+		examineView.setDistance(examineView.getDistance() + (c * zoomSpeed));
+		examineView.setMaxScale((examineView.getDistance() - 0.5) / 0.5);
+
 	}
 
 	// /////////////////////////////////////
@@ -107,11 +167,11 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 	@Override
 	public void mouseMove(MouseEvent event)
 	{
-		if (buttonDown == 1) {
+		if (mouse1Down) {
 			onMouseDraggedLeftButton(event);
-		} else if (buttonDown == 2) {
+		} else if (mouse2Down) {
 			onMouseDraggedMiddleButton(event);
-		} else if (buttonDown == 3) {
+		} else if (mouse3Down) {
 			onMouseDraggedRightButton(event);
 		}
 	}
@@ -129,20 +189,37 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 	@Override
 	public void mouseDown(MouseEvent event)
 	{
+		switch (event.button) {
+		case 1:
+			mouse1Down = true;
+			break;
+		case 2:
+			mouse2Down = true;
+			break;
+		case 3: 
+			mouse3Down = true;
+		}
 
-		buttonDown = event.button;
-		downX = event.x;
-		downY = event.y;
+		lastX = event.x;
+		lastY = event.y;
 	}
 
 	@Override
 	public void mouseUp(MouseEvent event)
 	{
-		buttonDown = -1;
+		switch (event.button) {
+		case 1:
+			mouse1Down = false;
+			break;
+		case 2:
+			mouse2Down = false;
+			break;
+		case 3: 
+			mouse3Down = false;
+		}
+		
 		lastX = -1;
 		lastY = -1;
-		downX = -1;
-		downY = -1;
 	}
 	
 	
@@ -155,10 +232,10 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 	{
 		switch (e.character) {
 		case 'i':
-			moveViewForward(1);
+			
 			break;
 		case 'o':
-			moveViewForward(-1);
+			
 			break;
 		}
 	}
@@ -171,92 +248,46 @@ public class ModelMouseMovementTracker implements MouseListener, MouseMoveListen
 
 	protected void onMouseDraggedRightButton(MouseEvent e)
 	{
-		rotateViewInStaticPosition(e.x, e.y);
-	}
-
-	protected void onMouseDraggedMiddleButton(MouseEvent e)
-	{
-		/*
-		//ViewPerspective view = getViewPerspective();
 		int x = e.x;
 		int y = e.y;
-
+		
 		if (lastX != -1 && lastY != -1) {
 
 			int deltaX = x - lastX;
 			int deltaY = y - lastY;
 
-		//	view.setShiftX(view.getShiftX() - (deltaX * 0.01));
-		//	view.setShiftY(view.getShiftY() - (deltaY * 0.01));
+			examineView.setPitch(examineView.getPitch() + deltaY * rotateSpeed);
+			examineView.setRoll(examineView.getRoll() + deltaX * rotateSpeed);
+
 		}
 
 		lastX = x;
 		lastY = y;
+	}
 
-		//setViewPerspective(view);
-		 */
-		 
+	protected void onMouseDraggedMiddleButton(MouseEvent e)
+	{
+
 	}
 
 	protected void onMouseDraggedLeftButton(MouseEvent e)
 	{
-		rotateViewAroundOrigin(e.x, e.y);
-	}
-	
-	
-	protected void moveViewForward(int count)
-	{
-		Vector moveVector = new Vector(0, 0, ((double)count * -0.01));
+		int x = e.x;
+		int y = e.y;
 		
-		ViewerPosition viewer = getViewer();
-		
-		Vectors.rotateY(viewer.getYaw(), moveVector);
-		viewer.getPosition().z = viewer.getPosition().z + moveVector.z;
-		viewer.getPosition().x = viewer.getPosition().x + moveVector.x;
-		
-		setViewer(viewer);
-	}
-	
-	protected void rotateViewAroundOrigin(int mouseX, int mouseY)
-	{
-		ViewerPosition viewer = getViewer();
-
 		if (lastX != -1 && lastY != -1) {
 
-			int deltaX = mouseX - lastX;
-			int deltaY = mouseY - lastY;
-			
-			viewer.setPitch(viewer.getPitch() + deltaY * 0.5);
-			viewer.setYaw(viewer.getYaw() - deltaX * 0.5);
-			Vectors.rotate(-deltaY * 0.5, -deltaX * 0.5, 0.0, viewer.getPosition());
-			Vectors.rotate(-deltaY * 0.5, -deltaX * 0.5, 0.0, viewer.getFocalPoint());
-			
+			int deltaX = x - lastX;
+			int deltaY = y - lastY;
+
+			examineView.rotate(deltaY * rotateSpeed, deltaX * rotateSpeed);
+
 		}
 
-		lastX = mouseX;
-		lastY = mouseY;
-		
-		setViewer(viewer);
+		lastX = x;
+		lastY = y;
 	}
 	
-	protected void rotateViewInStaticPosition(int mouseX, int mouseY)
-	{
-		ViewerPosition viewer = getViewer();
 
-		if (lastX != -1 && lastY != -1) {
-
-			int deltaX = mouseX - lastX;
-			int deltaY = mouseY - lastY;
-			
-			viewer.setPitch(viewer.getPitch() + deltaY * 0.3);
-			viewer.setYaw(viewer.getYaw() - deltaX * 0.3);
-			Vectors.rotate(deltaY * 0.3, deltaX * 0.3, 0.0, viewer.getFocalPoint());
-		}
-
-		lastX = mouseX;
-		lastY = mouseY;
-		
-		setViewer(viewer);
-	}
 	
 }

@@ -2,11 +2,11 @@ package us.wthr.jdem846.math;
 
 public class Vector
 {
-	
-	public static final Vector X_AXIS = new Vector(1, 0, 0);
-	public static final Vector Y_AXIS = new Vector(0, 1, 0);
-	public static final Vector Z_AXIS = new Vector(0, 0, 1);
-	
+
+	public static final Vector X_AXIS_VECTOR = new Vector(1, 0, 0);
+	public static final Vector Y_AXIS_VECTOR = new Vector(0, 1, 0);
+	public static final Vector Z_AXIS_VECTOR = new Vector(0, 0, 1);
+
 	public double x = 0;
 	public double y = 0;
 	public double z = 0;
@@ -179,6 +179,22 @@ public class Vector
 		}
 		Vector intersect = new Vector(this.x + (direction.x * intersectDistance), this.y + (direction.y * intersectDistance), this.z + (direction.z * intersectDistance));
 		return intersect;
+	}
+	
+	public void rotate(double x, double y, double z)
+	{
+		Vectors.rotate(x, y, z, this);
+	}
+	
+	public void rotate(double angle, int axis)
+	{
+		if (axis == Vectors.X_AXIS) {
+			Vectors.rotateX(angle, this);
+		} else if (axis == Vectors.Y_AXIS) {
+			Vectors.rotateY(angle, this);
+		} else if (axis == Vectors.Z_AXIS) {
+			Vectors.rotateZ(angle, this);
+		}
 	}
 
 	public Vector getCopy()

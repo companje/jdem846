@@ -45,7 +45,9 @@ public class OptionValidationChangeObserver extends ProjectChangeObserver
 	@Override
 	public void onOptionChanged(OptionModelChangeEvent e)
 	{
-		validateOptionModels(e);
+		if (e.runValidation()) {
+			validateOptionModels(e);
+		}
 	}
 
 	protected void validateOptionModels(OptionModelChangeEvent e)
