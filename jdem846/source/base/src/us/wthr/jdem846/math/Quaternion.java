@@ -64,7 +64,10 @@ public class Quaternion
 	
 	public boolean withinEpsilon(Quaternion arg, double epsilon)
 	{
-		return ((MathExt.abs(q0 - arg.q0) < epsilon) && (MathExt.abs(q1 - arg.q1) < epsilon) && (MathExt.abs(q2 - arg.q2) < epsilon) && (MathExt.abs(q3 - arg.q3) < epsilon));
+		return ((MathExt.abs(q0 - arg.q0) < epsilon)
+				&& (MathExt.abs(q1 - arg.q1) < epsilon)
+				&& (MathExt.abs(q2 - arg.q2) < epsilon)
+				&& (MathExt.abs(q3 - arg.q3) < epsilon));
 	}
 
 	public double get(Vector axis)

@@ -104,7 +104,15 @@ public class Vector
 	{
 		return new Vector(x * -1, y * -1, z * -1);
 	}
-
+	
+	public void inverse()
+	{
+		this.x *= -1.0;
+		this.y *= -1.0;
+		this.z *= -1.0;
+	}
+	
+	
 	public double dotProduct(Vector other)
 	{
 		Vector v0 = this.getNormalized();
@@ -123,7 +131,9 @@ public class Vector
 
 	public Vector crossProduct(Vector other)
 	{
-		return new Vector(this.y * other.z - other.y * this.z, this.z * other.x - other.z * this.x, this.x * other.y - other.x * this.y);
+		return new Vector(this.y * other.z - other.y * this.z
+						, this.z * other.x - other.z * this.x
+						, this.x * other.y - other.x * this.y);
 	}
 
 	public double angle(Vector other)
@@ -177,7 +187,9 @@ public class Vector
 		if (intersectDistance == 0) {
 			return null;
 		}
-		Vector intersect = new Vector(this.x + (direction.x * intersectDistance), this.y + (direction.y * intersectDistance), this.z + (direction.z * intersectDistance));
+		Vector intersect = new Vector(this.x + (direction.x * intersectDistance)
+									, this.y + (direction.y * intersectDistance)
+									, this.z + (direction.z * intersectDistance));
 		return intersect;
 	}
 	

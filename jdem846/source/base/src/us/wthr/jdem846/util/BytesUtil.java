@@ -316,7 +316,7 @@ public class BytesUtil
 						((b2 & 0xFF) << 8) |
 						(b3 & 0xFF);
 		} else if (order == ByteOrder.LSBFIRST) {
-			intBits = ((b2 & 0xFF) << 24) |
+			intBits = ((b3 & 0xFF) << 24) |
 						((b2 & 0xFF) << 16) |
 						((b1 & 0xFF) << 8) |
 						(b0 & 0xFF);
