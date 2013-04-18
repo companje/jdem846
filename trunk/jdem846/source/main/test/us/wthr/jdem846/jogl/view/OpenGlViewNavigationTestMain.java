@@ -115,7 +115,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		animator = new FPSAnimator(canvas, 60);
 
 		examineView = new ExamineView();
-		examineView.setMinDistance(.52);
+		examineView.setMinDistance(1);
 		examineView.setMaxDistance(20);
 		examineView.setDistance(2);
 		
@@ -196,7 +196,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 
 		try {
 			//List<Path2D.Double> nations = ShapeFileToPath.load("C:\\jdem\\jdem846\\jdem846\\resources\\boundaries\\level1\\level1.shp");
-			List<Path2D.Double> states = ShapeFileToPath.load("C:\\jdem\\jdem846\\jdem846\\resources\\boundaries\\states\\statesp020.shp");
+			List<Path2D.Double> states = ShapeFileToPath.load("D:\\workspaces\\us.wthr.jdem846\\jdem846\\resources\\boundaries\\states\\statesp020.shp");
 			
 			//borders.addAll(nations);
 			borders.addAll(states);
@@ -209,6 +209,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		
 		try {
 			InputStream stream = getClass().getResourceAsStream("world.topo.bathy.200408.3x5400x2700.jpg");
+			//InputStream stream = getClass().getResourceAsStream("world.200411.3x1000x500.jpg");
 			TextureData data = TextureIO.newTextureData(glProfile, stream, false, "jpg");
 			planetTexture = TextureIO.newTexture(data);
 			System.err.println("Loaded Planet Texture.");
@@ -257,6 +258,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, new float[] { 0.3f, 0.3f, 0.3f, 1.0f }, 0);
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, new float[] { 1.9f, 1.9f, 1.9f, 1.0f }, 0);
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, new float[] { 0.4f, 0.4f, 0.4f, 1.0f }, 0);
+		gl.glLighti(GL2.GL_LIGHT0, GL2.GL_SPOT_EXPONENT, 70);
 		gl.glLightModeli(GL2.GL_LIGHT_MODEL_COLOR_CONTROL, GL2.GL_SEPARATE_SPECULAR_COLOR);
 		// gl.glLightModelfv(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, new float[] { 0.0f
 		// }, 0);
@@ -273,7 +275,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		gl.glLoadIdentity();
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-		glu.gluLookAt(0, 0, examineView.getDistance() - radius, 0, 0, 0, 0, 1, 0);
+		glu.gluLookAt(0, 0, examineView.getDistance(), 0, 0, 0, 0, 1, 0);
 		
 		gl.glMultMatrixd(examineView.getModelView().matrix, 0);
 		
@@ -300,7 +302,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 
 		gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, rgba, 0);
 		gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, rgba, 0);
-		gl.glMaterialf(GL.GL_FRONT, GL2.GL_SHININESS, 0.5f);
+		gl.glMaterialf(GL.GL_FRONT, GL2.GL_SHININESS, 0.7f);
 		renderPlanet(gl, glu);
 		
 		gl.glDisable(GL2.GL_FOG);
@@ -330,7 +332,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 
 			GLUquadric space = glu.gluNewQuadric();
 			glu.gluQuadricDrawStyle(space, GLU.GLU_FILL);
-			glu.gluQuadricNormals(space, GLU.GLU_FLAT);
+			glu.gluQuadricNormals(space, GLU.GLU_SMOOTH);
 			glu.gluQuadricOrientation(space, GLU.GLU_INSIDE);
 			glu.gluQuadricTexture(space, true);
 			final int slices = 64;
@@ -357,8 +359,8 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 
 		gl.glFogf(GL2.GL_FOG_DENSITY, (float) 100);
 		gl.glHint(GL2.GL_FOG_HINT, GL2.GL_FASTEST);
-		gl.glFogf(GL2.GL_FOG_START, (float) (examineView.getDistance() - radius - radius + 0.1));
-		gl.glFogf(GL2.GL_FOG_END, (float) (examineView.getDistance() - radius - 0.05));
+		gl.glFogf(GL2.GL_FOG_START, (float) (examineView.getDistance() - radius  + 0.1));
+		gl.glFogf(GL2.GL_FOG_END, (float) (examineView.getDistance() - 0.05));
 	}
 	
 	public void renderBorders(GL2 gl, GLU glu)

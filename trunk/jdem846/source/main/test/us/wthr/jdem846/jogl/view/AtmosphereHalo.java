@@ -10,6 +10,7 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Matrix;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vector;
+import us.wthr.jdem846.math.Vectors;
 
 public class AtmosphereHalo
 {
@@ -41,24 +42,31 @@ public class AtmosphereHalo
 	
 	public void render(GL2 gl, GLU glu, ExamineView view)
 	{	
-		renderHalo(gl, glu, view, 0, colorLower, 0.015, colorUpper);
-		renderHalo(gl, glu, view, 0.015, colorUpper, 0.025, colorFaded);
+		renderHalo(gl, glu, view, -0.2, colorLower, 0.01, colorUpper);
+		renderHalo(gl, glu, view, 0.01, colorUpper, 0.025, colorFaded);
 		
 	}
 	
 	protected void renderHalo(GL2 gl, GLU glu, ExamineView view, double elevationMinimum, IColor colorMinimum, double elevationMaximum, IColor colorMaximum)
 	{
-		Vector position = new Vector(0, 0, view.getDistance() - radius);
+		Vector position = new Vector(0, 0, -radius);
 		Vector focalPoint = new Vector(0, 0, 0);
+		
+		
+		position.rotate(-view.getPitch(), Vectors.X_AXIS);
+		position.inverse();
 		
 		gl.glPushMatrix();
 		
 		gl.glLoadIdentity();
-		glu.gluLookAt(0, 0, view.getDistance() - radius, 0, 0, 0, 0, 1, 0);
+		glu.gluLookAt(0, 0, view.getDistance(), 0, 0, 0, 0, 1, 0);
 		
-		gl.glMultMatrixd(view.getUnrotatedModelView().matrix, 0);
+		//gl.glMultMatrixd(view.getModelView().matrix, 0);
+		//gl.glRotated(180.0, 0.0, 0.0, 1.0);
+		//gl.glTranslated(0, 0, (radius));
+		//setBillboard(gl, glu, position, focalPoint);
+		//gl.glTranslated(0, 0, -radius);
 		
-		setBillboard(gl, glu, position, focalPoint);
 		//renderer.setBillboard(viewer.getPosition(), viewer.getFocalPoint())
 		
 		double near = view.getDistance() - radius;
@@ -68,21 +76,34 @@ public class AtmosphereHalo
 		double horizonHeightFromPlane = MathExt.sqrt(MathExt.sqr(radius) - MathExt.sqr(trans));
 		double distanceToSurfaceHorizon = MathExt.sqrt(MathExt.sqr(far) + MathExt.sqr(horizonHeightFromPlane));
 	   
-		double scale = (horizonHeightFromPlane / radius) * view.getScale();
+		double scale = (horizonHeightFromPlane / radius);// * view.getScale();
 		
 		gl.glDisable(GL2.GL_LIGHTING);
 		gl.glDisable(GL2.GL_COLOR_MATERIAL);
 		
+		
+		
+		
+		//gl.glTranslated(0, 0, view.getDistance() - radius);
 		gl.glTranslated(0.0, 0.0, trans);
 		gl.glScaled(scale, scale, scale);
-		gl.glRotated(90, 1, 0, 0);
-
+		
+		//gl.glTranslated(0, -radius, 0);
+		////gl.glRotated(-view.getPitch(), 1.0, 0.0, 0.0);
+		gl.glTranslated(-position.x, -position.y, -position.z);
+		gl.glTranslated(0, 0, radius * scale);
+		//gl.glRotated(view.getRoll(), 0.0, 1.0, 0.0);
+		gl.glRotated(90.0, 1.0, 0.0, 0.0);
+		//gl.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+		
 		gl.glBegin(GL2.GL_TRIANGLE_STRIP);
 		
-		double latitude = 0.0;
-		for (double angle = 0.0; angle <= 360.0; angle+=1.0) {
-			renderAtmosphereVertex(gl, glu, latitude, angle, elevationMinimum, colorMinimum);
-			renderAtmosphereVertex(gl, glu, latitude, angle, elevationMaximum, colorMaximum);
+		//double latitude = 0.0;
+		for (double longitude = 0.0; longitude <= 360.0; longitude+=1.0) {
+			double latitude = 0.0;
+		//for (double latitude = 90; latitude >= -90; latitude -= 1.0) {
+			renderAtmosphereVertex(gl, glu, latitude, longitude, elevationMinimum, colorMinimum);
+			renderAtmosphereVertex(gl, glu, latitude, longitude, elevationMaximum, colorMaximum);
 		}
 		gl.glEnd();
 		gl.glPopMatrix();
