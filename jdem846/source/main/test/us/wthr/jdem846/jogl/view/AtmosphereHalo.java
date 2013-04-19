@@ -3,7 +3,6 @@ package us.wthr.jdem846.jogl.view;
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 
-import us.wthr.jdem846.graphics.Color;
 import us.wthr.jdem846.graphics.ExamineView;
 import us.wthr.jdem846.graphics.IColor;
 import us.wthr.jdem846.math.MathExt;
@@ -12,7 +11,7 @@ import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.math.Vectors;
 
-public class AtmosphereHalo
+public class AtmosphereHalo implements Renderable
 {
 
 	private double radius = .5;
@@ -21,81 +20,75 @@ public class AtmosphereHalo
 	private double elevationMinimum = 0;
 	private double elevationMaximum = 10;
 	
-	private IColor colorLower = new Color("688AB0FF");
-	private IColor colorUpper = new Color("688AB0FF");
-	private IColor colorFaded = new Color("688AB000");
-	
-	private IColor emissive = new Color("#000000FF");
-	private IColor ambient = new Color("#0F161EFF");
-	private IColor diffuse = new Color("#688AB0FF");
-	private IColor specular = new Color("#0000000");
-	private double shininess = 5.0;
+	private HaloColoring coloring;
 	
 	private Vector atmosphereVector = new Vector();
 	private Vector atmosphereNormal = new Vector();
 	
 	public AtmosphereHalo()
 	{
-		
+		this(new HaloColoring());
+	}
+	
+	public AtmosphereHalo(HaloColoring coloring)
+	{
+		this.coloring = coloring;
 	}
 	
 	
 	public void render(GL2 gl, GLU glu, ExamineView view)
 	{	
-		renderHalo(gl, glu, view, -0.2, colorLower, 0.01, colorUpper);
-		renderHalo(gl, glu, view, 0.01, colorUpper, 0.025, colorFaded);
+		gl.glDisable(GL2.GL_FOG);
+		gl.glDisable(GL2.GL_LIGHTING);
 		
+		gl.glPushMatrix();
+		renderHalo(gl, glu, view, -0.2, coloring.getColorLower(), 0.01, coloring.getColorUpper());
+		renderHalo(gl, glu, view, 0.01, coloring.getColorUpper(), 0.025, coloring.getColorFaded());
+		gl.glPopMatrix();
 	}
 	
 	protected void renderHalo(GL2 gl, GLU glu, ExamineView view, double elevationMinimum, IColor colorMinimum, double elevationMaximum, IColor colorMaximum)
 	{
-		Vector position = new Vector(0, 0, -radius);
+		Vector spherePosition = new Vector(0, 0, -radius);
 		Vector focalPoint = new Vector(0, 0, 0);
 		
 		
-		position.rotate(-view.getPitch(), Vectors.X_AXIS);
-		position.inverse();
+		spherePosition.rotate(-view.getPitch(), Vectors.X_AXIS);
+		spherePosition.inverse();
 		
 		gl.glPushMatrix();
 		
 		gl.glLoadIdentity();
 		glu.gluLookAt(0, 0, view.getDistance(), 0, 0, 0, 0, 1, 0);
+
+		//double distance = MathExt.sqrt(MathExt.sqr(spherePosition.y) + MathExt.sqr(view.getDistance() + spherePosition.z));
+		double distance = view.getEyeDistanceToCenter();
 		
-		//gl.glMultMatrixd(view.getModelView().matrix, 0);
-		//gl.glRotated(180.0, 0.0, 0.0, 1.0);
-		//gl.glTranslated(0, 0, (radius));
-		//setBillboard(gl, glu, position, focalPoint);
-		//gl.glTranslated(0, 0, -radius);
-		
-		//renderer.setBillboard(viewer.getPosition(), viewer.getFocalPoint())
-		
-		double near = view.getDistance() - radius;
+		double near = distance - radius;
 		double far = farClipDistance(near);
-		double distanceToCenter = view.getDistance();
+		double distanceToCenter = distance;
 		double trans = distanceToCenter - far;
 		double horizonHeightFromPlane = MathExt.sqrt(MathExt.sqr(radius) - MathExt.sqr(trans));
-		double distanceToSurfaceHorizon = MathExt.sqrt(MathExt.sqr(far) + MathExt.sqr(horizonHeightFromPlane));
+		//double distanceToSurfaceHorizon = MathExt.sqrt(MathExt.sqr(far) + MathExt.sqr(horizonHeightFromPlane));
 	   
 		double scale = (horizonHeightFromPlane / radius);// * view.getScale();
 		
 		gl.glDisable(GL2.GL_LIGHTING);
 		gl.glDisable(GL2.GL_COLOR_MATERIAL);
-		
-		
-		
-		
-		//gl.glTranslated(0, 0, view.getDistance() - radius);
+
 		gl.glTranslated(0.0, 0.0, trans);
 		gl.glScaled(scale, scale, scale);
-		
-		//gl.glTranslated(0, -radius, 0);
-		////gl.glRotated(-view.getPitch(), 1.0, 0.0, 0.0);
-		gl.glTranslated(-position.x, -position.y, -position.z);
+
+		gl.glTranslated(-spherePosition.x, -spherePosition.y, -spherePosition.z);
 		gl.glTranslated(0, 0, radius * scale);
-		//gl.glRotated(view.getRoll(), 0.0, 1.0, 0.0);
+
 		gl.glRotated(90.0, 1.0, 0.0, 0.0);
-		//gl.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
 		
+		//double distanceToCenterAngled = MathExt.sqrt(MathExt.sqr(spherePosition.y) + MathExt.sqr(view.getDistance() + spherePosition.z));
+		double a = MathExt.degrees(MathExt.asin(spherePosition.y / distance));
+
+		gl.glRotated(-a, 1.0, 0.0, 0.0);
+
 		gl.glBegin(GL2.GL_TRIANGLE_STRIP);
 		
 		//double latitude = 0.0;

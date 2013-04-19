@@ -1,5 +1,8 @@
 package us.wthr.jdem846;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import us.wthr.jdem846.cli.ProjectExecutor;
 import us.wthr.jdem846.cli.ProjectRunPlan;
 import us.wthr.jdem846.logging.Log;
@@ -16,15 +19,55 @@ public class SandboxTestMain extends AbstractTestMain
 	
 	public static void main(String[] args)
 	{
-		try {
+		
+		
+		test("_eligibility", false);
+		test("foo_eligibility", false);
+		test("foo eligibility", true);
+		test("eligibility foo", true);
+		test("foo eligibility foo", true);
+		test("foo foo eligibility", true);
+		test("eligibility foo foo", true);
+		test("foo foo eligibility foo foo", true);
+		test("fooeligibility", false);
+		test("eligibilityfoo", false);
+		test("foo *", true);
+		test("* foo", true);
+		test("* foo *", true);
+		
+		test("foo*", true);
+		test("*foo", true);
+		test("*foo*", true);
+		
+		test("foo &", false);
+		test("& foo", false);
+		test("& foo &", false);
+		
+		test("foo&", false);
+		test("&foo", false);
+		test("&foo&", false);
+		
+		test("_bar", false);
+		test("foo_bar", false);
+		test("foo bar", false);
+		test("bar foo", false);
+		test("foo bar foo", false);
+		test("foobar", false);
+		test("barfoo", false);
+		
+		test("", true);
+		test("012345678901234567890123456789012345678901234567890", true);
+		/*
+		 * try {
 			AbstractTestMain.initialize(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
 		}
+		 */
 		
-		SandboxTestMain main = new SandboxTestMain();
-		main.run();
+		//SandboxTestMain main = new SandboxTestMain();
+		//main.run();
 		
 		
 		//int frameNum = 1000000;
@@ -46,6 +89,20 @@ public class SandboxTestMain extends AbstractTestMain
 			*/
 		//	frameNum++;
 	//	}
+	}
+	
+	
+	public static void test(String s, boolean shouldMatch)
+	{
+		
+		//boolean matches = s.matches("(^|\b)eligibility");
+		//Pattern p = Pattern.compile("(.{0})|(.{51,})|(.*?[^\\w _.()\\-+&']+?.*?)|(^([a-zA-Z0-9]*+[\\s]*?)*?\\b(eligibility|eligibilities|arbitration|arbitrations|expression|expressions|rule|rules)\\b([\\s]*?[a-zA-Z0-9]*+)*?$)");
+		//Pattern p = Pattern.compile("(?>(?!(^([a-zA-Z0-9]*+[\\s]*?)*?\\b(eligibility|eligibilities|arbitration|arbitrations|expression|expressions|rule|rules)\\b([\\s]*?[a-zA-Z0-9]*+)*?$)))(?>(^[\\w .()\\-+&']{1,50}$))");
+		//Pattern p = Pattern.compile("(?>(^([a-zA-Z0-9]*+[\\s]*?)*?\\b(eligibility|eligibilities|arbitration|arbitrations|expression|expressions|rule|rules)\\b([\\s]*?[a-zA-Z0-9]*+)*?$){0})(?>(^[\\w .()\\-+&']{1,50}$))");
+		Pattern p = Pattern.compile("^((?!(\\b(eligibility|eligibilities|arbitration|arbitrations|expression|expressions|rule|rules)\\b|([^\\w .()\\-+&']))).)*$");
+		Matcher m = p.matcher(s);
+		boolean matches = m.matches();//m.groupCount() > 0;
+		System.err.printf("%55s: %5s %5s %5s\n", s, (matches) ? "Yes" : "No", (shouldMatch) ? "Yes" : "No", (matches == shouldMatch) ? " " : "!!!!");
 	}
 	
 	public void run()
