@@ -19,7 +19,9 @@ import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -49,10 +51,11 @@ import com.jogamp.opengl.util.gl2.GLUT;
 public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListener, KeyListener, MouseMotionListener, MouseListener, MouseWheelListener
 {
 
-	private Planet earth;
-	private Planet mars;
-	private Planet saturn;
+	//private Planet earth;
+	//private Planet mars;
+	//private Planet saturn;
 
+	private Queue<Planet> planets = new LinkedList<Planet>();
 	private Planet usePlanet;
 
 	private GLCanvas canvas;
@@ -147,14 +150,27 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 
 	public void loadResources()
 	{
-		earth = new Planet("world.topo.bathy.200408.3x2500x1250.jpg", new Color("#688AB0FF"), "cloud_combined_2500.png", new Color("#688AB0FF"), 0.0033528);
+		Planet earth = null;
+		try {
+			earth = new Planet(glProfile, "world.topo.bathy.200408.3x2500x1250.jpg", new Color("#688AB0FF"), "cloud_combined_2500.png", new Color("#688AB0FF"), 0.0033528, true);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.exit(1);
+		}
 		earth.getObjects().add(new AtmosphereHalo(new HaloColoring()));
+		planets.add(earth);
 		
+		Planet saturn = null;
 		HaloColoring saturnHaloColoring = new HaloColoring();
 		saturnHaloColoring.setColorLower(new Color(209,204,183));
 		saturnHaloColoring.setColorUpper(new Color(209,204,183));
 		saturnHaloColoring.setColorFaded(new Color(209,204,183, 0));
-		saturn = new Planet("th_saturn.png", null, null, null, 0.09796);
+		try {
+			saturn = new Planet(glProfile, "th_saturn.png", null, null, null, 0.09796, true);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.exit(1);
+		}
 		saturn.getObjects().add(new AtmosphereHalo(saturnHaloColoring));
 		try {
 			saturn.getObjects().add(new PlanetaryRing(glProfile));
@@ -162,34 +178,58 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 			ex.printStackTrace();
 			System.exit(1);
 		}
+		planets.add(saturn);
 		
+		Planet mars = null;
 		HaloColoring marsHaloColoring = new HaloColoring();
 		marsHaloColoring.setColorLower(new Color("#DBAA79C8"));
 		marsHaloColoring.setColorUpper(new Color("#DBAA79C8"));
 		marsHaloColoring.setColorFaded(new Color("#DBAA7900"));
-		mars = new Planet("red-dust-bg.jpg", new Color("#DBAA79FF"), null, new Color("#DBAA79FF"), 0.00589);
+		try {
+			mars = new Planet(glProfile, "red-dust-bg.jpg", new Color("#DBAA79FF"), null, new Color("#DBAA79FF"), 0.00589, true);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.exit(1);
+		}
 		mars.getObjects().add(new AtmosphereHalo(marsHaloColoring));
+		planets.add(mars);
+		
+		Planet sun = null;
+		HaloColoring sunHaloColoring = new HaloColoring();
+		sunHaloColoring.setColorLower(new Color("#FFFF00C8"));
+		sunHaloColoring.setColorUpper(new Color("#FFC800C8"));
+		sunHaloColoring.setColorFaded(new Color("#DBAA7900"));
+		try {
+			sun = new Planet(glProfile, "th_sun.png", null, null, null, 0.0, false);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.exit(1);
+		}
+		sun.getObjects().add(new AtmosphereHalo(sunHaloColoring));
+		planets.add(sun);
 		
 		
-		usePlanet = saturn;
-
-		if (usePlanet.getSurfaceTexture() != null) {
-			try {
-				planet = new TexturedSphere(glProfile, usePlanet.getSurfaceTexture(), 0.5, true);
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
+		Planet pluto = null;
+		try {
+			pluto = new Planet(glProfile, "JVV_Pluto.png", null, null, null, 0.0, true);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.exit(1);
 		}
-
-		if (usePlanet.getCloudsTexture() != null) {
-			try {
-				clouds = new TexturedSphere(glProfile, usePlanet.getCloudsTexture(), 0.5, true);
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
+		planets.add(pluto);
+		
+		Planet jupiter = null;
+		try {
+			jupiter = new Planet(glProfile, "realj4k.jpg", null, null, null, 0.0, true);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.exit(1);
 		}
+		planets.add(jupiter);
+		
+		usePlanet = planets.poll();
+
+
 
 		try {
 			stars = new TexturedSphere(glProfile, "stars_4096x2048.png", 20, false);
@@ -198,6 +238,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 			System.exit(1);
 		}
 
+		/*
 		try {
 
 			for (String shapePath : usePlanet.getShapes()) {
@@ -209,7 +250,9 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 			e.printStackTrace();
 			System.exit(1);
 		}
-
+		*/
+		
+	
 	}
 
 	@Override
@@ -297,7 +340,11 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		gl.glColor3f(1.0f, 1.0f, 1.0f);
 		stars.render(gl, glu, examineView);
 
-		setLighting(drawable);
+		if (usePlanet.isUseLighting()) {
+			setLighting(drawable);
+		} else {
+			gl.glDisable(GL2.GL_LIGHTING);
+		}
 		enableFog(gl, glu);
 
 		IColor materialLightColor = usePlanet.getMaterialLightColor();
@@ -309,6 +356,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 			gl.glMaterialf(GL.GL_FRONT, GL2.GL_SHININESS, 0.7f);
 		}
 
+		/*
 		if (planet != null) {
 			planet.render(gl, glu, examineView);
 		}
@@ -316,11 +364,12 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		if (clouds != null) {
 			clouds.render(gl, glu, examineView);
 		}
-
-		
-		for(Renderable renderable : usePlanet.getObjects()) {
-			renderable.render(gl, glu, examineView);
+		*/
+		if (usePlanet != null) {
+			usePlanet.render(gl, glu, examineView);
 		}
+		
+		
 		
 		gl.glPopMatrix();
 
@@ -425,6 +474,13 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 				}
 			}.start();
 			System.exit(0);
+			break;
+		case KeyEvent.VK_N:
+			System.err.println("Next Planet...");
+			if (usePlanet != null) {
+				planets.add(usePlanet);
+			}
+			usePlanet = planets.poll();
 			break;
 		case 38: // Forward
 			moveVector = new Vector(0, 0, -0.1);
