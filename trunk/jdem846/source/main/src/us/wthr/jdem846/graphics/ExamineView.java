@@ -7,6 +7,7 @@ import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Matrix;
 import us.wthr.jdem846.math.Quaternion;
 import us.wthr.jdem846.math.Vector;
+import us.wthr.jdem846.math.Vectors;
 
 //https://kenai.com/projects/jogl/sources/jogl-demos-git/content/src/gleem/ExaminerViewer.java?rev=2d5f1650af2b64f7a8d25842b2b95192b3e4a4e9
 public class ExamineView
@@ -88,6 +89,14 @@ public class ExamineView
 	}
 	
 
+	public double getEyeDistanceToCenter()
+	{
+		Vector position = new Vector(0, 0, -modelRadius);
+		position.rotate(-pitch, Vectors.X_AXIS);
+		position.inverse();
+		double distance = MathExt.sqrt(MathExt.sqr(position.y) + MathExt.sqr(getDistance() + position.z));
+		return distance;
+	}
 	
 	public Quaternion getOrientation()
 	{

@@ -18,8 +18,6 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +30,6 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.fixedfunc.GLLightingFunc;
 import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUquadric;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
@@ -40,6 +37,7 @@ import us.wthr.jdem846.graphics.Color;
 import us.wthr.jdem846.graphics.ExamineView;
 import us.wthr.jdem846.graphics.ExamineView.ModelViewChangeListener;
 import us.wthr.jdem846.graphics.IColor;
+import us.wthr.jdem846.math.MathExt;
 import us.wthr.jdem846.math.Matrix;
 import us.wthr.jdem846.math.Spheres;
 import us.wthr.jdem846.math.Vector;
@@ -47,65 +45,56 @@ import us.wthr.jdem846.math.Vectors;
 
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.gl2.GLUT;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureData;
-import com.jogamp.opengl.util.texture.TextureIO;
 
 public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListener, KeyListener, MouseMotionListener, MouseListener, MouseWheelListener
 {
+
+	private Planet earth;
+	private Planet mars;
+	private Planet saturn;
+
+	private Planet usePlanet;
 
 	private GLCanvas canvas;
 	private GLCapabilities caps;
 	private FPSAnimator animator;
 	private GLProfile glProfile;
 
-	//private double distance = 20;
 	private double radius = .5;
 	private double rotateSpeed = 0.2;
 	private double zoomSpeed = 0.05;
-	//private Vector camPos;
-	//private Vector camUp;
-	//private Matrix modelView;
-	
-	//private Quaternion orientation;
-	
-	private int planetCallList = 0;
-	private int cloudsCallList = 0;
-	private int starCallList = 0;
+
 	private int borderCallList = 0;
-	
+
 	private ExamineView examineView;
-	
+
 	private int lastX = -1;
 	private int lastY = -1;
 
 	private Timer timer;
 
-	private Texture planetTexture;
-	private Texture cloudsTexture;
-	private Texture starTexture;
+	private TexturedSphere planet;
+	private TexturedSphere clouds;
+	private TexturedSphere stars;
 
 	private GLU glu = new GLU();
 	private GLUT glut = new GLUT();
-	
+
 	private boolean hideMouse = false;
 	private boolean captureMouse = false;
-	
+
 	private boolean mouse1Down = false;
 	private boolean mouse2Down = false;
 	private boolean mouse3Down = false;
-	
-	private AtmosphereHalo halo = new AtmosphereHalo();
-	
 	private List<Path2D.Double> borders = new ArrayList<Path2D.Double>();
-	
+
 	public OpenGlViewNavigationTestMain()
 	{
 		super("Tester");
 		glProfile = GLProfile.getDefault();
 		caps = new GLCapabilities(glProfile);
 		caps.setDoubleBuffered(true);
-		caps.setSampleBuffers(false);
+		caps.setSampleBuffers(true);
 		caps.setNumSamples(4);
 		canvas = new GLCanvas(caps);
 		canvas.addGLEventListener(this);
@@ -120,29 +109,26 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		examineView.setMinDistance(1);
 		examineView.setMaxDistance(20);
 		examineView.setDistance(2);
-		
+
 		examineView.setModelRadius(.5);
 		examineView.setMaxScale((examineView.getDistance() - radius) / radius);
 		examineView.rotate(-90, 0);
 		examineView.rotate(0, 90);
 		examineView.rotate(-30, 0);
-		//examineView.setMinScale(1.0 / radius);
-		
-		examineView.addModelViewChangeListener(new ModelViewChangeListener() {
+
+		examineView.addModelViewChangeListener(new ModelViewChangeListener()
+		{
 			public void onModelViewChanged(Matrix modelView)
 			{
 				canvas.repaint();
 			}
 		});
-		
+
 		getContentPane().add(canvas);
 	}
 
 	public void run()
 	{
-
-		loadResources();
-
 		if (hideMouse) {
 			Dimension d = Toolkit.getDefaultToolkit().getBestCursorSize(1, 1);
 			Image invisibleImage = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
@@ -161,21 +147,87 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 
 	public void loadResources()
 	{
+		earth = new Planet("world.topo.bathy.200408.3x2500x1250.jpg", new Color("#688AB0FF"), "cloud_combined_2500.png", new Color("#688AB0FF"), 0.0033528);
+		earth.getObjects().add(new AtmosphereHalo(new HaloColoring()));
+		
+		HaloColoring saturnHaloColoring = new HaloColoring();
+		saturnHaloColoring.setColorLower(new Color(209,204,183));
+		saturnHaloColoring.setColorUpper(new Color(209,204,183));
+		saturnHaloColoring.setColorFaded(new Color(209,204,183, 0));
+		saturn = new Planet("th_saturn.png", null, null, null, 0.09796);
+		saturn.getObjects().add(new AtmosphereHalo(saturnHaloColoring));
+		try {
+			saturn.getObjects().add(new PlanetaryRing(glProfile));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.exit(1);
+		}
+		
+		HaloColoring marsHaloColoring = new HaloColoring();
+		marsHaloColoring.setColorLower(new Color("#DBAA79C8"));
+		marsHaloColoring.setColorUpper(new Color("#DBAA79C8"));
+		marsHaloColoring.setColorFaded(new Color("#DBAA7900"));
+		mars = new Planet("red-dust-bg.jpg", new Color("#DBAA79FF"), null, new Color("#DBAA79FF"), 0.00589);
+		mars.getObjects().add(new AtmosphereHalo(marsHaloColoring));
+		
+		
+		usePlanet = saturn;
+
+		if (usePlanet.getSurfaceTexture() != null) {
+			try {
+				planet = new TexturedSphere(glProfile, usePlanet.getSurfaceTexture(), 0.5, true);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+
+		if (usePlanet.getCloudsTexture() != null) {
+			try {
+				clouds = new TexturedSphere(glProfile, usePlanet.getCloudsTexture(), 0.5, true);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+
+		try {
+			stars = new TexturedSphere(glProfile, "stars_4096x2048.png", 20, false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		try {
+
+			for (String shapePath : usePlanet.getShapes()) {
+				List<Path2D.Double> paths = ShapeFileToPath.load(shapePath);
+				borders.addAll(paths);
+			}
+			System.err.println("Loaded Borders.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 
 	}
 
 	@Override
 	public void init(GLAutoDrawable drawable)
 	{
+
+		loadResources();
+
 		GL2 gl = drawable.getGL().getGL2();
 
 		gl.glEnable(GL.GL_BLEND);
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		
 		gl.glEnable(GL.GL_TEXTURE_2D);
 
 		gl.glEnable(GL.GL_MULTISAMPLE);
 
 		gl.glShadeModel(GL2.GL_SMOOTH);
-		// gl.glEnable(GL2.GL_POLYGON_SMOOTH);
 
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL.GL_LEQUAL);
@@ -184,66 +236,13 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL.GL_FASTEST);
 		gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_FASTEST);
 
-		
-		
-		//gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-		//gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-		//gl.glEnable(GL.GL_CULL_FACE);
-		//gl.glCullFace(GL.GL_BACK);
-
-		// gl.glHint(GL2.GL_CLIP_VOLUME_CLIPPING_HINT_EXT, GL2.GL_FASTEST);
-
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
 		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
-		
-		gl.glPolygonOffset(0,1);
+
+		gl.glPolygonOffset(0, 1);
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-		try {
-			//List<Path2D.Double> nations = ShapeFileToPath.load("C:\\jdem\\jdem846\\jdem846\\resources\\boundaries\\level1\\level1.shp");
-			List<Path2D.Double> states = ShapeFileToPath.load("D:\\workspaces\\us.wthr.jdem846\\jdem846\\resources\\boundaries\\states\\statesp020.shp");
-			
-			//borders.addAll(nations);
-			borders.addAll(states);
-			System.err.println("Loaded Borders.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		
-		
-		try {
-			InputStream stream = getClass().getResourceAsStream("world.topo.bathy.200408.3x5400x2700.jpg");
-			//InputStream stream = getClass().getResourceAsStream("world.200411.3x1000x500.jpg");
-			TextureData data = TextureIO.newTextureData(glProfile, stream, false, "jpg");
-			planetTexture = TextureIO.newTexture(data);
-			System.err.println("Loaded Planet Texture.");
-		} catch (IOException exc) {
-			exc.printStackTrace();
-			System.exit(1);
-		}
-		
-		try {
-			InputStream stream = getClass().getResourceAsStream("cloud_combined_5000.png");
-			TextureData data = TextureIO.newTextureData(glProfile, stream, false, "png");
-			cloudsTexture = TextureIO.newTexture(data);
-			System.err.println("Loaded Clouds Texture.");
-		} catch (IOException exc) {
-			exc.printStackTrace();
-			System.exit(1);
-		}
-
-		try {
-			InputStream stream = getClass().getResourceAsStream("stars_4096x2048.png");
-			TextureData data = TextureIO.newTextureData(glProfile, stream, false, "png");
-			starTexture = TextureIO.newTexture(data);
-			System.err.println("Loaded Star Texture.");
-		} catch (IOException exc) {
-			exc.printStackTrace();
-			System.exit(1);
-		}
-		
 		mouseExited(null);
 
 		timer = new Timer(10, new ActionListener()
@@ -266,7 +265,6 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		gl.glEnable(GLLightingFunc.GL_LIGHT0);
 
 		Vector lightPosition = new Vector(10000, 0, 0);
-		// Vectors.rotate(60, 0, 60, lightPosition, Vectors.XYZ);
 
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, new float[] { (float) lightPosition.x, (float) lightPosition.y, (float) lightPosition.z, 1 }, 0);
 		gl.glShadeModel(GL2.GL_SMOOTH);
@@ -276,202 +274,115 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, new float[] { 0.4f, 0.4f, 0.4f, 1.0f }, 0);
 		gl.glLighti(GL2.GL_LIGHT0, GL2.GL_SPOT_EXPONENT, 70);
 		gl.glLightModeli(GL2.GL_LIGHT_MODEL_COLOR_CONTROL, GL2.GL_SEPARATE_SPECULAR_COLOR);
-		// gl.glLightModelfv(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, new float[] { 0.0f
-		// }, 0);
-
 	}
 
 	@Override
 	public void display(GLAutoDrawable drawable)
 	{
 		GL2 gl = drawable.getGL().getGL2();
-		
+
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 
 		gl.glLoadIdentity();
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
 		glu.gluLookAt(0, 0, examineView.getDistance(), 0, 0, 0, 0, 1, 0);
-		
+
 		gl.glMultMatrixd(examineView.getModelView().matrix, 0);
-		
-		
-		
-		//renderer.enableFog(fog.color, fog.type, fog.density, nearDistance * fog.nearFactor, farDistance * fog.farFactor);
-		
-		
-		
+
 		gl.glPushMatrix();
-		
-		//gl.glDisable(GL2.GL_LIGHTING);
-		
-		
+
 		gl.glDisable(GL2.GL_LIGHTING);
 		gl.glDisable(GL2.GL_COLOR_MATERIAL);
 		gl.glColor3f(1.0f, 1.0f, 1.0f);
-		renderStars(gl, glu);
-		
+		stars.render(gl, glu, examineView);
+
 		setLighting(drawable);
 		enableFog(gl, glu);
-		
-		float[] rgba = { 0.3f, 0.5f, 1f };
 
-		gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, rgba, 0);
-		gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, rgba, 0);
-		gl.glMaterialf(GL.GL_FRONT, GL2.GL_SHININESS, 0.7f);
-		renderPlanet(gl, glu);
-		renderClouds(gl, glu);
+		IColor materialLightColor = usePlanet.getMaterialLightColor();
+		if (materialLightColor != null) {
+			float[] rgba = { 0.0f, 0.0f, 0.0f };
+			materialLightColor.toArray(rgba);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, rgba, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, rgba, 0);
+			gl.glMaterialf(GL.GL_FRONT, GL2.GL_SHININESS, 0.7f);
+		}
+
+		if (planet != null) {
+			planet.render(gl, glu, examineView);
+		}
+
+		if (clouds != null) {
+			clouds.render(gl, glu, examineView);
+		}
+
 		
-		gl.glDisable(GL2.GL_FOG);
-		gl.glDisable(GL2.GL_LIGHTING);
-		
-		//renderBorders(gl, glu);
-		
-		
-		
-		halo.render(gl, glu, examineView);
+		for(Renderable renderable : usePlanet.getObjects()) {
+			renderable.render(gl, glu, examineView);
+		}
 		
 		gl.glPopMatrix();
 
 		gl.glFlush();
 	}
-	
-	public void renderStars(GL2 gl, GLU glu)
-	{
-		//planetCallList
-		
-		if (starCallList == 0) {
-			starCallList = gl.glGenLists(1);
-			gl.glNewList(starCallList, GL2.GL_COMPILE);
-			
-			starTexture.enable(gl);
-			starTexture.bind(gl);
 
-			GLUquadric space = glu.gluNewQuadric();
-			glu.gluQuadricDrawStyle(space, GLU.GLU_FILL);
-			glu.gluQuadricNormals(space, GLU.GLU_SMOOTH);
-			glu.gluQuadricOrientation(space, GLU.GLU_INSIDE);
-			glu.gluQuadricTexture(space, true);
-			final int slices = 64;
-			final int stacks = 64;
-			glu.gluSphere(space, 10, slices, stacks);
-			glu.gluDeleteQuadric(space);
-			gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
-			gl.glEndList();
-		} else {
-			gl.glCallList(starCallList);
-		}
-		
-	}
-	
 	public void enableFog(GL2 gl, GLU glu)
 	{
-		IColor fogColor = new Color("#688AB0FF");
-		gl.glEnable(GL2.GL_FOG);
-		gl.glFogi(GL2.GL_FOG_MODE, GL2.GL_LINEAR);
-		
-		float[] c = {0, 0, 0, 0};
-		fogColor.toArray(c);
-		gl.glFogfv(GL2.GL_FOG_COLOR, c, 0);
+		IColor fogColor = usePlanet.getFogColor();
+		if (fogColor != null) {
+			gl.glEnable(GL2.GL_FOG);
+			gl.glFogi(GL2.GL_FOG_MODE, GL2.GL_LINEAR);
 
-		gl.glFogf(GL2.GL_FOG_DENSITY, (float) 100);
-		gl.glHint(GL2.GL_FOG_HINT, GL2.GL_FASTEST);
-		gl.glFogf(GL2.GL_FOG_START, (float) (examineView.getDistance() - radius  + 0.1));
-		gl.glFogf(GL2.GL_FOG_END, (float) (examineView.getDistance() - 0.05));
+			float[] c = { 0, 0, 0, 0 };
+			fogColor.toArray(c);
+			gl.glFogfv(GL2.GL_FOG_COLOR, c, 0);
+
+			double distanceToCenter = examineView.getEyeDistanceToCenter();
+			double f = MathExt.sqrt((distanceToCenter - radius) * (2 * radius + (distanceToCenter - radius)));
+
+			gl.glFogf(GL2.GL_FOG_DENSITY, (float) 100);
+			gl.glHint(GL2.GL_FOG_HINT, GL2.GL_NICEST);
+			gl.glFogf(GL2.GL_FOG_START, (float) (f - 0.5));
+			gl.glFogf(GL2.GL_FOG_END, (float) (f - 0.4));
+		}
 	}
-	
+
 	public void renderBorders(GL2 gl, GLU glu)
 	{
 		if (borderCallList == 0) {
 			borderCallList = gl.glGenLists(1);
 			gl.glNewList(borderCallList, GL2.GL_COMPILE);
-			
+
 			gl.glColor3f(1.0f, 1.0f, 0f);
-			
-			double[] coords = {0, 0};
+
+			double[] coords = { 0, 0 };
 			Vector v0 = new Vector();
-			
+
 			for (Path2D.Double path : borders) {
 				gl.glBegin(GL2.GL_LINE_STRIP);
-				
+
 				PathIterator iter = path.getPathIterator(null);
-				while(!iter.isDone()) {
+				while (!iter.isDone()) {
 					iter.currentSegment(coords);
-					
+
 					Spheres.getPoint3D(coords[0], coords[1], radius, v0);
 					v0.rotate(-90, Vectors.X_AXIS);
 
 					gl.glVertex3d(v0.x, v0.y, v0.z);
-					
+
 					iter.next();
 				}
-				
+
 				gl.glEnd();
 			}
-			
-			
+
 			gl.glEndList();
 		} else {
 			gl.glCallList(borderCallList);
 		}
 	}
-	
-	public void renderClouds(GL2 gl, GLU glu)
-	{
-		//planetCallList
-		
-		if (cloudsCallList == 0) {
-			cloudsCallList = gl.glGenLists(1);
-			gl.glNewList(cloudsCallList, GL2.GL_COMPILE);
-			
-			cloudsTexture.enable(gl);
-			cloudsTexture.bind(gl);
 
-			GLUquadric earth = glu.gluNewQuadric();
-			glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
-			glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
-			glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
-			glu.gluQuadricTexture(earth, true);
-			final int slices = 64;
-			final int stacks = 64;
-			glu.gluSphere(earth, radius, slices, stacks);
-			glu.gluDeleteQuadric(earth);
-			gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
-			gl.glEndList();
-		} else {
-			gl.glCallList(cloudsCallList);
-		}
-		
-	}
-	
-	public void renderPlanet(GL2 gl, GLU glu)
-	{
-		//planetCallList
-		
-		if (planetCallList == 0) {
-			planetCallList = gl.glGenLists(1);
-			gl.glNewList(planetCallList, GL2.GL_COMPILE);
-			
-			planetTexture.enable(gl);
-			planetTexture.bind(gl);
-
-			GLUquadric earth = glu.gluNewQuadric();
-			glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
-			glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
-			glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
-			glu.gluQuadricTexture(earth, true);
-			final int slices = 64;
-			final int stacks = 64;
-			glu.gluSphere(earth, radius, slices, stacks);
-			glu.gluDeleteQuadric(earth);
-			gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
-			gl.glEndList();
-		} else {
-			gl.glCallList(planetCallList);
-		}
-		
-	}
-	
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h)
 	{
@@ -562,15 +473,14 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 
 			int deltaX = x - lastX;
 			int deltaY = y - lastY;
-			
-			
+
 			if (e.isShiftDown() || mouse3Down) {
 				examineView.setPitch(examineView.getPitch() + deltaY * rotateSpeed);
 				examineView.setRoll(examineView.getRoll() + deltaX * rotateSpeed);
 			} else {
 				examineView.rotate(-deltaY * rotateSpeed, -deltaX * rotateSpeed);
 			}
-			
+
 			canvas.repaint();
 		}
 
@@ -622,7 +532,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 	{
 		lastX = e.getX();
 		lastY = e.getY();
-		
+
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			mouse1Down = true;
 		} else if (e.getButton() == MouseEvent.BUTTON2) {
@@ -637,7 +547,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 	{
 		lastX = -1;
 		lastY = -1;
-		
+
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			mouse1Down = false;
 		} else if (e.getButton() == MouseEvent.BUTTON2) {
@@ -646,16 +556,13 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 			mouse3Down = false;
 		}
 	}
-	
-	
+
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e)
 	{
 		double c = e.getWheelRotation();
-		//examineView.scale(examineView.getScale() + (c * 0.1));
 		examineView.setDistance(examineView.getDistance() + (c * zoomSpeed));
 		examineView.setMaxScale((examineView.getDistance() - radius) / radius);
-		//examineView.setMinScale(1.0 / radius);
 	}
 
 	public static void main(String[] args)
@@ -663,7 +570,5 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		OpenGlViewNavigationTestMain testMain = new OpenGlViewNavigationTestMain();
 		testMain.run();
 	}
-
-
 
 }
