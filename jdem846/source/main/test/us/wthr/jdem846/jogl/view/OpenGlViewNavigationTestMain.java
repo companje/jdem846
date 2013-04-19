@@ -70,6 +70,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 	//private Quaternion orientation;
 	
 	private int planetCallList = 0;
+	private int cloudsCallList = 0;
 	private int starCallList = 0;
 	private int borderCallList = 0;
 	
@@ -81,6 +82,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 	private Timer timer;
 
 	private Texture planetTexture;
+	private Texture cloudsTexture;
 	private Texture starTexture;
 
 	private GLU glu = new GLU();
@@ -103,7 +105,7 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		glProfile = GLProfile.getDefault();
 		caps = new GLCapabilities(glProfile);
 		caps.setDoubleBuffered(true);
-		caps.setSampleBuffers(true);
+		caps.setSampleBuffers(false);
 		caps.setNumSamples(4);
 		canvas = new GLCanvas(caps);
 		canvas.addGLEventListener(this);
@@ -182,6 +184,10 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL.GL_FASTEST);
 		gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_FASTEST);
 
+		
+		
+		//gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+		//gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
 		//gl.glEnable(GL.GL_CULL_FACE);
 		//gl.glCullFace(GL.GL_BACK);
 
@@ -217,10 +223,20 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 			exc.printStackTrace();
 			System.exit(1);
 		}
+		
+		try {
+			InputStream stream = getClass().getResourceAsStream("cloud_combined_5000.png");
+			TextureData data = TextureIO.newTextureData(glProfile, stream, false, "png");
+			cloudsTexture = TextureIO.newTexture(data);
+			System.err.println("Loaded Clouds Texture.");
+		} catch (IOException exc) {
+			exc.printStackTrace();
+			System.exit(1);
+		}
 
 		try {
-			InputStream stream = getClass().getResourceAsStream("starfield2.jpg");
-			TextureData data = TextureIO.newTextureData(glProfile, stream, false, "jpg");
+			InputStream stream = getClass().getResourceAsStream("stars_4096x2048.png");
+			TextureData data = TextureIO.newTextureData(glProfile, stream, false, "png");
 			starTexture = TextureIO.newTexture(data);
 			System.err.println("Loaded Star Texture.");
 		} catch (IOException exc) {
@@ -304,11 +320,12 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, rgba, 0);
 		gl.glMaterialf(GL.GL_FRONT, GL2.GL_SHININESS, 0.7f);
 		renderPlanet(gl, glu);
+		renderClouds(gl, glu);
 		
 		gl.glDisable(GL2.GL_FOG);
 		gl.glDisable(GL2.GL_LIGHTING);
 		
-		renderBorders(gl, glu);
+		//renderBorders(gl, glu);
 		
 		
 		
@@ -397,6 +414,34 @@ public class OpenGlViewNavigationTestMain extends JFrame implements GLEventListe
 		} else {
 			gl.glCallList(borderCallList);
 		}
+	}
+	
+	public void renderClouds(GL2 gl, GLU glu)
+	{
+		//planetCallList
+		
+		if (cloudsCallList == 0) {
+			cloudsCallList = gl.glGenLists(1);
+			gl.glNewList(cloudsCallList, GL2.GL_COMPILE);
+			
+			cloudsTexture.enable(gl);
+			cloudsTexture.bind(gl);
+
+			GLUquadric earth = glu.gluNewQuadric();
+			glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
+			glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
+			glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
+			glu.gluQuadricTexture(earth, true);
+			final int slices = 64;
+			final int stacks = 64;
+			glu.gluSphere(earth, radius, slices, stacks);
+			glu.gluDeleteQuadric(earth);
+			gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+			gl.glEndList();
+		} else {
+			gl.glCallList(cloudsCallList);
+		}
+		
 	}
 	
 	public void renderPlanet(GL2 gl, GLU glu)
