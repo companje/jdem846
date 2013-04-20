@@ -18,6 +18,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -149,6 +150,14 @@ public class PlanetsMain extends JFrame implements GLEventListener, KeyListener,
 
 	public void loadResources()
 	{
+		
+		try {
+			ObjectLoader.loadObjects("objects.json", glProfile);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			System.exit(1);
+		}
+		
 		Planet earth = null;
 		try {
 			earth = new Planet(glProfile, "assets/world.topo.bathy.200408.3x2500x1250.jpg", new Color("#688AB0FF"), "assets/cloud_combined_2500.png", new Color("#688AB0FF"), 0.0033528, true);
