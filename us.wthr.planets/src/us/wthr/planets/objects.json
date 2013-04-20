@@ -1,0 +1,135 @@
+{
+	objects : [
+		{
+			name : "Sun",
+			id : "sun",
+			textures : {
+				surface : "assets/th_sun.png",
+				clouds : null
+			},
+			material {
+				color : null
+			},
+			fog : {
+				color : null
+			},
+			flattening : 0.0,
+			lighting : false,
+
+		},
+		
+		{
+			name : "Earth",
+			id : "earth",
+			textures : {
+				surface : "assets/world.topo.bathy.200408.3x2500x1250.jpg",
+				clouds : "assets/cloud_combined_2500.png"
+			},
+			material {
+				color : "#688AB0FF"
+			},
+			fog : {
+				color : "#688AB0FF"
+			},
+			flattening : 0.0033528,
+			lighting : true,
+			halo : {
+				lower : "#688AB0FF",
+				upper : "#688AB0FF",
+				faded : "#688AB000"
+			}
+		},
+		
+		{
+			name : "Mars",
+			id : "mars",
+			textures : {
+				surface : "assets/red-dust-bg.jpg",
+				clouds : null
+			},
+			material {
+				color : "#DBAA79FF"
+			},
+			fog : {
+				color : "#DBAA79FF"
+			},
+			flattening : 0.00589,
+			lighting : true,
+			halo : {
+				lower : "#DBAA79C8",
+				upper : "#DBAA79C8",
+				faded : "#DBAA7900"
+			}
+		},
+		
+		{
+			name : "Jupiter",
+			id : "jupiter",
+			textures : {
+				surface : "assets/realj4k.jpg",
+				clouds : null
+			},
+			material {
+				color : null
+			},
+			fog : {
+				color : null
+			},
+			flattening : 0.0,
+			lighting : true,
+
+		},
+		
+		{
+			name : "Saturn",
+			id : "saturn",
+			textures : {
+				surface : "assets/th_saturn.png",
+				clouds : null
+			},
+			material {
+				color : null
+			},
+			fog : {
+				color : null
+			},
+			flattening : 0.09796,
+			lighting : true,
+			halo : {
+				lower : "#D1CCB7FF",
+				upper : "#D1CCB7FF",
+				faded : "#D1CCB700"
+			},
+			ring : {
+				texture : "assets/t00fri_gh_saturnrings.png",
+				innerRadius : 0.618072609,
+				outterRadius : 1.163303909,
+				plane : [
+					[0, 0, -10000.0],
+					[-10000, 0, 10000.0],
+					[10000, 0, 10000]
+				]
+			}
+		},
+		
+		{
+			name : "Pluto",
+			id : "pluto",
+			textures : {
+				surface : "assets/JVV_Pluto.png",
+				clouds : null
+			},
+			material {
+				color : null
+			},
+			fog : {
+				color : null
+			},
+			flattening : 0.0,
+			lighting : true,
+
+		}
+	
+	
+	]
+}
