@@ -83,9 +83,9 @@ public class GridFloatHeader
 		else if (_bo != null && _bo.equalsIgnoreCase("MSBFIRST"))
 			byteOrder = ByteOrder.MSBFIRST;
 		else if (_bo != null && _bo.equalsIgnoreCase("I"))
-			byteOrder = ByteOrder.INTEL_BYTE_ORDER;
+			byteOrder = ByteOrder.LSBFIRST;
 		else if (_bo != null && _bo.equalsIgnoreCase("M"))
-			byteOrder = ByteOrder.INTEL_OR_MOTOROLA;
+			byteOrder = ByteOrder.LSBFIRST;
 
 	}
 
