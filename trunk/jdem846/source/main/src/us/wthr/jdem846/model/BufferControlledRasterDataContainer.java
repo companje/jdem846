@@ -58,6 +58,11 @@ public class BufferControlledRasterDataContainer extends RasterDataContext
 
 	public void checkBuffer(double latitude, double longitude)
 	{
+		if (latitude < south || latitude > north) {
+			return;
+		}
+		
+		
 		if (fullBuffering && !buffersFilled) {
 			try {
 				rasterDataContext.fillBuffers();
