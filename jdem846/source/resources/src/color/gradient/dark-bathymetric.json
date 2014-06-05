@@ -1,0 +1,38 @@
+{
+	name : 'Dark Bathymetric',
+	identifier : 'dark-bathy-tint',
+	needsMinMaxElevation : false,
+	units : 'meters',
+	gradient : [
+        {
+            stop : -11000,
+            red : 3,
+            green : 8,
+            blue : 16
+        },
+        {
+            stop : -500,
+            red : 26,
+            green : 71,
+            blue : 128
+        },
+        {
+            stop : -0.001,
+            red : 26,
+            green : 71,
+            blue : 128
+        },
+        {
+            stop : -0.001,
+            red : 255,
+            green : 255,
+            blue : 255
+        },
+        {
+            stop : 8500,
+            red : 255,
+            green : 255,
+            blue : 255
+        }		
+	]
+}

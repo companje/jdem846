@@ -3,8 +3,8 @@ package us.wthr.jdem846.model.processing.coloring;
 import us.wthr.jdem846.exception.RenderEngineException;
 import us.wthr.jdem846.gis.planets.Planet;
 import us.wthr.jdem846.gis.planets.PlanetsRegistry;
-import us.wthr.jdem846.graphics.ElevationFetchCallback;
 import us.wthr.jdem846.graphics.FlatNormalsCalculator;
+import us.wthr.jdem846.graphics.ScaledElevationFetchCallback;
 import us.wthr.jdem846.graphics.SphericalNormalsCalculator;
 import us.wthr.jdem846.logging.Log;
 import us.wthr.jdem846.logging.Logging;
@@ -13,6 +13,9 @@ import us.wthr.jdem846.math.Vector;
 import us.wthr.jdem846.model.annotations.GridProcessing;
 import us.wthr.jdem846.model.processing.GridFilter;
 import us.wthr.jdem846.model.processing.GridProcessingTypesEnum;
+import us.wthr.jdem846.scaling.ElevationScaler;
+import us.wthr.jdem846.scaling.ElevationScalerEnum;
+import us.wthr.jdem846.scaling.ElevationScalerFactory;
 
 @GridProcessing(id="us.wthr.jdem846.model.processing.coloring.NormalMapColorProcessor",
 				name="Normal Map Coloring",
@@ -42,11 +45,23 @@ public class NormalMapColorProcessor extends GridFilter
 			planet = PlanetsRegistry.getPlanet("earth");
 		}
 		
+		double minimumElevation = modelContext.getRasterDataContext().getDataMinimumValue();
+		double maximumElevation = modelContext.getRasterDataContext().getDataMaximumValue();
+		
+		ElevationScaler elevationScaler = null;
+		ElevationScalerEnum elevationScalerEnum = ElevationScalerEnum.getElevationScalerEnumFromIdentifier(globalOptionModel.getElevationScale());
+		try {
+			elevationScaler = ElevationScalerFactory.createElevationScaler(elevationScalerEnum, globalOptionModel.getElevationMultiple(), minimumElevation, maximumElevation);
+		} catch (Exception ex) {
+			throw new RenderEngineException("Error creating elevation scaler: " + ex.getMessage(), ex);
+		}
+		
 		
 		if (normalsOptionModel.getUseFlatSurface()) {
 			normals = new FlatNormalsCalculator(planet
 					, modelDimensions.getModelLatitudeResolution()
 					, modelDimensions.getModelLongitudeResolution()
+					, new ScaledElevationFetchCallback(modelGrid, elevationScaler));/*
 					, new ElevationFetchCallback() {
 						@Override
 						public double getElevation(double latitude, double longitude)
@@ -54,12 +69,13 @@ public class NormalMapColorProcessor extends GridFilter
 							return modelGrid.getElevation(latitude, longitude, true);
 						}
 				
-			});
+			});*/
 		} else {
 		
 			normals = new SphericalNormalsCalculator(planet
 					, modelDimensions.getModelLatitudeResolution()
 					, modelDimensions.getModelLongitudeResolution()
+					, new ScaledElevationFetchCallback(modelGrid, elevationScaler));/*
 					, new ElevationFetchCallback() {
 						@Override
 						public double getElevation(double latitude, double longitude)
@@ -67,7 +83,7 @@ public class NormalMapColorProcessor extends GridFilter
 							return modelGrid.getElevation(latitude, longitude, true);
 						}
 				
-			});
+			});*/
 		}
 		
 	}
